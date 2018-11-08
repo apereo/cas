@@ -1,8 +1,5 @@
 package org.apereo.cas.trusted.config;
 
-import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.benmanes.caffeine.cache.LoadingCache;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
@@ -12,13 +9,19 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustCipherExecutor;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
-import org.apereo.cas.trusted.authentication.storage.BaseMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.InMemoryMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.JsonMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.MultifactorAuthenticationTrustStorageCleaner;
 import org.apereo.cas.trusted.web.MultifactorTrustedDevicesReportEndpoint;
+import org.apereo.cas.util.function.FunctionUtils;
+
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
@@ -28,7 +31,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.transaction.PlatformTransactionManager;
 
 /**
@@ -47,11 +49,11 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
 
     @Autowired
     @Qualifier("ticketCreationActionResolver")
-    private AuditActionResolver ticketCreationActionResolver;
+    private ObjectProvider<AuditActionResolver> ticketCreationActionResolver;
 
     @Autowired
     @Qualifier("returnValueResourceResolver")
-    private AuditResourceResolver returnValueResourceResolver;
+    private ObjectProvider<AuditResourceResolver> returnValueResourceResolver;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -60,7 +62,7 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
     @Bean
     @RefreshScope
     public MultifactorAuthenticationTrustStorage mfaTrustEngine() {
-        final var trusted = casProperties.getAuthn().getMfa().getTrusted();
+        val trusted = casProperties.getAuthn().getMfa().getTrusted();
         final LoadingCache<String, MultifactorAuthenticationTrustRecord> storage = Caffeine.newBuilder()
             .initialCapacity(INITIAL_CACHE_SIZE)
             .maximumSize(MAX_CACHE_SIZE)
@@ -71,14 +73,16 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
             });
 
         storage.asMap();
-        final BaseMultifactorAuthenticationTrustStorage m;
-        if (trusted.getJson().getLocation() != null) {
-            LOGGER.debug("Storing trusted device records inside the JSON resource [{}]", trusted.getJson().getLocation());
-            m = new JsonMultifactorAuthenticationTrustStorage(trusted.getJson().getLocation());
-        } else {
-            LOGGER.warn("Storing trusted device records in runtime memory. Changes and records will be lost upon CAS restarts");
-            m = new InMemoryMultifactorAuthenticationTrustStorage(storage);
-        }
+
+        val m = FunctionUtils.doIf(trusted.getJson().getLocation() != null,
+            () -> {
+                LOGGER.debug("Storing trusted device records inside the JSON resource [{}]", trusted.getJson().getLocation());
+                return new JsonMultifactorAuthenticationTrustStorage(trusted.getJson().getLocation());
+            },
+            () -> {
+                LOGGER.warn("Storing trusted device records in runtime memory. Changes and records will be lost upon CAS restarts");
+                return new InMemoryMultifactorAuthenticationTrustStorage(storage);
+            }).get();
         m.setCipherExecutor(mfaTrustCipherExecutor());
         return m;
     }
@@ -92,12 +96,14 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
     @Bean
     @RefreshScope
     public CipherExecutor mfaTrustCipherExecutor() {
-        final var crypto = casProperties.getAuthn().getMfa().getTrusted().getCrypto();
+        val crypto = casProperties.getAuthn().getMfa().getTrusted().getCrypto();
         if (crypto.isEnabled()) {
             return new MultifactorAuthenticationTrustCipherExecutor(
                 crypto.getEncryption().getKey(),
                 crypto.getSigning().getKey(),
-                crypto.getAlg());
+                crypto.getAlg(),
+                crypto.getSigning().getKeySize(),
+                crypto.getEncryption().getKeySize());
         }
         LOGGER.info("Multifactor trusted authentication record encryption/signing is turned off and "
             + "MAY NOT be safe in a production environment. "
@@ -108,7 +114,6 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
 
     @ConditionalOnMissingBean(name = "mfaTrustStorageCleaner")
     @Bean
-    @Lazy
     public MultifactorAuthenticationTrustStorageCleaner mfaTrustStorageCleaner() {
         return new MultifactorAuthenticationTrustStorageCleaner(
             casProperties.getAuthn().getMfa().getTrusted(),
@@ -117,8 +122,8 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
 
     @Override
     public void configureAuditTrailRecordResolutionPlan(final AuditTrailRecordResolutionPlan plan) {
-        plan.registerAuditResourceResolver("TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER", this.returnValueResourceResolver);
-        plan.registerAuditActionResolver("TRUSTED_AUTHENTICATION_ACTION_RESOLVER", this.ticketCreationActionResolver);
+        plan.registerAuditResourceResolver("TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER", returnValueResourceResolver.getIfAvailable());
+        plan.registerAuditActionResolver("TRUSTED_AUTHENTICATION_ACTION_RESOLVER", ticketCreationActionResolver.getIfAvailable());
     }
 
     @Bean

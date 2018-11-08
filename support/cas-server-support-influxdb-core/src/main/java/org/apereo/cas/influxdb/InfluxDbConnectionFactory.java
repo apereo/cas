@@ -1,10 +1,12 @@
 package org.apereo.cas.influxdb;
 
-import lombok.extern.slf4j.Slf4j;
-import okhttp3.OkHttpClient;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.influxdb.InfluxDbProperties;
 import org.apereo.cas.configuration.support.Beans;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import okhttp3.OkHttpClient;
+import org.apache.commons.lang3.StringUtils;
 import org.influxdb.InfluxDB;
 import org.influxdb.InfluxDBFactory;
 import org.influxdb.dto.BatchPoints;
@@ -23,8 +25,6 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class InfluxDbConnectionFactory implements AutoCloseable {
-
-
     /**
      * The Influx db.
      */
@@ -35,15 +35,6 @@ public class InfluxDbConnectionFactory implements AutoCloseable {
      */
     private InfluxDbProperties influxDbProperties;
 
-    /**
-     * Instantiates a new Influx db connection factory.
-     *
-     * @param url          the url
-     * @param uid          the uid
-     * @param psw          the psw
-     * @param dbName       the db name
-     * @param dropDatabase the drop database
-     */
     public InfluxDbConnectionFactory(final String url, final String uid,
                                      final String psw, final String dbName,
                                      final boolean dropDatabase) {
@@ -52,7 +43,7 @@ public class InfluxDbConnectionFactory implements AutoCloseable {
             throw new IllegalArgumentException("Database name/url cannot be blank and must be specified");
         }
 
-        final var builder = new OkHttpClient.Builder();
+        val builder = new OkHttpClient.Builder();
         this.influxDb = InfluxDBFactory.connect(url, uid, psw, builder);
         this.influxDb.enableGzip();
 
@@ -91,7 +82,7 @@ public class InfluxDbConnectionFactory implements AutoCloseable {
         influxDb.setConsistency(InfluxDB.ConsistencyLevel.valueOf(props.getConsistencyLevel().toUpperCase()));
 
         if (props.getPointsToFlush() > 0 && StringUtils.isNotBlank(props.getBatchInterval())) {
-            final var interval = (int) Beans.newDuration(props.getBatchInterval()).toMillis();
+            val interval = (int) Beans.newDuration(props.getBatchInterval()).toMillis();
             this.influxDb.enableBatch(props.getPointsToFlush(), interval, TimeUnit.MILLISECONDS);
         }
 
@@ -124,7 +115,7 @@ public class InfluxDbConnectionFactory implements AutoCloseable {
      * @param point the points to write immediately in sync fashion
      */
     public void writeBatch(final Point... point) {
-        final var batchPoints = BatchPoints
+        val batchPoints = BatchPoints
             .database(influxDbProperties.getDatabase())
             .retentionPolicy(influxDbProperties.getRetentionPolicy())
             .consistency(InfluxDB.ConsistencyLevel.valueOf(influxDbProperties.getConsistencyLevel()))
@@ -132,7 +123,7 @@ public class InfluxDbConnectionFactory implements AutoCloseable {
         Arrays.stream(point).forEach(batchPoints::point);
         influxDb.write(batchPoints);
     }
-    
+
     /**
      * Query all result.
      *
@@ -163,8 +154,8 @@ public class InfluxDbConnectionFactory implements AutoCloseable {
      * @return the query result
      */
     public QueryResult query(final String fields, final String measurement, final String dbName) {
-        final var filter = String.format("SELECT %s FROM %s", fields, measurement);
-        final var query = new Query(filter, dbName);
+        val filter = String.format("SELECT %s FROM %s", fields, measurement);
+        val query = new Query(filter, dbName);
 
         return this.influxDb.query(query);
     }

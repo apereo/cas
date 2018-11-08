@@ -1,10 +1,14 @@
 package org.apereo.cas.support.oauth.web.views;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.jasig.cas.client.util.URIBuilder;
 import org.pac4j.core.context.J2EContext;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -18,7 +22,7 @@ import java.util.Map;
  * @since 5.0.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewResolver {
 
     /**
@@ -28,13 +32,13 @@ public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewRe
 
     @Override
     public ModelAndView resolve(final J2EContext context, final OAuthRegisteredService service) {
-        final var bypassApprovalParameter = context.getSessionStore().get(context, OAuth20Constants.BYPASS_APPROVAL_PROMPT);
-        LOGGER.debug("Bypassing approval prompt for service [{}]: [{}]", service, bypassApprovalParameter);
-
-        /*
-         * Inbound request; approval handled already.
-         */
-        if (bypassApprovalParameter != null || isConsentApprovalBypassed(context, service)) {
+        var bypassApprovalParameter = context.getRequestParameter(OAuth20Constants.BYPASS_APPROVAL_PROMPT);
+        if (StringUtils.isBlank(bypassApprovalParameter)) {
+            bypassApprovalParameter = (String) context.getSessionStore().get(context, OAuth20Constants.BYPASS_APPROVAL_PROMPT);
+        }
+        LOGGER.trace("Bypassing approval prompt for service [{}]: [{}]", service, bypassApprovalParameter);
+        if (Boolean.TRUE.toString().equalsIgnoreCase(bypassApprovalParameter) || isConsentApprovalBypassed(context, service)) {
+            context.getSessionStore().set(context, OAuth20Constants.BYPASS_APPROVAL_PROMPT, Boolean.TRUE.toString());
             return new ModelAndView();
         }
         return redirectToApproveView(context, service);
@@ -59,13 +63,14 @@ public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewRe
      * @return the model and view
      */
     protected ModelAndView redirectToApproveView(final J2EContext ctx, final OAuthRegisteredService svc) {
-        final var callbackUrl = ctx.getFullRequestURL();
-        ctx.getSessionStore().set(ctx, OAuth20Constants.BYPASS_APPROVAL_PROMPT, Boolean.TRUE);
-        LOGGER.debug("callbackUrl: [{}]", callbackUrl);
+        val callbackUrl = ctx.getFullRequestURL();
+        LOGGER.trace("callbackUrl: [{}]", callbackUrl);
 
-        final Map<String, Object> model = new HashMap<>();
+        val url = new URIBuilder(callbackUrl);
+        url.addParameter(OAuth20Constants.BYPASS_APPROVAL_PROMPT, Boolean.TRUE.toString());
+        val model = new HashMap<String, Object>();
         model.put("service", svc);
-        model.put("callbackUrl", callbackUrl);
+        model.put("callbackUrl", url.toString());
         model.put("serviceName", svc.getName());
         model.put("deniedApprovalUrl", svc.getAccessStrategy().getUnauthorizedRedirectUrl());
 

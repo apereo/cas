@@ -1,10 +1,12 @@
 package org.apereo.cas.support.saml.services;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.jasig.cas.client.util.URIBuilder;
 import org.springframework.core.Ordered;
 
@@ -29,19 +31,6 @@ public class SamlIdPEntityIdAuthenticationServiceSelectionStrategy implements Au
         this.casServiceUrlPattern = "^".concat(casServerPrefix).concat(".*");
     }
 
-    @Override
-    public Service resolveServiceFrom(final Service service) {
-        final var entityId = getEntityIdAsParameter(service).get().getValue();
-        LOGGER.trace("Located entity id [{}] from service authentication request at [{}]", entityId, service.getId());
-        return this.webApplicationServiceFactory.createService(entityId);
-    }
-
-    @Override
-    public boolean supports(final Service service) {
-        return service != null && service.getId().matches(this.casServiceUrlPattern)
-                && getEntityIdAsParameter(service).isPresent();
-    }
-
     /**
      * Gets entity id as parameter.
      *
@@ -49,10 +38,23 @@ public class SamlIdPEntityIdAuthenticationServiceSelectionStrategy implements Au
      * @return the entity id as parameter
      */
     protected static Optional<URIBuilder.BasicNameValuePair> getEntityIdAsParameter(final Service service) {
-        final var builder = new URIBuilder(service.getId());
-        final var param = builder.getQueryParams().stream()
-                .filter(p -> p.getName().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID)).findFirst();
+        val builder = new URIBuilder(service.getId());
+        val param = builder.getQueryParams().stream()
+            .filter(p -> p.getName().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID)).findFirst();
         return param;
+    }
+
+    @Override
+    public Service resolveServiceFrom(final Service service) {
+        val entityId = getEntityIdAsParameter(service).get().getValue();
+        LOGGER.trace("Located entity id [{}] from service authentication request at [{}]", entityId, service.getId());
+        return this.webApplicationServiceFactory.createService(entityId);
+    }
+
+    @Override
+    public boolean supports(final Service service) {
+        return service != null && service.getId().matches(this.casServiceUrlPattern)
+            && getEntityIdAsParameter(service).isPresent();
     }
 
     @Override

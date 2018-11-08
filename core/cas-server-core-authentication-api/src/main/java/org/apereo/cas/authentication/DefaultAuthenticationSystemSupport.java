@@ -1,9 +1,10 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.principal.Service;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.principal.Service;
+import lombok.val;
 
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -15,7 +16,6 @@ import java.util.stream.Stream;
  * @author Dmitriy Kopylenko
  * @since 4.2.0
  */
-@Slf4j
 @Getter
 @RequiredArgsConstructor
 public class DefaultAuthenticationSystemSupport implements AuthenticationSystemSupport {
@@ -26,7 +26,7 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
     @Override
     public AuthenticationResultBuilder handleInitialAuthenticationTransaction(final Service service,
                                                                               final Credential... credential) throws AuthenticationException {
-        final var builder = new DefaultAuthenticationResultBuilder();
+        val builder = new DefaultAuthenticationResultBuilder();
         if (credential != null) {
             Stream.of(credential).filter(Objects::nonNull).forEach(builder::collect);
         }
@@ -44,7 +44,7 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
                                                                        final AuthenticationResultBuilder authenticationResultBuilder,
                                                                        final Credential... credential) throws AuthenticationException {
 
-        final var transaction = DefaultAuthenticationTransaction.of(service, credential);
+        val transaction = DefaultAuthenticationTransaction.of(service, credential);
         this.authenticationTransactionManager.handle(transaction, authenticationResultBuilder);
         return authenticationResultBuilder;
     }

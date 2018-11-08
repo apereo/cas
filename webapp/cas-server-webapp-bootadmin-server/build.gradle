@@ -2,10 +2,11 @@ apply plugin: "war"
 
 project.ext["mainClassName"] = "org.apereo.cas.CasSpringBootAdminServerWebApplication"
 apply from: rootProject.file("gradle/springboot.gradle")
+
 description = "Apereo CAS Spring Boot Admin Server"
 
 dependencies {
-    providedRuntime libraries.springboottomcat
-    implementation libraries.springbootadminserver
-    implementation project(":core:cas-server-core-util-api")
+    implementation libraries.springboottomcat
+
+    implementation project(":webapp:cas-server-webapp-init-bootadmin-server")
 }

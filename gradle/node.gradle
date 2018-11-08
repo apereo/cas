@@ -32,18 +32,20 @@ task compileSass(type: NpmTask) {
 
 if (!rootProject.publishingRelease && !Boolean.getBoolean("skipNpmLint")) {
     processResources.dependsOn npmLint
+} else {
+    npmLint.enabled = false
 }
 
 if (!Boolean.getBoolean("skipSass")) {
     processResources.dependsOn compileSass
 } else {
-    println("Skipping Sass compilation...")
+    logger.info("Skipping Sass compilation...")
 }
 
 if (!Boolean.getBoolean("skipNodeModulesCleanUp")) {
     clean.delete << new File(project(":webapp").projectDir, "node_modules")
     clean.delete << fileTree(dir: project(":webapp").projectDir.getPath() + '/resources/static/js', include: '*-bundle.js')
 } else {
-    println("Skipping node_modules cleanup...")
+    logger.info("Skipping node_modules cleanup...")
 }
 

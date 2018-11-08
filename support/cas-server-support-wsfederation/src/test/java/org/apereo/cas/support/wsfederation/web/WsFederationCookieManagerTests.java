@@ -4,6 +4,8 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.wsfederation.AbstractWsFederationTests;
 import org.apereo.cas.util.HttpRequestUtils;
+
+import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.Test;
@@ -24,9 +26,9 @@ import static org.junit.Assert.*;
 public class WsFederationCookieManagerTests extends AbstractWsFederationTests {
     @Test
     public void verifyOperation() {
-        final var context = new MockRequestContext();
-        final var request = new MockHttpServletRequest();
-        final var response = new MockHttpServletResponse();
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
         request.setRemoteAddr("185.86.151.11");
@@ -38,14 +40,14 @@ public class WsFederationCookieManagerTests extends AbstractWsFederationTests {
         request.setAttribute("locale", "en");
         request.setAttribute("theme", "custom");
 
-        final var config = wsFederationConfigurations.iterator().next();
-        final var wctx = config.getId();
-        final var original = RegisteredServiceTestUtils.getService();
+        val config = wsFederationConfigurations.iterator().next();
+        val wctx = config.getId();
+        val original = RegisteredServiceTestUtils.getService();
         wsFederationCookieManager.store(request, response, wctx, original, config);
 
         request.addParameter(WsFederationCookieManager.WCTX, wctx);
         request.setCookies(response.getCookies());
-        final var service = wsFederationCookieManager.retrieve(context);
+        val service = wsFederationCookieManager.retrieve(context);
         assertNotNull(service);
         assertEquals(original.getId(), service.getId());
     }

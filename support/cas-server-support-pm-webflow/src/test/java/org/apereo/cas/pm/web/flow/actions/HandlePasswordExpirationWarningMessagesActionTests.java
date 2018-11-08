@@ -3,6 +3,8 @@ package org.apereo.cas.pm.web.flow.actions;
 import org.apereo.cas.authentication.support.password.PasswordExpiringWarningMessageDescriptor;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+
+import lombok.val;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -23,16 +25,16 @@ import static org.junit.Assert.*;
 public class HandlePasswordExpirationWarningMessagesActionTests {
     @Test
     public void verifyAction() throws Exception {
-        final var context = new MockRequestContext();
-        final var request = new MockHttpServletRequest();
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
-        final var exception = new PasswordExpiringWarningMessageDescriptor("About to expire", 10);
-        final var event = new Event(this, "success",
+        val exception = new PasswordExpiringWarningMessageDescriptor("About to expire", 10);
+        val event = new Event(this, "success",
             new LocalAttributeMap<>(CasWebflowConstants.ATTRIBUTE_ID_AUTHENTICATION_WARNINGS, CollectionUtils.wrapList(exception)));
         context.setCurrentEvent(event);
 
-        final var action = new HandlePasswordExpirationWarningMessagesAction();
+        val action = new HandlePasswordExpirationWarningMessagesAction();
         action.execute(context);
         assertTrue(context.getFlowScope().get(HandlePasswordExpirationWarningMessagesAction.ATTRIBUTE_NAME_EXPIRATION_WARNING_FOUND, Boolean.class));
     }

@@ -1,12 +1,14 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.ScriptingUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 
 import java.util.ArrayList;
@@ -20,22 +22,20 @@ import java.util.Collection;
  */
 @Slf4j
 public class GroovyResourceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver {
-
-
     public GroovyResourceMetadataResolver(final SamlIdPProperties samlIdPProperties,
                                           final OpenSamlConfigBean configBean) {
         super(samlIdPProperties, configBean);
     }
 
     @Override
-    public Collection<MetadataResolver> resolve(final SamlRegisteredService service) {
+    public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service) {
         try {
-            final var metadataLocation = service.getMetadataLocation();
+            val metadataLocation = service.getMetadataLocation();
             LOGGER.info("Loading SAML metadata via [{}]", metadataLocation);
-            final var metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
+            val metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
             final Object[] args = {service, this.configBean, this.samlIdPProperties, LOGGER};
-            final var metadataResolver =
-                ScriptingUtils.executeGroovyScript(metadataResource, args, MetadataResolver.class);
+            val metadataResolver =
+                ScriptingUtils.executeGroovyScript(metadataResource, args, MetadataResolver.class, true);
             if (metadataResolver != null) {
                 return CollectionUtils.wrap(metadataResolver);
             }
@@ -47,7 +47,16 @@ public class GroovyResourceMetadataResolver extends BaseSamlRegisteredServiceMet
 
     @Override
     public boolean supports(final SamlRegisteredService service) {
-        final var metadataLocation = service.getMetadataLocation();
+        val metadataLocation = service.getMetadataLocation();
         return ScriptingUtils.isExternalGroovyScript(metadataLocation);
+    }
+
+    @Override
+    public boolean isAvailable(final SamlRegisteredService service) {
+        if (supports(service)) {
+            val metadataLocation = service.getMetadataLocation();
+            return ResourceUtils.doesResourceExist(metadataLocation);
+        }
+        return false;
     }
 }

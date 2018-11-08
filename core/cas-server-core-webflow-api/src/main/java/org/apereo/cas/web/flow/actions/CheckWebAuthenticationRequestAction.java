@@ -1,8 +1,10 @@
 package org.apereo.cas.web.flow.actions;
 
+import org.apereo.cas.web.support.WebUtils;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.web.support.WebUtils;
+import lombok.val;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -21,7 +23,7 @@ public class CheckWebAuthenticationRequestAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext context) {
-        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
 
         LOGGER.debug("Checking request content type [{}] against [{}]", request.getContentType(), this.contentType);
         if (this.contentType.equalsIgnoreCase(request.getContentType())) {

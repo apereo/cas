@@ -1,9 +1,5 @@
 package org.apereo.cas.syncope.authentication;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.syncope.common.lib.to.UserTO;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
@@ -15,8 +11,15 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.SyncopeAuthenticationConfiguration;
 import org.apereo.cas.util.MockWebServer;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.syncope.common.lib.to.UserTO;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,7 +27,8 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.nio.charset.StandardCharsets;
 
@@ -34,7 +38,6 @@ import java.nio.charset.StandardCharsets;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     SyncopeAuthenticationConfiguration.class,
@@ -44,10 +47,16 @@ import java.nio.charset.StandardCharsets;
     CasCoreUtilConfiguration.class,
     CasPersonDirectoryTestConfiguration.class
 })
-@TestPropertySource(locations = "classpath:syncope.properties")
+@TestPropertySource(properties = "cas.authn.syncope.url=http://localhost:8095")
 @Slf4j
 public class SyncopeAuthenticationHandlerTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
     private static final ObjectMapper MAPPER = new IgnoringJaxbModuleJacksonObjectMapper().findAndRegisterModules();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     @Qualifier("syncopeAuthenticationHandler")
@@ -58,7 +67,7 @@ public class SyncopeAuthenticationHandlerTests {
     @Test
     public void verifyHandlerPasses() {
         try {
-            final var user = new UserTO();
+            val user = new UserTO();
             user.setUsername("casuser");
             startMockSever(user);
             syncopeAuthenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
@@ -72,7 +81,7 @@ public class SyncopeAuthenticationHandlerTests {
     @Test
     public void verifyHandlerMustChangePassword() {
         try {
-            final var user = new UserTO();
+            val user = new UserTO();
             user.setUsername("casuser");
             user.setMustChangePassword(true);
             startMockSever(user);
@@ -90,7 +99,7 @@ public class SyncopeAuthenticationHandlerTests {
     @Test
     public void verifyHandlerSuspended() {
         try {
-            final var user = new UserTO();
+            val user = new UserTO();
             user.setUsername("casuser");
             user.setSuspended(true);
             startMockSever(user);
@@ -106,7 +115,7 @@ public class SyncopeAuthenticationHandlerTests {
     }
 
     private void startMockSever(final UserTO user) throws JsonProcessingException {
-        final var data = MAPPER.writeValueAsString(user);
+        val data = MAPPER.writeValueAsString(user);
         this.webServer = new MockWebServer(8095,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE);

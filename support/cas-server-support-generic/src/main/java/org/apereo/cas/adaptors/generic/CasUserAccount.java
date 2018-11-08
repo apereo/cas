@@ -1,13 +1,13 @@
 package org.apereo.cas.adaptors.generic;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.extern.slf4j.Slf4j;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link CasUserAccount}.
@@ -16,12 +16,15 @@ import lombok.Setter;
  * @since 5.3.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@Slf4j
 @Getter
 @Setter
 public class CasUserAccount implements Serializable {
 
     private static final long serialVersionUID = 7579594722197541062L;
+    private String password;
+    private Map<String, Object> attributes = new LinkedHashMap<>();
+    private AccountStatus status = AccountStatus.OK;
+    private LocalDate expirationDate;
 
     /**
      * Indicates user account status.
@@ -31,27 +34,23 @@ public class CasUserAccount implements Serializable {
         /**
          * Ok account status.
          */
-        OK, /**
+        OK,
+        /**
          * Locked account status.
          */
-        LOCKED, /**
+        LOCKED,
+        /**
          * Disabled account status.
          */
-        DISABLED, /**
+        DISABLED,
+        /**
          * Expired account status.
          */
-        EXPIRED, /**
+        EXPIRED,
+        /**
          * Must change password account status.
          */
         MUST_CHANGE_PASSWORD
     }
-
-    private String password;
-
-    private Map<String, Object> attributes = new LinkedHashMap<>();
-
-    private AccountStatus status = AccountStatus.OK;
-
-    private LocalDate expirationDate;
 
 }

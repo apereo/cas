@@ -1,12 +1,14 @@
 package org.apereo.cas.web.report.util;
 
+import org.apereo.cas.util.ResourceUtils;
+
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configurator;
-import org.apereo.cas.util.ResourceUtils;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -33,14 +35,14 @@ public class ControllerUtils {
     @SneakyThrows
     public static Optional<Pair<Resource, LoggerContext>> buildLoggerContext(final Environment environment, final ResourceLoader
         resourceLoader) {
-        final var logFile = environment.getProperty("logging.config", "classpath:/log4j2.xml");
-        LOGGER.debug("Located logging configuration reference in the environment as [{}]", logFile);
+        val logFile = environment.getProperty("logging.config", "classpath:/log4j2.xml");
+        LOGGER.info("Located logging configuration reference in the environment as [{}]", logFile);
 
         if (ResourceUtils.doesResourceExist(logFile, resourceLoader)) {
-            final var logConfigurationFile = resourceLoader.getResource(logFile);
-            LOGGER.debug("Loaded logging configuration resource [{}]. Initializing logger context...", logConfigurationFile);
-            final var loggerContext = Configurator.initialize("CAS", null, logConfigurationFile.getURI());
-            LOGGER.debug("Installing log configuration listener to detect changes and update");
+            val logConfigurationFile = resourceLoader.getResource(logFile);
+            LOGGER.trace("Loaded logging configuration resource [{}]. Initializing logger context...", logConfigurationFile);
+            val loggerContext = Configurator.initialize("CAS", null, logConfigurationFile.getURI());
+            LOGGER.trace("Installing log configuration listener to detect changes and update");
             loggerContext.getConfiguration().addListener(reconfigurable -> loggerContext.updateLoggers(reconfigurable.reconfigure()));
             return Optional.of(Pair.of(logConfigurationFile, loggerContext));
         }

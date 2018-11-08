@@ -1,9 +1,11 @@
 package org.apereo.cas.configuration.model.support.influxdb;
 
 import org.apereo.cas.configuration.support.RequiredProperty;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * This is {@link InfluxDbProperties}.
@@ -11,7 +13,6 @@ import lombok.Setter;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-
 @Getter
 @Setter
 public class InfluxDbProperties implements Serializable {

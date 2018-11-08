@@ -1,11 +1,14 @@
 package org.apereo.cas.services.web.view;
 
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.ProtocolAttributeEncoder;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
+import org.apereo.cas.validation.CasProtocolAttributesRenderer;
+
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.AuthenticationAttributeReleasePolicy;
-import org.apereo.cas.authentication.ProtocolAttributeEncoder;
-import org.apereo.cas.services.ServicesManager;
 import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,16 +29,17 @@ public abstract class AbstractDelegatingCasView extends AbstractCasView {
     /**
      * View to delegate.
      */
-    protected View view;
+    protected final View view;
 
     public AbstractDelegatingCasView(final boolean successResponse,
                                      final ProtocolAttributeEncoder protocolAttributeEncoder,
                                      final ServicesManager servicesManager,
-                                     final String authenticationContextAttribute,
                                      final View view,
-                                     final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
-        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute,
-            authenticationAttributeReleasePolicy);
+                                     final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
+                                     final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
+                                     final CasProtocolAttributesRenderer attributesRenderer) {
+        super(successResponse, protocolAttributeEncoder, servicesManager,
+            authenticationAttributeReleasePolicy, authenticationRequestServiceSelectionStrategies, attributesRenderer);
         this.view = view;
     }
 

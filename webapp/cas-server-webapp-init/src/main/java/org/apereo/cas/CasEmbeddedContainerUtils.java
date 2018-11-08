@@ -1,9 +1,11 @@
 package org.apereo.cas;
 
-import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.spring.boot.AbstractCasBanner;
 import org.apereo.cas.util.spring.boot.DefaultCasBanner;
+
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ClasspathHelper;
@@ -11,7 +13,7 @@ import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 import org.springframework.boot.Banner;
 
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -35,7 +37,7 @@ public class CasEmbeddedContainerUtils {
      * @return the runtime properties
      */
     public static Map<String, Object> getRuntimeProperties(final Boolean embeddedContainerActive) {
-        final Map<String, Object> properties = new LinkedHashMap<>();
+        val properties = new HashMap<String, Object>();
         properties.put(EMBEDDED_CONTAINER_CONFIG_ACTIVE, embeddedContainerActive);
         return properties;
     }
@@ -46,21 +48,20 @@ public class CasEmbeddedContainerUtils {
      * @return the cas banner instance
      */
     public static Banner getCasBannerInstance() {
-        final var packageName = CasEmbeddedContainerUtils.class.getPackage().getName();
-        final var reflections =
-            new Reflections(new ConfigurationBuilder()
+        val packageName = CasEmbeddedContainerUtils.class.getPackage().getName();
+        val reflections = new Reflections(new ConfigurationBuilder()
                 .filterInputsBy(new FilterBuilder().includePackage(packageName))
                 .setUrls(ClasspathHelper.forPackage(packageName))
                 .setScanners(new SubTypesScanner(true)));
 
-        final var subTypes = reflections.getSubTypesOf(AbstractCasBanner.class);
+        val subTypes = reflections.getSubTypesOf(AbstractCasBanner.class);
         subTypes.remove(DefaultCasBanner.class);
 
         if (subTypes.isEmpty()) {
             return new DefaultCasBanner();
         }
         try {
-            final Class<? extends AbstractCasBanner> clz = subTypes.iterator().next();
+            val clz = subTypes.iterator().next();
             return clz.getDeclaredConstructor().newInstance();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

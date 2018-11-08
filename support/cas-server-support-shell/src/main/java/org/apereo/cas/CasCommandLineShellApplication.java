@@ -1,11 +1,12 @@
 package org.apereo.cas;
 
-import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.spring.boot.DefaultCasBanner;
+
+import lombok.NoArgsConstructor;
 import org.springframework.boot.Banner;
 import org.springframework.boot.WebApplicationType;
+import org.springframework.boot.actuate.autoconfigure.metrics.LogbackMetricsAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
@@ -37,6 +38,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
     DataSourceAutoConfiguration.class,
     RedisAutoConfiguration.class,
     MongoAutoConfiguration.class,
+    LogbackMetricsAutoConfiguration.class,
     MongoDataAutoConfiguration.class,
     CassandraAutoConfiguration.class,
     DataSourceTransactionManagerAutoConfiguration.class,
@@ -44,7 +46,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAsync
-@Slf4j
 @NoArgsConstructor
 public class CasCommandLineShellApplication {
 

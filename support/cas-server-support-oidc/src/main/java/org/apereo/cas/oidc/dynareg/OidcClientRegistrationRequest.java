@@ -1,16 +1,18 @@
 package org.apereo.cas.oidc.dynareg;
 
+import org.apereo.cas.util.CollectionUtils;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.util.CollectionUtils;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.List;
-import lombok.ToString;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * This is {@link OidcClientRegistrationRequest}.
@@ -19,7 +21,6 @@ import lombok.NoArgsConstructor;
  * @since 5.1.0
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Slf4j
 @ToString
 @Getter
 @NoArgsConstructor
@@ -56,6 +57,9 @@ public class OidcClientRegistrationRequest implements Serializable {
 
     @JsonProperty("request_object_signing_alg")
     private String requestObjectSigningAlg;
+
+    @JsonProperty("post_logout_redirect_uris")
+    private List<String> postLogoutRedirectUris = new ArrayList<>();
 
     @JsonIgnore
     public Collection<String> getScopes() {

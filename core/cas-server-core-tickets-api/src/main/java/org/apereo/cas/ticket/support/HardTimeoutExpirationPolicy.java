@@ -1,16 +1,19 @@
 package org.apereo.cas.ticket.support;
 
+import org.apereo.cas.ticket.TicketState;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.ticket.TicketState;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import lombok.val;
+
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import lombok.NoArgsConstructor;
 
 /**
  * Ticket expiration policy based on a hard timeout from ticket creation time rather than the
@@ -20,9 +23,9 @@ import lombok.NoArgsConstructor;
  * @since 3.1.2
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@Slf4j
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /**
@@ -47,8 +50,8 @@ public class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     @Override
     public boolean isExpired(final TicketState ticketState) {
-        final var expiringTime = ticketState.getCreationTime().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
-        final var expired = ticketState == null || expiringTime.isBefore(ZonedDateTime.now(ZoneOffset.UTC));
+        val expiringTime = ticketState.getCreationTime().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+        val expired = ticketState == null || expiringTime.isBefore(ZonedDateTime.now(ZoneOffset.UTC));
         if (!expired) {
             return super.isExpired(ticketState);
         }

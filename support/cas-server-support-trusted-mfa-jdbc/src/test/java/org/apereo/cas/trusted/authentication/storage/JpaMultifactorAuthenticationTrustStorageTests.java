@@ -1,6 +1,5 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
@@ -8,17 +7,20 @@ import org.apereo.cas.trusted.config.JdbcMultifactorAuthnTrustConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
+
+import lombok.val;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.time.LocalDateTime;
@@ -34,7 +36,6 @@ import static org.junit.Assert.*;
  * @author Daniel Frett
  * @since 5.3.0
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
     JdbcMultifactorAuthnTrustConfiguration.class,
     MultifactorAuthnTrustedDeviceFingerprintConfiguration.class,
@@ -44,12 +45,17 @@ import static org.junit.Assert.*;
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableScheduling
-@Slf4j
 public class JpaMultifactorAuthenticationTrustStorageTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
     private static final String PRINCIPAL = "principal";
     private static final String PRINCIPAL2 = "principal2";
     private static final String GEOGRAPHY = "geography";
     private static final String DEVICE_FINGERPRINT = "deviceFingerprint";
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -63,7 +69,7 @@ public class JpaMultifactorAuthenticationTrustStorageTests {
         // create 2 records
         mfaTrustEngine.set(MultifactorAuthenticationTrustRecord.newInstance(PRINCIPAL, GEOGRAPHY, DEVICE_FINGERPRINT));
         mfaTrustEngine.set(MultifactorAuthenticationTrustRecord.newInstance(PRINCIPAL, GEOGRAPHY, DEVICE_FINGERPRINT));
-        final var records = mfaTrustEngine.get(PRINCIPAL);
+        val records = mfaTrustEngine.get(PRINCIPAL);
         assertEquals(2, records.size());
 
         // expire 1 of the records
@@ -77,7 +83,7 @@ public class JpaMultifactorAuthenticationTrustStorageTests {
     public void verifyRetrieveAndExpireByDate() {
         Stream.of(PRINCIPAL, PRINCIPAL2).forEach(p -> {
             for (var offset = 0; offset < 3; offset++) {
-                final var record =
+                val record =
                     MultifactorAuthenticationTrustRecord.newInstance(p, GEOGRAPHY, DEVICE_FINGERPRINT);
                 record.setRecordDate(LocalDateTime.now().minusDays(offset));
                 mfaTrustEngine.set(record);
@@ -97,12 +103,12 @@ public class JpaMultifactorAuthenticationTrustStorageTests {
     @Test
     public void verifyStoreAndRetrieve() {
         // create record
-        final var original =
-                MultifactorAuthenticationTrustRecord.newInstance(PRINCIPAL, GEOGRAPHY, DEVICE_FINGERPRINT);
+        val original =
+            MultifactorAuthenticationTrustRecord.newInstance(PRINCIPAL, GEOGRAPHY, DEVICE_FINGERPRINT);
         mfaTrustEngine.set(original);
-        final var records = mfaTrustEngine.get(PRINCIPAL);
+        val records = mfaTrustEngine.get(PRINCIPAL);
         assertEquals(1, records.size());
-        final var record = records.stream().findFirst().get();
+        val record = records.stream().findFirst().get();
 
         assertEquals(MultifactorAuthenticationTrustUtils.generateKey(original), MultifactorAuthenticationTrustUtils.generateKey(record));
 

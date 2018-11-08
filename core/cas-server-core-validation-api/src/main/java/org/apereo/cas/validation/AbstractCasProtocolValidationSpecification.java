@@ -1,12 +1,13 @@
 package org.apereo.cas.validation;
 
+import org.apereo.cas.CasProtocolConstants;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apereo.cas.CasProtocolConstants;
 import org.springframework.context.annotation.Scope;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,7 +35,7 @@ public abstract class AbstractCasProtocolValidationSpecification implements CasP
 
     @Override
     public boolean isSatisfiedBy(final Assertion assertion, final HttpServletRequest request) {
-        LOGGER.debug("Is validation specification set to enforce [{}] protocol behavior? [{}]. Is assertion issued from a new login? [{}]",
+        LOGGER.trace("Is validation specification set to enforce [{}] protocol behavior? [{}]. Is assertion issued from a new login? [{}]",
             CasProtocolConstants.PARAMETER_RENEW, BooleanUtils.toStringYesNo(this.renew),
             BooleanUtils.toStringYesNo(assertion.isFromNewLogin()));
         var satisfied = isSatisfiedByInternal(assertion);
@@ -48,7 +49,7 @@ public abstract class AbstractCasProtocolValidationSpecification implements CasP
                 CasProtocolConstants.PARAMETER_RENEW);
             return false;
         }
-        LOGGER.debug("Validation specification is satisfied by the produced assertion");
+        LOGGER.trace("Validation specification is satisfied by the produced assertion");
         return true;
     }
 

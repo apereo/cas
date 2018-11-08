@@ -1,16 +1,18 @@
 package org.apereo.cas.services;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.OidcPairwisePersistentIdGenerator;
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
-import org.springframework.web.util.UriComponentsBuilder;
+
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * This is {@link PairwiseOidcRegisteredServiceUsernameAttributeProvider}.
@@ -49,12 +51,12 @@ public class PairwiseOidcRegisteredServiceUsernameAttributeProvider extends Base
             LOGGER.warn("Service definition [{}] is undefined or it's not an OpenId Connect relying party", registeredService);
             return principal.getId();
         }
-        final var oidcSvc = OidcRegisteredService.class.cast(registeredService);
+        val oidcSvc = OidcRegisteredService.class.cast(registeredService);
         if (StringUtils.isBlank(oidcSvc.getSubjectType()) || StringUtils.equalsIgnoreCase(OidcSubjectTypes.PUBLIC.getType(), oidcSvc.getSubjectType())) {
             LOGGER.warn("Service definition [{}] does not request a pairwise subject type", oidcSvc);
             return principal.getId();
         }
-        final var sectorIdentifier = getSectorIdentifier(oidcSvc);
+        val sectorIdentifier = getSectorIdentifier(oidcSvc);
         if (StringUtils.isBlank(sectorIdentifier)) {
             LOGGER.debug("Service definition [{}] does not provide a sector identifier", oidcSvc);
             return principal.getId();
@@ -62,17 +64,17 @@ public class PairwiseOidcRegisteredServiceUsernameAttributeProvider extends Base
         if (this.persistentIdGenerator == null) {
             throw new IllegalArgumentException("No pairwise persistent id generator is defined");
         }
-        final var id = this.persistentIdGenerator.generate(principal, new PairwiseService(sectorIdentifier));
+        val id = this.persistentIdGenerator.generate(principal, new PairwiseService(sectorIdentifier));
         LOGGER.debug("Resolved username [{}] for pairwise access", id);
         return id;
     }
 
-    private String getSectorIdentifier(final OidcRegisteredService client) {
+    private static String getSectorIdentifier(final OidcRegisteredService client) {
         if (!StringUtils.isBlank(client.getSectorIdentifierUri())) {
-            final var uri = UriComponentsBuilder.fromUriString(client.getSectorIdentifierUri()).build();
+            val uri = UriComponentsBuilder.fromUriString(client.getSectorIdentifierUri()).build();
             return uri.getHost();
         }
-        final var uri = UriComponentsBuilder.fromUriString(client.getServiceId()).build();
+        val uri = UriComponentsBuilder.fromUriString(client.getServiceId()).build();
         return uri.getHost();
     }
 

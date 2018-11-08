@@ -1,5 +1,6 @@
 package org.apereo.cas.audit;
 
+import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
@@ -20,10 +21,10 @@ public class DelegatedAuthenticationAuditResourceResolver extends ReturnValueAsS
     @Override
     public String[] resolveFrom(final JoinPoint auditableTarget, final Object retval) {
         Objects.requireNonNull(retval, "Return value must not be null");
-        final var result = AuditableExecutionResult.class.cast(retval);
-        final var accessCheckOutcome = "Client Access " + BooleanUtils.toString(result.isExecutionFailure(), "Denied", "Granted");
+        val result = AuditableExecutionResult.class.cast(retval);
+        val accessCheckOutcome = "Client Access " + BooleanUtils.toString(result.isExecutionFailure(), "Denied", "Granted");
 
-        final var builder = new ToStringBuilder(this, NO_CLASS_NAME_STYLE)
+        val builder = new ToStringBuilder(this, NO_CLASS_NAME_STYLE)
             .append("result", accessCheckOutcome);
         if (result.getProperties().containsKey(Client.class.getSimpleName())) {
             builder.append("client", result.getProperties().get(Client.class.getSimpleName()));

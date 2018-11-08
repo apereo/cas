@@ -1,8 +1,9 @@
 package org.apereo.cas.support.realm;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.wss4j.common.ext.WSPasswordCallback;
 
 import javax.security.auth.callback.Callback;
@@ -16,7 +17,7 @@ import java.util.Arrays;
  * @since 5.1.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class RealmPasswordVerificationCallbackHandler implements CallbackHandler {
 
     private final String psw;
@@ -28,7 +29,7 @@ public class RealmPasswordVerificationCallbackHandler implements CallbackHandler
             .filter(WSPasswordCallback.class::isInstance)
             .map(WSPasswordCallback.class::cast)
             .forEach(c -> {
-                final var identifier = c.getIdentifier();
+                val identifier = c.getIdentifier();
                 LOGGER.debug("Evaluating [{}]", identifier);
                 c.setPassword(this.psw);
                 LOGGER.debug("Authenticated [{}] successfully.", identifier);

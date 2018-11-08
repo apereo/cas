@@ -1,15 +1,17 @@
 package org.apereo.cas.web.flow.action;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.SurrogateUsernamePasswordCredential;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.web.flow.actions.InitialAuthenticationAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -33,8 +35,8 @@ public class SurrogateInitialAuthenticationAction extends InitialAuthenticationA
 
     @Override
     protected Event doPreExecute(final RequestContext context) {
-        final var up = WebUtils.getCredential(context, UsernamePasswordCredential.class);
-        if (up == null || up instanceof SurrogateUsernamePasswordCredential) {
+        val up = WebUtils.getCredential(context, UsernamePasswordCredential.class);
+        if (up == null) {
             LOGGER.debug("Provided credentials cannot be found, or are already of type [{}]", SurrogateUsernamePasswordCredential.class.getName());
             return null;
         }
@@ -46,11 +48,11 @@ public class SurrogateInitialAuthenticationAction extends InitialAuthenticationA
     }
 
     private void convertToSurrogateCredential(final RequestContext context, final UsernamePasswordCredential up) {
-        final var sc = new SurrogateUsernamePasswordCredential();
+        val sc = new SurrogateUsernamePasswordCredential();
 
-        final var tUsername = up.getUsername();
-        final var surrogateUsername = tUsername.substring(0, tUsername.indexOf(this.separator));
-        final var realUsername = tUsername.substring(tUsername.indexOf(this.separator) + this.separator.length());
+        val tUsername = up.getUsername();
+        val surrogateUsername = tUsername.substring(0, tUsername.indexOf(this.separator));
+        val realUsername = tUsername.substring(tUsername.indexOf(this.separator) + this.separator.length());
         LOGGER.debug("Converting to surrogate credential for username [{}], surrogate username [{}]", realUsername, surrogateUsername);
 
         if (StringUtils.isBlank(surrogateUsername)) {

@@ -1,9 +1,11 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
+
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import lombok.val;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 
 /**
@@ -33,19 +35,11 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
 
     @Override
     public MetadataResolver resolve(final SamlRegisteredService service) {
-        MetadataResolver resolver = null;
-        try {
-            LOGGER.debug("Resolving metadata for [{}] at [{}].", service.getName(), service.getMetadataLocation());
-            final var k = new SamlRegisteredServiceCacheKey(service);
-            LOGGER.debug("Locating cached metadata resolver using key [{}] for service [{}]", k.getId(), service.getName());
-            resolver = this.cache.get(k);
-            return resolver;
-        } finally {
-            if (resolver != null) {
-                LOGGER.debug("Loaded and cached SAML metadata [{}] from [{}]",
-                    resolver.getId(),
-                    service.getMetadataLocation());
-            }
-        }
+        LOGGER.debug("Resolving metadata for [{}] at [{}].", service.getName(), service.getMetadataLocation());
+        val k = new SamlRegisteredServiceCacheKey(service);
+        LOGGER.trace("Locating cached metadata resolver using key [{}] for service [{}]", k.getId(), service.getName());
+        val resolver = this.cache.get(k);
+        LOGGER.debug("Loaded and cached SAML metadata [{}] from [{}]", resolver.getId(), service.getMetadataLocation());
+        return resolver;
     }
 }

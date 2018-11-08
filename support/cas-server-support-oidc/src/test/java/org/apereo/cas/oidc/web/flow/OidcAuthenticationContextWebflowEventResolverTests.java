@@ -7,11 +7,13 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.Before;
 import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -54,18 +56,18 @@ public class OidcAuthenticationContextWebflowEventResolverTests extends Abstract
 
         this.context = new MockRequestContext();
 
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setRemoteAddr("385.86.151.11");
         request.setLocalAddr("295.88.151.11");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         request.addParameter(OAuth20Constants.ACR_VALUES, TestMultifactorAuthenticationProvider.ID);
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
 
-        final var response = new MockHttpServletResponse();
+        val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
-        final var targetResolver = new DefaultTargetStateResolver(TestMultifactorAuthenticationProvider.ID);
-        final var transition = new Transition(new DefaultTransitionCriteria(
+        val targetResolver = new DefaultTargetStateResolver(TestMultifactorAuthenticationProvider.ID);
+        val transition = new Transition(new DefaultTransitionCriteria(
             new LiteralExpression(TestMultifactorAuthenticationProvider.ID)), targetResolver);
         context.getRootFlow().getGlobalTransitionSet().add(transition);
 
@@ -76,7 +78,7 @@ public class OidcAuthenticationContextWebflowEventResolverTests extends Abstract
 
     @Test
     public void verifyOperationNeedsMfa() {
-        final var event = resolver.resolve(context);
+        val event = resolver.resolve(context);
         assertEquals(1, event.size());
         assertEquals(TestMultifactorAuthenticationProvider.ID, event.iterator().next().getId());
     }

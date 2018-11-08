@@ -1,9 +1,12 @@
 package org.apereo.cas.authentication;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apereo.cas.authentication.principal.Principal;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import lombok.val;
+
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * This is {@link SurrogatePrincipalElectionStrategy}.
@@ -17,7 +20,7 @@ public class SurrogatePrincipalElectionStrategy extends DefaultPrincipalElection
     @SuppressFBWarnings("PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS")
     @Override
     protected Principal getPrincipalFromAuthentication(final Collection<Authentication> authentications) {
-        final var result = authentications
+        val result = authentications
             .stream()
             .map(Authentication::getPrincipal)
             .filter(SurrogatePrincipal.class::isInstance)
@@ -27,5 +30,10 @@ public class SurrogatePrincipalElectionStrategy extends DefaultPrincipalElection
             return result.get().getSurrogate();
         }
         return super.getPrincipalFromAuthentication(authentications);
+    }
+
+    @Override
+    protected Map<String, Object> getPrincipalAttributesForPrincipal(final Principal principal, final Map<String, Object> principalAttributes) {
+        return principal.getAttributes();
     }
 }

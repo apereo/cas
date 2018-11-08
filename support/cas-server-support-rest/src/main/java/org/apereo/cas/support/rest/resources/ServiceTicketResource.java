@@ -1,16 +1,16 @@
 package org.apereo.cas.support.rest.resources;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
-import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.rest.factory.ServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.support.ArgumentExtractor;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +37,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @RestController("serviceTicketResourceRestController")
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ServiceTicketResource {
     private final AuthenticationSystemSupport authenticationSystemSupport;
     private final TicketRegistrySupport ticketRegistrySupport;
@@ -48,24 +48,24 @@ public class ServiceTicketResource {
      * Create new service ticket.
      *
      * @param httpServletRequest http request
-     * @param tgtId       ticket granting ticket id URI path param
+     * @param tgtId              ticket granting ticket id URI path param
      * @return {@link ResponseEntity} representing RESTful response
      */
     @PostMapping(value = "/v1/tickets/{tgtId:.+}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<String> createServiceTicket(final HttpServletRequest httpServletRequest,
                                                       @PathVariable("tgtId") final String tgtId) {
         try {
-            final var authn = this.ticketRegistrySupport.getAuthenticationFrom(tgtId);
+            val authn = this.ticketRegistrySupport.getAuthenticationFrom(tgtId);
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(authn);
             if (authn == null) {
                 throw new InvalidTicketException(tgtId);
             }
-            final AuthenticationResultBuilder builder = new DefaultAuthenticationResultBuilder();
-            final Service service = this.argumentExtractor.extractService(httpServletRequest);
+            val builder = new DefaultAuthenticationResultBuilder();
+            val service = this.argumentExtractor.extractService(httpServletRequest);
             if (service == null) {
                 throw new IllegalArgumentException("Target service/application is unspecified or unrecognized in the request");
             }
-            final var authenticationResult = builder
+            val authenticationResult = builder
                 .collect(authn)
                 .build(this.authenticationSystemSupport.getPrincipalElectionStrategy(), service);
             return this.serviceTicketResourceEntityResponseFactory.build(tgtId, service, authenticationResult);

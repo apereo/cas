@@ -1,10 +1,6 @@
 package org.apereo.cas;
 
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
-import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
@@ -39,10 +35,16 @@ import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.config.CasSupportActionsConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.SneakyThrows;
+import lombok.val;
+import org.apache.commons.io.IOUtils;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -57,7 +59,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -85,7 +88,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
     CasThemesConfiguration.class,
     CasFiltersConfiguration.class,
@@ -93,10 +95,12 @@ import static org.junit.Assert.*;
     CasWebAppConfiguration.class,
     CasWebflowServerSessionContextConfigurationTests.TestWebflowContextConfiguration.class,
     CasWebflowContextConfiguration.class,
+    CasMultifactorAuthenticationWebflowConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreWebflowConfiguration.class,
-    CasCoreAuthenticationConfiguration.class, CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCoreServicesAuthenticationConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationPolicyConfiguration.class,
     CasCoreAuthenticationMetadataConfiguration.class,
@@ -123,8 +127,12 @@ import static org.junit.Assert.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @TestPropertySource(properties = "spring.aop.proxy-target-class=true")
-@Slf4j
 public abstract class BaseCasWebflowSessionContextConfigurationTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Test
     public void verifyExecutorsAreBeans() {
@@ -133,22 +141,22 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
 
     @Test
     public void verifyFlowExecutorByClient() {
-        final var ctx = getMockRequestContext();
-        final var map = new LocalAttributeMap<>();
+        val ctx = getMockRequestContext();
+        val map = new LocalAttributeMap<>();
         getFlowExecutor().launchExecution("login", map, ctx.getExternalContext());
     }
 
     @Test
     public void verifyCasPropertiesAreAvailableInView() {
-        final var ctx = getMockRequestContext();
-        final var map = new LocalAttributeMap<>();
+        val ctx = getMockRequestContext();
+        val map = new LocalAttributeMap<>();
         getFlowExecutor().launchExecution("login", map, ctx.getExternalContext());
         assertResponseWrittenEquals("classpath:expected/end.html", ctx);
     }
 
     @SneakyThrows(IOException.class)
     protected void assertResponseWrittenEquals(final String response, final MockRequestContext context) {
-        final var nativeResponse = (MockHttpServletResponse) context.getExternalContext().getNativeResponse();
+        val nativeResponse = (MockHttpServletResponse) context.getExternalContext().getNativeResponse();
 
         assertEquals(
             IOUtils.toString(new InputStreamReader(ResourceUtils.getResourceFrom(response).getInputStream(), StandardCharsets.UTF_8)),
@@ -156,11 +164,11 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
         );
     }
 
-    private MockRequestContext getMockRequestContext() {
-        final var ctx = new MockRequestContext();
-        final var request = new MockHttpServletRequest();
-        final var response = new MockHttpServletResponse();
-        final var sCtx = new MockServletContext();
+    private static MockRequestContext getMockRequestContext() {
+        val ctx = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        val sCtx = new MockServletContext();
         ctx.setExternalContext(new ServletExternalContext(sCtx, request, response));
         return ctx;
     }
@@ -184,7 +192,7 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
             return new AbstractAction() {
                 @Override
                 protected Event doExecute(final RequestContext requestContext) {
-                    final var flowScope = requestContext.getFlowScope();
+                    val flowScope = requestContext.getFlowScope();
                     flowScope.put("test", TEST);
                     flowScope.put("test0", Collections.singleton(TEST));
                     flowScope.put("test1", Collections.singletonList(TEST));
@@ -199,17 +207,17 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
                     flowScope.put("test10", Collections.emptySet());
                     flowScope.put("test11", Collections.emptyList());
 
-                    final var service = new SimpleWebApplicationServiceImpl();
+                    val service = new SimpleWebApplicationServiceImpl();
                     service.setId(CoreAuthenticationTestUtils.CONST_TEST_URL);
                     service.setOriginalUrl(CoreAuthenticationTestUtils.CONST_TEST_URL);
                     service.setArtifactId(null);
 
-                    final var authentication = CoreAuthenticationTestUtils.getAuthentication();
-                    final AuthenticationResultBuilder authenticationResultBuilder = new DefaultAuthenticationResultBuilder();
-                    final var principal = CoreAuthenticationTestUtils.getPrincipal();
+                    val authentication = CoreAuthenticationTestUtils.getAuthentication();
+                    val authenticationResultBuilder = new DefaultAuthenticationResultBuilder();
+                    val principal = CoreAuthenticationTestUtils.getPrincipal();
                     authenticationResultBuilder.collect(authentication);
                     authenticationResultBuilder.collect(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
-                    final var authenticationResult = authenticationResultBuilder.build(principalElectionStrategy.getIfAvailable(), service);
+                    val authenticationResult = authenticationResultBuilder.build(principalElectionStrategy.getIfAvailable(), service);
 
                     WebUtils.putAuthenticationResultBuilder(authenticationResultBuilder, requestContext);
                     WebUtils.putAuthenticationResult(authenticationResult, requestContext);

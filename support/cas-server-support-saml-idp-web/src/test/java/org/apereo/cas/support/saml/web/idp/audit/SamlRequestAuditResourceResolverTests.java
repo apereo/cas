@@ -1,15 +1,18 @@
 package org.apereo.cas.support.saml.web.idp.audit;
 
+import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.aspectj.lang.JoinPoint;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -20,23 +23,28 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 public class SamlRequestAuditResourceResolverTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
     @Test
     public void verifyAction() {
-        final var r = new SamlRequestAuditResourceResolver();
-        final var authnRequest = mock(AuthnRequest.class);
-        final var issuer = mock(Issuer.class);
+        val r = new SamlRequestAuditResourceResolver();
+        val authnRequest = mock(AuthnRequest.class);
+        val issuer = mock(Issuer.class);
         when(issuer.getValue()).thenReturn("https://idp.example.org");
         when(authnRequest.getIssuer()).thenReturn(issuer);
         when(authnRequest.getProtocolBinding()).thenReturn("ProtocolBinding");
-        Pair pair = Pair.of(authnRequest, null);
+        var pair = Pair.of(authnRequest, null);
         var result = r.resolveFrom(mock(JoinPoint.class), pair);
         assertNotNull(result);
         assertTrue(result.length > 0);
 
-        final var logoutRequest = mock(LogoutRequest.class);
+        val logoutRequest = mock(LogoutRequest.class);
         when(logoutRequest.getIssuer()).thenReturn(issuer);
         pair = Pair.of(authnRequest, null);
         result = r.resolveFrom(mock(JoinPoint.class), pair);

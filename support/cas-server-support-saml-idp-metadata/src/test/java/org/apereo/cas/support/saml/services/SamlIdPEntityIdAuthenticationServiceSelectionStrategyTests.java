@@ -1,7 +1,8 @@
 package org.apereo.cas.support.saml.services;
 
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+
+import lombok.val;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -15,12 +16,12 @@ import static org.junit.Assert.*;
 public class SamlIdPEntityIdAuthenticationServiceSelectionStrategyTests {
     @Test
     public void verifyAction() {
-        final var factory = new WebApplicationServiceFactory();
-        final var strategy =
+        val factory = new WebApplicationServiceFactory();
+        val strategy =
             new SamlIdPEntityIdAuthenticationServiceSelectionStrategy(factory,
                 "http://localhost:8080/cas");
 
-        final Service service = factory.createService("http://localhost:8080/cas/idp/profile/SAML2/Callback.+?"
+        val service = factory.createService("http://localhost:8080/cas/idp/profile/SAML2/Callback.+?"
             + "entityId=http%3A%2F%2Flocalhost%3A8081%2Fcallback%3Fclient_name%3DSAML2Client&SAMLRequest=PD94bWwgdmVyc2lvbj0i"
             + "MS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c2FtbDJwOkF1dGhuUmVxdWVzdCB4bWxuczpzYW1sMnA9InVybjpvYXNpczpuYW1lczp0YzpTQU1MOjI"
             + "uMDpwcm90b2NvbCIgQXNzZXJ0aW9uQ29uc3VtZXJTZXJ2aWNlVVJMPSJodHRwOi8vbG9jYWxob3N0OjgwODEvY2FsbGJhY2s%2FY2xpZW50X25"
@@ -32,7 +33,7 @@ public class SamlIdPEntityIdAuthenticationServiceSelectionStrategyTests {
             + "YW1laWQtZm9ybWF0OmVudGl0eSIgTmFtZVF1YWxpZmllcj0iaHR0cDovL2xvY2FsaG9zdDo4MDgxL2NhbGxiYWNrP2NsaWVudF9uYW1lPVNBTU"
             + "wyQ2xpZW50Ij5odHRwOi8vbG9jYWxob3N0OjgwODEvY2FsbGJhY2s%2FY2xpZW50X25hbWU9U0FNTDJDbGllbnQ8L3NhbWwyOklzc3Vlcj48L"
             + "3NhbWwycDpBdXRoblJlcXVlc3Q%2B&RelayState=http%3A%2F%2Flocalhost%3A8081%2Fcallback%3Fclient_name%3DSAML2Client");
-        final var result = strategy.resolveServiceFrom(service);
+        val result = strategy.resolveServiceFrom(service);
         assertTrue(strategy.supports(service));
         assertEquals("http://localhost:8081/callback?client_name=SAML2Client", result.getId());
     }

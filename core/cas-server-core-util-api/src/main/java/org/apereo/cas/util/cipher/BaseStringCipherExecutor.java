@@ -1,12 +1,15 @@
 package org.apereo.cas.util.cipher;
 
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.ResourceUtils;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 
 import java.io.Serializable;
@@ -24,10 +27,8 @@ import java.security.Key;
 @Slf4j
 @NoArgsConstructor
 @Setter
+@Getter
 public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Serializable, String> {
-    private static final int ENCRYPTION_KEY_SIZE = 256;
-    private static final int SIGNING_KEY_SIZE = 512;
-
     private String encryptionAlgorithm = KeyManagementAlgorithmIdentifiers.DIRECT;
 
     private String contentEncryptionAlgorithmIdentifier;
@@ -37,6 +38,10 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
     private boolean encryptionEnabled = true;
 
     private boolean signingEnabled = true;
+
+    private int encryptionKeySize = CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE;
+
+    private int signingKeySize = CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE;
 
     /**
      * Instantiates a new cipher.
@@ -48,46 +53,49 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
      * @param secretKeySigning    the secret key signing; must be represented as a octet sequence JSON Web Key (JWK)
      * @param encryptionEnabled   the enable encryption
      * @param signingEnabled      the signing enabled
-     */
-    public BaseStringCipherExecutor(final String secretKeyEncryption, final String secretKeySigning, final boolean encryptionEnabled, final boolean signingEnabled) {
-        this(secretKeyEncryption, secretKeySigning, CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, encryptionEnabled, signingEnabled);
-    }
-
-    public BaseStringCipherExecutor(final String secretKeyEncryption, final String secretKeySigning, final boolean encryptionEnabled) {
-        this(secretKeyEncryption, secretKeySigning, encryptionEnabled, true);
-    }
-
-    public BaseStringCipherExecutor(final String secretKeyEncryption, final String secretKeySigning, final String alg) {
-        this(secretKeyEncryption, secretKeySigning, alg, true, true);
-    }
-
-    /**
-     * Instantiates a new cipher.
-     * <p>Note that in order to customize the encryption algorithms,
-     * you will need to download and install the JCE Unlimited Strength Jurisdiction
-     * Policy File into your Java installation.</p>
-     *
-     * @param secretKeyEncryption the secret key encryption; must be represented as a octet sequence JSON Web Key (JWK)
-     * @param secretKeySigning    the secret key signing; must be represented as a octet sequence JSON Web Key (JWK)
-     */
-    public BaseStringCipherExecutor(final String secretKeyEncryption, final String secretKeySigning) {
-        this(secretKeyEncryption, secretKeySigning, CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, true, true);
-    }
-
-    /**
-     * Instantiates a new cipher.
-     *
-     * @param secretKeyEncryption                  the key for encryption
-     * @param secretKeySigning                     the key for signing
-     * @param contentEncryptionAlgorithmIdentifier the content encryption algorithm identifier
-     * @param encryptionEnabled                    the encryption enabled
-     * @param signingEnabled                       the signing enabled
+     * @param signingKeySize      the signing key size
+     * @param encryptionKeySize   the encryption key size
      */
     public BaseStringCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
+                                    final boolean encryptionEnabled, final boolean signingEnabled,
+                                    final int signingKeySize, final int encryptionKeySize) {
+        this(secretKeyEncryption, secretKeySigning, CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM,
+            encryptionEnabled, signingEnabled, signingKeySize, encryptionKeySize);
+    }
+
+    public BaseStringCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
+                                    final boolean encryptionEnabled,
+                                    final int signingKeySize,
+                                    final int encryptionKeySize) {
+        this(secretKeyEncryption, secretKeySigning, encryptionEnabled, true, signingKeySize, encryptionKeySize);
+    }
+
+    public BaseStringCipherExecutor(final String secretKeyEncryption, final String secretKeySigning, final String alg,
+                                    final int signingKeySize,
+                                    final int encryptionKeySize) {
+        this(secretKeyEncryption, secretKeySigning, alg, true, true, signingKeySize, encryptionKeySize);
+    }
+
+
+    public BaseStringCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
+                                    final int signingKeySize,
+                                    final int encryptionKeySize) {
+        this(secretKeyEncryption, secretKeySigning, CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM,
+            true, true, signingKeySize, encryptionKeySize);
+    }
+
+    public BaseStringCipherExecutor(final String secretKeyEncryption,
+                                    final String secretKeySigning,
                                     final String contentEncryptionAlgorithmIdentifier,
-                                    final boolean encryptionEnabled, final boolean signingEnabled) {
+                                    final boolean encryptionEnabled,
+                                    final boolean signingEnabled,
+                                    final int signingKeyLength,
+                                    final int encryptionKeyLength) {
+
         this.encryptionEnabled = encryptionEnabled || StringUtils.isNotBlank(secretKeyEncryption);
         this.signingEnabled = signingEnabled || StringUtils.isNotBlank(secretKeySigning);
+        this.signingKeySize = signingKeyLength <= 0 ? CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE : signingKeyLength;
+        this.encryptionKeySize = encryptionKeyLength <= 0 ? CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE : encryptionKeyLength;
 
         if (this.encryptionEnabled) {
             configureEncryptionParameters(secretKeyEncryption, contentEncryptionAlgorithmIdentifier);
@@ -98,8 +106,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         if (this.signingEnabled) {
             configureSigningParameters(secretKeySigning);
         } else {
-            LOGGER.warn("Signing is not enabled for [{}]. The cipher [{}] will attempt to produce plain objects",
-                getName(), getClass().getSimpleName());
+            LOGGER.warn("Signing is not enabled for [{}]. The cipher [{}] will attempt to produce plain objects", getName(), getClass().getSimpleName());
         }
     }
 
@@ -107,11 +114,11 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         var signingKeyToUse = secretKeySigning;
         if (StringUtils.isBlank(signingKeyToUse)) {
             LOGGER.warn("Secret key for signing is not defined for [{}]. CAS will attempt to auto-generate the signing key", getName());
-            signingKeyToUse = EncodingUtils.generateJsonWebKey(SIGNING_KEY_SIZE);
+            signingKeyToUse = EncodingUtils.generateJsonWebKey(this.signingKeySize);
             LOGGER.warn("Generated signing key [{}] of size [{}] for [{}]. The generated key MUST be added to CAS settings under setting [{}].",
-                signingKeyToUse, SIGNING_KEY_SIZE, getName(), getSigningKeySetting());
+                signingKeyToUse, this.signingKeySize, getName(), getSigningKeySetting());
         } else {
-            LOGGER.debug("Located signing key to use for [{}]", getName());
+            LOGGER.trace("Located signing key to use for [{}]", getName());
         }
         configureSigningKey(signingKeyToUse);
     }
@@ -120,11 +127,11 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         var secretKeyToUse = secretKeyEncryption;
         if (StringUtils.isBlank(secretKeyToUse)) {
             LOGGER.warn("Secret key for encryption is not defined for [{}]; CAS will attempt to auto-generate the encryption key", getName());
-            secretKeyToUse = EncodingUtils.generateJsonWebKey(ENCRYPTION_KEY_SIZE);
+            secretKeyToUse = EncodingUtils.generateJsonWebKey(this.encryptionKeySize);
             LOGGER.warn("Generated encryption key [{}] of size [{}] for [{}]. The generated key MUST be added to CAS settings under setting [{}].",
-                secretKeyToUse, ENCRYPTION_KEY_SIZE, getName(), getEncryptionKeySetting());
+                secretKeyToUse, this.encryptionKeySize, getName(), getEncryptionKeySetting());
         } else {
-            LOGGER.debug("Located encryption key to use for [{}]", getName());
+            LOGGER.trace("Located encryption key to use for [{}]", getName());
         }
         try {
             if (ResourceUtils.doesResourceExist(secretKeyToUse)) {
@@ -134,11 +141,11 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
             LOGGER.error(e.getMessage(), e);
         } finally {
             if (this.secretKeyEncryptionKey == null) {
-                LOGGER.debug("Creating encryption key instance based on provided secret key");
+                LOGGER.trace("Creating encryption key instance based on provided secret key");
                 setSecretKeyEncryptionKey(EncodingUtils.generateJsonWebKey(secretKeyToUse));
             }
             setContentEncryptionAlgorithmIdentifier(contentEncryptionAlgorithmIdentifier);
-            LOGGER.debug("Initialized cipher encryption sequence via content encryption [{}] and algorithm [{}]", this.contentEncryptionAlgorithmIdentifier, this.encryptionAlgorithm);
+            LOGGER.trace("Initialized cipher encryption sequence via content encryption [{}] and algorithm [{}]", this.contentEncryptionAlgorithmIdentifier, this.encryptionAlgorithm);
         }
     }
 
@@ -146,10 +153,9 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
      * Configure encryption key from public key resource.
      *
      * @param secretKeyToUse the secret key to use
-     * @throws Exception the exception
      */
-    protected void configureEncryptionKeyFromPublicKeyResource(final String secretKeyToUse) throws Exception {
-        final var object = extractPublicKeyFromResource(secretKeyToUse);
+    protected void configureEncryptionKeyFromPublicKeyResource(final String secretKeyToUse) {
+        val object = extractPublicKeyFromResource(secretKeyToUse);
         LOGGER.debug("Located encryption key resource [{}]", secretKeyToUse);
         setSecretKeyEncryptionKey(object);
         setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
@@ -157,16 +163,12 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
 
     @Override
     public String encode(final Serializable value, final Object[] parameters) {
-        final String encoded;
-
-        if (this.encryptionEnabled && this.secretKeyEncryptionKey != null) {
-            encoded = EncodingUtils.encryptValueAsJwt(this.secretKeyEncryptionKey, value, this.encryptionAlgorithm, this.contentEncryptionAlgorithmIdentifier);
-        } else {
-            encoded = value.toString();
-        }
+        val encoded = this.encryptionEnabled && this.secretKeyEncryptionKey != null
+            ? EncodingUtils.encryptValueAsJwt(this.secretKeyEncryptionKey, value, this.encryptionAlgorithm, this.contentEncryptionAlgorithmIdentifier)
+            : value.toString();
 
         if (this.signingEnabled) {
-            final var signed = sign(encoded.getBytes(StandardCharsets.UTF_8));
+            val signed = sign(encoded.getBytes(StandardCharsets.UTF_8));
             return new String(signed, StandardCharsets.UTF_8);
         }
         return encoded;
@@ -174,11 +176,11 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
 
     @Override
     public String decode(final Serializable value, final Object[] parameters) {
-        final var currentValue = value.toString().getBytes(StandardCharsets.UTF_8);
-        final var encoded = this.signingEnabled ? verifySignature(currentValue) : currentValue;
+        val currentValue = value.toString().getBytes(StandardCharsets.UTF_8);
+        val encoded = this.signingEnabled ? verifySignature(currentValue) : currentValue;
 
         if (encoded != null && encoded.length > 0) {
-            final var encodedObj = new String(encoded, StandardCharsets.UTF_8);
+            val encodedObj = new String(encoded, StandardCharsets.UTF_8);
 
             if (this.encryptionEnabled && this.secretKeyEncryptionKey != null) {
                 return EncodingUtils.decryptJwtValue(this.secretKeyEncryptionKey, encodedObj);
@@ -195,7 +197,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
      */
     protected String getEncryptionKeySetting() {
         return "N/A";
-    };
+    }
 
     /**
      * Gets signing key setting.
@@ -204,5 +206,6 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
      */
     protected String getSigningKeySetting() {
         return "N/A";
-    };
+    }
+
 }

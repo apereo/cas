@@ -1,9 +1,12 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
-import lombok.Getter;
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -14,6 +17,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @RequiresModule(name = "cas-server-support-pac4j-webflow")
 @Getter
+@Setter
 public class Pac4jDelegatedSessionCookieProperties extends CookieProperties {
     private static final long serialVersionUID = 7392972818105536350L;
 
@@ -25,5 +29,7 @@ public class Pac4jDelegatedSessionCookieProperties extends CookieProperties {
 
     public Pac4jDelegatedSessionCookieProperties() {
         super.setName("PAC4JDELSESSION");
+        crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
+        crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
     }
 }

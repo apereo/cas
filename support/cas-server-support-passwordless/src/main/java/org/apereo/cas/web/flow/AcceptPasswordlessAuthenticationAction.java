@@ -1,19 +1,19 @@
 package org.apereo.cas.web.flow;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.OneTimePasswordCredential;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
-import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.credential.OneTimePasswordCredential;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.web.flow.actions.AbstractAuthenticationAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
@@ -45,29 +45,29 @@ public class AcceptPasswordlessAuthenticationAction extends AbstractAuthenticati
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        final var password = requestContext.getRequestParameters().get("password");
-        final var username = requestContext.getRequestParameters().get("username");
+        val password = requestContext.getRequestParameters().get("password");
+        val username = requestContext.getRequestParameters().get("username");
         try {
-            final var currentToken = passwordlessTokenRepository.findToken(username);
+            val currentToken = passwordlessTokenRepository.findToken(username);
 
             if (currentToken.isPresent()) {
-                final Credential credential = new OneTimePasswordCredential(username, password);
-                final Service service = WebUtils.getService(requestContext);
-                final var authenticationResult = authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
+                val credential = new OneTimePasswordCredential(username, password);
+                val service = WebUtils.getService(requestContext);
+                val authenticationResult = authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
                 WebUtils.putAuthenticationResult(authenticationResult, requestContext);
                 WebUtils.putAuthentication(authenticationResult.getAuthentication(), requestContext);
                 WebUtils.putCredential(requestContext, credential);
 
-                final var token = currentToken.get();
+                val token = currentToken.get();
                 passwordlessTokenRepository.deleteToken(username, token);
 
                 return super.doExecute(requestContext);
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
-            final var attributes = new LocalAttributeMap();
+            val attributes = new LocalAttributeMap();
             attributes.put("error", e);
-            final var account = passwordlessUserAccountStore.findUser(username);
+            val account = passwordlessUserAccountStore.findUser(username);
             if (account.isPresent()) {
                 attributes.put("passwordlessAccount", account.get());
                 return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, attributes);

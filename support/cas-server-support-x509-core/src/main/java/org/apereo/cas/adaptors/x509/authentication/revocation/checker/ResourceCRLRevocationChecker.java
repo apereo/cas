@@ -1,12 +1,14 @@
 package org.apereo.cas.adaptors.x509.authentication.revocation.checker;
 
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.RevocationPolicy;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
@@ -134,15 +136,12 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker i
             return;
         }
 
-        // Fetch CRL data synchronously and throw exception to abort if any fail
-        final var results = this.fetcher.fetch(getResources());
+        val results = this.fetcher.fetch(getResources());
         ResourceCRLRevocationChecker.this.addCrls(results);
 
-        // Set up the scheduler to fetch periodically to implement refresh
         final Runnable scheduledFetcher = () -> {
             try {
-                final var resources = getResources();
-                final var fetchedResults = getFetcher().fetch(resources);
+                val fetchedResults = getFetcher().fetch(getResources());
                 ResourceCRLRevocationChecker.this.addCrls(fetchedResults);
             } catch (final Exception e) {
                 LOGGER.debug(e.getMessage(), e);
@@ -207,7 +206,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker i
 
     @Override
     protected Collection<X509CRL> getCRLs(final X509Certificate cert) {
-        final var principal = cert.getIssuerX500Principal();
+        val principal = cert.getIssuerX500Principal();
 
         if (this.crlIssuerMap.containsKey(principal)) {
             return CollectionUtils.wrap(this.crlIssuerMap.get(principal));

@@ -1,13 +1,5 @@
 package org.apereo.cas.token.authentication;
 
-import com.nimbusds.jose.Algorithm;
-import com.nimbusds.jose.EncryptionMethod;
-import com.nimbusds.jose.JWEAlgorithm;
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.util.Base64;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
@@ -19,6 +11,16 @@ import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
+
+import com.nimbusds.jose.Algorithm;
+import com.nimbusds.jose.EncryptionMethod;
+import com.nimbusds.jose.JWEAlgorithm;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.util.Base64;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.jwt.config.encryption.SecretEncryptionConfiguration;
@@ -47,36 +49,51 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
         super(name, servicesManager, principalFactory, null, principalNameTransformer);
     }
 
+    private static <T extends Algorithm> T findAlgorithmFamily(final Set<Algorithm> family,
+                                                               final String alg, final Class<T> clazz) {
+        val result = family
+            .stream()
+            .filter(l -> l.getName().equalsIgnoreCase(alg))
+            .findFirst()
+            .get();
+        if (!clazz.isAssignableFrom(result.getClass())) {
+            throw new ClassCastException("Result [" + result
+                + " is of type " + result.getClass()
+                + " when we were expecting " + clazz);
+        }
+        return (T) result;
+    }
+
     @Override
     public AuthenticationHandlerExecutionResult postAuthenticate(final Credential credential, final AuthenticationHandlerExecutionResult result) {
-        final var tokenCredential = (TokenCredential) credential;
+        val tokenCredential = (TokenCredential) credential;
         tokenCredential.setId(result.getPrincipal().getId());
         return super.postAuthenticate(credential, result);
     }
 
     @Override
     protected Authenticator<TokenCredentials> getAuthenticator(final Credential credential) {
-        final var tokenCredential = (TokenCredential) credential;
+        val tokenCredential = (TokenCredential) credential;
         LOGGER.debug("Locating token secret for service [{}]", tokenCredential.getService());
 
-        final var service = this.servicesManager.findServiceBy(tokenCredential.getService());
-        final var signingSecret = getRegisteredServiceJwtSigningSecret(service);
-        final var encryptionSecret = getRegisteredServiceJwtEncryptionSecret(service);
+        val service = this.servicesManager.findServiceBy(tokenCredential.getService());
+        val signingSecret = getRegisteredServiceJwtSigningSecret(service);
+        val encryptionSecret = getRegisteredServiceJwtEncryptionSecret(service);
 
-        final var serviceSigningAlg = getRegisteredServiceJwtProperty(service,
+        val serviceSigningAlg = getRegisteredServiceJwtProperty(service,
             RegisteredServiceProperties.TOKEN_SECRET_SIGNING_ALG);
-        final var signingSecretAlg = StringUtils.defaultString(serviceSigningAlg, JWSAlgorithm.HS256.getName());
+        val signingSecretAlg = StringUtils.defaultString(serviceSigningAlg, JWSAlgorithm.HS256.getName());
 
-        final var encryptionAlg = getRegisteredServiceJwtProperty(service,
+        val encryptionAlg = getRegisteredServiceJwtProperty(service,
             RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION_ALG);
-        final var encryptionSecretAlg = StringUtils.defaultString(encryptionAlg, JWEAlgorithm.DIR.getName());
+        val encryptionSecretAlg = StringUtils.defaultString(encryptionAlg, JWEAlgorithm.DIR.getName());
 
-        final var encryptionMethod = getRegisteredServiceJwtProperty(service,
+        val encryptionMethod = getRegisteredServiceJwtProperty(service,
             RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION_METHOD);
-        final var encryptionSecretMethod = StringUtils.defaultString(encryptionMethod, EncryptionMethod.A192CBC_HS384.getName());
-        final var secretIsBase64String = getRegisteredServiceJwtProperty(service,
+        val encryptionSecretMethod = StringUtils.defaultString(encryptionMethod, EncryptionMethod.A192CBC_HS384.getName());
+        val secretIsBase64String = getRegisteredServiceJwtProperty(service,
             RegisteredServiceProperties.TOKEN_SECRETS_ARE_BASE64_ENCODED);
-        final var secretsAreBase64Encoded = BooleanUtils.toBoolean(secretIsBase64String);
+        val secretsAreBase64Encoded = BooleanUtils.toBoolean(secretIsBase64String);
 
         if (StringUtils.isNotBlank(signingSecret)) {
             Set<Algorithm> sets = new HashSet<>();
@@ -85,10 +102,10 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
             sets.addAll(JWSAlgorithm.Family.RSA);
             sets.addAll(JWSAlgorithm.Family.SIGNATURE);
 
-            final var signingAlg = findAlgorithmFamily(sets, signingSecretAlg, JWSAlgorithm.class);
+            val signingAlg = findAlgorithmFamily(sets, signingSecretAlg, JWSAlgorithm.class);
 
-            final var jwtAuthenticator = new JwtAuthenticator();
-            final var secretBytes = getSecretBytes(signingSecret, secretsAreBase64Encoded);
+            val jwtAuthenticator = new JwtAuthenticator();
+            val secretBytes = getSecretBytes(signingSecret, secretsAreBase64Encoded);
             jwtAuthenticator.setSignatureConfiguration(new SecretSignatureConfiguration(secretBytes, signingAlg));
 
             if (StringUtils.isNotBlank(encryptionSecret)) {
@@ -101,14 +118,14 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
                 sets.addAll(JWEAlgorithm.Family.RSA);
                 sets.addAll(JWEAlgorithm.Family.SYMMETRIC);
 
-                final var encAlg = findAlgorithmFamily(sets, encryptionSecretAlg, JWEAlgorithm.class);
+                val encAlg = findAlgorithmFamily(sets, encryptionSecretAlg, JWEAlgorithm.class);
 
                 sets = new HashSet<>();
                 sets.addAll(EncryptionMethod.Family.AES_CBC_HMAC_SHA);
                 sets.addAll(EncryptionMethod.Family.AES_GCM);
 
-                final var encMethod = findAlgorithmFamily(sets, encryptionSecretMethod, EncryptionMethod.class);
-                final var encSecretBytes = getSecretBytes(encryptionSecret, secretsAreBase64Encoded);
+                val encMethod = findAlgorithmFamily(sets, encryptionSecretMethod, EncryptionMethod.class);
+                val encSecretBytes = getSecretBytes(encryptionSecret, secretsAreBase64Encoded);
                 jwtAuthenticator.setEncryptionConfiguration(new SecretEncryptionConfiguration(encSecretBytes, encAlg, encMethod));
             } else {
                 LOGGER.warn("JWT authentication is configured to share jwtAuthenticator single key for both signing/encryption");
@@ -119,21 +136,6 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
             service.getServiceId(),
             RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_SIGNING.getPropertyName());
         return null;
-    }
-
-    private static <T extends Algorithm> T findAlgorithmFamily(final Set<Algorithm> family,
-                                                               final String alg, final Class<T> clazz) {
-        final var result = family
-            .stream()
-            .filter(l -> l.getName().equalsIgnoreCase(alg))
-            .findFirst()
-            .get();
-        if (!clazz.isAssignableFrom(result.getClass())) {
-            throw new ClassCastException("Result [" + result
-                + " is of type " + result.getClass()
-                + " when we were expecting " + clazz);
-        }
-        return (T) result;
     }
 
     /**
@@ -183,7 +185,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
      * @param secretIsBase64Encoded - is this a base64 encoded #secret?
      * @return byte[] representation of #secret
      */
-    private byte[] getSecretBytes(final String secret, final boolean secretIsBase64Encoded) {
+    private static byte[] getSecretBytes(final String secret, final boolean secretIsBase64Encoded) {
         return secretIsBase64Encoded ? new Base64(secret).decode() : secret.getBytes(UTF_8);
     }
 }

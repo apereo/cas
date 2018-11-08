@@ -1,15 +1,15 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.ScriptingUtils;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.util.ScriptingUtils;
-import org.springframework.core.io.Resource;
+import lombok.val;
 
 import javax.persistence.Transient;
 import java.net.URI;
@@ -22,7 +22,6 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Slf4j
 @Getter
 @Setter
 @NoArgsConstructor
@@ -51,6 +50,13 @@ public class GroovyRegisteredServiceAccessStrategy implements RegisteredServiceA
 
     @Override
     @JsonIgnore
+    public void setServiceAccessAllowed(final boolean enabled) {
+        buildGroovyAccessStrategyInstanceIfNeeded();
+        this.groovyStrategyInstance.setServiceAccessAllowed(enabled);
+    }
+
+    @Override
+    @JsonIgnore
     public boolean isServiceAccessAllowedForSso() {
         buildGroovyAccessStrategyInstanceIfNeeded();
         return this.groovyStrategyInstance.isServiceAccessAllowedForSso();
@@ -72,13 +78,6 @@ public class GroovyRegisteredServiceAccessStrategy implements RegisteredServiceA
 
     @Override
     @JsonIgnore
-    public void setServiceAccessAllowed(final boolean enabled) {
-        buildGroovyAccessStrategyInstanceIfNeeded();
-        this.groovyStrategyInstance.setServiceAccessAllowed(enabled);
-    }
-
-    @Override
-    @JsonIgnore
     public RegisteredServiceDelegatedAuthenticationPolicy getDelegatedAuthenticationPolicy() {
         buildGroovyAccessStrategyInstanceIfNeeded();
         return this.groovyStrategyInstance.getDelegatedAuthenticationPolicy();
@@ -93,7 +92,7 @@ public class GroovyRegisteredServiceAccessStrategy implements RegisteredServiceA
     @SneakyThrows
     private void buildGroovyAccessStrategyInstanceIfNeeded() {
         if (this.groovyStrategyInstance == null) {
-            final Resource groovyResource = ResourceUtils.getResourceFrom(this.groovyScript);
+            val groovyResource = ResourceUtils.getResourceFrom(this.groovyScript);
             this.groovyStrategyInstance = ScriptingUtils.getObjectInstanceFromGroovyResource(groovyResource, RegisteredServiceAccessStrategy.class);
         }
     }

@@ -1,8 +1,5 @@
 package org.apereo.cas.config;
 
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.CasServiceRegistryInitializerConfigurationEventListener;
 import org.apereo.cas.services.ServiceRegistry;
@@ -12,6 +9,11 @@ import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistry;
 import org.apereo.cas.services.util.CasAddonsRegisteredServicesJsonSerializer;
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -59,11 +61,10 @@ public class CasServiceRegistryInitializationConfiguration {
     @Qualifier("serviceRegistry")
     private ObjectProvider<ServiceRegistry> serviceRegistry;
 
-    @RefreshScope
     @Bean
     public ServiceRegistryInitializer serviceRegistryInitializer() {
-        final var serviceRegistryInstance = serviceRegistry.getIfAvailable();
-        final var initializer = new ServiceRegistryInitializer(embeddedJsonServiceRegistry(),
+        val serviceRegistryInstance = serviceRegistry.getIfAvailable();
+        val initializer = new ServiceRegistryInitializer(embeddedJsonServiceRegistry(),
             serviceRegistryInstance, servicesManager.getIfAvailable());
 
         LOGGER.info("Attempting to initialize the service registry [{}] from service definition resources found at [{}]",
@@ -74,7 +75,6 @@ public class CasServiceRegistryInitializationConfiguration {
     }
 
     @Bean
-    @RefreshScope
     public CasServiceRegistryInitializerConfigurationEventListener serviceRegistryInitializerConfigurationEventListener() {
         return new CasServiceRegistryInitializerConfigurationEventListener(serviceRegistryInitializer());
     }
@@ -83,12 +83,12 @@ public class CasServiceRegistryInitializationConfiguration {
     @Bean
     @SneakyThrows
     public ServiceRegistry embeddedJsonServiceRegistry() {
-        final var location = getServiceRegistryInitializerServicesDirectoryResource();
+        val location = getServiceRegistryInitializerServicesDirectoryResource();
         return new EmbeddedResourceBasedServiceRegistry(eventPublisher, location);
     }
 
     private Resource getServiceRegistryInitializerServicesDirectoryResource() {
-        final var registry = casProperties.getServiceRegistry().getJson();
+        val registry = casProperties.getServiceRegistry().getJson();
         return ObjectUtils.defaultIfNull(registry.getLocation(), new ClassPathResource("services"));
     }
 
@@ -108,8 +108,8 @@ public class CasServiceRegistryInitializationConfiguration {
         }
 
         @Override
-        protected String getExtension() {
-            return "json";
+        protected String[] getExtensions() {
+            return new String[]{"json"};
         }
     }
 }

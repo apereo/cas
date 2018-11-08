@@ -1,11 +1,13 @@
 package org.apereo.cas.support.geo.maxmind;
 
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
+import org.apereo.cas.support.geo.AbstractGeoLocationService;
+
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.exception.AddressNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
-import org.apereo.cas.support.geo.AbstractGeoLocationService;
+import lombok.val;
 
 import java.net.InetAddress;
 
@@ -26,11 +28,11 @@ public class MaxmindDatabaseGeoLocationService extends AbstractGeoLocationServic
     @Override
     public GeoLocationResponse locate(final InetAddress address) {
         try {
-            final var location = new GeoLocationResponse();
+            val location = new GeoLocationResponse();
             if (this.cityDatabaseReader != null) {
-                final var response = this.cityDatabaseReader.city(address);
+                val response = this.cityDatabaseReader.city(address);
                 location.addAddress(response.getCity().getName());
-                final var loc = response.getLocation();
+                val loc = response.getLocation();
                 if (loc != null) {
                     if (loc.getLatitude() != null) {
                         location.setLatitude(loc.getLatitude());
@@ -41,7 +43,7 @@ public class MaxmindDatabaseGeoLocationService extends AbstractGeoLocationServic
                 }
             }
             if (this.countryDatabaseReader != null) {
-                final var response = this.countryDatabaseReader.country(address);
+                val response = this.countryDatabaseReader.country(address);
                 location.addAddress(response.getCountry().getName());
             }
             LOGGER.debug("Geo location for [{}] is calculated as [{}]", address, location);

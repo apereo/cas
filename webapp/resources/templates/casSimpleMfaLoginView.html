@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title th:text="#{cas.mfa.simple.pagetitle}">CAS Multifactor Authentication View</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
+</head>
+
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content" id="login">
+        <form method="post" id="fm1" class="fm-v clearfix" th:object="${credential}" th:action="@{/login}">
+            <div id="msg" class="errors" th:if="${#fields.hasErrors('*')}">
+                <span th:each="err : ${#fields.errors('*')}" th:utext="${err}"/>
+            </div>
+
+            <div class="form-group">
+                <label for="token" class="fl-label" th:utext="#{cas.mfa.simple.label.token}">Token:</label>
+                <input type="password" class="form-control required" id="token" size="25" tabindex="1"
+                       th:field="*{token}"
+                       th:accesskey="#{screen.welcome.label.password.accesskey}" autocomplete="off"/>
+                <div>
+                    <p/>
+                </div>
+            </div>
+            <input class="btn btn-submit" accesskey="l"
+                   th:value="#{screen.welcome.button.login}" tabindex="4" type="submit"/>
+            <input type="hidden" name="_eventId_submit" value="Login" />
+            <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+            <input type="hidden" name="geolocation"/>
+        </form>
+    </div>
+</main>
+</body>
+</html>

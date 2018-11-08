@@ -1,24 +1,21 @@
 package org.apereo.cas.web.flow;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.HttpRequestUtils;
-import org.apereo.cas.web.config.CasSupportActionsConfiguration;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.junit.Test;
 import org.junit.Before;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
@@ -33,20 +30,17 @@ import static org.mockito.Mockito.*;
  * @author Marvin S. Addison
  * @since 3.4.0
  */
-@DirtiesContext
-@Import(CasSupportActionsConfiguration.class)
 @TestPropertySource(properties = "cas.sso.createSsoCookieOnRenewAuthn=false")
-@Slf4j
-public class SendTicketGrantingTicketActionSsoTests extends AbstractCentralAuthenticationServiceTests {
+public class SendTicketGrantingTicketActionSsoTests extends AbstractWebflowActionsTests {
 
     private static final String LOCALHOST_IP = "127.0.0.1";
     private static final String TEST_STRING = "test";
     private static final String SUCCESS = "success";
-    
+
     @Autowired
     @Qualifier("sendTicketGrantingTicketAction")
     private Action action;
-    
+
     private MockRequestContext context;
 
     @Before
@@ -56,16 +50,16 @@ public class SendTicketGrantingTicketActionSsoTests extends AbstractCentralAuthe
 
     @Test
     public void verifySsoSessionCookieOnRenewAsParameter() throws Exception {
-        
-        final var response = new MockHttpServletResponse();
-        final var request = new MockHttpServletRequest();
+
+        val response = new MockHttpServletResponse();
+        val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
         request.setRemoteAddr(LOCALHOST_IP);
         request.setLocalAddr(LOCALHOST_IP);
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
-        
-        final var tgt = mock(TicketGrantingTicket.class);
+
+        val tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn(TEST_STRING);
         request.setCookies(new Cookie("TGT", "test5"));
         WebUtils.putTicketGrantingTicketInScopes(this.context, tgt);
@@ -76,19 +70,19 @@ public class SendTicketGrantingTicketActionSsoTests extends AbstractCentralAuthe
 
     @Test
     public void verifySsoSessionCookieOnServiceSsoDisallowed() throws Exception {
-        final var response = new MockHttpServletResponse();
-        final var request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        val request = new MockHttpServletRequest();
 
-        final var svc = mock(WebApplicationService.class);
+        val svc = mock(WebApplicationService.class);
         when(svc.getId()).thenReturn("TestSsoFalse");
-        
-        final var tgt = mock(TicketGrantingTicket.class);
+
+        val tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn(TEST_STRING);
         request.setCookies(new Cookie("TGT", "test5"));
         WebUtils.putTicketGrantingTicketInScopes(this.context, tgt);
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         this.context.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, svc);
-        
+
         assertEquals(SUCCESS, action.execute(this.context).getId());
         assertEquals(0, response.getCookies().length);
     }

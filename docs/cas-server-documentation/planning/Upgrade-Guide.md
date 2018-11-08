@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Upgrade Guide
+category: Planning
 ---
 
 # Upgrade Guide
@@ -18,7 +19,7 @@ affected by that vulnerability and/or bug?
 local changes, I can realize their benefit from CAS directly and end up with a smaller more-maintainable overlay? 
 
 This document attempts to describe, at a very high level, the scope and effort required to upgrade a given 
-[CAS deployment](../installation/Maven-Overlay-Installation.html). Rather than describing all steps/changes that would be required
+[CAS deployment](../installation/WAR-Overlay-Installation.html). Rather than describing all steps/changes that would be required
 to review and adjust (which would be impossible), we describe a strategy by which the upgrade could be executed. 
 
 ## Change Log
@@ -43,7 +44,7 @@ may be for the upgrade.
 
 ## Evaluate Local Overlay
 
-As a best practice, it is recommended that you deploy CAS via the [overlay method](../installation/Maven-Overlay-Installation.html).
+As a best practice, it is recommended that you deploy CAS via the [overlay method](../installation/WAR-Overlay-Installation.html).
 If you have, the task here would be to identify the number of files your overlay has touched and modified. Catalog the 
 what and why of the changes applied, and cross-check those changes with the CAS change log. Chances are, many of the
 local changes that are present within your overlay are provided by default via CAS as a result of that upgrade which will
@@ -70,7 +71,7 @@ and make sure you have everything installed and configured correctly before you 
 
 ## Sanitize Configuration
 
-We recommend that you first start out with a separate clean [CAS overlay](../installation/Maven-Overlay-Installation.html) targeted
+We recommend that you first start out with a separate clean [CAS overlay](../installation/WAR-Overlay-Installation.html) targeted
 at the version to which you want to upgrade. This has the advantage of guaranteeing that your new CAS deployment 
 will be functional without any local changes. Build and deploy the clean CAS overlay once to make sure
 your build/deployment process is functional.

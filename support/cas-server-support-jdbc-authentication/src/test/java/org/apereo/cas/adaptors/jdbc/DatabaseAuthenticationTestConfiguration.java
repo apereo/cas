@@ -4,6 +4,8 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
+
+import lombok.val;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -35,7 +37,7 @@ public class DatabaseAuthenticationTestConfiguration {
 
     @Bean
     public DataSource dataSource() {
-        final var ds = new SimpleDriverDataSource();
+        val ds = new SimpleDriverDataSource();
         ds.setDriverClass(org.hsqldb.jdbcDriver.class);
         ds.setUsername(databaseUser);
         ds.setPassword(databasePassword);
@@ -45,7 +47,7 @@ public class DatabaseAuthenticationTestConfiguration {
 
     @Bean
     public HibernateJpaVendorAdapter jpaVendorAdapter() {
-        final var properties = new DatabaseProperties();
+        val properties = new DatabaseProperties();
         properties.setGenDdl(true);
         properties.setShowSql(true);
         return JpaBeans.newHibernateJpaVendorAdapter(properties);
@@ -53,13 +55,13 @@ public class DatabaseAuthenticationTestConfiguration {
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-        final var bean = new LocalContainerEntityManagerFactoryBean();
+        val bean = new LocalContainerEntityManagerFactoryBean();
         bean.setPersistenceUnitName("databaseAuthnContext");
         bean.setJpaVendorAdapter(jpaVendorAdapter());
         bean.setPackagesToScan(CentralAuthenticationService.NAMESPACE);
         bean.setDataSource(dataSource());
 
-        final var properties = new Properties();
+        val properties = new Properties();
         properties.put("hibernate.dialect", "org.hibernate.dialect.HSQLDialect");
         properties.put("hibernate.hbm2ddl.auto", "create-drop");
         properties.put("hibernate.jdbc.batch_size", 1);

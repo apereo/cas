@@ -1,15 +1,17 @@
 package org.apereo.cas.monitor.config;
 
-import lombok.extern.slf4j.Slf4j;
-import net.spy.memcached.MemcachedClientIF;
-import net.spy.memcached.transcoders.Transcoder;
-import org.apache.commons.pool2.ObjectPool;
-import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apereo.cas.ComponentSerializationPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.memcached.MemcachedPooledClientConnectionFactory;
 import org.apereo.cas.memcached.MemcachedUtils;
 import org.apereo.cas.monitor.MemcachedHealthIndicator;
+
+import lombok.val;
+import net.spy.memcached.MemcachedClientIF;
+import net.spy.memcached.transcoders.Transcoder;
+import org.apache.commons.pool2.ObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPool;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.health.HealthIndicator;
@@ -25,7 +27,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("memcachedMonitorConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class MemcachedMonitorConfiguration {
 
     @Autowired
@@ -33,17 +34,17 @@ public class MemcachedMonitorConfiguration {
 
     @Autowired
     @Qualifier("componentSerializationPlan")
-    private ComponentSerializationPlan componentSerializationPlan;
+    private ObjectProvider<ComponentSerializationPlan> componentSerializationPlan;
 
     @Bean
     public Transcoder memcachedMonitorTranscoder() {
-        final var memcached = casProperties.getMonitor().getMemcached();
-        return MemcachedUtils.newTranscoder(memcached, componentSerializationPlan.getRegisteredClasses());
+        val memcached = casProperties.getMonitor().getMemcached();
+        return MemcachedUtils.newTranscoder(memcached, componentSerializationPlan.getIfAvailable().getRegisteredClasses());
     }
 
     @Bean
     public HealthIndicator memcachedHealthIndicator() {
-        final var warn = casProperties.getMonitor().getWarn();
+        val warn = casProperties.getMonitor().getWarn();
         return new MemcachedHealthIndicator(memcachedHealthClientPool(),
             warn.getEvictionThreshold(),
             warn.getThreshold());
@@ -51,8 +52,8 @@ public class MemcachedMonitorConfiguration {
 
     @Bean
     public ObjectPool<MemcachedClientIF> memcachedHealthClientPool() {
-        final var memcached = casProperties.getMonitor().getMemcached();
-        final var factory = new MemcachedPooledClientConnectionFactory(memcached, memcachedMonitorTranscoder());
+        val memcached = casProperties.getMonitor().getMemcached();
+        val factory = new MemcachedPooledClientConnectionFactory(memcached, memcachedMonitorTranscoder());
         return new GenericObjectPool<>(factory);
     }
 }

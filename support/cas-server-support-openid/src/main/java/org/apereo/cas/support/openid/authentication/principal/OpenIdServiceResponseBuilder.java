@@ -1,7 +1,5 @@
 package org.apereo.cas.support.openid.authentication.principal;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationServiceResponseBuilder;
@@ -12,6 +10,10 @@ import org.apereo.cas.support.openid.OpenIdProtocolConstants;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.validation.Assertion;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.openid4java.association.Association;
 import org.openid4java.message.AuthRequest;
 import org.openid4java.message.MessageException;
@@ -29,7 +31,7 @@ import java.util.Map;
  */
 @Slf4j
 public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {
-    
+
     private static final long serialVersionUID = -4581238964007702423L;
 
     private final ServerManager serverManager;
@@ -62,22 +64,22 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
     @Override
     public Response build(final WebApplicationService webApplicationService, final String ticketId, final Authentication authentication) {
 
-        final var service = (OpenIdService) webApplicationService;
-        final var parameterList = new ParameterList(HttpRequestUtils.getHttpServletRequestFromRequestAttributes().getParameterMap());
+        val service = (OpenIdService) webApplicationService;
+        val parameterList = new ParameterList(HttpRequestUtils.getHttpServletRequestFromRequestAttributes().getParameterMap());
 
-        final Map<String, String> parameters = new HashMap<>();
+        val parameters = new HashMap<String, String>();
 
         if (StringUtils.isBlank(ticketId)) {
             parameters.put(OpenIdProtocolConstants.OPENID_MODE, OpenIdProtocolConstants.CANCEL);
             return buildRedirect(service, parameters);
         }
 
-        final var association = getAssociation(serverManager, parameterList);
-        final var associated = association != null;
-        final var associationValid = isAssociationValid(association);
+        val association = getAssociation(serverManager, parameterList);
+        val associated = association != null;
+        val associationValid = isAssociationValid(association);
         var successFullAuthentication = true;
 
-        Assertion assertion = null;
+        var assertion = (Assertion) null;
         try {
             if (associated && associationValid) {
                 assertion = centralAuthenticationService.validateServiceTicket(ticketId, service);
@@ -92,7 +94,7 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
             LOGGER.error("Could not validate ticket : [{}]", e.getMessage(), e);
             successFullAuthentication = false;
         }
-        final var id = determineIdentity(service, assertion);
+        val id = determineIdentity(service, assertion);
         return buildAuthenticationResponse(service, parameters, successFullAuthentication, id, parameterList);
     }
 
@@ -104,13 +106,10 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
      * @return the string
      */
     protected String determineIdentity(final OpenIdService service, final Assertion assertion) {
-        final String id;
         if (assertion != null && OpenIdProtocolConstants.OPENID_IDENTIFIERSELECT.equals(service.getIdentity())) {
-            id = this.openIdPrefixUrl + '/' + assertion.getPrimaryAuthentication().getPrincipal().getId();
-        } else {
-            id = service.getIdentity();
+            return this.openIdPrefixUrl + '/' + assertion.getPrimaryAuthentication().getPrincipal().getId();
         }
-        return id;
+        return service.getIdentity();
     }
 
     /**
@@ -133,7 +132,7 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
                                                    final boolean successFullAuthentication,
                                                    final String id,
                                                    final ParameterList parameterList) {
-        final var response = serverManager.authResponse(parameterList, id, id, successFullAuthentication, true);
+        val response = serverManager.authResponse(parameterList, id, id, successFullAuthentication, true);
         parameters.putAll(response.getParameterMap());
         LOGGER.debug("Parameters passed for the OpenID response are [{}]", parameters.keySet());
         return buildRedirect(service, parameters);
@@ -148,10 +147,10 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
      */
     protected Association getAssociation(final ServerManager serverManager, final ParameterList parameterList) {
         try {
-            final var authReq = AuthRequest.createAuthRequest(parameterList, serverManager.getRealmVerifier());
-            final var parameterMap = authReq.getParameterMap();
+            val authReq = AuthRequest.createAuthRequest(parameterList, serverManager.getRealmVerifier());
+            val parameterMap = authReq.getParameterMap();
             if (parameterMap != null && !parameterMap.isEmpty()) {
-                final var assocHandle = (String) parameterMap.get(OpenIdProtocolConstants.OPENID_ASSOCHANDLE);
+                val assocHandle = (String) parameterMap.get(OpenIdProtocolConstants.OPENID_ASSOCHANDLE);
                 if (assocHandle != null) {
                     return serverManager.getSharedAssociations().load(assocHandle);
                 }

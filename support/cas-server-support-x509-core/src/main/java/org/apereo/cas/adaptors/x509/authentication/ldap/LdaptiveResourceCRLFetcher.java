@@ -1,10 +1,12 @@
 package org.apereo.cas.adaptors.x509.authentication.ldap;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcher;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LdapUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DefaultConnectionFactory;
@@ -89,13 +91,13 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
      */
     protected X509CRL fetchCRLFromLdap(final Object r) throws CertificateException, IOException, CRLException {
         try {
-            final var ldapURL = r.toString();
+            val ldapURL = r.toString();
             LOGGER.debug("Fetching CRL from ldap [{}]", ldapURL);
 
-            final var result = performLdapSearch(ldapURL);
+            val result = performLdapSearch(ldapURL);
             if (result.getResultCode() == ResultCode.SUCCESS) {
-                final var entry = result.getResult().getEntry();
-                final var attribute = entry.getAttribute(this.certificateAttribute);
+                val entry = result.getResult().getEntry();
+                val attribute = entry.getAttribute(this.certificateAttribute);
 
                 if (attribute.isBinary()) {
                     LOGGER.debug("Located entry [{}]. Retrieving first attribute [{}]", entry, attribute);
@@ -126,11 +128,11 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
      */
     protected X509CRL fetchX509CRLFromAttribute(final LdapAttribute aval) throws CertificateException, IOException, CRLException {
         if (aval != null && aval.isBinary()) {
-            final var val = aval.getBinaryValue();
+            val val = aval.getBinaryValue();
             if (val == null || val.length == 0) {
                 throw new CertificateException("Empty attribute. Can not download CRL from ldap");
             }
-            final var decoded64 = EncodingUtils.decodeBase64(val);
+            val decoded64 = EncodingUtils.decodeBase64(val);
             if (decoded64 == null) {
                 throw new CertificateException("Could not decode the attribute value to base64");
             }
@@ -148,7 +150,7 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
      * @throws LdapException if an error occurs performing the search
      */
     protected Response<SearchResult> performLdapSearch(final String ldapURL) throws LdapException {
-        final var connectionFactory = prepareConnectionFactory(ldapURL);
+        val connectionFactory = prepareConnectionFactory(ldapURL);
         return this.searchExecutor.search(connectionFactory);
     }
 
@@ -159,7 +161,7 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
      * @return connection factory
      */
     protected ConnectionFactory prepareConnectionFactory(final String ldapURL) {
-        final var cc = ConnectionConfig.newConnectionConfig(this.connectionConfig);
+        val cc = ConnectionConfig.newConnectionConfig(this.connectionConfig);
         cc.setLdapUrl(ldapURL);
         return new DefaultConnectionFactory(cc);
     }

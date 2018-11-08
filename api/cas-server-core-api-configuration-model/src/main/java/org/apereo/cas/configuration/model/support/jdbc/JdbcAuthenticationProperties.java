@@ -1,11 +1,17 @@
 package org.apereo.cas.configuration.model.support.jdbc;
 
+import org.apereo.cas.configuration.model.support.jdbc.authn.BindJdbcAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.jdbc.authn.QueryEncodeJdbcAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.jdbc.authn.QueryJdbcAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.jdbc.authn.SearchJdbcAuthenticationProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
+
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link JdbcAuthenticationProperties}.
@@ -14,7 +20,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-jdbc-authentication")
-
 @Getter
 @Setter
 public class JdbcAuthenticationProperties implements Serializable {

@@ -1,11 +1,10 @@
 package org.apereo.cas.discovery;
 
-import lombok.extern.slf4j.Slf4j;
-import java.util.Map;
-import java.util.Set;
-
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This is {@link CasServerProfile}.
@@ -13,7 +12,6 @@ import lombok.Setter;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @Getter
 @Setter
 public class CasServerProfile {

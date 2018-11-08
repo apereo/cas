@@ -6,6 +6,8 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.val;
 import org.junit.Test;
 import org.pac4j.core.context.J2EContext;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -24,19 +26,19 @@ public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
 
     @Test
     public void verifyOperationFilterWithoutOpenId() {
-        final var service = getOidcRegisteredService();
-        final var accessToken = mock(AccessToken.class);
-        final var context = new J2EContext(new MockHttpServletRequest(), new MockHttpServletResponse());
-        final var original = CoreAuthenticationTestUtils.getPrincipal();
-        final var principal = profileScopeToAttributesFilter.filter(CoreAuthenticationTestUtils.getService(),
+        val service = getOidcRegisteredService();
+        val accessToken = mock(AccessToken.class);
+        val context = new J2EContext(new MockHttpServletRequest(), new MockHttpServletResponse());
+        val original = CoreAuthenticationTestUtils.getPrincipal();
+        val principal = profileScopeToAttributesFilter.filter(CoreAuthenticationTestUtils.getService(),
             original, service, context, accessToken);
         assertEquals(original, principal);
     }
 
     @Test
     public void verifyOperationFilterWithOpenId() {
-        final var service = getOidcRegisteredService();
-        final var accessToken = mock(AccessToken.class);
+        val service = getOidcRegisteredService();
+        val accessToken = mock(AccessToken.class);
         when(accessToken.getScopes()).thenReturn(CollectionUtils.wrapList(
             OidcConstants.StandardScopes.OPENID.getScope(),
             OidcConstants.StandardScopes.PHONE.getScope(),
@@ -48,11 +50,11 @@ public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
         service.getScopes().add(OidcConstants.StandardScopes.ADDRESS.getScope());
         service.getScopes().add(OidcConstants.StandardScopes.PHONE.getScope());
         service.getScopes().add(OidcConstants.StandardScopes.PROFILE.getScope());
-        final var context = new J2EContext(new MockHttpServletRequest(), new MockHttpServletResponse());
-        final var original = CoreAuthenticationTestUtils.getPrincipal(
+        val context = new J2EContext(new MockHttpServletRequest(), new MockHttpServletResponse());
+        val original = CoreAuthenticationTestUtils.getPrincipal(
             CollectionUtils.wrap("email", "casuser@example.org", "address", "1234 Main Street",
                 "phone", "123445677", "name", "CAS", "gender", "male"));
-        final var principal = profileScopeToAttributesFilter.filter(CoreAuthenticationTestUtils.getService(),
+        val principal = profileScopeToAttributesFilter.filter(CoreAuthenticationTestUtils.getService(),
             original, service, context, accessToken);
         assertTrue(principal.getAttributes().containsKey("name"));
         assertTrue(principal.getAttributes().containsKey("address"));
@@ -63,7 +65,7 @@ public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
 
     @Test
     public void verifyOperationRecon() {
-        final var service = getOidcRegisteredService();
+        val service = getOidcRegisteredService();
         service.getScopes().add(OidcConstants.StandardScopes.ADDRESS.getScope());
         service.getScopes().add(OidcConstants.StandardScopes.CUSTOM.getScope());
         service.getScopes().add(OidcConstants.StandardScopes.EMAIL.getScope());
@@ -72,9 +74,9 @@ public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
         service.getScopes().add(OidcConstants.StandardScopes.PHONE.getScope());
         service.getScopes().add(OidcConstants.StandardScopes.PROFILE.getScope());
         profileScopeToAttributesFilter.reconcile(service);
-        final var policy = service.getAttributeReleasePolicy();
+        val policy = service.getAttributeReleasePolicy();
         assertTrue(policy instanceof ChainingAttributeReleasePolicy);
-        final var chain = (ChainingAttributeReleasePolicy) policy;
+        val chain = (ChainingAttributeReleasePolicy) policy;
         assertEquals(5, chain.size());
     }
 }

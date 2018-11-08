@@ -1,6 +1,6 @@
 package org.apereo.cas;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.EqualsAndHashCode;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.data.mongodb.core.MongoOperations;
 
@@ -12,11 +12,11 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
+@EqualsAndHashCode(callSuper = true)
 public class MongoDbPropertySource extends EnumerablePropertySource<MongoOperations> {
 
     private final List<MongoDbProperty> list;
-    
+
     public MongoDbPropertySource(final String context, final MongoOperations mongo) {
         super(context, mongo);
         list = getSource().findAll(MongoDbProperty.class, MongoDbProperty.class.getSimpleName());
@@ -26,11 +26,13 @@ public class MongoDbPropertySource extends EnumerablePropertySource<MongoOperati
     public String[] getPropertyNames() {
         return list.stream().map(MongoDbProperty::getName).toArray(String[]::new);
     }
-    
+
     @Override
     public Object getProperty(final String s) {
-        return list.stream().filter(prop -> prop.getName().equals(s))
-                .findFirst().map(MongoDbProperty::getValue)
-                .orElse(null);
+        return list.stream()
+            .filter(prop -> prop.getName().equals(s))
+            .findFirst()
+            .map(MongoDbProperty::getValue)
+            .orElse(null);
     }
 }

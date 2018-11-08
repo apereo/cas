@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.core.audit;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 import java.io.Serializable;
 
 /**
@@ -32,7 +33,7 @@ public class AuditProperties implements Serializable {
 
     /**
      * Application code to use in the audit logs.
-     *
+     * <p>
      * This is a unique code that acts as the identifier for the application.
      * In case audit logs are aggregated in a central location. This makes it easy
      * to identify the application and filter results based on the code.
@@ -46,7 +47,7 @@ public class AuditProperties implements Serializable {
 
     /**
      * Request header to use identify the client address.
-     *
+     * <p>
      * If the application is sitting behind a load balancer,
      * the client address typically ends up being the load balancer
      * address itself. A common example for a header here would be
@@ -58,7 +59,7 @@ public class AuditProperties implements Serializable {
 
     /**
      * Determines whether a local DNS lookup should be made to query for the CAS server address.
-     *
+     * <p>
      * By default, the server is address is determined from the request. Aside from special headers,
      * this option allows one to query DNS to look up the server address of the CAS server processing requests.
      */
@@ -75,6 +76,12 @@ public class AuditProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private AuditMongoDbProperties mongo = new AuditMongoDbProperties();
+
+    /**
+     * Family of sub-properties pertaining to CouchDb-based audit destinations.
+     */
+    @NestedConfigurationProperty
+    private AuditCouchDbProperties couchDb = new AuditCouchDbProperties();
 
     /**
      * Family of sub-properties pertaining to rest-based audit destinations.

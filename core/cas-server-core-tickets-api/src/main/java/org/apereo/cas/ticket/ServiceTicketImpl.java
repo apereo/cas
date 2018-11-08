@@ -1,5 +1,9 @@
 package org.apereo.cas.ticket;
 
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -8,9 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
+import lombok.val;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -77,8 +79,8 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
      * @throws IllegalArgumentException if the TicketGrantingTicket or the Service are null.
      */
     @JsonCreator
-    public ServiceTicketImpl(@JsonProperty("id") final String id, @NonNull @JsonProperty("ticketGrantingTicket") final TicketGrantingTicket ticket,
-                             @NonNull @JsonProperty("service") final Service service, @JsonProperty("credentialProvided") final boolean credentialProvided,
+    public ServiceTicketImpl(@JsonProperty("id") final String id, @JsonProperty("ticketGrantingTicket") final @NonNull TicketGrantingTicket ticket,
+                             @JsonProperty("service") final @NonNull Service service, @JsonProperty("credentialProvided") final boolean credentialProvided,
                              @JsonProperty("expirationPolicy") final ExpirationPolicy policy) {
         super(id, policy);
         this.ticketGrantingTicket = ticket;
@@ -107,7 +109,7 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
             throw new InvalidProxyGrantingTicketForServiceTicketException(this.service);
         }
         this.grantedTicketAlready = Boolean.TRUE;
-        final ProxyGrantingTicket pgt = new ProxyGrantingTicketImpl(id, this.service, this.getTicketGrantingTicket(), authentication, expirationPolicy);
+        val pgt = new ProxyGrantingTicketImpl(id, this.service, this.getTicketGrantingTicket(), authentication, expirationPolicy);
         getTicketGrantingTicket().getProxyGrantingTickets().put(pgt.getId(), this.service);
         return pgt;
     }

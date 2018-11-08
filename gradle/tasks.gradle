@@ -1,5 +1,6 @@
-import org.gradle.internal.logging.events.*
-import org.gradle.internal.logging.*
+import org.gradle.internal.logging.LoggingOutputInternal
+import org.gradle.internal.logging.events.OutputEvent
+import org.gradle.internal.logging.events.OutputEventListener
 
 tasks.withType(Javadoc) {
     def exceptions = []
@@ -20,16 +21,16 @@ tasks.withType(Javadoc) {
 }
 
 task pathingJar(type: Jar, description: "Produces a 'pathing' JAR whose manifest class-path contains project runtime dependencies") {
-    dependsOn configurations.runtime
+    dependsOn configurations.runtimeClasspath
     appendix = "pathing"
 
     doFirst {
         manifest {
             attributes "Class-Path":
-                    configurations.runtime.files.collect {
-                        it.toURL().toString().replaceFirst("/file:/+/", "/")
-                    }
-                    .join(" ")
+            configurations.runtimeClasspath.files.collect {
+                it.toURL().toString().replaceFirst("/file:/+/", "/")
+            }
+            .join(" ")
         }
     }
 }
@@ -56,14 +57,17 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 }
 
 task cleanLogs(description: "Clean build log files") {
-    delete fileTree(dir: project.projectDir, includes: ["**/*.log", "**/*.gz", "**/*.log.gz"])
+    delete fileTree(dir: project.projectDir, includes: ["**/*.log", "**/*.gz", "**/*.log.gz", "**/*.orig"])
 }
 
-task spotbugs(type: FindBugs, description: "Set up classpath for Findbugs") {
-    pluginClasspath = project.configurations.spotbugsPlugins
+task spotbugs(type: FindBugs, description: "Set up classpath for Spotbugs") {
+    if (!Boolean.getBoolean("skipFindbugs")) {
+        pluginClasspath = project.configurations.spotbugsPlugins
+    }
 }
 
 task showConfiguration {
+    description "Shows the configuration used by the build"
     doLast() {
         def cfg = project.hasProperty("configuration") ? project.property("configuration") : "compile"
         configurations.getByName(cfg).each { println it }
@@ -84,8 +88,121 @@ task downloadDependencies {
     }
 }
 
+task verifySpringConfigurationFactories(description: "Examine spring.factories file and ensure @Configuration classes can be located") {
+    doLast {
+        def springFactoriesFile = new File(project.projectDir, "src/main/resources/META-INF/spring.factories")
+        if (springFactoriesFile.exists()) {
+            def properties = new Properties()
+            properties.load(new FileReader(springFactoriesFile))
+
+            if (properties.containsKey("org.springframework.cloud.bootstrap.BootstrapConfiguration")) {
+                def classes = properties.get("org.springframework.cloud.bootstrap.BootstrapConfiguration")
+                checkForSpringConfigurationFactories(project.projectDir.getCanonicalPath(), classes)
+            }
+            if (properties.containsKey("org.springframework.boot.autoconfigure.EnableAutoConfiguration")) {
+                def classes = properties.get("org.springframework.boot.autoconfigure.EnableAutoConfiguration")
+                checkForSpringConfigurationFactories(project.projectDir.getCanonicalPath(), classes)
+            }
+        }
+    }
+}
+
+task validateTestsSuites(description: "Ensure all projects contain a tests suite that contains test classes") {
+    doLast {
+        def testSources = new File(project.getProjectDir(), "src/test/java")
+        if (testSources.exists()) {
+            def testSuites = new FileNameByRegexFinder().getFileNames(testSources.canonicalPath, /.*TestsSuite\.java/)
+            def testClasses = new FileNameByRegexFinder().getFileNames(testSources.canonicalPath, /.*Tests\.java/, /.*(Base|Abstract).+Tests\.java/)
+
+            if (testClasses.size() > 1 && testSuites.isEmpty()) {
+                throw new GradleException("Project ${project.displayName} is missing a TestsSuite class, while it contains ${testClasses.size()} tests")
+            }
+
+            if (testSuites.size() > 1) {
+                throw new GradleException("Project ${project.displayName} has more than one TestsSuite")
+            }
+
+            if (!testSuites.isEmpty()) {
+                def testSuiteFile = new File(testSuites.get(0))
+                def testSuiteFileBody = testSuiteFile.text
+                def missingClasses = testClasses.findAll({
+                    def testClass = new File(it).name.replace(".java", ".class")
+                    !testSuiteFileBody.contains(testClass)
+                })
+                if (!missingClasses.isEmpty()) {
+                    println "${testSuiteFile.name} of ${project.displayName} does not include:"
+                    println missingClasses
+                            .sort()
+                            .collect({ new File(it).name.replace(".java", ".class") })
+                            .join(", ")
+
+                    throw new GradleException("Found ${missingClasses.size()} missing test class(es) in test suites")
+                }
+            } 
+        }
+    }
+}
+
+task outputSpotbugsReports(description: "Display Spotbugs output") {
+    doLast {
+        printSpotbugsReportToConsole(spotbugsMain.reports.xml.destination)
+    }
+}
+
+def checkForSpringConfigurationFactories(String projectPath, String configurations) {
+    def classes = configurations.split(",")
+    classes.each {
+        def sourcePath = "/src/main/java/".replace("/", String.valueOf(File.separator))
+        def clazz = projectPath + sourcePath + it.replace(".", String.valueOf(File.separator)) + ".java"
+        def configurationFile = new File(clazz)
+        if (!configurationFile.exists()) {
+            throw new GradleException("Spring configuration class does not exist: ${clazz}")
+        }
+    }
+}
+
+def printSpotbugsReportToConsole(File file) {
+    logger.debug "Reviewing file $file"
+    if (file.exists()) {
+        logger.debug "Processing file $file"
+        def slurper = new XmlSlurper().parse(file)
+        def bugsFound = slurper.BugInstance.size()
+        if (bugsFound > 0) {
+            println "*********************************\nFound Spotbugs rule violation(s):\n"
+            slurper.BugInstance.each { bug ->
+                println "*********************************"
+                println "Bug (" + bug.@abbrev + "): " + bug.@type + " [" + bug.@priority + "-" + bug.@rank + "] @ category " + bug.@category
+                bug.Class.each { clz ->
+                    println "\tClass: " + clz.@classname
+                    clz.SourceLine.each { line ->
+                        println "\tStart Line: " + line.@start + ", End Line: " + line.@end + ", Source Path: [" + line.@sourcepath + "], Source File: [" + line.@sourcefile + "]"
+                    }
+                }
+                println "\t----------------------METHOD-----------------------------"
+                bug.Method.each { md ->
+                    println "\tMethod: " + md.@name + " [static: " + md.@isStatic + "]"
+                    println "\tSignature: " + md.@signature
+                    md.SourceLine.each { line ->
+                        println "\tStart Line: " + line.@start + ", End Line: " + line.@end
+                    }
+                }
+                println "\t-------------------SOURCE LINE---------------------------"
+                bug.SourceLine.each { line ->
+                    println "\tStart Line: " + line.@start + ", End Line: " + line.@end + ", Class: [" + line.@classname + "]"
+                }
+            }
+            def msg = "\n$bugsFound Spotbugs rule violation(s) were found. See the report at: $file"
+            println msg
+            if (!Boolean.getBoolean("ignoreFindbugsFailures")) {
+                throw new GradleException(msg)
+            }
+        }
+    }
+}
+
 gradle.buildFinished { buildResult ->
     cleanLogs
 }
+
 
 clean.dependsOn("cleanLogs")

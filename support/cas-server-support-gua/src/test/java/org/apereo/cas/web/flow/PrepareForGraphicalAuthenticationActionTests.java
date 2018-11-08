@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -18,10 +19,10 @@ import static org.junit.Assert.*;
 public class PrepareForGraphicalAuthenticationActionTests extends AbstractGraphicalAuthenticationActionTests {
     @Test
     public void verifyAction() throws Exception {
-        final var context = new MockRequestContext();
-        final var request = new MockHttpServletRequest();
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        final var event = initializeLoginAction.execute(context);
+        val event = initializeLoginAction.execute(context);
         assertEquals(GraphicalUserAuthenticationWebflowConfigurer.TRANSITION_ID_GUA_GET_USERID, event.getId());
     }
 }

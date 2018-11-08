@@ -1,18 +1,18 @@
 package org.apereo.cas.support.events.ticket;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.validation.Assertion;
+
 import lombok.ToString;
 
 /**
  * Concrete subclass of {@code AbstractCasEvent} representing validation of a
  * service ticket by a CAS server.
+ *
  * @author Dmitriy Kopylenko
  * @since 4.2
  */
-@Slf4j
 @ToString
 public class CasServiceTicketValidatedEvent extends AbstractCasEvent {
 

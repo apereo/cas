@@ -1,9 +1,11 @@
 package org.apereo.cas.configuration.model.support.memcached;
 
 import org.apereo.cas.configuration.support.RequiredProperty;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * This is {@link BaseMemcachedProperties}.
@@ -11,7 +13,6 @@ import lombok.Setter;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
 @Getter
 @Setter
 public class BaseMemcachedProperties implements Serializable {

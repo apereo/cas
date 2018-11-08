@@ -1,7 +1,7 @@
 package org.apereo.cas.consent;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
+
 
 /**
  * This is {@link AttributeReleaseConsentCipherExecutor}.
@@ -9,13 +9,14 @@ import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 public class AttributeReleaseConsentCipherExecutor extends BaseStringCipherExecutor {
 
     public AttributeReleaseConsentCipherExecutor(final String secretKeyEncryption,
                                                  final String secretKeySigning,
-                                                 final String alg) {
-        super(secretKeyEncryption, secretKeySigning, alg);
+                                                 final String alg,
+                                                 final int signingKeySize,
+                                                 final int encryptionKeySize) {
+        super(secretKeyEncryption, secretKeySigning, alg, signingKeySize, encryptionKeySize);
     }
 
     @Override

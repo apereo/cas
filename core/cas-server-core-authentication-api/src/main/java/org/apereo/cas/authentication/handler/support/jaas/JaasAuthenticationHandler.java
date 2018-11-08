@@ -1,16 +1,17 @@
 package org.apereo.cas.authentication.handler.support.jaas;
 
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
-import org.apereo.cas.authentication.MessageDescriptor;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
+
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -24,7 +25,6 @@ import java.io.File;
 import java.security.GeneralSecurityException;
 import java.security.URIParameter;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * JAAS Authentication Handler for CAAS. This is a simple bridge from CAS'
@@ -120,11 +120,11 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             System.setProperty(SYS_PROP_KRB5_REALM, this.kerberosRealmSystemProperty);
         }
 
-        final var principal = authenticateAndGetPrincipal(credential);
-        final var strategy = getPasswordPolicyHandlingStrategy();
+        val principal = authenticateAndGetPrincipal(credential);
+        val strategy = getPasswordPolicyHandlingStrategy();
         if (principal != null && strategy != null) {
             LOGGER.debug("Attempting to examine and handle password policy via [{}]", strategy.getClass().getSimpleName());
-            final List<MessageDescriptor> messageList = strategy.handle(principal, getPasswordPolicyConfiguration());
+            val messageList = strategy.handle(principal, getPasswordPolicyConfiguration());
             return createHandlerResult(credential, principal, messageList);
         }
         throw new FailedLoginException("Unable to authenticate " + credential.getId());
@@ -138,24 +138,22 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @throws GeneralSecurityException the general security exception
      */
     protected Principal authenticateAndGetPrincipal(final UsernamePasswordCredential credential) throws GeneralSecurityException {
-        Principal principal = null;
-        LoginContext lc = null;
+        val lc = getLoginContext(credential);
         try {
-            lc = getLoginContext(credential);
             lc.login();
-            final var principals = lc.getSubject().getPrincipals();
+            val principals = lc.getSubject().getPrincipals();
             LOGGER.debug("JAAS principals extracted from subject are [{}}", principals);
             if (principals != null && !principals.isEmpty()) {
-                final var secPrincipal = principals.iterator().next();
+                val secPrincipal = principals.iterator().next();
                 LOGGER.debug("JAAS principal detected from subject login context is [{}}", secPrincipal.getName());
-                principal = this.principalFactory.createPrincipal(secPrincipal.getName());
+                return this.principalFactory.createPrincipal(secPrincipal.getName());
             }
         } finally {
             if (lc != null) {
                 lc.logout();
             }
         }
-        return principal;
+        return null;
     }
 
     /**
@@ -166,11 +164,11 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @throws GeneralSecurityException the general security exception
      */
     protected LoginContext getLoginContext(final UsernamePasswordCredential credential) throws GeneralSecurityException {
-        final var callbackHandler = new UsernamePasswordCallbackHandler(credential.getUsername(), credential.getPassword());
+        val callbackHandler = new UsernamePasswordCallbackHandler(credential.getUsername(), credential.getPassword());
         if (this.loginConfigurationFile != null && StringUtils.isNotBlank(this.loginConfigType)
             && this.loginConfigurationFile.exists() && this.loginConfigurationFile.canRead()) {
             final Configuration.Parameters parameters = new URIParameter(loginConfigurationFile.toURI());
-            final var loginConfig = Configuration.getInstance(this.loginConfigType, parameters);
+            val loginConfig = Configuration.getInstance(this.loginConfigType, parameters);
             return new LoginContext(this.realm, null, callbackHandler, loginConfig);
         }
         return new LoginContext(this.realm, callbackHandler);

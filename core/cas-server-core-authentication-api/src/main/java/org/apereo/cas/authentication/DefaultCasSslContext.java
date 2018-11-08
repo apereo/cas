@@ -1,10 +1,12 @@
 package org.apereo.cas.authentication;
 
-import lombok.Getter;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.http.ssl.SSLContexts;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.http.ssl.SSLContexts;
 import org.springframework.core.io.Resource;
 
 import javax.net.ssl.KeyManager;
@@ -14,6 +16,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509KeyManager;
 import javax.net.ssl.X509TrustManager;
+import java.io.IOException;
 import java.net.Socket;
 import java.security.KeyStore;
 import java.security.Principal;
@@ -34,40 +37,46 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-
-@Slf4j
 @Getter
 public class DefaultCasSslContext {
     private static final String ALG_NAME_PKIX = "PKIX";
 
     private final SSLContext sslContext;
 
-    @SneakyThrows
-    public DefaultCasSslContext(final Resource trustStoreFile, final String trustStorePassword, final String trustStoreType) {
-        final var casTrustStore = KeyStore.getInstance(trustStoreType);
-        final var trustStorePasswordCharArray = trustStorePassword.toCharArray();
+    public DefaultCasSslContext(final Resource trustStoreFile, final String trustStorePassword, final String trustStoreType) throws IOException {
+        try {
+            this.sslContext = initialize(trustStoreFile, trustStorePassword, trustStoreType);
+        } catch (final Exception e) {
+            throw new IOException(e.getMessage(), e);
+        }
+    }
 
-        try (var casStream = trustStoreFile.getInputStream()) {
+    private static SSLContext initialize(final Resource trustStoreFile, final String trustStorePassword, final String trustStoreType) throws Exception {
+        val casTrustStore = KeyStore.getInstance(trustStoreType);
+        val trustStorePasswordCharArray = trustStorePassword.toCharArray();
+
+        try (val casStream = trustStoreFile.getInputStream()) {
             casTrustStore.load(casStream, trustStorePasswordCharArray);
         }
 
-        final var defaultAlgorithm = KeyManagerFactory.getDefaultAlgorithm();
-        final var customKeyManager = getKeyManager(ALG_NAME_PKIX, casTrustStore, trustStorePasswordCharArray);
-        final var jvmKeyManager = getKeyManager(defaultAlgorithm, null, null);
+        val defaultAlgorithm = KeyManagerFactory.getDefaultAlgorithm();
+        val customKeyManager = getKeyManager(ALG_NAME_PKIX, casTrustStore, trustStorePasswordCharArray);
+        val jvmKeyManager = getKeyManager(defaultAlgorithm, null, null);
 
-        final var defaultTrustAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
-        final var customTrustManager = getTrustManager(ALG_NAME_PKIX, casTrustStore);
-        final var jvmTrustManagers = getTrustManager(defaultTrustAlgorithm, null);
+        val defaultTrustAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
+        val customTrustManager = getTrustManager(ALG_NAME_PKIX, casTrustStore);
+        val jvmTrustManagers = getTrustManager(defaultTrustAlgorithm, null);
 
         final KeyManager[] keyManagers = {
             new CompositeX509KeyManager(CollectionUtils.wrapList(jvmKeyManager, customKeyManager))
         };
-        final List<X509TrustManager> allManagers = new ArrayList<>(customTrustManager);
+        val allManagers = new ArrayList<X509TrustManager>(customTrustManager);
         allManagers.addAll(jvmTrustManagers);
-        final var trustManagers = new TrustManager[]{new CompositeX509TrustManager(allManagers)};
+        val trustManagers = new TrustManager[]{new CompositeX509TrustManager(allManagers)};
 
-        this.sslContext = SSLContexts.custom().useProtocol("SSL").build();
+        val sslContext = SSLContexts.custom().setProtocol("SSL").build();
         sslContext.init(keyManagers, trustManagers, null);
+        return sslContext;
     }
 
     /**
@@ -81,7 +90,7 @@ public class DefaultCasSslContext {
      */
     private static X509KeyManager getKeyManager(final String algorithm, final KeyStore keystore,
                                                 final char[] password) throws Exception {
-        final var factory = KeyManagerFactory.getInstance(algorithm);
+        val factory = KeyManagerFactory.getInstance(algorithm);
         factory.init(keystore, password);
         return (X509KeyManager) factory.getKeyManagers()[0];
     }
@@ -95,7 +104,7 @@ public class DefaultCasSslContext {
      * @throws Exception the exception
      */
     private static Collection<X509TrustManager> getTrustManager(final String algorithm, final KeyStore keystore) throws Exception {
-        final var factory = TrustManagerFactory.getInstance(algorithm);
+        val factory = TrustManagerFactory.getInstance(algorithm);
         factory.init(keystore);
         return Arrays.stream(factory.getTrustManagers())
             .filter(e -> e instanceof X509TrustManager)
@@ -146,16 +155,16 @@ public class DefaultCasSslContext {
 
         @Override
         public String[] getClientAliases(final String keyType, final Principal[] issuers) {
-            final List<String> aliases = new ArrayList<>();
+            val aliases = new ArrayList<String>();
             this.keyManagers.forEach(keyManager -> aliases.addAll(CollectionUtils.wrapList(keyManager.getClientAliases(keyType, issuers))));
-            return aliases.toArray(new String[]{});
+            return aliases.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
         }
 
         @Override
         public String[] getServerAliases(final String keyType, final Principal[] issuers) {
-            final List<String> aliases = new ArrayList<>();
+            val aliases = new ArrayList<String>();
             this.keyManagers.forEach(keyManager -> aliases.addAll(CollectionUtils.wrapList(keyManager.getServerAliases(keyType, issuers))));
-            return aliases.toArray(new String[]{});
+            return aliases.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
         }
     }
 
@@ -163,6 +172,7 @@ public class DefaultCasSslContext {
      * Represents an ordered list of {@link X509TrustManager}s with additive trust. If any one of the
      * composed managers trusts a certificate chain, then it is trusted by the composite manager.
      */
+    @Slf4j
     private static class CompositeX509TrustManager implements X509TrustManager {
 
 
@@ -179,14 +189,13 @@ public class DefaultCasSslContext {
 
         @Override
         public void checkClientTrusted(final X509Certificate[] chain, final String authType) throws CertificateException {
-            final var trusted = this.trustManagers.stream().anyMatch(trustManager -> {
+            val trusted = this.trustManagers.stream().anyMatch(trustManager -> {
                 try {
                     trustManager.checkClientTrusted(chain, authType);
                     return true;
                 } catch (final CertificateException e) {
-                    final var msg = "Unable to trust the client certificates [%s] for auth type [%s]: [%s]";
-                    LOGGER.debug(String.format(msg, Arrays.stream(chain).map(Certificate::toString).collect(Collectors.toSet()),
-                        authType, e.getMessage()), e);
+                    val msg = "Unable to trust the client certificates [%s] for auth type [%s]: [%s]";
+                    LOGGER.debug(String.format(msg, Arrays.stream(chain).map(Certificate::toString).collect(Collectors.toSet()), authType, e.getMessage()), e);
                     return false;
                 }
             });
@@ -199,14 +208,13 @@ public class DefaultCasSslContext {
         @Override
         public void checkServerTrusted(final X509Certificate[] chain, final String authType) throws CertificateException {
 
-            final var trusted = this.trustManagers.stream().anyMatch(trustManager -> {
+            val trusted = this.trustManagers.stream().anyMatch(trustManager -> {
                 try {
                     trustManager.checkServerTrusted(chain, authType);
                     return true;
                 } catch (final CertificateException e) {
-                    final var msg = "Unable to trust the server certificates [%s] for auth type [%s]: [%s]";
-                    LOGGER.debug(String.format(msg, Arrays.stream(chain).map(Certificate::toString).collect(Collectors.toSet()),
-                        authType, e.getMessage()), e);
+                    val msg = "Unable to trust the server certificates [%s] for auth type [%s]: [%s]";
+                    LOGGER.debug(String.format(msg, Arrays.stream(chain).map(Certificate::toString).collect(Collectors.toSet()), authType, e.getMessage()), e);
                     return false;
                 }
             });
@@ -217,7 +225,7 @@ public class DefaultCasSslContext {
 
         @Override
         public X509Certificate[] getAcceptedIssuers() {
-            final List<X509Certificate> certificates = new ArrayList<>();
+            val certificates = new ArrayList<X509Certificate>();
             this.trustManagers.forEach(trustManager -> certificates.addAll(CollectionUtils.wrapList(trustManager.getAcceptedIssuers())));
             return certificates.toArray(new X509Certificate[0]);
         }

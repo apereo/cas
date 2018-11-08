@@ -1,10 +1,12 @@
 package org.apereo.cas.authentication.principal;
 
+import org.apereo.cas.util.EncodingUtils;
+
 import com.google.common.base.Splitter;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.util.EncodingUtils;
+import lombok.val;
 
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -69,20 +71,22 @@ public class DefaultResponse implements Response {
      * @return the redirect response
      */
     public static Response getRedirectResponse(final String url, final Map<String, String> parameters) {
-        final var builder = new StringBuilder(parameters.size() * CONST_REDIRECT_RESPONSE_MULTIPLIER + CONST_REDIRECT_RESPONSE_BUFFER);
-        final var sanitizedUrl = sanitizeUrl(url);
+        val builder = new StringBuilder(parameters.size() * CONST_REDIRECT_RESPONSE_MULTIPLIER + CONST_REDIRECT_RESPONSE_BUFFER);
+        val sanitizedUrl = sanitizeUrl(url);
         LOGGER.debug("Sanitized URL for redirect response is [{}]", sanitizedUrl);
-        final var fragmentSplit = Splitter.on("#").splitToList(sanitizedUrl);
+        val fragmentSplit = Splitter.on("#").splitToList(sanitizedUrl);
         builder.append(fragmentSplit.get(0));
-        final var params = parameters.entrySet().stream().filter(entry -> entry.getValue() != null).map(entry -> {
-            String param;
-            try {
-                param = String.join("=", entry.getKey(), EncodingUtils.urlEncode(entry.getValue()));
-            } catch (final Exception e) {
-                param = String.join("=", entry.getKey(), entry.getValue());
-            }
-            return param;
-        }).collect(Collectors.joining("&"));
+        val params = parameters.entrySet()
+            .stream()
+            .filter(entry -> entry.getValue() != null)
+            .map(entry -> {
+                try {
+                    return String.join("=", entry.getKey(), EncodingUtils.urlEncode(entry.getValue()));
+                } catch (final Exception e) {
+                    return String.join("=", entry.getKey(), entry.getValue());
+                }
+            })
+            .collect(Collectors.joining("&"));
         if (!(params == null || params.isEmpty())) {
             builder.append(url.contains("?") ? "&" : "?");
             builder.append(params);
@@ -91,7 +95,7 @@ public class DefaultResponse implements Response {
             builder.append('#');
             builder.append(fragmentSplit.get(1));
         }
-        final var urlRedirect = builder.toString();
+        val urlRedirect = builder.toString();
         LOGGER.debug("Final redirect response is [{}]", urlRedirect);
         return new DefaultResponse(ResponseType.REDIRECT, urlRedirect, parameters);
     }
@@ -106,8 +110,8 @@ public class DefaultResponse implements Response {
      * @return Sanitized URL string.
      */
     private static String sanitizeUrl(final String url) {
-        final var m = NON_PRINTABLE.matcher(url);
-        final var sb = new StringBuffer(url.length());
+        val m = NON_PRINTABLE.matcher(url);
+        val sb = new StringBuffer(url.length());
         var hasNonPrintable = false;
         while (m.find()) {
             m.appendReplacement(sb, " ");

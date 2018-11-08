@@ -1,6 +1,8 @@
 package org.apereo.cas.ticket.accesstoken;
 
 import org.apereo.cas.ticket.BaseOAuthExpirationPolicyTests;
+
+import lombok.val;
 import org.junit.Test;
 import org.springframework.test.context.TestPropertySource;
 
@@ -14,8 +16,8 @@ import static org.junit.Assert.*;
 public class OAuthAccessTokenSovereignExpirationPolicyTests extends BaseOAuthExpirationPolicyTests {
     @Test
     public void verifyAccessTokenExpiryWhenTgtIsExpired() {
-        final var tgt = newTicketGrantingTicket();
-        final var at = newAccessToken(tgt);
+        val tgt = newTicketGrantingTicket();
+        val at = newAccessToken(tgt);
 
         assertFalse("Access token must not be expired", at.isExpired());
         tgt.markTicketExpired();

@@ -8,11 +8,14 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.val;
 import org.junit.Test;
 import org.pac4j.core.context.J2EContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.util.Collection;
 import java.util.LinkedHashSet;
 
 import static org.junit.Assert.*;
@@ -27,20 +30,19 @@ import static org.mockito.Mockito.*;
 public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests {
     @Test
     public void verifyValidator() {
-        final var serviceManager = mock(ServicesManager.class);
-        final var service = new OAuthRegisteredService();
+        val serviceManager = mock(ServicesManager.class);
+        val service = new OAuthRegisteredService();
         service.setName("OAuth");
         service.setClientId("client");
         service.setClientSecret("secret");
         service.setServiceId("https://callback.example.org");
 
-        when(serviceManager.getAllServices()).thenReturn(CollectionUtils.wrapList(service));
-        final var v =
-            new OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator(serviceManager, new WebApplicationServiceFactory(),
+        when(serviceManager.getAllServices()).thenReturn((Collection) CollectionUtils.toCollection(service));
+        val v = new OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator(serviceManager, new WebApplicationServiceFactory(),
                 new RegisteredServiceAccessStrategyAuditableEnforcer());
 
-        final var request = new MockHttpServletRequest();
-        final var response = new MockHttpServletResponse();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
         assertFalse(v.validate(new J2EContext(request, response)));
 
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());

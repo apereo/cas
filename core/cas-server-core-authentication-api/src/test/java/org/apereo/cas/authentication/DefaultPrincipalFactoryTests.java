@@ -2,6 +2,8 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.val;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -15,8 +17,8 @@ import static org.junit.Assert.*;
 public class DefaultPrincipalFactoryTests {
     @Test
     public void verifyAction() {
-        final var factory = PrincipalFactoryUtils.newPrincipalFactory();
-        final var p = factory.createPrincipal("casuser", CollectionUtils.wrap("name", "CAS"));
+        val factory = PrincipalFactoryUtils.newPrincipalFactory();
+        val p = factory.createPrincipal("casuser", CollectionUtils.wrap("name", "CAS"));
         assertTrue(p.getId().equals("casuser"));
         assertEquals(1, p.getAttributes().size());
     }

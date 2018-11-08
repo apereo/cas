@@ -1,8 +1,9 @@
 package org.apereo.cas.configuration.model.support.aws;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
+
 import lombok.Getter;
 import lombok.Setter;
-import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.core.io.Resource;
 
 import java.io.Serializable;
@@ -13,7 +14,6 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-
 @Getter
 @Setter
 public abstract class BaseAmazonWebServicesProperties implements Serializable {

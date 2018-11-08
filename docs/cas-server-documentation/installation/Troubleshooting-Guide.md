@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Troubleshooting Guide
+category: Installation
 ---
 
 # Troubleshooting Guide
@@ -13,14 +14,14 @@ CAS server logs are the best resource for determining the root cause of the prob
 Specifically you want to make sure `DEBUG` levels are turned on the `org.apereo` package in the log configuration:
 
 ```xml
-<AsyncLogger name="org.apereo" level="debug" additivity="false" includeLocation="true">
+<AsyncLogger name="org.apereo" level="trace" additivity="false" includeLocation="true">
     <AppenderRef ref="console"/>
     <AppenderRef ref="file"/>
 </AsyncLogger>
 ```
 
 When changes are applied, restart the server environment and observe the log files to get a better 
-understanding of CAS behavior. For more info, please [review  this guide](Logging.html) on how to configure logs with CAS.
+understanding of CAS behavior. For more info, please [review  this guide](../logging/Logging.html) on how to configure logs with CAS.
 
 Note that the above configuration block only addresses logging behavior of CAS components; not those
 upon which CAS depends. Consult the log4j configuration and turn on appropriate `DEBUG` logs for each relevant component.
@@ -51,7 +52,7 @@ Typical questions in this category that are best answered elsewhere are:
 
 ## Using `SNAPSHOT` Versions
 
-There may be cases where you learn that a fix is available for the defect or behavior relevant for your CAS deployments and you may be advised to upgrade to the current available `SNAPSHOT` release. Depending on your [choice of installation](Maven-Overlay-Installation.html), you will need to find the setting in your deployment configuration and build scripts that describes your *current* CAS version and bump that to the next `SNAPSHOT`. The build scripts should also have additional instructions on how to obtain and build `SNAPSHOT` releases in README files and such. 
+There may be cases where you learn that a fix is available for the defect or behavior relevant for your CAS deployments and you may be advised to upgrade to the current available `SNAPSHOT` release. Depending on your [choice of installation](WAR-Overlay-Installation.html), you will need to find the setting in your deployment configuration and build scripts that describes your *current* CAS version and bump that to the next `SNAPSHOT`. The build scripts should also have additional instructions on how to obtain and build `SNAPSHOT` releases in README files and such. 
 
 To find out what `SNAPSHOT` version applies to your deployment, you can either look at the release schedule or the appropriate branch of the CAS codebase. For instance, if you have deployed CAS `2.0.4` and the release schedule shows the next release is targeted for a `2.0.5`, then the available `SNAPSHOT` release would be `2.0.5-SNAPSHOT`. You can also take a look at the milestone setting assigned to the issue/pull request and determine the `SNAPSHOT` release. `SNAPSHOT` releases are always postfixed with `-SNAPSHOT`. If the assigned milestone to an issue is for instance `1.2.5-RC1`, then the `SNAPSHOT` release would be `1.2.5-RC1-SNAPSHOT`. 
 

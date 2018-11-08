@@ -2,6 +2,8 @@ package org.apereo.cas.web.flow.client;
 
 import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.web.flow.AbstractSpnegoTests;
+
+import lombok.val;
 import org.junit.Test;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,19 @@ import static org.junit.Assert.*;
 @Import(BaseLdapSpnegoKnownClientSystemsFilterActionTests.CasTestConfiguration.class)
 public abstract class BaseLdapSpnegoKnownClientSystemsFilterActionTests extends AbstractSpnegoTests {
 
+    @Test
+    public void ensureLdapAttributeShouldDoSpnego() throws Exception {
+        val ctx = new MockRequestContext();
+        val req = new MockHttpServletRequest();
+        req.setRemoteAddr("localhost");
+        val extCtx = new ServletExternalContext(
+            new MockServletContext(), req,
+            new MockHttpServletResponse());
+        ctx.setExternalContext(extCtx);
+        val ev = ldapSpnegoClientAction.execute(ctx);
+        assertEquals(ev.getId(), new EventFactorySupport().yes(this).getId());
+    }
+
     @TestConfiguration
     public static class CasTestConfiguration implements InitializingBean {
         @Autowired
@@ -35,18 +50,5 @@ public abstract class BaseLdapSpnegoKnownClientSystemsFilterActionTests extends 
         public void afterPropertiesSet() {
             SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
         }
-    }
-
-    @Test
-    public void ensureLdapAttributeShouldDoSpnego() throws Exception {
-        final var ctx = new MockRequestContext();
-        final var req = new MockHttpServletRequest();
-        req.setRemoteAddr("localhost");
-        final var extCtx = new ServletExternalContext(
-            new MockServletContext(), req,
-            new MockHttpServletResponse());
-        ctx.setExternalContext(extCtx);
-        final var ev = ldapSpnegoClientAction.execute(ctx);
-        assertEquals(ev.getId(), new EventFactorySupport().yes(this).getId());
     }
 }

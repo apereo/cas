@@ -1,12 +1,14 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.dao.MongoDbYubiKeyAccountRegistry;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
+
+import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -24,19 +26,18 @@ import org.springframework.data.mongodb.core.MongoTemplate;
  */
 @Configuration("mongoDbYubiKeyConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class MongoDbYubiKeyConfiguration {
 
     @Autowired
     @Qualifier("yubiKeyAccountValidator")
-    private YubiKeyAccountValidator yubiKeyAccountValidator;
+    private ObjectProvider<YubiKeyAccountValidator> yubiKeyAccountValidator;
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("yubikeyAccountCipherExecutor")
-    private CipherExecutor yubikeyAccountCipherExecutor;
+    private ObjectProvider<CipherExecutor> yubikeyAccountCipherExecutor;
 
     @RefreshScope
     @Bean
@@ -47,21 +48,21 @@ public class MongoDbYubiKeyConfiguration {
     @RefreshScope
     @Bean
     public MongoTemplate mongoYubiKeyTemplate() {
-        final var mongo = casProperties.getAuthn().getMfa().getYubikey().getMongo();
-        final var factory = new MongoDbConnectionFactory();
-        final var mongoTemplate = factory.buildMongoTemplate(mongo);
+        val mongo = casProperties.getAuthn().getMfa().getYubikey().getMongo();
+        val factory = new MongoDbConnectionFactory();
+        val mongoTemplate = factory.buildMongoTemplate(mongo);
         factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
         return mongoTemplate;
     }
-    
+
     @RefreshScope
     @Bean
     public YubiKeyAccountRegistry yubiKeyAccountRegistry() {
-        final var yubi = casProperties.getAuthn().getMfa().getYubikey();
-        final var registry = new MongoDbYubiKeyAccountRegistry(yubiKeyAccountValidator,
-                mongoYubiKeyTemplate(),
-                yubi.getMongo().getCollection());
-        registry.setCipherExecutor(this.yubikeyAccountCipherExecutor);
+        val yubi = casProperties.getAuthn().getMfa().getYubikey();
+        val registry = new MongoDbYubiKeyAccountRegistry(yubiKeyAccountValidator.getIfAvailable(),
+            mongoYubiKeyTemplate(),
+            yubi.getMongo().getCollection());
+        registry.setCipherExecutor(yubikeyAccountCipherExecutor.getIfAvailable());
         return registry;
     }
 }

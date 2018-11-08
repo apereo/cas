@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.mongo;
 
 import org.apereo.cas.configuration.support.RequiredProperty;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,7 +11,6 @@ import lombok.Setter;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-
 @Getter
 @Setter
 public class SingleCollectionMongoDbProperties extends BaseMongoDbProperties {

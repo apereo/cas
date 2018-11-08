@@ -1,6 +1,8 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.val;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -19,11 +21,11 @@ import static org.junit.Assert.*;
 public class DisplayUserGraphicsBeforeAuthenticationActionTests extends AbstractGraphicalAuthenticationActionTests {
     @Test
     public void verifyAction() throws Exception {
-        final var context = new MockRequestContext();
-        final var request = new MockHttpServletRequest();
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
         request.addParameter("username", "casuser");
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        final var event = displayUserGraphicsBeforeAuthenticationAction.execute(context);
+        val event = displayUserGraphicsBeforeAuthenticationAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
         assertTrue(WebUtils.containsGraphicalUserAuthenticationImage(context));
         assertTrue(WebUtils.containsGraphicalUserAuthenticationUsername(context));

@@ -2,7 +2,7 @@ package org.apereo.cas.util.http;
 
 import lombok.Setter;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.http.ConnectionReuseStrategy;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
@@ -16,7 +16,6 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
-import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -51,7 +50,6 @@ import java.util.stream.IntStream;
  * @author Jerome Leleu
  * @since 4.1.0
  */
-@Slf4j
 @Setter
 public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient>, DisposableBean {
 
@@ -108,6 +106,9 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
 
     private int readTimeout = DEFAULT_TIMEOUT;
 
+    /**
+     * The redirection strategy by default, using http status codes.
+     */
     private RedirectStrategy redirectionStrategy = new DefaultRedirectStrategy();
 
     /**
@@ -181,9 +182,9 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
 
     @Override
     public SimpleHttpClient getObject() {
-        final var httpClient = buildHttpClient();
-        final var requestExecutorService = buildRequestExecutorService(httpClient);
-        final var codes = this.acceptableCodes.stream().sorted().collect(Collectors.toList());
+        val httpClient = buildHttpClient();
+        val requestExecutorService = buildRequestExecutorService(httpClient);
+        val codes = this.acceptableCodes.stream().sorted().collect(Collectors.toList());
         return new SimpleHttpClient(codes, httpClient, requestExecutorService);
     }
 
@@ -204,30 +205,44 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
      */
     @SneakyThrows
     private CloseableHttpClient buildHttpClient() {
-        final ConnectionSocketFactory plainsf = PlainConnectionSocketFactory.getSocketFactory();
-        final LayeredConnectionSocketFactory sslsf = this.sslSocketFactory;
-        final var registry = RegistryBuilder.<ConnectionSocketFactory>create()
-            .register("http", plainsf).register("https", sslsf).build();
-        final var connMgmr = new PoolingHttpClientConnectionManager(registry);
-        connMgmr.setMaxTotal(this.maxPooledConnections);
-        connMgmr.setDefaultMaxPerRoute(this.maxConnectionsPerRoute);
-        connMgmr.setValidateAfterInactivity(DEFAULT_TIMEOUT);
-        final var httpHost = new HttpHost(InetAddress.getLocalHost());
-        final var httpRoute = new HttpRoute(httpHost);
-        connMgmr.setMaxPerRoute(httpRoute, MAX_CONNECTIONS_PER_ROUTE);
-        final var requestConfig = RequestConfig.custom().setSocketTimeout(this.readTimeout)
-            .setConnectTimeout((int) this.connectionTimeout).setConnectionRequestTimeout((int) this.connectionTimeout)
-            .setCircularRedirectsAllowed(this.circularRedirectsAllowed).setRedirectsEnabled(this.redirectsEnabled)
-            .setAuthenticationEnabled(this.authenticationEnabled).build();
-        final var builder = HttpClients.custom().setConnectionManager(connMgmr)
-            .setDefaultRequestConfig(requestConfig).setSSLSocketFactory(sslsf)
-            .setSSLHostnameVerifier(this.hostnameVerifier).setRedirectStrategy(this.redirectionStrategy)
-            .setDefaultCredentialsProvider(this.credentialsProvider).setDefaultCookieStore(this.cookieStore)
+        val plainSocketFactory = PlainConnectionSocketFactory.getSocketFactory();
+        val registry = RegistryBuilder.<ConnectionSocketFactory>create()
+            .register("http", plainSocketFactory)
+            .register("https", this.sslSocketFactory)
+            .build();
+
+        val connectionManager = new PoolingHttpClientConnectionManager(registry);
+        connectionManager.setMaxTotal(this.maxPooledConnections);
+        connectionManager.setDefaultMaxPerRoute(this.maxConnectionsPerRoute);
+        connectionManager.setValidateAfterInactivity(DEFAULT_TIMEOUT);
+
+        val httpHost = new HttpHost(InetAddress.getLocalHost());
+        val httpRoute = new HttpRoute(httpHost);
+        connectionManager.setMaxPerRoute(httpRoute, MAX_CONNECTIONS_PER_ROUTE);
+
+        val requestConfig = RequestConfig.custom()
+            .setSocketTimeout(this.readTimeout)
+            .setConnectTimeout((int) this.connectionTimeout)
+            .setConnectionRequestTimeout((int) this.connectionTimeout)
+            .setCircularRedirectsAllowed(this.circularRedirectsAllowed)
+            .setRedirectsEnabled(this.redirectsEnabled)
+            .setAuthenticationEnabled(this.authenticationEnabled)
+            .build();
+
+        val builder = HttpClients.custom()
+            .setConnectionManager(connectionManager)
+            .setDefaultRequestConfig(requestConfig)
+            .setSSLSocketFactory(this.sslSocketFactory)
+            .setSSLHostnameVerifier(this.hostnameVerifier)
+            .setRedirectStrategy(this.redirectionStrategy)
+            .setDefaultCredentialsProvider(this.credentialsProvider)
+            .setDefaultCookieStore(this.cookieStore)
             .setConnectionReuseStrategy(this.connectionReuseStrategy)
             .setConnectionBackoffStrategy(this.connectionBackoffStrategy)
             .setServiceUnavailableRetryStrategy(this.serviceUnavailableRetryStrategy)
             .setProxyAuthenticationStrategy(this.proxyAuthenticationStrategy)
-            .setDefaultHeaders(this.defaultHeaders).useSystemProperties();
+            .setDefaultHeaders(this.defaultHeaders)
+            .useSystemProperties();
         return builder.build();
     }
 
@@ -245,7 +260,7 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
     }
 
     /**
-     * Destroy.
+     * Destroy the service if available.
      */
     @Override
     public void destroy() {
@@ -256,7 +271,7 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
     }
 
     /**
-     * The type Default http client.
+     * The default http client.
      */
     public static class DefaultHttpClient extends SimpleHttpClientFactoryBean {
     }

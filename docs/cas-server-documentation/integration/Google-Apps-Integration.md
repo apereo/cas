@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Google Apps Integration
+category: Integration
 ---
 
 # Overview
@@ -38,11 +39,11 @@ openssl req -new -x509 -key private.key -out x509.pem -days 365
 
 The `x509.pem` file should be uploaded into Google Apps under Security/SSO.
 
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#google-apps-authentication).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#google-apps-authentication).
 
 ## Register Google Apps
 
-Ensure that Google Apps is registered in your [service registry](../installation/Service-Management.html).
+Ensure that Google Apps is registered in your [service registry](../services/Service-Management.html).
 
 ```json
 {
@@ -57,7 +58,7 @@ Ensure that Google Apps is registered in your [service registry](../installation
 ## Configure Username Attribute
 
 As an optional step, you can configure an alternate username to be send to Google in the SAML reply. This alternate user name
-can be specified in the CAS service registry via [username attribute providers](../installation/Service-Management.html)
+can be specified in the CAS service registry via [username attribute providers](../services/Service-Management.html)
 for the registered Google Apps service.
 
 ## Configure Google

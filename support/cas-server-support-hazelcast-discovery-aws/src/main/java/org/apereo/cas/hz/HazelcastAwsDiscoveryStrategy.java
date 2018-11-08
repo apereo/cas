@@ -1,14 +1,17 @@
 package org.apereo.cas.hz;
 
-import com.hazelcast.aws.AwsDiscoveryStrategyFactory;
-import com.hazelcast.config.DiscoveryStrategyConfig;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastClusterProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.discovery.HazelcastAwsDiscoveryProperties;
+
+import com.hazelcast.aws.AwsDiscoveryStrategyFactory;
+import com.hazelcast.config.Config;
+import com.hazelcast.config.DiscoveryStrategyConfig;
+import com.hazelcast.config.JoinConfig;
+import com.hazelcast.config.NetworkConfig;
+import lombok.val;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link HazelcastAwsDiscoveryStrategy}.
@@ -16,13 +19,12 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Slf4j
 public class HazelcastAwsDiscoveryStrategy implements HazelcastDiscoveryStrategy {
 
     @Override
-    public DiscoveryStrategyConfig get(final HazelcastClusterProperties cluster) {
-        final var aws = cluster.getDiscovery().getAws();
-        final Map<String, Comparable> properties = new HashMap<>();
+    public DiscoveryStrategyConfig get(final HazelcastClusterProperties cluster, final JoinConfig joinConfig, final Config configuration, final NetworkConfig networkConfig) {
+        val aws = cluster.getDiscovery().getAws();
+        val properties = new HashMap<String, Comparable>();
         if (StringUtils.hasText(aws.getAccessKey())) {
             properties.put(HazelcastAwsDiscoveryProperties.AWS_DISCOVERY_ACCESS_KEY, aws.getAccessKey());
         }

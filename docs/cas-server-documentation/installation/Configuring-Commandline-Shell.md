@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuring Commandline Shell
+category: Installation
 ---
 
 # CAS Command-line Shell
@@ -23,6 +24,6 @@ You will learn how to launch into the interactive shell and query the CAS engine
 Java environment that is used by CAS, specially if you need to use specific signing/encryption algorithms and methods. 
 Be sure to pick the right version of the JCE for your Java version. Java versions can be detected via the <code>java -version</code> command.</p></div>
 
-Note that the [WAR Overlay deployment strategy](Maven-Overlay-Installation.html) should already be equipped with this 
+Note that the [WAR Overlay deployment strategy](WAR-Overlay-Installation.html) should already be equipped with this 
 functionality. You should not have to do anything special and extra to interact with the shell. See the relevant 
 overlay documentation for more info on how to invoke and work with the shell.

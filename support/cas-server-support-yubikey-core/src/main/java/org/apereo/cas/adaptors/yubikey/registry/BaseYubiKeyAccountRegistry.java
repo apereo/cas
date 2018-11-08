@@ -1,16 +1,19 @@
 package org.apereo.cas.adaptors.yubikey.registry;
 
+import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
+import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
-import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
+import lombok.val;
 
 import javax.persistence.NoResultException;
 import java.io.Serializable;
+import java.util.NoSuchElementException;
 
 /**
  * This is {@link BaseYubiKeyAccountRegistry}.
@@ -44,12 +47,9 @@ public abstract class BaseYubiKeyAccountRegistry implements YubiKeyAccountRegist
     @Override
     public boolean isYubiKeyRegisteredFor(final String uid, final String yubikeyPublicId) {
         try {
-            final var account = getAccount(uid);
-            if (account.isPresent()) {
-                return account.get().getPublicId().equals(yubikeyPublicId);
-            }
-            return false;
-        } catch (final NoResultException e) {
+            val account = getAccount(uid);
+            return account.map(yubiKeyAccount -> yubiKeyAccount.getPublicId().equals(yubikeyPublicId)).get();
+        } catch (final NoSuchElementException | NoResultException e) {
             LOGGER.debug("No registration record could be found for id [{}] and public id [{}]", uid, yubikeyPublicId);
         } catch (final Exception e) {
             LOGGER.debug(e.getMessage(), e);

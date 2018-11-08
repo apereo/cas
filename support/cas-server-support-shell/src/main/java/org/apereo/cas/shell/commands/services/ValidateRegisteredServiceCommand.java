@@ -1,9 +1,11 @@
 package org.apereo.cas.shell.commands.services;
 
+import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
+
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
@@ -31,7 +33,7 @@ public class ValidateRegisteredServiceCommand {
      * @param directory the directory
      */
     @ShellMethod(key = "validate-service", value = "Validate a given JSON/YAML service definition by path or directory")
-    public void validateService(
+    public static void validateService(
         @ShellOption(value = {"file"},
             help = "Path to the JSON/YAML service definition file") final String file,
         @ShellOption(value = {"directory"},
@@ -44,25 +46,25 @@ public class ValidateRegisteredServiceCommand {
         }
 
         if (StringUtils.isNotBlank(file)) {
-            final var filePath = new File(file);
+            val filePath = new File(file);
             validate(filePath);
             return;
         }
         if (StringUtils.isNotBlank(directory)) {
-            final var directoryPath = new File(directory);
+            val directoryPath = new File(directory);
             if (directoryPath.isDirectory()) {
-                FileUtils.listFiles(directoryPath, new String[]{"json", "yml"}, false).forEach(this::validate);
+                FileUtils.listFiles(directoryPath, new String[]{"json", "yml"}, false).forEach(ValidateRegisteredServiceCommand::validate);
             }
             return;
         }
 
     }
 
-    private void validate(final File filePath) {
+    private static void validate(final File filePath) {
         try {
-            final var validator = new DefaultRegisteredServiceJsonSerializer();
+            val validator = new DefaultRegisteredServiceJsonSerializer();
             if (filePath.isFile() && filePath.exists() && filePath.canRead() && filePath.length() > 0) {
-                final var svc = validator.from(filePath);
+                val svc = validator.from(filePath);
                 LOGGER.info("Service [{}] is valid at [{}].", svc.getName(), filePath.getCanonicalPath());
             } else {
                 LOGGER.warn("File [{}] is does not exist, is not readable or is empty", filePath.getCanonicalPath());

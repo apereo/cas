@@ -1,5 +1,9 @@
 package org.apereo.cas.hz;
 
+import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
+import org.apereo.cas.configuration.model.support.hazelcast.HazelcastClusterProperties;
+import org.apereo.cas.util.CollectionUtils;
+
 import com.hazelcast.config.Config;
 import com.hazelcast.config.DiscoveryConfig;
 import com.hazelcast.config.DiscoveryStrategyConfig;
@@ -12,10 +16,8 @@ import com.hazelcast.config.NetworkConfig;
 import com.hazelcast.config.PartitionGroupConfig;
 import com.hazelcast.config.TcpIpConfig;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
-import org.apereo.cas.configuration.model.support.hazelcast.HazelcastClusterProperties;
-import org.apereo.cas.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
@@ -30,7 +32,7 @@ import java.util.ServiceLoader;
  */
 @Slf4j
 public class HazelcastConfigurationFactory {
-    
+
     /**
      * Build map config map config.
      *
@@ -40,12 +42,12 @@ public class HazelcastConfigurationFactory {
      * @return the map config
      */
     public MapConfig buildMapConfig(final BaseHazelcastProperties hz, final String mapName, final long timeoutSeconds) {
-        final var cluster = hz.getCluster();
-        final var evictionPolicy = EvictionPolicy.valueOf(cluster.getEvictionPolicy());
+        val cluster = hz.getCluster();
+        val evictionPolicy = EvictionPolicy.valueOf(cluster.getEvictionPolicy());
 
         LOGGER.debug("Creating Hazelcast map configuration for [{}] with idle timeoutSeconds [{}] second(s)", mapName, timeoutSeconds);
 
-        final var maxSizeConfig = new MaxSizeConfig()
+        val maxSizeConfig = new MaxSizeConfig()
             .setMaxSizePolicy(MaxSizeConfig.MaxSizePolicy.valueOf(cluster.getMaxSizePolicy()))
             .setSize(cluster.getMaxHeapSizePercentage());
 
@@ -65,8 +67,8 @@ public class HazelcastConfigurationFactory {
      * @param mapConfigs the map configs
      * @return the config
      */
-    public Config build(final BaseHazelcastProperties hz, final Map<String, MapConfig> mapConfigs) {
-        final var cfg = build(hz);
+    public static Config build(final BaseHazelcastProperties hz, final Map<String, MapConfig> mapConfigs) {
+        val cfg = build(hz);
         cfg.setMapConfigs(mapConfigs);
         return finalizeConfig(cfg, hz);
     }
@@ -78,8 +80,8 @@ public class HazelcastConfigurationFactory {
      * @param mapConfig the map config
      * @return the config
      */
-    public Config build(final BaseHazelcastProperties hz, final MapConfig mapConfig) {
-        final Map<String, MapConfig> cfg = new HashMap<>();
+    public static Config build(final BaseHazelcastProperties hz, final MapConfig mapConfig) {
+        val cfg = new HashMap<String, MapConfig>();
         cfg.put(mapConfig.getName(), mapConfig);
         return build(hz, cfg);
     }
@@ -90,69 +92,72 @@ public class HazelcastConfigurationFactory {
      * @param hz the hz
      * @return the config
      */
-    public Config build(final BaseHazelcastProperties hz) {
-        final var cluster = hz.getCluster();
-        final var config = new Config();
+    public static Config build(final BaseHazelcastProperties hz) {
+        val cluster = hz.getCluster();
+        val config = new Config();
 
-        final var joinConfig = cluster.getDiscovery().isEnabled()
-            ? createDiscoveryJoinConfig(config, hz.getCluster()) : createDefaultJoinConfig(config, hz.getCluster());
-
-        LOGGER.debug("Created Hazelcast join configuration [{}]", joinConfig);
-
-        final var networkConfig = new NetworkConfig()
+        val networkConfig = new NetworkConfig()
             .setPort(cluster.getPort())
-            .setPortAutoIncrement(cluster.isPortAutoIncrement())
-            .setJoin(joinConfig);
+            .setPortAutoIncrement(cluster.isPortAutoIncrement());
+
+        val joinConfig = cluster.getDiscovery().isEnabled()
+            ? createDiscoveryJoinConfig(config, hz.getCluster(), networkConfig)
+            : createDefaultJoinConfig(config, hz.getCluster());
+        LOGGER.debug("Created Hazelcast join configuration [{}]", joinConfig);
+        networkConfig.setJoin(joinConfig);
 
         LOGGER.debug("Created Hazelcast network configuration [{}]", networkConfig);
         config.setNetworkConfig(networkConfig);
 
         return config.setInstanceName(cluster.getInstanceName())
-            .setProperty(BaseHazelcastProperties.HAZELCAST_DISCOVERY_ENABLED, BooleanUtils.toStringTrueFalse(cluster.getDiscovery().isEnabled()))
+            .setProperty(BaseHazelcastProperties.HAZELCAST_DISCOVERY_ENABLED_PROP, BooleanUtils.toStringTrueFalse(cluster.getDiscovery().isEnabled()))
             .setProperty(BaseHazelcastProperties.IPV4_STACK_PROP, String.valueOf(cluster.isIpv4Enabled()))
             .setProperty(BaseHazelcastProperties.LOGGING_TYPE_PROP, cluster.getLoggingType())
             .setProperty(BaseHazelcastProperties.MAX_HEARTBEAT_SECONDS_PROP, String.valueOf(cluster.getMaxNoHeartbeatSeconds()));
     }
 
-    private JoinConfig createDiscoveryJoinConfig(final Config config, final HazelcastClusterProperties cluster) {
-        final var joinConfig = new JoinConfig();
+    private static JoinConfig createDiscoveryJoinConfig(final Config config, final HazelcastClusterProperties cluster, final NetworkConfig networkConfig) {
+        val joinConfig = new JoinConfig();
 
         LOGGER.debug("Disabling multicast and TCP/IP configuration for discovery");
         joinConfig.getMulticastConfig().setEnabled(false);
         joinConfig.getTcpIpConfig().setEnabled(false);
 
-        final var discoveryConfig = new DiscoveryConfig();
-        final var strategyConfig = locateDiscoveryStrategyConfig(cluster);
+        val discoveryConfig = new DiscoveryConfig();
+        val strategyConfig = locateDiscoveryStrategyConfig(cluster, joinConfig, config, networkConfig);
         LOGGER.debug("Creating discovery strategy configuration as [{}]", strategyConfig);
         discoveryConfig.setDiscoveryStrategyConfigs(CollectionUtils.wrap(strategyConfig));
         joinConfig.setDiscoveryConfig(discoveryConfig);
         return joinConfig;
     }
 
-    private DiscoveryStrategyConfig locateDiscoveryStrategyConfig(final HazelcastClusterProperties cluster) {
-        final var serviceLoader = ServiceLoader.load(HazelcastDiscoveryStrategy.class);
-        final var it = serviceLoader.iterator();
+    private static DiscoveryStrategyConfig locateDiscoveryStrategyConfig(final HazelcastClusterProperties cluster,
+                                                                         final JoinConfig joinConfig,
+                                                                         final Config config,
+                                                                         final NetworkConfig networkConfig) {
+        val serviceLoader = ServiceLoader.load(HazelcastDiscoveryStrategy.class);
+        val it = serviceLoader.iterator();
         if (it.hasNext()) {
-            final var strategy = it.next();
-            return strategy.get(cluster);
+            val strategy = it.next();
+            return strategy.get(cluster, joinConfig, config, networkConfig);
         }
         throw new IllegalArgumentException("Could not create discovery strategy configuration. No discovery provider is defined in the settings");
     }
 
-    private JoinConfig createDefaultJoinConfig(final Config config, final HazelcastClusterProperties cluster) {
-        final var tcpIpConfig = new TcpIpConfig()
+    private static JoinConfig createDefaultJoinConfig(final Config config, final HazelcastClusterProperties cluster) {
+        val tcpIpConfig = new TcpIpConfig()
             .setEnabled(cluster.isTcpipEnabled())
             .setMembers(cluster.getMembers())
             .setConnectionTimeoutSeconds(cluster.getTimeout());
         LOGGER.debug("Created Hazelcast TCP/IP configuration [{}] for members [{}]", tcpIpConfig, cluster.getMembers());
 
-        final var multicastConfig = new MulticastConfig().setEnabled(cluster.isMulticastEnabled());
+        val multicastConfig = new MulticastConfig().setEnabled(cluster.isMulticastEnabled());
         if (cluster.isMulticastEnabled()) {
             LOGGER.debug("Created Hazelcast Multicast configuration [{}]", multicastConfig);
             multicastConfig.setMulticastGroup(cluster.getMulticastGroup());
             multicastConfig.setMulticastPort(cluster.getMulticastPort());
 
-            final var trustedInterfaces = StringUtils.commaDelimitedListToSet(cluster.getMulticastTrustedInterfaces());
+            val trustedInterfaces = StringUtils.commaDelimitedListToSet(cluster.getMulticastTrustedInterfaces());
             if (!trustedInterfaces.isEmpty()) {
                 multicastConfig.setTrustedInterfaces(trustedInterfaces);
             }
@@ -167,10 +172,10 @@ public class HazelcastConfigurationFactory {
             .setTcpIpConfig(tcpIpConfig);
     }
 
-    private Config finalizeConfig(final Config config, final BaseHazelcastProperties hz) {
+    private static Config finalizeConfig(final Config config, final BaseHazelcastProperties hz) {
         if (StringUtils.hasText(hz.getCluster().getPartitionMemberGroupType())) {
-            final var partitionGroupConfig = config.getPartitionGroupConfig();
-            final var type = PartitionGroupConfig.MemberGroupType.valueOf(
+            val partitionGroupConfig = config.getPartitionGroupConfig();
+            val type = PartitionGroupConfig.MemberGroupType.valueOf(
                 hz.getCluster().getPartitionMemberGroupType().toUpperCase());
             LOGGER.debug("Using partition member group type [{}]", type);
             partitionGroupConfig.setEnabled(true).setGroupType(type);

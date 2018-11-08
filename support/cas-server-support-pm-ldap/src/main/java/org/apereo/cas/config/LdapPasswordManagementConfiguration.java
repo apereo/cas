@@ -1,10 +1,11 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.pm.LdapPasswordManagementService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.pm.LdapPasswordManagementService;
 import org.apereo.cas.pm.PasswordManagementService;
+
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -20,20 +21,19 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("ldapPasswordManagementConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class LdapPasswordManagementConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("passwordManagementCipherExecutor")
-    private CipherExecutor passwordManagementCipherExecutor;
+    private ObjectProvider<CipherExecutor> passwordManagementCipherExecutor;
 
     @RefreshScope
     @Bean
     public PasswordManagementService passwordChangeService() {
-        return new LdapPasswordManagementService(passwordManagementCipherExecutor,
-                casProperties.getServer().getPrefix(),
-                casProperties.getAuthn().getPm());
+        return new LdapPasswordManagementService(passwordManagementCipherExecutor.getIfAvailable(),
+            casProperties.getServer().getPrefix(),
+            casProperties.getAuthn().getPm());
     }
 }

@@ -1,11 +1,13 @@
 package org.apereo.cas.ticket.registry;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.hibernate.LockOptions;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +20,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -46,6 +49,14 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         this.ticketCatalog = ticketCatalog;
     }
 
+    private static String getTicketEntityName(final TicketDefinition tk) {
+        return tk.getImplementationClass().getSimpleName();
+    }
+
+    private static long countToLong(final Object result) {
+        return ((Number) result).longValue();
+    }
+
     @Override
     public Ticket updateTicket(final Ticket ticket) {
         this.entityManager.merge(ticket);
@@ -69,19 +80,18 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Ticket getTicket(final String ticketId) {
+    public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         try {
-            final var tkt = ticketCatalog.find(ticketId);
-            final var sql = String.format("select t from %s t where t.id = :id", getTicketEntityName(tkt));
-            final TypedQuery<? extends Ticket> query = entityManager.createQuery(sql, tkt.getImplementationClass());
+            val tkt = ticketCatalog.find(ticketId);
+            val sql = String.format("select t from %s t where t.id = :id", getTicketEntityName(tkt));
+            val query = entityManager.createQuery(sql, tkt.getImplementationClass());
             query.setParameter("id", ticketId);
             query.setLockMode(this.lockType);
-            final Ticket result = query.getSingleResult();
-            if (result != null && result.isExpired()) {
-                LOGGER.debug("Ticket [{}] has expired and will be removed from the database", result.getId());
-                return null;
+            val result = query.getSingleResult();
+            if (predicate.test(result)) {
+                return result;
             }
-            return result;
+            return null;
         } catch (final Exception e) {
             LOGGER.error("Error getting ticket [{}] from registry.", ticketId, e);
         }
@@ -89,12 +99,12 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Collection<Ticket> getTickets() {
+    public Collection<? extends Ticket> getTickets() {
         return this.ticketCatalog.findAll()
             .stream()
             .map(t -> {
-                final var sql = String.format("select t from %s t", getTicketEntityName(t));
-                final TypedQuery<? extends Ticket> query = entityManager.createQuery(sql, t.getImplementationClass());
+                val sql = String.format("select t from %s t", getTicketEntityName(t));
+                val query = entityManager.createQuery(sql, t.getImplementationClass());
                 query.setLockMode(this.lockType);
                 return query;
             })
@@ -109,16 +119,16 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
      * This method purposefully doesn't lock any rows, because the stream traversing can take an indeterminate
      * amount of time, and logging in to an application with an existing TGT will update the TGT row in the database.
      *
-     * @return {@inheritDoc}
+     * @return tickets
      */
     @Override
     @SuppressWarnings("unchecked")
-    public Stream<Ticket> getTicketsStream() {
+    public Stream<? extends Ticket> getTicketsStream() {
         return this.ticketCatalog.findAll()
             .stream()
             .map(t -> {
-                final var sql = String.format("select t from %s t", getTicketEntityName(t));
-                final var query = (org.hibernate.query.Query<Ticket>) entityManager.createQuery(sql, t.getImplementationClass());
+                val sql = String.format("select t from %s t", getTicketEntityName(t));
+                val query = (org.hibernate.query.Query<Ticket>) entityManager.createQuery(sql, t.getImplementationClass());
                 query.setFetchSize(STREAM_BATCH_SIZE);
                 query.setLockOptions(LockOptions.NONE);
                 return query;
@@ -128,32 +138,32 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long sessionCount() {
-        final var md = this.ticketCatalog.find(TicketGrantingTicket.PREFIX);
-        final var sql = String.format("select count(t) from %s t", getTicketEntityName(md));
-        final var query = this.entityManager.createQuery(sql);
+        val md = this.ticketCatalog.find(TicketGrantingTicket.PREFIX);
+        val sql = String.format("select count(t) from %s t", getTicketEntityName(md));
+        val query = this.entityManager.createQuery(sql);
         return countToLong(query.getSingleResult());
     }
 
     @Override
     public long serviceTicketCount() {
-        final var md = this.ticketCatalog.find(ServiceTicket.PREFIX);
-        final var sql = String.format("select count(t) from %s t", getTicketEntityName(md));
-        final var query = this.entityManager.createQuery(sql);
+        val md = this.ticketCatalog.find(ServiceTicket.PREFIX);
+        val sql = String.format("select count(t) from %s t", getTicketEntityName(md));
+        val query = this.entityManager.createQuery(sql);
         return countToLong(query.getSingleResult());
     }
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
         var totalCount = 0;
-        final var md = this.ticketCatalog.find(ticketId);
+        val md = this.ticketCatalog.find(ticketId);
 
         if (md.getProperties().isCascade()) {
             totalCount = deleteTicketGrantingTickets(ticketId);
         } else {
-            final var ticketEntityName = getTicketEntityName(md);
+            val ticketEntityName = getTicketEntityName(md);
             try {
-                final var sql = String.format("delete from %s o where o.id = :id", ticketEntityName);
-                final var query = entityManager.createQuery(sql);
+                val sql = String.format("delete from %s o where o.id = :id", ticketEntityName);
+                val query = entityManager.createQuery(sql);
                 query.setParameter("id", ticketId);
                 totalCount = query.executeUpdate();
             } catch (final EntityNotFoundException e) {
@@ -165,10 +175,6 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         return totalCount != 0;
     }
 
-    private static String getTicketEntityName(final TicketDefinition tk) {
-        return tk.getImplementationClass().getSimpleName();
-    }
-
     /**
      * Delete ticket granting tickets int.
      *
@@ -178,28 +184,24 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     private int deleteTicketGrantingTickets(final String ticketId) {
         var totalCount = 0;
 
-        final var st = this.ticketCatalog.find(ServiceTicket.PREFIX);
+        val st = this.ticketCatalog.find(ServiceTicket.PREFIX);
 
-        final var sql1 = String.format("delete from %s s where s.ticketGrantingTicket.id = :id", getTicketEntityName(st));
+        val sql1 = String.format("delete from %s s where s.ticketGrantingTicket.id = :id", getTicketEntityName(st));
         var query = entityManager.createQuery(sql1);
         query.setParameter("id", ticketId);
         totalCount += query.executeUpdate();
 
-        final var tgt = this.ticketCatalog.find(TicketGrantingTicket.PREFIX);
-        final var sql2 = String.format("delete from %s s where s.ticketGrantingTicket.id = :id", getTicketEntityName(tgt));
+        val tgt = this.ticketCatalog.find(TicketGrantingTicket.PREFIX);
+        val sql2 = String.format("delete from %s s where s.ticketGrantingTicket.id = :id", getTicketEntityName(tgt));
         query = entityManager.createQuery(sql2);
         query.setParameter("id", ticketId);
         totalCount += query.executeUpdate();
 
-        final var sql3 = String.format("delete from %s t where t.id = :id", getTicketEntityName(tgt));
+        val sql3 = String.format("delete from %s t where t.id = :id", getTicketEntityName(tgt));
         query = entityManager.createQuery(sql3);
         query.setParameter("id", ticketId);
         totalCount += query.executeUpdate();
 
         return totalCount;
-    }
-
-    private static long countToLong(final Object result) {
-        return ((Number) result).longValue();
     }
 }

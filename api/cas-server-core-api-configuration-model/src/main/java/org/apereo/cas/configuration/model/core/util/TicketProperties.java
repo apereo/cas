@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.util;
 
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.model.core.ticket.ProxyGrantingTicketProperties;
 import org.apereo.cas.configuration.model.core.ticket.ProxyTicketProperties;
 import org.apereo.cas.configuration.model.core.ticket.ServiceTicketProperties;
@@ -7,10 +8,12 @@ import org.apereo.cas.configuration.model.core.ticket.TicketGrantingTicketProper
 import org.apereo.cas.configuration.model.core.ticket.TransientSessionTicketProperties;
 import org.apereo.cas.configuration.model.core.ticket.registry.TicketRegistryProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.io.Serializable;
 
 /**
  * Configuration properties class for {@code ticket}.
@@ -68,6 +71,8 @@ public class TicketProperties implements Serializable {
     private TicketGrantingTicketProperties tgt = new TicketGrantingTicketProperties();
 
     public TicketProperties() {
-        this.crypto.setEnabled(false);
+        crypto.setEnabled(false);
+        crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
+        crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
     }
 }

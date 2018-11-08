@@ -1,6 +1,7 @@
 package org.apereo.cas.services.support;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.util.List;
 import java.util.Set;
@@ -21,18 +22,17 @@ public class RegisteredServiceReverseMappedRegexAttributeFilter extends Register
     private static final long serialVersionUID = 852145306984610128L;
 
 
-
     @Override
     protected List<Object> filterAttributeValuesByPattern(final Set<Object> attributeValues, final Pattern pattern) {
         return attributeValues.stream()
-                .filter(v -> {
-                    LOGGER.debug("Matching attribute value [{}] against pattern [{}]", v, pattern.pattern());
-                    final var matcher = pattern.matcher(v.toString());
-                    if (isCompleteMatch()) {
-                        return !matcher.matches();
-                    }
-                    return !matcher.find();
-                })
-                .collect(Collectors.toList());
+            .filter(v -> {
+                LOGGER.debug("Matching attribute value [{}] against pattern [{}]", v, pattern.pattern());
+                val matcher = pattern.matcher(v.toString());
+                if (isCompleteMatch()) {
+                    return !matcher.matches();
+                }
+                return !matcher.find();
+            })
+            .collect(Collectors.toList());
     }
 }

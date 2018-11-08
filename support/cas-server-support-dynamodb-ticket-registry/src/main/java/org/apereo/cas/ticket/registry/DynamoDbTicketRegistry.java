@@ -1,11 +1,14 @@
 package org.apereo.cas.ticket.registry;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.ticket.Ticket;
 
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Collection;
+import java.util.function.Predicate;
 
 /**
  * This is {@link DynamoDbTicketRegistry}.
@@ -27,7 +30,7 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
     public void addTicket(final Ticket ticket) {
         try {
             LOGGER.debug("Adding ticket [{}] with ttl [{}s]", ticket.getId(), ticket.getExpirationPolicy().getTimeToLive());
-            final var encTicket = encodeTicket(ticket);
+            val encTicket = encodeTicket(ticket);
             this.dbTableService.put(ticket, encTicket);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -35,16 +38,15 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Ticket getTicket(final String ticketId) {
-        final var encTicketId = encodeTicketId(ticketId);
-        if (StringUtils.isNotBlank(encTicketId)) {
-            LOGGER.debug("Retrieving ticket [{}] ", ticketId);
-            final var ticket = this.dbTableService.get(ticketId, encTicketId);
-            final var decodedTicket = decodeTicket(ticket);
-            if (decodedTicket == null || decodedTicket.isExpired()) {
-                LOGGER.warn("The expiration policy for ticket id [{}] has expired the ticket", ticketId);
-                return null;
-            }
+    public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
+        val encTicketId = encodeTicketId(ticketId);
+        if (StringUtils.isBlank(encTicketId)) {
+            return null;
+        }
+        LOGGER.debug("Retrieving ticket [{}]", ticketId);
+        val ticket = this.dbTableService.get(ticketId, encTicketId);
+        val decodedTicket = decodeTicket(ticket);
+        if (predicate.test(decodedTicket)) {
             return decodedTicket;
         }
         return null;
@@ -56,7 +58,7 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Collection<Ticket> getTickets() {
+    public Collection<? extends Ticket> getTickets() {
         return decodeTickets(this.dbTableService.getAll());
     }
 
@@ -68,7 +70,7 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public boolean deleteSingleTicket(final String ticketIdToDelete) {
-        final var ticketId = encodeTicketId(ticketIdToDelete);
+        val ticketId = encodeTicketId(ticketIdToDelete);
         return this.dbTableService.delete(ticketIdToDelete, ticketId);
     }
 }

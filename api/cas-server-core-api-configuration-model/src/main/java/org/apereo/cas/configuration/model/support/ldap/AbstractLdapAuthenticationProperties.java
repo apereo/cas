@@ -1,10 +1,12 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
 import org.apereo.cas.configuration.support.RequiredProperty;
-import java.util.ArrayList;
-import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is {@link AbstractLdapAuthenticationProperties}.
@@ -12,33 +14,11 @@ import lombok.Setter;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
 @Getter
 @Setter
 public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapSearchProperties {
 
     private static final long serialVersionUID = 3849857270054289852L;
-
-    /**
-     * The enum Authentication types.
-     */
-    public enum AuthenticationTypes {
-
-        /**
-         * Active Directory.
-         */
-        AD, /**
-         * Authenticated Search.
-         */
-        AUTHENTICATED, /**
-         * Direct Bind.
-         */
-        DIRECT, /**
-         * Anonymous Search.
-         */
-        ANONYMOUS
-    }
-
     /**
      * The authentication type.
      * <ul>
@@ -54,8 +34,7 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapS
      * </ul>
      */
     @RequiredProperty
-    private AuthenticationTypes type;
-
+    private AuthenticationTypes type = AuthenticationTypes.AUTHENTICATED;
     /**
      * If principalAttributePassword is empty then a user simple bind is done to validate credentials
      * otherwise the given attribute is compared with the given principalAttributePassword
@@ -68,33 +47,52 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapS
      * </p>
      */
     private String principalAttributePassword;
-
     /**
      * Specify the dn format accepted by the AD authenticator, etc.
      * Example format might be {@code uid=%s,ou=people,dc=example,dc=org}.
      */
     private String dnFormat;
-
     /**
      * Whether specific search entry resolvers need to be set
      * on the authenticator, or the default should be used.
      */
     private boolean enhanceWithEntryResolver = true;
-
     /**
      * Define how aliases are de-referenced.
      * Accepted values are:
      * <ul>
-     *     <li>{@code NEVER}</li>
-     *     <li>{@code SEARCHING}: dereference when searching the entries beneath the starting point but not when searching for the starting entry.</li>
-     *     <li>{@code FINDING}: dereference when searching for the starting entry but not when searching the entries beneath the starting point.</li>
-     *     <li>{@code ALWAYS}: dereference when searching for the starting entry and when searching the entries beneath the starting point.</li>
+     * <li>{@code NEVER}</li>
+     * <li>{@code SEARCHING}: dereference when searching the entries beneath the starting point but not when searching for the starting entry.</li>
+     * <li>{@code FINDING}: dereference when searching for the starting entry but not when searching the entries beneath the starting point.</li>
+     * <li>{@code ALWAYS}: dereference when searching for the starting entry and when searching the entries beneath the starting point.</li>
      * </ul>
      */
     private String derefAliases;
-
     /**
      * Search entry to define on the authenticator.
      */
     private List<LdapSearchEntryHandlersProperties> searchEntryHandlers = new ArrayList<>();
+
+    /**
+     * The enum Authentication types.
+     */
+    public enum AuthenticationTypes {
+
+        /**
+         * Active Directory.
+         */
+        AD,
+        /**
+         * Authenticated Search.
+         */
+        AUTHENTICATED,
+        /**
+         * Direct Bind.
+         */
+        DIRECT,
+        /**
+         * Anonymous Search.
+         */
+        ANONYMOUS
+    }
 }

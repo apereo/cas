@@ -1,14 +1,5 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Ehcache;
-import net.sf.ehcache.bootstrap.BootstrapCacheLoader;
-import net.sf.ehcache.config.PersistenceConfiguration;
-import net.sf.ehcache.distribution.CacheReplicator;
-import net.sf.ehcache.distribution.RMIAsynchronousCacheReplicator;
-import net.sf.ehcache.distribution.RMIBootstrapCacheLoader;
-import net.sf.ehcache.distribution.RMISynchronousCacheReplicator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.TicketCatalog;
@@ -18,10 +9,22 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.ResourceUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Ehcache;
+import net.sf.ehcache.bootstrap.BootstrapCacheLoader;
+import net.sf.ehcache.config.PersistenceConfiguration;
+import net.sf.ehcache.distribution.CacheReplicator;
+import net.sf.ehcache.distribution.RMIAsynchronousCacheReplicator;
+import net.sf.ehcache.distribution.RMIBootstrapCacheLoader;
+import net.sf.ehcache.distribution.RMISynchronousCacheReplicator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.cache.ehcache.EhCacheFactoryBean;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -38,8 +41,6 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class EhcacheTicketRegistryConfiguration {
-
-
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -47,7 +48,7 @@ public class EhcacheTicketRegistryConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "ticketRMISynchronousCacheReplicator")
     public CacheReplicator ticketRMISynchronousCacheReplicator() {
-        final var cache = casProperties.getTicket().getRegistry().getEhcache();
+        val cache = casProperties.getTicket().getRegistry().getEhcache();
         return new RMISynchronousCacheReplicator(
             cache.isReplicatePuts(),
             cache.isReplicatePutsViaCopy(),
@@ -60,7 +61,7 @@ public class EhcacheTicketRegistryConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "ticketRMIAsynchronousCacheReplicator")
     public CacheReplicator ticketRMIAsynchronousCacheReplicator() {
-        final var cache = casProperties.getTicket().getRegistry().getEhcache();
+        val cache = casProperties.getTicket().getRegistry().getEhcache();
         return new RMIAsynchronousCacheReplicator(
             cache.isReplicatePuts(),
             cache.isReplicatePutsViaCopy(),
@@ -75,16 +76,16 @@ public class EhcacheTicketRegistryConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "ticketCacheBootstrapCacheLoader")
     public BootstrapCacheLoader ticketCacheBootstrapCacheLoader() {
-        final var cache = casProperties.getTicket().getRegistry().getEhcache();
+        val cache = casProperties.getTicket().getRegistry().getEhcache();
         return new RMIBootstrapCacheLoader(cache.isLoaderAsync(), cache.getMaxChunkSize());
     }
 
     @Bean
     public EhCacheManagerFactoryBean ehcacheTicketCacheManager() {
-        final var cache = casProperties.getTicket().getRegistry().getEhcache();
-        final var bean = new EhCacheManagerFactoryBean();
+        val cache = casProperties.getTicket().getRegistry().getEhcache();
+        val bean = new EhCacheManagerFactoryBean();
 
-        final var configExists = ResourceUtils.doesResourceExist(cache.getConfigLocation());
+        val configExists = ResourceUtils.doesResourceExist(cache.getConfigLocation());
         if (configExists) {
             bean.setConfigLocation(cache.getConfigLocation());
         } else {
@@ -97,11 +98,11 @@ public class EhcacheTicketRegistryConfiguration {
     }
 
     private Ehcache buildCache(final TicketDefinition ticketDefinition) {
-        final var cache = casProperties.getTicket().getRegistry().getEhcache();
-        final var configExists = ResourceUtils.doesResourceExist(cache.getConfigLocation());
+        val cache = casProperties.getTicket().getRegistry().getEhcache();
+        val configExists = ResourceUtils.doesResourceExist(cache.getConfigLocation());
 
-        final var ehcacheProperties = casProperties.getTicket().getRegistry().getEhcache();
-        final var bean = new EhCacheFactoryBean();
+        val ehcacheProperties = casProperties.getTicket().getRegistry().getEhcache();
+        val bean = new EhCacheFactoryBean();
 
         bean.setCacheName(ticketDefinition.getProperties().getStorageName());
         LOGGER.debug("Constructing Ehcache cache [{}]", bean.getName());
@@ -114,7 +115,7 @@ public class EhcacheTicketRegistryConfiguration {
                 + "so no cache event listeners will be configured to bootstrap. "
                 + "The ticket registry will operate in standalone mode", ticketDefinition.getPrefix(), cache.getConfigLocation());
         }
-                              
+
         bean.setTimeToIdle((int) ticketDefinition.getProperties().getStorageTimeout());
         bean.setTimeToLive((int) ticketDefinition.getProperties().getStorageTimeout());
         bean.setDiskExpiryThreadIntervalSeconds(ehcacheProperties.getDiskExpiryThreadIntervalSeconds());
@@ -123,7 +124,7 @@ public class EhcacheTicketRegistryConfiguration {
         bean.setMaxEntriesInCache(ehcacheProperties.getMaxElementsInCache());
         bean.setMaxEntriesLocalDisk(ehcacheProperties.getMaxElementsOnDisk());
         bean.setMemoryStoreEvictionPolicy(ehcacheProperties.getMemoryStoreEvictionPolicy());
-        final var c = new PersistenceConfiguration();
+        val c = new PersistenceConfiguration();
         c.strategy(ehcacheProperties.getPersistence());
         c.setSynchronousWrites(ehcacheProperties.isSynchronousWrites());
         bean.persistence(c);
@@ -133,20 +134,19 @@ public class EhcacheTicketRegistryConfiguration {
     }
 
     @Autowired
-    @RefreshScope
     @Bean
     public TicketRegistry ticketRegistry(@Qualifier("ehcacheTicketCacheManager") final CacheManager manager,
                                          @Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
-        final var crypto = casProperties.getTicket().getRegistry().getEhcache().getCrypto();
+        val crypto = casProperties.getTicket().getRegistry().getEhcache().getCrypto();
 
-        final var definitions = ticketCatalog.findAll();
+        val definitions = ticketCatalog.findAll();
         definitions.forEach(t -> {
-            final var ehcache = buildCache(t);
+            val ehcache = buildCache(t);
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Created Ehcache cache [{}] for [{}]", ehcache.getName(), t);
 
 
-                final var config = ehcache.getCacheConfiguration();
+                val config = ehcache.getCacheConfiguration();
                 LOGGER.debug("TicketCache.maxEntriesLocalHeap=[{}]", config.getMaxEntriesLocalHeap());
                 LOGGER.debug("TicketCache.maxEntriesLocalDisk=[{}]", config.getMaxEntriesLocalDisk());
                 LOGGER.debug("TicketCache.maxEntriesInCache=[{}]", config.getMaxEntriesInCache());
@@ -163,5 +163,16 @@ public class EhcacheTicketRegistryConfiguration {
             LOGGER.debug("The following caches are available: [{}]", (Object[]) manager.getCacheNames());
         }
         return new EhCacheTicketRegistry(ticketCatalog, manager, CoreTicketUtils.newTicketRegistryCipherExecutor(crypto, "ehcache"));
+    }
+
+    /**
+     * This bean is used by the spring boot cache actuator which spring boot admin can use to clear caches.
+     * Actuator needs to be exposed in order for this bean to be used.
+     * @param ehcacheTicketCacheManager EhCache cache manager to be wrapped by spring cache manager.
+     * @return Spring EhCacheCacheManager that wraps EhCache CacheManager
+     */
+    @Bean
+    public EhCacheCacheManager ehCacheCacheManager(@Autowired final CacheManager ehcacheTicketCacheManager) {
+        return new EhCacheCacheManager(ehcacheTicketCacheManager);
     }
 }

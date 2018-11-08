@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.idp.metadata.locator;
 
+import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
+
 import org.springframework.core.io.Resource;
 
 /**
@@ -47,7 +49,7 @@ public interface SamlIdPMetadataLocator {
     /**
      * Initialize.
      */
-    void initialize();
+    default void initialize() {}
 
     /**
      * Metadata exists?
@@ -55,4 +57,11 @@ public interface SamlIdPMetadataLocator {
      * @return the boolean
      */
     boolean exists();
+
+    /**
+     * Fetch metadata document.
+     *
+     * @return the saml id p metadata document
+     */
+    SamlIdPMetadataDocument fetch();
 }

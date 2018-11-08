@@ -1,9 +1,9 @@
 package org.apereo.cas.ticket;
 
+import org.apereo.cas.authentication.ContextualAuthenticationPolicy;
+
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.ContextualAuthenticationPolicy;
 
 /**
  * Error condition arising at ticket creation or validation time when a ticketing operation relying on authentication
@@ -12,7 +12,6 @@ import org.apereo.cas.authentication.ContextualAuthenticationPolicy;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@Slf4j
 @Getter
 public class UnsatisfiedAuthenticationPolicyException extends AbstractTicketException {
 
@@ -36,7 +35,7 @@ public class UnsatisfiedAuthenticationPolicyException extends AbstractTicketExce
      *
      * @param policy Non-null unfulfilled security policy that caused exception.
      */
-    public UnsatisfiedAuthenticationPolicyException(@NonNull final ContextualAuthenticationPolicy<?> policy) {
+    public UnsatisfiedAuthenticationPolicyException(final @NonNull ContextualAuthenticationPolicy<?> policy) {
         super(policy.getCode().orElse(CODE));
         this.policy = policy;
     }

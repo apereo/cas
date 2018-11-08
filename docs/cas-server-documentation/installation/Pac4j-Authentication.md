@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - pac4j Authentication
+category: Authentication
 ---
 
 <p align="center">
@@ -10,7 +11,7 @@ title: CAS - pac4j Authentication
 ## Overview
 
 The [pac4j](https://github.com/pac4j/pac4j) project is a security engine with specific authentication mechanisms, 
-called authenticators, for MongoDB, LDAP, JWT, RDBMS...
+called authenticators, for MongoDB, LDAP, CouchDb, JWT, RDBMS...
 
 A pac4j authenticator (and profile creator) can be wrapped 
 in a CAS authentication handler and used for authentication.

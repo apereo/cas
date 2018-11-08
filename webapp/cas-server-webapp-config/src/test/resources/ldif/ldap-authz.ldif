@@ -1,0 +1,12 @@
+dn: cn=authzcas,ou=people,dc=example,dc=org
+objectClass: organizationalRole
+objectClass: inetOrgPerson
+objectClass: person
+objectClass: account
+cn: authzcas
+userPassword: 123456
+sn: authzcas
+uid: authzcas
+mail: authzcas@example.org
+roomNumber: 888
+businessCategory: cn=authzcas,ou=people,dc=example,dc=org

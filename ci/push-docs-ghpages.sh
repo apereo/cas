@@ -58,3 +58,4 @@ echo -e "Pushing upstream to origin/gh-pages...\n"
 git push -fq origin --all > /dev/null
 
 echo -e "Successfully published documentation.\n"
+exit 0

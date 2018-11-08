@@ -1,11 +1,12 @@
 package org.apereo.cas.services;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -17,11 +18,28 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RequiredArgsConstructor
 @Getter
-@Slf4j
+@RequiredArgsConstructor
 public class ChainingServiceRegistry extends AbstractServiceRegistry {
-    private final Collection<ServiceRegistry> serviceRegistries;
+    private final List<ServiceRegistry> serviceRegistries = new ArrayList<>();
+
+    /**
+     * Add service registry.
+     *
+     * @param registry the registry
+     */
+    public void addServiceRegistry(final ServiceRegistry registry) {
+        serviceRegistries.add(registry);
+    }
+
+    /**
+     * Add service registries.
+     *
+     * @param registries the registries
+     */
+    public void addServiceRegistries(final Collection<ServiceRegistry> registries) {
+        serviceRegistries.addAll(registries);
+    }
 
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
@@ -39,11 +57,11 @@ public class ChainingServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
-    public List<RegisteredService> load() {
+    public Collection<RegisteredService> load() {
         return serviceRegistries.stream()
             .map(ServiceRegistry::load)
             .filter(Objects::nonNull)
-            .flatMap(List::stream)
+            .flatMap(Collection::stream)
             .collect(Collectors.toList());
     }
 
@@ -85,9 +103,9 @@ public class ChainingServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public long size() {
-        final Predicate filter = Predicates.not(Predicates.instanceOf(ImmutableServiceRegistry.class));
+        val filter = Predicates.not(Predicates.instanceOf(ImmutableServiceRegistry.class));
         return serviceRegistries.stream()
-            .filter(filter::test)
+            .filter(filter)
             .map(ServiceRegistry::size)
             .mapToLong(Long::longValue)
             .sum();
@@ -95,10 +113,11 @@ public class ChainingServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public String getName() {
-        final Predicate filter = Predicates.not(Predicates.instanceOf(ImmutableServiceRegistry.class));
-        return serviceRegistries.stream()
-            .filter(filter::test)
+        val filter = Predicates.not(Predicates.instanceOf(ImmutableServiceRegistry.class));
+        val name = serviceRegistries.stream()
+            .filter(filter)
             .map(ServiceRegistry::getName)
             .collect(Collectors.joining(","));
+        return StringUtils.defaultIfBlank(name, getClass().getSimpleName());
     }
 }

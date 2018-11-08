@@ -1,11 +1,13 @@
 package org.apereo.cas.support.saml.web.idp.metadata;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +25,7 @@ import java.nio.charset.StandardCharsets;
  */
 @Controller("samlIdPMetadataController")
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SamlIdPMetadataController implements InitializingBean {
     private static final String CONTENT_TYPE = "text/xml;charset=UTF-8";
 
@@ -46,11 +48,11 @@ public class SamlIdPMetadataController implements InitializingBean {
     @GetMapping(path = SamlIdPConstants.ENDPOINT_IDP_METADATA)
     public void generateMetadataForIdp(final HttpServletResponse response) throws IOException {
         this.metadataAndCertificatesGenerationService.generate();
-        final var md = this.samlIdPMetadataLocator.getMetadata().getInputStream();
-        final var contents = IOUtils.toString(md, StandardCharsets.UTF_8);
+        val md = this.samlIdPMetadataLocator.getMetadata().getInputStream();
+        val contents = IOUtils.toString(md, StandardCharsets.UTF_8);
         response.setContentType(CONTENT_TYPE);
         response.setStatus(HttpServletResponse.SC_OK);
-        try (var writer = response.getWriter()) {
+        try (val writer = response.getWriter()) {
             LOGGER.debug("Producing metadata for the response");
             writer.write(contents);
             writer.flush();

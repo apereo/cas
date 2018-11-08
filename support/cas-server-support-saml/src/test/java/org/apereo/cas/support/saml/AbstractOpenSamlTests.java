@@ -1,7 +1,5 @@
 package org.apereo.cas.support.saml;
 
-import lombok.extern.slf4j.Slf4j;
-import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -28,8 +26,11 @@ import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
 import org.apereo.cas.web.config.CasValidationConfiguration;
+
+import net.shibboleth.utilities.java.support.xml.ParserPool;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.io.MarshallerFactory;
@@ -43,7 +44,8 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import static org.junit.Assert.*;
@@ -54,7 +56,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
     AbstractOpenSamlTests.SamlTestConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
@@ -84,8 +85,10 @@ import static org.junit.Assert.*;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreConfiguration.class
 })
-@Slf4j
 public abstract class AbstractOpenSamlTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
     protected static final String SAML_REQUEST = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         + "<samlp:AuthnRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" "
         + "ID=\"5545454455\" Version=\"2.0\" IssueInstant=\"Value\" "
@@ -93,13 +96,18 @@ public abstract class AbstractOpenSamlTests {
         + "ProviderName=\"https://localhost:8443/myRutgers\" "
         + "AssertionConsumerServiceURL=\"https://localhost:8443/myRutgers\"/>";
 
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
     @Autowired
     protected ApplicationContext applicationContext;
 
     @Autowired
+    @Qualifier("shibboleth.OpenSAMLConfig")
     protected OpenSamlConfigBean configBean;
 
     @Autowired
+    @Qualifier("shibboleth.ParserPool")
     protected ParserPool parserPool;
 
     @Autowired
@@ -113,27 +121,6 @@ public abstract class AbstractOpenSamlTests {
     @Autowired
     @Qualifier("shibboleth.UnmarshallerFactory")
     protected UnmarshallerFactory unmarshallerFactory;
-
-    @TestConfiguration
-    public static class SamlTestConfiguration implements InitializingBean {
-        @Autowired
-        protected ApplicationContext applicationContext;
-
-        @Bean
-        public SpringTemplateEngine springTemplateEngine() {
-            return new SpringTemplateEngine();
-        }
-
-        @Bean
-        public ThymeleafProperties thymeleafProperties() {
-            return new ThymeleafProperties();
-        }
-
-        @Override
-        public void afterPropertiesSet() {
-            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
-        }
-    }
 
     @Test
     public void autowireApplicationContext() {
@@ -154,10 +141,30 @@ public abstract class AbstractOpenSamlTests {
         assertNotNull(XMLObjectProviderRegistrySupport.getUnmarshallerFactory());
     }
 
-
     @Test
     public void ensureParserIsInitialized() throws Exception {
         assertNotNull(this.parserPool);
         assertNotNull(this.parserPool.getBuilder());
+    }
+
+    @TestConfiguration
+    public static class SamlTestConfiguration implements InitializingBean {
+        @Autowired
+        protected ApplicationContext applicationContext;
+
+        @Bean
+        public SpringTemplateEngine springTemplateEngine() {
+            return new SpringTemplateEngine();
+        }
+
+        @Bean
+        public ThymeleafProperties thymeleafProperties() {
+            return new ThymeleafProperties();
+        }
+
+        @Override
+        public void afterPropertiesSet() {
+            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
+        }
     }
 }

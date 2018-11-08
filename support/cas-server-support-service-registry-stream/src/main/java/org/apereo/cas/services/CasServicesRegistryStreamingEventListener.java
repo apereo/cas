@@ -1,11 +1,12 @@
 package org.apereo.cas.services;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.publisher.CasRegisteredServiceStreamPublisher;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 
 /**
@@ -15,7 +16,7 @@ import org.springframework.context.event.EventListener;
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CasServicesRegistryStreamingEventListener {
     private final CasRegisteredServiceStreamPublisher publisher;
 
@@ -26,7 +27,7 @@ public class CasServicesRegistryStreamingEventListener {
      */
     @EventListener
     public void handleCasRegisteredServiceLoadedEvent(final CasRegisteredServiceLoadedEvent event) {
-        LOGGER.debug("Received event [{}]", event);
+        LOGGER.trace("Received event [{}]", event);
         this.publisher.publish(event.getRegisteredService(), event);
     }
 
@@ -37,7 +38,7 @@ public class CasServicesRegistryStreamingEventListener {
      */
     @EventListener
     public void handleCasRegisteredServiceSavedEvent(final CasRegisteredServiceSavedEvent event) {
-        LOGGER.debug("Received event [{}]", event);
+        LOGGER.trace("Received event [{}]", event);
         this.publisher.publish(event.getRegisteredService(), event);
     }
 
@@ -48,7 +49,7 @@ public class CasServicesRegistryStreamingEventListener {
      */
     @EventListener
     public void handleCasRegisteredServiceDeletedEvent(final CasRegisteredServiceDeletedEvent event) {
-        LOGGER.debug("Received event [{}]", event);
+        LOGGER.trace("Received event [{}]", event);
         this.publisher.publish(event.getRegisteredService(), event);
     }
 }

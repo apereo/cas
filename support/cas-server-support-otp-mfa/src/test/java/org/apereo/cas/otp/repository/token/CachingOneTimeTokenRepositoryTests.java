@@ -1,6 +1,5 @@
 package org.apereo.cas.otp.repository.token;
 
-import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -21,16 +20,13 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.otp.config.OneTimeTokenAuthenticationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
-
-import static org.junit.Assert.*;
 
 /**
  * This is {@link CachingOneTimeTokenRepositoryTests}.
@@ -38,7 +34,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
     OneTimeTokenAuthenticationConfiguration.class,
     CasCoreTicketsConfiguration.class,
@@ -63,17 +58,11 @@ import static org.junit.Assert.*;
     RefreshAutoConfiguration.class,
     CasCoreWebConfiguration.class
 })
-public class CachingOneTimeTokenRepositoryTests {
+@Getter
+public class CachingOneTimeTokenRepositoryTests extends BaseOneTimeTokenRepositoryTests {
+
     @Autowired
     @Qualifier("oneTimeTokenAuthenticatorTokenRepository")
     private OneTimeTokenRepository repository;
 
-    @Test
-    public void verifyTokenSave() {
-        final var token = new OneTimeToken(1234, "casuser");
-        repository.store(token);
-        repository.store(token);
-        repository.clean();
-        assertTrue(repository.exists("casuser", 1234));
-    }
 }

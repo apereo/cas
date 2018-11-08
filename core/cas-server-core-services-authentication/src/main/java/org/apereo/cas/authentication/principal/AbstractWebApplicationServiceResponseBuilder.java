@@ -1,15 +1,18 @@
 package org.apereo.cas.authentication.principal;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.function.FunctionUtils;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Abstract response builder that provides wrappers for building
@@ -18,7 +21,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Slf4j
 @Getter
 @Setter
 @RequiredArgsConstructor
@@ -72,26 +74,22 @@ public abstract class AbstractWebApplicationServiceResponseBuilder implements Re
      * @return the response type
      */
     protected Response.ResponseType getWebApplicationServiceResponseType(final WebApplicationService finalService) {
-        final var request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
-        var method = request != null ? request.getParameter(CasProtocolConstants.PARAMETER_METHOD) : null;
-        if (StringUtils.isBlank(method)) {
-            final var registeredService = this.servicesManager.findServiceBy(finalService);
-            if (registeredService != null) {
-                method = registeredService.getResponseType();
-            }
-        }
+        val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
+        val methodRequest = request != null ? request.getParameter(CasProtocolConstants.PARAMETER_METHOD) : null;
+        final Function<String, String> func = FunctionUtils.doIf(StringUtils::isBlank,
+            t -> {
+                val registeredService = this.servicesManager.findServiceBy(finalService);
+                if (registeredService != null) {
+                    return registeredService.getResponseType();
+                }
+                return null;
+            },
+            f -> methodRequest);
 
+        val method = func.apply(methodRequest);
         if (StringUtils.isBlank(method)) {
             return Response.ResponseType.REDIRECT;
         }
-
-        if (StringUtils.equalsIgnoreCase(method, Response.ResponseType.HEADER.name())) {
-            return Response.ResponseType.HEADER;
-        }
-        if (StringUtils.equalsIgnoreCase(method, Response.ResponseType.POST.name())) {
-            return Response.ResponseType.POST;
-        }
-
-        return Response.ResponseType.REDIRECT;
+        return Response.ResponseType.valueOf(method.toUpperCase());
     }
 }

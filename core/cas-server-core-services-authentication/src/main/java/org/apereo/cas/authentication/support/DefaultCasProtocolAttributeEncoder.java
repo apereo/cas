@@ -1,15 +1,20 @@
 package org.apereo.cas.authentication.support;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.RegisteredServicePublicKeyCipherExecutor;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
+
+import com.google.common.base.Predicates;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -29,8 +34,6 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttributeEncoder {
-
-
     private final CipherExecutor<String, String> cacheCredentialCipherExecutor;
 
     /**
@@ -58,6 +61,52 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
         this.cacheCredentialCipherExecutor = cacheCredentialCipherExecutor;
     }
 
+    private static void sanitizeAndTransformAttributeNames(final Map<String, Object> attributes,
+                                                           final RegisteredService registeredService) {
+        LOGGER.trace("Sanitizing attribute names in preparation of the final validation response");
+
+        val attrs = attributes.keySet().stream()
+            .filter(getSanitizingAttributeNamePredicate())
+            .map(s -> Pair.of(EncodingUtils.hexEncode(s.getBytes(StandardCharsets.UTF_8)), attributes.get(s)))
+            .collect(Collectors.toSet());
+
+        if (!attrs.isEmpty()) {
+            LOGGER.warn("Found [{}] attribute(s) that need to be sanitized/encoded.", attrs);
+            attributes.keySet().removeIf(getSanitizingAttributeNamePredicate());
+            attrs.forEach(p -> {
+                val key = p.getKey();
+                LOGGER.trace("Sanitized attribute name to be [{}]", key);
+                attributes.put(key, transformAttributeValueIfNecessary(p.getValue()));
+            });
+        }
+    }
+
+    private static void sanitizeAndTransformAttributeValues(final Map<String, Object> attributes,
+                                                            final RegisteredService registeredService) {
+        LOGGER.trace("Sanitizing attribute values in preparation of the final validation response");
+        attributes.forEach((key, value) -> {
+            val values = CollectionUtils.toCollection(value);
+            values.stream()
+                .filter(v -> getBinaryAttributeValuePredicate().test(v))
+                .forEach(v -> attributes.put(key, transformAttributeValueIfNecessary(v)));
+        });
+    }
+
+    private static Object transformAttributeValueIfNecessary(final Object attributeValue) {
+        if (getBinaryAttributeValuePredicate().test(attributeValue)) {
+            return EncodingUtils.encodeBase64((byte[]) attributeValue);
+        }
+        return attributeValue;
+    }
+
+    private static Predicate<String> getSanitizingAttributeNamePredicate() {
+        return s -> s.contains(":") || s.contains("@");
+    }
+
+    private static Predicate<Object> getBinaryAttributeValuePredicate() {
+        return Predicates.instanceOf(byte[].class);
+    }
+
     /**
      * Encode and encrypt credential password using the public key
      * supplied by the service. The result is base64 encoded
@@ -75,8 +124,8 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
                                                       final RegisteredService registeredService) {
 
         if (cachedAttributesToEncode.containsKey(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL)) {
-            final var value = cachedAttributesToEncode.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
-            final var decodedValue = this.cacheCredentialCipherExecutor.decode(value, new Object[] {});
+            val value = cachedAttributesToEncode.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
+            val decodedValue = this.cacheCredentialCipherExecutor.decode(value, ArrayUtils.EMPTY_OBJECT_ARRAY);
             cachedAttributesToEncode.remove(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
             if (StringUtils.isNotBlank(decodedValue)) {
                 cachedAttributesToEncode.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL, decodedValue);
@@ -118,18 +167,18 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
                                                            final String cachedAttributeName,
                                                            final RegisteredServiceCipherExecutor cipher,
                                                            final RegisteredService registeredService) {
-        final var cachedAttribute = cachedAttributesToEncode.remove(cachedAttributeName);
+        val cachedAttribute = cachedAttributesToEncode.remove(cachedAttributeName);
         if (StringUtils.isNotBlank(cachedAttribute)) {
-            LOGGER.debug("Retrieved [{}] as a cached model attribute...", cachedAttributeName);
-            final var encodedValue = cipher.encode(cachedAttribute, Optional.of(registeredService));
+            LOGGER.trace("Retrieved [{}] as a cached model attribute...", cachedAttributeName);
+            val encodedValue = cipher.encode(cachedAttribute, Optional.of(registeredService));
             if (StringUtils.isNotBlank(encodedValue)) {
                 attributes.put(cachedAttributeName, encodedValue);
-                LOGGER.debug("Encrypted and encoded [{}] as an attribute to [{}].", cachedAttributeName, encodedValue);
+                LOGGER.trace("Encrypted and encoded [{}] as an attribute to [{}].", cachedAttributeName, encodedValue);
             } else {
                 LOGGER.warn("Attribute [{}] cannot be encoded and is removed from the collection of attributes", cachedAttributeName);
             }
         } else {
-            LOGGER.debug("[{}] is not available as a cached model attribute to encrypt...", cachedAttributeName);
+            LOGGER.trace("[{}] is not available as a cached model attribute to encrypt...", cachedAttributeName);
         }
     }
 
@@ -141,28 +190,6 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
         encodeAndEncryptCredentialPassword(attributes, cachedAttributesToEncode, cipher, registeredService);
         encodeAndEncryptProxyGrantingTicket(attributes, cachedAttributesToEncode, cipher, registeredService);
         sanitizeAndTransformAttributeNames(attributes, registeredService);
-    }
-
-    private static void sanitizeAndTransformAttributeNames(final Map<String, Object> attributes,
-                                                           final RegisteredService registeredService) {
-        LOGGER.debug("Sanitizing attribute names in preparation of the final validation response");
-
-        final var attrs = attributes.keySet().stream()
-            .filter(getSanitizingAttributeNamePredicate())
-            .map(s -> Pair.of(EncodingUtils.hexEncode(s.getBytes(StandardCharsets.UTF_8)), attributes.get(s)))
-            .collect(Collectors.toSet());
-        if (!attrs.isEmpty()) {
-            LOGGER.warn("Found [{}] attribute(s) that need to be sanitized/encoded.", attrs);
-            attributes.keySet().removeIf(getSanitizingAttributeNamePredicate());
-            attrs.forEach(p -> {
-                final var key = p.getKey();
-                LOGGER.debug("Sanitized attribute name to be [{}]", key);
-                attributes.put(key, p.getValue());
-            });
-        }
-    }
-
-    private static Predicate<String> getSanitizingAttributeNamePredicate() {
-        return s -> s.contains(":") || s.contains("@");
+        sanitizeAndTransformAttributeValues(attributes, registeredService);
     }
 }

@@ -1,7 +1,8 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
-import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
+import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +13,6 @@ import lombok.Setter;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-authy")
-
 @Getter
 @Setter
 public class AuthyMultifactorProperties extends BaseMultifactorProviderProperties {

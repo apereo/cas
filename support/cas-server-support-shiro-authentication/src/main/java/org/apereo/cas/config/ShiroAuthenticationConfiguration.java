@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.generic.ShiroAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -12,6 +11,10 @@ import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -32,12 +35,12 @@ import org.springframework.context.annotation.Configuration;
 public class ShiroAuthenticationConfiguration {
 
     @Autowired
-    @Qualifier("personDirectoryPrincipalResolver")
-    private PrincipalResolver personDirectoryPrincipalResolver;
+    @Qualifier("defaultPrincipalResolver")
+    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -51,8 +54,8 @@ public class ShiroAuthenticationConfiguration {
     @RefreshScope
     @Bean
     public AuthenticationHandler shiroAuthenticationHandler() {
-        final var shiro = casProperties.getAuthn().getShiro();
-        final var h = new ShiroAuthenticationHandler(shiro.getName(), servicesManager, shiroPrincipalFactory(),
+        val shiro = casProperties.getAuthn().getShiro();
+        val h = new ShiroAuthenticationHandler(shiro.getName(), servicesManager.getIfAvailable(), shiroPrincipalFactory(),
             shiro.getRequiredRoles(), shiro.getRequiredPermissions());
 
         h.loadShiroConfiguration(shiro.getLocation());
@@ -66,10 +69,10 @@ public class ShiroAuthenticationConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer shiroAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
-            final var shiroConfigFile = casProperties.getAuthn().getShiro().getLocation();
+            val shiroConfigFile = casProperties.getAuthn().getShiro().getLocation();
             if (shiroConfigFile != null) {
                 LOGGER.debug("Injecting shiro authentication handler configured at [{}]", shiroConfigFile.getDescription());
-                plan.registerAuthenticationHandlerWithPrincipalResolver(shiroAuthenticationHandler(), personDirectoryPrincipalResolver);
+                plan.registerAuthenticationHandlerWithPrincipalResolver(shiroAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
             }
         };
     }

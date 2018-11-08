@@ -1,24 +1,21 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandlerResolver;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.AuthenticationTransactionManager;
-import org.apereo.cas.authentication.DefaultMultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
-import org.apereo.cas.authentication.RegisteredServiceAuthenticationHandlerResolver;
+import org.apereo.cas.authentication.handler.ByCredentialSourceAuthenticationHandlerResolver;
+import org.apereo.cas.authentication.handler.RegisteredServiceAuthenticationHandlerResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -31,7 +28,6 @@ import org.springframework.context.annotation.Lazy;
  */
 @Configuration("casCoreAuthenticationSupportConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CasCoreAuthenticationSupportConfiguration {
 
     @Autowired
@@ -49,20 +45,6 @@ public class CasCoreAuthenticationSupportConfiguration {
     @Qualifier("authenticationTransactionManager")
     private ObjectProvider<AuthenticationTransactionManager> authenticationTransactionManager;
 
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-    
-    @RefreshScope
-    @Bean
-    @ConditionalOnMissingBean(name = "authenticationContextValidator")
-    public AuthenticationContextValidator authenticationContextValidator() {
-        final var mfa = casProperties.getAuthn().getMfa();
-        final var contextAttribute = mfa.getAuthenticationContextAttribute();
-        final var failureMode = mfa.getGlobalFailureMode();
-        final var authnAttributeName = mfa.getTrusted().getAuthenticationContextAttribute();
-        return new DefaultMultifactorAuthenticationContextValidator(contextAttribute, failureMode, authnAttributeName, applicationContext);
-    }
-
     @Bean
     public AuthenticationSystemSupport defaultAuthenticationSystemSupport() {
         return new DefaultAuthenticationSystemSupport(authenticationTransactionManager.getIfAvailable(),
@@ -76,9 +58,21 @@ public class CasCoreAuthenticationSupportConfiguration {
         return new RegisteredServiceAuthenticationHandlerResolver(servicesManager.getIfAvailable());
     }
 
+    @Bean
+    @Lazy
+    @ConditionalOnMissingBean(name = "byCredentialSourceAuthenticationHandlerResolver")
+    public AuthenticationHandlerResolver byCredentialSourceAuthenticationHandlerResolver() {
+        return new ByCredentialSourceAuthenticationHandlerResolver();
+    }
+
     @ConditionalOnMissingBean(name = "authenticationHandlerResolversExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer authenticationHandlerResolversExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationHandlerResolver(registeredServiceAuthenticationHandlerResolver());
+        return plan -> {
+            if (casProperties.getAuthn().getPolicy().isSourceSelectionEnabled()) {
+                plan.registerAuthenticationHandlerResolver(byCredentialSourceAuthenticationHandlerResolver());
+            }
+            plan.registerAuthenticationHandlerResolver(registeredServiceAuthenticationHandlerResolver());
+        };
     }
 }

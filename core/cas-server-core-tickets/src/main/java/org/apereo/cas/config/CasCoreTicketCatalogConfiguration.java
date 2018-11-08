@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.BaseTicketCatalogConfigurer;
 import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
@@ -15,6 +14,8 @@ import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -31,7 +32,7 @@ import org.springframework.core.Ordered;
 public class CasCoreTicketCatalogConfiguration extends BaseTicketCatalogConfigurer {
     @Override
     public final void configureTicketCatalog(final TicketCatalog plan) {
-        LOGGER.debug("Registering core CAS protocol ticket definitions...");
+        LOGGER.trace("Registering core CAS protocol ticket definitions...");
 
         buildAndRegisterProxyTicketDefinition(plan,
             buildTicketDefinition(plan, ProxyTicket.PROXY_TICKET_PREFIX,

@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.yubikey.dao;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
@@ -25,8 +24,10 @@ import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
+
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -37,7 +38,8 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import static org.junit.Assert.*;
 
@@ -47,40 +49,44 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(
-        classes = {
-                YubiKeyConfiguration.class,
-                JpaYubiKeyConfiguration.class,
-                JpaYubiKeyAccountRegistryTests.JpaYubiKeyAccountRegistryTestConfiguration.class,
-                YubiKeyAuthenticationEventExecutionPlanConfiguration.class,
-                CasCoreServicesConfiguration.class,
-                CasWebflowContextConfiguration.class,
-                CasCoreHttpConfiguration.class,
-                AopAutoConfiguration.class,
-                CasThemesConfiguration.class,
-                CasCoreTicketsConfiguration.class,
-                CasCoreLogoutConfiguration.class,
-                CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-                CasCoreAuthenticationPrincipalConfiguration.class,
-                CasCoreWebflowConfiguration.class,
-                CasCoreConfiguration.class,
-                CasPersonDirectoryTestConfiguration.class,
-                CasCoreAuthenticationSupportConfiguration.class,
-                CasCookieConfiguration.class,
-                CasCoreUtilConfiguration.class,
-                CasCoreWebConfiguration.class,
-                CasCoreHttpConfiguration.class,
-                CasCoreTicketCatalogConfiguration.class,
-                CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-                CasWebApplicationServiceFactoryConfiguration.class,
-                RefreshAutoConfiguration.class
-        })
+    classes = {
+        YubiKeyConfiguration.class,
+        JpaYubiKeyConfiguration.class,
+        JpaYubiKeyAccountRegistryTests.JpaYubiKeyAccountRegistryTestConfiguration.class,
+        YubiKeyAuthenticationEventExecutionPlanConfiguration.class,
+        CasCoreServicesConfiguration.class,
+        CasWebflowContextConfiguration.class,
+        CasCoreHttpConfiguration.class,
+        AopAutoConfiguration.class,
+        CasThemesConfiguration.class,
+        CasCoreTicketsConfiguration.class,
+        CasCoreLogoutConfiguration.class,
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCoreWebflowConfiguration.class,
+        CasCoreConfiguration.class,
+        CasPersonDirectoryTestConfiguration.class,
+        CasCoreAuthenticationSupportConfiguration.class,
+        CasCookieConfiguration.class,
+        CasCoreUtilConfiguration.class,
+        CasCoreWebConfiguration.class,
+        CasCoreHttpConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
+        CasDefaultServiceTicketIdGeneratorsConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
+        RefreshAutoConfiguration.class
+    })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 @TestPropertySource(locations = {"classpath:/yubikey-jpa.properties"})
 public class JpaYubiKeyAccountRegistryTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
     private static final String BAD_TOKEN = "123456";
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     @Qualifier("yubiKeyAccountRegistry")

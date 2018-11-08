@@ -4,10 +4,14 @@ import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPri
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is {@link SpnegoProperties}.
@@ -16,12 +20,22 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-spnego-webflow")
-
 @Getter
 @Setter
 public class SpnegoProperties implements Serializable {
 
     private static final long serialVersionUID = 8084143496524446970L;
+
+    /**
+     * Spnego settings that apply as system properties.
+     */
+    private final SpnegoSystemProperties system = new SpnegoSystemProperties();
+
+    /**
+     * Individual authentication settings for spengo that are grouped
+     * and fed to the spnego authentication object to form a collection.
+     */
+    private final List<SpnegoAuthenticationProperties> properties = new ArrayList<>();
 
     /**
      * If specified, will create the principal by ths name on successful authentication.
@@ -54,81 +68,6 @@ public class SpnegoProperties implements Serializable {
      * LDAP settings for spnego to validate clients, etc.
      */
     private Ldap ldap = new Ldap();
-
-    /**
-     * The Jcifs password.
-     */
-    private String jcifsPassword;
-
-    /**
-     * The Jcifs service password.
-     */
-    private String jcifsServicePassword;
-
-    /**
-     * The Jcifs service principal.
-     */
-    private String jcifsServicePrincipal = "HTTP/cas.example.com@EXAMPLE.COM";
-
-    /**
-     * The Kerberos conf.
-     */
-    private String kerberosConf;
-
-    /**
-     * The Kerberos kdc.
-     */
-    private String kerberosKdc = "172.10.1.10";
-
-    /**
-     * The Kerberos realm.
-     */
-    private String kerberosRealm = "EXAMPLE.COM";
-
-    /**
-     * The Login conf.
-     */
-    private String loginConf;
-
-    /**
-     * Spnego JCIFS timeout.
-     */
-    private String timeout = "PT5M";
-
-    /**
-     * Jcifs Netbios cache policy.
-     */
-    private long cachePolicy = 600;
-
-    /**
-     * The Jcifs netbios wins.
-     */
-    private String jcifsNetbiosWins;
-
-    /**
-     * The Jcifs username.
-     */
-    private String jcifsUsername;
-
-    /**
-     * The Jcifs domain controller.
-     */
-    private String jcifsDomainController;
-
-    /**
-     * The Jcifs domain.
-     */
-    private String jcifsDomain;
-
-    /**
-     * The Kerberos debug.
-     */
-    private String kerberosDebug;
-
-    /**
-     * The Use subject creds only.
-     */
-    private boolean useSubjectCredsOnly;
 
     /**
      * When validating clients, specifies the DNS timeout used to look up an address.

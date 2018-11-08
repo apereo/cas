@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - OpenID Connect Authentication
+category: Authentication
 ---
 
 # OpenID Connect Authentication
@@ -35,8 +36,9 @@ The current implementation provides support for:
 
 | Field                                         | Description
 |-----------------------------------------------|-------------------------------------------------------
-| `/oidc/.well-known`, `/oidc/.well-known/openid-configuration` | The discovery endpoint is a static page that you/clients use to query for CAS OIDC configuration information and metadata. No session is required. CAS returns basic information about endpoints, supported scopes, etc used for OIDC authentication.
-| `/oidc/jwks`                              | A read-only endpoint that contains the server’s public signing keys, which clients may use to verify the digital signatures of access tokens and ID tokens issued by CAS.
+| `/oidc/.well-known` | The discovery endpoint used to query for CAS OIDC configuration information and metadata.
+| `/oidc/.well-known/openid-configuration`  | Same as above.
+| `/oidc/jwks`                              | Contains the server’s public signing keys, which clients may use to verify the digital signatures of access tokens and ID tokens issued by CAS.
 | `/oidc/authorize`                         | Authorization requests are handled here.
 | `/oidc/profile`                           | User profile requests are handled here.
 | `/oidc/introspect`                        | Query CAS to detect the status of a given access token via [introspection](https://tools.ietf.org/html/rfc7662).
@@ -78,6 +80,7 @@ The following fields are specifically available for OpenID connect services:
 | `jwks`                        | Optional. Resource path to the keystore location that holds the keys for this application.
 | `encryptIdToken`              | Optional. Whether ID tokens should be encrypted. Default is `false`.
 | `idTokenEncryptionAlg`        | Optional. The algorithm header value used to encrypt the id token.
+| `idTokenSigingAlg`            | Optional. The algorithm header value used to sign the id token.
 | `idTokenEncryptionEncoding`   | Optional. The algorithm method header value used to encrypt the id token.
 | `subjectType`                 | Optional value chosen from `public` or `pairwise`. Type to use when generating principal identifiers. Default is `public`.
 | `sectoreIdentifierUri`        | Optional. Host value of this URL is used as the sector identifier for the pairwise identifier calculation. If left undefined, the host value of the `serviceId` will be used instead.
@@ -103,7 +106,7 @@ CAS settings to allow CAS to operate in an `OPEN` mode.
 
 ## Settings
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#openid-connect).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#openid-connect).
 
 ## Server Configuration
 
@@ -145,7 +148,7 @@ without having an impact on the attribute resolution configuration and all other
 
 If mapping is not defined, by default CAS attributes are expected to match claim names.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#openid-connect).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#openid-connect).
 
 ### User-Defined Scopes
 
@@ -156,13 +159,13 @@ such that you may bundle attributes together, then you need to first register yo
 define its attribute bundle and then use it a given service definition such as `eduPerson` above.
 Such user-defined scopes are also able to override the definition of system scopes.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#openid-connect).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#openid-connect).
 
 ## Authentication Context Class
 
 Support for authentication context class references is implemented in form of `acr_values` as part of the original 
 authorization request, which is mostly taken into account by 
-the [multifactor authentication features](Configuring-Multifactor-Authentication.html) of CAS. 
+the [multifactor authentication features](../mfa/Configuring-Multifactor-Authentication.html) of CAS. 
 Once successful, `acr` and `amr` values are passed back to the relying party as part of the id token.
 
 ## Pairwise Identifiers

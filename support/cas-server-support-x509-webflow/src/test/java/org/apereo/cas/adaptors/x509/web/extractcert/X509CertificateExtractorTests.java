@@ -1,8 +1,9 @@
 package org.apereo.cas.adaptors.x509.web.extractcert;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.principal.AbstractX509CertificateTests;
 import org.apereo.cas.web.extractcert.RequestHeaderX509CertificateExtractor;
+
+import lombok.val;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -14,7 +15,6 @@ import java.security.cert.X509Certificate;
  * @author Hal Deadman
  * @since 5.3.0
  */
-@Slf4j
 public class X509CertificateExtractorTests extends AbstractX509CertificateTests {
 
     private static final String[] CERTIFICATE_LINES = new String[]{
@@ -50,12 +50,12 @@ public class X509CertificateExtractorTests extends AbstractX509CertificateTests 
         "WLu8gep+XCwSn0Wb6D3eFs4DoIiMvQ6g2rS/pk7o5eWj",
         "-----END CERTIFICATE-----"};
 
-    private RequestHeaderX509CertificateExtractor extractX509CertificateFromHeader
-            = new RequestHeaderX509CertificateExtractor("ssl_client_cert");
+    private final RequestHeaderX509CertificateExtractor extractX509CertificateFromHeader
+        = new RequestHeaderX509CertificateExtractor("ssl_client_cert");
 
     private static String certificateSingleLine(final String[] lines, final String separator) {
-        final var singleSpaced = new StringBuilder();
-        for (final var current : lines) {
+        val singleSpaced = new StringBuilder();
+        for (val current : lines) {
             singleSpaced.append(current).append(separator);
         }
         singleSpaced.deleteCharAt(singleSpaced.length() - 1);
@@ -66,7 +66,7 @@ public class X509CertificateExtractorTests extends AbstractX509CertificateTests 
         return certificateSingleLine(CERTIFICATE_LINES, separator);
     }
 
-    private void assertCertificateParsed(final X509Certificate[] certificates) {
+    private static void assertCertificateParsed(final X509Certificate[] certificates) {
         Assert.assertNotNull(certificates);
         Assert.assertEquals(1, certificates.length);
         Assert.assertNotNull(certificates[0]);
@@ -74,21 +74,21 @@ public class X509CertificateExtractorTests extends AbstractX509CertificateTests 
 
     @Test
     public void verifyExtractX509FromHeaderSpaceSeperator() {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.addHeader(extractX509CertificateFromHeader.getSslClientCertHeader(), certificateSingleLine(" "));
         assertCertificateParsed(extractX509CertificateFromHeader.extract(request));
     }
 
     @Test
     public void verifyExtractX509FromHeaderNoSeparator() {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.addHeader(extractX509CertificateFromHeader.getSslClientCertHeader(), certificateSingleLine("\t"));
         assertCertificateParsed(extractX509CertificateFromHeader.extract(request));
     }
 
     @Test
     public void verifyExtractX509FromHeaderNoHeader() {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         Assert.assertNull(extractX509CertificateFromHeader.extract(request));
     }
 }

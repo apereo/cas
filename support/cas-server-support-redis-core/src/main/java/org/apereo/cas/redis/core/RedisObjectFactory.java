@@ -1,16 +1,18 @@
 package org.apereo.cas.redis.core;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
+
+import lombok.val;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisNode;
+import org.springframework.data.redis.connection.RedisPassword;
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
-import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.util.StringUtils;
 
@@ -23,7 +25,6 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 public class RedisObjectFactory {
 
     /**
@@ -38,9 +39,9 @@ public class RedisObjectFactory {
      */
     public <K, V> RedisTemplate<K, V> newRedisTemplate(final RedisConnectionFactory connectionFactory,
                                                        final Class<K> keyClass, final Class<V> valueClass) {
-        final RedisTemplate<K, V> template = new RedisTemplate();
-        final RedisSerializer<String> string = new StringRedisSerializer();
-        final var jdk = new JdkSerializationRedisSerializer();
+        val template = new RedisTemplate<K, V>();
+        val string = new StringRedisSerializer();
+        val jdk = new JdkSerializationRedisSerializer();
         template.setKeySerializer(string);
         template.setValueSerializer(jdk);
         template.setHashValueSerializer(jdk);
@@ -55,15 +56,28 @@ public class RedisObjectFactory {
      * @param redis the redis
      * @return the redis connection factory
      */
-    public RedisConnectionFactory newRedisConnectionFactory(final BaseRedisProperties redis) {
-        final var poolConfig = redis.getPool() != null
+    public static RedisConnectionFactory newRedisConnectionFactory(final BaseRedisProperties redis) {
+        val poolConfig = redis.getPool() != null
             ? redisPoolConfig(redis)
             : LettucePoolingClientConfiguration.defaultConfiguration();
 
-        final var factory = new LettuceConnectionFactory(potentiallyGetSentinelConfig(redis), poolConfig);
+        val sentinelConfiguration = redis.getSentinel() == null
+            ? null
+            : potentiallyGetSentinelConfig(redis);
+
+        val standaloneConfig = new RedisStandaloneConfiguration(redis.getHost(), redis.getPort());
+        standaloneConfig.setDatabase(redis.getDatabase());
+        if (StringUtils.hasText(redis.getPassword())) {
+            standaloneConfig.setPassword(RedisPassword.of(redis.getPassword()));
+        }
+
+        val factory = sentinelConfiguration != null
+            ? new LettuceConnectionFactory(sentinelConfiguration, poolConfig)
+            : new LettuceConnectionFactory(standaloneConfig);
+
         factory.setHostName(redis.getHost());
         factory.setPort(redis.getPort());
-        if (redis.getPassword() != null) {
+        if (StringUtils.hasText(redis.getPassword())) {
             factory.setPassword(redis.getPassword());
         }
         factory.setDatabase(redis.getDatabase());
@@ -75,9 +89,9 @@ public class RedisObjectFactory {
         return factory;
     }
 
-    private LettucePoolingClientConfiguration redisPoolConfig(final BaseRedisProperties redis) {
-        final var config = new GenericObjectPoolConfig();
-        final var props = redis.getPool();
+    private static LettucePoolingClientConfiguration redisPoolConfig(final BaseRedisProperties redis) {
+        val config = new GenericObjectPoolConfig();
+        val props = redis.getPool();
         config.setMaxTotal(props.getMaxActive());
         config.setMaxIdle(props.getMaxIdle());
         config.setMinIdle(props.getMinIdle());
@@ -103,24 +117,19 @@ public class RedisObjectFactory {
             .build();
     }
 
-    private RedisSentinelConfiguration potentiallyGetSentinelConfig(final BaseRedisProperties redis) {
-        if (redis.getSentinel() == null) {
-            return null;
-        }
-        RedisSentinelConfiguration sentinelConfig = null;
-        if (redis.getSentinel() != null) {
-            sentinelConfig = new RedisSentinelConfiguration().master(redis.getSentinel().getMaster());
-            sentinelConfig.setSentinels(createRedisNodesForProperties(redis));
-        }
+    private static RedisSentinelConfiguration potentiallyGetSentinelConfig(final BaseRedisProperties redis) {
+        val sentinelConfig = new RedisSentinelConfiguration().master(redis.getSentinel().getMaster());
+        sentinelConfig.setSentinels(createRedisNodesForProperties(redis));
+
         return sentinelConfig;
     }
 
-    private List<RedisNode> createRedisNodesForProperties(final BaseRedisProperties redis) {
-        final List<RedisNode> redisNodes = new ArrayList<>();
+    private static List<RedisNode> createRedisNodesForProperties(final BaseRedisProperties redis) {
+        val redisNodes = new ArrayList<RedisNode>();
         if (redis.getSentinel().getNode() != null) {
-            final var nodes = redis.getSentinel().getNode();
-            for (final var hostAndPort: nodes) {
-                final var args = StringUtils.split(hostAndPort, ":");
+            val nodes = redis.getSentinel().getNode();
+            for (val hostAndPort : nodes) {
+                val args = StringUtils.split(hostAndPort, ":");
                 redisNodes.add(new RedisNode(args[0], Integer.parseInt(args[1])));
             }
         }

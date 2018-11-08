@@ -3,8 +3,9 @@ package org.apereo.cas.pm.web.flow.actions;
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.support.password.PasswordExpiringWarningMessageDescriptor;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+
+import lombok.val;
 import org.springframework.webflow.action.AbstractAction;
-import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -25,10 +26,10 @@ public class HandlePasswordExpirationWarningMessagesAction extends AbstractActio
 
     @Override
     public Event doExecute(final RequestContext context) {
-        final AttributeMap attributes = context.getCurrentEvent().getAttributes();
-        final var warnings = (Collection<MessageDescriptor>)
+        val attributes = context.getCurrentEvent().getAttributes();
+        val warnings = (Collection<MessageDescriptor>)
             attributes.get(CasWebflowConstants.ATTRIBUTE_ID_AUTHENTICATION_WARNINGS, Collection.class, new LinkedHashSet<>());
-        final var found = warnings
+        val found = warnings
             .stream()
             .filter(PasswordExpiringWarningMessageDescriptor.class::isInstance)
             .findAny();

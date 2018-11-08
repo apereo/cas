@@ -1,7 +1,5 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.DefaultCentralAuthenticationService;
@@ -19,6 +17,10 @@ import org.apereo.cas.services.ServiceContext;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.RegExUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -45,7 +47,7 @@ public class CasCoreConfiguration {
 
     @Autowired
     @Qualifier("registeredServiceAccessStrategyEnforcer")
-    private AuditableExecution registeredServiceAccessStrategyEnforcer;
+    private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
 
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
@@ -90,10 +92,10 @@ public class CasCoreConfiguration {
     @Autowired
     @Bean
     public AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan(final List<AuthenticationServiceSelectionStrategyConfigurer> configurers) {
-        final var plan = new DefaultAuthenticationServiceSelectionPlan();
+        val plan = new DefaultAuthenticationServiceSelectionPlan();
         configurers.forEach(c -> {
-            final var name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
-            LOGGER.debug("Configuring authentication request service selection strategy plan [{}]", name);
+            val name = RegExUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
+            LOGGER.trace("Configuring authentication request service selection strategy plan [{}]", name);
             c.configureAuthenticationServiceSelectionStrategy(plan);
         });
         return plan;
@@ -113,6 +115,6 @@ public class CasCoreConfiguration {
             authenticationPolicyFactory(),
             principalFactory.getIfAvailable(),
             cipherExecutor.getIfAvailable(),
-            registeredServiceAccessStrategyEnforcer);
+            registeredServiceAccessStrategyEnforcer.getIfAvailable());
     }
 }

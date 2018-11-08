@@ -1,20 +1,24 @@
 package org.apereo.cas.authentication.policy;
 
-import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+
+import lombok.val;
+import org.apache.commons.io.FileUtils;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.util.LinkedHashSet;
 
 import static org.junit.Assert.*;
 
@@ -24,9 +28,14 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {RefreshAutoConfiguration.class})
 public class GroovyScriptAuthenticationPolicyTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
@@ -35,39 +44,39 @@ public class GroovyScriptAuthenticationPolicyTests {
 
     @Test
     public void verifyActionInlinedScriptPasses() throws Exception {
-        final var script = "groovy {"
+        val script = "groovy {"
             + " logger.info(principal.id)\n"
             + " return Optional.empty()\n"
             + '}';
-        final var p = new GroovyScriptAuthenticationPolicy(resourceLoader, script);
-        assertTrue(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication()));
+        val p = new GroovyScriptAuthenticationPolicy(resourceLoader, script);
+        assertTrue(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication(), new LinkedHashSet<>()));
     }
 
     @Test
     public void verifyActionInlinedScriptFails() throws Exception {
-        final var script = "groovy {"
+        val script = "groovy {"
             + " import org.apereo.cas.authentication.*\n"
             + " logger.info(principal.id)\n"
             + " return Optional.of(new AuthenticationException())\n"
             + '}';
-        final var p = new GroovyScriptAuthenticationPolicy(resourceLoader, script);
+        val p = new GroovyScriptAuthenticationPolicy(resourceLoader, script);
         thrown.expect(GeneralSecurityException.class);
-        p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication());
+        p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication(), new LinkedHashSet<>());
     }
 
     @Test
     public void verifyActionExternalScript() throws Exception {
-        final var script = "import org.apereo.cas.authentication.*\n"
+        val script = "import org.apereo.cas.authentication.*\n"
             + "def run(Object[] args) {"
             + " def principal = args[0]\n"
             + " def logger = args[1]\n"
             + " return Optional.of(new AuthenticationException())\n"
             + '}';
 
-        final var scriptFile = new File(FileUtils.getTempDirectoryPath(), "script.groovy");
+        val scriptFile = new File(FileUtils.getTempDirectoryPath(), "script.groovy");
         FileUtils.write(scriptFile, script, StandardCharsets.UTF_8);
-        final var p = new GroovyScriptAuthenticationPolicy(resourceLoader, "file:" + scriptFile.getCanonicalPath());
+        val p = new GroovyScriptAuthenticationPolicy(resourceLoader, "file:" + scriptFile.getCanonicalPath());
         thrown.expect(GeneralSecurityException.class);
-        p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication());
+        p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication(), new LinkedHashSet<>());
     }
 }

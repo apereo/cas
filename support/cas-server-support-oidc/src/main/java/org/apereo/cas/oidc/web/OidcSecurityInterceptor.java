@@ -1,9 +1,10 @@
 package org.apereo.cas.oidc.web;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupport;
 import org.apereo.cas.util.Pac4jUtils;
+
+import lombok.val;
 import org.pac4j.core.config.Config;
 import org.pac4j.springframework.web.SecurityInterceptor;
 
@@ -16,7 +17,6 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 public class OidcSecurityInterceptor extends SecurityInterceptor {
 
     private final OidcAuthorizationRequestSupport authorizationRequestSupport;
@@ -30,26 +30,25 @@ public class OidcSecurityInterceptor extends SecurityInterceptor {
     public boolean preHandle(final HttpServletRequest request,
                              final HttpServletResponse response,
                              final Object handler) throws Exception {
-        final var ctx = Pac4jUtils.getPac4jJ2EContext(request, response);
-        final var manager = Pac4jUtils.getPac4jProfileManager(request, response);
-
+        val ctx = Pac4jUtils.getPac4jJ2EContext(request, response);
+        val manager = Pac4jUtils.getPac4jProfileManager(request, response);
 
         var clearCreds = false;
-        final var authentication = authorizationRequestSupport.isCasAuthenticationAvailable(ctx);
-        if (!authentication.isPresent()) {
+        val authentication = authorizationRequestSupport.isCasAuthenticationAvailable(ctx);
+        if (authentication.isEmpty()) {
             clearCreds = true;
         }
 
-        final var auth = authorizationRequestSupport.isAuthenticationProfileAvailable(ctx);
+        val auth = authorizationRequestSupport.isAuthenticationProfileAvailable(ctx);
 
         if (auth.isPresent()) {
-            final var maxAge = authorizationRequestSupport.getOidcMaxAgeFromAuthorizationRequest(ctx);
+            val maxAge = authorizationRequestSupport.getOidcMaxAgeFromAuthorizationRequest(ctx);
             if (maxAge.isPresent()) {
                 clearCreds = authorizationRequestSupport.isCasAuthenticationOldForMaxAgeAuthorizationRequest(ctx, auth.get());
             }
         }
 
-        final var prompts = authorizationRequestSupport.getOidcPromptFromAuthorizationRequest(ctx);
+        val prompts = authorizationRequestSupport.getOidcPromptFromAuthorizationRequest(ctx);
 
         if (!clearCreds) {
             clearCreds = prompts.contains(OidcConstants.PROMPT_LOGIN);

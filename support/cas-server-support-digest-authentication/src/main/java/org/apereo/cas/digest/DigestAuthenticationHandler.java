@@ -1,13 +1,14 @@
 package org.apereo.cas.digest;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AbstractAuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
-import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
+
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -18,7 +19,6 @@ import java.security.GeneralSecurityException;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 public class DigestAuthenticationHandler extends AbstractAuthenticationHandler {
 
     public DigestAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory) {
@@ -27,7 +27,7 @@ public class DigestAuthenticationHandler extends AbstractAuthenticationHandler {
 
     @Override
     public AuthenticationHandlerExecutionResult authenticate(final Credential credential) throws GeneralSecurityException {
-        final var c = (DigestCredential) credential;
+        val c = (DigestCredential) credential;
         if (StringUtils.isNotBlank(c.getId()) && StringUtils.isNotBlank(c.getHash())) {
             return new DefaultAuthenticationHandlerExecutionResult(this, c, this.principalFactory.createPrincipal(c.getId()));
         }
@@ -37,6 +37,11 @@ public class DigestAuthenticationHandler extends AbstractAuthenticationHandler {
     @Override
     public boolean supports(final Credential credential) {
         return credential instanceof DigestCredential;
+    }
+
+    @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return DigestCredential.class.isAssignableFrom(clazz);
     }
 
 

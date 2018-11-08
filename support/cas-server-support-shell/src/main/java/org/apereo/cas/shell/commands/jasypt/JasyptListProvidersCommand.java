@@ -1,6 +1,7 @@
 package org.apereo.cas.shell.commands.jasypt;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
@@ -38,17 +39,17 @@ public class JasyptListProvidersCommand {
             Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
         }
 
-        final var providers = Security.getProviders();
-        for (final var provider: providers) {
-            final var services = provider.getServices();
-            final var algorithms =
+        val providers = Security.getProviders();
+        for (val provider : providers) {
+            val services = provider.getServices();
+            val algorithms =
                 services.stream()
                     .filter(service -> "Cipher".equals(service.getType()) && service.getAlgorithm().contains("PBE"))
                     .map(Provider.Service::getAlgorithm)
                     .collect(Collectors.toList());
             if (!algorithms.isEmpty()) {
                 LOGGER.info("Provider: Name: [{}] Class: [{}]", provider.getName(), provider.getClass().getName());
-                for (final var algorithm: algorithms) {
+                for (val algorithm : algorithms) {
                     LOGGER.info(" - Algorithm: [{}]", algorithm);
                 }
             }

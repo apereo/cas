@@ -1,11 +1,13 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
+import org.apereo.cas.configuration.CasCoreConfigurationUtils;
+
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
-import org.apereo.cas.configuration.CasCoreConfigurationUtils;
+import lombok.val;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -14,7 +16,6 @@ import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.InputStreamResource;
 
 import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -27,32 +28,35 @@ import java.util.Properties;
 @Slf4j
 @Getter
 public class AmazonS3BucketsCloudConfigBootstrapConfiguration implements PropertySourceLocator {
-    private static final String CAS_CONFIGURATION_PREFIX = "cas.spring.cloud.aws.s3";
+    /**
+     * Amazon S3 CAS configuration key prefix.
+     */
+    public static final String CAS_CONFIGURATION_PREFIX = "cas.spring.cloud.aws.s3";
 
     @Override
     public PropertySource<?> locate(final Environment environment) {
-        final Map properties = new LinkedHashMap<>();
+        val properties = new LinkedHashMap<String, Object>();
         try {
-            final var builder = new AmazonEnvironmentAwareClientBuilder(CAS_CONFIGURATION_PREFIX, environment);
-            final var s3Client = builder.build(AmazonS3ClientBuilder.standard(), AmazonS3.class);
+            val builder = new AmazonEnvironmentAwareClientBuilder(CAS_CONFIGURATION_PREFIX, environment);
+            val s3Client = builder.build(AmazonS3ClientBuilder.standard(), AmazonS3.class);
 
-            final var bucketName = builder.getSetting("bucketName", "cas-properties");
+            val bucketName = builder.getSetting("bucketName", "cas-properties");
             LOGGER.debug("Locating S3 object(s) from bucket [{}]...", bucketName);
-            final var result = s3Client.listObjectsV2(bucketName);
-            final var objects = result.getObjectSummaries();
+            val result = s3Client.listObjectsV2(bucketName);
+            val objects = result.getObjectSummaries();
             LOGGER.debug("Located [{}] S3 object(s) from bucket [{}]", objects.size(), bucketName);
 
             objects.forEach(obj -> {
-                final var objectKey = obj.getKey();
+                val objectKey = obj.getKey();
                 LOGGER.debug("Fetching object [{}] from bucket [{}]", objectKey, bucketName);
-                final var object = s3Client.getObject(obj.getBucketName(), objectKey);
-                try (var is = object.getObjectContent()) {
+                val object = s3Client.getObject(obj.getBucketName(), objectKey);
+                try (val is = object.getObjectContent()) {
                     if (objectKey.endsWith("properties")) {
-                        final var props = new Properties();
+                        val props = new Properties();
                         props.load(is);
-                        props.entrySet().forEach(entry -> properties.put(entry.getKey(), entry.getValue()));
-                    } else if (objectKey.endsWith("yml")) {
-                        final var yamlProps = CasCoreConfigurationUtils.loadYamlProperties(new InputStreamResource(is));
+                        props.forEach((key, value) -> properties.put(key.toString(), value));
+                    } else if (objectKey.endsWith("yml") || objectKey.endsWith("yaml")) {
+                        val yamlProps = CasCoreConfigurationUtils.loadYamlProperties(new InputStreamResource(is));
                         properties.putAll(yamlProps);
                     }
                 } catch (final Exception e) {

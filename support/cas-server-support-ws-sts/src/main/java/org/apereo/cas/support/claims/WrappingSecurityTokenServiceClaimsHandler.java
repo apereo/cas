@@ -1,16 +1,18 @@
 package org.apereo.cas.support.claims;
 
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.ws.idp.WSFederationClaims;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.cxf.rt.security.claims.ClaimCollection;
 import org.apache.cxf.sts.claims.ClaimsHandler;
 import org.apache.cxf.sts.claims.ClaimsParameters;
 import org.apache.cxf.sts.claims.ProcessedClaim;
 import org.apache.cxf.sts.claims.ProcessedClaimCollection;
 import org.apache.cxf.sts.token.realm.RealmSupport;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.ws.idp.WSFederationClaims;
 
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
@@ -53,9 +55,9 @@ public class WrappingSecurityTokenServiceClaimsHandler implements ClaimsHandler,
             LOGGER.warn("No claims are available to process");
             return new ProcessedClaimCollection();
         }
-        final var claimCollection = new ProcessedClaimCollection();
+        val claimCollection = new ProcessedClaimCollection();
         claims.stream().map(requestClaim -> {
-            final var claim = new ProcessedClaim();
+            val claim = new ProcessedClaim();
             claim.setClaimType(requestClaim.getClaimType());
             claim.setIssuer(this.issuer);
             claim.setOriginalIssuer(this.issuer);

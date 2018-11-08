@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Security Guide
+category: Planning
 ---
 
 # Security Guide
@@ -15,6 +16,7 @@ be considered to achieve suitable security.
 
 ## Announcements
 
+- [Sep 26 2018 Vulnerability Disclosure](https://apereo.github.io/2018/09/26/mfavulndisc/)
 - [Mar 6 2017 Vulnerability Disclosure](https://apereo.github.io/2017/03/06/moncfgsecvulndisc/)
 - [Oct 24 2016 Vulnerability Disclosure](https://apereo.github.io/2016/10/24/servlvulndisc/)
 - [Apr 8 2016 Vulnerability Disclosure](https://apereo.github.io/2016/04/08/commonsvulndisc/)
@@ -40,7 +42,7 @@ from the CAS server to the application must be done using HTTPS:
 - when the generated service ticket is sent back to the application on the "service" url
 - when a proxy callback url is called.
 
-To see the relevant list of CAS properties and tune this behavior, please [review this guide](../installation/Configuration-Properties.html#http-client).
+To see the relevant list of CAS properties and tune this behavior, please [review this guide](../configuration/Configuration-Properties.html#http-client).
 
 
 ### Connections to Dependent Systems
@@ -132,7 +134,7 @@ decentralized security policy model.) Some highlights of service management cont
 
 The service management facility is comprised of a service registry containing one or more registered services, each
 of which specifies the management controls above. The service registry can be controlled via static configuration files,
-a Web user interface, or both. See the [Service Management](../installation/Service-Management.html) section for more
+a Web user interface, or both. See the [Service Management](../services/Service-Management.html) section for more
 information.
 
 <div class="alert alert-warning"><strong>Authorized Services</strong><p>
@@ -160,9 +162,9 @@ Please [see this guide](../installation/Password-Policy-Enforcement.html) for mo
 
 Protocol tickets that are issued by CAS and shared with other applications such as service tickets may optionally go through a signing/encryption process. Even though the CAS server will always cross check ticket validity and expiration policy, this may be forced as an extra check to ensure tickets in transit to other applications are not tampered with and remain to be authentic. While sample data is provided for initial deployments, these keys **MUST** be regenerated per your specific environment.
 
-<div class="alert alert-warn"><strong>Pay Attention</strong><p>Encrypting and signing a generated ticket will, depending on the encryption method and algorithm used, increase the generated ticket length. Not all CAS clients are equipped to handle lengthy ticket strings and may get upset with you. Evaluate existing integrations before turning this on and consider whether this feature is truly needed for your deployment.</p></div>
+<div class="alert alert-warning"><strong>Pay Attention</strong><p>Encrypting and signing a generated ticket will, depending on the encryption method and algorithm used, increase the generated ticket length. Not all CAS clients are equipped to handle lengthy ticket strings and may get upset with you. Evaluate existing integrations before turning this on and consider whether this feature is truly needed for your deployment.</p></div>
 
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#protocol-ticket-security).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#protocol-ticket-security).
 
 
 ### Ticket Registry Encryption
@@ -175,7 +177,7 @@ Please [see this guide](../installation/Ticket-Registry-Replication-Encryption.h
 CAS provides a large variety of web interfaces that are aimed at system administrators and deployers.
 These screens along with a number of REST endpoints allow a CAS deployer to manage and reconfigure CAS behavior without resorting to
 native command-line interfaces. Needless to say, these endpoints and screens must be secured and allowed proper access only to
-authorized parties. Please [see this guide](../installation/Monitoring-Statistics.html) for more info.
+authorized parties. Please [see this guide](../monitoring/Monitoring-Statistics.html) for more info.
 
 ### Ticket Expiration Policies
 
@@ -185,7 +187,7 @@ control of some important aspects of CAS SSO session behavior:
 * SSO session duration (sliding expiration, absolute)
 * Ticket reuse
 
-See the [Configuring Ticketing Components](../installation/Configuring-Ticketing-Components.html) section for a
+See the [Configuring Ticketing Components](../ticketing/Configuring-Ticketing-Components.html) section for a
 detailed discussion of the various expiration policies and configuration instructions.
 
 ### Single Sign-Out
@@ -218,7 +220,7 @@ section for further information.
 
 ### Credential Encryption
 
-To learn how sensitive CAS settings can be secured via encryption, [please review this guide](Configuration-Properties-Security.html).
+To learn how sensitive CAS settings can be secured via encryption, [please review this guide](../configuration/Configuration-Properties-Security.html).
 
 ### CAS Security Filter
 
@@ -237,14 +239,14 @@ One application of CORS is when a resource makes a cross-origin HTTP request whe
 different domain than the one which the first resource itself serves. This should help more with CAS-enabled
 applications are accessed via XHR/Ajax requests.
 
-To see the relevant list of CAS properties and tune this behavior, please [review this guide](../installation/Configuration-Properties.html#http-web-requests).
+To see the relevant list of CAS properties and tune this behavior, please [review this guide](../configuration/Configuration-Properties.html#http-web-requests).
 
 #### Security Response Headers
 
 As part of the CAS Security Filter, the CAS project automatically provides the necessary configuration to
 insert HTTP Security headers into the web response to prevent against HSTS, XSS, X-FRAME and other attacks.
 These settings are presently off by default.
-To see the relevant list of CAS properties and tune this behavior, please [review this guide](../installation/Configuration-Properties.html#http-web-requests).
+To see the relevant list of CAS properties and tune this behavior, please [review this guide](../configuration/Configuration-Properties.html#http-web-requests).
 
 To review and learn more about these options, please visit [this guide][cas-sec-filter].
 
@@ -253,7 +255,7 @@ To review and learn more about these options, please visit [this guide][cas-sec-
 The CAS project uses Spring Webflow to manage and orchestrate the authentication process. The conversational state of the
 webflow used by CAS is managed by the client which is then passed and tracked throughout various states of the authentication
 process. This state must be secured and encrypted to prevent session hijacking. While CAS provides default encryption
-settings out of the box, it is **STRONGLY** recommended that [all CAS deployments](../installation/Webflow-Customization.html) be
+settings out of the box, it is **STRONGLY** recommended that [all CAS deployments](../webflow/Webflow-Customization.html) be
 evaluated prior to production deployments and regenerate this configuration to prevent attacks.
 
 ### Long Term Authentication

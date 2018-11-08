@@ -1,5 +1,6 @@
 package org.apereo.cas.web.pac4j;
 
+import lombok.val;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -15,8 +16,8 @@ public class DelegatedSessionCookieCipherExecutorTests {
 
     @Test
     public void verifyCipheredToken() {
-        final var c = new DelegatedSessionCookieCipherExecutor(null, null);
-        final var token = c.encode(ST);
+        val c = new DelegatedSessionCookieCipherExecutor(null, null, 0, 0);
+        val token = c.encode(ST);
         assertEquals(ST, c.decode(token));
         assertNotNull(c.getName());
         assertNotNull(c.getEncryptionKeySetting());

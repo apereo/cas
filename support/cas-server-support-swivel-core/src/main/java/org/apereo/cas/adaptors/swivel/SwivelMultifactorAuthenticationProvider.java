@@ -1,15 +1,19 @@
 package org.apereo.cas.adaptors.swivel;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpStatus;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.SwivelMultifactorProperties;
+import org.apereo.cas.services.RegisteredService;
+
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpStatus;
 import org.springframework.http.HttpMethod;
+
 import java.net.HttpURLConnection;
 import java.net.URL;
-import lombok.NoArgsConstructor;
 
 /**
  * This is {@link SwivelMultifactorAuthenticationProvider}.
@@ -27,7 +31,7 @@ public class SwivelMultifactorAuthenticationProvider extends AbstractMultifactor
     private String swivelUrl;
 
     @Override
-    protected boolean isAvailable() {
+    public boolean isAvailable(final RegisteredService service) {
         return canPing();
     }
 
@@ -48,7 +52,7 @@ public class SwivelMultifactorAuthenticationProvider extends AbstractMultifactor
      */
     public boolean canPing() {
         try {
-            final var connection = (HttpURLConnection) new URL(this.swivelUrl).openConnection();
+            val connection = (HttpURLConnection) new URL(this.swivelUrl).openConnection();
             connection.setRequestMethod(HttpMethod.GET.name());
             connection.connect();
             return connection.getResponseCode() == HttpStatus.SC_OK;

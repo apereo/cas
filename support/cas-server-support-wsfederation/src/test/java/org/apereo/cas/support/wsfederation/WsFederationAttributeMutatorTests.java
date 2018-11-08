@@ -1,6 +1,8 @@
 package org.apereo.cas.support.wsfederation;
 
-import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.support.wsfederation.attributes.WsFederationAttributeMutator;
+
+import lombok.val;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -12,23 +14,23 @@ import static org.junit.Assert.*;
 
 /**
  * Test cases for {@link WsFederationAttributeMutator}.
+ *
  * @author John Gasper
  * @since 4.2.0
  */
-@Slf4j
 public class WsFederationAttributeMutatorTests extends AbstractWsFederationTests {
 
     private static final String UPN_PARAM = "upn";
 
     @Test
     public void verifyModifyAttributes() {
-        final Map<String, List<Object>> attributes = new HashMap<>();
+        val attributes = new HashMap<String, List<Object>>();
 
-        final List<Object> values = new ArrayList<>();
+        val values = new ArrayList<Object>();
         values.add("test@example.com");
         attributes.put(UPN_PARAM, values);
-        
-        final WsFederationAttributeMutator instance = new WsFederationAttributeMutatorImpl();
+
+        val instance = new WsFederationAttributeMutatorImpl();
         instance.modifyAttributes(attributes);
 
         assertTrue(attributes.containsKey("test"));
@@ -41,7 +43,7 @@ public class WsFederationAttributeMutatorTests extends AbstractWsFederationTests
         private static final long serialVersionUID = -1858140387002752668L;
 
         @Override
-        public void modifyAttributes(final Map<String, List<Object>> attributes) {
+        public Map<String, List<Object>> modifyAttributes(final Map<String, List<Object>> attributes) {
             List<Object> values = new ArrayList<>();
             values.add("newtest");
             attributes.put("test", values);
@@ -49,6 +51,7 @@ public class WsFederationAttributeMutatorTests extends AbstractWsFederationTests
             values = new ArrayList<>();
             values.add("testing");
             attributes.put(UPN_PARAM, values);
+            return attributes;
         }
     }
 }

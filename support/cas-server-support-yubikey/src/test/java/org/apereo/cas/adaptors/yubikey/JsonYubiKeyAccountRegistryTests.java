@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.yubikey;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.category.FileSystemCategory;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
@@ -23,6 +22,7 @@ import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
+
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -50,8 +50,8 @@ import static org.junit.Assert.*;
  */
 @Category(FileSystemCategory.class)
 @SpringBootTest(classes = {
-    YubiKeyAuthenticationEventExecutionPlanConfiguration.class,
     JsonYubiKeyAccountRegistryTests.JsonYubiKeyAccountRegistryTestConfiguration.class,
+    YubiKeyAuthenticationEventExecutionPlanConfiguration.class,
     YubiKeyConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasWebflowContextConfiguration.class,
@@ -76,7 +76,6 @@ import static org.junit.Assert.*;
     RefreshAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 @TestPropertySource(locations = {"classpath:/yubikey-json.properties"})
 public class JsonYubiKeyAccountRegistryTests {
 

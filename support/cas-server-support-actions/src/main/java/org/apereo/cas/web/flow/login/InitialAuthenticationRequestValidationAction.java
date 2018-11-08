@@ -1,8 +1,8 @@
 package org.apereo.cas.web.flow.login;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -13,14 +13,13 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class InitialAuthenticationRequestValidationAction extends AbstractAction {
 
-    private final CasWebflowEventResolver rankedAuthenticationProviderWebflowEventResolver;
+    private final CasWebflowEventResolver initialAuthenticationProviderWebflowEventResolver;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        return this.rankedAuthenticationProviderWebflowEventResolver.resolveSingle(requestContext);
+        return this.initialAuthenticationProviderWebflowEventResolver.resolveSingle(requestContext);
     }
 }

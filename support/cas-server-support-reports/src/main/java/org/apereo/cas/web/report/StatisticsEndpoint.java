@@ -1,11 +1,12 @@
 package org.apereo.cas.web.report;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
+
+import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 
@@ -14,12 +15,12 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Scott Battaglia
  * @since 3.3.5
  */
-@Slf4j
 @Endpoint(id = "statistics", enableByDefault = false)
 public class StatisticsEndpoint extends BaseCasMvcEndpoint {
     private final ZonedDateTime upTimeStartDate = ZonedDateTime.now(ZoneOffset.UTC);
@@ -39,40 +40,39 @@ public class StatisticsEndpoint extends BaseCasMvcEndpoint {
      */
     @ReadOperation
     public Map<String, Object> handle() {
-        final Map<String, Object> model = new HashMap<>();
+        val model = new HashMap<String, Object>();
 
-        final var diff = Duration.between(this.upTimeStartDate, ZonedDateTime.now(ZoneOffset.UTC));
+        val diff = Duration.between(this.upTimeStartDate, ZonedDateTime.now(ZoneOffset.UTC));
         model.put("upTime", diff.getSeconds());
 
-        final var runtime = Runtime.getRuntime();
+        val runtime = Runtime.getRuntime();
         model.put("totalMemory", FileUtils.byteCountToDisplaySize(runtime.totalMemory()));
         model.put("maxMemory", FileUtils.byteCountToDisplaySize(runtime.maxMemory()));
         model.put("freeMemory", FileUtils.byteCountToDisplaySize(runtime.freeMemory()));
 
-        var unexpiredTgts = 0;
-        var unexpiredSts = 0;
-        var expiredTgts = 0;
-        var expiredSts = 0;
+        val unexpiredTgts = new AtomicInteger();
+        val unexpiredSts = new AtomicInteger();
+        val expiredTgts = new AtomicInteger();
+        val expiredSts = new AtomicInteger();
 
-        final var tickets = this.centralAuthenticationService.getTickets(ticket -> true);
-
-        for (final var ticket : tickets) {
+        val tickets = this.centralAuthenticationService.getTickets(ticket -> true);
+        tickets.forEach(ticket -> {
             if (ticket instanceof ServiceTicket) {
                 if (ticket.isExpired()) {
                     this.centralAuthenticationService.deleteTicket(ticket.getId());
-                    expiredSts++;
+                    expiredSts.incrementAndGet();
                 } else {
-                    unexpiredSts++;
+                    unexpiredSts.incrementAndGet();
                 }
             } else {
                 if (ticket.isExpired()) {
                     this.centralAuthenticationService.deleteTicket(ticket.getId());
-                    expiredTgts++;
+                    expiredTgts.incrementAndGet();
                 } else {
-                    unexpiredTgts++;
+                    unexpiredTgts.incrementAndGet();
                 }
             }
-        }
+        });
 
         model.put("unexpiredTgts", unexpiredTgts);
         model.put("unexpiredSts", unexpiredSts);

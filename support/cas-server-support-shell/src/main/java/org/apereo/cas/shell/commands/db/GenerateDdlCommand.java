@@ -1,7 +1,7 @@
 package org.apereo.cas.shell.commands.db;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
+import lombok.val;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.AvailableSettings;
@@ -33,6 +33,7 @@ import org.springframework.shell.standard.ShellOption;
 import javax.persistence.Entity;
 import javax.persistence.MappedSuperclass;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -79,6 +80,7 @@ public class GenerateDdlCommand {
      *
      * @param file         the file
      * @param dialect      the dialect
+     * @param jdbcUrl      the jdbc url
      * @param delimiter    the delimiter
      * @param pretty       the pretty
      * @param dropSchema   the drop schema
@@ -93,6 +95,9 @@ public class GenerateDdlCommand {
         @ShellOption(value = {"dialect"},
             help = "Database dialect class",
             defaultValue = "HSQL") final String dialect,
+        @ShellOption(value = {"url"},
+            help = "JDBC database connection URL",
+            defaultValue = "jdbc:hsqldb:mem:cas") final String jdbcUrl,
         @ShellOption(value = {"delimiter"},
             help = "Delimiter to use for separation of statements when generating SQL",
             defaultValue = ";") final String delimiter,
@@ -109,7 +114,7 @@ public class GenerateDdlCommand {
             help = "Halt if an error occurs during the generation process",
             defaultValue = "true") final boolean haltOnError) {
 
-        final var dialectName = DIALECTS_MAP.getOrDefault(dialect.trim().toUpperCase(), dialect);
+        val dialectName = DIALECTS_MAP.getOrDefault(dialect.trim().toUpperCase(), dialect);
         LOGGER.info("Using database dialect class [{}]", dialectName);
         if (!dialectName.contains(".")) {
             LOGGER.warn("Dialect name must be a fully qualified class name. Supported dialects by default are [{}] "
@@ -117,14 +122,22 @@ public class GenerateDdlCommand {
             return;
         }
 
-        final var svcRegistry = new StandardServiceRegistryBuilder();
-        if (StringUtils.isNotBlank(dialectName)) {
-            svcRegistry.applySetting(AvailableSettings.DIALECT, dialect);
-        }
-        final var metadata = new MetadataSources(svcRegistry.build());
+        val svcRegistry = new StandardServiceRegistryBuilder();
+
+        val settings = new HashMap<String, String>();
+        settings.put(AvailableSettings.DIALECT, dialect);
+        settings.put(AvailableSettings.URL, jdbcUrl);
+        settings.put(AvailableSettings.HBM2DDL_AUTO, "none");
+        settings.put(AvailableSettings.SHOW_SQL, "true");
+        svcRegistry.applySettings(settings);
+
+        LOGGER.info("Collecting entity metadata sources...");
+        val metadata = new MetadataSources(svcRegistry.build());
         REFLECTIONS.getTypesAnnotatedWith(MappedSuperclass.class).forEach(metadata::addAnnotatedClass);
         REFLECTIONS.getTypesAnnotatedWith(Entity.class).forEach(metadata::addAnnotatedClass);
-        final var export = new SchemaExport();
+        val metadataSources = metadata.buildMetadata();
+
+        val export = new SchemaExport();
         export.setDelimiter(delimiter);
         export.setOutputFile(file);
         export.setFormat(pretty);
@@ -142,7 +155,7 @@ public class GenerateDdlCommand {
             action = SchemaExport.Action.NONE;
         }
         LOGGER.info("Exporting Database DDL to [{}] using dialect [{}] with export type set to [{}]", file, dialect, action);
-        export.execute(EnumSet.of(TargetType.SCRIPT, TargetType.STDOUT), SchemaExport.Action.BOTH, metadata.buildMetadata());
+        export.execute(EnumSet.of(TargetType.SCRIPT, TargetType.STDOUT), SchemaExport.Action.BOTH, metadataSources);
         LOGGER.info("Database DDL is exported to [{}]", file);
     }
 }

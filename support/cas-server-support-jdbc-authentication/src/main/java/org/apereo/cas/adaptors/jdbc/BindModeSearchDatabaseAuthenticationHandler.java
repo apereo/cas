@@ -1,17 +1,16 @@
 package org.apereo.cas.adaptors.jdbc;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
-import org.springframework.jdbc.datasource.DataSourceUtils;
+
+import lombok.val;
 
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
 import java.security.GeneralSecurityException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -26,7 +25,6 @@ import java.util.ArrayList;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@Slf4j
 public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
     public BindModeSearchDatabaseAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
@@ -38,21 +36,15 @@ public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUse
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
                                                                                         final String originalPassword)
         throws GeneralSecurityException, PreventedException {
-        Connection connection = null;
-        try {
-            final var username = credential.getUsername();
-            final var password = credential.getPassword();
-            connection = getDataSource().getConnection(username, password);
-            final var principal = this.principalFactory.createPrincipal(username);
+        val username = credential.getUsername();
+        val password = credential.getPassword();
+        try (val connection = getDataSource().getConnection(username, password)) {
+            val principal = this.principalFactory.createPrincipal(username);
             return createHandlerResult(credential, principal, new ArrayList<>(0));
         } catch (final SQLException e) {
             throw new FailedLoginException(e.getMessage());
         } catch (final Exception e) {
             throw new PreventedException("Unexpected SQL connection error", e);
-        } finally {
-            if (connection != null) {
-                DataSourceUtils.releaseConnection(connection, getDataSource());
-            }
         }
     }
 }

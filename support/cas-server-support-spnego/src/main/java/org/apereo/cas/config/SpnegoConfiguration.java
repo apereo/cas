@@ -1,7 +1,5 @@
 package org.apereo.cas.config;
 
-import jcifs.spnego.Authentication;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -15,7 +13,11 @@ import org.apereo.cas.support.spnego.authentication.handler.support.JcifsConfig;
 import org.apereo.cas.support.spnego.authentication.handler.support.JcifsSpnegoAuthenticationHandler;
 import org.apereo.cas.support.spnego.authentication.handler.support.NtlmAuthenticationHandler;
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoPrincipalResolver;
+
+import jcifs.spnego.Authentication;
+import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -23,6 +25,10 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ResourceLoader;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link SpnegoConfiguration}.
@@ -33,70 +39,69 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("spnegoConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class SpnegoConfiguration {
 
     @Autowired
+    private ResourceLoader resourceLoader;
+
+    @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("attributeRepository")
-    private IPersonAttributeDao attributeRepository;
+    private ObjectProvider<IPersonAttributeDao> attributeRepository;
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @RefreshScope
     @Bean
-    @ConditionalOnMissingBean(name = "spnegoAuthentication")
-    public Authentication spnegoAuthentication() {
-        return new Authentication();
+    @ConditionalOnMissingBean(name = "spnegoAuthentications")
+    public List<Authentication> spnegoAuthentications() {
+        val spnegoSystem = casProperties.getAuthn().getSpnego().getSystem();
+
+        JcifsConfig.SystemSettings.initialize(resourceLoader, spnegoSystem.getLoginConf());
+        JcifsConfig.SystemSettings.setKerberosConf(spnegoSystem.getKerberosConf());
+        JcifsConfig.SystemSettings.setKerberosDebug(spnegoSystem.getKerberosDebug());
+        JcifsConfig.SystemSettings.setKerberosKdc(spnegoSystem.getKerberosKdc());
+        JcifsConfig.SystemSettings.setKerberosRealm(spnegoSystem.getKerberosRealm());
+        JcifsConfig.SystemSettings.setUseSubjectCredsOnly(spnegoSystem.isUseSubjectCredsOnly());
+
+        val props = casProperties.getAuthn().getSpnego().getProperties();
+        return props.stream()
+            .map(p -> {
+                val c = new JcifsConfig();
+                val jcifsSettings = c.getJcifsSettings();
+                jcifsSettings.setJcifsDomain(p.getJcifsDomain());
+                jcifsSettings.setJcifsDomainController(p.getJcifsDomainController());
+                jcifsSettings.setJcifsNetbiosCachePolicy(p.getCachePolicy());
+                jcifsSettings.setJcifsNetbiosWins(p.getJcifsNetbiosWins());
+                jcifsSettings.setJcifsPassword(p.getJcifsPassword());
+                jcifsSettings.setJcifsServicePassword(p.getJcifsServicePassword());
+                jcifsSettings.setJcifsServicePrincipal(p.getJcifsServicePrincipal());
+                jcifsSettings.setJcifsSocketTimeout(Beans.newDuration(p.getTimeout()).toMillis());
+                jcifsSettings.setJcifsUsername(p.getJcifsUsername());
+                return new Authentication(jcifsSettings.getProperties());
+            })
+            .collect(Collectors.toList());
     }
 
-    @Bean
-    @RefreshScope
-    @ConditionalOnMissingBean(name = "jcifsConfig")
-    public JcifsConfig jcifsConfig() {
-        final var c = new JcifsConfig();
-        final var spnego = casProperties.getAuthn().getSpnego();
-        c.setJcifsDomain(spnego.getJcifsDomain());
-        c.setJcifsDomainController(spnego.getJcifsDomainController());
-        c.setJcifsNetbiosCachePolicy(spnego.getCachePolicy());
-        c.setJcifsNetbiosWins(spnego.getJcifsNetbiosWins());
-        c.setJcifsPassword(spnego.getJcifsPassword());
-        c.setJcifsServicePassword(spnego.getJcifsServicePassword());
-        c.setJcifsServicePrincipal(spnego.getJcifsServicePrincipal());
-        c.setJcifsSocketTimeout(Beans.newDuration(spnego.getTimeout()).toMillis());
-        c.setJcifsUsername(spnego.getJcifsUsername());
-        c.setKerberosConf(spnego.getKerberosConf());
-        c.setKerberosDebug(spnego.getKerberosDebug());
-        c.setKerberosKdc(spnego.getKerberosKdc());
-        c.setKerberosRealm(spnego.getKerberosRealm());
-        c.setLoginConf(spnego.getLoginConf());
-        c.setUseSubjectCredsOnly(spnego.isUseSubjectCredsOnly());
-
-        return c;
-    }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "spnegoHandler")
     public AuthenticationHandler spnegoHandler() {
-        final var spnegoProperties = casProperties.getAuthn().getSpnego();
-        final var h = new JcifsSpnegoAuthenticationHandler(spnegoProperties.getName(), servicesManager, spnegoPrincipalFactory(),
-            spnegoAuthentication(), spnegoProperties.isPrincipalWithDomainName(), spnegoProperties.isNtlmAllowed());
-        h.setAuthentication(spnegoAuthentication());
-        h.setPrincipalWithDomainName(spnegoProperties.isPrincipalWithDomainName());
-        h.setNtlmAllowed(spnegoProperties.isNtlmAllowed());
-        return h;
+        val spnegoProperties = casProperties.getAuthn().getSpnego();
+        return new JcifsSpnegoAuthenticationHandler(spnegoProperties.getName(), servicesManager.getIfAvailable(), spnegoPrincipalFactory(),
+            spnegoAuthentications(), spnegoProperties.isPrincipalWithDomainName(), spnegoProperties.isNtlmAllowed());
     }
 
     @Bean
     @RefreshScope
     public AuthenticationHandler ntlmAuthenticationHandler() {
-        final var ntlmProperties = casProperties.getAuthn().getNtlm();
-        return new NtlmAuthenticationHandler(ntlmProperties.getName(), servicesManager, ntlmPrincipalFactory(),
+        val ntlmProperties = casProperties.getAuthn().getNtlm();
+        return new NtlmAuthenticationHandler(ntlmProperties.getName(), servicesManager.getIfAvailable(), ntlmPrincipalFactory(),
             ntlmProperties.isLoadBalance(),
             ntlmProperties.getDomainController(), ntlmProperties.getIncludePattern());
     }
@@ -111,8 +116,9 @@ public class SpnegoConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "spnegoPrincipalResolver")
     public PrincipalResolver spnegoPrincipalResolver() {
-        final var spnegoProperties = casProperties.getAuthn().getSpnego();
-        return new SpnegoPrincipalResolver(attributeRepository, spnegoPrincipalFactory(),
+        val spnegoProperties = casProperties.getAuthn().getSpnego();
+        return new SpnegoPrincipalResolver(attributeRepository.getIfAvailable(),
+            spnegoPrincipalFactory(),
             spnegoProperties.getPrincipal().isReturnNull(),
             PrincipalNameTransformerUtils.newPrincipalNameTransformer(spnegoProperties.getPrincipalTransformation()),
             spnegoProperties.getPrincipal().getPrincipalAttribute());

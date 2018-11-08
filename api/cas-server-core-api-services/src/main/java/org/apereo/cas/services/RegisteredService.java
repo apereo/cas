@@ -1,12 +1,11 @@
 package org.apereo.cas.services;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apereo.cas.authentication.principal.Service;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import java.io.Serializable;
-import java.net.URL;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,24 +19,6 @@ import java.util.Set;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface RegisteredService extends Serializable, Comparable<RegisteredService> {
-
-    /**
-     * The logout type.
-     */
-    enum LogoutType {
-        /**
-         * For no SLO.
-         */
-        NONE,
-        /**
-         * For back channel SLO.
-         */
-        BACK_CHANNEL,
-        /**
-         * For front channel SLO.
-         */
-        FRONT_CHANNEL
-    }
 
     /**
      * Initial ID value of newly created (but not persisted) registered service.
@@ -72,6 +53,13 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
      * @return the numeric identifier for this service.
      */
     long getId();
+
+    /**
+     * Sets the identifier for this service. Use {@link #INITIAL_IDENTIFIER_VALUE} to indicate a branch new service definition.
+     *
+     * @param id the numeric identifier for the service.
+     */
+    void setId(long id);
 
     /**
      * Returns the name of the service.
@@ -121,13 +109,6 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
     void setEvaluationOrder(int evaluationOrder);
 
     /**
-     * Sets the identifier for this service. Use {@link #INITIAL_IDENTIFIER_VALUE} to indicate a branch new service definition.
-     *
-     * @param id the numeric identifier for the service.
-     */
-    void setId(long id);
-
-    /**
      * Get the name of the attribute this service prefers to consume as username.
      *
      * @return an instance of {@link RegisteredServiceUsernameAttributeProvider}
@@ -148,6 +129,15 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
      * @return Non -null set of required handler names.
      */
     Set<String> getRequiredHandlers();
+
+    /**
+     * Gets the set of  names that correspond to the environment to which this service belongs.
+     * This may be used as a filter at runtime to narrow down the list of services
+     * that are applicable to a particular environment, such as test, prod, etc.
+     *
+     * @return Non -null set of environment names.
+     */
+    Set<String> getEnvironments();
 
     /**
      * Gets the access strategy that decides whether this registered
@@ -179,7 +169,7 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
      *
      * @return the logout type of the service.
      */
-    LogoutType getLogoutType();
+    RegisteredServiceLogoutType getLogoutType();
 
     /**
      * Gets the attribute filtering policy to determine
@@ -226,7 +216,7 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
      * @return the logout url for this service
      * @since 4.1
      */
-    URL getLogoutUrl();
+    String getLogoutUrl();
 
     /**
      * Gets the public key associated with this service
@@ -248,9 +238,7 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
      * @return map of custom metadata.
      * @since 4.2
      */
-    default Map<String, RegisteredServiceProperty> getProperties() {
-        return new LinkedHashMap<>(0);
-    }
+    Map<String, RegisteredServiceProperty> getProperties();
 
     /**
      * A list of contacts that are responsible for the clients that use

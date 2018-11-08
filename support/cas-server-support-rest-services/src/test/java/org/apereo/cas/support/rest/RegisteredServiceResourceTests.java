@@ -1,6 +1,5 @@
 package org.apereo.cas.support.rest;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationTransaction;
@@ -9,11 +8,13 @@ import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
 import org.apereo.cas.authentication.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.apereo.cas.util.EncodingUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
@@ -29,9 +30,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.io.StringWriter;
 
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * Unit tests for {@link RegisteredServiceResource}.
@@ -40,7 +40,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 4.0.0
  */
 @RunWith(MockitoJUnitRunner.Silent.class)
-@Slf4j
 public class RegisteredServiceResourceTests {
 
     @Mock
@@ -60,7 +59,7 @@ public class RegisteredServiceResourceTests {
     public void checkRegisteredServiceNoAuthn() throws Exception {
         runTest("memberOf", "something", "testfail:something", status().isUnauthorized());
     }
-    
+
     @Test
     public void checkRegisteredServiceNoAttributeValue() throws Exception {
         runTest("memberOf", null, "test:test", status().isForbidden());
@@ -71,9 +70,9 @@ public class RegisteredServiceResourceTests {
         runTest(null, null, "test:test", status().isForbidden());
     }
 
-    private MockMvc configureMockMvcFor(final RegisteredServiceResource registeredServiceResource) {
-        final var sz = new DefaultRegisteredServiceJsonSerializer();
-        final var converter = new MappingJackson2HttpMessageConverter(sz.getObjectMapper());
+    private static MockMvc configureMockMvcFor(final RegisteredServiceResource registeredServiceResource) {
+        val sz = new DefaultRegisteredServiceJsonSerializer();
+        val converter = new MappingJackson2HttpMessageConverter(sz.getObjectMapper());
         return MockMvcBuilders.standaloneSetup(registeredServiceResource)
             .defaultRequest(get("/")
                 .contextPath("/cas")
@@ -83,11 +82,11 @@ public class RegisteredServiceResourceTests {
     }
 
     private RegisteredServiceResource getRegisteredServiceResource(final String attrName, final String attrValue) {
-        final var mgmr = mock(AuthenticationManager.class);
+        val mgmr = mock(AuthenticationManager.class);
         when(mgmr.authenticate(argThat(new AuthenticationCredentialMatcher("test")))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
         when(mgmr.authenticate(argThat(new AuthenticationCredentialMatcher("testfail")))).thenThrow(AuthenticationException.class);
 
-        final var publisher = mock(ApplicationEventPublisher.class);
+        val publisher = mock(ApplicationEventPublisher.class);
         return new RegisteredServiceResource(new DefaultAuthenticationSystemSupport(
             new DefaultAuthenticationTransactionManager(publisher, mgmr),
             new DefaultPrincipalElectionStrategy()),
@@ -96,10 +95,10 @@ public class RegisteredServiceResourceTests {
     }
 
     private void runTest(final String attrName, final String attrValue, final String credentials, final ResultMatcher result) throws Exception {
-        final var registeredServiceResource = getRegisteredServiceResource(attrName, attrValue);
-        final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService();
-        final var sz = new DefaultRegisteredServiceJsonSerializer();
-        try (var writer = new StringWriter()) {
+        val registeredServiceResource = getRegisteredServiceResource(attrName, attrValue);
+        val service = RegisteredServiceTestUtils.getRegisteredService();
+        val sz = new DefaultRegisteredServiceJsonSerializer();
+        try (val writer = new StringWriter()) {
             sz.to(writer, service);
             configureMockMvcFor(registeredServiceResource)
                 .perform(post("/cas/v1/services")
@@ -110,12 +109,9 @@ public class RegisteredServiceResourceTests {
         }
     }
 
+    @RequiredArgsConstructor
     private static class AuthenticationCredentialMatcher implements ArgumentMatcher<AuthenticationTransaction> {
-        private String id;
-
-        AuthenticationCredentialMatcher(final String id) {
-            this.id = id;
-        }
+        private final String id;
 
         @Override
         public boolean matches(final AuthenticationTransaction t) {

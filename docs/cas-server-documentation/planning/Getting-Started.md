@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Getting Started Guide
+category: Planning
 ---
 
 # Getting Started
@@ -45,7 +46,7 @@ Quite simply, study the [installation requirements](Installation-Requirements.ht
 
 ## Deploy CAS
 
-It is recommended to build and deploy CAS locally using the [WAR Overlay method](../installation/Maven-Overlay-Installation.html). 
+It is recommended to build and deploy CAS locally using the [WAR Overlay method](../installation/WAR-Overlay-Installation.html). 
 This approach does not require the adopter to *explicitly* download any version of CAS, but 
 rather utilizes the overlay mechanism to combine CAS original artifacts and local 
 customizations to further ease future upgrades and maintenance.

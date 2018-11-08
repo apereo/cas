@@ -1,23 +1,25 @@
 package org.apereo.cas.services;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ScriptingUtils;
+
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
-import lombok.Setter;
 
 /**
  * Return a collection of allowed attributes for the principal, but additionally,
@@ -38,44 +40,11 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
 
     private Map<String, Object> allowedAttributes = new TreeMap<>();
 
-    /**
-     * Gets the allowed attributes.
-     *
-     * @return the allowed attributes
-     */
-    public Map<String, Object> getAllowedAttributes() {
-        return new TreeMap<>(this.allowedAttributes);
-    }
-
-    @Override
-    public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attrs, final RegisteredService service) {
-        final Map<String, Object> resolvedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-        resolvedAttributes.putAll(attrs);
-        final Map<String, Object> attributesToRelease = new HashMap<>();
-        /*
-         * Map each entry in the allowed list into an array first
-         * by the original key, value and the original entry itself.
-         * Then process the array to populate the map for allowed attributes
-         */
-        this.allowedAttributes.entrySet().forEach(entry -> {
-            final var attributeName = entry.getKey();
-            final Collection mappedAttributes = CollectionUtils.wrap(entry.getValue());
-            LOGGER.debug("Attempting to map allowed attribute name [{}]", attributeName);
-            final var attributeValue = resolvedAttributes.get(attributeName);
-            mappedAttributes.forEach(mapped -> {
-                final var mappedAttributeName = mapped.toString();
-                LOGGER.debug("Mapping attribute [{}] to [{}] with value [{}]", attributeName, mappedAttributeName, attributeValue);
-                mapSingleAttributeDefinition(attributeName, mappedAttributeName, attributeValue, resolvedAttributes, attributesToRelease);
-            });
-        });
-        return attributesToRelease;
-    }
-
     private static void mapSingleAttributeDefinition(final String attributeName, final String mappedAttributeName,
                                                      final Object attributeValue, final Map<String, Object> resolvedAttributes,
                                                      final Map<String, Object> attributesToRelease) {
-        final var matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(mappedAttributeName);
-        final var matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(mappedAttributeName);
+        val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(mappedAttributeName);
+        val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(mappedAttributeName);
         if (matcherInline.find()) {
             LOGGER.debug("Mapped attribute [{}] is an inlined groovy script", mappedAttributeName);
             processInlineGroovyAttribute(resolvedAttributes, attributesToRelease, matcherInline, attributeName);
@@ -89,8 +58,8 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
                 attributesToRelease.put(mappedAttributeName, attributeValue);
             } else {
                 LOGGER.warn("Could not find value for mapped attribute [{}] that is based off of [{}] in the allowed attributes list. "
-                    + "Ensure the original attribute [{}] is retrieved and contains at least a single value. Attribute [{}] "
-                    + "will and can not be released without the presence of a value.", mappedAttributeName, attributeName,
+                        + "Ensure the original attribute [{}] is retrieved and contains at least a single value. Attribute [{}] "
+                        + "will and can not be released without the presence of a value.", mappedAttributeName, attributeName,
                     attributeName, mappedAttributeName);
             }
         }
@@ -101,9 +70,9 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
                                                          final Matcher matcherFile, final String key) {
         try {
             LOGGER.debug("Found groovy script to execute for attribute mapping [{}]", key);
-            final var file = new File(matcherFile.group(2));
-            final var script = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
-            final var result = getGroovyAttributeValue(script, resolvedAttributes);
+            val file = new File(matcherFile.group(2));
+            val script = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+            val result = getGroovyAttributeValue(script, resolvedAttributes);
             if (result != null) {
                 LOGGER.debug("Mapped attribute [{}] to [{}] from script", key, result);
                 attributesToRelease.put(key, result);
@@ -119,7 +88,7 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
                                                      final Map<String, Object> attributesToRelease,
                                                      final Matcher matcherInline, final String attributeName) {
         LOGGER.debug("Found inline groovy script to execute for attribute mapping [{}]", attributeName);
-        final var result = getGroovyAttributeValue(matcherInline.group(1), resolvedAttributes);
+        val result = getGroovyAttributeValue(matcherInline.group(1), resolvedAttributes);
         if (result != null) {
             LOGGER.debug("Mapped attribute [{}] to [{}] from script", attributeName, result);
             attributesToRelease.put(attributeName, result);
@@ -129,8 +98,40 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
     }
 
     private static Object getGroovyAttributeValue(final String groovyScript, final Map<String, Object> resolvedAttributes) {
-        final var args = CollectionUtils.wrap("attributes", resolvedAttributes, "logger", LOGGER);
+        val args = CollectionUtils.wrap("attributes", resolvedAttributes, "logger", LOGGER);
         return ScriptingUtils.executeGroovyShellScript(groovyScript, args, Object.class);
+    }
+
+    /**
+     * Gets the allowed attributes.
+     *
+     * @return the allowed attributes
+     */
+    public Map<String, Object> getAllowedAttributes() {
+        return new TreeMap<>(this.allowedAttributes);
+    }
+
+    @Override
+    public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attrs, final RegisteredService service) {
+        val resolvedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        resolvedAttributes.putAll(attrs);
+        val attributesToRelease = new HashMap<String, Object>();
+        /*
+         * Map each entry in the allowed list into an array first
+         * by the original key, value and the original entry itself.
+         * Then process the array to populate the map for allowed attributes
+         */
+        this.allowedAttributes.forEach((attributeName, value) -> {
+            val mappedAttributes = CollectionUtils.wrap(value);
+            LOGGER.debug("Attempting to map allowed attribute name [{}]", attributeName);
+            val attributeValue = resolvedAttributes.get(attributeName);
+            mappedAttributes.forEach(mapped -> {
+                val mappedAttributeName = mapped.toString();
+                LOGGER.debug("Mapping attribute [{}] to [{}] with value [{}]", attributeName, mappedAttributeName, attributeValue);
+                mapSingleAttributeDefinition(attributeName, mappedAttributeName, attributeValue, resolvedAttributes, attributesToRelease);
+            });
+        });
+        return attributesToRelease;
     }
 
 }

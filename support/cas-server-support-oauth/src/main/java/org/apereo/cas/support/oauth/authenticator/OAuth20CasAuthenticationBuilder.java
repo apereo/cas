@@ -1,19 +1,10 @@
 package org.apereo.cas.support.oauth.authenticator;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationBuilder;
-import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
-import org.apereo.cas.authentication.AuthenticationManager;
-import org.apereo.cas.authentication.BasicCredentialMetaData;
-import org.apereo.cas.authentication.BasicIdentifiableCredential;
-import org.apereo.cas.authentication.CredentialMetaData;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
+import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -24,14 +15,18 @@ import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilte
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.UserProfile;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 
 /**
  * This is {@link OAuth20CasAuthenticationBuilder}.
@@ -40,7 +35,7 @@ import java.util.Map;
  * @since 5.1.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class OAuth20CasAuthenticationBuilder {
 
     /**
@@ -62,7 +57,7 @@ public class OAuth20CasAuthenticationBuilder {
      * Collection of CAS settings.
      */
     protected final CasConfigurationProperties casProperties;
-    
+
     /**
      * Build service.
      *
@@ -72,7 +67,7 @@ public class OAuth20CasAuthenticationBuilder {
      * @return the service
      */
     public Service buildService(final OAuthRegisteredService registeredService, final J2EContext context, final boolean useServiceHeader) {
-        String id = null;
+        var id = StringUtils.EMPTY;
         if (useServiceHeader) {
             id = OAuth20Utils.getServiceRequestHeaderIfAny(context.getRequest());
             LOGGER.debug("Located service based on request header is [{}]", id);
@@ -97,63 +92,35 @@ public class OAuth20CasAuthenticationBuilder {
                                 final J2EContext context,
                                 final Service service) {
 
-        final var profileAttributes = getPrincipalAttributesFromProfile(profile);
-        final var newPrincipal = this.principalFactory.createPrincipal(profile.getId(), profileAttributes);
+        val profileAttributes = new LinkedHashMap<String, Object>(profile.getAttributes());
+        val newPrincipal = this.principalFactory.createPrincipal(profile.getId(), profileAttributes);
         LOGGER.debug("Created final principal [{}] after filtering attributes based on [{}]", newPrincipal, registeredService);
 
-        final var authenticator = profile.getClass().getCanonicalName();
-        final CredentialMetaData metadata = new BasicCredentialMetaData(new BasicIdentifiableCredential(profile.getId()));
-        final AuthenticationHandlerExecutionResult handlerResult =
-            new DefaultAuthenticationHandlerExecutionResult(authenticator, metadata, newPrincipal, new ArrayList<>());
-        final var scopes = CollectionUtils.toCollection(context.getRequest().getParameterValues(OAuth20Constants.SCOPE));
+        val authenticator = profile.getClass().getCanonicalName();
+        val metadata = new BasicCredentialMetaData(new BasicIdentifiableCredential(profile.getId()));
+        val handlerResult = new DefaultAuthenticationHandlerExecutionResult(authenticator, metadata, newPrincipal, new ArrayList<>());
+        val scopes = CollectionUtils.toCollection(context.getRequest().getParameterValues(OAuth20Constants.SCOPE));
 
-        final var state = StringUtils.defaultIfBlank(context.getRequestParameter(OAuth20Constants.STATE), StringUtils.EMPTY);
-        final var nonce = StringUtils.defaultIfBlank(context.getRequestParameter(OAuth20Constants.NONCE), StringUtils.EMPTY);
+        val state = StringUtils.defaultIfBlank(context.getRequestParameter(OAuth20Constants.STATE), StringUtils.EMPTY);
+        val nonce = StringUtils.defaultIfBlank(context.getRequestParameter(OAuth20Constants.NONCE), StringUtils.EMPTY);
         LOGGER.debug("OAuth [{}] is [{}], and [{}] is [{}]", OAuth20Constants.STATE, state, OAuth20Constants.NONCE, nonce);
 
         /*
          * pac4j UserProfile.getPermissions() and getRoles() returns UnmodifiableSet which Jackson Serializer
          * happily serializes to json but is unable to deserialize.
-         * We have to of it to HashSet to avoid such problem
+         * We have to transform those to HashSet to avoid such a problem
          */
-        final var bldr = DefaultAuthenticationBuilder.newInstance()
-                .addAttribute("permissions", new HashSet<>(profile.getPermissions()))
-                .addAttribute("roles", new HashSet<>(profile.getRoles()))
-                .addAttribute("scopes", scopes)
-                .addAttribute(OAuth20Constants.STATE, state)
-                .addAttribute(OAuth20Constants.NONCE, nonce)
-                .addCredential(metadata)
-                .setPrincipal(newPrincipal)
-                .setAuthenticationDate(ZonedDateTime.now())
-                .addSuccess(profile.getClass().getCanonicalName(), handlerResult);
-
-        collectionAuthenticationAttributesIfNecessary(profile, bldr);
-        return bldr.build();
-    }
-
-    private static Map<String, Object> getPrincipalAttributesFromProfile(final UserProfile profile) {
-        final Map<String, Object> profileAttributes = new HashMap<>(profile.getAttributes());
-        profileAttributes.remove(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN);
-        profileAttributes.remove(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME);
-        profileAttributes.remove(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE);
-        profileAttributes.remove(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS);
-        profileAttributes.remove(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE);
-        return profileAttributes;
-    }
-
-    private void collectionAuthenticationAttributesIfNecessary(final UserProfile profile, final AuthenticationBuilder bldr) {
-        if (casProperties.getAuthn().getOauth().getAccessToken().isReleaseProtocolAttributes()) {
-            addAuthenticationAttribute(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE, bldr, profile);
-            addAuthenticationAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN, bldr, profile);
-            addAuthenticationAttribute(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME, bldr, profile);
-            addAuthenticationAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE, bldr, profile);
-            addAuthenticationAttribute(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS, bldr, profile);
-        }
-    }
-
-    private static void addAuthenticationAttribute(final String name, final AuthenticationBuilder bldr,
-                                                   final UserProfile profile) {
-        bldr.addAttribute(name, profile.getAttribute(name));
-        LOGGER.debug("Added attribute [{}] to the authentication", name);
+        return DefaultAuthenticationBuilder.newInstance()
+            .addAttribute("permissions", new LinkedHashSet<>(profile.getPermissions()))
+            .addAttribute("roles", new LinkedHashSet<>(profile.getRoles()))
+            .addAttribute("scopes", scopes)
+            .addAttribute(OAuth20Constants.STATE, state)
+            .addAttribute(OAuth20Constants.NONCE, nonce)
+            .addAttribute(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
+            .addCredential(metadata)
+            .setPrincipal(newPrincipal)
+            .setAuthenticationDate(ZonedDateTime.now())
+            .addSuccess(profile.getClass().getCanonicalName(), handlerResult)
+            .build();
     }
 }

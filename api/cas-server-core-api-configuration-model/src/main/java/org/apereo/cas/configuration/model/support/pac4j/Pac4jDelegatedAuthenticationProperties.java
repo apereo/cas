@@ -1,8 +1,13 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
+import org.apereo.cas.configuration.model.support.pac4j.cas.Pac4jCasClientProperties;
+import org.apereo.cas.configuration.model.support.pac4j.oauth.Pac4jOAuth20ClientProperties;
+import org.apereo.cas.configuration.model.support.pac4j.oidc.Pac4jOidcClientProperties;
+import org.apereo.cas.configuration.model.support.pac4j.saml.Pac4jSamlClientProperties;
+import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.Getter;
 import lombok.Setter;
-import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -16,7 +21,6 @@ import java.util.List;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-pac4j-webflow")
-
 @Getter
 @Setter
 public class Pac4jDelegatedAuthenticationProperties implements Serializable {
@@ -34,7 +38,7 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
      * The attribute to use as the principal identifier built during and upon a successful authentication attempt.
      */
     private String principalAttributeId;
-    
+
     /**
      * Settings that deal with having Facebook as an external delegated-to authentication provider.
      */
@@ -121,6 +125,12 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
     private Bitbucket bitbucket = new Bitbucket();
 
     /**
+     * Settings that deal with having HiOrg-Server as an external delegated-to
+     * authentication provider.
+     */
+    private HiOrgServer hiOrgServer = new HiOrgServer();
+    
+    /**
      * The name of the authentication handler in CAS used for delegation.
      */
     private String name;
@@ -130,7 +140,7 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private Pac4jDelegatedSessionCookieProperties cookie = new Pac4jDelegatedSessionCookieProperties();
-    
+
     @RequiresModule(name = "cas-server-support-pac4j-webflow")
     @Getter
     @Setter
@@ -274,6 +284,20 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
 
         public Dropbox() {
             setClientName("Dropbox");
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-pac4j-webflow")
+    @Getter
+    @Setter
+    public static class HiOrgServer extends Pac4jIdentifiableClientProperties {
+        private static final long serialVersionUID = -1898237349924741147L;
+        /**
+         * The requested scope.
+         */
+        private String scope;
+        public HiOrgServer() {
+            setClientName("HiOrg-Server");
         }
     }
 

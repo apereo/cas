@@ -1,8 +1,8 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
-import lombok.Getter;
-import lombok.Setter;
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
+import org.apereo.cas.configuration.model.support.couchdb.BaseCouchDbProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mfa.trusteddevice.DeviceFingerprintProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
@@ -10,6 +10,9 @@ import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RestEndpointProperties;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -22,7 +25,6 @@ import java.util.concurrent.TimeUnit;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-trusted-mfa")
-
 @Getter
 @Setter
 public class TrustedDevicesMultifactorProperties implements Serializable {
@@ -87,10 +89,20 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
     private MongoDb mongo = new MongoDb();
 
     /**
+     * Store devices records inside MongoDb.
+     */
+    private CouchDb couchDb = new CouchDb();
+
+    /**
      * Crypto settings that sign/encrypt the device records.
      */
     @NestedConfigurationProperty
     private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
+
+    public TrustedDevicesMultifactorProperties() {
+        crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
+        crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
+    }
 
     @Getter
     @Setter
@@ -102,6 +114,18 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
     @Setter
     public static class Jpa extends AbstractJpaProperties {
         private static final long serialVersionUID = -8329950619696176349L;
+    }
+
+    @RequiresModule(name = "cas-server-support-trusted-mfa-couchdb")
+    @Getter
+    @Setter
+    public static class CouchDb extends BaseCouchDbProperties {
+
+        private static final long serialVersionUID = 5887850351177564308L;
+
+        public CouchDb() {
+            setDbName("trusted_devices_multifactor");
+        }
     }
 
     @Getter

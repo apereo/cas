@@ -1,21 +1,27 @@
+import java.util.concurrent.ConcurrentHashMap
+
 description = "Apereo Central Authentication Service $version"
 defaultTasks "clean", "build"
 
 ext {
+    srcTagMap = new ConcurrentHashMap<File, Set<String>>()
     publishSnapshots = Boolean.getBoolean("publishSnapshots")
     publishReleases = Boolean.getBoolean("publishReleases")
     sonatypeUsername = System.getProperty("sonatypeUsername")
     sonatypePassword = System.getProperty("sonatypePassword")
     testCategoryType = System.getProperty("testCategoryType")
+    skipBootifulArtifact = System.getProperty("skipBootifulArtifact")
     skipErrorProneCompiler = System.getProperty("skipErrorProneCompiler")
     forceBom = Boolean.getBoolean("forceBom")
     enableRemoteDebugging = Boolean.getBoolean("enableRemoteDebugging")
+    remoteDebuggingSuspend = Boolean.getBoolean("remoteDebuggingSuspend") ? "y" : "n"
+
     continuousIntegrationBuild = Boolean.getBoolean("CI") || Boolean.getBoolean("TRAVIS") || Boolean.getBoolean("CONTINUOUS_INTEGRATION")
 
     publishingRelease = publishReleases && rootProject.sonatypeUsername != null && rootProject.sonatypePassword != null
     /*
-    Open the Git repository in the current directory.
-    Get commit id of HEAD.
+        Open the project git repository in the current directory.
+        Get commit id of HEAD.
      */
     git = org.ajoberstar.grgit.Grgit.open(dir: file('.').canonicalPath)
     def gitHead = git.head()
@@ -29,8 +35,15 @@ def isArtifactSigningRequired = {
 
 apply from: rootProject.file("gradle/overrides.gradle")
 apply from: rootProject.file("gradle/dependencies.gradle")
-apply plugin: "com.github.kt3k.coveralls"
 apply plugin: "com.github.ben-manes.versions"
+
+if (project.ext.continuousIntegrationBuild) {
+    apply plugin: "com.gradle.build-scan"
+}
+
+if (!Boolean.getBoolean("skipSonarqube")) {
+    apply plugin: "org.sonarqube"
+}
 
 buildscript {
     repositories {
@@ -43,6 +56,7 @@ buildscript {
     }
 
     dependencies {
+        classpath "com.gradle:build-scan-plugin:2.0.2"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
         classpath "com.netflix.nebula:gradle-lint-plugin:$gradleLintVersion"
         classpath "io.franzbecker:gradle-lombok:$gradleLombokVersion"
@@ -51,16 +65,42 @@ buildscript {
         classpath "org.ajoberstar:grgit:$gradleGitVersion"
         classpath "net.ltgt.gradle:gradle-errorprone-javacplugin-plugin:$gradleErrorProneVersion"
         classpath "com.moowork.gradle:gradle-node-plugin:$gradleNodeVersion"
-        classpath "org.kt3k.gradle.plugin:coveralls-gradle-plugin:$gradleCoverallsVersion"
         classpath "org.owasp:dependency-check-gradle:$gradleDependencyCheckVersion"
-        classpath "gradle.plugin.com.github.spotbugs:spotbugs-gradle-plugin:$gradleFindbugsVersion"
+        classpath "gradle.plugin.com.github.spotbugs:spotbugs-gradle-plugin:$gradleSpotbugsVersion"
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$gradleSonarqubeVersion"
     }
 }
 
 if (rootProject.continuousIntegrationBuild) {
     buildScan {
-        licenseAgreementUrl = "https://gradle.com/terms-of-service"
-        licenseAgree = "yes"
+        termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+        termsOfServiceAgree = 'yes'
+    }
+}
+
+apply plugin: "org.owasp.dependencycheck"
+dependencyCheck {
+    /*
+     * Specifies if the build should be failed if a CVSS score equal
+     * to or above a specified level is identified.
+     */
+    failBuildOnCVSS = 7
+    skipTestGroups = true
+    suppressionFile = file("$rootProject.projectDir/style/dependency-check-suppressions.xml")
+    analyzers {
+        assemblyEnabled = false
+        swiftEnabled = false
+        cocoapodsEnabled = false
+        nspEnabled = false
+        autoconfEnabled = false
+        cmakeEnabled = false
+        pathToMono = false
+        nuspecEnabled = false
+        rubygemsEnabled = false
+        pyPackageEnabled = false
+        pyDistributionEnabled = false
+        nexusEnabled = false
+        centralEnabled = false
     }
 }
 
@@ -71,6 +111,8 @@ allprojects {
     apply plugin: "signing"
     apply plugin: "jacoco"
     apply plugin: "groovy"
+
+    project.ext["forceBootifulArtifact"] = null
 
     if (!rootProject.publishSnapshots && !Boolean.getBoolean("skipGradleLint")) {
         apply plugin: "nebula.lint"
@@ -116,6 +158,7 @@ allprojects {
         mavenCentral()
         jcenter()
         maven { url "https://repo.spring.io/libs-milestone" }
+        maven { url "$sonatypeReleasesRepositoryUrl" }
     }
 
     javadoc {
@@ -125,6 +168,8 @@ allprojects {
 }
 
 subprojects {
+    task dependencyCheckAnalyze(type: org.owasp.dependencycheck.gradle.tasks.Analyze)
+
     task allDependenciesInsight(type: DependencyInsightReportTask,
             description: "Produce insight information for all dependencies") {
         doLast {}
@@ -134,9 +179,9 @@ subprojects {
         doLast {}
     }
     apply plugin: "java-library"
-   if (!rootProject.skipErrorProneCompiler) {
-       apply plugin: "net.ltgt.errorprone-javacplugin"
-   }
+    if (!rootProject.skipErrorProneCompiler) {
+        apply plugin: "net.ltgt.errorprone-javacplugin"
+    }
     apply plugin: "checkstyle"
     apply plugin: "io.franzbecker.gradle-lombok"
     if (!Boolean.getBoolean("skipFindbugs")) {
@@ -146,7 +191,6 @@ subprojects {
     apply plugin: "propdeps-maven"
     apply plugin: "propdeps-idea"
     apply plugin: "propdeps-eclipse"
-    apply plugin: "org.owasp.dependencycheck"
 
     apply from: rootProject.file("gradle/tasks.gradle")
     apply from: rootProject.file("gradle/tests.gradle")
@@ -160,8 +204,10 @@ subprojects {
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
         maven { url "https://repo.spring.io/plugins-release/" }
         maven { url "https://repo.spring.io/milestone/" }
+        maven { url "https://repo.spring.io/snapshot/" }
         maven { url "https://repo.spring.io/libs-milestone" }
         maven { url "https://dl.bintray.com/uniconiam/maven" }
+        maven { url "https://oss.jfrog.org/artifactory/oss-snapshot-local" }
         maven { url "https://jitpack.io" }
         jcenter()
     }
@@ -169,6 +215,11 @@ subprojects {
 
     configurations {
         tests
+        developmentOnly
+        
+        runtimeClasspath {
+            extendsFrom developmentOnly
+        }
     }
 
     configurations.all {
@@ -177,7 +228,7 @@ subprojects {
                 failOnVersionConflict()
             }
             preferProjectModules()
-            cacheDynamicVersionsFor 5, "days"
+            cacheDynamicVersionsFor 1, "days"
             cacheChangingModulesFor 5, "days"
 
             /**
@@ -186,10 +237,6 @@ subprojects {
             eachDependency { DependencyResolveDetails details ->
                 if (details.requested.group == "gnu-getopt") {
                     details.useTarget group: "gnu.getopt", name: "java-getopt", version: details.requested.version
-                }
-
-                if (details.requested.group == "org.ow2.asm") {
-                    details.useVersion "6.2"
                 }
             }
         }
@@ -237,13 +284,15 @@ subprojects {
     ext.buildJarFile = new File(project.buildDir, "libs/${project.name}-${project.version}.jar")
 
     [compileTestJava, compileJava].each {
-        it.options.fork = true
+        it.options.fork = false
+        it.options.incremental = false
+
         def casCompilerArgs = ["-parameters"]
 
         if (!rootProject.skipErrorProneCompiler) {
             it.options.errorprone.allErrorsAsWarnings = false
             it.options.errorprone.disableWarningsInGeneratedCode = true
-            it.options.errorprone.errorproneArgs += [ '-Xep:ParameterName:OFF', '-Xep:MissingOverride:OFF' ]
+            it.options.errorprone.errorproneArgs += ['-Xep:ParameterName:OFF', '-Xep:MissingOverride:OFF']
 
             casCompilerArgs.add("-XDcompilePolicy=byfile")
         }
@@ -288,48 +337,26 @@ subprojects {
         }
     }
 
-    dependencyCheck {
-        /*
-         * Specifies if the build should be failed if a CVSS score equal
-         * to or above a specified level is identified.
-         */
-        failBuildOnCVSS = 7
-        skipTestGroups = true
-        suppressionFile = file("$rootProject.projectDir/style/dependency-check-suppressions.xml")
-        analyzers {
-            assemblyEnabled = false
-            swiftEnabled = false
-            cocoapodsEnabled = false
-            nspEnabled = false
-            autoconfEnabled = false
-            cmakeEnabled = false
-            pathToMono = false
-            nuspecEnabled = false
-            rubygemsEnabled = false
-            pyPackageEnabled = false
-            pyDistributionEnabled = false
-            nexusEnabled = false
-            centralEnabled = false
-        }
-    }
-
     if (!Boolean.getBoolean("skipFindbugs")) {
         spotbugs {
-            toolVersion = "${findbugsVersion}"
+            toolVersion = "${spotbugsVersion}"
             sourceSets = [sourceSets.main]
-            ignoreFailures = false
+            ignoreFailures = true
             reportsDir = file("$project.buildDir/findbugsReports")
             effort = "max"
             reportLevel = "low"
             includeFilter = file("$rootProject.projectDir/style/findbugs-rules.xml")
             excludeFilter = file("$rootProject.projectDir/style/findbugs-excludes.xml")
+            //jvmArgs = ["-Xms2g", "-Xmx4g"]
+            extraArgs = ["maxHeap 4000"]
         }
 
         [spotbugsMain, spotbugsTest].each {
             it.reports {
-                xml.enabled = false
-                html.enabled = true
+                xml.enabled = true
+                html.enabled = false
             }
+            it.finalizedBy outputSpotbugsReports
         }
     }
 
@@ -355,7 +382,7 @@ subprojects {
         api libraries.springcloud
         api libraries.springboot
 
-        provided libraries.javax
+        api libraries.javax
 
         if (!Boolean.getBoolean("skipFindbugs")) {
             spotbugs libraries.findbugs
@@ -367,6 +394,7 @@ subprojects {
 
         if (!Boolean.getBoolean("skipErrorProneCompiler")) {
             errorprone "com.google.errorprone:error_prone_core:$errorProneVersion"
+            errorproneJavac "com.google.errorprone:javac:$errorproneJavacVersion"
         }
         testImplementation libraries.tests
         testImplementation libraries.groovy
@@ -418,6 +446,7 @@ def publishedProjects = subprojects.findAll { !it.path.contains(':docs') }
 task jacocoMerge(type: JacocoMerge) {
     publishedProjects.each { subproject ->
         executionData subproject.tasks.withType(Test)
+        dependsOn tasks.withType(Test)
     }
     doFirst {
         executionData = files(executionData.findAll { it.exists() })
@@ -426,7 +455,13 @@ task jacocoMerge(type: JacocoMerge) {
 
 task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
     description = 'Generates an aggregate report from all subprojects'
-    dependsOn publishedProjects.test
+
+    subprojects.each {
+        if (!it.path.contains(":docs")) {
+            it.tasks.withType(Test).each { task -> dependsOn(task) }
+        }
+    }
+
     dependsOn jacocoMerge
 
     additionalSourceDirs = files(publishedProjects.sourceSets.main.allSource.srcDirs)
@@ -459,13 +494,14 @@ task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
     }
 }
 
-coveralls {
-    sourceDirs = publishedProjects.sourceSets.main.allSource.srcDirs.flatten()
-    jacocoReportPath = "${buildDir}/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
+task casVersion(description: "Display current CAS version") {
+    doLast {
+        println project.version
+    }
 }
 
-tasks.coveralls {
-    group = "Coverage reports"
-    description = "Uploads the aggregated coverage report to Coveralls"
-    dependsOn jacocoRootReport
+task signingKey(description: "Display CAS signing key id") {
+    doLast {
+        println "Signing key: " + project.findProperty("signing.keyId")
+    }
 }

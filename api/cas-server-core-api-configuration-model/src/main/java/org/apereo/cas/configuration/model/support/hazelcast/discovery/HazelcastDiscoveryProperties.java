@@ -1,9 +1,12 @@
 package org.apereo.cas.configuration.model.support.hazelcast.discovery;
 
 import org.apereo.cas.configuration.support.RequiresModule;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.io.Serializable;
 
 /**
  * This is {@link HazelcastDiscoveryProperties}.
@@ -12,7 +15,6 @@ import lombok.Setter;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-support-hazelcast-core")
-
 @Getter
 @Setter
 public class HazelcastDiscoveryProperties implements Serializable {
@@ -37,15 +39,30 @@ public class HazelcastDiscoveryProperties implements Serializable {
      * Once Hazelcast has figured out which instances are available, it will use the private IP addresses of these
      * instances to create a TCP/IP-cluster.
      */
+    @NestedConfigurationProperty
     private HazelcastAwsDiscoveryProperties aws = new HazelcastAwsDiscoveryProperties();
 
     /**
      * Describe discovery strategy based on JClouds.
      */
+    @NestedConfigurationProperty
     private HazelcastJCloudsDiscoveryProperties jclouds = new HazelcastJCloudsDiscoveryProperties();
 
     /**
      * Describe discovery strategy based on Azure.
      */
+    @NestedConfigurationProperty
     private HazelcastAzureDiscoveryProperties azure = new HazelcastAzureDiscoveryProperties();
+
+    /**
+     * Describe discovery strategy based on Kubernetes.
+     */
+    @NestedConfigurationProperty
+    private HazelcastKubernetesDiscoveryProperties kubernetes = new HazelcastKubernetesDiscoveryProperties();
+
+    /**
+     * Describe discovery strategy based on docker swarm.
+     */
+    @NestedConfigurationProperty
+    private HazelcastDockerSwarmDiscoveryProperties dockerSwarm = new HazelcastDockerSwarmDiscoveryProperties();
 }

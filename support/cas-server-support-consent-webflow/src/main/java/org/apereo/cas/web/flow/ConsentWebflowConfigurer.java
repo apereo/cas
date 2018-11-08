@@ -1,9 +1,10 @@
 package org.apereo.cas.web.flow;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.val;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -20,7 +21,6 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 public class ConsentWebflowConfigurer extends AbstractCasWebflowConfigurer {
     private static final String VIEW_ID_CONSENT_VIEW = "casConsentView";
     private static final String STATE_ID_CONSENT_CONFIRM = "confirmAttributeConsent";
@@ -35,7 +35,7 @@ public class ConsentWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     @Override
     protected void doInitialize() {
-        final var flow = getLoginFlow();
+        val flow = getLoginFlow();
 
         if (flow != null) {
             createInitialConsentEnabledAction(flow);
@@ -56,16 +56,16 @@ public class ConsentWebflowConfigurer extends AbstractCasWebflowConfigurer {
     }
 
     private void createConsentView(final Flow flow) {
-        final var state = createViewState(flow, VIEW_ID_CONSENT_VIEW, VIEW_ID_CONSENT_VIEW);
+        val state = createViewState(flow, VIEW_ID_CONSENT_VIEW, VIEW_ID_CONSENT_VIEW);
         createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_CONFIRM, STATE_ID_CONSENT_CONFIRM);
         createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_CANCEL, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
 
-        final var action = createActionState(flow, STATE_ID_CONSENT_CONFIRM, createEvaluateAction("confirmConsentAction"));
+        val action = createActionState(flow, STATE_ID_CONSENT_CONFIRM, createEvaluateAction("confirmConsentAction"));
         createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_SUCCESS, ACTION_GEN_SERVICE_TICKET_AFTER_CONSENT);
     }
 
     private void createConsentTransitions(final Flow flow) {
-        final var sendTicket = getState(flow, CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET, ActionState.class);
+        val sendTicket = getState(flow, CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET, ActionState.class);
         createTransitionForState(sendTicket, CheckConsentRequiredAction.EVENT_ID_CONSENT_REQUIRED, VIEW_ID_CONSENT_VIEW);
     }
 

@@ -1,13 +1,15 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.support.RequiresModule;
+
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link LdapValidatorProperties}.
@@ -16,7 +18,6 @@ import lombok.Setter;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-support-ldap")
-
 @Getter
 @Setter
 public class LdapValidatorProperties implements Serializable {
@@ -26,10 +27,10 @@ public class LdapValidatorProperties implements Serializable {
     /**
      * The following LDAP validators can be used to test connection health status:
      * <ul>
-     *     <li>{@code search}: Validates a connection is healthy by performing a search operation.
-     *     Validation is considered successful if the search result size is greater than zero.</li>
-     *     <li>{@code none}: No validation takes place.</li>
-     *     <li>{@code compare}: Validates a connection is healthy by performing a compare operation.</li>
+     * <li>{@code search}: Validates a connection is healthy by performing a search operation.
+     * Validation is considered successful if the search result size is greater than zero.</li>
+     * <li>{@code none}: No validation takes place.</li>
+     * <li>{@code compare}: Validates a connection is healthy by performing a compare operation.</li>
      * </ul>
      */
     private String type = "search";

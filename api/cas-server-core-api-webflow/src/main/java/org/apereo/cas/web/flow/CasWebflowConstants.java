@@ -7,6 +7,47 @@ package org.apereo.cas.web.flow;
  * @since 5.0.0
  */
 public interface CasWebflowConstants {
+
+    /*
+     ****************************************
+     * Transitions.
+     ****************************************
+     */
+    /**
+     * The transition state 'authenticationFailure'.
+     */
+    String TRANSITION_ID_AUTHENTICATION_FAILURE = "authenticationFailure";
+
+    /**
+     * The transition state 'yes'.
+     */
+    String TRANSITION_ID_YES = "yes";
+
+    /**
+     * The transition state 'warn'.
+     */
+    String TRANSITION_ID_WARN = "warn";
+
+    /**
+     * The transition state 'no'.
+     */
+    String TRANSITION_ID_NO = "no";
+
+    /**
+     * The transition state 'submit'.
+     */
+    String TRANSITION_ID_SUBMIT = "submit";
+
+    /**
+     * The transition state 'error'.
+     */
+    String TRANSITION_ID_ERROR = "error";
+
+    /**
+     * The transition state 'gateway'.
+     */
+    String TRANSITION_ID_GATEWAY = "gateway";
+
     /**
      * The transition state 'stop'.
      */
@@ -28,9 +69,35 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_TGT_VALID = "valid";
 
     /**
+     * The transition state 'interruptSkipped'.
+     */
+    String TRANSITION_ID_INTERRUPT_SKIPPED = "interruptSkipped";
+
+    /**
+     * The transition state 'interruptRequired'.
+     */
+    String TRANSITION_ID_INTERRUPT_REQUIRED = "interruptRequired";
+
+    /**
+     * Provider service is unavailable.
+     */
+    String TRANSITION_ID_UNAVAILABLE = "unavailable";
+
+    /**
+     * User allowed to bypass auth by provider.
+     */
+    String TRANSITION_ID_BYPASS = "bypass";
+
+    /**
+     * User was denied access by provider.
+     */
+    String TRANSITION_ID_DENY = "deny";
+
+    /**
      * The transition state 'success'.
      */
     String TRANSITION_ID_SUCCESS = "success";
+
     /**
      * Transition id 'redirect' .
      */
@@ -50,6 +117,7 @@ public interface CasWebflowConstants {
      * Front transition id.
      */
     String TRANSITION_ID_FRONT = "front";
+
     /**
      * Proceed transition id.
      */
@@ -71,6 +139,41 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_ENROLL = "enroll";
 
     /**
+     * The transition state 'successWithWarnings'.
+     */
+    String TRANSITION_ID_SUCCESS_WITH_WARNINGS = "successWithWarnings";
+
+    /**
+     * Transition id 'resetPassword'.
+     */
+    String TRANSITION_ID_RESET_PASSWORD = "resetPassword";
+
+    /**
+     * Transition id 'forgotUsername'.
+     */
+    String TRANSITION_ID_FORGOT_USERNAME = "forgotUsername";
+
+    /**
+     * Transition id 'mustAcceptUsagePolicy'.
+     */
+    String TRANSITION_ID_AUP_MUST_ACCEPT = "mustAcceptUsagePolicy";
+
+    /**
+     * Transition id 'acceptedUsagePolicy'.
+     */
+    String TRANSITION_ID_AUP_ACCEPTED = "acceptedUsagePolicy";
+
+    /**
+     * State to determine the MFA failure mode and what action to take.
+     */
+    String TRANSITION_ID_MFA_FAILURE = "mfaFailure";
+
+    /*
+     ****************************************
+     * States.
+     ****************************************
+     */
+    /**
      * The state id 'success'.
      */
     String STATE_ID_SUCCESS = "success";
@@ -79,21 +182,11 @@ public interface CasWebflowConstants {
      * The state id 'stopWebflow'.
      */
     String STATE_ID_STOP_WEBFLOW = "stopWebflow";
-    /**
-     * The state id 'clientAction'.
-     */
-    String STATE_ID_CLIENT_ACTION = "clientAction";
 
     /**
      * The state id 'verifyTrustedDevice'.
      */
     String STATE_ID_VERIFY_TRUSTED_DEVICE = "verifyTrustedDevice";
-
-    /**
-     * The view id 'registerDeviceView'.
-     */
-    String VIEW_ID_REGISTER_DEVICE = "registerDeviceView";
-
 
     /**
      * The state id 'registerTrustedDevice'.
@@ -106,83 +199,14 @@ public interface CasWebflowConstants {
     String STATE_ID_REAL_SUBMIT = "realSubmit";
 
     /**
-     * The view state 'casPac4jStopWebflow'.
-     */
-    String VIEW_ID_PAC4J_STOP_WEBFLOW = "casPac4jStopWebflow";
-
-    /**
-     * The view state 'casWsFedStopWebflow'.
-     */
-    String VIEW_ID_WSFED_STOP_WEBFLOW = "casWsFedStopWebflow";
-
-    /**
-     * The transition state 'successWithWarnings'.
-     */
-    String TRANSITION_ID_SUCCESS_WITH_WARNINGS = "successWithWarnings";
-
-    /**
-     * The decision state 'checkRegistrationRequired'.
-     */
-    String DECISION_STATE_REQUIRE_REGISTRATION = "checkRegistrationRequired";
-
-    /**
-     * The decision state 'finishLogout'.
-     */
-    String DECISION_STATE_FINISH_LOGOUT = "finishLogout";
-
-    /**
-     * The transition state 'yes'.
-     */
-    String TRANSITION_ID_YES = "yes";
-
-    /**
-     * The transition state 'no'.
-     */
-    String TRANSITION_ID_NO = "no";
-
-    /**
-     * The transition state 'submit'.
-     */
-    String TRANSITION_ID_SUBMIT = "submit";
-    /**
-     * The transition state 'error'.
-     */
-    String TRANSITION_ID_ERROR = "error";
-
-    /**
-     * The transition state 'gateway'.
-     */
-    String TRANSITION_ID_GATEWAY = "gateway";
-
-    /**
-     * The view state 'error'.
-     */
-    String VIEW_ID_ERROR = "error";
-
-    /**
-     * The view state 'showAuthenticationWarningMessages'.
-     */
-    String VIEW_ID_SHOW_AUTHN_WARNING_MSGS = "showAuthenticationWarningMessages";
-
-    /**
-     * The transition state 'authenticationFailure'.
-     */
-    String TRANSITION_ID_AUTHENTICATION_FAILURE = "authenticationFailure";
-
-    /**
      * 'gateway' state id.
      */
     String STATE_ID_GATEWAY = "gateway";
+
     /**
      * 'finishMfaTrustedAuth' state id.
      */
     String STATE_ID_FINISH_MFA_TRUSTED_AUTH = "finishMfaTrustedAuth";
-
-
-    /**
-     * The transition state 'warn'.
-     */
-    String TRANSITION_ID_WARN = "warn";
 
     /**
      * The transition state 'initialAuthenticationRequestValidationCheck'.
@@ -234,7 +258,6 @@ public interface CasWebflowConstants {
      */
     String STATE_ID_GENERATE_SERVICE_TICKET = "generateServiceTicket";
 
-
     /**
      * The state 'gatewayServicesManagementCheck'.
      */
@@ -275,7 +298,6 @@ public interface CasWebflowConstants {
      */
     String STATE_ID_SERVICE_UNAUTHZ_CHECK = "serviceUnauthorizedCheck";
 
-
     /**
      * The state 'viewGenericLoginSuccess'.
      */
@@ -312,6 +334,146 @@ public interface CasWebflowConstants {
     String STATE_ID_REDIRECT = "redirect";
 
     /**
+     * State id when MFA provider has been detected as unavailable and failureMode is closed.
+     */
+    String STATE_ID_MFA_UNAVAILABLE = "mfaUnavailable";
+
+    /**
+     * State id when MFA provider has denied access to a user because of account lockout.
+     */
+    String STATE_ID_MFA_DENIED = "mfaDenied";
+
+    /**
+     * State id 'doLogout'.
+     */
+    String STATE_ID_DO_LOGOUT = "doLogout";
+
+    /**
+     * State id 'propagateLogoutRequests'.
+     */
+    String STATE_ID_PROPAGATE_LOGOUT_REQUESTS = "propagateLogoutRequests";
+
+    /**
+     * State id 'logoutView'.
+     */
+    String STATE_ID_LOGOUT_VIEW = "logoutView";
+
+    /**
+     * State id 'finishLogout'.
+     */
+    String STATE_ID_FINISH_LOGOUT = "finishLogout";
+
+    /**
+     * State id 'frontLogout'.
+     */
+    String STATE_ID_FRONT_LOGOUT = "frontLogout";
+
+    /**
+     * State id 'confirmLogoutView'.
+     */
+    String STATE_ID_CONFIRM_LOGOUT_VIEW = "confirmLogoutView";
+
+    /**
+     * State id 'casPasswordUpdateSuccess'.
+     */
+    String STATE_ID_PASSWORD_UPDATE_SUCCESS = "casPasswordUpdateSuccess";
+
+    /**
+     * State id 'handleAuthenticationFailure'.
+     */
+    String STATE_ID_HANDLE_AUTHN_FAILURE = "handleAuthenticationFailure";
+
+    /**
+     * State for password reset subflow "pswdResetSubflow".
+     */
+    String STATE_ID_PASSWORD_RESET_SUBFLOW = "pswdResetSubflow";
+
+    /**
+     * State id 'proceedFromAuthenticationWarningView'.
+     */
+    String STATE_ID_PROCEED_FROM_AUTHENTICATION_WARNINGS_VIEW = "proceedFromAuthenticationWarningView";
+
+    /**
+     * Login flow state indicating the password reset subflow is complete "pswdResetComplete".
+     */
+    String STATE_ID_PASSWORD_RESET_FLOW_COMPLETE = "pswdResetComplete";
+
+    /**
+     * State to restart the login flow fresh "redirectToLogin".
+     */
+    String STATE_ID_REDIRECT_TO_LOGIN = "redirectToLogin";
+
+    /**
+     * State to check where the password change should go after completion (post or pre-login) "postLoginPswdChangeCheck".
+     */
+    String STATE_ID_POST_LOGIN_PASSWORD_CHANGE_CHECK = "postLoginPswdChangeCheck";
+
+    /**
+     * State id to check for do change password manual flag "checkDoChangePassword".
+     */
+    String STATE_ID_CHECK_DO_CHANGE_PASSWORD = "checkDoChangePassword";
+
+    /**
+     * Delegated authentication state id.
+     */
+    String STATE_ID_DELEGATED_AUTHENTICATION = "delegatedAuthenticationAction";
+
+    /**
+     * State to check if the MFA provider is available.
+     */
+    String STATE_ID_MFA_CHECK_AVAILABLE = "mfaCheckAvailable";
+
+    /**
+     * State to check if the MFA provider should be bypassed.
+     */
+    String STATE_ID_MFA_CHECK_BYPASS = "mfaCheckBypass";
+
+    /**
+     * State that can be used by MFA providers that offer preAuth endpoints.
+     */
+    String STATE_ID_MFA_PRE_AUTH = "mfaPreAuth";
+
+    /*
+     ****************************************
+     * Views.
+     ****************************************
+     */
+    /**
+     * The view id 'registerDeviceView'.
+     */
+    String VIEW_ID_REGISTER_DEVICE = "registerDeviceView";
+
+    /**
+     * The view state 'casPac4jStopWebflow'.
+     */
+    String VIEW_ID_PAC4J_STOP_WEBFLOW = "casPac4jStopWebflow";
+
+    /**
+     * The view state 'casWsFedStopWebflow'.
+     */
+    String VIEW_ID_WSFED_STOP_WEBFLOW = "casWsFedStopWebflow";
+
+    /**
+     * The view state 'error'.
+     */
+    String VIEW_ID_ERROR = "error";
+
+    /**
+     * The view state 'showAuthenticationWarningMessages'.
+     */
+    String VIEW_ID_SHOW_AUTHN_WARNING_MSGS = "showAuthenticationWarningMessages";
+
+    /**
+     * View id when MFA provider has been detected as unavailable and failureMode is closed.
+     */
+    String VIEW_ID_MFA_UNAVAILABLE = "casMfaUnavailableView";
+
+    /**
+     * View id when MFA provider has denied access to a user because of account lockout.
+     */
+    String VIEW_ID_MFA_DENIED = "casMfaDeniedView";
+
+    /**
      * The view id 'casPostResponseView'.
      */
     String VIEW_ID_POST_RESPONSE = "casPostResponseView";
@@ -332,19 +494,19 @@ public interface CasWebflowConstants {
     String VIEW_ID_SERVICE_ERROR = "casServiceErrorView";
 
     /**
-     * The flow var id 'credential'.
-     */
-    String VAR_ID_CREDENTIAL = "credential";
-
-    /**
-     * Event attribute id 'authenticationWarnings'.
-     */
-    String ATTRIBUTE_ID_AUTHENTICATION_WARNINGS = "authenticationWarnings";
-
-    /**
      * View id 'casResetPasswordSendInstructions'.
      */
     String VIEW_ID_SEND_RESET_PASSWORD_ACCT_INFO = "casResetPasswordSendInstructionsView";
+
+    /**
+     * View id 'casForgotUsernameSentInfoView'.
+     */
+    String VIEW_ID_SENT_FORGOT_USERNAME_ACCT_INFO = "casForgotUsernameSentInfoView";
+
+    /**
+     * View id 'casForgotUsernameSendInfoView'.
+     */
+    String VIEW_ID_FORGOT_USERNAME_ACCT_INFO = "casForgotUsernameSendInfoView";
 
     /**
      * View id 'casBadHoursView'.
@@ -397,49 +559,57 @@ public interface CasWebflowConstants {
     String VIEW_ID_SENT_RESET_PASSWORD_ACCT_INFO = "casResetPasswordSentInstructionsView";
 
     /**
-     * Transition id 'resetPassword'.
+     * View name used for form-login into admin/actuator endpoints.
      */
-    String TRANSITION_ID_RESET_PASSWORD = "resetPassword";
+    String VIEW_ID_ENDPOINT_ADMIN_LOGIN_VIEW = "casAdminLoginView";
+    /*
+     ****************************************
+     * Decisions.
+     ****************************************
+     */
 
     /**
-     * State id 'doLogout'.
+     * The decision state 'checkRegistrationRequired'.
      */
-    String STATE_ID_DO_LOGOUT = "doLogout";
+    String DECISION_STATE_REQUIRE_REGISTRATION = "checkRegistrationRequired";
 
     /**
-     * State id 'propagateLogoutRequests'.
+     * The decision state 'finishLogout'.
      */
-    String STATE_ID_PROPAGATE_LOGOUT_REQUESTS = "propagateLogoutRequests";
+    String DECISION_STATE_FINISH_LOGOUT = "finishLogout";
 
     /**
-     * State id 'logoutView'.
+     * Action to check if login should redirect to password reset subflow.
      */
-    String STATE_ID_LOGOUT_VIEW = "logoutView";
+    String DECISION_STATE_CHECK_FOR_PASSWORD_RESET_TOKEN_ACTION = "checkForPswdResetToken";
+
+    /*
+     ****************************************
+     * Variables & Attributes.
+     ****************************************
+     */
 
     /**
-     * State id 'finishLogout'.
+     * The flow var id 'credential'.
      */
-    String STATE_ID_FINISH_LOGOUT = "finishLogout";
+    String VAR_ID_CREDENTIAL = "credential";
 
     /**
-     * State id 'frontLogout'.
+     * The flow var id 'providerId'.
      */
-    String STATE_ID_FRONT_LOGOUT = "frontLogout";
+    String VAR_ID_MFA_PROVIDER_ID = "mfaProviderId";
+
 
     /**
-     * State id 'confirmLogoutView'.
+     * Event attribute id 'authenticationWarnings'.
      */
-    String STATE_ID_CONFIRM_LOGOUT_VIEW = "confirmLogoutView";
+    String ATTRIBUTE_ID_AUTHENTICATION_WARNINGS = "authenticationWarnings";
 
-    /**
-     * State id 'casPasswordUpdateSuccess'.
+    /*
+     ****************************************
+     * Actions.
+     ****************************************
      */
-    String STATE_ID_PASSWORD_UPDATE_SUCCESS = "casPasswordUpdateSuccess";
-
-    /**
-     * State id 'handleAuthenticationFailure'.
-     */
-    String STATE_ID_HANDLE_AUTHN_FAILURE = "handleAuthenticationFailure";
 
     /**
      * Action id 'initialFlowSetupAction'.
@@ -502,37 +672,7 @@ public interface CasWebflowConstants {
     String ACTION_ID_CREATE_TICKET_GRANTING_TICKET = "createTicketGrantingTicketAction";
 
     /**
-     * State id 'proceedFromAuthenticationWarningView'.
+     * Delegated authentication action id.
      */
-    String STATE_ID_PROCEED_FROM_AUTHENTICATION_WARNINGS_VIEW = "proceedFromAuthenticationWarningView";
-
-    /**
-     * Action to check if login should redirect to password reset subflow.
-     */
-    String CHECK_FOR_PASSWORD_RESET_TOKEN_ACTION = "checkForPswdResetToken";
-
-    /**
-     * State for password reset subflow "pswdResetSubflow".
-     */
-    String STATE_ID_PASSWORD_RESET_SUBFLOW = "pswdResetSubflow";
-
-    /**
-     * Login flow state indicating the password reset subflow is complete "pswdResetComplete".
-     */
-    String STATE_ID_PASSWORD_RESET_FLOW_COMPLETE = "pswdResetComplete";
-
-    /**
-     * State to restart the login flow fresh "redirectToLogin".
-     */
-    String STATE_ID_REDIRECT_TO_LOGIN = "redirectToLogin";
-
-    /**
-     * State to check where the password change should go after completion (post or pre-login) "postLoginPswdChangeCheck".
-     */
-    String STATE_ID_POST_LOGIN_PASSWORD_CHANGE_CHECK = "postLoginPswdChangeCheck";
-
-    /**
-     * State id to check for do change password manual flag "checkDoChangePassword".
-     */
-    String STATE_ID_CHECK_DO_CHANGE_PASSWORD = "checkDoChangePassword";
+    String ACTION_ID_DELEGATED_AUTHENTICATION = "delegatedAuthenticationAction";
 }

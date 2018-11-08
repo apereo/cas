@@ -1,10 +1,12 @@
 package org.apereo.cas.grouper;
 
+import org.apereo.cas.util.CollectionUtils;
+
 import edu.internet2.middleware.grouperClient.api.GcGetGroups;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGroup;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.util.CollectionUtils;
+import lombok.val;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,8 +52,8 @@ public class GrouperFacade {
      */
     public Collection<WsGetGroupsResult> getGroupsForSubjectId(final String subjectId) {
         try {
-            final var groupsClient = new GcGetGroups().addSubjectId(subjectId);
-            final var results = groupsClient.execute().getResults();
+            val groupsClient = new GcGetGroups().addSubjectId(subjectId);
+            val results = groupsClient.execute().getResults();
             if (results == null || results.length == 0) {
                 LOGGER.warn("Subject id [{}] could not be located.", subjectId);
                 return new ArrayList<>(0);

@@ -1,11 +1,13 @@
 package org.apereo.cas.support.openid.web.mvc;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.support.openid.OpenIdProtocolConstants;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.AbstractDelegateController;
-import org.openid4java.message.Message;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.openid4java.message.ParameterList;
 import org.openid4java.server.ServerManager;
 import org.springframework.web.servlet.ModelAndView;
@@ -24,7 +26,7 @@ import java.util.Map;
  * @since 3.5
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SmartOpenIdController extends AbstractDelegateController implements Serializable {
     private static final long serialVersionUID = -594058549445950430L;
 
@@ -40,35 +42,33 @@ public class SmartOpenIdController extends AbstractDelegateController implements
      * @return the association response
      */
     public Map<String, String> getAssociationResponse(final HttpServletRequest request) {
-        final var parameters = new ParameterList(request.getParameterMap());
+        val parameters = new ParameterList(request.getParameterMap());
 
-        final var mode = parameters.hasParameter(OpenIdProtocolConstants.OPENID_MODE)
+        val mode = parameters.hasParameter(OpenIdProtocolConstants.OPENID_MODE)
             ? parameters.getParameterValue(OpenIdProtocolConstants.OPENID_MODE)
             : null;
 
-        Message response = null;
+        val response = FunctionUtils.doIf(StringUtils.equals(mode, OpenIdProtocolConstants.ASSOCIATE),
+            () -> this.serverManager.associationResponse(parameters),
+            () -> null)
+            .get();
 
-        if (StringUtils.equals(mode, OpenIdProtocolConstants.ASSOCIATE)) {
-            response = this.serverManager.associationResponse(parameters);
-        }
-        final Map<String, String> responseParams = new HashMap<>();
+        val responseParams = new HashMap<String, String>();
         if (response != null) {
             responseParams.putAll(response.getParameterMap());
         }
-
         return responseParams;
-
     }
 
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) {
-        final Map<String, String> parameters = new HashMap<>(getAssociationResponse(request));
+        val parameters = new HashMap<String, String>(getAssociationResponse(request));
         return new ModelAndView(this.successView, parameters);
     }
 
     @Override
     public boolean canHandle(final HttpServletRequest request, final HttpServletResponse response) {
-        final var openIdMode = request.getParameter(OpenIdProtocolConstants.OPENID_MODE);
+        val openIdMode = request.getParameter(OpenIdProtocolConstants.OPENID_MODE);
         if (StringUtils.equals(openIdMode, OpenIdProtocolConstants.ASSOCIATE)) {
             LOGGER.info("Handling request. openid.mode : [{}]", openIdMode);
             return true;

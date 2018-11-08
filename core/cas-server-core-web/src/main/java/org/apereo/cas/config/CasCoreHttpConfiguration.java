@@ -1,18 +1,19 @@
 package org.apereo.cas.config;
 
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.http.conn.ssl.DefaultHostnameVerifier;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.ssl.SSLContexts;
 import org.apereo.cas.authentication.DefaultCasSslContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.SimpleHttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
+
+import lombok.SneakyThrows;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.conn.ssl.DefaultHostnameVerifier;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.ssl.SSLContexts;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -35,7 +36,6 @@ import java.security.KeyStore;
 @Configuration("casCoreHttpConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Order(value = Ordered.HIGHEST_PRECEDENCE)
-@Slf4j
 public class CasCoreHttpConfiguration {
 
     @Autowired
@@ -51,11 +51,9 @@ public class CasCoreHttpConfiguration {
     @Bean
     @SneakyThrows
     public SSLContext sslContext() {
-
-        final var client = casProperties.getHttpClient().getTruststore();
+        val client = casProperties.getHttpClient().getTruststore();
         if (client.getFile() != null && client.getFile().exists() && StringUtils.isNotBlank(client.getPsw())) {
-            final var ctx =
-                new DefaultCasSslContext(client.getFile(), client.getPsw(), KeyStore.getDefaultType());
+            val ctx = new DefaultCasSslContext(client.getFile(), client.getPsw(), KeyStore.getDefaultType());
             return ctx.getSslContext();
         }
         return SSLContexts.createSystemDefault();
@@ -65,22 +63,18 @@ public class CasCoreHttpConfiguration {
     @ConditionalOnMissingBean(name = "httpClient")
     @Bean
     public FactoryBean<SimpleHttpClient> httpClient() {
-        final var c = new SimpleHttpClientFactoryBean.DefaultHttpClient();
-        final var httpClient = casProperties.getHttpClient();
-        c.setConnectionTimeout(Beans.newDuration(httpClient.getConnectionTimeout()).toMillis());
-        c.setReadTimeout((int) Beans.newDuration(httpClient.getReadTimeout()).toMillis());
-        return c;
+        return buildHttpClientFactoryBean();
     }
 
     @ConditionalOnMissingBean(name = "noRedirectHttpClient")
     @Bean
-    public HttpClient noRedirectHttpClient() throws Exception {
+    public HttpClient noRedirectHttpClient() {
         return getHttpClient(false);
     }
 
     @ConditionalOnMissingBean(name = "supportsTrustStoreSslSocketFactoryHttpClient")
     @Bean
-    public HttpClient supportsTrustStoreSslSocketFactoryHttpClient() throws Exception {
+    public HttpClient supportsTrustStoreSslSocketFactoryHttpClient() {
         return getHttpClient(true);
     }
 
@@ -94,14 +88,19 @@ public class CasCoreHttpConfiguration {
     }
 
     private HttpClient getHttpClient(final boolean redirectEnabled) {
-        final var c = new SimpleHttpClientFactoryBean.DefaultHttpClient();
-        final var httpClient = casProperties.getHttpClient();
-        c.setConnectionTimeout(Beans.newDuration(httpClient.getConnectionTimeout()).toMillis());
-        c.setReadTimeout((int) Beans.newDuration(httpClient.getReadTimeout()).toMillis());
+        val c = buildHttpClientFactoryBean();
         c.setRedirectsEnabled(redirectEnabled);
         c.setCircularRedirectsAllowed(redirectEnabled);
         c.setSslSocketFactory(trustStoreSslSocketFactory());
         c.setHostnameVerifier(hostnameVerifier());
         return c.getObject();
+    }
+
+    private SimpleHttpClientFactoryBean buildHttpClientFactoryBean() {
+        val c = new SimpleHttpClientFactoryBean.DefaultHttpClient();
+        val httpClient = casProperties.getHttpClient();
+        c.setConnectionTimeout(Beans.newDuration(httpClient.getConnectionTimeout()).toMillis());
+        c.setReadTimeout((int) Beans.newDuration(httpClient.getReadTimeout()).toMillis());
+        return c;
     }
 }

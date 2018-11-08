@@ -4,6 +4,8 @@ import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningStandaloneCondition;
+
+import lombok.val;
 import org.junit.Test;
 import org.springframework.test.context.TestPropertySource;
 
@@ -16,7 +18,11 @@ import static org.junit.Assert.*;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@TestPropertySource(locations = "classpath:/ldapsvc.properties")
+@TestPropertySource(properties = {
+    "cas.serviceRegistry.ldap.ldapUrl=ldap://localhost:1390",
+    "cas.serviceRegistry.ldap.useSsl=false",
+    "cas.serviceRegistry.ldap.baseDn=dc=example,dc=org"
+})
 @ConditionalIgnore(condition = RunningStandaloneCondition.class)
 public class LdapServiceRegistryTests extends BaseLdapServiceRegistryTests {
 
@@ -31,10 +37,10 @@ public class LdapServiceRegistryTests extends BaseLdapServiceRegistryTests {
     @Test
     public void verifySavingServiceChangesDn() {
         getServiceRegistry().save(buildRegisteredServiceInstance(8080));
-        final var services = getServiceRegistry().load();
+        val services = getServiceRegistry().load();
         assertFalse(services.isEmpty());
-        final var rs = getServiceRegistry().findServiceById(services.get(0).getId());
-        final var originalId = rs.getId();
+        val rs = getServiceRegistry().findServiceById(services.stream().findFirst().orElse(null).getId());
+        val originalId = rs.getId();
         assertNotNull(rs);
         rs.setId(666);
         assertNotNull(getServiceRegistry().save(rs));

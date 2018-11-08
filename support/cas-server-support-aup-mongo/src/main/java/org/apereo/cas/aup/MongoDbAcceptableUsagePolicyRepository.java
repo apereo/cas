@@ -1,8 +1,10 @@
 package org.apereo.cas.aup;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -38,8 +40,8 @@ public class MongoDbAcceptableUsagePolicyRepository extends AbstractPrincipalAtt
     @Override
     public boolean submit(final RequestContext requestContext, final Credential credential) {
         try {
-            final var update = Update.update(this.aupAttributeName, Boolean.TRUE);
-            final var query = new Query(Criteria.where("username").is(credential.getId()));
+            val update = Update.update(this.aupAttributeName, Boolean.TRUE);
+            val query = new Query(Criteria.where("username").is(credential.getId()));
             this.mongoTemplate.updateFirst(query, update, this.collection);
             return true;
         } catch (final Exception e) {

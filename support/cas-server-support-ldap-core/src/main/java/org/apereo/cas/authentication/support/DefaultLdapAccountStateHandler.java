@@ -1,8 +1,5 @@
 package org.apereo.cas.authentication.support;
 
-import lombok.Setter;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.DefaultMessageDescriptor;
 import org.apereo.cas.authentication.AuthenticationAccountStateHandler;
 import org.apereo.cas.authentication.MessageDescriptor;
@@ -13,6 +10,11 @@ import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
 import org.apereo.cas.authentication.support.password.PasswordExpiringWarningMessageDescriptor;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.apereo.cas.util.DateTimeUtils;
+
+import lombok.Setter;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.ldaptive.auth.AccountState;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.ext.ActiveDirectoryAccountState;
@@ -95,12 +97,12 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
             handlePolicyAttributes(response);
         }
 
-        final var state = response.getAccountState();
+        val state = response.getAccountState();
         if (state == null) {
             LOGGER.debug("Account state not defined. Returning empty list of messages.");
             return new ArrayList<>(0);
         }
-        final List<MessageDescriptor> messages = new ArrayList<>();
+        val messages = new ArrayList<MessageDescriptor>();
         handleError(state.getError(), response, configuration, messages);
         handleWarning(state.getWarning(), response, configuration, messages);
 
@@ -122,9 +124,8 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
                                final PasswordPolicyConfiguration configuration, final List<MessageDescriptor> messages) throws LoginException {
 
         LOGGER.debug("Handling LDAP account state error [{}]", error);
-        final var ex = this.errorMap.get(error);
-        if (ex != null) {
-            throw ex;
+        if (errorMap.containsKey(error)) {
+            throw errorMap.get(error);
         }
         LOGGER.debug("No LDAP error mapping defined for [{}]", error);
     }
@@ -151,8 +152,8 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
         }
 
         if (warning.getExpiration() != null) {
-            final var expDate = DateTimeUtils.zonedDateTimeOf(warning.getExpiration());
-            final var ttl = ZonedDateTime.now(ZoneOffset.UTC).until(expDate, ChronoUnit.DAYS);
+            val expDate = DateTimeUtils.zonedDateTimeOf(warning.getExpiration());
+            val ttl = ZonedDateTime.now(ZoneOffset.UTC).until(expDate, ChronoUnit.DAYS);
             LOGGER.debug(
                 "Password expires in [{}] days. Expiration warning threshold is [{}] days.",
                 ttl,
@@ -181,10 +182,10 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
      */
     @SneakyThrows
     protected void handlePolicyAttributes(final AuthenticationResponse response) {
-        final var attributes = response.getLdapEntry().getAttributes();
-        for (final var attr : attributes) {
+        val attributes = response.getLdapEntry().getAttributes();
+        for (val attr : attributes) {
             if (this.attributesToErrorMap.containsKey(attr.getName()) && Boolean.parseBoolean(attr.getStringValue())) {
-                final var clazz = this.attributesToErrorMap.get(attr.getName());
+                val clazz = this.attributesToErrorMap.get(attr.getName());
                 throw clazz.getDeclaredConstructor().newInstance();
             }
         }

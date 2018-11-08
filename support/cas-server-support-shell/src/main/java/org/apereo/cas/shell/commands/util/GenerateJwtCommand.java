@@ -6,6 +6,7 @@ import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.crypto.AESDecrypter;
 import com.nimbusds.jose.crypto.DirectDecrypter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
@@ -45,7 +46,7 @@ public class GenerateJwtCommand {
      *
      * @param subject the subject
      */
-    public void generate(final String subject) {
+    public static void generate(final String subject) {
         generate(DEFAULT_SIGNING_SECRET_SIZE, DEFAULT_ENCRYPTION_SECRET_SIZE,
             DEFAULT_SIGNING_ALGORITHM, DEFAULT_ENCRYPTION_ALGORITHM,
             DEFAULT_ENCRYPTION_METHOD, subject);
@@ -62,7 +63,7 @@ public class GenerateJwtCommand {
      * @param subject              the subject
      */
     @ShellMethod(key = "generate-jwt", value = "Generate a JWT with given size and algorithm for signing and encryption.")
-    public void generate(
+    public static void generate(
         @ShellOption(value = {"signingSecretSize"},
             help = "Size of the signing secret",
             defaultValue = "" + DEFAULT_SIGNING_SECRET_SIZE) final int signingSecretSize,
@@ -81,36 +82,36 @@ public class GenerateJwtCommand {
         @ShellOption(value = {"subject"},
             help = "Subject to use for the JWT") final String subject) {
 
-        final JwtGenerator<CommonProfile> g = new JwtGenerator<>();
+        val g = new JwtGenerator<>();
 
         configureJwtSigning(signingSecretSize, signingAlgorithm, g);
         configureJwtEncryption(encryptionSecretSize, encryptionAlgorithm, encryptionMethod, g);
 
-        final var profile = new CommonProfile();
+        val profile = new CommonProfile();
         profile.setId(subject);
 
-        final var repeat = StringUtils.repeat('=', SEP_LENGTH);
+        val repeat = StringUtils.repeat('=', SEP_LENGTH);
         LOGGER.debug(repeat);
         LOGGER.info("\nGenerating JWT for subject [{}] with signing key size [{}], signing algorithm [{}], "
                 + "encryption key size [{}], encryption method [{}] and encryption algorithm [{}]\n",
             subject, signingSecretSize, signingAlgorithm, encryptionSecretSize, encryptionMethod, encryptionAlgorithm);
         LOGGER.debug(repeat);
 
-        final var token = g.generate(profile);
+        val token = g.generate(profile);
         LOGGER.info("==== JWT ====\n[{}]", token);
     }
 
-    private void configureJwtEncryption(final int encryptionSecretSize, final String encryptionAlgorithm,
-                                        final String encryptionMethod, final JwtGenerator<CommonProfile> g) {
+    private static void configureJwtEncryption(final int encryptionSecretSize, final String encryptionAlgorithm,
+                                               final String encryptionMethod, final JwtGenerator<CommonProfile> g) {
         if (encryptionSecretSize <= 0 || StringUtils.isBlank(encryptionMethod) || StringUtils.isBlank(encryptionAlgorithm)) {
             LOGGER.info("No encryption algorithm or size specified, so the generated JWT will not be encrypted");
             return;
         }
 
-        final var encryptionSecret = RandomStringUtils.randomAlphanumeric(encryptionSecretSize);
+        val encryptionSecret = RandomStringUtils.randomAlphanumeric(encryptionSecretSize);
         LOGGER.info("==== Encryption Secret ====\n[{}]\n", encryptionSecret);
 
-        final var acceptedEncAlgs = Arrays.stream(JWEAlgorithm.class.getDeclaredFields())
+        val acceptedEncAlgs = Arrays.stream(JWEAlgorithm.class.getDeclaredFields())
             .filter(f -> f.getType().equals(JWEAlgorithm.class))
             .map(Unchecked.function(f -> {
                 f.setAccessible(true);
@@ -119,7 +120,7 @@ public class GenerateJwtCommand {
             .collect(Collectors.joining(","));
         LOGGER.debug("Encryption algorithm: [{}]. Available algorithms are [{}]", encryptionAlgorithm, acceptedEncAlgs);
 
-        final var acceptedEncMethods = Arrays.stream(EncryptionMethod.class.getDeclaredFields())
+        val acceptedEncMethods = Arrays.stream(EncryptionMethod.class.getDeclaredFields())
             .filter(f -> f.getType().equals(EncryptionMethod.class))
             .map(Unchecked.function(f -> {
                 f.setAccessible(true);
@@ -128,8 +129,8 @@ public class GenerateJwtCommand {
             .collect(Collectors.joining(","));
         LOGGER.debug("Encryption method: [{}]. Available methods are [{}]", encryptionMethod, acceptedEncMethods);
 
-        final var algorithm = JWEAlgorithm.parse(encryptionAlgorithm);
-        final var encryptionMethodAlg = EncryptionMethod.parse(encryptionMethod);
+        val algorithm = JWEAlgorithm.parse(encryptionAlgorithm);
+        val encryptionMethodAlg = EncryptionMethod.parse(encryptionMethod);
 
         if (DirectDecrypter.SUPPORTED_ALGORITHMS.contains(algorithm)) {
             if (!DirectDecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(encryptionMethodAlg)) {
@@ -150,16 +151,16 @@ public class GenerateJwtCommand {
 
     }
 
-    private void configureJwtSigning(final int signingSecretSize, final String signingAlgorithm, final JwtGenerator<CommonProfile> g) {
+    private static void configureJwtSigning(final int signingSecretSize, final String signingAlgorithm, final JwtGenerator<CommonProfile> g) {
         if (signingSecretSize <= 0 || StringUtils.isBlank(signingAlgorithm)) {
             LOGGER.info("No signing algorithm or size specified, so the generated JWT will not be encrypted");
             return;
         }
 
-        final var signingSecret = RandomStringUtils.randomAlphanumeric(signingSecretSize);
+        val signingSecret = RandomStringUtils.randomAlphanumeric(signingSecretSize);
         LOGGER.info("==== Signing Secret ====\n{}\n", signingSecret);
 
-        final var acceptedSigningAlgs = Arrays.stream(JWSAlgorithm.class.getDeclaredFields())
+        val acceptedSigningAlgs = Arrays.stream(JWSAlgorithm.class.getDeclaredFields())
             .filter(f -> f.getType().equals(JWSAlgorithm.class))
             .map(Unchecked.function(f -> {
                 f.setAccessible(true);

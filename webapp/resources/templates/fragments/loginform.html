@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
 
     <title>Login Form Fragment</title>
-    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
 </head>
 <body>
 <main role="main" class="container mt-3 mb-3">
@@ -28,6 +28,29 @@
                         </div>
 
                         <h3 th:utext="#{screen.welcome.instructions}">Enter your Username and Password</h3>
+
+                        <section class="form-group">
+                            <span th:if="${availableAuthenticationHandlerNames != null}">
+                                <span th:if="${availableAuthenticationHandlerNames.size() > 1}">
+                                    <label for="source" th:utext="#{screen.welcome.label.source}">Source</label>
+                                    <div>
+                                        <select class="form-control required"
+                                                id="source"
+                                                name="source"
+                                                tabindex="0"
+                                                th:field="*{source}">
+                                            <option th:each="handler : ${availableAuthenticationHandlerNames}" th:value="${handler}" th:text="${handler}">Source</option>
+                                        </select>
+                                    </div>
+                                </span>
+                                <span th:if="${availableAuthenticationHandlerNames.size() == 1}">
+                                     <input type="hidden"
+                                            id="source"
+                                            name="source"
+                                            th:value="${availableAuthenticationHandlerNames.get(0)}"/>
+                                </span>
+                            </span>
+                        </section>
 
                         <section class="form-group">
                             <label for="username" th:utext="#{screen.welcome.label.netid}">Username</label>
@@ -90,31 +113,61 @@
                             </p>
                         </section>
 
-                        <section class="row" th:if="${recaptchaSiteKey != null AND recaptchaInvisible != null AND recaptchaSiteKey AND !recaptchaInvisible}">
-                            <div class="g-recaptcha" th:attr="data-sitekey=${recaptchaSiteKey}"/>
-                        </section>
-
+                        <span th:if="${recaptchaVersion=='v2'}" th:remove="tag">
+                            <section class="form-group" th:if="${recaptchaSiteKey != null AND recaptchaInvisible != null AND !recaptchaInvisible}">
+                                <div class="g-recaptcha" th:attr="data-sitekey=${recaptchaSiteKey}"/>
+                            </section>
+                        </span>
+                        <span th:if="${recaptchaVersion=='v3'}" th:remove="tag">
+                              <input type="hidden" id="g-recaptcha-token" name="g-recaptcha-token"/>
+                        </span>
                         <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                         <input type="hidden" name="_eventId" value="submit"/>
                         <input type="hidden" name="geolocation"/>
+
                         <input class="btn btn-block btn-submit"
-                               th:unless="${recaptchaSiteKey != null AND recaptchaInvisible != null AND recaptchaSiteKey AND recaptchaInvisible}"
+                               th:if="${recaptchaSiteKey == null}"
                                name="submit"
                                accesskey="l"
                                th:value="#{screen.welcome.button.login}"
                                tabindex="6"
                                type="submit"
-                               value="Login3"
+                               value="Login8"
                         />
-                        <button class="btn btn-block btn-submit g-recaptcha"
-                                th:if="${recaptchaSiteKey != null AND recaptchaInvisible != null AND recaptchaSiteKey AND recaptchaInvisible}"
-                                th:attr="data-sitekey=${recaptchaSiteKey}, data-badge=${recaptchaPosition}"
-                                data-callback="onSubmit"
-                                name="submitBtn"
-                                accesskey="l"
-                                th:text="#{screen.welcome.button.login}"
-                                tabindex="6"
-                        />
+
+                        <span th:if="${recaptchaVersion=='v2'}" th:remove="tag">
+                            <input class="btn btn-block btn-submit"
+                                   th:unless="${recaptchaSiteKey != null AND recaptchaInvisible != null AND recaptchaInvisible}"
+                                   name="submit"
+                                   accesskey="l"
+                                   th:value="#{screen.welcome.button.login}"
+                                   tabindex="6"
+                                   type="submit"
+                                   value="Login3"
+                            />
+                            <button class="btn btn-block btn-submit"
+                                    th:if="${recaptchaSiteKey != null AND recaptchaInvisible != null AND recaptchaInvisible}"
+                                    th:attr="data-sitekey=${recaptchaSiteKey}, data-badge=${recaptchaPosition}"
+                                    data-callback="onRecaptchaV2Submit"
+                                    name="submitBtn"
+                                    accesskey="l"
+                                    th:text="#{screen.welcome.button.login}"
+                                    tabindex="6"
+                            />
+                        </span>
+
+                        <span th:if="${recaptchaVersion=='v3'}" th:remove="tag">
+                            <input class="btn btn-block btn-submit"
+                                  th:if="${recaptchaSiteKey != null}"
+                                  name="submit"
+                                  th:attr="data-sitekey=${recaptchaSiteKey}"
+                                  accesskey="l"
+                                  th:value="#{screen.welcome.button.login}"
+                                  tabindex="6"
+                                  type="submit"
+                                  value="Login3"
+                            />
+                         </span>
                     </form>
 
                     <form th:if="${passwordManagementEnabled}" method="post" id="passwordManagementForm">
@@ -125,25 +178,35 @@
                         <p/>
                     </form>
 
+                    <form th:if="${passwordManagementEnabled}" method="post" id="passwordManagementUserForm">
+                        <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                        <input type="hidden" name="_eventId" value="forgotUsername"/>
+                        <span class="fa fa-unlock"></span>
+                        <a th:utext="#{screen.pm.button.forgotUsername}" href="javascript:void(0)" onclick="$('#passwordManagementUserForm').submit();"/>
+                        <p/>
+                    </form>
+
                     <div th:unless="${passwordManagementEnabled}">
+                        <br/>
                         <span class="fa fa-question-circle"></span>
                         <span th:utext="#{screen.pm.button.forgotpwd}">Forgot your password?</span>
                         <p/>
                     </div>
 
                     <script type="text/javascript" th:inline="javascript">
-                        var i = [[#{screen.welcome.button.loginwip}]]
-                        $( document ).ready(function() {
-                            $("#fm1").submit(function () {
-                                $(":submit").attr("disabled", true);
-                                $(":submit").attr("value", i);
-                                console.log(i);
-                                return true;
+                        /*<![CDATA[*/
+                        var i = /*[[@{#{screen.welcome.button.loginwip}}]]*/
+                            /*]]>*/
+                            $(document).ready(function () {
+                                $("#fm1").submit(function () {
+                                    $(":submit").attr("disabled", true);
+                                    $(":submit").attr("value", i);
+                                    return true;
+                                });
                             });
-                        });
                     </script>
 
-                    <div th:replace="fragments/loginsidebar :: loginsidebar" />
+                    <div th:replace="fragments/loginsidebar :: loginsidebar"/>
                 </div>
             </div>
         </div>

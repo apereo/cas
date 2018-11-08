@@ -1,42 +1,43 @@
 package org.apereo.cas.services;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 public class ServiceRegistryInitializerTests {
 
     @Test
     public void ensureInitFromJsonDoesNotCreateDuplicates() {
-        var initialService = newService();
+        val initialService = newService();
 
-        final var servicesManager = mock(ServicesManager.class);
-        final var jsonServiceRegistry = mock(ServiceRegistry.class);
-        when(jsonServiceRegistry.load()).thenReturn(Arrays.asList(initialService));
+        val servicesManager = mock(ServicesManager.class);
+        val jsonServiceRegistry = mock(ServiceRegistry.class);
+        when(jsonServiceRegistry.load()).thenReturn((Collection) Arrays.asList(initialService));
 
-        final ServiceRegistry serviceRegistry = new InMemoryServiceRegistry();
-        final var serviceRegistryInitializer = new ServiceRegistryInitializer(jsonServiceRegistry, serviceRegistry, servicesManager);
+        val serviceRegistry = new InMemoryServiceRegistry();
+        val serviceRegistryInitializer = new ServiceRegistryInitializer(jsonServiceRegistry, serviceRegistry, servicesManager);
         serviceRegistryInitializer.initServiceRegistryIfNecessary();
         assertThat(serviceRegistry.size()).isEqualTo(1);
 
-        initialService = newService();
-        when(jsonServiceRegistry.load()).thenReturn(Arrays.asList(initialService));
+        val initialService2 = newService();
+        when(jsonServiceRegistry.load()).thenReturn((Collection) Collections.singletonList(initialService2));
 
         serviceRegistryInitializer.initServiceRegistryIfNecessary();
         assertThat(serviceRegistry.size()).isEqualTo(1);
     }
 
-    private RegisteredService newService() {
-        final var service = mock(RegisteredService.class);
+    private static RegisteredService newService() {
+        val service = mock(RegisteredService.class);
         when(service.getServiceId()).thenReturn("^https?://.*");
         when(service.getName()).thenReturn("Test");
         when(service.getDescription()).thenReturn("Test");

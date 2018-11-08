@@ -1,9 +1,11 @@
 package org.apereo.cas.authentication.principal;
 
+import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
+
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
+import lombok.val;
 
 import java.util.Map;
 
@@ -28,7 +30,7 @@ public class DefaultPrincipalAttributesRepository extends AbstractPrincipalAttri
 
     @Override
     protected Map<String, Object> getPrincipalAttributes(final Principal p) {
-        final var attributes = p.getAttributes();
+        val attributes = p.getAttributes();
         LOGGER.debug("[{}] will return the collection of attributes directly associated with the principal object which are [{}]",
             this.getClass().getSimpleName(), attributes);
         return attributes;

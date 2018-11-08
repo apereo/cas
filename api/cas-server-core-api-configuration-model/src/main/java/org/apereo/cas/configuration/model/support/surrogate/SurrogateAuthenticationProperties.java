@@ -1,20 +1,23 @@
 package org.apereo.cas.configuration.model.support.surrogate;
 
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
+import org.apereo.cas.configuration.model.support.couchdb.BaseCouchDbProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
-import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RestEndpointProperties;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link SurrogateAuthenticationProperties}.
@@ -23,7 +26,6 @@ import lombok.Setter;
  * @since 5.1.0
  */
 @RequiresModule(name = "cas-server-support-surrogate-webflow")
-
 @Getter
 @Setter
 public class SurrogateAuthenticationProperties implements Serializable {
@@ -34,6 +36,11 @@ public class SurrogateAuthenticationProperties implements Serializable {
      * The separator character used to distinguish between the surrogate account and the admin account.
      */
     private String separator = "+";
+
+    /**
+     * Locate surrogate accounts via CouchDB.
+     */
+    private CouchDb couchDb = new CouchDb();
 
     /**
      * Locate surrogate accounts via CAS configuration, hardcoded as properties.
@@ -70,7 +77,7 @@ public class SurrogateAuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private PersonDirectoryPrincipalResolverProperties principal = new PersonDirectoryPrincipalResolverProperties();
-    
+
     /**
      * Email settings for notifications.
      */
@@ -97,6 +104,29 @@ public class SurrogateAuthenticationProperties implements Serializable {
          * impersonated by the admin-user.
          */
         private Map<String, String> surrogates = new LinkedHashMap<>();
+    }
+
+    @RequiresModule(name = "cas-server-support-surrogate-authentication-couchdb")
+    @Getter
+    @Setter
+    public static class CouchDb extends BaseCouchDbProperties {
+
+        private static final long serialVersionUID = 8378399979559955402L;
+
+        /**
+         * Use user profiles instead of surrogate/principal pairs. If +true+, a list of of principals the user is an authorized surrogate of is stored in the
+         * user profile in CouchDb. Most useful with CouchDb authentication or AUP.
+         */
+        private boolean profileBased;
+
+        /**
+         * Attribute with list of principals the user may surrogate when user surrogates are stored in user profiles.
+         */
+        private String surrogatePrincipalsAttribute = "surrogateFor";
+
+        public CouchDb() {
+            this.setDbName("surrogates");
+        }
     }
 
     @RequiresModule(name = "cas-server-support-surrogate-webflow")
@@ -128,8 +158,8 @@ public class SurrogateAuthenticationProperties implements Serializable {
         private String surrogateSearchFilter;
 
         /**
-         *  Attribute that must be found on the LDAP entry linked to the admin user
-         *  that tags the account as authorized for impersonation.
+         * Attribute that must be found on the LDAP entry linked to the admin user
+         * that tags the account as authorized for impersonation.
          */
         @RequiredProperty
         private String memberAttributeName;

@@ -1,9 +1,10 @@
 package org.apereo.cas.configuration.model.support.saml.idp.metadata;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -20,7 +21,6 @@ import java.util.concurrent.TimeUnit;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-saml-idp")
-
 @Getter
 @Setter
 public class SamlIdPMetadataProperties implements Serializable {
@@ -73,6 +73,12 @@ public class SamlIdPMetadataProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private AmazonS3SamlMetadataProperties amazonS3 = new AmazonS3SamlMetadataProperties();
+
+    /**
+     * Properties pertaining to CouchDB metadata resolution.
+     */
+    @NestedConfigurationProperty
+    private CouchDbSamlMetadataProperties couchDb = new CouchDbSamlMetadataProperties();
 
     /**
      * Algorithm name to use when generating private key.

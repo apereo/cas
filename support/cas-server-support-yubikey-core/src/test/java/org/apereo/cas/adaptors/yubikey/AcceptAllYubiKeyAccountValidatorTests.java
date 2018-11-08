@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.yubikey;
 
+import lombok.val;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -13,7 +14,7 @@ import static org.junit.Assert.*;
 public class AcceptAllYubiKeyAccountValidatorTests {
     @Test
     public void verifyAction() {
-        final var v = new AcceptAllYubiKeyAccountValidator();
+        val v = new AcceptAllYubiKeyAccountValidator();
         assertTrue(v.isValid("anything", "anything"));
     }
 }

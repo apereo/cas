@@ -1,10 +1,11 @@
 package org.apereo.cas.util.spring.boot;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.AsciiArtUtils;
 import org.apereo.cas.util.CasVersion;
 import org.apereo.cas.util.SystemUtils;
+
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.Banner;
 import org.springframework.core.env.Environment;
 
@@ -18,7 +19,6 @@ import java.util.Formatter;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 public abstract class AbstractCasBanner implements Banner {
 
     private static final int SEPARATOR_REPEAT_COUNT = 60;
@@ -49,16 +49,16 @@ public abstract class AbstractCasBanner implements Banner {
      * @return environment info
      */
     private String collectEnvironmentInfo(final Environment environment, final Class<?> sourceClass) {
-        final var properties = System.getProperties();
+        val properties = System.getProperties();
         if (properties.containsKey("CAS_BANNER_SKIP")) {
-            try (var formatter = new Formatter()) {
+            try (val formatter = new Formatter()) {
                 formatter.format("CAS Version: %s%n", CasVersion.getVersion());
                 return formatter.toString();
             }
         }
 
-        try (var formatter = new Formatter()) {
-            final var sysInfo = SystemUtils.getSystemInfo();
+        try (val formatter = new Formatter()) {
+            val sysInfo = SystemUtils.getSystemInfo();
             sysInfo.forEach((k, v) -> {
                 if (k.startsWith(SEPARATOR_CHAR)) {
                     formatter.format("%s%n", LINE_SEPARATOR);

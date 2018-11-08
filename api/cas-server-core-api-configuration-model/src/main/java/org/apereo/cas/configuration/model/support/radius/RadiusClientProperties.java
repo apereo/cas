@@ -1,10 +1,12 @@
 package org.apereo.cas.configuration.model.support.radius;
 
-import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
-import java.io.Serializable;
+import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * This is {@link RadiusClientProperties}.
@@ -13,7 +15,6 @@ import lombok.Setter;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-radius")
-
 @Getter
 @Setter
 public class RadiusClientProperties implements Serializable {

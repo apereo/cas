@@ -1,11 +1,12 @@
 ---
 layout: default
 title: CAS - Overlay Installation
+category: Installation
 ---
 
 # Servlet Container Configuration
 
-A number of container options are available to deploy CAS. The [WAR Overlay](Maven-Overlay-Installation.html) guide
+A number of container options are available to deploy CAS. The [WAR Overlay](WAR-Overlay-Installation.html) guide
 describes how to build and deploy CAS.
 
 ## How Do I Choose?
@@ -32,10 +33,10 @@ updated usually for every release and surely are meant to and can be used in pro
 You **DO NOT** need to, but can if you want to, configure and deploy to an externally configured container. 
 
 <div class="alert alert-info"><strong>Do Less</strong><p>Remember that most if not all aspects of the embedded 
-container can be controlled via the CAS properties. See <a href="Configuration-Properties.html#embedded-tomcat">this guide</a> for more info.</p></div>
+container can be controlled via the CAS properties. See <a href="../configuration/Configuration-Properties.html#embedded-apache-tomcat-container">this guide</a> for more info.</p></div>
 
 To see the relevant list of CAS properties, 
-please [review this guide](Configuration-Properties.html#embedded-container).
+please [review this guide](../configuration/Configuration-Properties.html#embedded-container).
 
 ### Execution
 
@@ -141,7 +142,7 @@ java -jar /path/to/cas.war -Djava.util.logging.config.file=/path/to/logging.prop
 
 A CAS deployment may be deployed to any number of external servlet containers. The container **MUST** support
 the servlet specification `v4.0.0` at a minimum. In these scenarios, the following vanilla CAS web application
-may be used, in the [WAR Overlay](Maven-Overlay-Installation.html) :
+may be used, in the [WAR Overlay](WAR-Overlay-Installation.html) :
 
 ```xml
 <dependency>
@@ -196,7 +197,7 @@ To disable CAS' own logging, define a `log4j2.xml` under `src/main/resources` an
 <Configuration>
     <Appenders>
         <Console name="console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
+            <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n" />
         </Console>
     </Appenders>
     <Loggers>

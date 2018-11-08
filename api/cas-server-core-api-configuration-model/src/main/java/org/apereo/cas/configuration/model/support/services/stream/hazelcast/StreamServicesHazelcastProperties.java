@@ -3,9 +3,10 @@ package org.apereo.cas.configuration.model.support.services.stream.hazelcast;
 import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
 import org.apereo.cas.configuration.model.support.services.stream.BaseStreamServicesProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * This is {@link StreamServicesHazelcastProperties}.
@@ -14,7 +15,6 @@ import lombok.Setter;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-service-registry-stream-hazelcast")
-
 @Getter
 @Setter
 public class StreamServicesHazelcastProperties extends BaseStreamServicesProperties {

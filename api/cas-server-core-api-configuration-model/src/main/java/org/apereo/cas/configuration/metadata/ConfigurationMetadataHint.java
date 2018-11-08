@@ -14,14 +14,11 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-
 @Getter
 @Setter
 public class ConfigurationMetadataHint {
 
-    private String name;
-
     private final List<ValueHint> values = new ArrayList();
-
     private final List<ValueProvider> providers = new ArrayList();
+    private String name;
 }

@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import lombok.SneakyThrows;
+import lombok.val;
 import org.junit.Test;
 import org.springframework.test.context.TestPropertySource;
 
@@ -14,13 +15,20 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@TestPropertySource(locations = {"classpath:/jdbc-multi-attribute-repository.properties"})
+@TestPropertySource(properties = {
+    "cas.authn.attributeRepository.jdbc[0].attributes.nickname=cas_nickname",
+    "cas.authn.attributeRepository.jdbc[0].attributes.role_code=cas_role",
+    "cas.authn.attributeRepository.jdbc[0].singleRow=false",
+    "cas.authn.attributeRepository.jdbc[0].columnMappings.attr_name=attr_value",
+    "cas.authn.attributeRepository.jdbc[0].sql=SELECT * FROM table_users WHERE {0}",
+    "cas.authn.attributeRepository.jdbc[0].username=uid"
+})
 public class JdbcMultiRowAttributeRepositoryTests extends BaseJdbcAttributeRepositoryTests {
 
     @Test
     public void verifyMultiRowAttributeRepository() {
         assertNotNull(attributeRepository);
-        final var person = attributeRepository.getPerson("casuser");
+        val person = attributeRepository.getPerson("casuser");
         assertNotNull(person);
         assertNotNull(person.getAttributes());
         assertFalse(person.getAttributes().isEmpty());

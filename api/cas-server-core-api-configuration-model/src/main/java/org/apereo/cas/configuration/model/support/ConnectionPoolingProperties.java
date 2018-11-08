@@ -1,8 +1,9 @@
 package org.apereo.cas.configuration.model.support;
 
-import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * This is {@link ConnectionPoolingProperties}.
@@ -10,7 +11,6 @@ import lombok.Setter;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
 @Getter
 @Setter
 public class ConnectionPoolingProperties implements Serializable {
@@ -30,7 +30,7 @@ public class ConnectionPoolingProperties implements Serializable {
     /**
      * Sets the maximum time in seconds that this data source will wait
      * while attempting to connect to a database.
-     *
+     * <p>
      * A value of zero specifies that the timeout is the default system timeout
      * if there is one; otherwise, it specifies that there is no timeout.
      */
@@ -38,7 +38,7 @@ public class ConnectionPoolingProperties implements Serializable {
 
     /**
      * Whether or not pool suspension is allowed.
-     *
+     * <p>
      * There is a performance impact when pool suspension is enabled.
      * Unless you need it (for a redundancy system for example) do not enable it.
      */

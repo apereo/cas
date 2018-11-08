@@ -1,9 +1,10 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.cassandra.CassandraSessionFactory;
 import org.apereo.cas.cassandra.DefaultCassandraSessionFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -18,7 +19,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("cassandraCoreConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CassandraCoreConfiguration {
 
     @Autowired
@@ -27,7 +27,7 @@ public class CassandraCoreConfiguration {
     @Bean
     @RefreshScope
     public CassandraSessionFactory cassandraSessionFactory() {
-        final var cassandra = casProperties.getAuthn().getCassandra();
+        val cassandra = casProperties.getAuthn().getCassandra();
         return new DefaultCassandraSessionFactory(cassandra);
     }
 

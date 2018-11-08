@@ -1,13 +1,14 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -25,11 +26,11 @@ import java.util.Set;
  */
 @Entity
 @DiscriminatorValue("oidc")
-@Slf4j
 @ToString(callSuper = true)
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
 public class OidcRegisteredService extends OAuthRegisteredService {
 
     private static final long serialVersionUID = 1310899699465091444L;
@@ -45,6 +46,9 @@ public class OidcRegisteredService extends OAuthRegisteredService {
 
     @Column
     private String idTokenEncryptionAlg;
+
+    @Column
+    private String idTokenSigningAlg;
 
     @Column
     private String idTokenEncryptionEncoding;
@@ -67,10 +71,6 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     @Lob
     @Column(name = "scopes", length = Integer.MAX_VALUE)
     private HashSet<String> scopes = new HashSet<>();
-
-    public OidcRegisteredService() {
-        setJsonFormat(true);
-    }
 
     /**
      * Gets subject type.

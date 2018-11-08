@@ -1,8 +1,5 @@
 package org.apereo.cas.adaptors.x509.authentication.ldap;
 
-import lombok.extern.slf4j.Slf4j;
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
 import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.AbstractX509LdapTests;
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.CRLDistributionPointRevocationChecker;
@@ -25,9 +22,14 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.util.crypto.CertUtils;
-import org.junit.Test;
+
+import lombok.val;
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
 import org.junit.BeforeClass;
-import org.junit.runner.RunWith;
+import org.junit.ClassRule;
+import org.junit.Rule;
+import org.junit.Test;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -37,7 +39,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 
 /**
@@ -46,7 +49,6 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {X509AuthenticationConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
@@ -67,10 +69,14 @@ import org.springframework.test.context.junit4.SpringRunner;
     CasCoreServicesConfiguration.class})
 @TestPropertySource(locations = {"classpath:/x509.properties"})
 @EnableScheduling
-@Slf4j
 public class LdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests implements InitializingBean {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
 
     private static final int LDAP_PORT = 1389;
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     @Qualifier("crlFetcher")
@@ -79,28 +85,28 @@ public class LdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests imple
     @Autowired
     private ApplicationContext applicationContext;
 
-    @Override
-    public void afterPropertiesSet() {
-        SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
-    }
-
     @BeforeClass
     public static void bootstrapTests() throws Exception {
         initDirectoryServer(LDAP_PORT);
         AbstractX509LdapTests.bootstrap(LDAP_PORT);
     }
 
+    @Override
+    public void afterPropertiesSet() {
+        SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
+    }
+
     @Test
     public void getCrlFromLdap() throws Exception {
         CacheManager.getInstance().removeAllCaches();
-        final var cache = new Cache("crlCache-1", 100, false, false, 20, 10);
+        val cache = new Cache("crlCache-1", 100, false, false, 20, 10);
         CacheManager.getInstance().addCache(cache);
 
         for (var i = 0; i < 10; i++) {
-            final var checker =
+            val checker =
                 new CRLDistributionPointRevocationChecker(false, new AllowRevocationPolicy(), null,
                     cache, fetcher, true);
-            final var cert = CertUtils.readCertificate(new ClassPathResource("ldap-crl.crt"));
+            val cert = CertUtils.readCertificate(new ClassPathResource("ldap-crl.crt"));
             checker.check(cert);
         }
     }
@@ -109,12 +115,12 @@ public class LdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests imple
     public void getCrlFromLdapWithNoCaching() throws Exception {
         for (var i = 0; i < 10; i++) {
             CacheManager.getInstance().removeAllCaches();
-            final var cache = new Cache("crlCache-1", 100, false, false, 20, 10);
+            val cache = new Cache("crlCache-1", 100, false, false, 20, 10);
             CacheManager.getInstance().addCache(cache);
-            final var checker = new CRLDistributionPointRevocationChecker(
+            val checker = new CRLDistributionPointRevocationChecker(
                 false, new AllowRevocationPolicy(), null,
                 cache, fetcher, true);
-            final var cert = CertUtils.readCertificate(new ClassPathResource("ldap-crl.crt"));
+            val cert = CertUtils.readCertificate(new ClassPathResource("ldap-crl.crt"));
             checker.check(cert);
         }
     }

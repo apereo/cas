@@ -1,9 +1,11 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import java.io.Serializable;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.io.Serializable;
 
 /**
  * This is {@link BaseMultifactorProviderProperties}.
@@ -11,9 +13,9 @@ import lombok.Setter;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-
 @Getter
 @Setter
+@EqualsAndHashCode(of = "id")
 public abstract class BaseMultifactorProviderProperties implements Serializable {
 
     private static final long serialVersionUID = -2690281104343633871L;
@@ -62,4 +64,9 @@ public abstract class BaseMultifactorProviderProperties implements Serializable 
      * The name of the authentication handler used to verify credentials in MFA.
      */
     private String name;
+
+    /**
+     * The failure mode policy for this MFA provider.
+     */
+    private String failureMode = "UNDEFINED";
 }

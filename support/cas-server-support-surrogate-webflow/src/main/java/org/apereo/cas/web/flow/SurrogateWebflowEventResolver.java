@@ -1,17 +1,17 @@
 package org.apereo.cas.web.flow;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
-import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.val;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -24,25 +24,23 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 public class SurrogateWebflowEventResolver extends AbstractCasWebflowEventResolver {
     /**
      * Internal flag to indicate whether surrogate account selection is requested.
      */
     public static final String CONTEXT_ATTRIBUTE_REQUEST_SURROGATE = "requestSurrogateAccount";
-    
+
     private final SurrogateAuthenticationService surrogateService;
-    
+
     public SurrogateWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                          final CentralAuthenticationService centralAuthenticationService,
                                          final ServicesManager servicesManager,
                                          final TicketRegistrySupport ticketRegistrySupport,
                                          final CookieGenerator warnCookieGenerator,
                                          final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
-                                         final MultifactorAuthenticationProviderSelector selector,
                                          final SurrogateAuthenticationService surrogateService) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport,
-                warnCookieGenerator, authenticationSelectionStrategies, selector);
+            warnCookieGenerator, authenticationSelectionStrategies);
         this.surrogateService = surrogateService;
     }
 
@@ -51,17 +49,17 @@ public class SurrogateWebflowEventResolver extends AbstractCasWebflowEventResolv
         if (requestContext.getFlowScope().getBoolean(CONTEXT_ATTRIBUTE_REQUEST_SURROGATE, Boolean.FALSE)) {
             requestContext.getFlowScope().remove(CONTEXT_ATTRIBUTE_REQUEST_SURROGATE);
             if (loadSurrogates(requestContext)) {
-                return CollectionUtils.wrapSet(new Event(this, SurrogateWebflowConfigurer.VIEW_ID_SURROGATE_VIEW));
+                return CollectionUtils.wrapSet(new Event(this, SurrogateWebflowConfigurer.TRANSITION_ID_SURROGATE_VIEW));
             }
         }
         return null;
     }
 
     private boolean loadSurrogates(final RequestContext requestContext) {
-        final var c = WebUtils.getCredential(requestContext);
+        val c = WebUtils.getCredential(requestContext);
         if (c instanceof UsernamePasswordCredential) {
-            final var username = c.getId();
-            final var surrogates = surrogateService.getEligibleAccountsForSurrogateToProxy(username);
+            val username = c.getId();
+            val surrogates = surrogateService.getEligibleAccountsForSurrogateToProxy(username);
             if (!surrogates.isEmpty()) {
                 surrogates.add(username);
                 requestContext.getFlowScope().put("surrogates", surrogates);

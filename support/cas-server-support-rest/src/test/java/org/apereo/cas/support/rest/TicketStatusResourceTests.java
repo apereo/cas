@@ -1,12 +1,13 @@
 package org.apereo.cas.support.rest;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.rest.resources.TicketStatusResource;
 import org.apereo.cas.ticket.InvalidTicketException;
-import org.junit.Test;
+
+import lombok.val;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -26,7 +27,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 5.3.0
  */
 @RunWith(MockitoJUnitRunner.Silent.class)
-@Slf4j
 public class TicketStatusResourceTests {
     private static final String TICKETS_RESOURCE_URL = "/cas/v1/tickets";
 
@@ -51,7 +51,7 @@ public class TicketStatusResourceTests {
 
     @Test
     public void verifyStatus() throws Exception {
-        final var tgt = new MockTicketGrantingTicket("casuser");
+        val tgt = new MockTicketGrantingTicket("casuser");
         when(casMock.getTicket(anyString())).thenReturn(tgt);
         this.mockMvc.perform(get(TICKETS_RESOURCE_URL + "/TGT-1"))
             .andExpect(status().isOk())

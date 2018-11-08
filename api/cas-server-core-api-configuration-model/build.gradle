@@ -2,8 +2,6 @@ description = "Apereo CAS Core Configuration Model"
 def skipConfigurationMetadata = Boolean.getBoolean("skipNestedConfigMetadataGen")
 
 dependencies {
-    implementation libraries.springsecurity
-    implementation libraries.mongo
     implementation libraries.jasypt
 
     implementation libraries.bouncycastle
@@ -17,6 +15,7 @@ dependencies {
     if (!skipConfigurationMetadata) {
         annotationProcessor libraries.springbootconfigmetadata
     }
+    
 }
 
 if (!skipConfigurationMetadata) {
@@ -31,7 +30,7 @@ if (!skipConfigurationMetadata) {
         classpath = sourceSets.main.runtimeClasspath
         args buildDir, projectDir.canonicalPath
     }
-    
+
     compileJava.dependsOn(processResources)
     jar.dependsOn(generateConfigurationMetadata)
 }

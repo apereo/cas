@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.jdbc;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.PreventedException;
@@ -8,19 +7,22 @@ import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
-import org.junit.Rule;
-import org.junit.Test;
+
+import lombok.val;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -41,17 +43,20 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     DatabaseAuthenticationTestConfiguration.class
 })
-@Slf4j
 @DirtiesContext
 public class QueryDatabaseAuthenticationHandlerTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
 
     private static final String SQL = "SELECT * FROM casusers where username=?";
     private static final String PASSWORD_FIELD = "password";
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -60,10 +65,15 @@ public class QueryDatabaseAuthenticationHandlerTests {
     @Qualifier("dataSource")
     private DataSource dataSource;
 
+    private static String getSqlInsertStatementToCreateUserAccount(final int i, final String expired, final String disabled) {
+        return String.format("insert into casusers (username, password, expired, disabled, phone) values('%s', '%s', '%s', '%s', '%s');",
+            "user" + i, "psw" + i, expired, disabled, "123456789");
+    }
+
     @Before
     public void initialize() throws Exception {
-        final var c = this.dataSource.getConnection();
-        final var s = c.createStatement();
+        val c = this.dataSource.getConnection();
+        val s = c.createStatement();
         c.setAutoCommit(true);
 
         s.execute(getSqlInsertStatementToCreateUserAccount(0, Boolean.FALSE.toString(), Boolean.FALSE.toString()));
@@ -78,8 +88,8 @@ public class QueryDatabaseAuthenticationHandlerTests {
 
     @After
     public void afterEachTest() throws Exception {
-        final var c = this.dataSource.getConnection();
-        final var s = c.createStatement();
+        val c = this.dataSource.getConnection();
+        val s = c.createStatement();
         c.setAutoCommit(true);
 
         for (var i = 0; i < 5; i++) {
@@ -88,9 +98,100 @@ public class QueryDatabaseAuthenticationHandlerTests {
         c.close();
     }
 
-    private static String getSqlInsertStatementToCreateUserAccount(final int i, final String expired, final String disabled) {
-        return String.format("insert into casusers (username, password, expired, disabled, phone) values('%s', '%s', '%s', '%s', '%s');",
-            "user" + i, "psw" + i, expired, disabled, "123456789");
+    @Test
+    public void verifyAuthenticationFailsToFindUser() throws Exception {
+        val q = new QueryDatabaseAuthenticationHandler("", null, null, null, this.dataSource, SQL, PASSWORD_FIELD, null,
+            null, new HashMap<>(0));
+        this.thrown.expect(AccountNotFoundException.class);
+        q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("usernotfound", "psw1"));
+    }
+
+    @Test
+    public void verifyPasswordInvalid() throws Exception {
+        val q = new QueryDatabaseAuthenticationHandler("", null, null, null, this.dataSource, SQL, PASSWORD_FIELD,
+            null, null, new HashMap<>(0));
+        this.thrown.expect(FailedLoginException.class);
+        q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user1", "psw11"));
+    }
+
+    @Test
+    public void verifyMultipleRecords() throws Exception {
+        val q = new QueryDatabaseAuthenticationHandler("", null, null, null, this.dataSource, SQL, PASSWORD_FIELD,
+            null, null, new HashMap<>(0));
+        this.thrown.expect(FailedLoginException.class);
+        q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"));
+    }
+
+    @Test
+    public void verifyBadQuery() throws Exception {
+        val q = new QueryDatabaseAuthenticationHandler("", null, null, null, this.dataSource, SQL.replace("*", "error"),
+            PASSWORD_FIELD, null, null, new HashMap<>(0));
+        this.thrown.expect(PreventedException.class);
+        q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"));
+    }
+
+    @Test
+    public void verifySuccess() throws Exception {
+        val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(Arrays.asList("phone:phoneNumber"));
+        val q = new QueryDatabaseAuthenticationHandler("", null, null, null,
+            this.dataSource, SQL, PASSWORD_FIELD,
+            null, null,
+            CollectionUtils.wrap(map));
+        val result = q.authenticate(
+            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "psw3"));
+        assertNotNull(result);
+        assertNotNull(result.getPrincipal());
+        assertTrue(result.getPrincipal().getAttributes().containsKey("phoneNumber"));
+    }
+
+    @Test
+    public void verifyFindUserAndExpired() throws Exception {
+        val q = new QueryDatabaseAuthenticationHandler("", null, null, null, this.dataSource, SQL, PASSWORD_FIELD,
+            "expired", null, new HashMap<>(0));
+        this.thrown.expect(AccountPasswordMustChangeException.class);
+        q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user20", "psw20"));
+        throw new AssertionError("Shouldn't get here");
+    }
+
+    @Test
+    public void verifyFindUserAndDisabled() throws Exception {
+        val q = new QueryDatabaseAuthenticationHandler("", null, null, null, this.dataSource, SQL, PASSWORD_FIELD,
+            null, "disabled", new HashMap<>(0));
+        this.thrown.expect(AccountDisabledException.class);
+        q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user21", "psw21"));
+        throw new AssertionError("Shouldn't get here");
+    }
+
+    /**
+     * This test proves that in case BCRYPT is used authentication using encoded password always fail
+     * with FailedLoginException
+     *
+     * @throws Exception in case encoding fails
+     */
+    @Test
+    public void verifyBCryptFail() throws Exception {
+        val encoder = new BCryptPasswordEncoder(8, RandomUtils.getNativeInstance());
+        val sql = SQL.replace("*", '\'' + encoder.encode("pswbc1") + "' password");
+        val q = new QueryDatabaseAuthenticationHandler("", null, null, null, this.dataSource, sql, PASSWORD_FIELD,
+            null, null, new HashMap<>(0));
+        q.setPasswordEncoder(encoder);
+        this.thrown.expect(FailedLoginException.class);
+        q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "pswbc1"));
+    }
+
+    /**
+     * This test proves that in case BCRYPT and
+     * using raw password test can authenticate
+     */
+    @Test
+    public void verifyBCryptSuccess() throws Exception {
+        val encoder = new BCryptPasswordEncoder(6, RandomUtils.getNativeInstance());
+        val sql = SQL.replace("*", '\'' + encoder.encode("pswbc2") + "' password");
+        val q = new QueryDatabaseAuthenticationHandler("", null, null, null, this.dataSource, sql, PASSWORD_FIELD,
+            null, null, new HashMap<>(0));
+
+        q.setPasswordEncoder(encoder);
+        assertNotNull(q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "pswbc2")));
     }
 
     @Entity(name = "casusers")
@@ -113,101 +214,5 @@ public class QueryDatabaseAuthenticationHandlerTests {
 
         @Column
         private String phone;
-    }
-
-    @Test
-    public void verifyAuthenticationFailsToFindUser() throws Exception {
-        final var q = new QueryDatabaseAuthenticationHandler("", null, null, null, this.dataSource, SQL, PASSWORD_FIELD, null,
-            null, new HashMap<>(0));
-        this.thrown.expect(AccountNotFoundException.class);
-        q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("usernotfound", "psw1"));
-    }
-
-    @Test
-    public void verifyPasswordInvalid() throws Exception {
-        final var q = new QueryDatabaseAuthenticationHandler("", null, null, null, this.dataSource, SQL, PASSWORD_FIELD,
-            null, null, new HashMap<>(0));
-        this.thrown.expect(FailedLoginException.class);
-        q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user1", "psw11"));
-    }
-
-    @Test
-    public void verifyMultipleRecords() throws Exception {
-        final var q = new QueryDatabaseAuthenticationHandler("", null, null, null, this.dataSource, SQL, PASSWORD_FIELD,
-            null, null, new HashMap<>(0));
-        this.thrown.expect(FailedLoginException.class);
-        q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"));
-    }
-
-    @Test
-    public void verifyBadQuery() throws Exception {
-        final var q = new QueryDatabaseAuthenticationHandler("", null, null, null, this.dataSource, SQL.replace("*", "error"),
-            PASSWORD_FIELD, null, null, new HashMap<>(0));
-        this.thrown.expect(PreventedException.class);
-        q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"));
-    }
-
-    @Test
-    public void verifySuccess() throws Exception {
-        final var map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(Arrays.asList("phone:phoneNumber"));
-        final var q = new QueryDatabaseAuthenticationHandler("", null, null, null,
-            this.dataSource, SQL, PASSWORD_FIELD,
-            null, null,
-            CollectionUtils.wrap(map));
-        final var result = q.authenticate(
-            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "psw3"));
-        assertNotNull(result);
-        assertNotNull(result.getPrincipal());
-        assertTrue(result.getPrincipal().getAttributes().containsKey("phoneNumber"));
-    }
-
-    @Test
-    public void verifyFindUserAndExpired() throws Exception {
-        final var q = new QueryDatabaseAuthenticationHandler("", null, null, null, this.dataSource, SQL, PASSWORD_FIELD,
-            "expired", null, new HashMap<>(0));
-        this.thrown.expect(AccountPasswordMustChangeException.class);
-        q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user20", "psw20"));
-        throw new AssertionError("Shouldn't get here");
-    }
-
-    @Test
-    public void verifyFindUserAndDisabled() throws Exception {
-        final var q = new QueryDatabaseAuthenticationHandler("", null, null, null, this.dataSource, SQL, PASSWORD_FIELD,
-            null, "disabled", new HashMap<>(0));
-        this.thrown.expect(AccountDisabledException.class);
-        q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user21", "psw21"));
-        throw new AssertionError("Shouldn't get here");
-    }
-
-    /**
-     * This test proves that in case BCRYPT is used authentication using encoded password always fail
-     * with FailedLoginException
-     *
-     * @throws Exception in case encoding fails
-     */
-    @Test
-    public void verifyBCryptFail() throws Exception {
-        final var encoder = new BCryptPasswordEncoder(8, RandomUtils.getNativeInstance());
-        final var sql = SQL.replace("*", '\'' + encoder.encode("pswbc1") + "' password");
-        final var q = new QueryDatabaseAuthenticationHandler("", null, null, null, this.dataSource, sql, PASSWORD_FIELD,
-            null, null, new HashMap<>(0));
-        q.setPasswordEncoder(encoder);
-        this.thrown.expect(FailedLoginException.class);
-        q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "pswbc1"));
-    }
-
-    /**
-     * This test proves that in case BCRYPT and
-     * using raw password test can authenticate
-     */
-    @Test
-    public void verifyBCryptSuccess() throws Exception {
-        final var encoder = new BCryptPasswordEncoder(6, RandomUtils.getNativeInstance());
-        final var sql = SQL.replace("*", '\'' + encoder.encode("pswbc2") + "' password");
-        final var q = new QueryDatabaseAuthenticationHandler("", null, null, null, this.dataSource, sql, PASSWORD_FIELD,
-            null, null, new HashMap<>(0));
-
-        q.setPasswordEncoder(encoder);
-        assertNotNull(q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "pswbc2")));
     }
 }

@@ -1,12 +1,16 @@
 package org.apereo.cas.web.view;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpResponse;
 import org.springframework.http.HttpStatus;
 import org.thymeleaf.IEngineConfiguration;
 import org.thymeleaf.templateresource.ITemplateResource;
@@ -33,10 +37,10 @@ public class RestfulUrlTemplateResolver extends ThemeFileTemplateResolver {
     protected ITemplateResource computeTemplateResource(final IEngineConfiguration configuration, final String ownerTemplate,
                                                         final String template, final String resourceName, final String characterEncoding,
                                                         final Map<String, Object> templateResolutionAttributes) {
-        final var rest = casProperties.getView().getRest();
-        final var themeName = getCurrentTheme();
+        val rest = casProperties.getView().getRest();
+        val themeName = getCurrentTheme();
 
-        final Map headers = new LinkedHashMap();
+        val headers = new LinkedHashMap();
         headers.put("owner", ownerTemplate);
         headers.put("template", template);
         headers.put("resource", resourceName);
@@ -45,20 +49,23 @@ public class RestfulUrlTemplateResolver extends ThemeFileTemplateResolver {
             headers.put("theme", themeName);
         }
 
-        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
         if (request != null) {
             headers.put("locale", request.getLocale().getCountry());
             headers.putAll(HttpRequestUtils.getRequestHeaders(request));
         }
+        HttpResponse response = null;
         try {
-            final var response = HttpUtils.execute(rest.getUrl(), rest.getMethod(), rest.getBasicAuthUsername(), rest.getBasicAuthPassword(), headers);
-            final var statusCode = response.getStatusLine().getStatusCode();
+            response = HttpUtils.execute(rest.getUrl(), rest.getMethod(), rest.getBasicAuthUsername(), rest.getBasicAuthPassword(), headers);
+            val statusCode = response.getStatusLine().getStatusCode();
             if (response != null && HttpStatus.valueOf(statusCode).is2xxSuccessful()) {
-                final var result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                 return new StringTemplateResource(result);
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+        } finally {
+            HttpUtils.close(response);
         }
 
         return super.computeTemplateResource(configuration, ownerTemplate, template, resourceName,

@@ -1,9 +1,11 @@
 package org.apereo.cas.shell.commands.services;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
@@ -32,7 +34,7 @@ public class GenerateYamlRegisteredServiceCommand {
      * @param destination the destination
      */
     @ShellMethod(key = "generate-yaml", value = "Generate a YAML registered service definition")
-    public void generateYaml(
+    public static void generateYaml(
         @ShellOption(value = {"file"},
             help = "Path to the JSON service definition file") final String file,
         @ShellOption(value = {"destination"},
@@ -42,19 +44,19 @@ public class GenerateYamlRegisteredServiceCommand {
             return;
         }
 
-        final var filePath = new File(file);
-        final var result = StringUtils.isBlank(destination) ? null : new File(destination);
+        val filePath = new File(file);
+        val result = StringUtils.isBlank(destination) ? null : new File(destination);
         generate(filePath, result);
     }
 
-    private void generate(final File filePath, final File result) {
+    private static void generate(final File filePath, final File result) {
         try {
-            final var validator = new DefaultRegisteredServiceJsonSerializer();
+            val validator = new DefaultRegisteredServiceJsonSerializer();
             if (filePath.isFile() && filePath.exists() && filePath.canRead() && filePath.length() > 0) {
-                final var svc = validator.from(filePath);
+                val svc = validator.from(filePath);
                 LOGGER.info("Service [{}] is valid at [{}].", svc.getName(), filePath.getCanonicalPath());
-                final var yaml = new RegisteredServiceYamlSerializer();
-                try (var writer = new StringWriter()) {
+                val yaml = new RegisteredServiceYamlSerializer();
+                try (val writer = new StringWriter()) {
                     yaml.to(writer, svc);
                     LOGGER.info(writer.toString());
 

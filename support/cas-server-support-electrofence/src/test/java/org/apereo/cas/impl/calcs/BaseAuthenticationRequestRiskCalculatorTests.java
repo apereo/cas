@@ -1,6 +1,5 @@
 package org.apereo.cas.impl.calcs;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.api.AuthenticationRiskEvaluator;
 import org.apereo.cas.api.AuthenticationRiskNotifier;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
@@ -32,11 +31,12 @@ import org.apereo.cas.support.events.config.CasEventsInMemoryRepositoryConfigura
 import org.apereo.cas.support.geo.config.GoogleMapsGeoCodingConfiguration;
 import org.apereo.cas.util.MockSmsSender;
 import org.apereo.cas.util.io.SmsSender;
-import org.apereo.cas.util.junit.ConditionalSpringRunner;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+
 import org.junit.Before;
-import org.junit.runner.RunWith;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -46,6 +46,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 /**
  * This is {@link BaseAuthenticationRequestRiskCalculatorTests}.
@@ -53,7 +55,6 @@ import org.springframework.test.annotation.DirtiesContext;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(ConditionalSpringRunner.class)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     BaseAuthenticationRequestRiskCalculatorTests.ElectronicFenceTestConfiguration.class,
@@ -85,8 +86,13 @@ import org.springframework.test.annotation.DirtiesContext;
     CasCoreEventsConfiguration.class})
 @DirtiesContext
 @EnableScheduling
-@Slf4j
 public abstract class BaseAuthenticationRequestRiskCalculatorTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
     @Autowired
     protected ConfigurableApplicationContext applicationContext;
 

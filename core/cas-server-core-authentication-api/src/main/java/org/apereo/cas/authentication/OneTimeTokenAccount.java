@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 
 import javax.persistence.CollectionTable;
@@ -36,7 +35,6 @@ import java.util.List;
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@Slf4j
 @ToString
 @Getter
 @Setter
@@ -79,10 +77,7 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
      * @param validationCode the validation code
      * @param scratchCodes   the scratch codes
      */
-    @JsonCreator
-    public OneTimeTokenAccount(@JsonProperty("username") final String username,
-                               @JsonProperty("secretKey") final String secretKey, @JsonProperty("validationCode") final int validationCode,
-                               @JsonProperty("scratchCodes") final List<Integer> scratchCodes) {
+    public OneTimeTokenAccount(final String username, final String secretKey, final int validationCode, final List<Integer> scratchCodes) {
         this();
         this.secretKey = secretKey;
         this.validationCode = validationCode;
@@ -90,10 +85,23 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
         this.username = username;
     }
 
+    @JsonCreator
+    public OneTimeTokenAccount(@JsonProperty("username") final String username,
+                               @JsonProperty("secretKey") final String secretKey,
+                               @JsonProperty("validationCode") final int validationCode,
+                               @JsonProperty("scratchCodes") final List<Integer> scratchCodes,
+                               @JsonProperty("registrationDate") final ZonedDateTime registrationDate) {
+        this(username, secretKey, validationCode, scratchCodes);
+        this.registrationDate = registrationDate;
+    }
+
     @Override
     public int compareTo(final OneTimeTokenAccount o) {
-        return new CompareToBuilder().append(this.scratchCodes, o.getScratchCodes()).append(this.validationCode, o.getValidationCode())
-            .append(this.secretKey, o.getSecretKey()).append(this.username, o.getUsername()).build();
+        return new CompareToBuilder()
+            .append(this.scratchCodes.toArray(), o.getScratchCodes().toArray())
+            .append(this.validationCode, o.getValidationCode())
+            .append(this.secretKey, o.getSecretKey())
+            .append(this.username, o.getUsername()).build();
     }
 
     @Override

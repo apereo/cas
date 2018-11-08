@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.Getter;
 
 /**
@@ -9,19 +8,21 @@ import lombok.Getter;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Slf4j
 @Getter
 public class InvalidTicketException extends AbstractTicketException {
 
     private static final long serialVersionUID = 9141891414482490L;
 
-    /** The code description. */
+    /**
+     * The code description.
+     */
     private static final String CODE = "INVALID_TICKET";
 
     private final String ticketId;
 
     /**
      * Constructs a InvalidTicketException with the default exception code.
+     *
      * @param ticketId the ticket id that originally caused this exception to be thrown.
      */
     public InvalidTicketException(final String ticketId) {
@@ -34,7 +35,7 @@ public class InvalidTicketException extends AbstractTicketException {
      * the original exception that was thrown.
      *
      * @param throwable the chained exception
-     * @param ticketId the ticket id that originally caused this exception to be thrown.
+     * @param ticketId  the ticket id that originally caused this exception to be thrown.
      */
     public InvalidTicketException(final Throwable throwable, final String ticketId) {
         super(CODE, throwable);

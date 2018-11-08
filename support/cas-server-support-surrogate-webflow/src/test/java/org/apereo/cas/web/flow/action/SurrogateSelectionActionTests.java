@@ -4,6 +4,8 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.val;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -34,12 +36,12 @@ public class SurrogateSelectionActionTests extends BaseSurrogateInitialAuthentic
     @Test
     public void verifyNoCredentialFound() {
         try {
-            final var context = new MockRequestContext();
-            final var request = new MockHttpServletRequest();
+            val context = new MockRequestContext();
+            val request = new MockHttpServletRequest();
             request.addParameter(SurrogateSelectionAction.PARAMETER_NAME_SURROGATE_TARGET, "cassurrogate");
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals("success", selectSurrogateAction.execute(context).getId());
-            final var c = WebUtils.getCredential(context);
+            val c = WebUtils.getCredential(context);
             assertNull(c);
         } catch (final Exception e) {
             throw new AssertionError(e);
@@ -49,11 +51,11 @@ public class SurrogateSelectionActionTests extends BaseSurrogateInitialAuthentic
     @Test
     public void verifyCredentialFound() {
         try {
-            final var context = new MockRequestContext();
+            val context = new MockRequestContext();
             WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
-            final var request = new MockHttpServletRequest();
+            val request = new MockHttpServletRequest();
 
-            final var builder = mock(AuthenticationResultBuilder.class);
+            val builder = mock(AuthenticationResultBuilder.class);
             when(builder.getInitialAuthentication()).thenReturn(Optional.of(CoreAuthenticationTestUtils.getAuthentication()));
             when(builder.collect(any(Authentication.class))).thenReturn(builder);
 

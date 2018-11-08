@@ -4,6 +4,7 @@ import com.mongodb.CommandResult;
 import com.mongodb.DBCollection;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
 
@@ -49,8 +50,8 @@ public class MongoDbCacheStatistics implements CacheStatistics {
     @Override
     public String toString(final StringBuilder builder) {
         try {
-            final var json = JsonValue.readJSON(this.statistics.toString());
-            final var writer = new StringWriter();
+            val json = JsonValue.readJSON(this.statistics.toString());
+            val writer = new StringWriter();
             json.writeTo(writer, Stringify.FORMATTED);
             builder.append(writer.toString());
         } catch (final Exception e) {

@@ -2,14 +2,16 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Default In Memory Service Registry Dao for test/demonstration purposes.
@@ -17,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Scott Battaglia
  * @since 3.1
  */
-@Slf4j
 @ToString
 @Setter
 @NoArgsConstructor
@@ -25,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 public class InMemoryServiceRegistry extends AbstractServiceRegistry {
 
     private List<RegisteredService> registeredServices = new ArrayList<>();
-    
+
     @Override
     public boolean delete(final RegisteredService registeredService) {
         return this.registeredServices.remove(registeredService);
@@ -42,8 +43,8 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
-    public List<RegisteredService> load() {
-        final List<RegisteredService> services = new ArrayList<>();
+    public Collection<RegisteredService> load() {
+        val services = new ArrayList<RegisteredService>();
         this.registeredServices.forEach(s -> {
             publishEvent(new CasRegisteredServiceLoadedEvent(this, s));
             services.add(s);
@@ -56,7 +57,7 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistry {
         if (registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
             registeredService.setId(findHighestId() + 1);
         }
-        final var svc = findServiceById(registeredService.getId());
+        val svc = findServiceById(registeredService.getId());
         if (svc != null) {
             this.registeredServices.remove(svc);
         }

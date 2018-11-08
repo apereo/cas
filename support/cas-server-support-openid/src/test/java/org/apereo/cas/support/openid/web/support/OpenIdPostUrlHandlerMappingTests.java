@@ -1,9 +1,11 @@
 package org.apereo.cas.support.openid.web.support;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.openid.AbstractOpenIdTests;
+
+import lombok.val;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import static org.junit.Assert.*;
@@ -13,16 +15,17 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.1
  */
-@Slf4j
 public class OpenIdPostUrlHandlerMappingTests extends AbstractOpenIdTests {
 
     private static final String LOGIN_URL_PATH = "/login";
+
     @Autowired
+    @Qualifier("openIdPostUrlHandlerMapping")
     private OpenIdPostUrlHandlerMapping handlerMapping;
-    
+
     @Test
     public void verifyNoMatch() throws Exception {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setContextPath("/hello");
 
         assertNull(this.handlerMapping.lookupHandler("/hello", request));
@@ -30,7 +33,7 @@ public class OpenIdPostUrlHandlerMappingTests extends AbstractOpenIdTests {
 
     @Test
     public void verifyImproperMatch() throws Exception {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setContextPath("/hello");
 
         assertNull(this.handlerMapping.lookupHandler(LOGIN_URL_PATH, request));
@@ -38,7 +41,7 @@ public class OpenIdPostUrlHandlerMappingTests extends AbstractOpenIdTests {
 
     @Test
     public void verifyProperMatchWrongMethod() throws Exception {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setContextPath(LOGIN_URL_PATH);
         request.setMethod("GET");
 
@@ -47,7 +50,7 @@ public class OpenIdPostUrlHandlerMappingTests extends AbstractOpenIdTests {
 
     @Test
     public void verifyProperMatchCorrectMethodNoParam() throws Exception {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setContextPath(LOGIN_URL_PATH);
         request.setMethod("POST");
 
@@ -56,7 +59,7 @@ public class OpenIdPostUrlHandlerMappingTests extends AbstractOpenIdTests {
 
     @Test
     public void verifyProperMatchCorrectMethodWithParam() throws Exception {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setContextPath(LOGIN_URL_PATH);
         request.setMethod("POST");
         request.setParameter("openid.mode", "check_authentication");

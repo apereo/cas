@@ -1,9 +1,10 @@
 package org.apereo.cas.discovery;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
+
+import lombok.val;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -20,8 +21,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
-@Endpoint(id = "discovery-profile")
+@Endpoint(id = "discoveryProfile")
 public class CasServerDiscoveryProfileEndpoint extends BaseCasMvcEndpoint {
     private final ServicesManager servicesManager;
 
@@ -54,7 +54,7 @@ public class CasServerDiscoveryProfileEndpoint extends BaseCasMvcEndpoint {
     @ResponseBody
     @ReadOperation
     public Map<String, Object> discovery(final HttpServletRequest request, final HttpServletResponse response) {
-        final Map<String, Object> results = new LinkedHashMap<>();
+        val results = new HashMap<String, Object>();
         results.put("profile", casServerProfileRegistrar.getProfile());
         return results;
     }

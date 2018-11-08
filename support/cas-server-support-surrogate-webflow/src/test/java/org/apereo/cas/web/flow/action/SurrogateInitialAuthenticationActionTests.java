@@ -1,8 +1,10 @@
 package org.apereo.cas.web.flow.action;
 
 import org.apereo.cas.authentication.SurrogateUsernamePasswordCredential;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.val;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,7 +32,7 @@ public class SurrogateInitialAuthenticationActionTests extends BaseSurrogateInit
     @Test
     public void verifyNoCredentialsFound() {
         try {
-            final var context = new MockRequestContext();
+            val context = new MockRequestContext();
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(),
                 new MockHttpServletResponse()));
             assertEquals("error", authenticationViaFormAction.execute(context).getId());
@@ -42,8 +44,8 @@ public class SurrogateInitialAuthenticationActionTests extends BaseSurrogateInit
     @Test
     public void verifySurrogateCredentialsFound() {
         try {
-            final var context = new MockRequestContext();
-            final var c = new SurrogateUsernamePasswordCredential();
+            val context = new MockRequestContext();
+            val c = new SurrogateUsernamePasswordCredential();
             c.setUsername("casuser");
             c.setPassword("Mellon");
             c.setSurrogateUsername("cassurrogate");
@@ -58,8 +60,8 @@ public class SurrogateInitialAuthenticationActionTests extends BaseSurrogateInit
     @Test
     public void verifyUsernamePasswordCredentialsFound() {
         try {
-            final var context = new MockRequestContext();
-            final var c = new UsernamePasswordCredential();
+            val context = new MockRequestContext();
+            val c = new UsernamePasswordCredential();
             c.setUsername("cassurrogate+casuser");
             c.setPassword("Mellon");
             WebUtils.putCredential(context, c);

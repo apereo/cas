@@ -1,10 +1,11 @@
 package org.apereo.cas.util.crypto;
 
+import org.apereo.cas.util.DateTimeUtils;
+
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.apereo.cas.util.DateTimeUtils;
 import org.cryptacular.util.CertUtil;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.InputStreamSource;
@@ -25,7 +26,6 @@ import java.time.ZonedDateTime;
  * @author Marvin S. Addison
  * @since 3.4.6
  */
-@Slf4j
 @UtilityClass
 public class CertUtils {
 
@@ -63,7 +63,7 @@ public class CertUtils {
      * @return the x 509 certificate
      */
     public static X509Certificate readCertificate(final InputStreamSource resource) {
-        try (var in = resource.getInputStream()) {
+        try (val in = resource.getInputStream()) {
             return CertUtil.readCertificate(in);
         } catch (final IOException e) {
             throw new IllegalArgumentException("Error reading certificate " + resource, e);

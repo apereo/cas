@@ -1,8 +1,10 @@
 package org.apereo.cas.authentication.audit;
 
+import org.apereo.cas.audit.AuditableExecutionResult;
+
+import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.aspectj.lang.JoinPoint;
 
@@ -22,11 +24,11 @@ public class SurrogateEligibilityVerificationAuditResourceResolver extends Retur
     @Override
     public String[] resolveFrom(final JoinPoint auditableTarget, final Object returnValue) {
         Objects.requireNonNull(returnValue, "AuditableExecutionResult must not be null");
-        final var surrogateEligibilityResult = AuditableExecutionResult.class.cast(returnValue);
-        final var outcome = "Surrogate Authentication " + BooleanUtils
+        val surrogateEligibilityResult = AuditableExecutionResult.class.cast(returnValue);
+        val outcome = "Surrogate Authentication " + BooleanUtils
             .toString(surrogateEligibilityResult.getProperties().containsKey("eligible"), "Eligible", "Ineligible");
 
-        final var builder = new ToStringBuilder(this, NO_CLASS_NAME_STYLE).append("result", outcome);
+        val builder = new ToStringBuilder(this, NO_CLASS_NAME_STYLE).append("result", outcome);
         surrogateEligibilityResult.getService().ifPresent(it -> builder.append("service", it.getId()));
         surrogateEligibilityResult.getAuthentication().ifPresent(it -> builder.append("selfPrincipal", it.getPrincipal()));
         builder.append("surrogatePrincipal", surrogateEligibilityResult.getProperties().get("targetUserId"));

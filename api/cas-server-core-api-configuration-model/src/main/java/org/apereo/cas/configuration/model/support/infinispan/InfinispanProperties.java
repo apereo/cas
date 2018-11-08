@@ -1,14 +1,16 @@
 package org.apereo.cas.configuration.model.support.infinispan;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
-import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
+import org.apereo.cas.configuration.support.RequiresModule;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+
 import java.io.Serializable;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Encapsulates hazelcast properties exposed by CAS via properties file property source in a type-safe manner.
@@ -17,7 +19,6 @@ import lombok.Setter;
  * @since 4.2.0
  */
 @RequiresModule(name = "cas-server-support-infinispan-ticket-registry")
-
 @Getter
 @Setter
 public class InfinispanProperties implements Serializable {

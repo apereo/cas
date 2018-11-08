@@ -1,14 +1,17 @@
 package org.apereo.cas.web.flow.action;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.SurrogatePrincipalBuilder;
 import org.apereo.cas.authentication.SurrogateUsernamePasswordCredential;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.web.flow.SurrogateWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -31,30 +34,27 @@ public class LoadSurrogatesListAction extends AbstractAction {
             WebUtils.removeRequestSurrogateAuthenticationRequest(requestContext);
             LOGGER.debug("Attempting to load surrogates...");
             if (loadSurrogates(requestContext)) {
-                return new Event(this, SurrogateWebflowConfigurer.VIEW_ID_SURROGATE_VIEW);
+                return new Event(this, SurrogateWebflowConfigurer.TRANSITION_ID_SURROGATE_VIEW);
             }
-            return error();
+            return new EventFactorySupport().event(this, SurrogateWebflowConfigurer.TRANSITION_ID_SKIP_SURROGATE);
         }
 
-        final var c = WebUtils.getCredential(requestContext);
+        val c = WebUtils.getCredential(requestContext);
         if (c instanceof SurrogateUsernamePasswordCredential) {
-            final var authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(requestContext);
-            final var credential = (SurrogateUsernamePasswordCredential) c;
-            final var result =
-                surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(authenticationResultBuilder, c, credential.getSurrogateUsername());
-            if (result.isPresent()) {
-                WebUtils.putAuthenticationResultBuilder(result.get(), requestContext);
-            }
+            val authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(requestContext);
+            val credential = (SurrogateUsernamePasswordCredential) c;
+            val result = surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(authenticationResultBuilder, c, credential.getSurrogateUsername());
+            result.ifPresent(authenticationResultBuilder1 -> WebUtils.putAuthenticationResultBuilder(authenticationResultBuilder1, requestContext));
         }
         return success();
     }
 
     private boolean loadSurrogates(final RequestContext requestContext) {
-        final var c = WebUtils.getCredential(requestContext);
+        val c = WebUtils.getCredential(requestContext);
         if (c instanceof UsernamePasswordCredential) {
-            final var username = c.getId();
+            val username = c.getId();
             LOGGER.debug("Loading eligible accounts for [{}] to proxy", username);
-            final var surrogates = surrogateService.getEligibleAccountsForSurrogateToProxy(username);
+            val surrogates = surrogateService.getEligibleAccountsForSurrogateToProxy(username);
             LOGGER.debug("Surrogate accounts found are [{}]", surrogates);
             if (surrogates != null && !surrogates.isEmpty()) {
                 surrogates.add(0, username);

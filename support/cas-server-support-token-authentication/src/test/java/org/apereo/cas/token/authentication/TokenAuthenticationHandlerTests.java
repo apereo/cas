@@ -1,9 +1,5 @@
 package org.apereo.cas.token.authentication;
 
-import com.nimbusds.jose.EncryptionMethod;
-import com.nimbusds.jose.JWEAlgorithm;
-import com.nimbusds.jose.JWSAlgorithm;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -27,8 +23,14 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.apereo.cas.util.gen.RandomStringGenerator;
+
+import com.nimbusds.jose.EncryptionMethod;
+import com.nimbusds.jose.JWEAlgorithm;
+import com.nimbusds.jose.JWSAlgorithm;
+import lombok.val;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.jwt.config.encryption.SecretEncryptionConfiguration;
 import org.pac4j.jwt.config.signature.SecretSignatureConfiguration;
@@ -39,7 +41,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +55,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {RefreshAutoConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationPolicyConfiguration.class,
@@ -72,12 +74,16 @@ import static org.junit.Assert.*;
     CasCoreServicesAuthenticationConfiguration.class,
     CasCoreServicesConfiguration.class,
     TokenAuthenticationConfiguration.class})
-@Slf4j
 public class TokenAuthenticationHandlerTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
 
     private static final RandomStringGenerator RANDOM_STRING_GENERATOR = new DefaultRandomStringGenerator();
     private static final String SIGNING_SECRET = RANDOM_STRING_GENERATOR.getNewString(256);
     private static final String ENCRYPTION_SECRET = RANDOM_STRING_GENERATOR.getNewString(48);
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     @Qualifier("tokenAuthenticationHandler")
@@ -85,15 +91,15 @@ public class TokenAuthenticationHandlerTests {
 
     @Test
     public void verifyKeysAreSane() throws Exception {
-        final JwtGenerator<CommonProfile> g = new JwtGenerator<>();
+        val g = new JwtGenerator<CommonProfile>();
         g.setSignatureConfiguration(new SecretSignatureConfiguration(SIGNING_SECRET, JWSAlgorithm.HS256));
         g.setEncryptionConfiguration(new SecretEncryptionConfiguration(ENCRYPTION_SECRET, JWEAlgorithm.DIR, EncryptionMethod.A192CBC_HS384));
 
-        final var profile = new CommonProfile();
+        val profile = new CommonProfile();
         profile.setId("casuser");
-        final var token = g.generate(profile);
-        final var c = new TokenCredential(token, RegisteredServiceTestUtils.getService());
-        final var result = this.tokenAuthenticationHandler.authenticate(c);
+        val token = g.generate(profile);
+        val c = new TokenCredential(token, RegisteredServiceTestUtils.getService());
+        val result = this.tokenAuthenticationHandler.authenticate(c);
         assertNotNull(result);
         assertEquals(result.getPrincipal().getId(), profile.getId());
     }
@@ -102,18 +108,18 @@ public class TokenAuthenticationHandlerTests {
     public static class TestTokenAuthenticationConfiguration {
         @Bean
         public List inMemoryRegisteredServices() {
-            final var svc = RegisteredServiceTestUtils.getRegisteredService(".*");
+            val svc = RegisteredServiceTestUtils.getRegisteredService(".*");
             svc.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
 
-            var p = new DefaultRegisteredServiceProperty();
+            val p = new DefaultRegisteredServiceProperty();
             p.addValue(SIGNING_SECRET);
             svc.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_SIGNING.getPropertyName(), p);
 
-            p = new DefaultRegisteredServiceProperty();
-            p.addValue(ENCRYPTION_SECRET);
-            svc.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION.getPropertyName(), p);
+            val p2 = new DefaultRegisteredServiceProperty();
+            p2.addValue(ENCRYPTION_SECRET);
+            svc.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION.getPropertyName(), p2);
 
-            final List l = new ArrayList();
+            val l = new ArrayList();
             l.add(svc);
             return l;
         }

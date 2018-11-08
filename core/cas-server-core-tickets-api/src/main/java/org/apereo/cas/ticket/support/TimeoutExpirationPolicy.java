@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.support;
 
+import org.apereo.cas.ticket.TicketState;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -7,8 +9,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.ticket.TicketState;
+import lombok.ToString;
+import lombok.val;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -25,10 +27,10 @@ import java.time.temporal.ChronoUnit;
  * @since 3.0.0
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY)
-@Slf4j
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /**
@@ -57,9 +59,9 @@ public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
         if (ticketState == null) {
             return true;
         }
-        final var now = ZonedDateTime.now(ZoneOffset.UTC);
-        final var expirationTime = ticketState.getLastTimeUsed().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
-        final var expired = now.isAfter(expirationTime);
+        val now = ZonedDateTime.now(ZoneOffset.UTC);
+        val expirationTime = ticketState.getLastTimeUsed().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+        val expired = now.isAfter(expirationTime);
         if (!expired) {
             return super.isExpired(ticketState);
         }

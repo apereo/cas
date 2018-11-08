@@ -1,8 +1,5 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -11,6 +8,11 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.ResourceUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilter;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
 import org.opensaml.saml.metadata.resolver.filter.impl.EntityRoleFilter;
@@ -46,6 +48,47 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
      */
     protected final OpenSamlConfigBean configBean;
 
+    private static void buildEntityRoleFilterIfNeeded(final SamlRegisteredService service, final List<MetadataFilter> metadataFilterList) {
+        if (StringUtils.isNotBlank(service.getMetadataCriteriaRoles())) {
+            val roles = new ArrayList<QName>();
+            val rolesSet = org.springframework.util.StringUtils.commaDelimitedListToSet(service.getMetadataCriteriaRoles());
+            rolesSet.forEach(s -> {
+                if (s.equalsIgnoreCase(SPSSODescriptor.DEFAULT_ELEMENT_NAME.getLocalPart())) {
+                    LOGGER.debug("Added entity role filter [{}]", SPSSODescriptor.DEFAULT_ELEMENT_NAME);
+                    roles.add(SPSSODescriptor.DEFAULT_ELEMENT_NAME);
+                }
+                if (s.equalsIgnoreCase(IDPSSODescriptor.DEFAULT_ELEMENT_NAME.getLocalPart())) {
+                    LOGGER.debug("Added entity role filter [{}]", IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
+                    roles.add(IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
+                }
+            });
+            val filter = new EntityRoleFilter(roles);
+            filter.setRemoveEmptyEntitiesDescriptors(service.isMetadataCriteriaRemoveEmptyEntitiesDescriptors());
+            filter.setRemoveRolelessEntityDescriptors(service.isMetadataCriteriaRemoveRolelessEntityDescriptors());
+
+            metadataFilterList.add(filter);
+            LOGGER.debug("Added entity role filter with roles [{}]", roles);
+        }
+    }
+
+    private static void buildPredicateFilterIfNeeded(final SamlRegisteredService service, final List<MetadataFilter> metadataFilterList) {
+        if (StringUtils.isNotBlank(service.getMetadataCriteriaDirection())
+            && StringUtils.isNotBlank(service.getMetadataCriteriaPattern())
+            && RegexUtils.isValidRegex(service.getMetadataCriteriaPattern())) {
+
+            val dir = PredicateFilter.Direction.valueOf(service.getMetadataCriteriaDirection());
+            LOGGER.debug("Metadata predicate filter configuring with direction [{}] and pattern [{}]",
+                service.getMetadataCriteriaDirection(), service.getMetadataCriteriaPattern());
+
+            val filter = new PredicateFilter(dir, entityDescriptor ->
+                StringUtils.isNotBlank(entityDescriptor.getEntityID()) && entityDescriptor.getEntityID().matches(service.getMetadataCriteriaPattern()));
+
+            metadataFilterList.add(filter);
+            LOGGER.debug("Added metadata predicate filter with direction [{}] and pattern [{}]",
+                service.getMetadataCriteriaDirection(), service.getMetadataCriteriaPattern());
+        }
+    }
+
     /**
      * Build metadata resolver from document.
      *
@@ -56,14 +99,13 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
     protected AbstractMetadataResolver buildMetadataResolverFrom(final SamlRegisteredService service,
                                                                  final SamlMetadataDocument metadataDocument) {
         try {
-            final var desc = StringUtils.defaultString(service.getDescription(), service.getName());
+            val desc = StringUtils.defaultString(service.getDescription(), service.getName());
+            val metadataResource = ResourceUtils.buildInputStreamResourceFrom(metadataDocument.getDecodedValue(), desc);
+            val metadataResolver = new InMemoryResourceMetadataResolver(metadataResource, configBean);
 
-            final var metadataResource = ResourceUtils.buildInputStreamResourceFrom(metadataDocument.getValue(), desc);
-            final AbstractMetadataResolver metadataResolver = new InMemoryResourceMetadataResolver(metadataResource, configBean);
-
-            final List<MetadataFilter> metadataFilterList = new ArrayList<>();
+            val metadataFilterList = new ArrayList<MetadataFilter>();
             if (StringUtils.isNotBlank(metadataDocument.getSignature())) {
-                final var signatureResource = ResourceUtils.buildInputStreamResourceFrom(metadataDocument.getSignature(), desc);
+                val signatureResource = ResourceUtils.buildInputStreamResourceFrom(metadataDocument.getSignature(), desc);
                 buildSignatureValidationFilterIfNeeded(service, metadataFilterList, signatureResource);
             }
             configureAndInitializeSingleMetadataResolver(metadataResolver, service, metadataFilterList);
@@ -85,7 +127,7 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
     protected void configureAndInitializeSingleMetadataResolver(final AbstractMetadataResolver metadataProvider,
                                                                 final SamlRegisteredService service,
                                                                 final List<MetadataFilter> metadataFilterList) throws Exception {
-        final var md = samlIdPProperties.getMetadata();
+        val md = samlIdPProperties.getMetadata();
         metadataProvider.setParserPool(this.configBean.getParserPool());
         metadataProvider.setFailFastInitialization(md.isFailFast());
         metadataProvider.setRequireValidMetadata(md.isRequireValidMetadata());
@@ -148,53 +190,11 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
      * @param metadataFilterList the metadata filter list
      */
     protected void addMetadataFiltersToMetadataResolver(final AbstractMetadataResolver metadataProvider, final List<MetadataFilter> metadataFilterList) {
-        final var metadataFilterChain = new MetadataFilterChain();
+        val metadataFilterChain = new MetadataFilterChain();
         metadataFilterChain.setFilters(metadataFilterList);
 
         LOGGER.debug("Metadata filter chain initialized with [{}] filters", metadataFilterList.size());
         metadataProvider.setMetadataFilter(metadataFilterChain);
-    }
-
-    private static void buildEntityRoleFilterIfNeeded(final SamlRegisteredService service, final List<MetadataFilter> metadataFilterList) {
-        if (StringUtils.isNotBlank(service.getMetadataCriteriaRoles())) {
-            final List<QName> roles = new ArrayList<>();
-            final var rolesSet = org.springframework.util.StringUtils.commaDelimitedListToSet(service.getMetadataCriteriaRoles());
-            rolesSet.forEach(s -> {
-                if (s.equalsIgnoreCase(SPSSODescriptor.DEFAULT_ELEMENT_NAME.getLocalPart())) {
-                    LOGGER.debug("Added entity role filter [{}]", SPSSODescriptor.DEFAULT_ELEMENT_NAME);
-                    roles.add(SPSSODescriptor.DEFAULT_ELEMENT_NAME);
-                }
-                if (s.equalsIgnoreCase(IDPSSODescriptor.DEFAULT_ELEMENT_NAME.getLocalPart())) {
-                    LOGGER.debug("Added entity role filter [{}]", IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
-                    roles.add(IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
-                }
-            });
-            final var filter = new EntityRoleFilter(roles);
-            filter.setRemoveEmptyEntitiesDescriptors(service.isMetadataCriteriaRemoveEmptyEntitiesDescriptors());
-            filter.setRemoveRolelessEntityDescriptors(service.isMetadataCriteriaRemoveRolelessEntityDescriptors());
-
-            metadataFilterList.add(filter);
-            LOGGER.debug("Added entity role filter with roles [{}]", roles);
-        }
-    }
-
-
-    private static void buildPredicateFilterIfNeeded(final SamlRegisteredService service, final List<MetadataFilter> metadataFilterList) {
-        if (StringUtils.isNotBlank(service.getMetadataCriteriaDirection())
-            && StringUtils.isNotBlank(service.getMetadataCriteriaPattern())
-            && RegexUtils.isValidRegex(service.getMetadataCriteriaPattern())) {
-
-            final var dir = PredicateFilter.Direction.valueOf(service.getMetadataCriteriaDirection());
-            LOGGER.debug("Metadata predicate filter configuring with direction [{}] and pattern [{}]",
-                service.getMetadataCriteriaDirection(), service.getMetadataCriteriaPattern());
-
-            final var filter = new PredicateFilter(dir, entityDescriptor ->
-                StringUtils.isNotBlank(entityDescriptor.getEntityID()) && entityDescriptor.getEntityID().matches(service.getMetadataCriteriaPattern()));
-
-            metadataFilterList.add(filter);
-            LOGGER.debug("Added metadata predicate filter with direction [{}] and pattern [{}]",
-                service.getMetadataCriteriaDirection(), service.getMetadataCriteriaPattern());
-        }
     }
 
     /**
@@ -204,7 +204,7 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
      * @param metadataFilterList the metadata filter list
      * @throws Exception the exception
      */
-    protected void buildSignatureValidationFilterIfNeeded(final SamlRegisteredService service, final List<MetadataFilter> metadataFilterList) throws Exception {
+    protected static void buildSignatureValidationFilterIfNeeded(final SamlRegisteredService service, final List<MetadataFilter> metadataFilterList) throws Exception {
         if (StringUtils.isBlank(service.getMetadataSignatureLocation())) {
             LOGGER.warn("No metadata signature location is defined for [{}], so SignatureValidationFilter will not be invoked", service.getMetadataLocation());
             return;
@@ -220,10 +220,10 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
      * @param metadataSignatureResource the metadata signature resource
      * @throws Exception the exception
      */
-    protected void buildSignatureValidationFilterIfNeeded(final SamlRegisteredService service,
-                                                          final List<MetadataFilter> metadataFilterList,
-                                                          final String metadataSignatureResource) throws Exception {
-        final var signatureValidationFilter = SamlUtils.buildSignatureValidationFilter(metadataSignatureResource);
+    protected static void buildSignatureValidationFilterIfNeeded(final SamlRegisteredService service,
+                                                                 final List<MetadataFilter> metadataFilterList,
+                                                                 final String metadataSignatureResource) throws Exception {
+        val signatureValidationFilter = SamlUtils.buildSignatureValidationFilter(metadataSignatureResource);
         addSignatureValidationFilterIfNeeded(service, signatureValidationFilter, metadataFilterList);
     }
 
@@ -235,16 +235,16 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
      * @param metadataSignatureResource the metadata signature resource
      * @throws Exception the exception
      */
-    protected void buildSignatureValidationFilterIfNeeded(final SamlRegisteredService service,
-                                                          final List<MetadataFilter> metadataFilterList,
-                                                          final Resource metadataSignatureResource) throws Exception {
-        final var signatureValidationFilter = SamlUtils.buildSignatureValidationFilter(metadataSignatureResource);
+    protected static void buildSignatureValidationFilterIfNeeded(final SamlRegisteredService service,
+                                                                 final List<MetadataFilter> metadataFilterList,
+                                                                 final Resource metadataSignatureResource) throws Exception {
+        val signatureValidationFilter = SamlUtils.buildSignatureValidationFilter(metadataSignatureResource);
         addSignatureValidationFilterIfNeeded(service, signatureValidationFilter, metadataFilterList);
     }
 
-    private void addSignatureValidationFilterIfNeeded(final SamlRegisteredService service,
-                                                      final SignatureValidationFilter signatureValidationFilter,
-                                                      final List<MetadataFilter> metadataFilterList) {
+    private static void addSignatureValidationFilterIfNeeded(final SamlRegisteredService service,
+                                                             final SignatureValidationFilter signatureValidationFilter,
+                                                             final List<MetadataFilter> metadataFilterList) {
         if (signatureValidationFilter != null) {
             signatureValidationFilter.setRequireSignedRoot(false);
             metadataFilterList.add(signatureValidationFilter);
@@ -262,7 +262,7 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
      */
     protected void buildRequiredValidUntilFilterIfNeeded(final SamlRegisteredService service, final List<MetadataFilter> metadataFilterList) {
         if (service.getMetadataMaxValidity() > 0) {
-            final var requiredValidUntilFilter = new RequiredValidUntilFilter(service.getMetadataMaxValidity());
+            val requiredValidUntilFilter = new RequiredValidUntilFilter(service.getMetadataMaxValidity());
             metadataFilterList.add(requiredValidUntilFilter);
             LOGGER.debug("Added metadata RequiredValidUntilFilter with max validity of [{}]", service.getMetadataMaxValidity());
         } else {

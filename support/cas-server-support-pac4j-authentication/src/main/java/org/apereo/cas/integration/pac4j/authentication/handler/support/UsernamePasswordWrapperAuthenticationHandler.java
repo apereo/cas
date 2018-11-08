@@ -1,19 +1,22 @@
 package org.apereo.cas.integration.pac4j.authentication.handler.support;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
+
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.http.credentials.authenticator.test.SimpleTestUsernamePasswordAuthenticator;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
 import javax.security.auth.login.AccountNotFoundException;
 import java.security.GeneralSecurityException;
-import lombok.Setter;
 
 /**
  * Pac4j authentication handler which works on a CAS username / password credential
@@ -49,12 +52,12 @@ public class UsernamePasswordWrapperAuthenticationHandler extends AbstractWrappe
     @Override
     protected UsernamePasswordCredentials convertToPac4jCredentials(final UsernamePasswordCredential casCredential) throws GeneralSecurityException {
         LOGGER.debug("CAS credentials: [{}]", casCredential);
-        final var username = this.principalNameTransformer.transform(casCredential.getUsername());
+        val username = this.principalNameTransformer.transform(casCredential.getUsername());
         if (username == null) {
             throw new AccountNotFoundException("Username is null.");
         }
-        final var password = this.passwordEncoder.encode(casCredential.getPassword());
-        final var credentials = new UsernamePasswordCredentials(username, password);
+        val password = this.passwordEncoder.encode(casCredential.getPassword());
+        val credentials = new UsernamePasswordCredentials(username, password);
         LOGGER.debug("pac4j credentials: [{}]", credentials);
         return credentials;
     }
@@ -62,6 +65,11 @@ public class UsernamePasswordWrapperAuthenticationHandler extends AbstractWrappe
     @Override
     protected Authenticator<UsernamePasswordCredentials> getAuthenticator(final Credential credential) {
         return this.authenticator;
+    }
+
+    @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return UsernamePasswordCredential.class.isAssignableFrom(clazz);
     }
 
     @Override

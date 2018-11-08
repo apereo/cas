@@ -1,6 +1,8 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.web.FlowExecutionExceptionResolver;
+
+import lombok.val;
 import org.apereo.spring.webflow.plugin.ClientFlowExecutionRepositoryException;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -20,24 +22,24 @@ import static org.junit.Assert.*;
 public class FlowExecutionExceptionResolverTests {
     @Test
     public void verifyActionNull() {
-        final var context = new MockRequestContext();
-        final var request = new MockHttpServletRequest();
-        final var response = new MockHttpServletResponse();
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        final var r = new FlowExecutionExceptionResolver();
+        val r = new FlowExecutionExceptionResolver();
         assertNull(r.resolveException(request, response, new Object(), new RuntimeException()));
     }
 
     @Test
     public void verifyActionModelView() {
-        final var context = new MockRequestContext();
-        final var request = new MockHttpServletRequest();
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
         request.setRequestURI("/cas/login");
         request.setQueryString("param=value&something=something");
-        final var response = new MockHttpServletResponse();
+        val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        final var r = new FlowExecutionExceptionResolver();
-        final var mv = r.resolveException(request, response, new Object(), new ClientFlowExecutionRepositoryException("error"));
+        val r = new FlowExecutionExceptionResolver();
+        val mv = r.resolveException(request, response, new Object(), new ClientFlowExecutionRepositoryException("error"));
         assertNotNull(mv);
         assertTrue(mv.getModel().containsKey(r.getModelKey()));
     }

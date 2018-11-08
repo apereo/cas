@@ -14,14 +14,19 @@
     <suppress checks="MagicNumber" files="(.*Tests*|Mock.*|Test.*)\.java"/>
     <suppress checks="DesignForExtension" files="(.*Tests*|Mock.*|Test.*)\.java"/>
     <suppress checks="InterfaceIsType"  files=".*Constants\.java"/>
+    <suppress checks="\w+" files="(\.(crt|crl|class|keystore))|rebel.xml"/>
+    <suppress checks="." files="com[\\/]duosecurity[\\/]duoweb[\\/]"/>
     <suppress id="stackTraceConsoleLogs" files="(.*Tests*|Mock.*|Test.*)\.java" />
+    <suppress id="objectProvider" files="(.*Tests*|Mock.*|Test.*)\.java" />
     <suppress id="forbiddenAnnotations" files="(.*Tests*|Mock.*|Test.*|.*TestConfiguration.*)\.java" />
     <suppress id="collectionsUnmodifiable" files="(.*Tests*|Mock.*|Test.*)\.java" />
     <suppress id="collectionsEmpty" files="(.*Tests*|Mock.*|Test.*)\.java" />
     <suppress id="sysOutConsoleLogs" files="\.xml" />
     <suppress id="secureRandom" files="RandomUtils\.java" />
     <suppress id="namedAnnotations" files="(Base.*|Abstract.*|Root.*)\.java" />
-    <suppress checks="\w+" files="(\.(crt|crl|class|keystore))|rebel.xml"/>
     <suppress id="finalNonUtilClass" files="(.*(Utils|Constants|Facade|Support|Beans|Tickets))\.java" />
-    <suppress checks="." files="com[\\/]duosecurity[\\/]duoweb[\\/]"/>
+    <suppress id="useLombokVar" files="(.*ConfigurationMetadataGenerator|.*ConfigurationMetadataHint|.*RelaxedPropertyNames)\.java" />
+    <suppress id="useLombokVar" files="RestConsentRepositoryTests.java" lines="56,81"/>
+    <suppress id="useLombokVaLForFinalVar" files="(.*ConfigurationMetadataGenerator|.*ConfigurationMetadataHint|.*RelaxedPropertyNames)\.java" />
+    <suppress id="useLombokVarForGenerics" files="(.*ConfigurationMetadataGenerator|.*ConfigurationMetadataHint|.*RelaxedPropertyNames)\.java" />
 </suppressions>

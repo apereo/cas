@@ -1,10 +1,12 @@
 package org.apereo.cas.services.web;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.configuration.CasConfigurationProperties;
+import lombok.val;
 import org.springframework.boot.autoconfigure.template.TemplateLocation;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.context.ApplicationContext;
@@ -38,20 +40,20 @@ public class ThemeViewResolver extends AbstractCachingViewResolver {
 
     @Override
     protected View loadView(final String viewName, final Locale locale) throws Exception {
-        final var view = delegate.resolveViewName(viewName, locale);
+        val view = delegate.resolveViewName(viewName, locale);
         if (view instanceof AbstractThymeleafView) {
-            final var thymeleafView = (AbstractThymeleafView) view;
+            val thymeleafView = (AbstractThymeleafView) view;
             configureTemplateThemeDefaultLocation(thymeleafView);
         }
         return view;
     }
 
     private void configureTemplateThemeDefaultLocation(final AbstractThymeleafView thymeleafView) {
-        final var baseTemplateName = thymeleafView.getTemplateName();
-        final var templateName = theme + '/' + baseTemplateName;
-        final var path = thymeleafProperties.getPrefix().concat(templateName).concat(thymeleafProperties.getSuffix());
+        val baseTemplateName = thymeleafView.getTemplateName();
+        val templateName = theme + '/' + baseTemplateName;
+        val path = thymeleafProperties.getPrefix().concat(templateName).concat(thymeleafProperties.getSuffix());
         LOGGER.trace("Attempting to locate theme location at [{}]", path);
-        final var location = new TemplateLocation(path);
+        val location = new TemplateLocation(path);
         if (location.exists(getApplicationContext())) {
             thymeleafView.setTemplateName(templateName);
         }
@@ -80,7 +82,7 @@ public class ThemeViewResolver extends AbstractCachingViewResolver {
 
         @Override
         public ThemeViewResolver create(final String theme) {
-            final var resolver = new ThemeViewResolver(delegate, thymeleafProperties, casProperties, theme);
+            val resolver = new ThemeViewResolver(delegate, thymeleafProperties, casProperties, theme);
             resolver.setApplicationContext(applicationContext);
             resolver.setCache(thymeleafProperties.isCache());
             return resolver;

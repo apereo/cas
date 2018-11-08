@@ -1,11 +1,12 @@
 package org.apereo.cas.support.oauth.web;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
-import org.junit.Test;
+
+import lombok.val;
 import org.junit.Before;
+import org.junit.Test;
 
 import static org.junit.Assert.*;
 
@@ -15,7 +16,6 @@ import static org.junit.Assert.*;
  * @author Jerome Leleu
  * @since 3.5.2
  */
-@Slf4j
 public class OAuth20RefreshTokenTests extends AbstractOAuth20Tests {
 
     @Before
@@ -25,24 +25,23 @@ public class OAuth20RefreshTokenTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyTicketGrantingRemovalDoesNotRemoveAccessToken() throws Exception {
-        final var service = addRegisteredService();
+        val service = addRegisteredService();
         service.setGenerateRefreshToken(true);
-        service.setJsonFormat(true);
 
-        final var result = internalVerifyClientOK(service, true, true);
+        val result = internalVerifyClientOK(service, true);
 
-        final var at = this.ticketRegistry.getTicket(result.getKey(), AccessToken.class);
+        val at = this.ticketRegistry.getTicket(result.getKey(), AccessToken.class);
         assertNotNull(at);
         assertNotNull(at.getTicketGrantingTicket());
 
         this.ticketRegistry.deleteTicket(at.getTicketGrantingTicket().getId());
-        final var at2 = this.ticketRegistry.getTicket(at.getId(), AccessToken.class);
+        val at2 = this.ticketRegistry.getTicket(at.getId(), AccessToken.class);
         assertNotNull(at2);
 
-        final var rt = this.ticketRegistry.getTicket(result.getRight(), RefreshToken.class);
+        val rt = this.ticketRegistry.getTicket(result.getRight(), RefreshToken.class);
         assertNotNull(rt);
 
-        final var result2 = internalVerifyRefreshTokenOk(service, true, rt, createPrincipal());
+        val result2 = internalVerifyRefreshTokenOk(service, rt, createPrincipal());
         assertNotNull(result2.getKey());
     }
 

@@ -1,9 +1,9 @@
 package org.apereo.cas.util;
 
-import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -11,11 +11,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
-import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
 /**
@@ -30,40 +28,6 @@ import java.util.zip.InflaterInputStream;
 @UtilityClass
 public class CompressionUtils {
 
-    private static final int INFLATED_ARRAY_LENGTH = 10000;
-
-    /**
-     * Inflate the given byte array by {@link #INFLATED_ARRAY_LENGTH}.
-     *
-     * @param bytes the bytes
-     * @return the array as a string with {@code UTF-8} encoding
-     */
-    public static String inflate(final byte[] bytes) {
-        final var inflater = new Inflater(true);
-        final var xmlMessageBytes = new byte[INFLATED_ARRAY_LENGTH];
-
-        final var extendedBytes = new byte[bytes.length + 1];
-        System.arraycopy(bytes, 0, extendedBytes, 0, bytes.length);
-        extendedBytes[bytes.length] = 0;
-
-        inflater.setInput(extendedBytes);
-
-        try {
-            final var resultLength = inflater.inflate(xmlMessageBytes);
-            inflater.end();
-
-            if (!inflater.finished()) {
-                throw new IllegalArgumentException("buffer not large enough.");
-            }
-
-            inflater.end();
-            return new String(xmlMessageBytes, 0, resultLength, StandardCharsets.UTF_8);
-        } catch (final DataFormatException e) {
-            return null;
-        }
-    }
-
-
     /**
      * Deflate the given bytes using zlib.
      *
@@ -71,7 +35,7 @@ public class CompressionUtils {
      * @return the converted string
      */
     public static String deflate(final byte[] bytes) {
-        final var data = new String(bytes, StandardCharsets.UTF_8);
+        val data = new String(bytes, StandardCharsets.UTF_8);
         return deflate(data);
     }
 
@@ -82,27 +46,27 @@ public class CompressionUtils {
      * @return base64 encoded string
      */
     public static String deflate(final String data) {
-        final var deflater = new Deflater();
+        val deflater = new Deflater();
         deflater.setInput(data.getBytes(StandardCharsets.UTF_8));
         deflater.finish();
-        final var buffer = new byte[data.length()];
-        final var resultSize = deflater.deflate(buffer);
-        final var output = new byte[resultSize];
+        val buffer = new byte[data.length()];
+        val resultSize = deflater.deflate(buffer);
+        val output = new byte[resultSize];
         System.arraycopy(buffer, 0, output, 0, resultSize);
         return EncodingUtils.encodeBase64(output);
     }
 
     /**
-     * Decode the byte[] in base64 to a string.
+     * Inflate the byte[] to a string.
      *
-     * @param bytes the data to encode
+     * @param bytes the data to decode
      * @return the new string
      */
-    public static String decodeByteArrayToString(final byte[] bytes) {
-        final var bais = new ByteArrayInputStream(bytes);
-        final var baos = new ByteArrayOutputStream();
-        final var buf = new byte[bytes.length];
-        try (var iis = new InflaterInputStream(bais)) {
+    public static String inflate(final byte[] bytes) {
+        val bais = new ByteArrayInputStream(bytes);
+        val baos = new ByteArrayOutputStream();
+        val buf = new byte[bytes.length];
+        try (val iis = new InflaterInputStream(bais)) {
             var count = iis.read(buf);
             while (count != -1) {
                 baos.write(buf, 0, count);
@@ -110,7 +74,6 @@ public class CompressionUtils {
             }
             return new String(baos.toByteArray(), StandardCharsets.UTF_8);
         } catch (final Exception e) {
-            LOGGER.error("Base64 decoding failed", e);
             return null;
         }
     }
@@ -124,10 +87,10 @@ public class CompressionUtils {
      */
     @SneakyThrows
     public static String decompress(final String zippedBase64Str) {
-        final var bytes = EncodingUtils.decodeBase64(zippedBase64Str);
-        @Cleanup
-        final var zi = new GZIPInputStream(new ByteArrayInputStream(bytes));
-        return IOUtils.toString(zi, Charset.defaultCharset());
+        val bytes = EncodingUtils.decodeBase64(zippedBase64Str);
+        try (val zi = new GZIPInputStream(new ByteArrayInputStream(bytes))) {
+            return IOUtils.toString(zi, Charset.defaultCharset());
+        }
     }
 
     /**
@@ -139,16 +102,13 @@ public class CompressionUtils {
      */
     @SneakyThrows
     public static String compress(final String srcTxt) {
-        @Cleanup
-        final var rstBao = new ByteArrayOutputStream();
-        @Cleanup
-        final var zos = new GZIPOutputStream(rstBao);
-        zos.write(srcTxt.getBytes(StandardCharsets.UTF_8));
-        zos.flush();
-        zos.finish();
-        final var bytes = rstBao.toByteArray();
-        final var base64 = StringUtils.remove(EncodingUtils.encodeBase64(bytes), '\0');
-        return new String(StandardCharsets.UTF_8.encode(base64).array(), StandardCharsets.UTF_8);
-
+        try (val rstBao = new ByteArrayOutputStream(); val zos = new GZIPOutputStream(rstBao)) {
+            zos.write(srcTxt.getBytes(StandardCharsets.UTF_8));
+            zos.flush();
+            zos.finish();
+            val bytes = rstBao.toByteArray();
+            val base64 = StringUtils.remove(EncodingUtils.encodeBase64(bytes), '\0');
+            return new String(StandardCharsets.UTF_8.encode(base64).array(), StandardCharsets.UTF_8);
+        }
     }
 }

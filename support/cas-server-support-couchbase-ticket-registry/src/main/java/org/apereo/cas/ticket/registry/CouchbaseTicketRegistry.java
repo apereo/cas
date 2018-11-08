@@ -1,29 +1,31 @@
 package org.apereo.cas.ticket.registry;
 
-import com.couchbase.client.java.document.SerializableDocument;
-import com.couchbase.client.java.view.DefaultView;
-import com.couchbase.client.java.view.View;
-import com.couchbase.client.java.view.ViewQuery;
-import com.couchbase.client.java.view.ViewResult;
-import com.couchbase.client.java.view.ViewRow;
-import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
+
+import com.couchbase.client.java.document.SerializableDocument;
+import com.couchbase.client.java.view.DefaultView;
+import com.couchbase.client.java.view.View;
+import com.couchbase.client.java.view.ViewQuery;
+import com.couchbase.client.java.view.ViewResult;
+import com.couchbase.client.java.view.ViewRow;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.DisposableBean;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * A Ticket Registry storage backend which uses the memcached protocol.
@@ -36,7 +38,7 @@ import java.util.function.Consumer;
  * @since 4.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements DisposableBean {
     /**
      * The all tickets view name.
@@ -67,6 +69,34 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
     private final TicketCatalog ticketCatalog;
     private final CouchbaseClientFactory couchbase;
 
+    private static int getViewRowCountFromViewResultIterator(final Iterator<ViewRow> iterator) {
+        if (iterator.hasNext()) {
+            val res = iterator.next();
+            val count = (Integer) res.value();
+            LOGGER.debug("Found [{}] rows", count);
+            return count;
+        }
+        LOGGER.debug("No rows could be found by the query iterator.");
+        return 0;
+    }
+
+    /**
+     * Get the expiration policy value of the ticket in seconds.
+     *
+     * @param ticket the ticket
+     * @return the exp value
+     * @see <a href="http://docs.couchbase.com/developer/java-2.0/documents-basics.html">Couchbase Docs</a>
+     */
+    private static int getTimeToLive(final Ticket ticket) {
+        val expTime = ticket.getExpirationPolicy().getTimeToLive().intValue();
+        if (TimeUnit.SECONDS.toDays(expTime) >= MAX_EXP_TIME_IN_DAYS) {
+            LOGGER.warn("Any expiration time larger than [{}] days in seconds is considered absolute (as in a Unix time stamp) "
+                + "anything smaller is considered relative in seconds.", MAX_EXP_TIME_IN_DAYS);
+
+        }
+        return expTime;
+    }
+
     @Override
     public Ticket updateTicket(final Ticket ticket) {
         addTicket(ticket);
@@ -77,9 +107,9 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
     public void addTicket(final Ticket ticketToAdd) {
         LOGGER.debug("Adding ticket [{}]", ticketToAdd);
         try {
-            final var ticket = encodeTicket(ticketToAdd);
-            final var document = SerializableDocument.create(ticket.getId(), getTimeToLive(ticketToAdd), ticket);
-            final var bucket = this.couchbase.getBucket();
+            val ticket = encodeTicket(ticketToAdd);
+            val document = SerializableDocument.create(ticket.getId(), getTimeToLive(ticketToAdd), ticket);
+            val bucket = this.couchbase.getBucket();
             LOGGER.debug("Created document for ticket [{}]. Upserting into bucket [{}]", ticketToAdd, bucket.name());
             bucket.upsert(document);
         } catch (final Exception e) {
@@ -88,26 +118,25 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
     }
 
     @Override
-    public Ticket getTicket(final String ticketId) {
+    public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         try {
             LOGGER.debug("Locating ticket id [{}]", ticketId);
-            final var encTicketId = encodeTicketId(ticketId);
+            val encTicketId = encodeTicketId(ticketId);
             if (encTicketId == null) {
                 LOGGER.debug("Ticket id [{}] could not be found", ticketId);
                 return null;
             }
 
-            final var document = this.couchbase.getBucket().get(encTicketId, SerializableDocument.class);
+            val document = this.couchbase.getBucket().get(encTicketId, SerializableDocument.class);
             if (document != null) {
-                final var t = (Ticket) document.content();
+                val t = (Ticket) document.content();
                 LOGGER.debug("Got ticket [{}] from the registry.", t);
 
-                final var decoded = decodeTicket(t);
-                if (decoded == null || decoded.isExpired()) {
-                    LOGGER.warn("The expiration policy for ticket id [{}] has expired the ticket", ticketId);
-                    return null;
+                val decoded = decodeTicket(t);
+                if (predicate.test(decoded)) {
+                    return decoded;
                 }
-                return decoded;
+                return null;
             }
             LOGGER.debug("Ticket [{}] not found in the registry.", encTicketId);
             return null;
@@ -128,27 +157,19 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
     }
 
     @Override
-    public Collection<Ticket> getTickets() {
-        final List<Ticket> tickets = new ArrayList<>();
-        this.ticketCatalog.findAll().forEach(t -> {
-            final var it = getViewResultIteratorForPrefixedTickets(t.getPrefix() + '-').iterator();
-            while (it.hasNext()) {
-                final var row = it.next();
-                if (StringUtils.isNotBlank(row.id())) {
-                    final var document = row.document();
-                    final var ticket = (Ticket) document.content();
-                    LOGGER.debug("Got ticket [{}] from the registry.", ticket);
-
-                    final var decoded = decodeTicket(ticket);
-                    if (decoded == null || decoded.isExpired()) {
-                        LOGGER.warn("Ticket has expired or cannot be decoded");
-                    } else {
-                        tickets.add(decoded);
-                    }
+    public Collection<? extends Ticket> getTickets() {
+        return this.ticketCatalog.findAll().stream().flatMap(t -> getViewResultIteratorForPrefixedTickets(t.getPrefix() + '-').allRows().stream())
+            .filter(row -> StringUtils.isNotBlank(row.id())).map(row -> {
+                val ticket = (Ticket) row.document().content();
+                LOGGER.debug("Got ticket [{}] from the registry.", ticket);
+                return decodeTicket(ticket);
+            }).map(decoded -> {
+                if (decoded == null || decoded.isExpired()) {
+                    LOGGER.warn("Ticket has expired or cannot be decoded");
+                    return null;
                 }
-            }
-        });
-        return tickets;
+                return decoded;
+            }).collect(Collectors.toList());
     }
 
     @Override
@@ -163,7 +184,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
 
     @Override
     public boolean deleteSingleTicket(final String ticketIdToDelete) {
-        final var ticketId = encodeTicketId(ticketIdToDelete);
+        val ticketId = encodeTicketId(ticketIdToDelete);
         LOGGER.debug("Deleting ticket [{}]", ticketId);
         try {
             return this.couchbase.getBucket().remove(ticketId) != null;
@@ -175,12 +196,12 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
 
     @Override
     public long deleteAll() {
-        final Consumer<? super ViewRow> remove = t -> this.couchbase.getBucket().remove(t.document());
+        val remove = (Consumer<? super ViewRow>) t -> this.couchbase.getBucket().remove(t.document());
         return this.ticketCatalog.findAll()
             .stream()
             .mapToLong(t -> {
-                final var it = getViewResultIteratorForPrefixedTickets(t.getPrefix() + '-').iterator();
-                final var count = getViewRowCountFromViewResultIterator(it);
+                val it = getViewResultIteratorForPrefixedTickets(t.getPrefix() + '-').iterator();
+                val count = getViewRowCountFromViewResultIterator(it);
                 it.forEachRemaining(remove);
                 return count;
             })
@@ -188,19 +209,8 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
     }
 
     private int runQuery(final String prefix) {
-        final var iterator = getViewResultIteratorForPrefixedTickets(prefix).iterator();
+        val iterator = getViewResultIteratorForPrefixedTickets(prefix).iterator();
         return getViewRowCountFromViewResultIterator(iterator);
-    }
-
-    private static int getViewRowCountFromViewResultIterator(final Iterator<ViewRow> iterator) {
-        if (iterator.hasNext()) {
-            final var res = iterator.next();
-            final var count = (Integer) res.value();
-            LOGGER.debug("Found [{}] rows", count);
-            return count;
-        }
-        LOGGER.debug("No rows could be found by the query iterator.");
-        return 0;
     }
 
     private ViewResult getViewResultIteratorForPrefixedTickets(final String prefix) {
@@ -211,23 +221,6 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
                 .startKey(prefix)
                 .endKey(prefix + END_TOKEN)
                 .reduce());
-    }
-
-    /**
-     * Get the expiration policy value of the ticket in seconds.
-     *
-     * @param ticket the ticket
-     * @return the exp value
-     * @see <a href="http://docs.couchbase.com/developer/java-2.0/documents-basics.html">Couchbase Docs</a>
-     */
-    private static int getTimeToLive(final Ticket ticket) {
-        final var expTime = ticket.getExpirationPolicy().getTimeToLive().intValue();
-        if (TimeUnit.SECONDS.toDays(expTime) >= MAX_EXP_TIME_IN_DAYS) {
-            LOGGER.warn("Any expiration time larger than [{}] days in seconds is considered absolute (as in a Unix time stamp) "
-                + "anything smaller is considered relative in seconds.", MAX_EXP_TIME_IN_DAYS);
-
-        }
-        return expTime;
     }
 }
 

@@ -1,12 +1,13 @@
 package org.apereo.cas.ticket.support;
 
+import org.apereo.cas.ticket.TicketState;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.ticket.TicketState;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /**
  * NeverExpiresExpirationPolicy always answers false when asked if a Ticket is
@@ -18,12 +19,14 @@ import lombok.NoArgsConstructor;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@Slf4j
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class NeverExpiresExpirationPolicy extends AbstractCasExpirationPolicy {
 
-    /** Serializable Unique ID. */
+    /**
+     * Serializable Unique ID.
+     */
     private static final long serialVersionUID = 3833747698242303540L;
 
     @Override

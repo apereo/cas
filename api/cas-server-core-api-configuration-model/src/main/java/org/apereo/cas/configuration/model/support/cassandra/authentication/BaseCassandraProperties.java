@@ -1,9 +1,11 @@
 package org.apereo.cas.configuration.model.support.cassandra.authentication;
 
 import org.apereo.cas.configuration.support.RequiredProperty;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * This is {@link BaseCassandraProperties}.
@@ -11,7 +13,6 @@ import lombok.Setter;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-
 @Getter
 @Setter
 public abstract class BaseCassandraProperties implements Serializable {
@@ -54,15 +55,6 @@ public abstract class BaseCassandraProperties implements Serializable {
      * In other words, this policy guarantees that no host in a remote data center will be queried unless no host in the local data center can be reached.
      */
     private String localDc;
-
-    /**
-     * The DC policy is wrapped inside a token-aware policy that may be set to shuffle replicas.
-     * This indicates whether to shuffle the replicas returned by getRoutingKey. Note that setting this parameter to true might decrease the effectiveness of
-     * caching (especially at consistency level ONE), since the same row will be retrieved from any
-     * replica (instead of only the "primary" replica without shuffling).
-     * On the other hand, shuffling will better distribute writes, and can alleviate hotspots caused by "fat" partitions.
-     */
-    private boolean shuffleReplicas = true;
 
     /**
      * A policy that defines a default behavior to adopt when a request fails.
@@ -131,4 +123,10 @@ public abstract class BaseCassandraProperties implements Serializable {
      */
     @RequiredProperty
     private int port = 9042;
+
+    /**
+     * Define replica ordering. Accepted values are:
+     * {@code TOPOLOGICAL, RANDOM, NEUTRAL}.
+     */
+    private String replicaOrdering = "RANDOM";
 }

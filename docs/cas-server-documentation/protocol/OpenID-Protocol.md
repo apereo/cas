@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - OpenID Protocol
+category: Protocols
 ---
 
 # OpenID Protocol
@@ -21,7 +22,6 @@ This is not recommended and you should think of a more elaborated way of providi
 <div class="alert alert-info"><strong>Pay Attention!</strong><p>OpenID protocol is <strong>NOT</strong> the same thing
 as the OpenId Connect protocol whose details are <a href="OIDC-Protocol.html">documented here</a>.</p></div>
 
-
 ## Configuration
 
 Support is enabled by including the following dependency in the WAR overlay:
@@ -34,7 +34,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#openid-authentication).
+To see the relevant list of CAS properties for this feature, please [review this guide](../configuration/Configuration-Properties.html#openid-authentication).
 
 ## Register Clients
 
@@ -52,5 +52,4 @@ Register clients in the CAS service registry:
 
 # OpenID Provider Delegation
 
-Using the OpenID protocol, the CAS server can also be configured
-to [delegate the authentication](../integration/Delegate-Authentication.html) to an OpenID provider.
+Using the OpenID protocol, the CAS server can also be configured to [delegate the authentication](../integration/Delegate-Authentication.html) to an OpenID provider.

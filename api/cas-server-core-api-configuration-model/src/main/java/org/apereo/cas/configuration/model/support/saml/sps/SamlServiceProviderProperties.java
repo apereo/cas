@@ -1,9 +1,10 @@
 package org.apereo.cas.configuration.model.support.saml.sps;
 
+import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apereo.cas.configuration.support.RequiresModule;
 
 import java.io.Serializable;
 
@@ -14,11 +15,196 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-saml-sp-integrations")
-
 @Getter
 @Setter
 @NoArgsConstructor
 public class SamlServiceProviderProperties implements Serializable {
+
+    private static final long serialVersionUID = 8602328179113963081L;
+    /**
+     * Settings related to ConcurSolutions acting as a SAML service provider.
+     */
+    private ConcurSolutions concurSolutions = new ConcurSolutions();
+    /**
+     * Settings related to PollEverywhere acting as a SAML service provider.
+     */
+    private PollEverywhere pollEverywhere = new PollEverywhere();
+    /**
+     * Settings related to Hipchat acting as a SAML service provider.
+     */
+    private Hipchat hipchat = new Hipchat();
+    /**
+     * Settings related to Gitlab acting as a SAML service provider.
+     */
+    private Gitlab gitlab = new Gitlab();
+    /**
+     * Settings related to Dropbox acting as a SAML service provider.
+     */
+    private Dropbox dropbox = new Dropbox();
+    /**
+     * Settings related to Workday acting as a SAML service provider.
+     */
+    private Workday workday = new Workday();
+    /**
+     * Settings related to SA Manage acting as a SAML service provider.
+     */
+    private SAManage saManage = new SAManage();
+    /**
+     * Settings related to Salesforce acting as a SAML service provider.
+     */
+    private Salesforce salesforce = new Salesforce();
+    /**
+     * Settings related to ServiceNow acting as a SAML service provider.
+     */
+    private ServiceNow serviceNow = new ServiceNow();
+    /**
+     * Settings related to Box acting as a SAML service provider.
+     */
+    private Box box = new Box();
+    /**
+     * Settings related to NetPartner acting as a SAML service provider.
+     */
+    private NetPartner netPartner = new NetPartner();
+    /**
+     * Settings related to Webex acting as a SAML service provider.
+     */
+    private Webex webex = new Webex();
+    /**
+     * Settings related to Office365 acting as a SAML service provider.
+     */
+    private Office365 office365 = new Office365();
+    /**
+     * Settings related to TestShib acting as a SAML service provider.
+     */
+    private TestShib testShib = new TestShib();
+    /**
+     * Settings related to InCommon acting as a SAML service provider.
+     */
+    private InCommon inCommon = new InCommon();
+    /**
+     * Settings related to ZOOM acting as a SAML service provider.
+     */
+    private Zoom zoom = new Zoom();
+    /**
+     * Settings related to Evernote acting as a SAML service provider.
+     */
+    private Evernote evernote = new Evernote();
+    /**
+     * Settings related to Asana acting as a SAML service provider.
+     */
+    private Asana asana = new Asana();
+    /**
+     * Settings related to Gartner acting as a SAML service provider.
+     */
+    private Gartner gartner = new Gartner();
+    /**
+     * Settings related to Tableu acting as a SAML service provider.
+     */
+    private Tableau tableau = new Tableau();
+    /**
+     * Settings related to WebAdvisor acting as a SAML service provider.
+     */
+    private WebAdvisor webAdvisor = new WebAdvisor();
+    /**
+     * Settings related to OpenAthens acting as a SAML service provider.
+     */
+    private OpenAthens openAthens = new OpenAthens();
+    /**
+     * Settings related to ArcGIS acting as a SAML service provider.
+     */
+    private ArcGIS arcGIS = new ArcGIS();
+    /**
+     * Settings related to BenefitFocus acting as a SAML service provider.
+     */
+    private BenefitFocus benefitFocus = new BenefitFocus();
+    /**
+     * Settings related to Adobe Cloud acting as a SAML service provider.
+     */
+    private AdobeCloud adobeCloud = new AdobeCloud();
+    /**
+     * Settings related to Academic Works acting as a SAML service provider.
+     */
+    private AcademicWorks academicWorks = new AcademicWorks();
+    /**
+     * Settings related to Easy IEP acting as a SAML service provider.
+     */
+    private EasyIep easyIep = new EasyIep();
+    /**
+     * Settings related to InfiniteCampus acting as a SAML service provider.
+     */
+    private InfiniteCampus infiniteCampus = new InfiniteCampus();
+    /**
+     * Settings related to SecuringTheHuman acting as a SAML service provider.
+     */
+    private SecuringTheHuman sansSth = new SecuringTheHuman();
+    /**
+     * Settings related to Slack acting as a SAML service provider.
+     */
+    private Slack slack = new Slack();
+    /**
+     * Settings related to Zendesk acting as a SAML service provider.
+     */
+    private Zendesk zendesk = new Zendesk();
+    /**
+     * Settings related to Bynder acting as a SAML service provider.
+     */
+    private Bynder bynder = new Bynder();
+    /**
+     * Settings related to Famis acting as a SAML service provider.
+     */
+    private Famis famis = new Famis();
+    /**
+     * Settings related to Sunshine state ed/release alliance acting as a SAML service provider.
+     */
+    private SunshineStateEdResearchAlliance sserca = new SunshineStateEdResearchAlliance();
+    /**
+     * Settings related to EverBridge acting as a SAML service provider.
+     */
+    private EverBridge everBridge = new EverBridge();
+    /**
+     * Settings related to CherWell acting as a SAML service provider.
+     */
+    private CherWell cherWell = new CherWell();
+    /**
+     * Settings related to CherWell acting as a SAML service provider.
+     */
+    private Egnyte egnyte = new Egnyte();
+    /**
+     * Settings related to CherWell acting as a SAML service provider.
+     */
+    private NewRelic newRelic = new NewRelic();
+    /**
+     * Settings related to Yuja acting as a SAML service provider.
+     */
+    private Yuja yuja = new Yuja();
+    /**
+     * Settings related to Symplicity acting as a SAML service provider.
+     */
+    private Symplicity symplicity = new Symplicity();
+    /**
+     * Settings related to AppDynamics acting as a SAML service provider.
+     */
+    private AppDynamics appDynamics = new AppDynamics();
+    /**
+     * Settings related to Amazon acting as a SAML service provider.
+     */
+    private Amazon amazon = new Amazon();
+    /**
+     * Settings related to BlackBaud acting as a SAML service provider.
+     */
+    private BlackBaud blackBaud = new BlackBaud();
+    /**
+     * Settings related to GiveCampus acting as a SAML service provider.
+     */
+    private GiveCampus giveCampus = new GiveCampus();
+    /**
+     * Settings related to WarpWire acting as a SAML service provider.
+     */
+    private WarpWire warpWire = new WarpWire();
+    /**
+     * Settings related to RocketChat acting as a SAML service provider.
+     */
+    private RocketChat rocketChat = new RocketChat();
 
     @Getter
     private enum CommonAttributeNames {
@@ -84,238 +270,6 @@ public class SamlServiceProviderProperties implements Serializable {
             this.attributeName = name;
         }
     }
-
-    private static final long serialVersionUID = 8602328179113963081L;
-
-    /**
-     * Settings related to ConcurSolutions acting as a SAML service provider.
-     */
-    private ConcurSolutions concurSolutions = new ConcurSolutions();
-
-    /**
-     * Settings related to PollEverywhere acting as a SAML service provider.
-     */
-    private PollEverywhere pollEverywhere = new PollEverywhere();
-
-    /**
-     * Settings related to Hipchat acting as a SAML service provider.
-     */
-    private Hipchat hipchat = new Hipchat();
-
-    /**
-     * Settings related to Gitlab acting as a SAML service provider.
-     */
-    private Gitlab gitlab = new Gitlab();
-
-    /**
-     * Settings related to Dropbox acting as a SAML service provider.
-     */
-    private Dropbox dropbox = new Dropbox();
-
-    /**
-     * Settings related to Workday acting as a SAML service provider.
-     */
-    private Workday workday = new Workday();
-
-    /**
-     * Settings related to SA Manage acting as a SAML service provider.
-     */
-    private SAManage saManage = new SAManage();
-
-    /**
-     * Settings related to Salesforce acting as a SAML service provider.
-     */
-    private Salesforce salesforce = new Salesforce();
-
-    /**
-     * Settings related to ServiceNow acting as a SAML service provider.
-     */
-    private ServiceNow serviceNow = new ServiceNow();
-
-    /**
-     * Settings related to Box acting as a SAML service provider.
-     */
-    private Box box = new Box();
-
-    /**
-     * Settings related to NetPartner acting as a SAML service provider.
-     */
-    private NetPartner netPartner = new NetPartner();
-
-    /**
-     * Settings related to Webex acting as a SAML service provider.
-     */
-    private Webex webex = new Webex();
-
-    /**
-     * Settings related to Office365 acting as a SAML service provider.
-     */
-    private Office365 office365 = new Office365();
-
-    /**
-     * Settings related to TestShib acting as a SAML service provider.
-     */
-    private TestShib testShib = new TestShib();
-
-    /**
-     * Settings related to InCommon acting as a SAML service provider.
-     */
-    private InCommon inCommon = new InCommon();
-
-    /**
-     * Settings related to ZOOM acting as a SAML service provider.
-     */
-    private Zoom zoom = new Zoom();
-
-    /**
-     * Settings related to Evernote acting as a SAML service provider.
-     */
-    private Evernote evernote = new Evernote();
-
-    /**
-     * Settings related to Asana acting as a SAML service provider.
-     */
-    private Asana asana = new Asana();
-
-    /**
-     * Settings related to Gartner acting as a SAML service provider.
-     */
-    private Gartner gartner = new Gartner();
-
-    /**
-     * Settings related to Tableu acting as a SAML service provider.
-     */
-    private Tableau tableau = new Tableau();
-
-    /**
-     * Settings related to WebAdvisor acting as a SAML service provider.
-     */
-    private WebAdvisor webAdvisor = new WebAdvisor();
-
-    /**
-     * Settings related to OpenAthens acting as a SAML service provider.
-     */
-    private OpenAthens openAthens = new OpenAthens();
-
-    /**
-     * Settings related to ArcGIS acting as a SAML service provider.
-     */
-    private ArcGIS arcGIS = new ArcGIS();
-
-    /**
-     * Settings related to BenefitFocus acting as a SAML service provider.
-     */
-    private BenefitFocus benefitFocus = new BenefitFocus();
-
-    /**
-     * Settings related to Adobe Cloud acting as a SAML service provider.
-     */
-    private AdobeCloud adobeCloud = new AdobeCloud();
-
-    /**
-     * Settings related to Academic Works acting as a SAML service provider.
-     */
-    private AcademicWorks academicWorks = new AcademicWorks();
-
-    /**
-     * Settings related to Easy IEP acting as a SAML service provider.
-     */
-    private EasyIep easyIep = new EasyIep();
-
-    /**
-     * Settings related to InfiniteCampus acting as a SAML service provider.
-     */
-    private InfiniteCampus infiniteCampus = new InfiniteCampus();
-
-    /**
-     * Settings related to SecuringTheHuman acting as a SAML service provider.
-     */
-    private SecuringTheHuman sansSth = new SecuringTheHuman();
-
-    /**
-     * Settings related to Slack acting as a SAML service provider.
-     */
-    private Slack slack = new Slack();
-
-    /**
-     * Settings related to Zendesk acting as a SAML service provider.
-     */
-    private Zendesk zendesk = new Zendesk();
-
-    /**
-     * Settings related to Bynder acting as a SAML service provider.
-     */
-    private Bynder bynder = new Bynder();
-
-    /**
-     * Settings related to Famis acting as a SAML service provider.
-     */
-    private Famis famis = new Famis();
-
-    /**
-     * Settings related to Sunshine state ed/release alliance acting as a SAML service provider.
-     */
-    private SunshineStateEdResearchAlliance sserca = new SunshineStateEdResearchAlliance();
-
-    /**
-     * Settings related to EverBridge acting as a SAML service provider.
-     */
-    private EverBridge everBridge = new EverBridge();
-
-    /**
-     * Settings related to CherWell acting as a SAML service provider.
-     */
-    private CherWell cherWell = new CherWell();
-
-    /**
-     * Settings related to CherWell acting as a SAML service provider.
-     */
-    private Egnyte egnyte = new Egnyte();
-
-    /**
-     * Settings related to CherWell acting as a SAML service provider.
-     */
-    private NewRelic newRelic = new NewRelic();
-
-    /**
-     * Settings related to Yuja acting as a SAML service provider.
-     */
-    private Yuja yuja = new Yuja();
-
-    /**
-     * Settings related to Symplicity acting as a SAML service provider.
-     */
-    private Symplicity symplicity = new Symplicity();
-
-    /**
-     * Settings related to AppDynamics acting as a SAML service provider.
-     */
-    private AppDynamics appDynamics = new AppDynamics();
-
-    /**
-     * Settings related to Amazon acting as a SAML service provider.
-     */
-    private Amazon amazon = new Amazon();
-
-    /**
-     * Settings related to BlackBaud acting as a SAML service provider.
-     */
-    private BlackBaud blackBaud = new BlackBaud();
-
-    /**
-     * Settings related to GiveCampus acting as a SAML service provider.
-     */
-    private GiveCampus giveCampus = new GiveCampus();
-
-    /**
-     * Settings related to WarpWire acting as a SAML service provider.
-     */
-    private WarpWire warpWire = new WarpWire();
-
-    /**
-     * Settings related to RocketChat acting as a SAML service provider.
-     */
-    private RocketChat rocketChat = new RocketChat();
 
     @RequiresModule(name = "cas-server-support-saml-sp-integrations")
     @Getter

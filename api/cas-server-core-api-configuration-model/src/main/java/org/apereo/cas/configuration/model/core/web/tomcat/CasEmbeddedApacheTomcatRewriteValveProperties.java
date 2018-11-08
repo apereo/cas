@@ -1,11 +1,13 @@
 package org.apereo.cas.configuration.model.core.web.tomcat;
 
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+
+import java.io.Serializable;
 
 /**
  * This is {@link CasEmbeddedApacheTomcatRewriteValveProperties}.
@@ -14,7 +16,6 @@ import lombok.Setter;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-webapp-tomcat")
-
 @Getter
 @Setter
 public class CasEmbeddedApacheTomcatRewriteValveProperties implements Serializable {

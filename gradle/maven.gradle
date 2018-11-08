@@ -31,6 +31,10 @@ def generatePom() {
                     name "Jérôme Leleu"
                 }
                 developer {
+                    id "tduehr"
+                    name "Timur Duehr"
+                }
+                developer {
                     id "mindblender"
                     name "Jeff Sittler"
                 }
@@ -176,13 +180,6 @@ def generatePom() {
                 repository {
                     id "spring-plugins"
                     url "https://repo.spring.io/plugins-release/"
-                    releases {
-                        enabled true
-                    }
-                }
-                repository {
-                    id "jasig-legacy"
-                    url "https://developer.jasig.org/repo/content/groups/m2-legacy"
                     releases {
                         enabled true
                     }

@@ -1,12 +1,14 @@
 package org.apereo.cas.configuration.model.core.web.tomcat;
 
 import org.apereo.cas.configuration.support.RequiresModule;
+
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link CasEmbeddedApacheTomcatBasicAuthenticationProperties}.
@@ -15,7 +17,6 @@ import lombok.Setter;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-webapp-tomcat")
-
 @Getter
 @Setter
 public class CasEmbeddedApacheTomcatBasicAuthenticationProperties implements Serializable {

@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
@@ -8,6 +7,9 @@ import org.apereo.cas.web.extractcert.X509CertificateExtractor;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -33,17 +35,21 @@ public class X509CertificateCredentialsRequestHeaderAction extends X509Certifica
 
     @Override
     protected Credential constructCredentialsFromRequest(final RequestContext context) {
-        final var x509Credential = super.constructCredentialsFromRequest(context);
+        val x509Credential = super.constructCredentialsFromRequest(context);
         if (x509Credential != null) {
             return x509Credential;
         }
-        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        final var certFromHeader = x509CertificateExtractor.extract(request);
-        if (certFromHeader != null) {
-            LOGGER.debug("Certificate found in HTTP request via {}", x509CertificateExtractor.getClass().getName());
-            return new X509CertificateCredential(certFromHeader);
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        if (x509CertificateExtractor != null) {
+            val certFromHeader = x509CertificateExtractor.extract(request);
+            if (certFromHeader != null) {
+                LOGGER.debug("Certificate found in HTTP request via {}", x509CertificateExtractor.getClass().getName());
+                return new X509CertificateCredential(certFromHeader);
+            }
+            LOGGER.debug("Certificates not found in request header.");
+        } else {
+            LOGGER.debug("No X509CertificateExtractor was configured");
         }
-        LOGGER.debug("Certificates not found in request header.");
         return null;
     }
 }

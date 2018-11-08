@@ -1,13 +1,7 @@
 package org.apereo.cas.authentication;
 
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.exceptions.UnresolvedPrincipalException;
+import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -16,6 +10,13 @@ import org.apereo.cas.support.events.authentication.CasAuthenticationPrincipalRe
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionFailureEvent;
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionStartedEvent;
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionSuccessfulEvent;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
@@ -55,15 +56,13 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
     protected void invokeAuthenticationPostProcessors(final AuthenticationBuilder builder,
                                                       final AuthenticationTransaction transaction) {
         LOGGER.debug("Invoking authentication post processors for authentication transaction");
-        final var pops = authenticationEventExecutionPlan.getAuthenticationPostProcessors(transaction);
+        val pops = authenticationEventExecutionPlan.getAuthenticationPostProcessors(transaction);
 
         final Collection<AuthenticationPostProcessor> supported = pops.stream().filter(processor -> transaction.getCredentials()
             .stream()
-            .filter(processor::supports)
-            .findFirst()
-            .isPresent())
+            .anyMatch(processor::supports))
             .collect(Collectors.toList());
-        for (final var p : supported) {
+        for (val p : supported) {
             p.process(builder, transaction);
         }
     }
@@ -77,7 +76,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
     protected void populateAuthenticationMetadataAttributes(final AuthenticationBuilder builder,
                                                             final AuthenticationTransaction transaction) {
         LOGGER.debug("Invoking authentication metadata populators for authentication transaction");
-        final var pops = getAuthenticationMetadataPopulatorsForTransaction(transaction);
+        val pops = getAuthenticationMetadataPopulatorsForTransaction(transaction);
         pops.forEach(populator -> transaction.getCredentials()
             .stream()
             .filter(populator::supports)
@@ -108,7 +107,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                                          final Credential credential, final Principal principal) {
         if (resolver.supports(credential)) {
             try {
-                final var p = resolver.resolve(credential, Optional.ofNullable(principal), Optional.ofNullable(handler));
+                val p = resolver.resolve(credential, Optional.ofNullable(principal), Optional.ofNullable(handler));
                 LOGGER.debug("[{}] resolved [{}] from [{}]", resolver, p, credential);
                 return p;
             } catch (final Exception e) {
@@ -128,22 +127,22 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         actionResolverName = "AUTHENTICATION_RESOLVER",
         resourceResolverName = "AUTHENTICATION_RESOURCE_RESOLVER")
     public Authentication authenticate(final AuthenticationTransaction transaction) throws AuthenticationException {
-        final var result = invokeAuthenticationPreProcessors(transaction);
+        val result = invokeAuthenticationPreProcessors(transaction);
         if (!result) {
             LOGGER.warn("An authentication pre-processor could not successfully process the authentication transaction");
             throw new AuthenticationException("Authentication pre-processor has failed to process transaction");
         }
         AuthenticationCredentialsThreadLocalBinder.bindCurrent(transaction.getCredentials());
-        final var builder = authenticateInternal(transaction);
+        val builder = authenticateInternal(transaction);
         AuthenticationCredentialsThreadLocalBinder.bindCurrent(builder);
 
-        final var authentication = builder.build();
+        val authentication = builder.build();
         addAuthenticationMethodAttribute(builder, authentication);
         populateAuthenticationMetadataAttributes(builder, transaction);
         invokeAuthenticationPostProcessors(builder, transaction);
 
-        final var auth = builder.build();
-        final var principal = auth.getPrincipal();
+        val auth = builder.build();
+        val principal = auth.getPrincipal();
         if (principal instanceof NullPrincipal) {
             throw new UnresolvedPrincipalException(auth);
         }
@@ -161,21 +160,19 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
      * @return the boolean
      */
     protected boolean invokeAuthenticationPreProcessors(final AuthenticationTransaction transaction) {
-        LOGGER.debug("Invoking authentication pre processors for authentication transaction");
-        final var pops = authenticationEventExecutionPlan.getAuthenticationPreProcessors(transaction);
+        LOGGER.trace("Invoking authentication pre processors for authentication transaction");
+        val pops = authenticationEventExecutionPlan.getAuthenticationPreProcessors(transaction);
 
         final Collection<AuthenticationPreProcessor> supported = pops.stream()
             .filter(processor -> transaction.getCredentials()
-            .stream()
-            .filter(processor::supports)
-            .findFirst()
-            .isPresent())
+                .stream()
+                .anyMatch(processor::supports))
             .collect(Collectors.toList());
 
         var processed = true;
-        final var it = supported.iterator();
+        val it = supported.iterator();
         while (processed && it.hasNext()) {
-            final var processor = it.next();
+            val processor = it.next();
             processed = processor.process(transaction);
         }
         return processed;
@@ -198,15 +195,15 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
 
         publishEvent(new CasAuthenticationTransactionStartedEvent(this, credential));
 
-        final var result = handler.authenticate(credential);
-        final var authenticationHandlerName = handler.getName();
+        val result = handler.authenticate(credential);
+        val authenticationHandlerName = handler.getName();
         builder.addSuccess(authenticationHandlerName, result);
         LOGGER.debug("Authentication handler [{}] successfully authenticated [{}]", authenticationHandlerName, credential);
 
         publishEvent(new CasAuthenticationTransactionSuccessfulEvent(this, credential));
         var principal = result.getPrincipal();
 
-        final var resolverName = resolver != null ? resolver.getClass().getSimpleName() : "N/A";
+        val resolverName = resolver != null ? resolver.getName(): "N/A";
         if (resolver == null) {
             LOGGER.debug("No principal resolution is configured for [{}]. Falling back to handler principal [{}]", authenticationHandlerName, principal);
         } else {
@@ -232,39 +229,6 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         publishEvent(new CasAuthenticationPrincipalResolvedEvent(this, principal));
     }
 
-    /**
-     * Gets authentication handlers for this transaction.
-     *
-     * @param transaction the transaction
-     * @return the authentication handlers for this transaction
-     */
-    @SneakyThrows
-    protected Set<AuthenticationHandler> getAuthenticationHandlersForThisTransaction(final AuthenticationTransaction transaction) {
-        final var handlers = authenticationEventExecutionPlan.getAuthenticationHandlersForTransaction(transaction);
-        LOGGER.debug("Candidate/Registered authentication handlers for this transaction are [{}]", handlers);
-        final var handlerResolvers = authenticationEventExecutionPlan.getAuthenticationHandlerResolvers(transaction);
-        LOGGER.debug("Authentication handler resolvers for this transaction are [{}]", handlerResolvers);
-
-        final var resolvedHandlers = handlerResolvers.stream()
-            .filter(r -> r.supports(handlers, transaction))
-            .map(r -> r.resolve(handlers, transaction))
-            .flatMap(Set::stream)
-            .collect(Collectors.toCollection(LinkedHashSet::new));
-
-        if (resolvedHandlers.isEmpty()) {
-            LOGGER.debug("Authentication handler resolvers produced no candidate authentication handler. Using the default handler resolver instead...");
-            final var defaultHandlerResolver = new DefaultAuthenticationHandlerResolver();
-            if (defaultHandlerResolver.supports(handlers, transaction)) {
-                resolvedHandlers.addAll(defaultHandlerResolver.resolve(handlers, transaction));
-            }
-        }
-
-        if (resolvedHandlers.isEmpty()) {
-            throw new GeneralSecurityException("No authentication handlers could be resolved to support the authentication transaction");
-        }
-        LOGGER.debug("Resolved and finalized authentication handlers to carry out this authentication transaction are [{}]", handlerResolvers);
-        return resolvedHandlers;
-    }
 
     /**
      * Gets principal resolver linked to the handler if any.
@@ -307,7 +271,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
      * @throws AuthenticationException the authentication exception
      */
     protected AuthenticationBuilder authenticateInternal(final AuthenticationTransaction transaction) throws AuthenticationException {
-        final var credentials = transaction.getCredentials();
+        val credentials = transaction.getCredentials();
         LOGGER.debug("Authentication credentials provided for this transaction are [{}]", credentials);
 
         if (credentials.isEmpty()) {
@@ -315,10 +279,10 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
             throw new AuthenticationException("Resolved credentials for this transaction are empty");
         }
 
-        final AuthenticationBuilder builder = new DefaultAuthenticationBuilder(NullPrincipal.getInstance());
+        val builder = new DefaultAuthenticationBuilder(NullPrincipal.getInstance());
         credentials.forEach(cred -> builder.addCredential(new BasicCredentialMetaData(cred)));
 
-        @NonNull final var handlerSet = getAuthenticationHandlersForThisTransaction(transaction);
+        val handlerSet = this.authenticationEventExecutionPlan.getAuthenticationHandlersForTransaction(transaction);
         LOGGER.debug("Candidate resolved authentication handlers for this transaction are [{}]", handlerSet);
 
         if (handlerSet.isEmpty()) {
@@ -327,24 +291,24 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         }
 
         try {
-            final var it = credentials.iterator();
+            val it = credentials.iterator();
             AuthenticationCredentialsThreadLocalBinder.clearInProgressAuthentication();
             while (it.hasNext()) {
-                final var credential = it.next();
+                val credential = it.next();
                 LOGGER.debug("Attempting to authenticate credential [{}]", credential);
 
-                final var itHandlers = handlerSet.iterator();
+                val itHandlers = handlerSet.iterator();
                 var proceedWithNextHandler = true;
                 while (proceedWithNextHandler && itHandlers.hasNext()) {
-                    final var handler = itHandlers.next();
+                    val handler = itHandlers.next();
                     if (handler.supports(credential)) {
                         try {
-                            final var resolver = getPrincipalResolverLinkedToHandlerIfAny(handler, transaction);
+                            val resolver = getPrincipalResolverLinkedToHandlerIfAny(handler, transaction);
                             LOGGER.debug("Attempting authentication of [{}] using [{}]", credential.getId(), handler.getName());
                             authenticateAndResolvePrincipal(builder, credential, resolver, handler);
-                            AuthenticationCredentialsThreadLocalBinder.bindInProgress(builder.build());
-
-                            final var failures = evaluateAuthenticationPolicies(builder.build(), transaction);
+                            val authnResult = builder.build();
+                            AuthenticationCredentialsThreadLocalBinder.bindInProgress(authnResult);
+                            val failures = evaluateAuthenticationPolicies(authnResult, transaction, handlerSet);
                             proceedWithNextHandler = !failures.getKey();
                         } catch (final Exception e) {
                             LOGGER.error("Authentication has failed. Credentials may be incorrect or CAS cannot "
@@ -360,7 +324,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                     }
                 }
             }
-            evaluateFinalAuthentication(builder, transaction);
+            evaluateFinalAuthentication(builder, transaction, handlerSet);
             return builder;
         } finally {
             AuthenticationCredentialsThreadLocalBinder.clearInProgressAuthentication();
@@ -372,19 +336,21 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
      * We apply an implicit security policy of at least one successful authentication.
      * Then, we apply the configured security policy.
      *
-     * @param builder     the builder
-     * @param transaction the transaction
+     * @param builder                the builder
+     * @param transaction            the transaction
+     * @param authenticationHandlers the authentication handlers
      * @throws AuthenticationException the authentication exception
      */
     protected void evaluateFinalAuthentication(final AuthenticationBuilder builder,
-                                               final AuthenticationTransaction transaction) throws AuthenticationException {
+                                               final AuthenticationTransaction transaction,
+                                               final Set<AuthenticationHandler> authenticationHandlers) throws AuthenticationException {
         if (builder.getSuccesses().isEmpty()) {
             publishEvent(new CasAuthenticationTransactionFailureEvent(this, builder.getFailures(), transaction.getCredentials()));
             throw new AuthenticationException(builder.getFailures(), builder.getSuccesses());
         }
 
-        final var authentication = builder.build();
-        final var failures = evaluateAuthenticationPolicies(authentication, transaction);
+        val authentication = builder.build();
+        val failures = evaluateAuthenticationPolicies(authentication, transaction, authenticationHandlers);
         if (!failures.getKey()) {
             publishEvent(new CasAuthenticationPolicyFailureEvent(this, builder.getFailures(), transaction, authentication));
             failures.getValue().forEach(e -> handleAuthenticationException(e, e.getClass().getSimpleName(), builder));
@@ -395,32 +361,36 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
     /**
      * Evaluate authentication policies.
      *
-     * @param authentication the authentication
-     * @param transaction    the transaction
+     * @param authentication         the authentication
+     * @param transaction            the transaction
+     * @param authenticationHandlers the authentication handlers
      * @return true /false
      */
     protected Pair<Boolean, Set<Throwable>> evaluateAuthenticationPolicies(final Authentication authentication,
-                                                                           final AuthenticationTransaction transaction) {
-        final Set<Throwable> failures = new LinkedHashSet<>();
-        final var policies = authenticationEventExecutionPlan.getAuthenticationPolicies(transaction);
+                                                                           final AuthenticationTransaction transaction,
+                                                                           final Set<AuthenticationHandler> authenticationHandlers) {
+        val failures = new LinkedHashSet<Throwable>();
+        val policies = authenticationEventExecutionPlan.getAuthenticationPolicies(transaction);
 
-        policies
-            .stream()
-            .forEach(p -> {
-                try {
-                    final var simpleName = p.getClass().getSimpleName();
-                    LOGGER.debug("Executing authentication policy [{}]", simpleName);
-                    if (!p.isSatisfiedBy(authentication)) {
-                        failures.add(new AuthenticationException("Unable to satisfy authentication policy " + simpleName));
-                    }
-                } catch (final GeneralSecurityException e) {
-                    LOGGER.debug(e.getMessage(), e);
-                    failures.add(e.getCause());
-                } catch (final Exception e) {
-                    LOGGER.debug(e.getMessage(), e);
-                    failures.add(e);
+        policies.forEach(p -> {
+            try {
+                val simpleName = p.getClass().getSimpleName();
+                LOGGER.debug("Executing authentication policy [{}]", simpleName);
+                val supportingHandlers = authenticationHandlers
+                    .stream()
+                    .filter(handler -> transaction.getCredentials().stream().anyMatch(handler::supports))
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
+                if (!p.isSatisfiedBy(authentication, supportingHandlers)) {
+                    failures.add(new AuthenticationException("Unable to satisfy authentication policy " + simpleName));
                 }
-            });
+            } catch (final GeneralSecurityException e) {
+                LOGGER.debug(e.getMessage(), e);
+                failures.add(e.getCause());
+            } catch (final Exception e) {
+                LOGGER.debug(e.getMessage(), e);
+                failures.add(e);
+            }
+        });
 
         return Pair.of(failures.isEmpty(), failures);
     }
@@ -437,7 +407,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         if (ex instanceof UndeclaredThrowableException) {
             e = ((UndeclaredThrowableException) ex).getUndeclaredThrowable();
         }
-        final var msg = new StringBuilder(StringUtils.defaultString(e.getMessage()));
+        val msg = new StringBuilder(StringUtils.defaultString(e.getMessage()));
         if (e.getCause() != null) {
             msg.append(" / ").append(e.getCause().getMessage());
         }

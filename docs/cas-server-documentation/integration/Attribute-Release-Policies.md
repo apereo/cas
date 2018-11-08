@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Attribute Release Policies
+category: Attributes
 ---
 
 # Attribute Release Policies
@@ -33,7 +34,7 @@ authentication handlers, date/time of the authentication, etc.
 
 Releasing authentication attributes to service providers and applications can be
 controlled to some extent. To learn more and see the relevant list of CAS properties,
-please [review this guide](../installation/Configuration-Properties.html#authentication-attributes).
+please [review this guide](../configuration/Configuration-Properties.html#authentication-attributes).
 
 
 ## Principal Attributes
@@ -46,7 +47,7 @@ to explicitly control the collection of attributes that may be authorized for re
 
 CAS provides the ability to release a bundle of principal attributes to all services by default. This bundle is not defined on a per-service basis and is always combined with attributes produced by the specific release policy of the service, such that for instance, you can devise rules to always release `givenName` and `cn` to every application, and additionally allow other specific principal attributes for only some applications per their attribute release policy.
 
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#default-bundle).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#default-bundle).
 
 ### Return All
 
@@ -194,7 +195,7 @@ have resolved a `uid` attribute with a value of `piper`, you could then consider
     "@class" : "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy",
     "allowedAttributes" : {
       "@class" : "java.util.TreeMap",
-      "uid" : "groovy { return attributes['uid'] + ' is great' }"
+      "uid" : "groovy { return attributes['uid'].get(0) + ' is great' }"
     }
   }
 }

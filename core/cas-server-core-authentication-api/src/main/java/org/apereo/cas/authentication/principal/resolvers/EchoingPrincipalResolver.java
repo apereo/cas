@@ -1,13 +1,14 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.services.persondir.IPersonAttributeDao;
+
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apereo.services.persondir.IPersonAttributeDao;
 
 import java.util.Optional;
 
@@ -24,7 +25,7 @@ public class EchoingPrincipalResolver implements PrincipalResolver {
     @Override
     public Principal resolve(final Credential credential, final Optional<Principal> principal, final Optional<AuthenticationHandler> handler) {
         LOGGER.debug("Echoing back the authenticated principal [{}]", principal);
-        return principal.isPresent() ? principal.get() : null;
+        return principal.orElse(null);
     }
 
     @Override

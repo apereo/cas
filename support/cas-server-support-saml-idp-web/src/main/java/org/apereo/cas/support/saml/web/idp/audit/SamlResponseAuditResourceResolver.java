@@ -1,6 +1,8 @@
 package org.apereo.cas.support.saml.web.idp.audit;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
@@ -26,26 +28,26 @@ public class SamlResponseAuditResourceResolver extends ReturnValueAsStringResour
             return getPrincipalIdFromSamlEcpResponse((Envelope) returnValue);
         }
         LOGGER.error("Could not determine the SAML response in the returned value");
-        return new String[]{};
+        return ArrayUtils.EMPTY_STRING_ARRAY;
     }
 
     private String[] getPrincipalIdFromSamlEcpResponse(final Envelope envelope) {
-        final var objects = envelope.getBody().getUnknownXMLObjects();
+        val objects = envelope.getBody().getUnknownXMLObjects();
         if (objects.isEmpty()) {
-            return new String[]{};
+            return ArrayUtils.EMPTY_STRING_ARRAY;
         }
-        final var object = objects.get(0);
+        val object = objects.get(0);
         if (object instanceof Response) {
             return getPrincipalIdFromSamlResponse((Response) object);
         }
         if (object instanceof Fault) {
             return getPrincipalIdFromSamlEcpFault((Fault) object);
         }
-        return new String[]{};
+        return ArrayUtils.EMPTY_STRING_ARRAY;
     }
 
     private String[] getPrincipalIdFromSamlResponse(final Response response) {
-        final var result =
+        val result =
             new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
                 .append("issuer", response.getIssuer().getValue())
                 .append("destination", response.getDestination())
@@ -54,7 +56,7 @@ public class SamlResponseAuditResourceResolver extends ReturnValueAsStringResour
     }
 
     private String[] getPrincipalIdFromSamlEcpFault(final Fault fault) {
-        final var result =
+        val result =
             new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
                 .append("actor", fault.getActor().getValue())
                 .append("message", fault.getMessage().getValue())

@@ -1,7 +1,5 @@
 package org.apereo.cas.validation;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.principal.ClientCredential;
@@ -9,6 +7,10 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.pac4j.core.client.Client;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,25 +30,25 @@ public class DelegatedAuthenticationServiceTicketValidationAuthorizer implements
 
     @Override
     public void authorize(final HttpServletRequest request, final Service service, final Assertion assertion) {
-        final var registeredService = this.servicesManager.findServiceBy(service);
+        val registeredService = this.servicesManager.findServiceBy(service);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
         LOGGER.debug("Evaluating service [{}] for delegated authentication policy", service);
-        final var policy = registeredService.getAccessStrategy().getDelegatedAuthenticationPolicy();
+        val policy = registeredService.getAccessStrategy().getDelegatedAuthenticationPolicy();
         if (policy != null) {
-            final var attributes = assertion.getPrimaryAuthentication().getAttributes();
+            val attributes = assertion.getPrimaryAuthentication().getAttributes();
 
             if (attributes.containsKey(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME)) {
-                final var clientNameAttr = attributes.get(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME);
-                final var value = CollectionUtils.firstElement(clientNameAttr);
+                val clientNameAttr = attributes.get(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME);
+                val value = CollectionUtils.firstElement(clientNameAttr);
                 if (value.isPresent()) {
-                    final var client = value.get().toString();
+                    val client = value.get().toString();
                     LOGGER.debug("Evaluating delegated authentication policy [{}] for client [{}] and service [{}]", policy, client, registeredService);
 
-                    final var context = AuditableContext.builder()
+                    val context = AuditableContext.builder()
                         .registeredService(registeredService)
                         .properties(CollectionUtils.wrap(Client.class.getSimpleName(), client))
                         .build();
-                    final var result = delegatedAuthenticationPolicyEnforcer.execute(context);
+                    val result = delegatedAuthenticationPolicyEnforcer.execute(context);
                     result.throwExceptionIfNeeded();
                 }
             }

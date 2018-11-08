@@ -1,5 +1,6 @@
 package org.apereo.cas.support.sms;
 
+import lombok.val;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -13,7 +14,7 @@ import static org.junit.Assert.*;
 public class TextMagicSmsSenderTests {
     @Test
     public void verifyAction() {
-        final var sender = new TextMagicSmsSender("casuser", "test-token");
+        val sender = new TextMagicSmsSender("casuser", "test-token");
         assertFalse(sender.send("123456678", "123456678", "Msg"));
     }
 }

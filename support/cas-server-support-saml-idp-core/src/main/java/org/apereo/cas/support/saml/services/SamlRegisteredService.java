@@ -1,14 +1,14 @@
 package org.apereo.cas.support.saml.services;
 
+import org.apereo.cas.services.AbstractRegisteredService;
+import org.apereo.cas.services.RegexRegisteredService;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.services.AbstractRegisteredService;
-import org.apereo.cas.services.RegexRegisteredService;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 
 import javax.persistence.CollectionTable;
@@ -16,7 +16,9 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.Lob;
 import javax.persistence.MapKeyColumn;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -28,7 +30,6 @@ import java.util.TreeMap;
  */
 @Entity
 @DiscriminatorValue("saml")
-@Slf4j
 @ToString(callSuper = true)
 @Getter
 @Setter
@@ -92,6 +93,9 @@ public class SamlRegisteredService extends RegexRegisteredService {
     @Column(name = "skipGenSubConfNotBefore")
     private boolean skipGeneratingSubjectConfirmationNotBefore = true;
 
+    @Column(name = "skipGenSubConfNameId")
+    private boolean skipGeneratingSubjectConfirmationNameId = true;
+
     @Column
     private boolean signResponses = true;
 
@@ -99,12 +103,15 @@ public class SamlRegisteredService extends RegexRegisteredService {
     private boolean encryptAssertions;
 
     @Column
+    private boolean encryptAttributes;
+
+    @Column
     private String metadataCriteriaRoles = SPSSODescriptor.DEFAULT_ELEMENT_LOCAL_NAME;
 
-    @Column(name="mdCriteriaRmEmptyEntities")
+    @Column(name = "mdCriteriaRmEmptyEntities")
     private boolean metadataCriteriaRemoveEmptyEntitiesDescriptors = true;
 
-    @Column(name="mdCriteriaRmRolelessEntities")
+    @Column(name = "mdCriteriaRmRolelessEntities")
     private boolean metadataCriteriaRemoveRolelessEntityDescriptors = true;
 
     @Column
@@ -124,6 +131,10 @@ public class SamlRegisteredService extends RegexRegisteredService {
     @MapKeyColumn(name = "attribute_name")
     @Column(name = "attribute_value")
     private Map<String, String> attributeFriendlyNames = new TreeMap<>();
+
+    @Lob
+    @Column(name = "encryptable_attrs", length = Integer.MAX_VALUE)
+    private HashSet<String> encryptableAttributes = new HashSet<>();
 
     @Override
     protected AbstractRegisteredService newInstance() {

@@ -1,10 +1,12 @@
 package org.apereo.cas.services.util;
 
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.util.EncodingUtils;
+
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import javax.crypto.Cipher;
@@ -26,37 +28,6 @@ public class RegisteredServicePublicKeyCipherExecutor implements RegisteredServi
     }
 
     /**
-     * Encrypt using the given cipher associated with the service,
-     * and encode the data in base 64.
-     *
-     * @param data    the data
-     * @param service the registered service
-     * @return the encoded piece of data in base64
-     */
-    @Override
-    public String encode(final String data, final Optional<RegisteredService> service) {
-        try {
-            if (service.isPresent()) {
-                final var registeredService = service.get();
-                final var publicKey = createRegisteredServicePublicKey(registeredService);
-                final var result = encodeInternal(data, publicKey, registeredService);
-                if (result != null) {
-                    return EncodingUtils.encodeBase64(result);
-                }
-            }
-        } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
-        }
-        return null;
-    }
-
-    @Override
-    public String decode(final String data, final Optional<RegisteredService> service) {
-        LOGGER.warn("Operation is not supported by this cipher");
-        return null;
-    }
-
-    /**
      * Encode internally, meant to be called by extensions.
      * Default behavior will encode the data based on the
      * registered service public key's algorithm using {@link javax.crypto.Cipher}.
@@ -69,7 +40,7 @@ public class RegisteredServicePublicKeyCipherExecutor implements RegisteredServi
     @SneakyThrows
     protected static byte[] encodeInternal(final String data, final PublicKey publicKey,
                                            final RegisteredService registeredService) {
-        final var cipher = initializeCipherBasedOnServicePublicKey(publicKey, registeredService);
+        val cipher = initializeCipherBasedOnServicePublicKey(publicKey, registeredService);
         if (cipher != null) {
             LOGGER.debug("Initialized cipher successfully. Proceeding to finalize...");
             return cipher.doFinal(data.getBytes(StandardCharsets.UTF_8));
@@ -88,7 +59,7 @@ public class RegisteredServicePublicKeyCipherExecutor implements RegisteredServi
             LOGGER.debug("No public key is defined for service [{}]. No encoding will take place.", registeredService);
             return null;
         }
-        final var publicKey = registeredService.getPublicKey().createInstance();
+        val publicKey = registeredService.getPublicKey().createInstance();
         if (publicKey == null) {
             LOGGER.debug("No public key instance created for service [{}]. No encoding will take place.", registeredService);
             return null;
@@ -110,7 +81,7 @@ public class RegisteredServicePublicKeyCipherExecutor implements RegisteredServi
             LOGGER.debug("Using service [{}] public key [{}] to initialize the cipher", registeredService.getServiceId(),
                 registeredService.getPublicKey());
 
-            final var cipher = Cipher.getInstance(publicKey.getAlgorithm());
+            val cipher = Cipher.getInstance(publicKey.getAlgorithm());
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
             LOGGER.debug("Initialized cipher in encrypt-mode via the public key algorithm [{}] for service [{}]",
                 publicKey.getAlgorithm(), registeredService.getServiceId());
@@ -119,6 +90,37 @@ public class RegisteredServicePublicKeyCipherExecutor implements RegisteredServi
             LOGGER.warn("Cipher could not be initialized for service [{}]. Error [{}]",
                 registeredService, e.getMessage());
         }
+        return null;
+    }
+
+    /**
+     * Encrypt using the given cipher associated with the service,
+     * and encode the data in base 64.
+     *
+     * @param data    the data
+     * @param service the registered service
+     * @return the encoded piece of data in base64
+     */
+    @Override
+    public String encode(final String data, final Optional<RegisteredService> service) {
+        try {
+            if (service.isPresent()) {
+                val registeredService = service.get();
+                val publicKey = createRegisteredServicePublicKey(registeredService);
+                val result = encodeInternal(data, publicKey, registeredService);
+                if (result != null) {
+                    return EncodingUtils.encodeBase64(result);
+                }
+            }
+        } catch (final Exception e) {
+            LOGGER.warn(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    @Override
+    public String decode(final String data, final Optional<RegisteredService> service) {
+        LOGGER.warn("Operation is not supported by this cipher");
         return null;
     }
 }

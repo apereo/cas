@@ -1,25 +1,26 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.web.support.WebUtils;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
-import org.apereo.cas.web.support.WebUtils;
+import org.apache.http.HttpResponse;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link ValidateCaptchaAction}.
@@ -28,67 +29,74 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ValidateCaptchaAction extends AbstractAction {
     /**
      * Recaptcha response as a request parameter.
      */
     public static final String REQUEST_PARAM_RECAPTCHA_RESPONSE = "g-recaptcha-response";
+
+    /**
+     * Recaptcha token as a request parameter.
+     */
+    public static final String REQUEST_PARAM_RECAPTCHA_TOKEN = "g-recaptcha-token";
+
     /**
      * Captcha error event.
      */
     public static final String EVENT_ID_ERROR = "captchaError";
-    
+
     private static final ObjectReader READER = new ObjectMapper().findAndRegisterModules().reader();
 
     private final GoogleRecaptchaProperties recaptchaProperties;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        final var gRecaptchaResponse = request.getParameter(REQUEST_PARAM_RECAPTCHA_RESPONSE);
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        val userAgent = WebUtils.getHttpServletRequestUserAgentFromRequestContext();
+
+        val gRecaptchaResponse = getRecaptchaResponse(request);
 
         if (StringUtils.isBlank(gRecaptchaResponse)) {
-            LOGGER.warn("Recaptcha response is missing from the request");
+            LOGGER.warn("Recaptcha response/token is missing from the request");
             return getError(requestContext);
         }
+
+        HttpResponse response = null;
         try {
-            final var obj = new URL(recaptchaProperties.getVerifyUrl());
-            final var con = (HttpURLConnection) obj.openConnection();
+            response = HttpUtils.executePost(recaptchaProperties.getVerifyUrl(),
+                CollectionUtils.wrap("secret", recaptchaProperties.getSecret(), "response", gRecaptchaResponse),
+                CollectionUtils.wrap("User-Agent", userAgent, "Accept-Language", "en-US,en;q=0.5"));
 
-            con.setRequestMethod("POST");
-            con.setRequestProperty("User-Agent", WebUtils.getHttpServletRequestUserAgentFromRequestContext());
-            con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
-
-            final var postParams = "secret=" + recaptchaProperties.getSecret() + "&response=" + gRecaptchaResponse;
-
-            LOGGER.debug("Sending 'POST' request to URL: [{}]", obj);
-            con.setDoOutput(true);
-            try (var wr = new DataOutputStream(con.getOutputStream())) {
-                wr.writeBytes(postParams);
-                wr.flush();
-            }
-            final var responseCode = con.getResponseCode();
-            LOGGER.debug("Response Code: [{}]", responseCode);
-
-            if (responseCode == HttpStatus.OK.value()) {
-                try (var in = new BufferedReader(new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8))) {
-                    final var response = in.lines().collect(Collectors.joining());
-                    LOGGER.debug("Google captcha response received: [{}]", response);
-                    final var node = READER.readTree(response);
-                    if (node.has("success") && node.get("success").booleanValue()) {
-                        return null;
-                    }
+            if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
+                val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                LOGGER.debug("Recaptcha verification response received: [{}]", result);
+                val node = READER.readTree(result);
+                if (node.has("score") && node.get("score").doubleValue() <= recaptchaProperties.getScore()) {
+                    LOGGER.warn("Recaptcha score received is less than the threshold score defined for CAS");
+                    return getError(requestContext);
+                }
+                if (node.has("success") && node.get("success").booleanValue()) {
+                    LOGGER.trace("Recaptcha has successfully verified the request");
+                    return null;
                 }
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+        } finally {
+            HttpUtils.close(response);
         }
         return getError(requestContext);
     }
 
+    private String getRecaptchaResponse(final HttpServletRequest request) {
+        return recaptchaProperties.getVersion() == GoogleRecaptchaProperties.RecaptchaVersions.V2
+            ? request.getParameter(REQUEST_PARAM_RECAPTCHA_RESPONSE)
+            : request.getParameter(REQUEST_PARAM_RECAPTCHA_TOKEN);
+    }
+
     private Event getError(final RequestContext requestContext) {
-        final var messageContext = requestContext.getMessageContext();
+        val messageContext = requestContext.getMessageContext();
         messageContext.addMessage(new MessageBuilder().error().code(EVENT_ID_ERROR).defaultText(EVENT_ID_ERROR).build());
         return getEventFactorySupport().event(this, EVENT_ID_ERROR);
     }

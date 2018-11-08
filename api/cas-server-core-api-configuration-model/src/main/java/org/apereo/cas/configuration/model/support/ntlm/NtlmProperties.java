@@ -1,9 +1,11 @@
 package org.apereo.cas.configuration.model.support.ntlm;
 
 import org.apereo.cas.configuration.support.RequiresModule;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * This is {@link NtlmProperties}.
@@ -12,7 +14,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-spnego")
-
 @Getter
 @Setter
 public class NtlmProperties implements Serializable {

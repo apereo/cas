@@ -1,13 +1,14 @@
 package org.apereo.cas.consent;
 
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.RandomUtils;
+
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.val;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,13 +22,12 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @Setter
+@RequiredArgsConstructor
 @AllArgsConstructor
-@NoArgsConstructor
 public abstract class BaseConsentRepository implements ConsentRepository {
     private static final long serialVersionUID = 1736846688546785564L;
-    private Set<ConsentDecision> consentDecisions = new LinkedHashSet<>();
+    private transient Set<ConsentDecision> consentDecisions = new LinkedHashSet<>();
 
     @Override
     public ConsentDecision findConsentDecision(final Service service, final RegisteredService registeredService,
@@ -40,20 +40,20 @@ public abstract class BaseConsentRepository implements ConsentRepository {
     }
 
     @Override
-    public Collection<ConsentDecision> findConsentDecisions(final String principal) {
+    public Collection<? extends ConsentDecision> findConsentDecisions(final String principal) {
         return this.consentDecisions.stream()
             .filter(d -> d.getPrincipal().equals(principal))
             .collect(Collectors.toSet());
     }
 
     @Override
-    public Collection<ConsentDecision> findConsentDecisions() {
+    public Collection<? extends ConsentDecision> findConsentDecisions() {
         return new ArrayList<>(this.consentDecisions);
     }
 
     @Override
     public boolean storeConsentDecision(final ConsentDecision decision) {
-        final var consent = getConsentDecisions()
+        val consent = getConsentDecisions()
             .stream()
             .filter(d -> d.getId() == decision.getId())
             .findFirst()
@@ -61,7 +61,7 @@ public abstract class BaseConsentRepository implements ConsentRepository {
         if (consent != null) {
             getConsentDecisions().remove(decision);
         } else {
-            decision.setId(Math.abs(RandomUtils.getNativeInstance().nextInt()));
+            decision.setId(RandomUtils.getNativeInstance().nextInt());
         }
         getConsentDecisions().add(decision);
         return true;
@@ -70,8 +70,8 @@ public abstract class BaseConsentRepository implements ConsentRepository {
 
     @Override
     public boolean deleteConsentDecision(final long decisionId, final String principal) {
-        final var decisions = findConsentDecisions(principal);
-        final var result = decisions.stream().filter(d -> d.getId() == decisionId).findFirst();
+        val decisions = findConsentDecisions(principal);
+        val result = decisions.stream().filter(d -> d.getId() == decisionId).findFirst();
         result.ifPresent(value -> this.consentDecisions.remove(value));
         return result.isPresent();
     }

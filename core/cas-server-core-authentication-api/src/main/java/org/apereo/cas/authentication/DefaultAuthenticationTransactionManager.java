@@ -1,9 +1,11 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionCompletedEvent;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionCompletedEvent;
+import lombok.val;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 
@@ -26,8 +28,8 @@ public class DefaultAuthenticationTransactionManager implements AuthenticationTr
                                                    final AuthenticationResultBuilder authenticationResult)
         throws AuthenticationException {
         if (!authenticationTransaction.getCredentials().isEmpty()) {
-            final var authentication = this.authenticationManager.authenticate(authenticationTransaction);
-            LOGGER.debug("Successful authentication; Collecting authentication result [{}]", authentication);
+            val authentication = this.authenticationManager.authenticate(authenticationTransaction);
+            LOGGER.trace("Successful authentication; Collecting authentication result [{}]", authentication);
             publishEvent(new CasAuthenticationTransactionCompletedEvent(this, authentication));
             authenticationResult.collect(authentication);
         } else {

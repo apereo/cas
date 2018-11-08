@@ -1,8 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import net.sf.ehcache.distribution.CacheReplicator;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -23,6 +20,10 @@ import org.apereo.cas.config.EhcacheTicketRegistryConfiguration;
 import org.apereo.cas.config.EhcacheTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+
+import lombok.SneakyThrows;
+import lombok.val;
+import net.sf.ehcache.distribution.CacheReplicator;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,7 +69,6 @@ import static org.mockito.Mockito.*;
     CasCoreServicesConfiguration.class,
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class})
-@Slf4j
 public class EhCacheTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
 
     @Autowired
@@ -89,13 +89,12 @@ public class EhCacheTicketRegistryTests extends BaseSpringRunnableTicketRegistry
         return ticketRegistry;
     }
 
-
     @Configuration("EhcacheTicketRegistryTestConfiguration")
     public static class EhcacheTicketRegistryTestConfiguration {
         @Bean
         @SneakyThrows
         public CacheReplicator ticketRMISynchronousCacheReplicator() {
-            final var replicator = mock(CacheReplicator.class);
+            val replicator = mock(CacheReplicator.class);
             when(replicator.isReplicateUpdatesViaCopy()).thenReturn(false);
             when(replicator.notAlive()).thenReturn(false);
             when(replicator.alive()).thenReturn(false);

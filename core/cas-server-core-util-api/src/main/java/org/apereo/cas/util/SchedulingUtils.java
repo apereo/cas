@@ -1,8 +1,10 @@
 package org.apereo.cas.util;
 
+import org.apereo.cas.CasEmbeddedValueResolver;
+
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.CasEmbeddedValueResolver;
+import lombok.val;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor;
@@ -24,9 +26,9 @@ public class SchedulingUtils {
      * @return the string value resolver
      */
     public static StringValueResolver prepScheduledAnnotationBeanPostProcessor(final ApplicationContext applicationContext) {
-        final StringValueResolver resolver = new CasEmbeddedValueResolver(applicationContext);
+        val resolver = new CasEmbeddedValueResolver(applicationContext);
         try {
-            final var sch = applicationContext.getBean(ScheduledAnnotationBeanPostProcessor.class);
+            val sch = applicationContext.getBean(ScheduledAnnotationBeanPostProcessor.class);
             sch.setEmbeddedValueResolver(resolver);
         } catch (final NoSuchBeanDefinitionException e) {
             LOGGER.warn("Unable to locate [ScheduledAnnotationBeanPostProcessor] as a bean. Support for duration syntax (i.e. PT2S) may not be available");

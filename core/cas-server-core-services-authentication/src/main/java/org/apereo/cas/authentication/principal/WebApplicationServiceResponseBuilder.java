@@ -1,12 +1,14 @@
 package org.apereo.cas.authentication.principal;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Response.ResponseType;
 import org.apereo.cas.services.ServicesManager;
+
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.val;
 import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
@@ -20,9 +22,9 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Slf4j
 @EqualsAndHashCode(callSuper = true)
 @Getter
+@Setter
 public class WebApplicationServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {
 
     private static final long serialVersionUID = -851233878780818494L;
@@ -35,13 +37,13 @@ public class WebApplicationServiceResponseBuilder extends AbstractWebApplication
 
     @Override
     public Response build(final WebApplicationService service, final String serviceTicketId, final Authentication authentication) {
-        final Map<String, String> parameters = new HashMap<>();
+        val parameters = new HashMap<String, String>();
         if (StringUtils.hasText(serviceTicketId)) {
             parameters.put(CasProtocolConstants.PARAMETER_TICKET, serviceTicketId);
         }
 
-        final var finalService = buildInternal(service, parameters);
-        final var responseType = getWebApplicationServiceResponseType(finalService);
+        val finalService = buildInternal(service, parameters);
+        val responseType = getWebApplicationServiceResponseType(finalService);
         if (responseType == ResponseType.POST) {
             return buildPost(finalService, parameters);
         }

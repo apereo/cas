@@ -1,10 +1,13 @@
 package org.apereo.cas.authentication;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
+
+import lombok.val;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import static org.junit.Assert.*;
 
@@ -14,22 +17,26 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(SpringRunner.class)
-@Slf4j
 public class SurrogateAuthenticationMetaDataPopulatorTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
     @Test
     public void verifyAction() {
-        final var p = new SurrogateAuthenticationMetaDataPopulator();
+        val p = new SurrogateAuthenticationMetaDataPopulator();
         assertFalse(p.supports(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
 
-        final var c = new SurrogateUsernamePasswordCredential();
+        val c = new SurrogateUsernamePasswordCredential();
         c.setSurrogateUsername("cassurrogate");
         c.setUsername("casuser");
         c.setPassword("password");
 
-        final var builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
+        val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
         p.populateAttributes(builder, DefaultAuthenticationTransaction.of(c));
-        final var auth = builder.build();
+        val auth = builder.build();
         assertTrue(auth.getAttributes().containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED));
         assertTrue(auth.getAttributes().containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL));
         assertTrue(auth.getAttributes().containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_USER));

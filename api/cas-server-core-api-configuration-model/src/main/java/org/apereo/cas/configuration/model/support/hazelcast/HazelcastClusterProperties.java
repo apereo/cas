@@ -3,13 +3,15 @@ package org.apereo.cas.configuration.model.support.hazelcast;
 import org.apereo.cas.configuration.model.support.hazelcast.discovery.HazelcastDiscoveryProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link HazelcastClusterProperties}.
@@ -18,7 +20,6 @@ import lombok.Setter;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-hazelcast-core")
-
 @Getter
 @Setter
 public class HazelcastClusterProperties implements Serializable {

@@ -1,5 +1,8 @@
 package org.apereo.cas.authentication;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.core.Ordered;
+
 /**
  * This is {@link AuthenticationEventExecutionPlanConfigurer}.
  * Passes on an authentication execution plan to implementors
@@ -18,7 +21,7 @@ package org.apereo.cas.authentication;
  * @since 5.1.0
  */
 @FunctionalInterface
-public interface AuthenticationEventExecutionPlanConfigurer {
+public interface AuthenticationEventExecutionPlanConfigurer extends Ordered {
 
     /**
      * configure the plan.
@@ -26,4 +29,18 @@ public interface AuthenticationEventExecutionPlanConfigurer {
      * @param plan the plan
      */
     void configureAuthenticationExecutionPlan(AuthenticationEventExecutionPlan plan);
+
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
+    default String getName() {
+        return StringUtils.defaultIfBlank(this.getClass().getSimpleName(), "Default");
+    }
+
+    @Override
+    default int getOrder() {
+        return 0;
+    }
 }

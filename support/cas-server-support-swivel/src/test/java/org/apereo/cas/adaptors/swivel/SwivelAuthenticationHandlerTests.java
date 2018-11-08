@@ -28,12 +28,14 @@ import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.support.WebUtils;
-import org.junit.Rule;
-import org.junit.Test;
+
+import lombok.val;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -44,7 +46,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
@@ -59,7 +62,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
@@ -87,8 +89,18 @@ import static org.junit.Assert.*;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     SwivelConfiguration.class,
     SwivelAuthenticationEventExecutionPlanConfiguration.class})
-@TestPropertySource(locations = {"classpath:/swivelauthn.properties"})
+@TestPropertySource(properties = {
+    "cas.authn.mfa.swivel.swivelUrl=http://localhost:9191",
+    "cas.authn.mfa.swivel.sharedSecret=$ecret",
+    "cas.authn.mfa.swivel.ignoreSslErrors=true"
+})
 public class SwivelAuthenticationHandlerTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
@@ -100,7 +112,7 @@ public class SwivelAuthenticationHandlerTests {
 
     @Before
     public void initialize() {
-        final var data = "<?xml version=\"1.0\" ?>"
+        val data = "<?xml version=\"1.0\" ?>"
             + "<SASResponse secret=\"MyAdminAgent\" version=\"3.4\">"
             + "<Version>3.6</Version>\n"
             + "<Result>PASS</Result>\n"
@@ -125,8 +137,8 @@ public class SwivelAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthn() throws Exception {
-        final var c = new SwivelTokenCredential("123456");
-        final var context = new MockRequestContext();
+        val c = new SwivelTokenCredential("123456");
+        val context = new MockRequestContext();
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
         RequestContextHolder.setRequestContext(context);

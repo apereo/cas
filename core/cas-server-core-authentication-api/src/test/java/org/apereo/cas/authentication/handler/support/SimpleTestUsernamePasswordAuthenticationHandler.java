@@ -1,14 +1,16 @@
 package org.apereo.cas.authentication.handler.support;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
-import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
+import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.StringUtils;
 
@@ -38,11 +40,6 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
      */
     private static final Map<String, Exception> DEFAULT_USERNAME_ERROR_MAP = new HashMap<>();
 
-    /**
-     * Map of special usernames to exceptions that are raised when a user with that name attempts authentication.
-     */
-    private final Map<String, Exception> usernameErrorMap = DEFAULT_USERNAME_ERROR_MAP;
-
     static {
         DEFAULT_USERNAME_ERROR_MAP.put("accountDisabled", new AccountDisabledException("Account disabled"));
         DEFAULT_USERNAME_ERROR_MAP.put("accountLocked", new AccountLockedException("Account locked"));
@@ -50,6 +47,11 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
         DEFAULT_USERNAME_ERROR_MAP.put("badWorkstation", new InvalidLoginLocationException("Invalid workstation"));
         DEFAULT_USERNAME_ERROR_MAP.put("passwordExpired", new CredentialExpiredException("Password expired"));
     }
+
+    /**
+     * Map of special usernames to exceptions that are raised when a user with that name attempts authentication.
+     */
+    private final Map<String, Exception> usernameErrorMap = DEFAULT_USERNAME_ERROR_MAP;
 
     public SimpleTestUsernamePasswordAuthenticationHandler() {
         super("", null, null, null);
@@ -66,10 +68,10 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
                                                                                         final String originalPassword)
         throws GeneralSecurityException, PreventedException {
 
-        final var username = credential.getUsername();
-        final var password = credential.getPassword();
+        val username = credential.getUsername();
+        val password = credential.getPassword();
 
-        final var exception = this.usernameErrorMap.get(username);
+        val exception = this.usernameErrorMap.get(username);
         if (exception instanceof GeneralSecurityException) {
             throw (GeneralSecurityException) exception;
         }

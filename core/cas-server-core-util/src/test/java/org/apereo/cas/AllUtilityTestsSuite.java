@@ -4,6 +4,7 @@ import org.apereo.cas.util.CollectionUtilsTests;
 import org.apereo.cas.util.CompressionUtilsTests;
 import org.apereo.cas.util.DateTimeUtilsTests;
 import org.apereo.cas.util.EncodingUtilsTests;
+import org.apereo.cas.util.RandomUtilsTests;
 import org.apereo.cas.util.RegexUtilsTests;
 import org.apereo.cas.util.ResourceUtilsTests;
 import org.apereo.cas.util.ScriptingUtilsTests;
@@ -19,11 +20,12 @@ import org.apereo.cas.util.gen.ChainingPrincipalNameTransformerTests;
 import org.apereo.cas.util.gen.DefaultLongNumericGeneratorTests;
 import org.apereo.cas.util.gen.DefaultRandomStringGeneratorTests;
 import org.apereo.cas.util.gen.HexRandomStringGeneratorTests;
-import org.apereo.cas.util.http.HttpClientMultiThreadedDownloaderTests;
 import org.apereo.cas.util.http.HttpMessageTests;
 import org.apereo.cas.util.http.SimpleHttpClientTests;
 import org.apereo.cas.util.io.CommunicationsManagerTests;
-import org.apereo.cas.util.io.CopyServletOutputStreamTests;
+import org.apereo.cas.util.io.GroovySmsSenderTests;
+import org.apereo.cas.util.io.RestfulSmsSenderTests;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -39,12 +41,10 @@ import org.junit.runners.Suite;
     ProtocolTicketCipherExecutorTests.class,
     TicketGrantingCookieCipherExecutorTests.class,
     WebflowConversationStateCipherExecutorTests.class,
-    HttpClientMultiThreadedDownloaderTests.class,
     RsaKeyPairCipherExecutorTests.class,
     HttpMessageTests.class,
     SimpleHttpClientTests.class,
     CommunicationsManagerTests.class,
-    CopyServletOutputStreamTests.class,
     Base64RandomStringGeneratorTests.class,
     ChainingPrincipalNameTransformerTests.class,
     CollectionUtilsTests.class,
@@ -59,7 +59,9 @@ import org.junit.runners.Suite;
     BinaryCipherExecutorTests.class,
     ResourceUtilsTests.class,
     ScriptingUtilsTests.class,
-    CopyServletOutputStreamTests.class
+    GroovySmsSenderTests.class,
+    RestfulSmsSenderTests.class,
+    RandomUtilsTests.class
 })
 public class AllUtilityTestsSuite {
 }

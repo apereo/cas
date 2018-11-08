@@ -1,9 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import com.nimbusds.jose.EncryptionMethod;
-import com.nimbusds.jose.JWEAlgorithm;
-import com.nimbusds.jose.JWSAlgorithm;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.TokenAuthenticationConfiguration;
@@ -17,11 +13,17 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.apereo.cas.util.gen.RandomStringGenerator;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.flow.config.TokenAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.support.WebUtils;
-import org.junit.Test;
+
+import com.nimbusds.jose.EncryptionMethod;
+import com.nimbusds.jose.JWEAlgorithm;
+import com.nimbusds.jose.JWSAlgorithm;
+import lombok.val;
 import org.junit.Before;
+import org.junit.Test;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.jwt.config.encryption.SecretEncryptionConfiguration;
 import org.pac4j.jwt.config.signature.SecretSignatureConfiguration;
@@ -47,10 +49,10 @@ import static org.junit.Assert.*;
 @Import({
     CasCoreWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,
+    CasMultifactorAuthenticationWebflowConfiguration.class,
     TokenAuthenticationConfiguration.class,
     TokenAuthenticationWebflowConfiguration.class
 })
-@Slf4j
 public class TokenAuthenticationActionTests extends AbstractCentralAuthenticationServiceTests {
     private static final RandomStringGenerator RANDOM_STRING_GENERATOR = new DefaultRandomStringGenerator();
     private static final String SIGNING_SECRET = RANDOM_STRING_GENERATOR.getNewString(256);
@@ -66,34 +68,35 @@ public class TokenAuthenticationActionTests extends AbstractCentralAuthenticatio
 
     @Before
     public void before() {
-        final var svc = RegisteredServiceTestUtils.getRegisteredService("https://example.token.org");
+        val svc = RegisteredServiceTestUtils.getRegisteredService("https://example.token.org");
         svc.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
-        var prop = new DefaultRegisteredServiceProperty();
+        val prop = new DefaultRegisteredServiceProperty();
         prop.addValue(SIGNING_SECRET);
         svc.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_SIGNING.getPropertyName(), prop);
-        prop = new DefaultRegisteredServiceProperty();
-        prop.addValue(ENCRYPTION_SECRET);
-        svc.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION.getPropertyName(), prop);
+
+        val prop2 = new DefaultRegisteredServiceProperty();
+        prop2.addValue(ENCRYPTION_SECRET);
+        svc.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION.getPropertyName(), prop2);
         this.servicesManager.save(svc);
     }
 
     @Test
     public void verifyAction() throws Exception {
-        final JwtGenerator<CommonProfile> g = new JwtGenerator<>();
+        val g = new JwtGenerator<CommonProfile>();
 
         g.setSignatureConfiguration(new SecretSignatureConfiguration(SIGNING_SECRET, JWSAlgorithm.HS256));
         g.setEncryptionConfiguration(new SecretEncryptionConfiguration(ENCRYPTION_SECRET, JWEAlgorithm.DIR, EncryptionMethod.A192CBC_HS384));
 
-        final var profile = new CommonProfile();
+        val profile = new CommonProfile();
         profile.setId("casuser");
         profile.addAttribute("uid", "uid");
         profile.addAttribute("givenName", "CASUser");
         profile.addAttribute("memberOf", CollectionUtils.wrapSet("system", "cas", "admin"));
-        final var token = g.generate(profile);
+        val token = g.generate(profile);
 
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.addHeader(TokenConstants.PARAMETER_NAME_TOKEN, token);
-        final var context = new MockRequestContext();
+        val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         WebUtils.putService(context, CoreAuthenticationTestUtils.getWebApplicationService("https://example.token.org"));
         assertEquals("success", this.action.execute(context).getId());

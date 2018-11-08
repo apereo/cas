@@ -1,13 +1,13 @@
 package org.apereo.cas.validation;
 
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.principal.Service;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.principal.Service;
 
 import java.io.Serializable;
 import java.util.List;
@@ -19,7 +19,6 @@ import java.util.List;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@Slf4j
 @ToString
 @RequiredArgsConstructor
 @EqualsAndHashCode
@@ -34,14 +33,12 @@ public class ImmutableAssertion implements Assertion, Serializable {
     /**
      * Primary authentication.
      */
-    @NonNull
-    private final Authentication primaryAuthentication;
+    private final @NonNull Authentication primaryAuthentication;
 
     /**
      * Chained authentications.
      */
-    @NonNull
-    private final List<Authentication> chainedAuthentications;
+    private final @NonNull List<Authentication> chainedAuthentications;
 
     /**
      * Was this the result of a new login.
@@ -51,6 +48,5 @@ public class ImmutableAssertion implements Assertion, Serializable {
     /**
      * The service we are asserting this ticket for.
      */
-    @NonNull
-    private final Service service;
+    private final @NonNull Service service;
 }

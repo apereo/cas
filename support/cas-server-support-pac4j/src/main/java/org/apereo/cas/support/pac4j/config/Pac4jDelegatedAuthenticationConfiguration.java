@@ -1,12 +1,5 @@
 package org.apereo.cas.support.pac4j.config;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.github.scribejava.core.model.OAuth1RequestToken;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -23,6 +16,16 @@ import org.apereo.cas.web.pac4j.SessionStoreCookieGenerator;
 import org.apereo.cas.web.pac4j.SessionStoreCookieSerializer;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.DefaultCasCookieValueManager;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.github.scribejava.core.model.OAuth1RequestToken;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -46,7 +49,7 @@ public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketV
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -67,7 +70,7 @@ public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketV
     @Bean
     @ConditionalOnMissingBean(name = "pac4jDelegatedSessionStoreCookieSerializer")
     public StringSerializer<Map<String, Object>> pac4jDelegatedSessionStoreCookieSerializer() {
-        final var serializer = new SessionStoreCookieSerializer();
+        val serializer = new SessionStoreCookieSerializer();
         serializer.getObjectMapper().registerModule(pac4jJacksonModule());
         return serializer;
     }
@@ -75,7 +78,7 @@ public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketV
     @Bean
     @ConditionalOnMissingBean(name = "pac4jJacksonModule")
     public Module pac4jJacksonModule() {
-        final var module = new SimpleModule();
+        val module = new SimpleModule();
         module.setMixInAnnotation(OAuth1RequestToken.class, AbstractOAuth1RequestTokenMixin.class);
         return module;
     }
@@ -83,20 +86,21 @@ public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketV
     @Bean
     @ConditionalOnMissingBean(name = "pac4jSessionStoreCookieGenerator")
     public CookieRetrievingCookieGenerator pac4jSessionStoreCookieGenerator() {
-        final var c = casProperties.getAuthn().getPac4j().getCookie();
-        return new SessionStoreCookieGenerator(
-            new DefaultCasCookieValueManager(pac4jDelegatedSessionStoreCookieCipherExecutor()),
-            c.getName(), c.getPath(), c.getMaxAge(),
-            c.isSecure(), c.getDomain(), c.isHttpOnly());
+        val c = casProperties.getAuthn().getPac4j().getCookie();
+        val valueManager = new DefaultCasCookieValueManager(pac4jDelegatedSessionStoreCookieCipherExecutor(), c);
+        return new SessionStoreCookieGenerator(valueManager, c);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "pac4jDelegatedSessionStoreCookieCipherExecutor")
     public CipherExecutor pac4jDelegatedSessionStoreCookieCipherExecutor() {
-        final var c = casProperties.getAuthn().getPac4j().getCookie().getCrypto();
+        val c = casProperties.getAuthn().getPac4j().getCookie().getCrypto();
         if (c.isEnabled()) {
             return new DelegatedSessionCookieCipherExecutor(c.getEncryption().getKey(),
-                c.getSigning().getKey(), c.getAlg());
+                c.getSigning().getKey(),
+                c.getAlg(),
+                c.getSigning().getKeySize(),
+                c.getEncryption().getKeySize());
         }
         LOGGER.info("Delegated authentication cookie encryption/signing is turned off and "
             + "MAY NOT be safe in a production environment. "
@@ -107,7 +111,7 @@ public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketV
 
     @Bean
     public ServiceTicketValidationAuthorizer pac4jServiceTicketValidationAuthorizer() {
-        return new DelegatedAuthenticationServiceTicketValidationAuthorizer(this.servicesManager,
+        return new DelegatedAuthenticationServiceTicketValidationAuthorizer(servicesManager.getIfAvailable(),
             registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer());
     }
 

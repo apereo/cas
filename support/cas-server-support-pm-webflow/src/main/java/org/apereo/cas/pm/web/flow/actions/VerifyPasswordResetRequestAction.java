@@ -1,12 +1,14 @@
 package org.apereo.cas.pm.web.flow.actions;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.BasePasswordManagementService;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -26,25 +28,25 @@ public class VerifyPasswordResetRequestAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        final var pm = casProperties.getAuthn().getPm();
+        val pm = casProperties.getAuthn().getPm();
 
-        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         LOGGER.debug("Checking for token at param [{}]", SendPasswordResetInstructionsAction.PARAMETER_NAME_TOKEN);
-        final var token = request.getParameter(SendPasswordResetInstructionsAction.PARAMETER_NAME_TOKEN);
+        val token = request.getParameter(SendPasswordResetInstructionsAction.PARAMETER_NAME_TOKEN);
 
         if (StringUtils.isBlank(token)) {
             LOGGER.error("Password reset token is missing");
             return error();
         }
 
-        final var username = passwordManagementService.parseToken(token);
+        val username = passwordManagementService.parseToken(token);
         if (StringUtils.isBlank(username)) {
             LOGGER.error("Password reset token could not be verified");
             return error();
         }
 
         if (pm.getReset().isSecurityQuestionsEnabled()) {
-            final var questions = BasePasswordManagementService
+            val questions = BasePasswordManagementService
                 .canonicalizeSecurityQuestions(passwordManagementService.getSecurityQuestions(username));
             if (questions.isEmpty()) {
                 LOGGER.warn("No security questions could be found for [{}]", username);

@@ -1,12 +1,14 @@
 package org.apereo.cas.support.geo.google;
 
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
+import org.apereo.cas.support.geo.AbstractGeoLocationService;
+
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.model.LatLng;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
-import org.apereo.cas.support.geo.AbstractGeoLocationService;
+import lombok.val;
 
 import java.net.InetAddress;
 import java.util.Arrays;
@@ -35,13 +37,13 @@ public class GoogleMapsGeoLocationService extends AbstractGeoLocationService {
             return null;
         }
 
-        final var r = new GeoLocationResponse();
+        val r = new GeoLocationResponse();
         r.setLatitude(latitude);
         r.setLongitude(longitude);
 
-        final var latlng = new LatLng(latitude, longitude);
+        val latlng = new LatLng(latitude, longitude);
         try {
-            final var results = GeocodingApi.reverseGeocode(this.context, latlng).await();
+            val results = GeocodingApi.reverseGeocode(this.context, latlng).await();
             if (results != null && results.length > 0) {
                 Arrays.stream(results)
                     .map(result -> result.formattedAddress)

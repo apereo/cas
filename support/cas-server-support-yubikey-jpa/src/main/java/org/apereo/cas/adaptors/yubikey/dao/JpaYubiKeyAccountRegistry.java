@@ -1,9 +1,11 @@
 package org.apereo.cas.adaptors.yubikey.dao;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.registry.BaseYubiKeyAccountRegistry;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.*;
 
 /**
  * This is {@link JpaYubiKeyAccountRegistry}.
@@ -27,7 +29,7 @@ import static java.util.stream.Collectors.toList;
 @Slf4j
 public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
 
-    private static final String SELECT_QUERY = "SELECT r from YubiKeyAccount r ";
+    private static final String SELECT_QUERY = "SELECT r from " + YubiKeyAccount.class.getSimpleName() + " r ";
 
     @PersistenceContext(unitName = "yubiKeyEntityManagerFactory")
     private transient EntityManager entityManager;
@@ -39,8 +41,8 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     @Override
     public boolean registerAccountFor(final String uid, final String token) {
         if (getAccountValidator().isValid(uid, token)) {
-            final var yubikeyPublicId = getAccountValidator().getTokenPublicId(token);
-            final var account = new YubiKeyAccount();
+            val yubikeyPublicId = getAccountValidator().getTokenPublicId(token);
+            val account = new YubiKeyAccount();
             account.setPublicId(getCipherExecutor().encode(yubikeyPublicId));
             account.setUsername(uid);
             return this.entityManager.merge(account) != null;
@@ -49,15 +51,12 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
-    public Collection<YubiKeyAccount> getAccounts() {
+    public Collection<? extends YubiKeyAccount> getAccounts() {
         try {
             return this.entityManager.createQuery(SELECT_QUERY, YubiKeyAccount.class)
                 .getResultList()
                 .stream()
-                .map(it -> {
-                    it.setPublicId(getCipherExecutor().decode(it.getPublicId()));
-                    return it;
-                })
+                .peek(it -> it.setPublicId(getCipherExecutor().decode(it.getPublicId())))
                 .collect(toList());
         } catch (final NoResultException e) {
             LOGGER.debug("No registration record could be found");
@@ -68,9 +67,9 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
-    public Optional<YubiKeyAccount> getAccount(final String uid) {
+    public Optional<? extends YubiKeyAccount> getAccount(final String uid) {
         try {
-            final var account = this.entityManager.createQuery(SELECT_QUERY.concat("where r.username = :username"),
+            val account = this.entityManager.createQuery(SELECT_QUERY.concat("where r.username = :username"),
                 YubiKeyAccount.class)
                 .setParameter("username", uid)
                 .getSingleResult();
@@ -81,5 +80,19 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
             LOGGER.debug(e.getMessage(), e);
         }
         return Optional.empty();
+    }
+
+    @Override
+    public void delete(final String uid) {
+        val count = this.entityManager.createQuery("DELETE FROM " + YubiKeyAccount.class.getSimpleName()
+            + " r WHERE r.username= :username")
+            .setParameter("username", uid)
+            .executeUpdate();
+        LOGGER.debug("Deleted [{}] record(s)", count);
+    }
+
+    @Override
+    public void deleteAll() {
+        this.entityManager.createQuery("DELETE FROM " + YubiKeyAccount.class.getSimpleName()).executeUpdate();
     }
 }

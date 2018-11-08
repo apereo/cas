@@ -1,13 +1,16 @@
 package org.apereo.cas.adaptors.yubikey;
 
+import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
+import org.apereo.cas.configuration.model.support.mfa.YubiKeyMultifactorProperties;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.http.HttpClient;
+
 import com.yubico.client.v2.YubicoClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
-import org.apereo.cas.configuration.model.support.mfa.YubiKeyMultifactorProperties;
-import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.util.http.HttpClient;
 
 import java.net.URL;
 
@@ -27,15 +30,15 @@ public class YubiKeyMultifactorAuthenticationProvider extends AbstractMultifacto
     private final transient HttpClient httpClient;
 
     @Override
-    protected boolean isAvailable() {
+    public boolean isAvailable(final RegisteredService service) {
         try {
-            final var endpoints = client.getWsapiUrls();
-            for (final var endpoint : endpoints) {
+            val endpoints = client.getWsapiUrls();
+            for (val endpoint : endpoints) {
                 LOGGER.debug("Pinging YubiKey API endpoint at [{}]", endpoint);
-                final var msg = this.httpClient.sendMessageToEndPoint(new URL(endpoint));
-                final var message = msg != null ? msg.getMessage() : null;
+                val msg = this.httpClient.sendMessageToEndPoint(new URL(endpoint));
+                val message = msg != null ? msg.getMessage() : null;
                 if (StringUtils.isNotBlank(message)) {
-                    final var response = EncodingUtils.urlDecode(message);
+                    val response = EncodingUtils.urlDecode(message);
                     LOGGER.debug("Received YubiKey ping response [{}]", response);
                     return true;
                 }

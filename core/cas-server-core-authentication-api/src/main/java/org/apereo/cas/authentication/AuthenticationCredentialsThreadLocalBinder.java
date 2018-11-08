@@ -1,12 +1,9 @@
 package org.apereo.cas.authentication;
 
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;
 import java.util.Collection;
-
-import static java.util.stream.Collectors.joining;
 
 /**
  * ThreadLocal based holder for current set of credentials and/or authentication object for any current
@@ -22,7 +19,6 @@ import static java.util.stream.Collectors.joining;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@Slf4j
 @NoArgsConstructor
 public class AuthenticationCredentialsThreadLocalBinder {
 
@@ -96,7 +92,7 @@ public class AuthenticationCredentialsThreadLocalBinder {
      * @return credential ids String representation
      */
     public static String getCurrentCredentialIdsAsString() {
-        return getCurrentCredentialIds() != null ? Arrays.stream(getCurrentCredentialIds()).collect(joining(", ")) : null;
+        return getCurrentCredentialIds() != null ? String.join(", ", getCurrentCredentialIds()) : null;
     }
 
     /**

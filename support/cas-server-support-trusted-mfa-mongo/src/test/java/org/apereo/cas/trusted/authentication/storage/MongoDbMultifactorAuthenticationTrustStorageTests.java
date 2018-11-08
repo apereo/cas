@@ -7,6 +7,8 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustS
 import org.apereo.cas.trusted.config.MongoDbMultifactorAuthenticationTrustConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
+
+import lombok.val;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -20,7 +22,6 @@ import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.time.LocalDateTime;
-import lombok.extern.slf4j.Slf4j;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -38,8 +39,15 @@ import static org.junit.Assert.*;
     MultifactorAuthnTrustConfiguration.class,
     CasCoreAuditConfiguration.class,
     RefreshAutoConfiguration.class})
-@Slf4j
-@TestPropertySource(locations = "classpath:trustedmongo.properties")
+@TestPropertySource(properties = {
+    "cas.authn.mfa.trusted.mongo.databaseName=mfa-trusted",
+    "cas.authn.mfa.trusted.mongo.host=localhost",
+    "cas.authn.mfa.trusted.mongo.port=27017",
+    "cas.authn.mfa.trusted.mongo.userId=root",
+    "cas.authn.mfa.trusted.mongo.password=secret",
+    "cas.authn.mfa.trusted.mongo.authenticationDatabaseName=admin",
+    "cas.authn.mfa.trusted.mongo.dropCollection=true"
+    })
 public class MongoDbMultifactorAuthenticationTrustStorageTests {
 
     @ClassRule
@@ -55,7 +63,7 @@ public class MongoDbMultifactorAuthenticationTrustStorageTests {
     @Test
     public void verifySetAnExpireByKey() {
         mfaTrustEngine.set(MultifactorAuthenticationTrustRecord.newInstance("casuser", "geography", "fingerprint"));
-        final var records = mfaTrustEngine.get("casuser");
+        val records = mfaTrustEngine.get("casuser");
         assertEquals(1, records.size());
         mfaTrustEngine.expire(records.stream().findFirst().get().getRecordKey());
         assertTrue(mfaTrustEngine.get("casuser").isEmpty());
@@ -63,7 +71,7 @@ public class MongoDbMultifactorAuthenticationTrustStorageTests {
 
     @Test
     public void verifyExpireByDate() {
-        final var r = MultifactorAuthenticationTrustRecord.newInstance("castest", "geography", "fingerprint");
+        val r = MultifactorAuthenticationTrustRecord.newInstance("castest", "geography", "fingerprint");
         r.setRecordDate(LocalDateTime.now().minusDays(2));
         mfaTrustEngine.set(r);
 

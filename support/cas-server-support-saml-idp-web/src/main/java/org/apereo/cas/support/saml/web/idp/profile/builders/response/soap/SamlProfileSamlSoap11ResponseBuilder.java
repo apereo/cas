@@ -1,18 +1,20 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response.soap;
 
-import lombok.NonNull;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.velocity.app.VelocityEngine;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.BaseSamlProfileSamlResponseBuilder;
+
+import lombok.NonNull;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.velocity.app.VelocityEngine;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.binding.encoding.impl.HTTPSOAP11Encoder;
@@ -49,7 +51,7 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
         final VelocityEngine velocityEngineFactory,
         final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
         final SamlProfileObjectBuilder<? extends SAMLObject> saml2ResponseBuilder,
-        final SamlObjectEncrypter samlObjectEncrypter) {
+        final SamlIdPObjectEncrypter samlObjectEncrypter) {
         super(openSamlConfigBean, samlObjectSigner, velocityEngineFactory, samlProfileSamlAssertionBuilder, samlObjectEncrypter);
         this.saml2ResponseBuilder = saml2ResponseBuilder;
     }
@@ -67,16 +69,16 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
 
         LOGGER.debug("Locating the assertion consumer service url for binding [{}]", binding);
         @NonNull
-        final var acs = adaptor.getAssertionConsumerService(binding);
+        val acs = adaptor.getAssertionConsumerService(binding);
         LOGGER.debug("Located assertion consumer service url [{}]", acs);
-        final var ecpResponse = newEcpResponse(acs.getLocation());
-        final var header = newSoapObject(Header.class);
+        val ecpResponse = newEcpResponse(acs.getLocation());
+        val header = newSoapObject(Header.class);
         header.getUnknownXMLObjects().add(ecpResponse);
-        final var body = newSoapObject(Body.class);
-        final var saml2Response =
+        val body = newSoapObject(Body.class);
+        val saml2Response =
             buildSaml2Response(casAssertion, authnRequest, service, adaptor, request, binding, messageContext);
         body.getUnknownXMLObjects().add(saml2Response);
-        final var envelope = newSoapObject(Envelope.class);
+        val envelope = newSoapObject(Envelope.class);
         envelope.setHeader(header);
         envelope.setBody(body);
         SamlUtils.logSamlObject(this.configBean, envelope);
@@ -117,10 +119,10 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
                               final String binding,
                               final RequestAbstractType authnRequest,
                               final Object assertion) throws SamlException {
-        final var result = new MessageContext();
-        final var ctx = result.getSubcontext(SOAP11Context.class, true);
+        val result = new MessageContext();
+        val ctx = result.getSubcontext(SOAP11Context.class, true);
         ctx.setEnvelope(envelope);
-        final var encoder = new HTTPSOAP11Encoder();
+        val encoder = new HTTPSOAP11Encoder();
         encoder.setHttpServletResponse(httpResponse);
         encoder.setMessageContext(result);
         encoder.initialize();

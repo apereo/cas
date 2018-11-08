@@ -1,10 +1,5 @@
 package org.apereo.cas;
 
-import lombok.AllArgsConstructor;
-import lombok.NonNull;
-import lombok.Setter;
-import lombok.Synchronized;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -23,6 +18,13 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
+import lombok.Synchronized;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
@@ -49,7 +51,6 @@ import java.util.stream.Collectors;
 public abstract class AbstractCentralAuthenticationService implements CentralAuthenticationService, Serializable, ApplicationEventPublisherAware {
 
     private static final long serialVersionUID = -7572316677901391166L;
-
     /**
      * Application event publisher.
      */
@@ -109,15 +110,15 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      */
     protected void doPublishEvent(final ApplicationEvent e) {
         if (applicationEventPublisher != null) {
-            LOGGER.debug("Publishing [{}]", e);
+            LOGGER.trace("Publishing [{}]", e);
             this.applicationEventPublisher.publishEvent(e);
         }
     }
 
     @Transactional(transactionManager = "ticketTransactionManager", noRollbackFor = InvalidTicketException.class)
     @Override
-    public Ticket getTicket(@NonNull final String ticketId) throws InvalidTicketException {
-        final var ticket = this.ticketRegistry.getTicket(ticketId);
+    public Ticket getTicket(final @NonNull String ticketId) throws InvalidTicketException {
+        val ticket = this.ticketRegistry.getTicket(ticketId);
         verifyTicketState(ticket, ticketId, null);
         return ticket;
     }
@@ -132,8 +133,8 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      */
     @Transactional(transactionManager = "ticketTransactionManager", noRollbackFor = InvalidTicketException.class)
     @Override
-    public <T extends Ticket> T getTicket(@NonNull final String ticketId, final Class<T> clazz) throws InvalidTicketException {
-        final Ticket ticket = this.ticketRegistry.getTicket(ticketId, clazz);
+    public <T extends Ticket> T getTicket(final @NonNull String ticketId, final Class<T> clazz) throws InvalidTicketException {
+        val ticket = this.ticketRegistry.getTicket(ticketId, clazz);
         verifyTicketState(ticket, ticketId, clazz);
         return (T) ticket;
     }
@@ -159,7 +160,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * @throws AbstractTicketException the ticket exception
      */
     protected Authentication getAuthenticationSatisfiedByPolicy(final Authentication authentication, final ServiceContext context) throws AbstractTicketException {
-        final var policy = this.serviceContextAuthenticationPolicyFactory.createPolicy(context);
+        val policy = this.serviceContextAuthenticationPolicyFactory.createPolicy(context);
         try {
             if (policy.isSatisfiedBy(authentication)) {
                 return authentication;
@@ -178,10 +179,10 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * @param registeredService    the registered service
      */
     protected void evaluateProxiedServiceIfNeeded(final Service service, final TicketGrantingTicket ticketGrantingTicket, final RegisteredService registeredService) {
-        final var proxiedBy = ticketGrantingTicket.getProxiedBy();
+        val proxiedBy = ticketGrantingTicket.getProxiedBy();
         if (proxiedBy != null) {
-            LOGGER.debug("TGT is proxied by [{}]. Locating proxy service in registry...", proxiedBy.getId());
-            final var proxyingService = this.servicesManager.findServiceBy(proxiedBy);
+            LOGGER.debug("Ticket-granting ticket is proxied by [{}]. Locating proxy service in registry...", proxiedBy.getId());
+            val proxyingService = this.servicesManager.findServiceBy(proxiedBy);
             if (proxyingService != null) {
                 LOGGER.debug("Located proxying service [{}] in the service registry", proxyingService);
                 if (!proxyingService.getProxyPolicy().isAllowedToProxy()) {
@@ -193,7 +194,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
                 throw new UnauthorizedProxyingException(UnauthorizedProxyingException.MESSAGE + registeredService.getId());
             }
         } else {
-            LOGGER.trace("TGT is not proxied by another service");
+            LOGGER.trace("Ticket-granting ticket is not proxied by another service");
         }
     }
 
@@ -243,7 +244,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      */
     protected boolean isTicketAuthenticityVerified(final String ticketId) {
         if (this.cipherExecutor != null) {
-            LOGGER.debug("Attempting to decode service ticket [{}] to verify authenticity", ticketId);
+            LOGGER.trace("Attempting to decode service ticket [{}] to verify authenticity", ticketId);
             return !StringUtils.isEmpty(this.cipherExecutor.decode(ticketId));
         }
         return !StringUtils.isEmpty(ticketId);

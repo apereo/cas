@@ -1,13 +1,14 @@
 package org.apereo.cas;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AbstractAuthenticationHandler;
-import org.apereo.cas.authentication.BasicCredentialMetaData;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
-import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
-import org.apereo.cas.authentication.OneTimePasswordCredential;
+import org.apereo.cas.authentication.credential.OneTimePasswordCredential;
+import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+
+import lombok.val;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -19,7 +20,6 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@Slf4j
 public class TestOneTimePasswordAuthenticationHandler extends AbstractAuthenticationHandler {
 
     private final Map<String, String> credentialMap;
@@ -36,14 +36,19 @@ public class TestOneTimePasswordAuthenticationHandler extends AbstractAuthentica
 
     @Override
     public AuthenticationHandlerExecutionResult authenticate(final Credential credential)
-            throws GeneralSecurityException {
-        final var otp = (OneTimePasswordCredential) credential;
-        final var valueOnRecord = credentialMap.get(otp.getId());
+        throws GeneralSecurityException {
+        val otp = (OneTimePasswordCredential) credential;
+        val valueOnRecord = credentialMap.get(otp.getId());
         if (otp.getPassword().equals(valueOnRecord)) {
             return new DefaultAuthenticationHandlerExecutionResult(this, new BasicCredentialMetaData(otp),
-                    new DefaultPrincipalFactory().createPrincipal(otp.getId()));
+                new DefaultPrincipalFactory().createPrincipal(otp.getId()));
         }
         throw new FailedLoginException();
+    }
+
+    @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return OneTimePasswordCredential.class.isAssignableFrom(clazz);
     }
 
     @Override

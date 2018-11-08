@@ -12,11 +12,14 @@ import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
+
+import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.junit.Test;
 import org.junit.Before;
-import org.junit.runner.RunWith;
+import org.junit.ClassRule;
+import org.junit.Rule;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,7 +28,8 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import javax.security.auth.login.FailedLoginException;
 import java.util.Collection;
@@ -39,13 +43,17 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
     DefaultCasEventListenerTests.TestEventConfiguration.class,
     CasCoreEventsConfiguration.class,
     RefreshAutoConfiguration.class
 })
 public class DefaultCasEventListenerTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
@@ -56,7 +64,7 @@ public class DefaultCasEventListenerTests {
 
     @Before
     public void initialize() {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setRemoteAddr("123.456.789.000");
         request.setLocalAddr("123.456.789.000");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
@@ -65,7 +73,7 @@ public class DefaultCasEventListenerTests {
 
     @Test
     public void verifyCasAuthenticationTransactionFailureEvent() {
-        final var event = new CasAuthenticationTransactionFailureEvent(this,
+        val event = new CasAuthenticationTransactionFailureEvent(this,
             CollectionUtils.wrap("error", new FailedLoginException()),
             CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
         eventPublisher.publishEvent(event);
@@ -74,15 +82,15 @@ public class DefaultCasEventListenerTests {
 
     @Test
     public void verifyTicketGrantingTicketCreated() {
-        final var tgt = new MockTicketGrantingTicket("casuser");
-        final var event = new CasTicketGrantingTicketCreatedEvent(this, tgt);
+        val tgt = new MockTicketGrantingTicket("casuser");
+        val event = new CasTicketGrantingTicketCreatedEvent(this, tgt);
         eventPublisher.publishEvent(event);
         assertFalse(casEventRepository.load().isEmpty());
     }
 
     @Test
     public void verifyCasAuthenticationPolicyFailureEvent() {
-        final var event = new CasAuthenticationPolicyFailureEvent(this,
+        val event = new CasAuthenticationPolicyFailureEvent(this,
             CollectionUtils.wrap("error", new FailedLoginException()),
             new DefaultAuthenticationTransaction(CoreAuthenticationTestUtils.getService(),
                 CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword())),
@@ -93,7 +101,7 @@ public class DefaultCasEventListenerTests {
 
     @Test
     public void verifyCasRiskyAuthenticationDetectedEvent() {
-        final var event = new CasRiskyAuthenticationDetectedEvent(this,
+        val event = new CasRiskyAuthenticationDetectedEvent(this,
             CoreAuthenticationTestUtils.getAuthentication(),
             CoreAuthenticationTestUtils.getRegisteredService(),
             new Object());
@@ -106,7 +114,7 @@ public class DefaultCasEventListenerTests {
         @Bean
         public CasEventRepository casEventRepository() {
             return new AbstractCasEventRepository() {
-                private Collection<CasEvent> events = new LinkedHashSet<>();
+                private final Collection<CasEvent> events = new LinkedHashSet<>();
 
                 @Override
                 public void save(final CasEvent event) {
@@ -114,7 +122,7 @@ public class DefaultCasEventListenerTests {
                 }
 
                 @Override
-                public Collection<? extends CasEvent> load() {
+                public Collection<CasEvent> load() {
                     return events;
                 }
             };

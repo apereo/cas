@@ -1,14 +1,19 @@
 package org.apereo.cas.interrupt.webflow.actions;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.interrupt.InterruptInquirer;
 import org.apereo.cas.interrupt.webflow.InterruptUtils;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import java.util.List;
 
 /**
  * This is {@link InquireInterruptAction}.
@@ -16,24 +21,43 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @RequiredArgsConstructor
+@Slf4j
 public class InquireInterruptAction extends AbstractAction {
-    private final InterruptInquirer interruptInquirer;
+    /**
+     * Attribute recorded in authentication to indicate interrupt is finalized.
+     */
+    public static final String AUTHENTICATION_ATTRIBUTE_FINALIZED_INTERRUPT = "finalizedInterrupt";
+
+    private final List<InterruptInquirer> interruptInquirers;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        final var authentication = WebUtils.getAuthentication(requestContext);
-        final Service service = WebUtils.getService(requestContext);
-        final var registeredService = WebUtils.getRegisteredService(requestContext);
-        final var credential = WebUtils.getCredential(requestContext);
+        val authentication = WebUtils.getAuthentication(requestContext);
+        val service = WebUtils.getService(requestContext);
+        val registeredService = WebUtils.getRegisteredService(requestContext);
+        val credential = WebUtils.getCredential(requestContext);
+        val eventFactorySupport = new EventFactorySupport();
 
-        final var response = this.interruptInquirer.inquire(authentication, registeredService, service, credential);
-        if (response == null || !response.isInterrupt()) {
-            return no();
+        if (authentication.getAttributes().containsKey(AUTHENTICATION_ATTRIBUTE_FINALIZED_INTERRUPT)) {
+            LOGGER.debug("Authentication event has already finalized interrupt. Skipping...");
+            return getInterruptSkippedEvent();
         }
-        InterruptUtils.putInterruptIn(requestContext, response);
-        WebUtils.putPrincipal(requestContext, authentication.getPrincipal());
-        return yes();
+        for (val inquirer : this.interruptInquirers) {
+            LOGGER.debug("Invoking interrupt inquirer using [{}]", inquirer.getName());
+            val response = inquirer.inquire(authentication, registeredService, service, credential, requestContext);
+            if (response != null && response.isInterrupt()) {
+                LOGGER.debug("Interrupt inquiry is required since inquirer produced a response [{}]", response);
+                InterruptUtils.putInterruptIn(requestContext, response);
+                WebUtils.putPrincipal(requestContext, authentication.getPrincipal());
+                return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_INTERRUPT_REQUIRED);
+            }
+        }
+        LOGGER.debug("Webflow interrupt is skipped since no inquirer produced a response");
+        return getInterruptSkippedEvent();
+    }
+
+    private Event getInterruptSkippedEvent() {
+        return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_INTERRUPT_SKIPPED);
     }
 }

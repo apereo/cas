@@ -1,7 +1,5 @@
 package org.apereo.cas.token.authentication.principal;
 
-import com.nimbusds.jwt.JWTParser;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
@@ -33,8 +31,12 @@ import org.apereo.cas.token.cipher.TokenTicketCipherExecutor;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+
+import com.nimbusds.jwt.JWTParser;
+import lombok.val;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -44,7 +46,8 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.nio.charset.StandardCharsets;
 
@@ -56,7 +59,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
     CasRegisteredServicesTestConfiguration.class,
     TokenTicketsConfiguration.class,
@@ -86,9 +88,13 @@ import static org.junit.Assert.*;
 })
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableScheduling
-@Slf4j
 @TestPropertySource(locations = "classpath:tokentests.properties")
 public class TokenWebApplicationServiceResponseBuilderTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     @Qualifier("webApplicationServiceResponseBuilder")
@@ -100,11 +106,11 @@ public class TokenWebApplicationServiceResponseBuilderTests {
 
     @Test
     public void verifyDecrypt() {
-        final var signingSecret = "EihBwA3OuDQMm4gdWzkqRJ87596G7o7a_naJAJipxFoRJbXK7APRcnCA91Y30rJdh4q-C2dmpfV6eNhQT0bR5A";
-        final var encryptionSecret = "dJ2YpUd-r_Qd7e3nDm79WiIHkqaLT8yZt6nN5eG0YnE";
+        val signingSecret = "EihBwA3OuDQMm4gdWzkqRJ87596G7o7a_naJAJipxFoRJbXK7APRcnCA91Y30rJdh4q-C2dmpfV6eNhQT0bR5A";
+        val encryptionSecret = "dJ2YpUd-r_Qd7e3nDm79WiIHkqaLT8yZt6nN5eG0YnE";
 
-        final var cipher = new TokenTicketCipherExecutor(encryptionSecret, signingSecret, true);
-        final var result = cipher.decode(cipher.encode("ThisIsValue"));
+        val cipher = new TokenTicketCipherExecutor(encryptionSecret, signingSecret, true, 0, 0);
+        val result = cipher.decode(cipher.encode("ThisIsValue"));
         assertEquals("ThisIsValue", result);
     }
 
@@ -115,17 +121,17 @@ public class TokenWebApplicationServiceResponseBuilderTests {
 
     @Test
     public void verifyTokenBuilder() {
-        final var data = "yes\ncasuser";
-        try (var webServer = new MockWebServer(8281,
+        val data = "yes\ncasuser";
+        try (val webServer = new MockWebServer(8281,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
 
-            final var result = responseBuilder.build(CoreAuthenticationTestUtils.getWebApplicationService("jwtservice"),
+            val result = responseBuilder.build(CoreAuthenticationTestUtils.getWebApplicationService("jwtservice"),
                 "ST-123456",
                 CoreAuthenticationTestUtils.getAuthentication());
             assertNotNull(result);
             assertTrue(result.getAttributes().containsKey(CasProtocolConstants.PARAMETER_TICKET));
-            final var ticket = result.getAttributes().get(CasProtocolConstants.PARAMETER_TICKET);
+            val ticket = result.getAttributes().get(CasProtocolConstants.PARAMETER_TICKET);
             assertNotNull(JWTParser.parse(ticket));
         } catch (final Exception e) {
             throw new AssertionError(e.getMessage(), e);

@@ -24,16 +24,19 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
+
+import lombok.val;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 /**
  * This is {@link SecurityTokenServiceAuthenticationMetaDataPopulatorTests}.
@@ -41,7 +44,6 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CasWsSecurityTokenTicketCatalogConfiguration.class,
@@ -67,6 +69,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 })
 @TestPropertySource(locations = "classpath:ws-idp.properties")
 public class SecurityTokenServiceAuthenticationMetaDataPopulatorTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
@@ -83,9 +91,9 @@ public class SecurityTokenServiceAuthenticationMetaDataPopulatorTests {
 
     @Test
     public void verifySecurityPopulator() {
-        final var realm = casProperties.getAuthn().getWsfedIdp().getIdp().getRealm();
+        val realm = casProperties.getAuthn().getWsfedIdp().getIdp().getRealm();
 
-        final var registeredService = new WSFederationRegisteredService();
+        val registeredService = new WSFederationRegisteredService();
         registeredService.setRealm(realm);
         registeredService.setServiceId("http://app.example.org/wsfed-idp");
         registeredService.setName("WSFED App");
@@ -94,12 +102,11 @@ public class SecurityTokenServiceAuthenticationMetaDataPopulatorTests {
         registeredService.setWsdlLocation("classpath:wsdl/ws-trust-1.4-service.wsdl");
         servicesManager.save(registeredService);
 
-        final var builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
-        final var service = CoreAuthenticationTestUtils.getService("http://example.org?"
+        val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
+        val service = CoreAuthenticationTestUtils.getService("http://example.org?"
             + WSFederationConstants.WREPLY + '=' + registeredService.getServiceId() + '&'
             + WSFederationConstants.WTREALM + '=' + realm);
-        final AuthenticationTransaction transaction =
-            DefaultAuthenticationTransaction.of(service, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+        val transaction = DefaultAuthenticationTransaction.of(service, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
 
         thrown.expect(AuthenticationException.class);
         populator.populateAttributes(builder, transaction);

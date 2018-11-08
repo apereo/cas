@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration;
 
 import lombok.experimental.UtilityClass;
+import lombok.val;
 import org.springframework.beans.factory.config.YamlProcessor;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.core.io.Resource;
@@ -23,7 +24,7 @@ public final class CasCoreConfigurationUtils {
      * @return the map
      */
     public static Map loadYamlProperties(final Resource... resource) {
-        final var factory = new YamlPropertiesFactoryBean();
+        val factory = new YamlPropertiesFactoryBean();
         factory.setResolutionMethod(YamlProcessor.ResolutionMethod.OVERRIDE);
         factory.setResources(resource);
         factory.setSingleton(true);

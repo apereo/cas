@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - SPNEGO Authentication
+category: Authentication
 ---
 
 # SPNEGO Authentication
@@ -28,6 +29,9 @@ ticket expires.
 
 <div class="alert alert-info"><strong>JCE Requirement</strong><p>It's safe to make sure you have the proper JCE bundle installed in your Java environment that is used by CAS, specially if you need to consume encrypted payloads issued by ADFS. Be sure to pick the right version of the JCE for your Java version. Java versions can be detected via the <code>java -version</code> command.</p></div>
 
+<div class="alert alert-info"><strong>Large Kerberos Tickets</strong><p>If organization users have large kerberos tickets, likely cause by being a member of a large number of groups, the Tomcat connector will need to have the <code>maxHttpHeaderSize</code> value increased from the default amount to allow the ticket to be passed to the CAS Server application.</p></div>
+ 
+
 ## Components
 
 SPNEGO support is enabled by including the following dependency in the WAR overlay:
@@ -40,15 +44,14 @@ SPNEGO support is enabled by including the following dependency in the WAR overl
 </dependency>
 ```
 
-You may also need to declare the following Maven repository in
-your CAS overlay to be able to resolve dependencies:
+You may also need to declare the following repository in your CAS overlay to be able to resolve dependencies:
 
 ```xml
 <repositories>
     ...
     <repository>
-        <id>jasig-releases</id>
-        <url>http://developer.jasig.org/repo/content/groups/m2-legacy</url>
+        <id>uniconiam</id>
+        <url>https://dl.bintray.com/uniconiam/maven</url>
     </repository>
     ...
 </repositories>
@@ -168,9 +171,9 @@ URL, e.g. `https://cas.example.com`.
 
 Make sure you have at least specified the JCIFS Service Principal in the CAS configuration.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#spnego-authentication).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#spnego-authentication).
 To see the relevant list of CAS properties that deal with NTLM authentication,
-please [review this guide](Configuration-Properties.html#ntlm-authentication).
+please [review this guide](../configuration/Configuration-Properties.html#ntlm-authentication).
 
 You may provide a JAAS `login.conf` file:
 
@@ -194,19 +197,19 @@ or resume normally, depending on the client action strategy chosen below.
 ### By Remote IP
 
 Checks to see if the request's remote ip address matches a predefine pattern.
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#spnego-authentication).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#spnego-authentication).
 
 ### By Hostname
 
 Checks to see if the request's remote hostname matches a predefine pattern.
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#spnego-authentication).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#spnego-authentication).
 
 ### By LDAP Attribute
 
 Checks an LDAP instance for the remote hostname, to locate a pre-defined attribute whose mere existence
 would allow the webflow to resume to SPNEGO.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#spnego-authentication).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#spnego-authentication).
 
 ## Logging
 

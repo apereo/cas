@@ -1,10 +1,12 @@
 package org.apereo.cas.configuration.model.support.hazelcast;
 
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.io.Serializable;
 
 /**
  * This is {@link BaseHazelcastProperties}.
@@ -13,10 +15,19 @@ import lombok.Setter;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-hazelcast-core")
-
 @Getter
 @Setter
 public class BaseHazelcastProperties implements Serializable {
+
+    /**
+     * Whether shut down hook is enabled.
+     */
+    public static final String SHUT_DOWN_HOOK_ENABLED_PROP = "hazelcast.shutdownhook.enabled";
+
+    /**
+     * Boolean value to indicate socket bind config.
+     */
+    public static final String SOCKET_BIND_ANY_PROP = "hazelcast.socket.bind.any";
 
     /**
      * Logging type property name.
@@ -26,7 +37,7 @@ public class BaseHazelcastProperties implements Serializable {
     /**
      * Enable discovery.
      */
-    public static final String HAZELCAST_DISCOVERY_ENABLED = "hazelcast.discovery.enabled";
+    public static final String HAZELCAST_DISCOVERY_ENABLED_PROP = "hazelcast.discovery.enabled";
 
     /**
      * Max num of seconds for heartbeat property name.

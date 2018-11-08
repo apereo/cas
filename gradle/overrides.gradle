@@ -7,24 +7,32 @@
   overlays could use and pull this file and have their 
   dependencies match that of CAS. 
  */
-ext["hibernateVersion"] = "5.3.1.Final"
-ext["springBootTomcatVersion"] = "9.0.10"
-ext["hazelcastVersion"] = "3.10.2"
-ext["infinispanVersion"] = "9.3.0.Final"
-ext["springVersion"] = "5.0.7.RELEASE"
-ext["jacksonDatabindVersion"] = "2.9.6"
-ext["thymeleafVersion"] = "3.0.9.RELEASE"
+ext["hibernateVersion"] = "5.3.7.Final"
+ext["hazelcastVersion"] = "3.11"
+ext["infinispanVersion"] = "9.4.1.Final"
+
+ext["springVersion"] = "5.1.2.RELEASE"
+ext["springBootTomcatVersion"] = "9.0.12"
+ext["springSessionVersion"] = "2.1.1.RELEASE"
+ext["springSessionMongoVersion"] = "2.1.0.RELEASE"
+
+ext["jacksonDatabindVersion"] = "2.9.7"
+ext["thymeleafVersion"] = "3.0.11.RELEASE"
 ext["thymeleafDialectVersion"] = "2.3.0"
-ext["springSessionVersion"] = "1.3.1.RELEASE"
 ext["hsqlVersion"] = "2.4.1"
 ext["httpCoreVersion"] = "4.4.10"
 ext["hikariVersion"] = "3.2.0"
-ext["groovyVersion"] = "3.0.0-alpha-3"
-ext["log4jVersion"] = "2.11.0"
+ext["groovyVersion"] = "2.5.3"
+ext["log4jVersion"] = "2.11.1"
 ext["commonsBeansVersion"] = "1.9.3"
-ext["dropwizardMetricsVersion"] = "3.2.5"
 ext["caffeinVersion"] = "2.6.2"
-ext["couchbaseVersion"] = "2.5.5"
+ext["couchbaseVersion"] = "2.7.1"
+
+ext["mysqlVersion"] = "8.0.13"
+ext["postgresqlVersion"] = "42.2.5"
+ext["mariaDbVersion"] = "2.3.0"
+ext["jtdsVersion"] = "1.3.1"
+ext["mssqlServerVersion"] = "7.0.0.jre10"
 
 ext["couchbase-client.version"] = ext["couchbaseVersion"]
 ext["caffeine.version"] = ext["caffeinVersion"]
@@ -44,4 +52,8 @@ ext["hikaricp.version"] = ext["hikariVersion"]
 ext["groovy.version"] = ext["groovyVersion"]
 ext["log4j2.version"] = ext["log4jVersion"]
 ext["commons-beanutils.version"] = ext["commonsBeansVersion"]
-ext["dropwizard-metrics.version"] = ext["dropwizardMetricsVersion"]
+ext["mysql.version"] = ext["mysqlVersion"]
+ext["postgresql.version"] = ext["postgresqlVersion"]
+ext["mariadb.version"] = ext["mariaDbVersion"]
+ext["jtds.version"] = ext["jtdsVersion"]
+ext["mssql-jdbc.version"] = ext["mssqlServerVersion"]

@@ -1,7 +1,5 @@
 package org.apereo.cas.ticket;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
@@ -27,12 +25,18 @@ import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
 import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.web.config.CasCookieConfiguration;
-import org.junit.runner.RunWith;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.val;
+import org.apache.commons.io.FileUtils;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -43,7 +47,6 @@ import java.util.ArrayList;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CasOAuthConfiguration.class,
@@ -66,11 +69,18 @@ import java.util.ArrayList;
     CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class
 })
 public abstract class BaseOAuthExpirationPolicyTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
     protected static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "oAuthTokenExpirationPolicy.json");
     protected static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     private static final UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator(64);
     private static final ExpirationPolicy EXP_POLICY_TGT = new HardTimeoutExpirationPolicy(1000);
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
 
     @Autowired
     @Qualifier("defaultAccessTokenFactory")
@@ -79,9 +89,9 @@ public abstract class BaseOAuthExpirationPolicyTests {
     @Autowired
     @Qualifier("defaultRefreshTokenFactory")
     protected RefreshTokenFactory defaultRefreshTokenFactory;
-    
+
     protected TicketGrantingTicket newTicketGrantingTicket() {
-        final var principal = CoreAuthenticationTestUtils.getPrincipal("casuser");
+        val principal = CoreAuthenticationTestUtils.getPrincipal("casuser");
         return new TicketGrantingTicketImpl(
             ID_GENERATOR.getNewTicketId(TicketGrantingTicket.PREFIX),
             CoreAuthenticationTestUtils.getAuthentication(principal),
@@ -89,13 +99,13 @@ public abstract class BaseOAuthExpirationPolicyTests {
     }
 
     protected AccessToken newAccessToken(final TicketGrantingTicket tgt) {
-        final var testService = CoreAuthenticationTestUtils.getService("https://service.example.com");
+        val testService = CoreAuthenticationTestUtils.getService("https://service.example.com");
         return defaultAccessTokenFactory.create(testService, tgt.getAuthentication(), tgt, new ArrayList<>());
     }
 
     protected RefreshToken newRefreshToken(final AccessToken at) {
-        final var testService = CoreAuthenticationTestUtils.getService("https://service.example.com");
-        final var rt = defaultRefreshTokenFactory.create(testService, at.getAuthentication(),
+        val testService = CoreAuthenticationTestUtils.getService("https://service.example.com");
+        val rt = defaultRefreshTokenFactory.create(testService, at.getAuthentication(),
             at.getTicketGrantingTicket(), new ArrayList<>());
         at.getTicketGrantingTicket().getDescendantTickets().add(rt.getId());
         return rt;

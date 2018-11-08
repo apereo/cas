@@ -1,10 +1,12 @@
 package org.apereo.cas.configuration.model.support.mongo;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.support.RequiredProperty;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.Serializable;
 
 /**
  * This is {@link BaseMongoDbProperties}.
@@ -12,7 +14,6 @@ import lombok.Setter;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-
 @Getter
 @Setter
 public abstract class BaseMongoDbProperties implements Serializable {

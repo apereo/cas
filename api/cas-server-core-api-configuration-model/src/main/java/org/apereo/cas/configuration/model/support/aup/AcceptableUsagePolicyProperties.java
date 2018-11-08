@@ -1,14 +1,17 @@
 package org.apereo.cas.configuration.model.support.aup;
 
+import org.apereo.cas.configuration.model.support.couchdb.BaseAsynchronousCouchDbProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RestEndpointProperties;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * This is {@link AcceptableUsagePolicyProperties}.
@@ -17,7 +20,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-aup-webflow")
-
 @Getter
 @Setter
 public class AcceptableUsagePolicyProperties implements Serializable {
@@ -40,6 +42,11 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     private Rest rest = new Rest();
 
     /**
+     * Control AUP via CouchDb.
+     */
+    private CouchDb couchDb = new CouchDb();
+
+    /**
      * Keep consent decisions stored via a MongoDb database resource.
      */
     private MongoDb mongo = new MongoDb();
@@ -56,6 +63,39 @@ public class AcceptableUsagePolicyProperties implements Serializable {
      */
     @RequiredProperty
     private String aupAttributeName = "aupAccepted";
+
+    /**
+     * Scope options for the default aup repository can store flag indicating acceptance.
+     * Scope refers to duration that acceptance is kept.
+     * Current options are global on the particular server (not replicated across CAS servers)
+     * and once per authentication via credentials (not authentication events via TGT).
+     */
+    public enum Scope {
+        /**
+         * Store in global in-memory map (for life of server).
+         */
+        GLOBAL,
+
+        /**
+         * Store aup acceptance such that user is prompted when they authenticate via credentials (not TGT).
+         */
+        AUTHENTICATION
+    };
+
+    /**
+     * Scope of map where the aup selection is stored.
+     */
+    private Scope scope = Scope.GLOBAL;
+
+    @RequiresModule(name = "cas-server-support-aup-couchdb")
+    public static class CouchDb extends BaseAsynchronousCouchDbProperties {
+
+        private static final long serialVersionUID = 1323894615409106853L;
+
+        public CouchDb() {
+            setDbName("acceptable_usage_policy");
+        }
+    }
 
     @RequiresModule(name = "cas-server-support-aup-mongo")
     @Getter

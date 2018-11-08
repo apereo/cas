@@ -1,18 +1,21 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
-import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.NoOpRevocationChecker;
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.RevocationChecker;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
-import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.crypto.CertUtils;
+import org.apereo.cas.util.function.FunctionUtils;
+
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -101,7 +104,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
     public X509CredentialsAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
                                                 final Pattern regExTrustedIssuerDnPattern, final int maxPathLength,
                                                 final boolean maxPathLengthAllowUnspecified, final boolean checkKeyUsage, final boolean requireKeyUsage,
-                                                final Pattern regExSubjectDnPattern, @NonNull final RevocationChecker revocationChecker) {
+                                                final Pattern regExSubjectDnPattern, final @NonNull RevocationChecker revocationChecker) {
         super(name, servicesManager, principalFactory, null);
         this.regExTrustedIssuerDnPattern = regExTrustedIssuerDnPattern;
         this.maxPathLength = maxPathLength;
@@ -141,21 +144,65 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
             revocationChecker);
     }
 
+    /**
+     * Checks if critical extension oids contain the extension oid.
+     *
+     * @param certificate  the certificate
+     * @param extensionOid the extension oid
+     * @return true, if  critical
+     */
+    private static boolean isCritical(final X509Certificate certificate, final String extensionOid) {
+        val criticalOids = certificate.getCriticalExtensionOIDs();
+        if (criticalOids == null || criticalOids.isEmpty()) {
+            return false;
+        }
+        return criticalOids.contains(extensionOid);
+    }
+
+    /**
+     * Does principal name match pattern?
+     *
+     * @param principal the principal
+     * @param pattern   the pattern
+     * @return true, if successful
+     */
+    private static boolean doesNameMatchPattern(final Principal principal, final Pattern pattern) {
+        if (pattern != null) {
+            val name = principal.getName();
+            val result = pattern.matcher(name).matches();
+            LOGGER.debug("[{}] matches [{}] == [{}]", pattern.pattern(), name, result);
+            return result;
+        }
+        return true;
+    }
+
     @Override
     public boolean supports(final Credential credential) {
         return credential != null && X509CertificateCredential.class.isAssignableFrom(credential.getClass());
     }
 
     @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return X509CertificateCredential.class.isAssignableFrom(clazz);
+    }
+
+    /**
+     * Note: The call to getBasicConstraints returns pathLenConstraints which is generally greater than or equal to zero
+     * when this is a CA cert and -1 when it's not.
+     * @param credential Credential to authenticate.
+     * @return Authn handler execution result.
+     * @throws GeneralSecurityException security exception
+     */
+    @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
 
-        final var x509Credential = (X509CertificateCredential) credential;
-        final var certificates = x509Credential.getCertificates();
+        val x509Credential = (X509CertificateCredential) credential;
+        val certificates = x509Credential.getCertificates();
 
-        X509Certificate clientCert = null;
+        var clientCert = (X509Certificate) null;
         var hasTrustedIssuer = false;
         for (var i = certificates.length - 1; i >= 0; i--) {
-            final var certificate = certificates[i];
+            val certificate = certificates[i];
             LOGGER.debug("Evaluating [{}]", CertUtils.toString(certificate));
 
             validate(certificate);
@@ -164,9 +211,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
                 hasTrustedIssuer = isCertificateFromTrustedIssuer(certificate);
             }
 
-            // getBasicConstraints returns pathLenConstraints which is generally
-            // >=0 when this is a CA cert and -1 when it's not
-            final var pathLength = certificate.getBasicConstraints();
+            val pathLength = certificate.getBasicConstraints();
             if (pathLength < 0) {
                 LOGGER.debug("Found valid client certificate");
                 clientCert = certificate;
@@ -193,7 +238,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
         cert.checkValidity();
         this.revocationChecker.check(cert);
 
-        final var pathLength = cert.getBasicConstraints();
+        val pathLength = cert.getBasicConstraints();
         if (pathLength < 0) {
             if (!isCertificateAllowed(cert)) {
                 throw new FailedLoginException("Certificate subject does not match pattern " + this.regExSubjectDnPattern.pattern());
@@ -223,36 +268,22 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
      */
     private boolean isValidKeyUsage(final X509Certificate certificate) {
         LOGGER.debug("Checking certificate keyUsage extension");
-        final var keyUsage = certificate.getKeyUsage();
+        val keyUsage = certificate.getKeyUsage();
         if (keyUsage == null) {
             LOGGER.warn("Configuration specifies checkKeyUsage but keyUsage extension not found in certificate.");
             return !this.requireKeyUsage;
         }
 
-        final boolean valid;
-        if (isCritical(certificate, KEY_USAGE_OID) || this.requireKeyUsage) {
-            LOGGER.debug("KeyUsage extension is marked critical or required by configuration.");
-            valid = keyUsage[0];
-        } else {
-            LOGGER.debug("KeyUsage digitalSignature=%s, Returning true since keyUsage validation not required by configuration.");
-            valid = true;
-        }
-        return valid;
-    }
-
-    /**
-     * Checks if critical extension oids contain the extension oid.
-     *
-     * @param certificate  the certificate
-     * @param extensionOid the extension oid
-     * @return true, if  critical
-     */
-    private static boolean isCritical(final X509Certificate certificate, final String extensionOid) {
-        final var criticalOids = certificate.getCriticalExtensionOIDs();
-        if (criticalOids == null || criticalOids.isEmpty()) {
-            return false;
-        }
-        return criticalOids.contains(extensionOid);
+        val func = FunctionUtils.doIf(c -> isCritical(certificate, KEY_USAGE_OID) || requireKeyUsage,
+            t -> {
+                LOGGER.debug("KeyUsage extension is marked critical or required by configuration.");
+                return keyUsage[0];
+            },
+            f -> {
+                LOGGER.debug("KeyUsage digitalSignature=%s, Returning true since keyUsage validation not required by configuration.");
+                return Boolean.TRUE;
+            });
+        return func.apply(certificate);
     }
 
     /**
@@ -273,22 +304,5 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
      */
     private boolean isCertificateFromTrustedIssuer(final X509Certificate cert) {
         return doesNameMatchPattern(cert.getIssuerDN(), this.regExTrustedIssuerDnPattern);
-    }
-
-    /**
-     * Does principal name match pattern?
-     *
-     * @param principal the principal
-     * @param pattern   the pattern
-     * @return true, if successful
-     */
-    private static boolean doesNameMatchPattern(final Principal principal, final Pattern pattern) {
-        if (pattern != null) {
-            final var name = principal.getName();
-            final var result = pattern.matcher(name).matches();
-            LOGGER.debug("[{}] matches [{}] == [{}]", pattern.pattern(), name, result);
-            return result;
-        }
-        return true;
     }
 }

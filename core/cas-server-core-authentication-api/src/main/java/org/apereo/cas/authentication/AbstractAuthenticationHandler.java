@@ -1,14 +1,15 @@
 package org.apereo.cas.authentication;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RandomUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
-import java.util.function.Predicate;
+
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.RandomUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.function.Predicate;
 
 /**
  * Base class for all authentication handlers that support configurable naming.
@@ -16,7 +17,6 @@ import lombok.Setter;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@Slf4j
 @Getter
 @Setter
 public abstract class AbstractAuthenticationHandler implements AuthenticationHandler {
@@ -55,10 +55,10 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
     /**
      * Instantiates a new Abstract authentication handler.
      *
-     * @param name Handler name.
-     * @param servicesManager the services manager.
+     * @param name             Handler name.
+     * @param servicesManager  the services manager.
      * @param principalFactory the principal factory
-     * @param order the order
+     * @param order            the order
      */
     public AbstractAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                          final PrincipalFactory principalFactory, final Integer order) {

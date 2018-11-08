@@ -1,8 +1,8 @@
 package org.apereo.cas.support.events;
 
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
+
+import lombok.ToString;
 import org.springframework.context.ApplicationEvent;
 
 /**
@@ -15,7 +15,6 @@ import org.springframework.context.ApplicationEvent;
  * @author Dmitriy Kopylenko
  * @since 4.2
  */
-@Slf4j
 @ToString
 public abstract class AbstractCasEvent extends ApplicationEvent {
 

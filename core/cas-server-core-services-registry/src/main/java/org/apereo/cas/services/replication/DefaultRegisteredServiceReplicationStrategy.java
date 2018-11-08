@@ -1,7 +1,5 @@
 package org.apereo.cas.services.replication;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.DistributedCacheManager;
 import org.apereo.cas.DistributedCacheObject;
 import org.apereo.cas.configuration.model.support.services.stream.StreamingServiceRegistryProperties;
@@ -9,6 +7,10 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.support.events.service.BaseCasRegisteredServiceEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
 
 import java.util.List;
@@ -54,11 +56,11 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
     public RegisteredService getRegisteredServiceFromCacheByPredicate(final RegisteredService service,
                                                                       final Predicate<DistributedCacheObject<RegisteredService>> predicate,
                                                                       final ServiceRegistry serviceRegistry) {
-        final var result = this.distributedCacheManager.find(predicate);
+        val result = this.distributedCacheManager.find(predicate);
         if (result.isPresent()) {
-            final var item = result.get();
-            final var value = item.getValue();
-            final var cachedService = value;
+            val item = result.get();
+            val value = item.getValue();
+            val cachedService = value;
             LOGGER.debug("Located cache entry [{}] in service registry cache [{}]", item, this.distributedCacheManager.getName());
             if (isRegisteredServiceMarkedAsDeletedInCache(item)) {
                 LOGGER.debug("Service found in the cache [{}] is marked as a deleted service. CAS will update the service registry "
@@ -93,7 +95,7 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
         LOGGER.debug("Requested service definition is not found in the replication cache");
         if (service != null) {
             LOGGER.debug("Attempting to update replication cache with service [{}}", service);
-            final DistributedCacheObject<RegisteredService> item = new DistributedCacheObject<>(service);
+            val item = new DistributedCacheObject<>(service);
             this.distributedCacheManager.set(service, item);
         }
         return service;
@@ -102,10 +104,10 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
     @Override
     public List<RegisteredService> updateLoadedRegisteredServicesFromCache(final List<RegisteredService> services,
                                                                            final ServiceRegistry serviceRegistry) {
-        final var cachedServices = this.distributedCacheManager.getAll();
+        val cachedServices = this.distributedCacheManager.getAll();
 
-        for (final var entry: cachedServices) {
-            final var cachedService = entry.getValue();
+        for (val entry : cachedServices) {
+            val cachedService = entry.getValue();
             LOGGER.debug("Found cached service definition [{}] in the replication cache [{}]", cachedService, distributedCacheManager.getName());
 
             if (isRegisteredServiceMarkedAsDeletedInCache(entry)) {
@@ -116,7 +118,7 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
                 continue;
             }
 
-            final var matchingService = services.stream()
+            val matchingService = services.stream()
                 .filter(s -> s.getId() == cachedService.getId())
                 .findFirst()
                 .orElse(null);
@@ -156,9 +158,9 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
         services.add(cachedService);
     }
 
-    private boolean isRegisteredServiceMarkedAsDeletedInCache(final DistributedCacheObject<RegisteredService> item) {
+    private static boolean isRegisteredServiceMarkedAsDeletedInCache(final DistributedCacheObject<RegisteredService> item) {
         if (item.containsProperty("event")) {
-            final var event = item.getProperty("event", BaseCasRegisteredServiceEvent.class);
+            val event = item.getProperty("event", BaseCasRegisteredServiceEvent.class);
             return event instanceof CasRegisteredServiceDeletedEvent;
         }
         return false;

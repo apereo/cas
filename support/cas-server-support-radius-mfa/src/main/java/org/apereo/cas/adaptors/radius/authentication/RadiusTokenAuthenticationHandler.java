@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.radius.authentication;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.adaptors.radius.RadiusUtils;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
@@ -8,12 +7,19 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import net.jradius.dictionary.Attr_State;
+import net.jradius.packet.attribute.value.AttributeValue;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This is {@link RadiusTokenAuthenticationHandler}.
@@ -48,23 +54,38 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
     }
 
     @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return RadiusTokenCredential.class.isAssignableFrom(clazz);
+    }
+
+    @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
         try {
-            final var radiusCredential = (RadiusTokenCredential) credential;
-            final var password = radiusCredential.getToken();
+            val radiusCredential = (RadiusTokenCredential) credential;
+            val password = radiusCredential.getToken();
 
-            final var authentication = WebUtils.getInProgressAuthentication();
+            val authentication = WebUtils.getInProgressAuthentication();
             if (authentication == null) {
                 throw new IllegalArgumentException("CAS has no reference to an authentication event to locate a principal");
             }
-            final var principal = authentication.getPrincipal();
-            final var username = principal.getId();
+            val principal = authentication.getPrincipal();
+            val username = principal.getId();
 
-            final var result =
-                RadiusUtils.authenticate(username, password, this.servers,
-                    this.failoverOnAuthenticationFailure, this.failoverOnException);
+            var state = Optional.empty();
+            val attributes = principal.getAttributes();
+            if (attributes.containsKey(Attr_State.NAME)) {
+                LOGGER.debug("Found state attribute in principal attributes for multifactor authentication");
+                val stateValue = CollectionUtils.firstElement(attributes.get(Attr_State.NAME));
+                if (stateValue.isPresent()) {
+                    val stateAttr = AttributeValue.class.cast(stateValue.get());
+                    state = Optional.of(stateAttr.getValueObject());
+                }
+            }
+
+            val result = RadiusUtils.authenticate(username, password, this.servers,
+                this.failoverOnAuthenticationFailure, this.failoverOnException, state);
             if (result.getKey()) {
-                final var finalPrincipal = this.principalFactory.createPrincipal(username, result.getValue().get());
+                val finalPrincipal = this.principalFactory.createPrincipal(username, result.getValue().get());
                 return createHandlerResult(credential, finalPrincipal, new ArrayList<>());
             }
             throw new FailedLoginException("Radius authentication failed for user " + username);

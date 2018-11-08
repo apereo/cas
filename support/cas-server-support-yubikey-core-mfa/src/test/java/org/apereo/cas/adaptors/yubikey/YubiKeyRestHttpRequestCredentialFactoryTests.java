@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.yubikey;
 
+import lombok.val;
 import org.junit.Test;
 import org.springframework.util.LinkedMultiValueMap;
 
@@ -14,9 +15,9 @@ import static org.junit.Assert.*;
 public class YubiKeyRestHttpRequestCredentialFactoryTests {
     @Test
     public void verifyAction() {
-        final var f = new YubiKeyRestHttpRequestCredentialFactory();
-        final LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        val f = new YubiKeyRestHttpRequestCredentialFactory();
+        val body = new LinkedMultiValueMap<String, String>();
         body.add(YubiKeyRestHttpRequestCredentialFactory.PARAMETER_NAME_YUBIKEY_OTP, "token");
-        assertFalse(f.fromRequestBody(body).isEmpty());
+        assertFalse(f.fromRequest(null, body).isEmpty());
     }
 }

@@ -1,9 +1,10 @@
 package org.apereo.cas.configuration.model.core.web.view;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RestEndpointProperties;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -17,7 +18,6 @@ import java.util.List;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-web", automated = true)
-
 @Getter
 @Setter
 public class ViewProperties implements Serializable {
@@ -34,6 +34,13 @@ public class ViewProperties implements Serializable {
      * Comma separated paths to where CAS templates may be found.
      */
     private List<String> templatePrefixes = new ArrayList<>();
+
+    /**
+     * CAS1 views and locations.
+     */
+    @NestedConfigurationProperty
+    private Cas10ViewProperties cas1 = new Cas10ViewProperties();
+
 
     /**
      * CAS2 views and locations.

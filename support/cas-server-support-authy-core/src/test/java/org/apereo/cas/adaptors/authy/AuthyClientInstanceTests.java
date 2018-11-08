@@ -1,14 +1,19 @@
 package org.apereo.cas.adaptors.authy;
 
-import com.authy.api.Error;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.util.CollectionUtils;
+
+import com.authy.api.Error;
+import lombok.val;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.http.HttpStatus;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import static org.junit.Assert.*;
 
@@ -18,28 +23,33 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class
 })
 public class AuthyClientInstanceTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
     @Test
     public void verifyAction() {
         try {
-            final var client = new AuthyClientInstance("apikey", "https://api.authy.com",
+            val client = new AuthyClientInstance("apikey", "https://api.authy.com",
                 "mail", "phone", "1");
-            final var user = client.getOrCreateUser(CoreAuthenticationTestUtils.getPrincipal("casuser",
+            val user = client.getOrCreateUser(CoreAuthenticationTestUtils.getPrincipal("casuser",
                 CollectionUtils.wrap("mail", "casuser@example.org", "phone", "123-456-6789")));
             assertNotNull(user);
             assertTrue(user.getId() <= 0);
-            assertTrue(user.getStatus() <= 0);
+            assertTrue(HttpStatus.valueOf(user.getStatus()).isError());
 
-            final var error = new Error();
+            val error = new Error();
             error.setCountryCode("1");
             error.setMessage("Error");
             error.setUrl("http://app.example.org");
-            final var msg = AuthyClientInstance.getErrorMessage(error);
+            val msg = AuthyClientInstance.getErrorMessage(error);
             assertNotNull(msg);
 
         } catch (final Exception e) {

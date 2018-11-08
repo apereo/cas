@@ -1,7 +1,5 @@
 package org.apereo.cas.support.saml.web.idp.profile.artifact;
 
-import lombok.extern.slf4j.Slf4j;
-import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -15,11 +13,14 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredSer
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicket;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.ArtifactResolve;
@@ -42,7 +43,6 @@ public class Saml1ArtifactResolutionProfileHandlerController extends AbstractSam
     private final SamlProfileObjectBuilder<? extends SAMLObject> samlFaultResponseBuilder;
 
     public Saml1ArtifactResolutionProfileHandlerController(final SamlIdPObjectSigner samlObjectSigner,
-                                                           final ParserPool parserPool,
                                                            final AuthenticationSystemSupport authenticationSystemSupport,
                                                            final ServicesManager servicesManager,
                                                            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
@@ -55,9 +55,9 @@ public class Saml1ArtifactResolutionProfileHandlerController extends AbstractSam
                                                            final SamlArtifactTicketFactory artifactTicketFactory,
                                                            final SamlProfileObjectBuilder<? extends SAMLObject> samlFaultResponseBuilder,
                                                            final Service callbackService) {
-        super(samlObjectSigner, parserPool, authenticationSystemSupport, servicesManager,
-                webApplicationServiceFactory, samlRegisteredServiceCachingMetadataResolver, configBean,
-                responseBuilder, casProperties, samlObjectSignatureValidator, callbackService);
+        super(samlObjectSigner, authenticationSystemSupport, servicesManager,
+            webApplicationServiceFactory, samlRegisteredServiceCachingMetadataResolver, configBean,
+            responseBuilder, casProperties, samlObjectSignatureValidator, callbackService);
         this.ticketRegistry = ticketRegistry;
         this.artifactTicketFactory = artifactTicketFactory;
         this.samlFaultResponseBuilder = samlFaultResponseBuilder;
@@ -72,32 +72,32 @@ public class Saml1ArtifactResolutionProfileHandlerController extends AbstractSam
     @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML1_SOAP_ARTIFACT_RESOLUTION)
     protected void handlePostRequest(final HttpServletResponse response,
                                      final HttpServletRequest request) {
-        final var ctx = decodeSoapRequest(request);
-        final var artifactMsg = (ArtifactResolve) ctx.getMessage();
+        val ctx = decodeSoapRequest(request);
+        val artifactMsg = (ArtifactResolve) ctx.getMessage();
         try {
-            final var issuer = artifactMsg.getIssuer().getValue();
-            final var service = verifySamlRegisteredService(issuer);
-            final var adaptor = getSamlMetadataFacadeFor(service, artifactMsg);
-            if (!adaptor.isPresent()) {
+            val issuer = artifactMsg.getIssuer().getValue();
+            val service = verifySamlRegisteredService(issuer);
+            val adaptor = getSamlMetadataFacadeFor(service, artifactMsg);
+            if (adaptor.isEmpty()) {
                 throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Cannot find metadata linked to " + issuer);
             }
-            final var facade = adaptor.get();
+            val facade = adaptor.get();
             verifyAuthenticationContextSignature(ctx, request, artifactMsg, facade);
-            final var artifactId = artifactMsg.getArtifact().getArtifact();
-            final var ticketId = artifactTicketFactory.createTicketIdFor(artifactId);
-            final var ticket = this.ticketRegistry.getTicket(ticketId, SamlArtifactTicket.class);
+            val artifactId = artifactMsg.getArtifact().getArtifact();
+            val ticketId = artifactTicketFactory.createTicketIdFor(artifactId);
+            val ticket = this.ticketRegistry.getTicket(ticketId, SamlArtifactTicket.class);
 
-            final Service issuerService = webApplicationServiceFactory.createService(issuer);
-            final var casAssertion = buildCasAssertion(ticket.getTicketGrantingTicket().getAuthentication(),
-                    issuerService, service,
-                    CollectionUtils.wrap("artifact", ticket));
+            val issuerService = webApplicationServiceFactory.createService(issuer);
+            val casAssertion = buildCasAssertion(ticket.getTicketGrantingTicket().getAuthentication(),
+                issuerService, service,
+                CollectionUtils.wrap("artifact", ticket));
             this.responseBuilder.build(artifactMsg, request, response, casAssertion,
-                    service, facade, SAMLConstants.SAML2_ARTIFACT_BINDING_URI, ctx);
+                service, facade, SAMLConstants.SAML2_ARTIFACT_BINDING_URI, ctx);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             request.setAttribute(SamlIdPConstants.REQUEST_ATTRIBUTE_ERROR, e.getMessage());
             samlFaultResponseBuilder.build(artifactMsg, request, response,
-                    null, null, null, SAMLConstants.SAML2_ARTIFACT_BINDING_URI, ctx);
+                null, null, null, SAMLConstants.SAML2_ARTIFACT_BINDING_URI, ctx);
         }
     }
 }

@@ -1,12 +1,14 @@
 package org.apereo.cas.consent;
 
-import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.util.CollectionUtils;
-import org.junit.Test;
-import org.springframework.core.io.ClassPathResource;
+import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasConsentCoreConfiguration;
 
-import static org.junit.Assert.*;
+import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.test.context.TestPropertySource;
 
 /**
  * This is {@link GroovyConsentRepositoryTests}.
@@ -14,28 +16,18 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-public class GroovyConsentRepositoryTests {
-    private final ClassPathResource groovyResource = new ClassPathResource("ConsentRepository.groovy");
+@SpringBootTest(classes = {
+    CasConsentCoreConfiguration.class,
+    RefreshAutoConfiguration.class,
+    CasCoreAuditConfiguration.class
+})
+@TestPropertySource(properties = {
+    "cas.consent.groovy.location=classpath:/ConsentRepository.groovy"
+})
+@Getter
+public class GroovyConsentRepositoryTests extends BaseConsentRepositoryTests {
 
-    @Test
-    public void verifyConsentDecisionIsDeleted() {
-        final var repo = new GroovyConsentRepository(groovyResource);
-        final var b = repo.deleteConsentDecision(1, "CasUser");
-        assertTrue(b);
-    }
-
-    @Test
-    public void verifyConsentDecisionStored() {
-        final var builder = new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());
-        final var regSvc = RegisteredServiceTestUtils.getRegisteredService("test");
-        final var svc = RegisteredServiceTestUtils.getService();
-        final var decision = builder.build(svc,
-            regSvc, "casuser",
-            CollectionUtils.wrap("attribute", "value"));
-
-        final var repo = new GroovyConsentRepository(groovyResource);
-        assertTrue(repo.storeConsentDecision(decision));
-
-        assertTrue(repo.getConsentDecisions().size() == 1);
-    }
+    @Autowired
+    @Qualifier("consentRepository")
+    protected ConsentRepository repository;
 }

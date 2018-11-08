@@ -1,18 +1,21 @@
 package org.apereo.cas.authentication;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.SerializationUtils;
-import org.apache.cxf.rt.security.SecurityConstants;
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.metadata.BaseAuthenticationMetaDataPopulator;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.SerializationUtils;
+import org.apache.cxf.rt.security.SecurityConstants;
 import org.springframework.core.Ordered;
 
 /**
@@ -35,16 +38,16 @@ public class SecurityTokenServiceAuthenticationMetaDataPopulator extends BaseAut
                                                     final AuthenticationBuilder builder,
                                                     final WSFederationRegisteredService rp,
                                                     final SecurityTokenServiceClient sts) {
-        final var up = getCredential(transaction);
+        val up = getCredential(transaction);
         if (up != null) {
             try {
-                final var properties = sts.getProperties();
+                val properties = sts.getProperties();
                 properties.put(SecurityConstants.USERNAME, up.getUsername());
 
-                final var uid = credentialCipherExecutor.encode(up.getUsername());
+                val uid = credentialCipherExecutor.encode(up.getUsername());
                 properties.put(SecurityConstants.PASSWORD, uid);
-                final var token = sts.requestSecurityToken(rp.getAppliesTo());
-                final var tokenStr = EncodingUtils.encodeBase64(SerializationUtils.serialize(token));
+                val token = sts.requestSecurityToken(rp.getAppliesTo());
+                val tokenStr = EncodingUtils.encodeBase64(SerializationUtils.serialize(token));
                 builder.addAttribute(WSFederationConstants.SECURITY_TOKEN_ATTRIBUTE, tokenStr);
             } catch (final Exception e) {
                 LOGGER.error(e.getMessage(), e);
@@ -54,7 +57,7 @@ public class SecurityTokenServiceAuthenticationMetaDataPopulator extends BaseAut
     }
 
     @SuppressFBWarnings("PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS")
-    private UsernamePasswordCredential getCredential(final AuthenticationTransaction transaction) {
+    private static UsernamePasswordCredential getCredential(final AuthenticationTransaction transaction) {
         return transaction.getCredentials()
             .stream().filter(UsernamePasswordCredential.class::isInstance)
             .map(UsernamePasswordCredential.class::cast)
@@ -72,14 +75,14 @@ public class SecurityTokenServiceAuthenticationMetaDataPopulator extends BaseAut
         if (!this.selectionStrategy.supports(transaction.getService())) {
             return;
         }
-        final var service = this.selectionStrategy.resolveServiceFrom(transaction.getService());
+        val service = this.selectionStrategy.resolveServiceFrom(transaction.getService());
         if (service != null) {
-            final var rp = this.servicesManager.findServiceBy(service, WSFederationRegisteredService.class);
+            val rp = this.servicesManager.findServiceBy(service, WSFederationRegisteredService.class);
             if (rp == null || !rp.getAccessStrategy().isServiceAccessAllowed()) {
                 LOGGER.warn("Service [{}] is not allowed to use SSO.", rp);
                 throw new UnauthorizedSsoServiceException();
             }
-            final var sts = clientBuilder.buildClientForSecurityTokenRequests(rp);
+            val sts = clientBuilder.buildClientForSecurityTokenRequests(rp);
             invokeSecurityTokenServiceForToken(transaction, builder, rp, sts);
         }
     }

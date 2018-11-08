@@ -1,11 +1,13 @@
 package org.apereo.cas.token.cipher;
 
-import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
+
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Optional;
 
@@ -22,13 +24,13 @@ public class RegisteredServiceTokenTicketCipherExecutor extends TokenTicketCiphe
     @Override
     public String decode(final String data, final Optional<RegisteredService> service) {
         if (service.isPresent()) {
-            final var registeredService = service.get();
+            val registeredService = service.get();
             if (supports(registeredService)) {
                 LOGGER.debug("Found signing and/or encryption keys for [{}] in service registry to decode", registeredService.getServiceId());
-                final var encryptionKey = getEncryptionKey(registeredService).get();
-                final var signingKey = getSigningKey(registeredService).get();
-                final var cipher = new TokenTicketCipherExecutor(encryptionKey, signingKey,
-                    StringUtils.isNotBlank(encryptionKey), StringUtils.isNotBlank(signingKey));
+                val encryptionKey = getEncryptionKey(registeredService).get();
+                val signingKey = getSigningKey(registeredService).get();
+                val cipher = new TokenTicketCipherExecutor(encryptionKey, signingKey,
+                    StringUtils.isNotBlank(encryptionKey), StringUtils.isNotBlank(signingKey), 0, 0);
                 if (cipher.isEnabled()) {
                     return cipher.decode(data);
                 }
@@ -40,13 +42,13 @@ public class RegisteredServiceTokenTicketCipherExecutor extends TokenTicketCiphe
     @Override
     public String encode(final String data, final Optional<RegisteredService> service) {
         if (service.isPresent()) {
-            final var registeredService = service.get();
+            val registeredService = service.get();
             if (supports(registeredService)) {
                 LOGGER.debug("Found signing and/or encryption keys for [{}] in service registry to encode", registeredService.getServiceId());
-                final var encryptionKey = getEncryptionKey(registeredService).get();
-                final var signingKey = getSigningKey(registeredService).get();
-                final var cipher = new TokenTicketCipherExecutor(encryptionKey, signingKey,
-                    StringUtils.isNotBlank(encryptionKey), StringUtils.isNotBlank(signingKey));
+                val encryptionKey = getEncryptionKey(registeredService).get();
+                val signingKey = getSigningKey(registeredService).get();
+                val cipher = new TokenTicketCipherExecutor(encryptionKey, signingKey,
+                    StringUtils.isNotBlank(encryptionKey), StringUtils.isNotBlank(signingKey), 0, 0);
                 if (cipher.isEnabled()) {
                     return cipher.encode(data);
                 }
@@ -68,7 +70,7 @@ public class RegisteredServiceTokenTicketCipherExecutor extends TokenTicketCiphe
      */
     public Optional<String> getSigningKey(final RegisteredService registeredService) {
         if (RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_SIGNING_KEY.isAssignedTo(registeredService)) {
-            final var signingKey = RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_SIGNING_KEY.getPropertyValue(registeredService).getValue();
+            val signingKey = RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_SIGNING_KEY.getPropertyValue(registeredService).getValue();
             return Optional.of(signingKey);
         }
         return Optional.empty();
@@ -82,7 +84,7 @@ public class RegisteredServiceTokenTicketCipherExecutor extends TokenTicketCiphe
      */
     public Optional<String> getEncryptionKey(final RegisteredService registeredService) {
         if (RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_ENCRYPTION_KEY.isAssignedTo(registeredService)) {
-            final var key = RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_ENCRYPTION_KEY.getPropertyValue(registeredService).getValue();
+            val key = RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_ENCRYPTION_KEY.getPropertyValue(registeredService).getValue();
             return Optional.of(key);
         }
         return Optional.empty();

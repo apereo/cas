@@ -7,6 +7,8 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+
+import lombok.val;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -20,8 +22,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
-
-import lombok.extern.slf4j.Slf4j;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -40,8 +40,7 @@ import static org.mockito.Mockito.*;
 })
 @Category(MailCategory.class)
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 25000)
-@TestPropertySource(locations = "classpath:cas-mail.properties")
-@Slf4j
+@TestPropertySource(properties = {"spring.mail.host=localhost", "spring.mail.port=25000", "spring.mail.testConnection=true"})
 public class CommunicationsManagerTests {
 
     @ClassRule
@@ -61,7 +60,7 @@ public class CommunicationsManagerTests {
     public void verifyMailSender() {
         assertTrue(communicationsManager.isMailSenderDefined());
         assertTrue(communicationsManager.email("Test Body", "cas@example.org", "Subject", "sample@example.org"));
-        final var p = mock(Principal.class);
+        val p = mock(Principal.class);
         when(p.getId()).thenReturn("casuser");
         when(p.getAttributes()).thenReturn(CollectionUtils.wrap("email", "cas@example.org"));
         assertTrue(communicationsManager.email(p, "email", "Body",

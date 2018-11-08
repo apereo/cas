@@ -1,15 +1,19 @@
 package org.apereo.cas.adaptors.radius.authentication;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import net.jradius.exception.TimeoutException;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.RadiusMultifactorProperties;
+import org.apereo.cas.services.RegisteredService;
+
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import net.jradius.exception.TimeoutException;
+import org.apache.commons.lang3.StringUtils;
+
 import java.net.SocketTimeoutException;
 import java.util.List;
-import lombok.NoArgsConstructor;
 
 /**
  * The authentication provider for yubikey.
@@ -32,7 +36,7 @@ public class RadiusMultifactorAuthenticationProvider extends AbstractMultifactor
     }
 
     @Override
-    protected boolean isAvailable() {
+    public boolean isAvailable(final RegisteredService service) {
         return canPing();
     }
 
@@ -47,8 +51,8 @@ public class RadiusMultifactorAuthenticationProvider extends AbstractMultifactor
      * @return true/false
      */
     public boolean canPing() {
-        final var uidPsw = getClass().getSimpleName();
-        for (final var server : this.servers) {
+        val uidPsw = getClass().getSimpleName();
+        for (val server : this.servers) {
             LOGGER.debug("Attempting to ping RADIUS server [{}] via simulating an authentication request. If the server responds "
                 + "successfully, mock authentication will fail correctly.", server);
             try {

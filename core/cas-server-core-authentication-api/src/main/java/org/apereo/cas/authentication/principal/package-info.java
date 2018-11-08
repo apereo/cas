@@ -16,6 +16,7 @@
  * looks into previously validated credentials to construct a Principal object containing an ID (and in more
  * complex cases some attributes). The {@link org.apereo.cas.authentication.principal.resolvers.ProxyingPrincipalResolver} takes
  * credentials and creates a SimplePrincipal containing the Userid.</p>
+ *
  * @since 3.0
  */
 package org.apereo.cas.authentication.principal;

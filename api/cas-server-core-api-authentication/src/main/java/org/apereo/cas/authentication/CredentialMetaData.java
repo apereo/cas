@@ -2,6 +2,8 @@ package org.apereo.cas.authentication;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import java.io.Serializable;
+
 /**
  * Describes a credential provided for authentication. Implementations should expect instances of this type to be
  * stored for periods of time equal to the length of the SSO session or longer, which necessitates consideration of
@@ -10,8 +12,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY)
-public interface CredentialMetaData {
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
+public interface CredentialMetaData extends Serializable {
     /**
      * Gets a unique identifier for the kind of credential this represents.
      *

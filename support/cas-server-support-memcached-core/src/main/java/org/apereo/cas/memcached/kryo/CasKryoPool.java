@@ -1,8 +1,9 @@
 package org.apereo.cas.memcached.kryo;
 
-import com.esotericsoftware.kryo.util.Pool;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.pool.KryoCallback;
+import com.esotericsoftware.kryo.pool.KryoPool;
+import lombok.val;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,26 +14,10 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
-public class CasKryoPool extends Pool<CloseableKryo> {
-    private static final int POOL_MAX_CAPACITY = 8;
+public class CasKryoPool implements KryoPool {
 
-    private final CloseableKryoFactory factory;
 
-    public CasKryoPool(final Collection<Class> classesToRegister,
-                       final boolean warnUnregisteredClasses,
-                       final boolean registrationRequired,
-                       final boolean replaceObjectsByReferences,
-                       final boolean autoReset) {
-        super(true, false, POOL_MAX_CAPACITY);
-
-        factory = new CloseableKryoFactory(this);
-        factory.setWarnUnregisteredClasses(warnUnregisteredClasses);
-        factory.setReplaceObjectsByReferences(replaceObjectsByReferences);
-        factory.setAutoReset(autoReset);
-        factory.setRegistrationRequired(registrationRequired);
-        factory.setClassesToRegister(classesToRegister);
-    }
+    private final KryoPool kryoPoolRef;
 
     public CasKryoPool() {
         this(new ArrayList<>(), true, true, false, false);
@@ -42,27 +27,35 @@ public class CasKryoPool extends Pool<CloseableKryo> {
         this(classesToRegister, true, true, false, false);
     }
 
-    /**
-     * Borrow kryo.
-     *
-     * @return the kryo
-     */
-    public CloseableKryo borrow() {
-        return super.obtain();
-    }
+    public CasKryoPool(final Collection<Class> classesToRegister,
+                       final boolean warnUnregisteredClasses,
+                       final boolean registrationRequired,
+                       final boolean replaceObjectsByReferences,
+                       final boolean autoReset) {
 
-    /**
-     * Release.
-     *
-     * @param kryo the kryo
-     */
-    public void release(final CloseableKryo kryo) {
-        free(kryo);
+        val factory = new CloseableKryoFactory(this);
+        factory.setWarnUnregisteredClasses(warnUnregisteredClasses);
+        factory.setReplaceObjectsByReferences(replaceObjectsByReferences);
+        factory.setAutoReset(autoReset);
+        factory.setRegistrationRequired(registrationRequired);
+        factory.setClassesToRegister(classesToRegister);
+        this.kryoPoolRef = new KryoPool.Builder(factory).softReferences().build();
     }
 
     @Override
-    @SneakyThrows
-    protected CloseableKryo create() {
-        return this.factory.createInstance();
+    public CloseableKryo borrow() {
+        return (CloseableKryo) kryoPoolRef.borrow();
+    }
+
+    @Override
+    public void release(final Kryo kryo) {
+        kryoPoolRef.release(kryo);
+    }
+
+    @Override
+    public <T> T run(final KryoCallback<T> callback) {
+        try (CloseableKryo kryo = borrow()) {
+            return callback.execute(kryo);
+        }
     }
 }

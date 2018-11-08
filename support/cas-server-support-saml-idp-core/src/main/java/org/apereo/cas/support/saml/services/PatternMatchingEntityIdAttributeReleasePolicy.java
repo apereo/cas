@@ -1,12 +1,14 @@
 package org.apereo.cas.support.saml.services;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.RegexUtils;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.context.ApplicationContext;
 
@@ -37,10 +39,10 @@ public class PatternMatchingEntityIdAttributeReleasePolicy extends BaseSamlRegis
                                                                         final SamlRegisteredServiceCachingMetadataResolver resolver,
                                                                         final SamlRegisteredServiceServiceProviderMetadataFacade facade,
                                                                         final EntityDescriptor entityDescriptor) {
-        final var pattern = RegexUtils.createPattern(this.entityIds);
-        final var entityID = entityDescriptor.getEntityID();
-        final var matcher = pattern.matcher(entityID);
-        final var matched = fullMatch ? matcher.matches() : matcher.find();
+        val pattern = RegexUtils.createPattern(this.entityIds);
+        val entityID = entityDescriptor.getEntityID();
+        val matcher = pattern.matcher(entityID);
+        val matched = fullMatch ? matcher.matches() : matcher.find();
         LOGGER.debug("Pattern [{}] matched against [{}]? [{}]", pattern.pattern(), entityID, BooleanUtils.toStringYesNo(matched));
         if (matched) {
             return authorizeReleaseOfAllowedAttributes(attributes);

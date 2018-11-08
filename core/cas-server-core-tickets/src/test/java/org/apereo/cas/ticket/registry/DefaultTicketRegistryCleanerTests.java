@@ -2,6 +2,8 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+
+import lombok.val;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -17,13 +19,13 @@ public class DefaultTicketRegistryCleanerTests {
 
     @Test
     public void verifyAction() {
-        final var logoutManager = mock(LogoutManager.class);
-        final TicketRegistry ticketRegistry = new DefaultTicketRegistry();
-        final var casuser = new MockTicketGrantingTicket("casuser");
+        val logoutManager = mock(LogoutManager.class);
+        val ticketRegistry = new DefaultTicketRegistry();
+        val casuser = new MockTicketGrantingTicket("casuser");
         casuser.markTicketExpired();
         ticketRegistry.addTicket(casuser);
         assertTrue(ticketRegistry.getTickets().size() == 1);
-        final var c = new DefaultTicketRegistryCleaner(new NoOpLockingStrategy(), logoutManager, ticketRegistry);
+        val c = new DefaultTicketRegistryCleaner(new NoOpLockingStrategy(), logoutManager, ticketRegistry);
         c.clean();
         assertTrue(ticketRegistry.sessionCount() == 0);
     }

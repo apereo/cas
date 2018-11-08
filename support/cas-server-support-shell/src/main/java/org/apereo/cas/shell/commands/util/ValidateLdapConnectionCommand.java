@@ -1,6 +1,7 @@
 package org.apereo.cas.shell.commands.util;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
@@ -39,7 +40,7 @@ public class ValidateLdapConnectionCommand {
      * @param userAttributes the user attributes
      */
     @ShellMethod(key = "validate-ldap", value = "Test connections to an LDAP server to verify connectivity, SSL, etc")
-    public void validateLdap(
+    public static void validateLdap(
         @ShellOption(value = {"url"},
             help = "LDAP URL to test, comma-separated.") final String url,
         @ShellOption(value = {"bindDn"},
@@ -61,20 +62,19 @@ public class ValidateLdapConnectionCommand {
         }
     }
 
-    private void connect(final String ldapUrl, final String bindDn,
-                         final String bindCredential,
-                         final String baseDn, final String searchFilter,
-                         final String userAttributes,
-                         final String userPassword) throws Exception {
-        final var pair = getContext(ldapUrl, bindDn, bindCredential);
+    private static void connect(final String ldapUrl, final String bindDn,
+                                final String bindCredential,
+                                final String baseDn, final String searchFilter,
+                                final String userAttributes,
+                                final String userPassword) throws Exception {
+        val pair = getContext(ldapUrl, bindDn, bindCredential);
         if (pair == null) {
             LOGGER.error("Could not connect to any of the provided LDAP urls based on the given credentials.");
             return;
         }
 
-        DirContext ctx = null;
+        val ctx = pair.getValue();
         try {
-            ctx = pair.getValue();
             var log = "Successfully connected to the LDAP url [" + pair.getKey() + "] ";
             if (ctx.getNameInNamespace() != null && !ctx.getNameInNamespace().isEmpty()) {
                 log += "with namespace [" + ctx.getNameInNamespace() + "].";
@@ -85,31 +85,31 @@ public class ValidateLdapConnectionCommand {
                 return;
             }
 
-            final var attrIDs = userAttributes.split(",");
+            val attrIDs = userAttributes.split(",");
             LOGGER.info("******* Ldap Search *******");
             LOGGER.info("Ldap filter: [{}]", searchFilter);
             LOGGER.info("Ldap search base: [{}]", baseDn);
             LOGGER.info("Returning attributes: [{}]\n", Arrays.toString(attrIDs));
 
-            final var ctls = getSearchControls(attrIDs);
-            final var answer = ctx.search(baseDn, searchFilter, ctls);
+            val ctls = getSearchControls(attrIDs);
+            val answer = ctx.search(baseDn, searchFilter, ctls);
             if (answer.hasMoreElements()) {
                 LOGGER.info("******* Ldap Search Results *******");
                 while (answer.hasMoreElements()) {
-                    final var result = answer.nextElement();
+                    val result = answer.nextElement();
                     LOGGER.info("User name: [{}]", result.getName());
                     LOGGER.info("User full name: [{}]", result.getNameInNamespace());
 
                     if (userPassword != null) {
                         LOGGER.info("Attempting to authenticate [{}] with password [{}]", result.getName(), userPassword);
 
-                        final var env = getLdapDirectoryContextSettings(result.getNameInNamespace(), userPassword, pair.getKey());
+                        val env = getLdapDirectoryContextSettings(result.getNameInNamespace(), userPassword, pair.getKey());
                         new InitialDirContext(env);
                         LOGGER.info("Successfully authenticated [{}] with password [{}]", result.getName(), userPassword);
                     }
-                    final var attrs = result.getAttributes().getIDs();
+                    val attrs = result.getAttributes().getIDs();
                     while (attrs.hasMoreElements()) {
-                        final var id = attrs.nextElement();
+                        val id = attrs.nextElement();
                         LOGGER.info("[{}] => [{}]", id, result.getAttributes().get(id));
                     }
                 }
@@ -124,8 +124,8 @@ public class ValidateLdapConnectionCommand {
         }
     }
 
-    private SearchControls getSearchControls(final String[] attrIDs) {
-        final var ctls = new SearchControls();
+    private static SearchControls getSearchControls(final String[] attrIDs) {
+        val ctls = new SearchControls();
         ctls.setDerefLinkFlag(true);
         ctls.setTimeLimit(TIMEOUT);
         ctls.setReturningAttributes(attrIDs);
@@ -133,13 +133,13 @@ public class ValidateLdapConnectionCommand {
         return ctls;
     }
 
-    private Pair<String, DirContext> getContext(final String ldapUrl, final String bindDn, final String bindCredential) {
-        final var urls = StringUtils.commaDelimitedListToSet(ldapUrl);
-        for (final var url: urls) {
+    private static Pair<String, DirContext> getContext(final String ldapUrl, final String bindDn, final String bindCredential) {
+        val urls = StringUtils.commaDelimitedListToSet(ldapUrl);
+        for (val url : urls) {
             if (ldapUrl != null && !ldapUrl.isEmpty()) {
                 LOGGER.info("Attempting connect to LDAP instance [{}]", url);
 
-                final var env = getLdapDirectoryContextSettings(bindDn, bindCredential, url);
+                val env = getLdapDirectoryContextSettings(bindDn, bindCredential, url);
                 try {
                     return Pair.of(ldapUrl, new InitialDirContext(env));
                 } catch (final Exception e) {
@@ -152,8 +152,8 @@ public class ValidateLdapConnectionCommand {
     }
 
     @SuppressWarnings("JdkObsolete")
-    private Hashtable<String, String> getLdapDirectoryContextSettings(final String bindDn, final String bindCredential, final String url) {
-        final Hashtable<String, String> env = new Hashtable<>(6);
+    private static Hashtable<String, String> getLdapDirectoryContextSettings(final String bindDn, final String bindCredential, final String url) {
+        val env = new Hashtable<String, String>();
         env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
         env.put(Context.PROVIDER_URL, url.trim());
         env.put(Context.SECURITY_AUTHENTICATION, "simple");

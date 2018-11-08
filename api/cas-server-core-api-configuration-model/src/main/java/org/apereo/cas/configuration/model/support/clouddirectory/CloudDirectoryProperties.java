@@ -1,12 +1,13 @@
 package org.apereo.cas.configuration.model.support.clouddirectory;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.support.aws.BaseAmazonWebServicesProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -16,7 +17,6 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-cloud-directory-authentication")
-
 @Getter
 @Setter
 public class CloudDirectoryProperties extends BaseAmazonWebServicesProperties {

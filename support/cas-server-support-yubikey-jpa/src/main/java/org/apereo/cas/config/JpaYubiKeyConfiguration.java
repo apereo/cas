@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
@@ -10,6 +9,9 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -37,18 +39,17 @@ import java.util.List;
 @Configuration("jpaYubiKeyConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
-@Slf4j
 public class JpaYubiKeyConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("yubiKeyAccountValidator")
-    private YubiKeyAccountValidator yubiKeyAccountValidator;
+    private ObjectProvider<YubiKeyAccountValidator> yubiKeyAccountValidator;
 
     @Autowired
     @Qualifier("yubikeyAccountCipherExecutor")
-    private CipherExecutor yubikeyAccountCipherExecutor;
+    private ObjectProvider<CipherExecutor> yubikeyAccountCipherExecutor;
 
     @RefreshScope
     @Bean
@@ -68,7 +69,7 @@ public class JpaYubiKeyConfiguration {
     @Autowired
     @Bean
     public PlatformTransactionManager transactionManagerYubiKey(@Qualifier("yubiKeyEntityManagerFactory") final EntityManagerFactory emf) {
-        final var mgmr = new JpaTransactionManager();
+        val mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
         return mgmr;
     }
@@ -76,7 +77,7 @@ public class JpaYubiKeyConfiguration {
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean yubiKeyEntityManagerFactory() {
-        final var bean =
+        val bean =
             JpaBeans.newHibernateEntityManagerFactoryBean(
                 new JpaConfigDataHolder(
                     jpaYubiKeyVendorAdapter(),
@@ -90,8 +91,8 @@ public class JpaYubiKeyConfiguration {
 
     @Bean
     public YubiKeyAccountRegistry yubiKeyAccountRegistry() {
-        final var registry = new JpaYubiKeyAccountRegistry(yubiKeyAccountValidator);
-        registry.setCipherExecutor(this.yubikeyAccountCipherExecutor);
+        val registry = new JpaYubiKeyAccountRegistry(yubiKeyAccountValidator.getIfAvailable());
+        registry.setCipherExecutor(yubikeyAccountCipherExecutor.getIfAvailable());
         return registry;
     }
 }

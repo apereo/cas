@@ -1,22 +1,13 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
-import org.apereo.cas.config.CasCoreHttpConfiguration;
-import org.apereo.cas.config.CoreSamlConfiguration;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
-import org.apereo.cas.support.saml.OpenSamlConfigBean;
+import org.apereo.cas.support.saml.services.BaseSamlIdPServicesTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Collection;
+import lombok.val;
+import org.apache.commons.io.FileUtils;
+import org.junit.Test;
+import org.springframework.core.io.FileSystemResource;
 
 import static org.junit.Assert.*;
 
@@ -26,38 +17,29 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(SpringRunner.class)
-@Slf4j
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    CoreSamlConfiguration.class
-})
-public class GroovyResourceMetadataResolverTests {
-    @Autowired
-    @Qualifier("shibboleth.OpenSAMLConfig")
-    private OpenSamlConfigBean openSamlConfigBean;
+public class GroovyResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
+
 
     @Test
     public void verifyResolverSupports() {
-        final var props = new SamlIdPProperties();
+        val props = new SamlIdPProperties();
         props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()));
-        final var resolver = new GroovyResourceMetadataResolver(props, openSamlConfigBean);
-        final var service = new SamlRegisteredService();
+        val resolver = new GroovyResourceMetadataResolver(props, openSamlConfigBean);
+        val service = new SamlRegisteredService();
         service.setMetadataLocation("classpath:GroovyMetadataResolver.groovy");
         assertTrue(resolver.supports(service));
     }
 
     @Test
     public void verifyResolverResolves() {
-        final var props = new SamlIdPProperties();
+        val props = new SamlIdPProperties();
         props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()));
-        final var resolver = new GroovyResourceMetadataResolver(props, openSamlConfigBean);
-        final var service = new SamlRegisteredService();
+        val resolver = new GroovyResourceMetadataResolver(props, openSamlConfigBean);
+        val service = new SamlRegisteredService();
         service.setName("TestShib");
         service.setId(1000);
         service.setMetadataLocation("classpath:GroovyMetadataResolver.groovy");
-        final Collection results = resolver.resolve(service);
+        val results = resolver.resolve(service);
         assertFalse(results.isEmpty());
     }
 }

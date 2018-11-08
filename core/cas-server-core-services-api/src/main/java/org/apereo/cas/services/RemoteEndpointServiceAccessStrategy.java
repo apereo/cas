@@ -1,13 +1,15 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.HttpUtils;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HttpUtils;
+import lombok.val;
 import org.springframework.util.StringUtils;
 
 import java.util.Map;
@@ -39,8 +41,8 @@ public class RemoteEndpointServiceAccessStrategy extends DefaultRegisteredServic
     public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> principalAttributes) {
         try {
             if (super.doPrincipalAttributesAllowServiceAccess(principal, principalAttributes)) {
-                final var response = HttpUtils.executeGet(this.endpointUrl, CollectionUtils.wrap("username", principal));
-                final var currentCodes = StringUtils.commaDelimitedListToSet(this.acceptableResponseCodes);
+                val response = HttpUtils.executeGet(this.endpointUrl, CollectionUtils.wrap("username", principal));
+                val currentCodes = StringUtils.commaDelimitedListToSet(this.acceptableResponseCodes);
                 return response != null && currentCodes.contains(String.valueOf(response.getStatusLine().getStatusCode()));
             }
         } catch (final Exception e) {

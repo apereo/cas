@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,29 +21,28 @@ import java.util.Collection;
  * @since 4.0.0
  */
 @RunWith(Parameterized.class)
-@Slf4j
 public class X509SubjectPrincipalResolverTests {
 
-    private X509Certificate certificate;
     private final X509SubjectPrincipalResolver resolver;
     private final String expected;
+    private X509Certificate certificate;
 
     /**
      * Creates a new test instance with the given parameters.
      *
-     * @param certPath path to the cert
-     * @param descriptor the descriptor
+     * @param certPath       path to the cert
+     * @param descriptor     the descriptor
      * @param expectedResult the expected result
      */
     public X509SubjectPrincipalResolverTests(
-            final String certPath,
-            final String descriptor,
-            final String expectedResult) {
+        final String certPath,
+        final String descriptor,
+        final String expectedResult) {
 
         this.resolver = new X509SubjectPrincipalResolver(descriptor);
         try {
             this.certificate = (X509Certificate) CertificateFactory.getInstance("X509").generateCertificate(
-                    new FileInputStream(certPath));
+                new FileInputStream(certPath));
         } catch (final Exception e) {
             Assert.fail(String.format("Error parsing certificate %s: %s", certPath, e.getMessage()));
         }
@@ -53,50 +52,50 @@ public class X509SubjectPrincipalResolverTests {
     /**
      * Gets the unit test parameters.
      *
-     * @return  Test parameter data.
+     * @return Test parameter data.
      */
     @Parameters
     public static Collection<Object[]> getTestParameters() throws Exception {
-        final Collection<Object[]> params = new ArrayList<>();
+        val params = new ArrayList<Object[]>();
 
         // Test case #1
         // Use CN for principal ID
-        params.add(new Object[] {
-                new ClassPathResource("x509-ctop-resolver-hizzy.crt").getFile().getCanonicalPath(),
-                "$CN",
-                "Hizzogarthington I.S. Pleakinsense"
+        params.add(new Object[]{
+            new ClassPathResource("x509-ctop-resolver-hizzy.crt").getFile().getCanonicalPath(),
+            "$CN",
+            "Hizzogarthington I.S. Pleakinsense"
         });
 
         // Test case #2
         // Use email address for principal ID
-        params.add(new Object[] {
-                new ClassPathResource("x509-ctop-resolver-hizzy.crt").getFile().getCanonicalPath(),
-                "$EMAILADDRESS",
-                "hizzy@vt.edu"
+        params.add(new Object[]{
+            new ClassPathResource("x509-ctop-resolver-hizzy.crt").getFile().getCanonicalPath(),
+            "$EMAILADDRESS",
+            "hizzy@vt.edu"
         });
 
         // Test case #2
         // Use combination of ou and cn for principal ID
-        params.add(new Object[] {
-                new ClassPathResource("x509-ctop-resolver-hizzy.crt").getFile().getCanonicalPath(),
-                "$OU $CN",
-                "Middleware Hizzogarthington I.S. Pleakinsense"
+        params.add(new Object[]{
+            new ClassPathResource("x509-ctop-resolver-hizzy.crt").getFile().getCanonicalPath(),
+            "$OU $CN",
+            "Middleware Hizzogarthington I.S. Pleakinsense"
         });
 
         // Test case #3
         // Use combination of serial number and cn for principal ID
-        params.add(new Object[] {
-                new ClassPathResource("x509-ctop-resolver-gazzo.crt").getFile().getCanonicalPath(),
-                "$CN:$SERIALNUMBER",
-                "Gazzaloddi P. Wishwashington:271828183"
+        params.add(new Object[]{
+            new ClassPathResource("x509-ctop-resolver-gazzo.crt").getFile().getCanonicalPath(),
+            "$CN:$SERIALNUMBER",
+            "Gazzaloddi P. Wishwashington:271828183"
         });
 
         // Test case #4
         // Build principal ID from multivalued attributes
-        params.add(new Object[] {
-                new ClassPathResource("x509-ctop-resolver-jacky.crt").getFile().getCanonicalPath(),
-                "$UID@$DC.$DC",
-                "jacky@vt.edu"
+        params.add(new Object[]{
+            new ClassPathResource("x509-ctop-resolver-jacky.crt").getFile().getCanonicalPath(),
+            "$UID@$DC.$DC",
+            "jacky@vt.edu"
         });
 
         return params;

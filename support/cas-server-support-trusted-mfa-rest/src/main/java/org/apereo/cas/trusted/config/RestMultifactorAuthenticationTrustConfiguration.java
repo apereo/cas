@@ -1,10 +1,12 @@
 package org.apereo.cas.trusted.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.RestMultifactorAuthenticationTrustStorage;
+
+import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -21,7 +23,6 @@ import org.springframework.web.client.RestTemplate;
  */
 @Configuration("restMultifactorAuthenticationTrustConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class RestMultifactorAuthenticationTrustConfiguration {
 
     @Autowired
@@ -29,13 +30,13 @@ public class RestMultifactorAuthenticationTrustConfiguration {
 
     @Autowired
     @Qualifier("mfaTrustCipherExecutor")
-    private CipherExecutor mfaTrustCipherExecutor;
+    private ObjectProvider<CipherExecutor> mfaTrustCipherExecutor;
 
     @RefreshScope
     @Bean
     public MultifactorAuthenticationTrustStorage mfaTrustEngine() {
-        final var m = new RestMultifactorAuthenticationTrustStorage(new RestTemplate(), casProperties);
-        m.setCipherExecutor(this.mfaTrustCipherExecutor);
+        val m = new RestMultifactorAuthenticationTrustStorage(new RestTemplate(), casProperties);
+        m.setCipherExecutor(mfaTrustCipherExecutor.getIfAvailable());
         return m;
     }
 }

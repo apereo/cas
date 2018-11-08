@@ -1,5 +1,7 @@
 package org.apereo.cas;
 
+import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,86 +29,14 @@ public interface CipherExecutor<I, O> {
         ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256;
 
     /**
-     * Encrypt the value. Implementations may
-     * choose to also sign the final value.
-     *
-     * @param value      the value
-     * @param parameters the parameters
-     * @return the encrypted value or null
+     * Encryption key size for text data and ciphers.
      */
-    O encode(I value, Object[] parameters);
+    int DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE = 256;
 
     /**
-     * Encrypt the value.
-     *
-     * @param value the value
-     * @return the encrypted value or null
+     * Signing key size for text data and ciphers.
      */
-    default O encode(final I value) {
-        return encode(value, new Object[]{});
-    }
-
-    /**
-     * Decode the value. Signatures may also be verified.
-     *
-     * @param value      encrypted value
-     * @param parameters the parameters
-     * @return the decoded value.
-     */
-    O decode(I value, Object[] parameters);
-
-    /**
-     * Decode the value.
-     *
-     * @param value the value
-     * @return the decoded value or null
-     */
-    default O decode(final I value) {
-        return decode(value, new Object[]{});
-    }
-
-    /**
-     * Decode map.
-     *
-     * @param properties the properties
-     * @param parameters the parameters
-     * @return the map
-     */
-    default Map<String, Object> decode(Map<String, Object> properties, final Object[] parameters) {
-        final Map<String, Object> decrypted = new HashMap<>();
-        properties.forEach((key, value) -> {
-            try {
-                LOGGER.debug("Attempting to decode key [{}]", key);
-                final Object result = decode((I) value, parameters);
-                if (result != null) {
-                    LOGGER.debug("Decrypted key [{}] successfully", key);
-                    decrypted.put(key, result);
-                }
-            } catch (final ClassCastException e) {
-                LOGGER.debug("Value of key {}, is not the correct type, not decrypting, but using value as-is.", key);
-                decrypted.put(key, value);
-            }
-        });
-        return decrypted;
-    }
-
-    /**
-     * Supports encryption of values.
-     *
-     * @return true /false
-     */
-    default boolean isEnabled() {
-        return true;
-    }
-
-    /**
-     * The (component) name of this cipher.
-     *
-     * @return the name.
-     */
-    default String getName() {
-        return getClass().getSimpleName();
-    }
+    int DEFAULT_STRINGABLE_SIGNING_KEY_SIZE = 512;
 
     /**
      * Factory method.
@@ -133,6 +63,88 @@ public interface CipherExecutor<I, O> {
      */
     static CipherExecutor<Serializable, String> noOpOfSerializableToString() {
         return NoOpCipherExecutor.getInstance();
+    }
+
+    /**
+     * Encrypt the value. Implementations may
+     * choose to also sign the final value.
+     *
+     * @param value      the value
+     * @param parameters the parameters
+     * @return the encrypted value or null
+     */
+    O encode(I value, Object[] parameters);
+
+    /**
+     * Encrypt the value.
+     *
+     * @param value the value
+     * @return the encrypted value or null
+     */
+    default O encode(final I value) {
+        return encode(value, ArrayUtils.EMPTY_OBJECT_ARRAY);
+    }
+
+    /**
+     * Decode the value. Signatures may also be verified.
+     *
+     * @param value      encrypted value
+     * @param parameters the parameters
+     * @return the decoded value.
+     */
+    O decode(I value, Object[] parameters);
+
+    /**
+     * Decode the value.
+     *
+     * @param value the value
+     * @return the decoded value or null
+     */
+    default O decode(final I value) {
+        return decode(value, ArrayUtils.EMPTY_OBJECT_ARRAY);
+    }
+
+    /**
+     * Decode map.
+     *
+     * @param properties the properties
+     * @param parameters the parameters
+     * @return the map
+     */
+    default Map<String, Object> decode(final Map<String, Object> properties, final Object[] parameters) {
+        val decrypted = new HashMap<String, Object>();
+        properties.forEach((key, value) -> {
+            try {
+                LOGGER.trace("Attempting to decode key [{}]", key);
+                val result = decode((I) value, parameters);
+                if (result != null) {
+                    LOGGER.trace("Decrypted key [{}] successfully", key);
+                    decrypted.put(key, result);
+                }
+            } catch (final ClassCastException e) {
+                LOGGER.debug("Value of key {}, is not the correct type, not decrypting, but using value as-is.", key);
+                decrypted.put(key, value);
+            }
+        });
+        return decrypted;
+    }
+
+    /**
+     * Supports encryption of values.
+     *
+     * @return true /false
+     */
+    default boolean isEnabled() {
+        return true;
+    }
+
+    /**
+     * The (component) name of this cipher.
+     *
+     * @return the name.
+     */
+    default String getName() {
+        return getClass().getSimpleName();
     }
 
 

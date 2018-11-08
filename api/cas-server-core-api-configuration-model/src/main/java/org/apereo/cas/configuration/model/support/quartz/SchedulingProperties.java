@@ -1,9 +1,11 @@
 package org.apereo.cas.configuration.model.support.quartz;
 
 import org.apereo.cas.configuration.support.RequiresModule;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * This is {@link SchedulingProperties}.
@@ -12,7 +14,6 @@ import lombok.Setter;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-core-util", automated = true)
-
 @Getter
 @Setter
 public class SchedulingProperties implements Serializable {

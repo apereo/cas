@@ -1,9 +1,11 @@
 package org.apereo.cas.support.sms;
 
+import org.apereo.cas.configuration.model.support.sms.AmazonSnsProperties;
+
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.model.PublishRequest;
 import com.amazonaws.services.sns.model.PublishResult;
-import org.apereo.cas.configuration.model.support.sms.AmazonSnsProperties;
+import lombok.val;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -18,14 +20,14 @@ import static org.mockito.Mockito.*;
 public class AmazonSimpleNotificationServiceSmsSenderTests {
     @Test
     public void verifyAction() {
-        final var snsClient = mock(AmazonSNS.class);
-        final var result = new PublishResult();
+        val snsClient = mock(AmazonSNS.class);
+        val result = new PublishResult();
         result.setMessageId("PASSED");
         when(snsClient.publish(any(PublishRequest.class))).thenReturn(result);
-        final var properties = new AmazonSnsProperties();
+        val properties = new AmazonSnsProperties();
         properties.setMaxPrice("100");
         properties.setSenderId("SenderId");
-        final var sender = new AmazonSimpleNotificationServiceSmsSender(snsClient, properties);
+        val sender = new AmazonSimpleNotificationServiceSmsSender(snsClient, properties);
         assertTrue(sender.send("1234567890", "1234567890", "TestMessage"));
     }
 }

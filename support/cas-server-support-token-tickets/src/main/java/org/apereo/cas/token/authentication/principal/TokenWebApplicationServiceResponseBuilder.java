@@ -1,7 +1,5 @@
 package org.apereo.cas.token.authentication.principal;
 
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.Service;
@@ -12,6 +10,10 @@ import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.token.TokenTicketBuilder;
+
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.util.Map;
 
@@ -35,9 +37,9 @@ public class TokenWebApplicationServiceResponseBuilder extends WebApplicationSer
 
     @Override
     protected WebApplicationService buildInternal(final WebApplicationService service, final Map<String, String> parameters) {
-        final var registeredService = this.servicesManager.findServiceBy(service);
+        val registeredService = this.servicesManager.findServiceBy(service);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
-        final var tokenAsResponse = RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.isAssignedTo(registeredService);
+        val tokenAsResponse = RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.isAssignedTo(registeredService);
 
         if (!tokenAsResponse) {
             LOGGER.debug("Registered service [{}] is not configured to issue JWTs for service tickets. "
@@ -46,8 +48,8 @@ public class TokenWebApplicationServiceResponseBuilder extends WebApplicationSer
             return super.buildInternal(service, parameters);
         }
 
-        final var jwt = generateToken(service, parameters);
-        final var jwtService = new TokenWebApplicationService(service.getId(), service.getOriginalUrl(), service.getArtifactId());
+        val jwt = generateToken(service, parameters);
+        val jwtService = new TokenWebApplicationService(service.getId(), service.getOriginalUrl(), service.getArtifactId());
         jwtService.setFormat(service.getFormat());
         jwtService.setLoggedOutAlready(service.isLoggedOutAlready());
 
@@ -66,7 +68,7 @@ public class TokenWebApplicationServiceResponseBuilder extends WebApplicationSer
      */
     @SneakyThrows
     protected String generateToken(final Service service, final Map<String, String> parameters) {
-        final var ticketId = parameters.get(CasProtocolConstants.PARAMETER_TICKET);
+        val ticketId = parameters.get(CasProtocolConstants.PARAMETER_TICKET);
         return this.tokenTicketBuilder.build(ticketId, service);
     }
 }

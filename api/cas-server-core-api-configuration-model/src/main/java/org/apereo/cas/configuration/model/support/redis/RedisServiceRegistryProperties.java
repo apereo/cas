@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.redis;
 
 import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,7 +12,6 @@ import lombok.Setter;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-redis-service-registry")
-
 @Getter
 @Setter
 public class RedisServiceRegistryProperties extends BaseRedisProperties {

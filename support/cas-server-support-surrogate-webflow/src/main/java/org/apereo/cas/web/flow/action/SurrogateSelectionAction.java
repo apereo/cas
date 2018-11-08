@@ -1,11 +1,13 @@
 package org.apereo.cas.web.flow.action;
 
+import org.apereo.cas.authentication.SurrogatePrincipalBuilder;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.web.support.WebUtils;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.SurrogatePrincipalBuilder;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
-import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -28,18 +30,16 @@ public class SurrogateSelectionAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        final var credential = WebUtils.getCredential(requestContext);
+        val credential = WebUtils.getCredential(requestContext);
         if (credential instanceof UsernamePasswordCredential) {
-            final var target = requestContext.getExternalContext().getRequestParameterMap().get("surrogateTarget");
+            val target = requestContext.getExternalContext().getRequestParameterMap().get("surrogateTarget");
 
             LOGGER.debug("Located surrogate target as [{}]", target);
             if (StringUtils.isNotBlank(target)) {
-                final var authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(requestContext);
-                final var result =
+                val authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(requestContext);
+                val result =
                     surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(authenticationResultBuilder, credential, target);
-                if (result.isPresent()) {
-                    WebUtils.putAuthenticationResultBuilder(result.get(), requestContext);
-                }
+                result.ifPresent(authenticationResultBuilder1 -> WebUtils.putAuthenticationResultBuilder(authenticationResultBuilder1, requestContext));
             } else {
                 LOGGER.warn("No surrogate identifier was selected or provided");
             }

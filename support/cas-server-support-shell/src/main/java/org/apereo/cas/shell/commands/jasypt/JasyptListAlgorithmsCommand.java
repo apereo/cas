@@ -1,6 +1,7 @@
 package org.apereo.cas.shell.commands.jasypt;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jasypt.registry.AlgorithmRegistry;
 import org.springframework.shell.standard.ShellCommandGroup;
@@ -9,7 +10,6 @@ import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 
 import java.security.Security;
-import java.util.Set;
 
 /**
  * This is {@link JasyptListAlgorithmsCommand}.
@@ -37,15 +37,15 @@ public class JasyptListAlgorithmsCommand {
         } else {
             Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
         }
-        final var providers = Security.getProviders();
+        val providers = Security.getProviders();
         LOGGER.info("Loaded providers: ");
-        for (final var provider: providers) {
+        for (val provider : providers) {
             LOGGER.info("Provider: [{}] [{}]", provider.getName(), provider.getClass().getName());
         }
-        final Set<String> pbeAlgos = AlgorithmRegistry.getAllPBEAlgorithms();
+        val pbeAlgos = AlgorithmRegistry.getAllPBEAlgorithms();
         LOGGER.info("==== JASYPT Password Based Encryption Algorithms ====\n");
-        for (final var pbeAlgo: pbeAlgos) {
-            LOGGER.info(pbeAlgo);
+        for (val pbeAlgo : pbeAlgos) {
+            LOGGER.info(pbeAlgo.toString());
         }
     }
 }

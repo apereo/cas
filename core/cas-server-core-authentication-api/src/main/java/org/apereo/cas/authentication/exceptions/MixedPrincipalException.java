@@ -1,10 +1,10 @@
 package org.apereo.cas.authentication.exceptions;
 
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.principal.Principal;
+
+import lombok.Getter;
 
 /**
  * Describes an error condition where non-identical principals have been resolved while authenticating
@@ -13,17 +13,22 @@ import org.apereo.cas.authentication.principal.Principal;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@Slf4j
 @Getter
 public class MixedPrincipalException extends PrincipalException {
 
-    /** Serialization version marker. */
+    /**
+     * Serialization version marker.
+     */
     private static final long serialVersionUID = -9040132618070273997L;
 
-    /** First resolved principal. */
+    /**
+     * First resolved principal.
+     */
     private final Principal first;
 
-    /** Second resolved principal. */
+    /**
+     * Second resolved principal.
+     */
     private final Principal second;
 
     /**
@@ -31,8 +36,8 @@ public class MixedPrincipalException extends PrincipalException {
      * disparate principals resolved.
      *
      * @param authentication Authentication event.
-     * @param a First resolved principal.
-     * @param b Second resolved principal.
+     * @param a              First resolved principal.
+     * @param b              Second resolved principal.
      */
     public MixedPrincipalException(final Authentication authentication, final Principal a, final Principal b) {
         super(a + " != " + b, authentication.getFailures(), authentication.getSuccesses());

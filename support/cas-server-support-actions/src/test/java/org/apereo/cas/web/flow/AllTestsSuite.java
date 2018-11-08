@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -26,8 +25,9 @@ import org.junit.runners.Suite;
     ServiceAuthorizationCheckTests.class,
     CreateTicketGrantingTicketActionTests.class,
     TicketGrantingTicketCheckActionTests.class,
-    ServiceWarningActionTests.class
+    ServiceWarningActionTests.class,
+    TerminateSessionActionTests.class,
+    TerminateSessionConfirmingActionTests.class
 })
-@Slf4j
 public class AllTestsSuite {
 }

@@ -3,9 +3,10 @@ package org.apereo.cas.configuration.model.support.couchbase.ticketregistry;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.couchbase.BaseCouchbaseProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * This is {@link CouchbaseTicketRegistryProperties}.
@@ -14,7 +15,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-couchbase-ticket-registry")
-
 @Getter
 @Setter
 public class CouchbaseTicketRegistryProperties extends BaseCouchbaseProperties {

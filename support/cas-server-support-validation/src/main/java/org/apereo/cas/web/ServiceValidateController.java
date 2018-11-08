@@ -1,18 +1,18 @@
 package org.apereo.cas.web;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
+import org.apereo.cas.validation.RequestedContextValidator;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.support.ArgumentExtractor;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
@@ -34,8 +34,7 @@ public class ServiceValidateController extends AbstractServiceValidateController
                                      final CentralAuthenticationService centralAuthenticationService,
                                      final ProxyHandler proxyHandler,
                                      final ArgumentExtractor argumentExtractor,
-                                     final MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
-                                     final AuthenticationContextValidator authenticationContextValidator,
+                                     final RequestedContextValidator requestedContextValidator,
                                      final View jsonView,
                                      final View successView, final View failureView,
                                      final String authnContextAttribute,
@@ -43,8 +42,7 @@ public class ServiceValidateController extends AbstractServiceValidateController
                                      final boolean renewEnabled) {
         super(CollectionUtils.wrapSet(validationSpecification), validationAuthorizers,
             authenticationSystemSupport, servicesManager, centralAuthenticationService, proxyHandler,
-            successView, failureView, argumentExtractor, multifactorTriggerSelectionStrategy,
-            authenticationContextValidator, jsonView, authnContextAttribute, renewEnabled);
+            successView, failureView, argumentExtractor, requestedContextValidator, jsonView, authnContextAttribute, renewEnabled);
     }
 
     /**
@@ -65,9 +63,9 @@ public class ServiceValidateController extends AbstractServiceValidateController
     protected void prepareForTicketValidation(final HttpServletRequest request, final WebApplicationService service, final String serviceTicketId) {
         super.prepareForTicketValidation(request, service, serviceTicketId);
         LOGGER.debug("Preparing to validate ticket [{}] for service [{}] via [{}]. Do note that this validation request "
-                        + "is not equipped to release principal attributes to applications. To access the authenticated "
-                        + "principal along with attributes, invoke the [{}] endpoint instead.",
-                CasProtocolConstants.ENDPOINT_SERVICE_VALIDATE,
-                serviceTicketId, service, CasProtocolConstants.ENDPOINT_SERVICE_VALIDATE_V3);
+                + "is not equipped to release principal attributes to applications. To access the authenticated "
+                + "principal along with attributes, invoke the [{}] endpoint instead.",
+            CasProtocolConstants.ENDPOINT_SERVICE_VALIDATE,
+            serviceTicketId, service, CasProtocolConstants.ENDPOINT_SERVICE_VALIDATE_V3);
     }
 }

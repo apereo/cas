@@ -1,8 +1,9 @@
 package org.apereo.cas.configuration.model.support.saml.googleapps;
 
-import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * This is {@link GoogleAppsProperties}.
@@ -10,7 +11,6 @@ import lombok.Setter;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
 @Getter
 @Setter
 public class GoogleAppsProperties implements Serializable {

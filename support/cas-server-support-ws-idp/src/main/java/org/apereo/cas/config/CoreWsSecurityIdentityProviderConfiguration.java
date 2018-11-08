@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
@@ -27,6 +26,9 @@ import org.apereo.cas.ws.idp.services.WSFederationRelyingPartyTokenProducer;
 import org.apereo.cas.ws.idp.services.WSFederationServiceRegistry;
 import org.apereo.cas.ws.idp.web.WSFederationValidateRequestCallbackController;
 import org.apereo.cas.ws.idp.web.WSFederationValidateRequestController;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +55,7 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
 
     @Autowired
     @Qualifier("casClientTicketValidator")
-    private AbstractUrlBasedTicketValidator casClientTicketValidator;
+    private ObjectProvider<AbstractUrlBasedTicketValidator> casClientTicketValidator;
 
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")
@@ -61,39 +63,44 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
 
     @Autowired
     @Qualifier("noRedirectHttpClient")
-    private HttpClient httpClient;
+    private ObjectProvider<HttpClient> httpClient;
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
-    private TicketRegistrySupport ticketRegistrySupport;
+    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")
-    private ServiceFactory webApplicationServiceFactory;
+    private ObjectProvider<ServiceFactory> webApplicationServiceFactory;
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("securityTokenTicketFactory")
-    private SecurityTokenTicketFactory securityTokenTicketFactory;
+    private ObjectProvider<SecurityTokenTicketFactory> securityTokenTicketFactory;
 
     @Autowired
     @Qualifier("ticketRegistry")
-    private TicketRegistry ticketRegistry;
+    private ObjectProvider<TicketRegistry> ticketRegistry;
 
     @Lazy
     @Bean
     public WSFederationValidateRequestController federationValidateRequestController() {
-        return new WSFederationValidateRequestController(servicesManager,
-            webApplicationServiceFactory, casProperties, wsFederationAuthenticationServiceSelectionStrategy(),
-            httpClient, securityTokenTicketFactory, ticketRegistry,
+        return new WSFederationValidateRequestController(servicesManager.getIfAvailable(),
+            webApplicationServiceFactory.getIfAvailable(),
+            casProperties,
+            wsFederationAuthenticationServiceSelectionStrategy(),
+            httpClient.getIfAvailable(),
+            securityTokenTicketFactory.getIfAvailable(),
+            ticketRegistry.getIfAvailable(),
             ticketGrantingTicketCookieGenerator.getIfAvailable(),
-            ticketRegistrySupport, wsFederationCallbackService());
+            ticketRegistrySupport.getIfAvailable(),
+            wsFederationCallbackService());
     }
 
     @Lazy
@@ -101,18 +108,23 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
     @Bean
     public WSFederationValidateRequestCallbackController federationValidateRequestCallbackController(
         @Qualifier("wsFederationRelyingPartyTokenProducer") final WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer) {
-        return new WSFederationValidateRequestCallbackController(servicesManager,
-            webApplicationServiceFactory, casProperties, wsFederationRelyingPartyTokenProducer,
+        return new WSFederationValidateRequestCallbackController(servicesManager.getIfAvailable(),
+            webApplicationServiceFactory.getIfAvailable(),
+            casProperties,
+            wsFederationRelyingPartyTokenProducer,
             wsFederationAuthenticationServiceSelectionStrategy(),
-            httpClient, securityTokenTicketFactory, ticketRegistry,
+            httpClient.getIfAvailable(),
+            securityTokenTicketFactory.getIfAvailable(),
+            ticketRegistry.getIfAvailable(),
             ticketGrantingTicketCookieGenerator.getIfAvailable(),
-            ticketRegistrySupport, casClientTicketValidator,
+            ticketRegistrySupport.getIfAvailable(),
+            casClientTicketValidator.getIfAvailable(),
             wsFederationCallbackService());
     }
 
     @Bean
     public Service wsFederationCallbackService() {
-        return this.webApplicationServiceFactory.createService(WSFederationConstants.ENDPOINT_FEDERATION_REQUEST_CALLBACK);
+        return webApplicationServiceFactory.getIfAvailable().createService(WSFederationConstants.ENDPOINT_FEDERATION_REQUEST_CALLBACK);
     }
 
     @Lazy
@@ -134,7 +146,7 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
     @Bean
     @RefreshScope
     public AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy() {
-        return new WSFederationAuthenticationServiceSelectionStrategy(webApplicationServiceFactory);
+        return new WSFederationAuthenticationServiceSelectionStrategy(webApplicationServiceFactory.getIfAvailable());
     }
 
     @Override
@@ -144,11 +156,11 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
 
     @Override
     public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-        final var callbackService = wsFederationCallbackService();
+        val callbackService = wsFederationCallbackService();
         LOGGER.debug("Initializing callback service [{}]", callbackService);
 
-        final var service = new RegexRegisteredService();
-        service.setId(Math.abs(RandomUtils.getNativeInstance().nextLong()));
+        val service = new RegexRegisteredService();
+        service.setId(RandomUtils.getNativeInstance().nextLong());
         service.setEvaluationOrder(0);
         service.setName(service.getClass().getSimpleName());
         service.setDescription("WS-Federation Authentication Request");

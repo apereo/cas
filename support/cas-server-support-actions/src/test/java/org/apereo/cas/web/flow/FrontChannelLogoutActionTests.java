@@ -1,20 +1,20 @@
 package org.apereo.cas.web.flow;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
-import org.apereo.cas.logout.DefaultLogoutManager;
-import org.apereo.cas.logout.DefaultSingleLogoutServiceLogoutUrlBuilder;
-import org.apereo.cas.logout.DefaultSingleLogoutServiceMessageHandler;
-import org.apereo.cas.logout.LogoutExecutionPlan;
-import org.apereo.cas.logout.SamlCompliantLogoutMessageCreator;
+import org.apereo.cas.logout.DefaultLogoutExecutionPlan;
+import org.apereo.cas.logout.DefaultSingleLogoutMessageCreator;
+import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
+import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceMessageHandler;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
 import org.apereo.cas.web.flow.logout.FrontChannelLogoutAction;
 import org.apereo.cas.web.support.WebUtils;
-import org.junit.Test;
+
+import lombok.val;
 import org.junit.Before;
+import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -34,10 +34,10 @@ import static org.mockito.Mockito.*;
  * @author Jerome Leleu
  * @since 4.0.0
  */
-@Slf4j
 public class FrontChannelLogoutActionTests {
 
     private static final String FLOW_EXECUTION_KEY = "12234";
+
     private FrontChannelLogoutAction frontChannelLogoutAction;
 
     private RequestContext requestContext;
@@ -51,27 +51,27 @@ public class FrontChannelLogoutActionTests {
 
     @Before
     public void onSetUp() {
-        final var validator = new SimpleUrlValidatorFactoryBean(false).getObject();
+        val validator = new SimpleUrlValidatorFactoryBean(false).getObject();
 
-        final var handler = new DefaultSingleLogoutServiceMessageHandler(new SimpleHttpClientFactoryBean().getObject(),
-            new SamlCompliantLogoutMessageCreator(), servicesManager, new DefaultSingleLogoutServiceLogoutUrlBuilder(validator), false,
+        val handler = new DefaultSingleLogoutServiceMessageHandler(new SimpleHttpClientFactoryBean().getObject(),
+            new DefaultSingleLogoutMessageCreator(), servicesManager, new DefaultSingleLogoutServiceLogoutUrlBuilder(validator), false,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
-        final var logoutManager = new DefaultLogoutManager(new SamlCompliantLogoutMessageCreator(),
-            handler, false, mock(LogoutExecutionPlan.class));
 
-        this.frontChannelLogoutAction = new FrontChannelLogoutAction(logoutManager);
+        val plan = new DefaultLogoutExecutionPlan();
+        plan.registerSingleLogoutServiceMessageHandler(handler);
+        this.frontChannelLogoutAction = new FrontChannelLogoutAction(plan, false);
 
-        final var request = new MockHttpServletRequest();
-        final var response = new MockHttpServletResponse();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
         this.requestContext = mock(RequestContext.class);
-        final var servletExternalContext = mock(ServletExternalContext.class);
+        val servletExternalContext = mock(ServletExternalContext.class);
         when(this.requestContext.getExternalContext()).thenReturn(servletExternalContext);
         when(servletExternalContext.getNativeRequest()).thenReturn(request);
         when(servletExternalContext.getNativeResponse()).thenReturn(response);
-        final var flowScope = new LocalAttributeMap();
+        val flowScope = new LocalAttributeMap();
         when(this.requestContext.getFlowScope()).thenReturn(flowScope);
-        final var mockFlowExecutionKey = new MockFlowExecutionKey(FLOW_EXECUTION_KEY);
-        final var mockFlowExecutionContext = new MockFlowExecutionContext();
+        val mockFlowExecutionKey = new MockFlowExecutionKey(FLOW_EXECUTION_KEY);
+        val mockFlowExecutionContext = new MockFlowExecutionContext();
         mockFlowExecutionContext.setKey(mockFlowExecutionKey);
         when(this.requestContext.getFlowExecutionContext()).thenReturn(mockFlowExecutionContext);
     }
@@ -79,7 +79,7 @@ public class FrontChannelLogoutActionTests {
     @Test
     public void verifyLogoutNoIndex() {
         WebUtils.putLogoutRequests(this.requestContext, new ArrayList<>(0));
-        final var event = this.frontChannelLogoutAction.doExecute(this.requestContext);
+        val event = this.frontChannelLogoutAction.doExecute(this.requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
     }
 }

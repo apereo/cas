@@ -1,10 +1,12 @@
 package org.apereo.cas.configuration.model.support.cookie;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.support.RequiresModule;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.Serializable;
 
 /**
  * Common properties for all cookie configs.
@@ -65,4 +67,11 @@ public class CookieProperties implements Serializable {
      * A zero value causes the cookie to be deleted.
      */
     private int maxAge = -1;
+
+    /**
+     * When generating cookie values, determine whether the value
+     * should be compounded and signed with the properties of
+     * the current session, such as IP address, user-agent, etc.
+     */
+    private boolean pinToSession = true;
 }

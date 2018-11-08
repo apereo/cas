@@ -1,15 +1,15 @@
 package org.apereo.cas.scim.v2;
 
+import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.util.CollectionUtils;
+
 import com.unboundid.scim2.common.types.Email;
 import com.unboundid.scim2.common.types.Name;
 import com.unboundid.scim2.common.types.PhoneNumber;
 import com.unboundid.scim2.common.types.UserResource;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.util.CollectionUtils;
+import lombok.val;
 
 /**
  * This is {@link ScimV2PrincipalAttributeMapper}.
@@ -17,7 +17,6 @@ import org.apereo.cas.util.CollectionUtils;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 public class ScimV2PrincipalAttributeMapper {
 
     /**
@@ -28,7 +27,7 @@ public class ScimV2PrincipalAttributeMapper {
      * @return the principal attribute value
      */
     public String getPrincipalAttributeValue(final Principal p, final String attributeName) {
-        final var attributes = p.getAttributes();
+        val attributes = p.getAttributes();
         if (attributes.containsKey(attributeName)) {
             return CollectionUtils.toCollection(attributes.get(attributeName)).iterator().next().toString();
         }
@@ -50,37 +49,24 @@ public class ScimV2PrincipalAttributeMapper {
         }
         user.setActive(Boolean.TRUE);
 
-        var attr = getPrincipalAttributeValue(p, "nickName");
-        user.setNickName(attr);
-        attr = getPrincipalAttributeValue(p, "displayName");
-        user.setDisplayName(attr);
+        user.setNickName(getPrincipalAttributeValue(p, "nickName"));
+        user.setDisplayName(getPrincipalAttributeValue(p, "displayName"));
 
-        final var name = new Name();
-        attr = getPrincipalAttributeValue(p, "givenName");
-        name.setGivenName(attr);
-        attr = getPrincipalAttributeValue(p, "familyName");
-        name.setFamilyName(attr);
-        attr = getPrincipalAttributeValue(p, "middleName");
-        name.setMiddleName(attr);
+        val name = new Name();
+        name.setGivenName(getPrincipalAttributeValue(p, "givenName"));
+        name.setFamilyName(getPrincipalAttributeValue(p, "familyName"));
+        name.setMiddleName(getPrincipalAttributeValue(p, "middleName"));
 
         user.setName(name);
 
-        final var email = new Email();
+        val email = new Email();
         email.setPrimary(Boolean.TRUE);
-        attr = getPrincipalAttributeValue(p, "mail");
-        if (StringUtils.isBlank(attr)) {
-            attr = getPrincipalAttributeValue(p, "email");
-        }
-        email.setValue(attr);
+        email.setValue(getPrincipalAttributeValue(p, "email"));
         user.setEmails(CollectionUtils.wrap(email));
 
-        final var phone = new PhoneNumber();
+        val phone = new PhoneNumber();
         phone.setPrimary(Boolean.TRUE);
-        attr = getPrincipalAttributeValue(p, "phone");
-        if (StringUtils.isBlank(attr)) {
-            attr = getPrincipalAttributeValue(p, "phoneNumber");
-        }
-        phone.setValue(attr);
+        phone.setValue(getPrincipalAttributeValue(p, "phoneNumber"));
         user.setPhoneNumbers(CollectionUtils.wrap(phone));
     }
 }

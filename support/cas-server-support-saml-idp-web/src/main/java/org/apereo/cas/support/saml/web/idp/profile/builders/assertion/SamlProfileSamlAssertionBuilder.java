@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.assertion;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
@@ -10,6 +9,9 @@ import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.util.RandomUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AttributeStatement;
@@ -24,7 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link SamlProfileSamlAssertionBuilder}.
@@ -74,19 +75,19 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
                            final String binding,
                            final MessageContext messageContext) throws SamlException {
 
-        final List<Statement> statements = new ArrayList<>();
-        final var authnStatement = this.samlProfileSamlAuthNStatementBuilder.build(authnRequest, request, response,
+        val statements = new ArrayList<Statement>();
+        val authnStatement = this.samlProfileSamlAuthNStatementBuilder.build(authnRequest, request, response,
             casAssertion, service, adaptor, binding, messageContext);
         statements.add(authnStatement);
-        final var attrStatement = this.samlProfileSamlAttributeStatementBuilder.build(authnRequest, request,
+        val attrStatement = this.samlProfileSamlAttributeStatementBuilder.build(authnRequest, request,
             response, casAssertion, service, adaptor, binding, messageContext);
 
         if (!attrStatement.getAttributes().isEmpty() || !attrStatement.getEncryptedAttributes().isEmpty()) {
             statements.add(attrStatement);
         }
 
-        final var id = '_' + String.valueOf(Math.abs(RandomUtils.getNativeInstance().nextLong()));
-        final var assertion = newAssertion(statements, casProperties.getAuthn().getSamlIdp().getEntityId(),
+        val id = '_' + String.valueOf(RandomUtils.getNativeInstance().nextLong());
+        val assertion = newAssertion(statements, casProperties.getAuthn().getSamlIdp().getEntityId(),
             ZonedDateTime.now(ZoneOffset.UTC), id);
         assertion.setSubject(this.samlProfileSamlSubjectBuilder.build(authnRequest, request, response,
             casAssertion, service, adaptor, binding, messageContext));

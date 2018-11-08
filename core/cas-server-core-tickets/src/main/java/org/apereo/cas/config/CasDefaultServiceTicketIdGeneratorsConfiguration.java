@@ -1,13 +1,13 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.UniqueTicketIdGeneratorConfigurer;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HostNameBasedUniqueTicketIdGenerator;
+import org.apereo.cas.util.ServiceTicketIdGenerator;
+
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -23,7 +23,6 @@ import java.util.Collection;
  */
 @Configuration("casDefaultServiceTicketIdGeneratorsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CasDefaultServiceTicketIdGeneratorsConfiguration implements UniqueTicketIdGeneratorConfigurer {
 
     @Autowired
@@ -31,9 +30,9 @@ public class CasDefaultServiceTicketIdGeneratorsConfiguration implements UniqueT
 
     @Bean
     public UniqueTicketIdGenerator serviceTicketUniqueIdGenerator() {
-        return new HostNameBasedUniqueTicketIdGenerator.ServiceTicketIdGenerator(
-                casProperties.getTicket().getSt().getMaxLength(),
-                casProperties.getHost().getName());
+        return new ServiceTicketIdGenerator(
+            casProperties.getTicket().getSt().getMaxLength(),
+            casProperties.getHost().getName());
     }
 
     @Override

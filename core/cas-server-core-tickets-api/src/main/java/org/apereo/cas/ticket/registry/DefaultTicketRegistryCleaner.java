@@ -1,11 +1,13 @@
 package org.apereo.cas.ticket.registry;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.support.LockingStrategy;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
@@ -34,17 +36,17 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner, Seri
                 return;
             }
 
-            LOGGER.debug("Attempting to acquire ticket cleanup lock.");
+            LOGGER.trace("Attempting to acquire ticket cleanup lock.");
             if (!this.lockingStrategy.acquire()) {
                 LOGGER.info("Could not obtain lock. Aborting cleanup. The ticket registry may not support self-service maintenance.");
                 return;
             }
-            LOGGER.debug("Acquired lock. Proceeding with cleanup.");
+            LOGGER.trace("Acquired lock. Proceeding with cleanup.");
             cleanInternal();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         } finally {
-            LOGGER.debug("Releasing ticket cleanup lock.");
+            LOGGER.trace("Releasing ticket cleanup lock.");
             this.lockingStrategy.release();
             LOGGER.debug("Finished ticket cleanup.");
         }
@@ -54,7 +56,7 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner, Seri
      * Clean tickets.
      */
     protected void cleanInternal() {
-        final var ticketsDeleted = ticketRegistry.getTicketsStream()
+        val ticketsDeleted = ticketRegistry.getTicketsStream()
             .filter(Ticket::isExpired)
             .mapToInt(this::cleanTicket)
             .sum();

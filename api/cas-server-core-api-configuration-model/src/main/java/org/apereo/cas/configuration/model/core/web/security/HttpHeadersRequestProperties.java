@@ -1,9 +1,11 @@
 package org.apereo.cas.configuration.model.core.web.security;
 
 import org.apereo.cas.configuration.support.RequiresModule;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * This is {@link HttpHeadersRequestProperties}.
@@ -12,7 +14,6 @@ import lombok.Setter;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-core-web", automated = true)
-
 @Getter
 @Setter
 public class HttpHeadersRequestProperties implements Serializable {

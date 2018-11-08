@@ -1,20 +1,25 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
+import org.apereo.cas.authentication.principal.DefaultPrincipalResolutionExecutionPlan;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.PrincipalResolutionExecutionPlan;
+import org.apereo.cas.authentication.principal.PrincipalResolutionExecutionPlanConfigurer;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.CollectionUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -22,8 +27,11 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * This is {@link CasCoreAuthenticationPrincipalConfiguration}.
@@ -34,18 +42,18 @@ import java.util.List;
 @Configuration("casCoreAuthenticationPrincipalConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class CasCoreAuthenticationPrincipalConfiguration {
+public class CasCoreAuthenticationPrincipalConfiguration implements PrincipalResolutionExecutionPlanConfigurer {
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("attributeRepositories")
-    private List<IPersonAttributeDao> attributeRepositories;
+    private ObjectProvider<List<IPersonAttributeDao>> attributeRepositories;
 
     @Autowired
     @Qualifier("attributeRepository")
-    private IPersonAttributeDao attributeRepository;
+    private ObjectProvider<IPersonAttributeDao> attributeRepository;
 
     @ConditionalOnMissingBean(name = "principalElectionStrategy")
     @Bean
@@ -61,42 +69,60 @@ public class CasCoreAuthenticationPrincipalConfiguration {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
-    @RefreshScope
-    @Bean
-    @ConditionalOnMissingBean(name = "personDirectoryPrincipalResolver")
-    public PrincipalResolver personDirectoryPrincipalResolver() {
-        final var personDirectory = casProperties.getPersonDirectory();
-        final var bean = new PersonDirectoryPrincipalResolver(
-            attributeRepository,
-            principalFactory(),
-            personDirectory.isReturnNull(),
-            personDirectory.getPrincipalAttribute()
-        );
-        
-        final var resolver = new ChainingPrincipalResolver();
-        if (!attributeRepositories.isEmpty()) {
-            LOGGER.debug("Attribute repository sources are defined and available for the principal resolution chain. "
-                + "The principal resolver will use a combination of attributes collected from attribute repository sources "
-                + "and whatever may be collected during the authentication phase where results are eventually merged.");
-            resolver.setChain(CollectionUtils.wrapList(new EchoingPrincipalResolver(), bean));
-        } else {
-            LOGGER.debug("Attribute repository sources are not available for principal resolution so principal resolver will echo "
-                + "back the principal resolved during authentication directly.");
-            resolver.setChain(CollectionUtils.wrapList(new EchoingPrincipalResolver()));
-        }
-
-        return resolver;
-    }
-
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "globalPrincipalAttributeRepository")
     public PrincipalAttributesRepository globalPrincipalAttributeRepository() {
-        final var props = casProperties.getAuthn().getAttributeRepository();
-        final long cacheTime = props.getExpirationTime();
-        if (cacheTime < 0) {
+        val props = casProperties.getAuthn().getAttributeRepository();
+        val cacheTime = props.getExpirationTime();
+        if (cacheTime <= 0) {
+            LOGGER.warn("Caching for the global principal attribute repository is disabled");
             return new DefaultPrincipalAttributesRepository();
         }
         return new CachingPrincipalAttributesRepository(props.getExpirationTimeUnit().toUpperCase(), cacheTime);
+    }
+
+    @RefreshScope
+    @Bean
+    @ConditionalOnMissingBean(name = "personDirectoryAttributeRepositoryPrincipalResolver")
+    public PrincipalResolver personDirectoryAttributeRepositoryPrincipalResolver() {
+        val personDirectory = casProperties.getPersonDirectory();
+        val resolver = new PersonDirectoryPrincipalResolver(
+            attributeRepository.getIfAvailable(),
+            principalFactory(),
+            personDirectory.isReturnNull(),
+            personDirectory.getPrincipalAttribute()
+        );
+        resolver.setUseCurrentPrincipalId(personDirectory.isUseExistingPrincipalId());
+        return resolver;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "defaultPrincipalResolver")
+    @RefreshScope
+    public PrincipalResolver defaultPrincipalResolver(final List<PrincipalResolutionExecutionPlanConfigurer> configurers) {
+        val plan = new DefaultPrincipalResolutionExecutionPlan();
+        val sortedConfigurers = new ArrayList<PrincipalResolutionExecutionPlanConfigurer>(configurers);
+        AnnotationAwareOrderComparator.sortIfNecessary(sortedConfigurers);
+
+        sortedConfigurers.forEach(c -> {
+            LOGGER.trace("Configuring principal resolution execution plan [{}]", c.getName());
+            c.configurePrincipalResolutionExecutionPlan(plan);
+        });
+        plan.registerPrincipalResolver(new EchoingPrincipalResolver());
+
+        val resolver = new ChainingPrincipalResolver();
+        resolver.setChain(plan.getRegisteredPrincipalResolvers());
+        return resolver;
+    }
+
+    @Override
+    public void configurePrincipalResolutionExecutionPlan(final PrincipalResolutionExecutionPlan plan) {
+        if (!Objects.requireNonNull(attributeRepositories.getIfAvailable()).isEmpty()) {
+            LOGGER.trace("Attribute repository sources are defined and available for person-directory principal resolution chain. ");
+            plan.registerPrincipalResolver(personDirectoryAttributeRepositoryPrincipalResolver());
+        } else {
+            LOGGER.debug("Attribute repository sources are not available for person-directory principal resolution");
+        }
     }
 }

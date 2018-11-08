@@ -1,6 +1,8 @@
 package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+
+import lombok.val;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -14,12 +16,12 @@ import static org.junit.Assert.*;
 public class PrincipalNameTransformerUtilsTests {
     @Test
     public void verifyAction() {
-        final var properties = new PrincipalTransformationProperties();
+        val properties = new PrincipalTransformationProperties();
         properties.setPrefix("prefix-");
         properties.setSuffix("-suffix");
         properties.setCaseConversion(PrincipalTransformationProperties.CaseConversion.UPPERCASE);
-        final var t = PrincipalNameTransformerUtils.newPrincipalNameTransformer(properties);
-        final var result = t.transform("userid");
+        val t = PrincipalNameTransformerUtils.newPrincipalNameTransformer(properties);
+        val result = t.transform("userid");
         assertEquals("PREFIX-USERID-SUFFIX", result);
     }
 }

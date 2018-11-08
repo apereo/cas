@@ -1,17 +1,16 @@
 package org.apereo.cas.web;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
+import org.apereo.cas.validation.RequestedContextValidator;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.support.ArgumentExtractor;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
@@ -25,7 +24,6 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Slf4j
 public class ProxyValidateController extends AbstractServiceValidateController {
 
     public ProxyValidateController(final CasProtocolValidationSpecification validationSpecification,
@@ -34,8 +32,7 @@ public class ProxyValidateController extends AbstractServiceValidateController {
                                    final CentralAuthenticationService centralAuthenticationService,
                                    final ProxyHandler proxyHandler,
                                    final ArgumentExtractor argumentExtractor,
-                                   final MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
-                                   final AuthenticationContextValidator authenticationContextValidator,
+                                   final RequestedContextValidator requestedContextValidator,
                                    final View jsonView,
                                    final View successView, final View failureView,
                                    final String authnContextAttribute,
@@ -43,8 +40,7 @@ public class ProxyValidateController extends AbstractServiceValidateController {
                                    final boolean renewEnabled) {
         super(CollectionUtils.wrapSet(validationSpecification), validationAuthorizers,
             authenticationSystemSupport, servicesManager, centralAuthenticationService, proxyHandler,
-            successView, failureView, argumentExtractor, multifactorTriggerSelectionStrategy,
-            authenticationContextValidator, jsonView, authnContextAttribute, renewEnabled);
+            successView, failureView, argumentExtractor, requestedContextValidator, jsonView, authnContextAttribute, renewEnabled);
     }
 
     /**

@@ -1,8 +1,9 @@
 package org.apereo.cas.util.junit;
 
+import lombok.val;
 import org.junit.Assume;
-import org.junit.rules.MethodRule;
-import org.junit.runners.model.FrameworkMethod;
+import org.junit.rules.TestRule;
+import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
 import java.lang.reflect.Modifier;
@@ -13,46 +14,47 @@ import java.lang.reflect.Modifier;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-public class ConditionalIgnoreRule implements MethodRule {
-    @Override
-    public Statement apply(final Statement base, final FrameworkMethod method, final Object target) {
-        var result = base;
-        if (hasConditionalIgnoreAnnotation(method)) {
-            final var condition = getIgnoreCondition(target, method);
-            if (condition.isSatisfied()) {
-                result = new IgnoreStatement(condition);
-            }
-        }
-        return result;
-    }
-
+public class ConditionalIgnoreRule implements TestRule {
     /**
      * Has conditional ignore annotation boolean.
      *
-     * @param method the method
+     * @param target the target
      * @return the boolean
      */
-    private static boolean hasConditionalIgnoreAnnotation(final FrameworkMethod method) {
-        return method.getAnnotation(ConditionalIgnore.class) != null;
+    private static boolean hasConditionalIgnoreAnnotation(final Description target) {
+        return target.getTestClass().isAnnotationPresent(ConditionalIgnore.class) || target.getAnnotation(ConditionalIgnore.class) != null;
     }
 
     /**
      * Gets ignore condition.
      *
      * @param target the target
-     * @param method the method
      * @return the ignore condition
      */
-    private static IgnoreCondition getIgnoreCondition(final Object target, final FrameworkMethod method) {
-        final var annotation = method.getAnnotation(ConditionalIgnore.class);
+    private static IgnoreCondition getIgnoreCondition(final Description target) {
+        var annotation = target.getAnnotation(ConditionalIgnore.class);
+        if (annotation == null) {
+            annotation = target.getTestClass().getAnnotation(ConditionalIgnore.class);
+        }
         return new IgnoreConditionCreator(target, annotation).create();
+    }
+
+    @Override
+    public Statement apply(final Statement base, final Description target) {
+        if (hasConditionalIgnoreAnnotation(target)) {
+            val condition = getIgnoreCondition(target);
+            if (!condition.isSatisfied()) {
+                return new IgnoreStatement(condition);
+            }
+        }
+        return base;
     }
 
     /**
      * The type Ignore condition creator.
      */
     private static class IgnoreConditionCreator {
-        private final Object target;
+        private final Description target;
         private final Class<? extends IgnoreCondition> conditionType;
 
         /**
@@ -61,7 +63,7 @@ public class ConditionalIgnoreRule implements MethodRule {
          * @param target     the target
          * @param annotation the annotation
          */
-        IgnoreConditionCreator(final Object target, final ConditionalIgnore annotation) {
+        IgnoreConditionCreator(final Description target, final ConditionalIgnore annotation) {
             this.target = target;
             this.conditionType = annotation.condition();
         }
@@ -87,13 +89,10 @@ public class ConditionalIgnoreRule implements MethodRule {
          * @throws Exception the exception
          */
         private IgnoreCondition createCondition() throws Exception {
-            final IgnoreCondition result;
             if (isConditionTypeStandalone()) {
-                result = conditionType.getDeclaredConstructor().newInstance();
-            } else {
-                result = conditionType.getDeclaredConstructor(target.getClass()).newInstance(target);
+                return conditionType.getDeclaredConstructor().newInstance();
             }
-            return result;
+            return conditionType.getDeclaredConstructor(target.getClass()).newInstance(target);
         }
 
         /**
@@ -101,7 +100,7 @@ public class ConditionalIgnoreRule implements MethodRule {
          */
         private void checkConditionType() {
             if (!isConditionTypeStandalone() && !isConditionTypeDeclaredInTarget()) {
-                final var msg
+                val msg
                     = "Conditional class '%s' is a member class "
                     + "but was not declared inside the test case using it.\n"
                     + "Either make this class a static class, "

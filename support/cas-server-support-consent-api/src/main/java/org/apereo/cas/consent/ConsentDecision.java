@@ -1,6 +1,8 @@
 package org.apereo.cas.consent;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
@@ -13,10 +15,6 @@ import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-import lombok.ToString;
-import lombok.Getter;
-import lombok.Setter;
-
 /**
  * This is {@link ConsentDecision}.
  *
@@ -25,7 +23,6 @@ import lombok.Setter;
  */
 @Entity
 @Table(name = "ConsentDecision")
-@Slf4j
 @ToString
 @Getter
 @Setter

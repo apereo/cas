@@ -1,9 +1,10 @@
 package org.apereo.cas.configuration.model.support.oidc;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
@@ -21,7 +22,6 @@ import java.util.stream.Stream;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-oidc")
-
 @Getter
 @Setter
 public class OidcProperties implements Serializable {
@@ -85,4 +85,34 @@ public class OidcProperties implements Serializable {
      * that should take its place and value.
      */
     private Map<String, String> claimsMap = new HashMap<>();
+
+    /**
+     * Supported response types.
+     */
+    private List<String> responseTypesSupported = Stream.of("code", "token", "id_token token").collect(Collectors.toList());
+
+    /**
+     * Supported authentication methods for introspection.
+     */
+    private List<String> introspectionSupportedAuthenticationMethods = Stream.of("client_secret_basic").collect(Collectors.toList());
+
+    /**
+     * Supported claim types.
+     */
+    private List<String> claimTypesSupported = Stream.of("normal").collect(Collectors.toList());
+
+    /**
+     * Supported grant types.
+     */
+    private List<String> grantTypesSupported = Stream.of("authorization_code", "password", "client_credentials", "refresh_token").collect(Collectors.toList());
+
+    /**
+     * Supported grant types.
+     */
+    private List<String> idTokenSigningAlgValuesSupported = Stream.of("none", "RS256").collect(Collectors.toList());
+
+    /**
+     * List of client authentication methods supported by token endpoint.
+     */
+    private List<String> tokenEndpointAuthMethodsSupported = Stream.of("client_secret_basic", "client_secret_post").collect(Collectors.toList());
 }

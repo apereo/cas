@@ -1,12 +1,13 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
 import org.apereo.cas.aup.LdapAcceptableUsagePolicyRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.LdapUtils;
-import org.ldaptive.ConnectionFactory;
+
+import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -24,12 +25,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("casAcceptableUsagePolicyLdapConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.acceptableUsagePolicy", name = "enabled", havingValue = "true", matchIfMissing = true)
-@Slf4j
 public class CasAcceptableUsagePolicyLdapConfiguration {
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
-    private TicketRegistrySupport ticketRegistrySupport;
+    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -37,10 +37,10 @@ public class CasAcceptableUsagePolicyLdapConfiguration {
     @RefreshScope
     @Bean
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
-        final var ldap = casProperties.getAcceptableUsagePolicy().getLdap();
-        final ConnectionFactory connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
-        return new LdapAcceptableUsagePolicyRepository(ticketRegistrySupport,
-                casProperties.getAcceptableUsagePolicy().getAupAttributeName(),
-                connectionFactory, ldap.getSearchFilter(), ldap.getBaseDn());
+        val ldap = casProperties.getAcceptableUsagePolicy().getLdap();
+        val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
+        return new LdapAcceptableUsagePolicyRepository(ticketRegistrySupport.getIfAvailable(),
+            casProperties.getAcceptableUsagePolicy().getAupAttributeName(),
+            connectionFactory, ldap.getSearchFilter(), ldap.getBaseDn());
     }
 }

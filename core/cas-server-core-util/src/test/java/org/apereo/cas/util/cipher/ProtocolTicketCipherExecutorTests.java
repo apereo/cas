@@ -1,5 +1,6 @@
 package org.apereo.cas.util.cipher;
 
+import lombok.val;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -13,8 +14,8 @@ import static org.junit.Assert.*;
 public class ProtocolTicketCipherExecutorTests {
     @Test
     public void verifyAction() {
-        final var cipher = new ProtocolTicketCipherExecutor();
-        final var encoded = cipher.encode("ST-1234567890");
+        val cipher = new ProtocolTicketCipherExecutor();
+        val encoded = cipher.encode("ST-1234567890");
         assertEquals("ST-1234567890", cipher.decode(encoded));
         assertNotNull(cipher.getName());
         assertNotNull(cipher.getSigningKeySetting());

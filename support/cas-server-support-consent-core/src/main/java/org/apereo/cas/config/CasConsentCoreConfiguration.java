@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
@@ -15,8 +14,12 @@ import org.apereo.cas.consent.DefaultConsentEngine;
 import org.apereo.cas.consent.GroovyConsentRepository;
 import org.apereo.cas.consent.InMemoryConsentRepository;
 import org.apereo.cas.consent.JsonConsentRepository;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
@@ -42,11 +45,11 @@ public class CasConsentCoreConfiguration implements AuditTrailRecordResolutionPl
 
     @Autowired
     @Qualifier("authenticationActionResolver")
-    private AuditActionResolver authenticationActionResolver;
+    private ObjectProvider<AuditActionResolver> authenticationActionResolver;
 
     @Autowired
     @Qualifier("returnValueResourceResolver")
-    private AuditResourceResolver returnValueResourceResolver;
+    private ObjectProvider<AuditResourceResolver> returnValueResourceResolver;
 
     @ConditionalOnMissingBean(name = "consentEngine")
     @Bean
@@ -59,10 +62,14 @@ public class CasConsentCoreConfiguration implements AuditTrailRecordResolutionPl
     @Bean
     @RefreshScope
     public CipherExecutor consentCipherExecutor() {
-        final var consent = casProperties.getConsent();
-        final var crypto = consent.getCrypto();
+        val consent = casProperties.getConsent();
+        val crypto = consent.getCrypto();
         if (crypto.isEnabled()) {
-            return new AttributeReleaseConsentCipherExecutor(crypto.getEncryption().getKey(), crypto.getSigning().getKey(), crypto.getAlg());
+            return new AttributeReleaseConsentCipherExecutor(crypto.getEncryption().getKey(),
+                crypto.getSigning().getKey(),
+                crypto.getAlg(),
+                crypto.getSigning().getKeySize(),
+                crypto.getEncryption().getKeySize());
         }
         LOGGER.debug("Consent attributes stored by CAS are not signed/encrypted.");
         return CipherExecutor.noOp();
@@ -79,14 +86,14 @@ public class CasConsentCoreConfiguration implements AuditTrailRecordResolutionPl
     @Bean
     @RefreshScope
     public ConsentRepository consentRepository() {
-        final var location = casProperties.getConsent().getJson().getLocation();
+        val location = casProperties.getConsent().getJson().getLocation();
         if (location != null) {
             LOGGER.warn("Storing consent records in [{}]. This MAY NOT be appropriate in production. "
                 + "Consider choosing an alternative repository format for storing consent decisions", location);
             return new JsonConsentRepository(location);
         }
 
-        final var groovy = casProperties.getConsent().getGroovy().getLocation();
+        val groovy = casProperties.getConsent().getGroovy().getLocation();
         if (groovy != null) {
             return new GroovyConsentRepository(groovy);
         }
@@ -97,8 +104,8 @@ public class CasConsentCoreConfiguration implements AuditTrailRecordResolutionPl
 
     @Override
     public void configureAuditTrailRecordResolutionPlan(final AuditTrailRecordResolutionPlan plan) {
-        plan.registerAuditActionResolver("SAVE_CONSENT_ACTION_RESOLVER", this.authenticationActionResolver);
-        plan.registerAuditResourceResolver("SAVE_CONSENT_RESOURCE_RESOLVER", this.returnValueResourceResolver);
+        plan.registerAuditActionResolver("SAVE_CONSENT_ACTION_RESOLVER", authenticationActionResolver.getIfAvailable());
+        plan.registerAuditResourceResolver("SAVE_CONSENT_RESOURCE_RESOLVER", returnValueResourceResolver.getIfAvailable());
     }
 
     @Bean

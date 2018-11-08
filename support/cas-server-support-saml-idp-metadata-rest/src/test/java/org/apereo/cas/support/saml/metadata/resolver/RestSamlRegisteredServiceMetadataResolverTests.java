@@ -1,10 +1,6 @@
 package org.apereo.cas.support.saml.metadata.resolver;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
-import org.apereo.cas.category.FileSystemCategory;
+import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -39,12 +35,17 @@ import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
+import lombok.val;
+import org.apache.commons.io.IOUtils;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.After;
-import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -68,7 +69,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Category(FileSystemCategory.class)
+@Category(RestfulApiCategory.class)
 @SpringBootTest(classes = {
     SamlIdPRestMetadataConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
@@ -103,9 +104,11 @@ import static org.junit.Assert.*;
     CoreSamlConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasCoreUtilConfiguration.class})
-@TestPropertySource(locations = {"classpath:/rest.properties"})
+@TestPropertySource(properties = {
+    "cas.authn.samlIdp.metadata.rest.url=http://localhost:8078",
+    "cas.authn.samlIdp.metadata.location=file:/tmp"
+})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class RestSamlRegisteredServiceMetadataResolverTests {
 
     @ClassRule
@@ -125,12 +128,12 @@ public class RestSamlRegisteredServiceMetadataResolverTests {
     @Before
     @SneakyThrows
     public void initialize() {
-        final var doc = new SamlMetadataDocument();
+        val doc = new SamlMetadataDocument();
         doc.setId(1);
         doc.setName("SAML Document");
         doc.setSignature(null);
         doc.setValue(IOUtils.toString(new ClassPathResource("sp-metadata.xml").getInputStream(), StandardCharsets.UTF_8));
-        final var data = MAPPER.writeValueAsString(doc);
+        val data = MAPPER.writeValueAsString(doc);
 
         this.webServer = new MockWebServer(8078,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
@@ -146,13 +149,13 @@ public class RestSamlRegisteredServiceMetadataResolverTests {
 
     @Test
     public void verifyRestEndpointProducesMetadata() {
-        final var service = new SamlRegisteredService();
+        val service = new SamlRegisteredService();
         service.setName("SAML Wiki Service");
         service.setServiceId("https://carmenwiki.osu.edu/shibboleth");
         service.setDescription("Testing");
         service.setMetadataLocation("rest://");
         assertTrue(resolver.supports(service));
-        final var resolvers = resolver.resolve(service);
+        val resolvers = resolver.resolve(service);
         assertTrue(resolvers.size() == 1);
     }
 }

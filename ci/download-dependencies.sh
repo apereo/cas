@@ -1,4 +1,22 @@
 #!/bin/bash
+source ./ci/functions.sh
+
+runBuild=false
+echo "Reviewing changes that might affect the Gradle build dependencies..."
+currentChangeSetAffectsDependencies
+retval=$?
+if [ "$retval" == 0 ]
+then
+    echo "Found changes that require the build to download dependencies."
+    runBuild=true
+else
+    echo "Changes do NOT affect project dependencies."
+    runBuild=false
+fi
+
+if [ "$runBuild" = false ]; then
+    exit 0
+fi
 
 prepCommand="echo 'Running command...'; "
 gradle="./gradlew $@"
@@ -9,10 +27,18 @@ echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-gradleBuild="$gradleBuild downloadDependencies --parallel "
+gradleBuild="$gradleBuild downloadDependencies --parallel --refresh-dependencies "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
     gradleBuild="$gradleBuild -DshowStandardStreams=true "
+fi
+
+if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[rerun tasks]"* ]]; then
+    gradleBuild="$gradleBuild --rerun-tasks "
+fi
+
+if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[refresh dependencies]"* ]]; then
+    gradleBuild="$gradleBuild --refresh-dependencies "
 fi
 
 if [ -z "$gradleBuild" ]; then
@@ -38,6 +64,7 @@ else
 
     if [ $retVal == 0 ]; then
         echo "Gradle build finished successfully."
+        exit 0
     else
         echo "Gradle build did NOT finish successfully."
         exit $retVal

@@ -28,12 +28,32 @@ public class RelaxedPropertyNames implements Iterable<String> {
         initialize(RelaxedPropertyNames.this.name, this.values);
     }
 
+    /**
+     * Return a relaxed name for the given source camelCase source name.
+     *
+     * @param name the source name in camelCase
+     * @return the relaxed names
+     */
+    public static RelaxedPropertyNames forCamelCase(final String name) {
+        final var result = new StringBuilder();
+        for (final var c : name.toCharArray()) {
+            result.append(Character.isUpperCase(c) && result.length() > 0
+                && result.charAt(result.length() - 1) != '-'
+                ? "-" + Character.toLowerCase(c) : c);
+        }
+        return new RelaxedPropertyNames(result.toString());
+    }
+
+    public Set<String> getValues() {
+        return values;
+    }
+
     @Override
     public Iterator<String> iterator() {
         return this.values.iterator();
     }
 
-    private void initialize(final String name, final Set<String> values) {
+    private static void initialize(final String name, final Set<String> values) {
         if (values.contains(name)) {
             return;
         }
@@ -180,8 +200,6 @@ public class RelaxedPropertyNames implements Iterable<String> {
 
         private static final char[] SUFFIXES = new char[]{'_', '-', '.'};
 
-        public abstract String apply(String value);
-
         private static String separatedToCamelCase(final String value, final boolean caseInsensitive) {
             if (value.isEmpty()) {
                 return value;
@@ -202,22 +220,8 @@ public class RelaxedPropertyNames implements Iterable<String> {
             return builder.toString();
         }
 
-    }
+        public abstract String apply(String value);
 
-    /**
-     * Return a relaxed name for the given source camelCase source name.
-     *
-     * @param name the source name in camelCase
-     * @return the relaxed names
-     */
-    public static RelaxedPropertyNames forCamelCase(final String name) {
-        final var result = new StringBuilder();
-        for (final var c : name.toCharArray()) {
-            result.append(Character.isUpperCase(c) && result.length() > 0
-                && result.charAt(result.length() - 1) != '-'
-                ? "-" + Character.toLowerCase(c) : c);
-        }
-        return new RelaxedPropertyNames(result.toString());
     }
 
 }

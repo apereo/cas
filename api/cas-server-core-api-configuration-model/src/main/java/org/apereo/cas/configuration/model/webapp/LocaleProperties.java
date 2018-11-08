@@ -1,9 +1,11 @@
 package org.apereo.cas.configuration.model.webapp;
 
 import org.apereo.cas.configuration.support.RequiresModule;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * Configuration properties class for locale.
@@ -12,7 +14,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-web")
-
 @Getter
 @Setter
 public class LocaleProperties implements Serializable {

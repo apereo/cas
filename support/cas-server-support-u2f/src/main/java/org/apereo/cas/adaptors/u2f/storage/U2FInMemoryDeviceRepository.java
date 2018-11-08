@@ -5,7 +5,7 @@ import com.yubico.u2f.data.DeviceRegistration;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -34,8 +34,8 @@ public class U2FInMemoryDeviceRepository extends BaseU2FDeviceRepository {
 
     @Override
     @SneakyThrows
-    public List<DeviceRegistration> getRegisteredDevices(final String username) {
-        final var registrations = userStorage.get(username).values()
+    public Collection<? extends DeviceRegistration> getRegisteredDevices(final String username) {
+        return userStorage.get(username).values()
             .stream()
             .map(r -> {
                 try {
@@ -47,7 +47,6 @@ public class U2FInMemoryDeviceRepository extends BaseU2FDeviceRepository {
             })
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
-        return registrations;
     }
 
     @Override

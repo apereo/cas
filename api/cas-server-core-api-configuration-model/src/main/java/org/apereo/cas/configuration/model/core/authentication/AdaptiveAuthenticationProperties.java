@@ -1,9 +1,11 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.Getter;
 import lombok.Setter;
-import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,6 +45,12 @@ public class AdaptiveAuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private RiskBasedAuthenticationProperties risk = new RiskBasedAuthenticationProperties();
+
+    /**
+     * Control settings that handle and calculate IP intelligence, etc.
+     */
+    @NestedConfigurationProperty
+    private AdaptiveAuthenticationIPIntelligenceProperties ipIntel = new AdaptiveAuthenticationIPIntelligenceProperties();
 
     /**
      * A map of ({@code mfaProviderId -> adaptiveRegexPattern}) that tells CAS when to trigger an MFA authentication transaction.

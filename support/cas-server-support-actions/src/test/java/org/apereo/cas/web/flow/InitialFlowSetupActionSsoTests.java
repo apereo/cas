@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -27,10 +26,12 @@ import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.config.CasSupportActionsConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+
+import lombok.val;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -43,7 +44,8 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
@@ -53,7 +55,6 @@ import org.springframework.webflow.test.MockRequestContext;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
     InitialFlowSetupActionSsoTests.CasTestConfiguration.class,
     CasSupportActionsConfiguration.class,
@@ -83,8 +84,27 @@ import org.springframework.webflow.test.MockRequestContext;
     CasCoreServicesConfiguration.class})
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @TestPropertySource(properties = "cas.sso.allowMissingServiceParameter=false")
-@Slf4j
 public class InitialFlowSetupActionSsoTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+    @Autowired
+    @Qualifier("initialFlowSetupAction")
+    private Action action;
+
+    @Test
+    public void disableFlowIfNoService() throws Exception {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        this.thrown.expect(NoSuchFlowExecutionException.class);
+        this.action.execute(context);
+    }
 
     @TestConfiguration
     public static class CasTestConfiguration implements InitializingBean {
@@ -95,21 +115,5 @@ public class InitialFlowSetupActionSsoTests {
         public void afterPropertiesSet() {
             SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
         }
-    }
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
-    @Autowired
-    @Qualifier("initialFlowSetupAction")
-    private Action action;
-
-    @Test
-    public void disableFlowIfNoService() throws Exception {
-        final var context = new MockRequestContext();
-        final var request = new MockHttpServletRequest();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        this.thrown.expect(NoSuchFlowExecutionException.class);
-        this.action.execute(context);
     }
 }

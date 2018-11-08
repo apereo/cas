@@ -1,8 +1,5 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.security.AddResponseHeadersFilter;
 import org.apereo.cas.security.RequestParameterPolicyEnforcementFilter;
@@ -11,6 +8,11 @@ import org.apereo.cas.services.web.support.RegisteredServiceResponseHeadersEnfor
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.AuthenticationCredentialsThreadLocalBinderClearingFilter;
+
+import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -26,7 +28,6 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.filter.CorsFilter;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link CasFiltersConfiguration} that attempts to create Spring-managed beans
@@ -37,26 +38,25 @@ import java.util.Map;
  */
 @Configuration("casFiltersConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CasFiltersConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("argumentExtractor")
-    private ArgumentExtractor argumentExtractor;
+    private ObjectProvider<ArgumentExtractor> argumentExtractor;
 
     @RefreshScope
     @Bean
     @Lazy
     public FilterRegistrationBean characterEncodingFilter() {
-        final var bean = new FilterRegistrationBean();
-        final var web = casProperties.getHttpWebRequest().getWeb();
+        val bean = new FilterRegistrationBean();
+        val web = casProperties.getHttpWebRequest().getWeb();
         bean.setFilter(new CharacterEncodingFilter(web.getEncoding(), web.isForceEncoding()));
         bean.setUrlPatterns(CollectionUtils.wrap("/*"));
         bean.setName("characterEncodingFilter");
@@ -68,8 +68,8 @@ public class CasFiltersConfiguration {
     @Bean
     @Lazy
     public FilterRegistrationBean responseHeadersFilter() {
-        final var bean = new FilterRegistrationBean();
-        final var filter = new AddResponseHeadersFilter();
+        val bean = new FilterRegistrationBean();
+        val filter = new AddResponseHeadersFilter();
         filter.setHeadersMap(casProperties.getHttpWebRequest().getCustomHeaders());
         bean.setFilter(filter);
         bean.setUrlPatterns(CollectionUtils.wrap("/*"));
@@ -83,9 +83,9 @@ public class CasFiltersConfiguration {
     @Bean
     @RefreshScope
     public FilterRegistrationBean casCorsFilter() {
-        final var cors = casProperties.getHttpWebRequest().getCors();
-        final var source = new UrlBasedCorsConfigurationSource();
-        final var config = new CorsConfiguration();
+        val cors = casProperties.getHttpWebRequest().getCors();
+        val source = new UrlBasedCorsConfigurationSource();
+        val config = new CorsConfiguration();
         config.setAllowCredentials(cors.isEnabled());
         config.setAllowedOrigins(cors.getAllowOrigins());
         config.setAllowedMethods(cors.getAllowMethods());
@@ -93,7 +93,7 @@ public class CasFiltersConfiguration {
         config.setMaxAge(cors.getMaxAge());
         config.setExposedHeaders(cors.getExposedHeaders());
         source.registerCorsConfiguration("/**", config);
-        final var bean = new FilterRegistrationBean(new CorsFilter(source));
+        val bean = new FilterRegistrationBean(new CorsFilter(source));
         bean.setName("casCorsFilter");
         bean.setAsyncSupported(true);
         bean.setOrder(0);
@@ -104,8 +104,8 @@ public class CasFiltersConfiguration {
     @RefreshScope
     @Bean
     public FilterRegistrationBean responseHeadersSecurityFilter() {
-        final var header = casProperties.getHttpWebRequest().getHeader();
-        final Map<String, String> initParams = new HashMap<>();
+        val header = casProperties.getHttpWebRequest().getHeader();
+        val initParams = new HashMap<String, String>();
         initParams.put("enableCacheControl", BooleanUtils.toStringTrueFalse(header.isCache()));
         initParams.put("enableXContentTypeOptions", BooleanUtils.toStringTrueFalse(header.isXcontent()));
         initParams.put("enableStrictTransportSecurity", BooleanUtils.toStringTrueFalse(header.isHsts()));
@@ -120,8 +120,8 @@ public class CasFiltersConfiguration {
         if (StringUtils.isNotBlank(header.getContentSecurityPolicy())) {
             initParams.put("contentSecurityPolicy", header.getContentSecurityPolicy());
         }
-        final var bean = new FilterRegistrationBean();
-        bean.setFilter(new RegisteredServiceResponseHeadersEnforcementFilter(servicesManager, argumentExtractor));
+        val bean = new FilterRegistrationBean();
+        bean.setFilter(new RegisteredServiceResponseHeadersEnforcementFilter(servicesManager.getIfAvailable(), argumentExtractor.getIfAvailable()));
         bean.setUrlPatterns(CollectionUtils.wrap("/*"));
         bean.setInitParameters(initParams);
         bean.setName("responseHeadersSecurityFilter");
@@ -133,7 +133,7 @@ public class CasFiltersConfiguration {
     @RefreshScope
     @Bean
     public FilterRegistrationBean requestParameterSecurityFilter() {
-        final Map<String, String> initParams = new HashMap<>();
+        val initParams = new HashMap<String, String>();
         initParams.put(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK,
             casProperties.getHttpWebRequest().getParamsToCheck());
         initParams.put(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID, "none");
@@ -142,7 +142,7 @@ public class CasFiltersConfiguration {
         initParams.put(RequestParameterPolicyEnforcementFilter.ONLY_POST_PARAMETERS,
             casProperties.getHttpWebRequest().getOnlyPostParams());
 
-        final var bean = new FilterRegistrationBean();
+        val bean = new FilterRegistrationBean();
         bean.setFilter(new RequestParameterPolicyEnforcementFilter());
         bean.setUrlPatterns(CollectionUtils.wrap("/*"));
         bean.setName("requestParameterSecurityFilter");
@@ -153,7 +153,7 @@ public class CasFiltersConfiguration {
 
     @Bean
     public FilterRegistrationBean currentCredentialsAndAuthenticationClearingFilter() {
-        final var bean = new FilterRegistrationBean();
+        val bean = new FilterRegistrationBean();
         bean.setFilter(new AuthenticationCredentialsThreadLocalBinderClearingFilter());
         bean.setUrlPatterns(CollectionUtils.wrap("/*"));
         bean.setName("currentCredentialsAndAuthenticationClearingFilter");

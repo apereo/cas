@@ -1,10 +1,12 @@
 package org.apereo.cas.web.support;
 
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -43,7 +45,7 @@ public class DefaultArgumentExtractor extends AbstractArgumentExtractor {
     @Override
     public WebApplicationService extractServiceInternal(final HttpServletRequest request) {
         return getServiceFactories().stream().map(factory -> {
-            final WebApplicationService service = factory.createService(request);
+            val service = factory.createService(request);
             if (service != null) {
                 LOGGER.trace("Created [{}] based on [{}]", service, factory);
                 return service;

@@ -1,12 +1,12 @@
 package org.apereo.cas;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.impl.calcs.DateTimeAuthenticationRequestRiskCalculatorTests;
 import org.apereo.cas.impl.calcs.GeoLocationAuthenticationRequestRiskCalculatorTests;
 import org.apereo.cas.impl.calcs.IpAddressAuthenticationRequestRiskCalculatorTests;
 import org.apereo.cas.impl.calcs.UserAgentAuthenticationRequestRiskCalculatorTests;
 import org.apereo.cas.impl.notify.AuthenticationRiskEmailNotifierTests;
 import org.apereo.cas.impl.notify.AuthenticationRiskSmsNotifierTests;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -25,6 +25,5 @@ import org.junit.runners.Suite;
     AuthenticationRiskEmailNotifierTests.class,
     AuthenticationRiskSmsNotifierTests.class
 })
-@Slf4j
 public class AllTestsSuite {
 }

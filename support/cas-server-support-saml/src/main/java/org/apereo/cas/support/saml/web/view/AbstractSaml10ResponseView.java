@@ -1,13 +1,18 @@
 package org.apereo.cas.support.saml.web.view;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.authentication.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.services.web.view.AbstractCasView;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
+import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
+import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 import org.apereo.cas.web.support.ArgumentExtractor;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.opensaml.saml.saml1.core.Response;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,7 +33,7 @@ import java.util.Map;
 @Slf4j
 public abstract class AbstractSaml10ResponseView extends AbstractCasView {
 
-    
+
     /**
      * The Saml object builder.
      */
@@ -38,7 +43,7 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
      * Skew time.
      **/
     protected final int skewAllowance;
-    
+
     /**
      * Assertion validity period length.
      **/
@@ -48,49 +53,18 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
 
     private final String encoding;
 
-
-    /**
-     * Instantiates a new Abstract saml 10 response view.
-     *
-     * @param successResponse                the success response
-     * @param protocolAttributeEncoder       the protocol attribute encoder
-     * @param servicesManager                the services manager
-     * @param authenticationContextAttribute the authentication context attribute
-     * @param samlObjectBuilder              the saml object builder
-     * @param samlArgumentExtractor          the saml argument extractor
-     * @param encoding                       Sets the character encoding in the HTTP response.
-     * @param skewAllowance                  Sets the allowance for time skew in seconds
-     *                                       between CAS and the client server.  Default 0s. This value will be
-     *                                       subtracted from the current time when setting the SAML
-     *                                       {@code NotBeforeDate} attribute, thereby allowing for the
-     *                                       CAS server to be ahead of the client by as much as the value defined here.
-     *                                       Skewing of the issue instant via setting this property
-     *                                       applies to all saml assertions that are issued by CAS and it
-     *                                       currently cannot be controlled on a per relying party basis.
-     *                                       Before configuring this, it is recommended that each service provider
-     *                                       attempt to correctly sync their system time with an NTP server
-     *                                       so as to match the CAS server's issue instant config and to
-     *                                       avoid applying this setting globally. This should only
-     *                                       be used in situations where the NTP server is unresponsive to
-     *                                       sync time on the client, or the client is simply unable
-     *                                       to adjust their server time configuration.
-     * @param issueLength                    Sets the length of time in seconds between the {@code NotBefore}
-     *                                       and {@code NotOnOrAfter} attributes in the SAML assertion. Default 30s.
-     * @param authAttrReleasePolicy          This policy controls which authentication attributes get released in a
-     *                                       validation response.
-     */
     public AbstractSaml10ResponseView(final boolean successResponse,
                                       final ProtocolAttributeEncoder protocolAttributeEncoder,
                                       final ServicesManager servicesManager,
-                                      final String authenticationContextAttribute,
                                       final Saml10ObjectBuilder samlObjectBuilder,
                                       final ArgumentExtractor samlArgumentExtractor,
                                       final String encoding,
                                       final int skewAllowance,
                                       final int issueLength,
-                                      final AuthenticationAttributeReleasePolicy authAttrReleasePolicy) {
-        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute,
-                authAttrReleasePolicy);
+                                      final AuthenticationAttributeReleasePolicy authAttrReleasePolicy,
+                                      final AuthenticationServiceSelectionPlan serviceSelectionStrategy,
+                                      final CasProtocolAttributesRenderer attributesRenderer) {
+        super(successResponse, protocolAttributeEncoder, servicesManager, authAttrReleasePolicy, serviceSelectionStrategy, attributesRenderer);
         this.samlObjectBuilder = samlObjectBuilder;
         this.samlArgumentExtractor = samlArgumentExtractor;
         this.encoding = encoding;
@@ -101,36 +75,24 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
     }
 
     @Override
-    protected void renderMergedOutputModel(final Map<String, Object> model, 
-                                           final HttpServletRequest request, 
+    protected void renderMergedOutputModel(final Map<String, Object> model,
+                                           final HttpServletRequest request,
                                            final HttpServletResponse response) throws Exception {
-
-        String serviceId = null;
         try {
             response.setCharacterEncoding(this.encoding);
-            final var service = this.samlArgumentExtractor.extractService(request);
-            if (service == null || StringUtils.isBlank(service.getId())) {
-                serviceId = "UNKNOWN";
-            } else {
-                try {
-                    serviceId = new URL(service.getId()).getHost();
-                } catch (final MalformedURLException e) {
-                    LOGGER.debug(e.getMessage(), e);
-                }
-            }
+            val service = this.samlArgumentExtractor.extractService(request);
+            val serviceId = getServiceIdFromRequest(service);
 
             LOGGER.debug("Using [{}] as the recipient of the SAML response for [{}]", serviceId, service);
-            final var samlResponse = this.samlObjectBuilder.newResponse(
-                    this.samlObjectBuilder.generateSecureRandomId(),
-                    ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(this.skewAllowance), serviceId, service);
+            val samlResponse = this.samlObjectBuilder.newResponse(
+                this.samlObjectBuilder.generateSecureRandomId(),
+                ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(this.skewAllowance), serviceId, service);
             LOGGER.debug("Created SAML response for service [{}]", serviceId);
-            
             prepareResponse(samlResponse, model);
-
             LOGGER.debug("Starting to encode SAML response for service [{}]", serviceId);
             this.samlObjectBuilder.encodeSamlResponse(response, request, samlResponse);
         } catch (final Exception e) {
-            LOGGER.error("Error generating SAML response for service [{}].", serviceId, e);
+            LOGGER.error("Error generating SAML response for service", e);
             throw e;
         }
     }
@@ -144,4 +106,15 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
      */
     protected abstract void prepareResponse(Response response, Map<String, Object> model);
 
+    private static String getServiceIdFromRequest(final Service service) {
+        if (service == null || StringUtils.isBlank(service.getId())) {
+            return "UNKNOWN";
+        }
+        try {
+            return new URL(service.getId()).getHost();
+        } catch (final MalformedURLException e) {
+            LOGGER.debug(e.getMessage(), e);
+        }
+        return null;
+    }
 }

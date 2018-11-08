@@ -2,6 +2,8 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.val;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -13,6 +15,7 @@ import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
 
 import static org.junit.Assert.*;
+
 /**
  * This is {@link PrepareForPasswordlessAuthenticationActionTests}.
  *
@@ -26,8 +29,8 @@ public class PrepareForPasswordlessAuthenticationActionTests extends BasePasswor
 
     @Test
     public void verifyAction() throws Exception {
-        final var context = new MockRequestContext();
-        final var request = new MockHttpServletRequest();
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         assertEquals(PasswordlessAuthenticationWebflowConfigurer.TRANSITION_ID_PASSWORDLESS_GET_USERID, initializeLoginAction.execute(context).getId());
 

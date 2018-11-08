@@ -1,12 +1,14 @@
 package org.apereo.cas.util.cipher;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.util.EncodingUtils;
-import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.val;
+
+import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 
 /**
  * A cipher executor that does compression/base64.
@@ -14,7 +16,6 @@ import lombok.NoArgsConstructor;
  * @author Misagh Moayyed
  * @since 5.1
  */
-@Slf4j
 @Getter
 @NoArgsConstructor
 public class Base64CipherExecutor extends AbstractCipherExecutor<Serializable, String> {
@@ -40,7 +41,7 @@ public class Base64CipherExecutor extends AbstractCipherExecutor<Serializable, S
 
     @Override
     public String decode(final Serializable value, final Object[] parameters) {
-        final var decoded = EncodingUtils.decodeBase64(value.toString());
+        val decoded = EncodingUtils.decodeBase64(value.toString());
         return new String(decoded, StandardCharsets.UTF_8);
     }
 }

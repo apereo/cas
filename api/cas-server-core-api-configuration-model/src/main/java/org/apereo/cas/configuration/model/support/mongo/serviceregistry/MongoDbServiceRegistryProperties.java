@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.mongo.serviceregistry;
 
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +13,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-mongo-service-registry")
-
 @Getter
 @Setter
 public class MongoDbServiceRegistryProperties extends SingleCollectionMongoDbProperties {

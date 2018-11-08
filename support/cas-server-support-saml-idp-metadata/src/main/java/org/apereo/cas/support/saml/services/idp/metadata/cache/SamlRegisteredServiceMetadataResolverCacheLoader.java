@@ -1,19 +1,20 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
-import com.github.benmanes.caffeine.cache.CacheLoader;
-import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
-import lombok.Synchronized;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlan;
 import org.apereo.cas.util.http.HttpClient;
+
+import com.github.benmanes.caffeine.cache.CacheLoader;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.Synchronized;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -26,18 +27,18 @@ import java.util.Objects;
  * @since 5.0.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLoader<SamlRegisteredServiceCacheKey, MetadataResolver> {
 
     /**
      * The Config bean.
      */
-    protected OpenSamlConfigBean configBean;
+    protected final OpenSamlConfigBean configBean;
 
     /**
      * The Http client.
      */
-    protected HttpClient httpClient;
+    protected final HttpClient httpClient;
 
     private final SamlRegisteredServiceMetadataResolutionPlan metadataResolutionPlan;
 
@@ -46,21 +47,21 @@ public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLo
     @SneakyThrows
     public ChainingMetadataResolver load(final SamlRegisteredServiceCacheKey cacheKey) {
 
-        final var metadataResolver = new ChainingMetadataResolver();
-        final List<MetadataResolver> metadataResolvers = new ArrayList<>();
+        val metadataResolver = new ChainingMetadataResolver();
+        val metadataResolvers = new ArrayList<MetadataResolver>();
 
-        final var service = cacheKey.getRegisteredService();
-        final var availableResolvers = this.metadataResolutionPlan.getRegisteredMetadataResolvers();
+        val service = cacheKey.getRegisteredService();
+        val availableResolvers = this.metadataResolutionPlan.getRegisteredMetadataResolvers();
         LOGGER.debug("There are [{}] metadata resolver(s) available in the chain", availableResolvers.size());
         availableResolvers
             .stream()
             .filter(Objects::nonNull)
             .filter(r -> {
-                LOGGER.debug("Evaluating whether metadata resolver [{}] can support service [{}]", r.getName(), service.getName());
+                LOGGER.trace("Evaluating whether metadata resolver [{}] can support service [{}]", r.getName(), service.getName());
                 return r.supports(service);
             })
             .map(r -> {
-                LOGGER.debug("Metadata resolver [{}] has started to process metadata for [{}]", r.getName(), service.getName());
+                LOGGER.trace("Metadata resolver [{}] has started to process metadata for [{}]", r.getName(), service.getName());
                 return r.resolve(service);
             })
             .forEach(metadataResolvers::addAll);
@@ -70,7 +71,7 @@ public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLo
                 + " with metadata location " + service.getMetadataLocation());
         }
         metadataResolver.setId(ChainingMetadataResolver.class.getCanonicalName());
-        LOGGER.debug("There are [{}] eligible metadata resolver(s) for this request", availableResolvers.size());
+        LOGGER.trace("There are [{}] eligible metadata resolver(s) for this request", availableResolvers.size());
         metadataResolver.setResolvers(metadataResolvers);
         metadataResolver.initialize();
 

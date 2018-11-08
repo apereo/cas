@@ -5,28 +5,28 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
-import javax.persistence.JoinTable;
 import javax.persistence.Lob;
-import javax.persistence.OneToMany;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -47,7 +47,6 @@ import java.util.Map;
 @DiscriminatorColumn(name = "expression_type", length = 50, discriminatorType = DiscriminatorType.STRING, columnDefinition = "VARCHAR(50) DEFAULT 'regex'")
 @Table(name = "RegexRegisteredService")
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@Slf4j
 @ToString
 @Getter
 @Setter
@@ -102,11 +101,15 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     private RegisteredServiceUsernameAttributeProvider usernameAttributeProvider = new DefaultRegisteredServiceUsernameProvider();
 
     @Column(name = "logout_type")
-    private LogoutType logoutType = LogoutType.BACK_CHANNEL;
+    private RegisteredServiceLogoutType logoutType = RegisteredServiceLogoutType.BACK_CHANNEL;
 
     @Lob
     @Column(name = "required_handlers", length = Integer.MAX_VALUE)
     private HashSet<String> requiredHandlers = new HashSet<>();
+
+    @Lob
+    @Column(name = "environments", length = Integer.MAX_VALUE)
+    private HashSet<String> environments = new HashSet<>();
 
     @Lob
     @Column(name = "attribute_release", length = Integer.MAX_VALUE)
@@ -120,7 +123,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     private String logo;
 
     @Column(name = "logout_url")
-    private URL logoutUrl;
+    private String logoutUrl;
 
     @Lob
     @Column(name = "access_strategy", length = Integer.MAX_VALUE)
@@ -130,26 +133,24 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @Column(name = "public_key", length = Integer.MAX_VALUE)
     private RegisteredServicePublicKey publicKey;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name = "RegisteredServiceImpl_Props")
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Cascade(CascadeType.ALL)
+    @CollectionTable(name = "RegexRegisteredService_RegexRegisteredServiceProperty")
+    @MapKeyColumn(name = "RegexRegisteredServiceProperty_name")
+    @Column(name = "RegexRegisteredServiceProperty_value")
     private Map<String, DefaultRegisteredServiceProperty> properties = new HashMap<>();
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name = "RegisteredService_Contacts")
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Cascade(CascadeType.ALL)
+    @CollectionTable(name = "RegexRegisteredService_RegisteredServiceImplContact")
     @OrderColumn
     private List<DefaultRegisteredServiceContact> contacts = new ArrayList<>();
 
-    /**
-     * Initializes the registered service with default values
-     * for fields that are unspecified. Only triggered by JPA.
-     *
-     * @since 4.1
-     */
     @Override
     public void initialize() {
         this.proxyPolicy = ObjectUtils.defaultIfNull(this.proxyPolicy, new RefuseRegisteredServiceProxyPolicy());
         this.usernameAttributeProvider = ObjectUtils.defaultIfNull(this.usernameAttributeProvider, new DefaultRegisteredServiceUsernameProvider());
-        this.logoutType = ObjectUtils.defaultIfNull(this.logoutType, LogoutType.BACK_CHANNEL);
+        this.logoutType = ObjectUtils.defaultIfNull(this.logoutType, RegisteredServiceLogoutType.BACK_CHANNEL);
         this.requiredHandlers = ObjectUtils.defaultIfNull(this.requiredHandlers, new HashSet<>());
         this.accessStrategy = ObjectUtils.defaultIfNull(this.accessStrategy, new DefaultRegisteredServiceAccessStrategy());
         this.multifactorPolicy = ObjectUtils.defaultIfNull(this.multifactorPolicy, new DefaultRegisteredServiceMultifactorPolicy());
@@ -166,19 +167,13 @@ public abstract class AbstractRegisteredService implements RegisteredService {
      */
     public abstract void setServiceId(String id);
 
-    /**
-     * {@inheritDoc}
-     * Compares this instance with the {@code other} registered service based on
-     * evaluation order, name. The name comparison is case insensitive.
-     *
-     * @see #getEvaluationOrder()
-     */
     @Override
     public int compareTo(final RegisteredService other) {
-        return new CompareToBuilder().append(getEvaluationOrder(),
-            other.getEvaluationOrder()).append(StringUtils.defaultIfBlank(getName(), StringUtils.EMPTY).toLowerCase(),
-            StringUtils.defaultIfBlank(other.getName(), StringUtils.EMPTY).toLowerCase())
-            .append(getServiceId(), other.getServiceId()).append(getId(), other.getId()).toComparison();
+        return new CompareToBuilder()
+            .append(getEvaluationOrder(), other.getEvaluationOrder())
+            .append(StringUtils.defaultIfBlank(getName(), StringUtils.EMPTY).toLowerCase(), StringUtils.defaultIfBlank(other.getName(), StringUtils.EMPTY).toLowerCase())
+            .append(getServiceId(), other.getServiceId()).append(getId(), other.getId())
+            .toComparison();
     }
 
     /**
@@ -193,13 +188,13 @@ public abstract class AbstractRegisteredService implements RegisteredService {
         return (Map) this.properties;
     }
 
+    public void setProperties(final Map<String, RegisteredServiceProperty> properties) {
+        this.properties = (Map) properties;
+    }
+
     @Override
     public List<RegisteredServiceContact> getContacts() {
         return (List) this.contacts;
-    }
-
-    public void setProperties(final Map<String, RegisteredServiceProperty> properties) {
-        this.properties = (Map) properties;
     }
 
     public void setContacts(final List<RegisteredServiceContact> contacts) {

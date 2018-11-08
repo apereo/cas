@@ -1,13 +1,15 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.saml.sps.AbstractSamlSPProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.SamlSPUtils;
+
+import lombok.val;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -17,7 +19,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 public abstract class BaseCasSamlSPConfiguration implements InitializingBean {
     /**
      * CAS properties.
@@ -27,23 +28,23 @@ public abstract class BaseCasSamlSPConfiguration implements InitializingBean {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
-    private SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver;
+    private ObjectProvider<SamlRegisteredServiceCachingMetadataResolver> samlRegisteredServiceCachingMetadataResolver;
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         init();
     }
 
     public void init() {
-        final var service = SamlSPUtils.newSamlServiceProviderService(getServiceProvider(),
-            samlRegisteredServiceCachingMetadataResolver);
+        val service = SamlSPUtils.newSamlServiceProviderService(getServiceProvider(),
+            samlRegisteredServiceCachingMetadataResolver.getIfAvailable());
         if (service != null) {
             finalizeRegisteredService(service);
-            SamlSPUtils.saveService(service, this.servicesManager);
+            SamlSPUtils.saveService(service, servicesManager.getIfAvailable());
         }
     }
 

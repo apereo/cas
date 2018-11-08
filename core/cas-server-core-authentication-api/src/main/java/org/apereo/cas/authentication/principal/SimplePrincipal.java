@@ -3,18 +3,19 @@ package org.apereo.cas.authentication.principal;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
+import lombok.ToString;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
-
-import lombok.ToString;
-import lombok.Getter;
 
 /**
  * Simple implementation of a {@link Principal} that exposes an unmodifiable
@@ -27,7 +28,6 @@ import lombok.Getter;
  * @since 3.1
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Slf4j
 @ToString
 @Getter
 @NoArgsConstructor
@@ -47,7 +47,8 @@ public class SimplePrincipal implements Principal {
     /**
      * Principal attributes.
      **/
-    private Map<String, Object> attributes;
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    private Map<String, Object> attributes = new HashMap<>();
 
     /**
      * Instantiates a new simple principal.
@@ -56,8 +57,8 @@ public class SimplePrincipal implements Principal {
      * @param attributes the attributes
      */
     @JsonCreator
-    protected SimplePrincipal(@NonNull @JsonProperty("id") final String id,
-                              @NonNull @JsonProperty("attributes") final Map<String, Object> attributes) {
+    protected SimplePrincipal(@JsonProperty("id") final @NonNull String id,
+                              @JsonProperty("attributes") final Map<String, Object> attributes) {
         this.id = id;
         if (attributes == null) {
             this.attributes = new HashMap<>();
@@ -71,14 +72,14 @@ public class SimplePrincipal implements Principal {
      */
     @Override
     public Map<String, Object> getAttributes() {
-        final Map<String, Object> attrs = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        val attrs = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         attrs.putAll(this.attributes);
         return attrs;
     }
 
     @Override
     public int hashCode() {
-        final var builder = new HashCodeBuilder(83, 31);
+        val builder = new HashCodeBuilder(83, 31);
         builder.append(this.id.toLowerCase());
         return builder.toHashCode();
     }
@@ -91,10 +92,12 @@ public class SimplePrincipal implements Principal {
         if (obj == this) {
             return true;
         }
-        if (obj.getClass() != getClass()) {
+        if (!(obj instanceof SimplePrincipal)) {
             return false;
         }
-        final var rhs = (SimplePrincipal) obj;
+        val rhs = (SimplePrincipal) obj;
         return StringUtils.equalsIgnoreCase(this.id, rhs.getId());
     }
+
+
 }

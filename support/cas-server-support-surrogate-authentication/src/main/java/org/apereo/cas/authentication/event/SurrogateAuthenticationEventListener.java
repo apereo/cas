@@ -1,13 +1,15 @@
 package org.apereo.cas.authentication.event;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.support.events.authentication.surrogate.CasSurrogateAuthenticationFailureEvent;
 import org.apereo.cas.support.events.authentication.surrogate.CasSurrogateAuthenticationSuccessfulEvent;
 import org.apereo.cas.util.io.CommunicationsManager;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.context.event.EventListener;
 
 /**
@@ -43,20 +45,26 @@ public class SurrogateAuthenticationEventListener {
     }
 
     private void notify(final Principal principal, final AbstractCasEvent event) {
-        final var eventDetails = event.toString();
+        val eventDetails = event.toString();
         if (communicationsManager.isSmsSenderDefined()) {
-            final var sms = casProperties.getAuthn().getSurrogate().getSms();
-            final var text = sms.getText().concat("\n").concat(eventDetails);
-            communicationsManager.sms(sms.getFrom(), principal.getAttributes().get(sms.getAttributeName()).toString(), text);
+            val sms = casProperties.getAuthn().getSurrogate().getSms();
+            val smsAttribute = sms.getAttributeName();
+            val to = principal.getAttributes().get(smsAttribute);
+            if (to != null) {
+                val text = sms.getText().concat("\n").concat(eventDetails);
+                this.communicationsManager.sms(sms.getFrom(), to.toString(), text);
+            } else {
+                LOGGER.trace("The principal has no [{}] attribute, cannot send SMS notification", smsAttribute);
+            }
         } else {
             LOGGER.trace("CAS is unable to send surrogate-authentication SMS messages given no settings are defined to account for servers, etc");
         }
         if (communicationsManager.isMailSenderDefined()) {
-            final var mail = casProperties.getAuthn().getSurrogate().getMail();
-            final var emailAttribute = mail.getAttributeName();
-            final var to = principal.getAttributes().get(emailAttribute);
+            val mail = casProperties.getAuthn().getSurrogate().getMail();
+            val emailAttribute = mail.getAttributeName();
+            val to = principal.getAttributes().get(emailAttribute);
             if (to != null) {
-                final var text = mail.getText().concat("\n").concat(eventDetails);
+                val text = mail.getText().concat("\n").concat(eventDetails);
                 this.communicationsManager.email(text, mail.getFrom(), mail.getSubject(), to.toString(), mail.getCc(), mail.getBcc());
             } else {
                 LOGGER.trace("The principal has no {} attribute, cannot send email notification", emailAttribute);

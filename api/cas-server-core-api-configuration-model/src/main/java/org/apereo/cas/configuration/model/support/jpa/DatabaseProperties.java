@@ -1,8 +1,9 @@
 package org.apereo.cas.configuration.model.support.jpa;
 
-import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * This is {@link DatabaseProperties}.
@@ -10,7 +11,6 @@ import lombok.Setter;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
 @Getter
 @Setter
 public class DatabaseProperties implements Serializable {

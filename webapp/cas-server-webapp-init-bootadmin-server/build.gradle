@@ -1,0 +1,11 @@
+description = "Apereo CAS Spring Boot Admin Web Application Initializer"
+dependencies {
+    api libraries.springbootadminserver
+    
+    implementation project(":core:cas-server-core-logging")
+    implementation project(":core:cas-server-core-util-api")
+
+    implementation libraries.springsecurity
+    implementation libraries.springsecurityweb
+    implementation libraries.springsecurityconfig
+}

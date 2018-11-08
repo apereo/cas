@@ -1,5 +1,6 @@
 package org.apereo.cas.web.view;
 
+import lombok.val;
 import org.junit.Test;
 import org.thymeleaf.IEngineConfiguration;
 import org.thymeleaf.templateresolver.StringTemplateResolver;
@@ -18,12 +19,12 @@ import static org.mockito.Mockito.*;
 public class ChainingTemplateViewResolverTests {
     @Test
     public void verifyAction() {
-        final var r = new ChainingTemplateViewResolver();
-        final var resolver = new StringTemplateResolver();
+        val r = new ChainingTemplateViewResolver();
+        val resolver = new StringTemplateResolver();
         resolver.setCheckExistence(true);
         r.addResolver(resolver);
         r.initialize();
-        final var res = r.resolveTemplate(mock(IEngineConfiguration.class), "cas",
+        val res = r.resolveTemplate(mock(IEngineConfiguration.class), "cas",
             "template", new LinkedHashMap<>());
         assertNotNull(res);
     }

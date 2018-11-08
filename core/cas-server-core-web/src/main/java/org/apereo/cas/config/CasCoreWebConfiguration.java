@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.ServiceFactoryConfigurer;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -10,6 +9,9 @@ import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.apereo.cas.web.view.CasReloadableMessageBundle;
+
+import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -19,6 +21,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.HierarchicalMessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 
@@ -35,7 +38,6 @@ import java.util.stream.Collectors;
  */
 @Configuration("casCoreWebConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CasCoreWebConfiguration {
 
     @Autowired
@@ -52,11 +54,11 @@ public class CasCoreWebConfiguration {
      */
     @Bean
     public PropertiesFactoryBean casCommonMessages() {
-        final var properties = new PropertiesFactoryBean();
-        final var resourceLoader = new DefaultResourceLoader();
-        final var commonNames = casProperties.getMessageBundle().getCommonNames();
+        val properties = new PropertiesFactoryBean();
+        val resourceLoader = new DefaultResourceLoader();
+        val commonNames = casProperties.getMessageBundle().getCommonNames();
 
-        final var resourceList = commonNames
+        val resourceList = commonNames
             .stream()
             .map(resourceLoader::getResource)
             .collect(Collectors.toList());
@@ -69,14 +71,15 @@ public class CasCoreWebConfiguration {
 
     @RefreshScope
     @Bean
+    @Autowired
     public HierarchicalMessageSource messageSource(@Qualifier("casCommonMessages") final Properties casCommonMessages) {
-        final var bean = new CasReloadableMessageBundle();
-        final var mb = casProperties.getMessageBundle();
+        val bean = new CasReloadableMessageBundle();
+        val mb = casProperties.getMessageBundle();
         bean.setDefaultEncoding(mb.getEncoding());
         bean.setCacheSeconds(mb.getCacheSeconds());
         bean.setFallbackToSystemLocale(mb.isFallbackSystemLocale());
         bean.setUseCodeAsDefaultMessage(mb.isUseCodeMessage());
-        bean.setBasenames(mb.getBaseNames().toArray(new String[]{}));
+        bean.setBasenames(mb.getBaseNames().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
         bean.setCommonMessages(casCommonMessages);
         return bean;
     }
@@ -84,17 +87,19 @@ public class CasCoreWebConfiguration {
     @Autowired
     @Bean
     public ArgumentExtractor argumentExtractor(final List<ServiceFactoryConfigurer> configurers) {
-        final List<ServiceFactory<? extends WebApplicationService>> serviceFactoryList = new ArrayList<>();
+        val serviceFactoryList = new ArrayList<ServiceFactory<? extends WebApplicationService>>();
         configurers.forEach(c -> serviceFactoryList.addAll(c.buildServiceFactories()));
+        AnnotationAwareOrderComparator.sortIfNecessary(configurers);
         return new DefaultArgumentExtractor(serviceFactoryList);
     }
 
     @Bean
+    @RefreshScope
     public FactoryBean<UrlValidator> urlValidator() {
-        final var httpClient = this.casProperties.getHttpClient();
-        final var allowLocalLogoutUrls = httpClient.isAllowLocalLogoutUrls();
-        final var authorityValidationRegEx = httpClient.getAuthorityValidationRegEx();
-        final var authorityValidationRegExCaseSensitive = httpClient.isAuthorityValidationRegExCaseSensitive();
+        val httpClient = this.casProperties.getHttpClient();
+        val allowLocalLogoutUrls = httpClient.isAllowLocalLogoutUrls();
+        val authorityValidationRegEx = httpClient.getAuthorityValidationRegEx();
+        val authorityValidationRegExCaseSensitive = httpClient.isAuthorityValidationRegExCaseSensitive();
         return new SimpleUrlValidatorFactoryBean(allowLocalLogoutUrls, authorityValidationRegEx, authorityValidationRegExCaseSensitive);
     }
 }

@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.StringBean;
 import org.apereo.cas.ticket.Ticket;
@@ -9,6 +8,9 @@ import org.apereo.cas.ticket.registry.queue.BaseMessageQueueCommand;
 import org.apereo.cas.ticket.registry.queue.DeleteTicketMessageQueueCommand;
 import org.apereo.cas.ticket.registry.queue.DeleteTicketsMessageQueueCommand;
 import org.apereo.cas.ticket.registry.queue.UpdateTicketMessageQueueCommand;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
@@ -30,7 +32,7 @@ public class JmsTicketRegistry extends DefaultTicketRegistry {
     public JmsTicketRegistry(final JmsTemplate jmsTemplate, final StringBean id) {
         this(jmsTemplate, id, CipherExecutor.noOp());
     }
-    
+
     public JmsTicketRegistry(final JmsTemplate jmsTemplate, final StringBean id, final CipherExecutor cipherExecutor) {
         super(cipherExecutor);
         this.jmsTemplate = jmsTemplate;
@@ -45,21 +47,21 @@ public class JmsTicketRegistry extends DefaultTicketRegistry {
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-        final var result = super.deleteSingleTicket(ticketId);
+        val result = super.deleteSingleTicket(ticketId);
         publishMessageToQueue(new DeleteTicketMessageQueueCommand(id, ticketId));
         return result;
     }
 
     @Override
     public long deleteAll() {
-        final var result = super.deleteAll();
+        val result = super.deleteAll();
         publishMessageToQueue(new DeleteTicketsMessageQueueCommand(id));
         return result;
     }
 
     @Override
     public Ticket updateTicket(final Ticket ticket) {
-        final var result = super.updateTicket(ticket);
+        val result = super.updateTicket(ticket);
         publishMessageToQueue(new UpdateTicketMessageQueueCommand(id, ticket));
         return result;
     }

@@ -3,6 +3,8 @@ package org.apereo.cas.monitor;
 import org.apereo.cas.category.MemcachedCategory;
 import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
 import org.apereo.cas.monitor.config.MemcachedMonitorConfiguration;
+
+import lombok.val;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -18,8 +20,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
-import lombok.extern.slf4j.Slf4j;
-
 import static org.junit.Assert.*;
 
 /**
@@ -33,9 +33,13 @@ import static org.junit.Assert.*;
     MemcachedMonitorConfiguration.class,
     CasCoreUtilSerializationConfiguration.class
 })
-@TestPropertySource(locations = {"classpath:/monitor.properties"})
+@TestPropertySource(properties = {
+    "cas.monitor.memcached.servers=localhost:11212",
+    "cas.monitor.memcached.failureMode=Redistribute",
+    "cas.monitor.memcached.locatorType=ARRAY_MOD",
+    "cas.monitor.memcached.hashAlgorithm=FNV1A_64_HASH"
+})
 @DirtiesContext
-@Slf4j
 @Category(MemcachedCategory.class)
 public class MemcachedHealthIndicatorTests {
 
@@ -51,7 +55,7 @@ public class MemcachedHealthIndicatorTests {
 
     @Test
     public void verifyMonitorNotRunning() {
-        final var health = monitor.health();
+        val health = monitor.health();
         assertEquals(Status.OUT_OF_SERVICE, health.getStatus());
     }
 }

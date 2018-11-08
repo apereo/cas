@@ -1,14 +1,16 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.web.flow.OAuth20RegisteredServiceUIAction;
 import org.apereo.cas.support.oauth.web.flow.OAuth20WebflowConfigurer;
-import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+
+import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -29,31 +31,30 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("casOAuthWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CasOAuthWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("loginFlowRegistry")
-    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
     @Qualifier("logoutFlowRegistry")
-    private FlowDefinitionRegistry logoutFlowDefinitionRegistry;
+    private ObjectProvider<FlowDefinitionRegistry> logoutFlowDefinitionRegistry;
 
     @Autowired
     @Qualifier("oauth20AuthenticationRequestServiceSelectionStrategy")
-    private AuthenticationServiceSelectionStrategy oauth20AuthenticationServiceSelectionStrategy;
+    private ObjectProvider<AuthenticationServiceSelectionStrategy> oauth20AuthenticationServiceSelectionStrategy;
 
     @Autowired
     private ApplicationContext applicationContext;
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Autowired
     private FlowBuilderServices flowBuilderServices;
 
@@ -61,16 +62,16 @@ public class CasOAuthWebflowConfiguration implements CasWebflowExecutionPlanConf
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer oauth20LogoutWebflowConfigurer() {
-        final var c = new OAuth20WebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
-                oauth20RegisteredServiceUIAction(), applicationContext, casProperties);
-        c.setLogoutFlowDefinitionRegistry(this.logoutFlowDefinitionRegistry);
+        val c = new OAuth20WebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getIfAvailable(),
+            oauth20RegisteredServiceUIAction(), applicationContext, casProperties);
+        c.setLogoutFlowDefinitionRegistry(logoutFlowDefinitionRegistry.getIfAvailable());
         return c;
     }
 
     @ConditionalOnMissingBean(name = "oauth20RegisteredServiceUIAction")
     @Bean
     public Action oauth20RegisteredServiceUIAction() {
-        return new OAuth20RegisteredServiceUIAction(this.servicesManager, oauth20AuthenticationServiceSelectionStrategy);
+        return new OAuth20RegisteredServiceUIAction(servicesManager.getIfAvailable(), oauth20AuthenticationServiceSelectionStrategy.getIfAvailable());
     }
 
     @Override

@@ -4,12 +4,14 @@ import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderPro
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 import java.util.HashSet;
 import java.util.Set;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
 
 /**
  * Configuration properties class for shiro.authn.
@@ -18,7 +20,6 @@ import lombok.NoArgsConstructor;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-shiro")
-
 @Getter
 @Setter
 @NoArgsConstructor

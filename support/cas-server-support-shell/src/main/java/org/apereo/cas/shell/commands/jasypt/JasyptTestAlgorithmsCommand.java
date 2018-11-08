@@ -1,7 +1,10 @@
 package org.apereo.cas.shell.commands.jasypt;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jasypt.exceptions.EncryptionInitializationException;
 import org.jasypt.registry.AlgorithmRegistry;
@@ -14,7 +17,6 @@ import org.springframework.shell.standard.ShellOption;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.Security;
-import java.util.Set;
 
 /**
  * This is {@link JasyptTestAlgorithmsCommand}.
@@ -50,29 +52,29 @@ public class JasyptTestAlgorithmsCommand {
         }
 
         LOGGER.info("==== JASYPT Password Based Encryption Algorithms ====\n");
-        final var password = "SecretKeyValue";
-        final var value = "ValueToEncrypt";
+        val password = "SecretKeyValue";
+        val value = "ValueToEncrypt";
 
-        final Set<String> pbeAlgos = AlgorithmRegistry.getAllPBEAlgorithms();
-        for (final var provider: providers) {
-            for (final var algorithm: pbeAlgos) {
-                final var cipher = new CasConfigurationJasyptCipherExecutor(this.environment);
+        val pbeAlgos = AlgorithmRegistry.getAllPBEAlgorithms();
+        for (val provider : providers) {
+            for (val algorithm : pbeAlgos) {
+                val cipher = new CasConfigurationJasyptCipherExecutor(this.environment);
                 cipher.setPassword(password);
                 cipher.setKeyObtentionIterations("1");
-                cipher.setAlgorithm(algorithm);
+                cipher.setAlgorithm(algorithm.toString());
                 cipher.setProviderName(provider);
                 try {
-                    final String encryptedValue;
+                    var encryptedValue = StringUtils.EMPTY;
                     try {
                         encryptedValue = cipher.encryptValuePropagateExceptions(value);
                     } catch (final EncryptionInitializationException e) {
-                        // encryption doesn't work for this algorithm/provider combo
+                        LOGGER.trace(e.getMessage(), e);
                         continue;
                     }
                     LOGGER.info("Provider: [{}] Algorithm: [{}]", provider, algorithm);
                     try {
                         cipher.decryptValuePropagateExceptions(encryptedValue);
-                        LOGGER.info("Encrypted Value: [{}] Decryption Succeeded", encryptedValue);
+                        LOGGER.info("Encrypted Value: [{}] Decryption succeeded", encryptedValue);
                     } catch (final Exception e) {
                         LOGGER.info("Encrypted Value: [{}] Decryption Failed", encryptedValue);
                     }

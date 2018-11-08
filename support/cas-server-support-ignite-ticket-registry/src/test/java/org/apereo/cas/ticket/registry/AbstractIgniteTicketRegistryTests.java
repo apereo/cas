@@ -22,6 +22,7 @@ import org.apereo.cas.config.IgniteTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.junit.ConditionalIgnoreRule;
+
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.experimental.categories.Category;
@@ -64,7 +65,12 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
 })
-@TestPropertySource(locations = {"classpath:/igniteregistry.properties"})
+@TestPropertySource(properties = {
+    "cas.ticket.registry.ignite.ticketsCache.writeSynchronizationMode=FULL_ASYNC",
+    "cas.ticket.registry.ignite.ticketsCache.atomicityMode=ATOMIC",
+    "cas.ticket.registry.ignite.ticketsCache.cacheMode=REPLICATED",
+    "cas.ticket.registry.ignite.igniteAddress[0]=localhost:47500"
+})
 public abstract class AbstractIgniteTicketRegistryTests extends BaseTicketRegistryTests {
 
     @ClassRule

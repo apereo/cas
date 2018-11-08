@@ -1,15 +1,16 @@
 package org.apereo.cas.interrupt;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.util.CollectionUtils;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.val;
 import org.junit.Test;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.webflow.test.MockRequestContext;
 
 import java.io.File;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -19,24 +20,26 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 public class JsonResourceInterruptInquirerTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
-    
+
     @Test
     public void verifyResponseCanSerializeIntoJson() throws Exception {
-        final Map<String, InterruptResponse> map = new LinkedHashMap<>();
+        val map = new LinkedHashMap<String, InterruptResponse>();
         var response = new InterruptResponse("Message",
-                CollectionUtils.wrap("text", "link", "text2", "link2"), false, true);
+            CollectionUtils.wrap("text", "link", "text2", "link2"), false, true);
         map.put("casuser", response);
 
-        final var f = File.createTempFile("interrupt", "json");
+        val f = File.createTempFile("interrupt", "json");
         MAPPER.writer().withDefaultPrettyPrinter().writeValue(f, map);
         assertTrue(f.exists());
-        
-        final var q = new JsonResourceInterruptInquirer(new FileSystemResource(f));
-        response = q.inquire(CoreAuthenticationTestUtils.getAuthentication("casuser"), CoreAuthenticationTestUtils.getRegisteredService(),
-                CoreAuthenticationTestUtils.getService(), CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+
+        val q = new JsonResourceInterruptInquirer(new FileSystemResource(f));
+        response = q.inquire(CoreAuthenticationTestUtils.getAuthentication("casuser"),
+            CoreAuthenticationTestUtils.getRegisteredService(),
+            CoreAuthenticationTestUtils.getService(),
+            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
+            new MockRequestContext());
         assertNotNull(response);
         assertFalse(response.isBlock());
         assertTrue(response.isSsoEnabled());

@@ -2,6 +2,8 @@ package org.apereo.cas.trusted.authentication.storage.fingerprint;
 
 import org.apereo.cas.trusted.web.flow.fingerprint.UserAgentDeviceFingerprintComponentExtractor;
 import org.apereo.cas.util.HttpRequestUtils;
+
+import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -22,20 +24,20 @@ public class UserAgentDeviceFingerprintComponentExtractorTests {
     @Test
     public void verifyAgentFingerprintNotFound() {
         ClientInfoHolder.setClientInfo(null);
-        final var ex = new UserAgentDeviceFingerprintComponentExtractor();
-        final var context = new MockRequestContext();
+        val ex = new UserAgentDeviceFingerprintComponentExtractor();
+        val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
         assertFalse(ex.extractComponent("casuser", context, false).isPresent());
     }
 
     @Test
     public void verifyAgentFingerprintFound() {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setRemoteAddr("1.2.3.4");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "TestAgent");
-        final var ex = new UserAgentDeviceFingerprintComponentExtractor();
+        val ex = new UserAgentDeviceFingerprintComponentExtractor();
 
-        final var context = new MockRequestContext();
+        val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         assertTrue(ex.extractComponent("casuser", context, false).isPresent());
     }

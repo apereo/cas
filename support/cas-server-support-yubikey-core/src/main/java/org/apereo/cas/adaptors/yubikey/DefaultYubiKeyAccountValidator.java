@@ -4,6 +4,7 @@ import com.yubico.client.v2.ResponseStatus;
 import com.yubico.client.v2.YubicoClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -21,10 +22,10 @@ public class DefaultYubiKeyAccountValidator implements YubiKeyAccountValidator {
     @Override
     public boolean isValid(final String uid, final String token) {
         try {
-            final var yubikeyPublicId = getTokenPublicId(token);
+            val yubikeyPublicId = getTokenPublicId(token);
             if (StringUtils.isNotBlank(yubikeyPublicId)) {
-                final var response = this.client.verify(token);
-                final var status = response.getStatus();
+                val response = this.client.verify(token);
+                val status = response.getStatus();
                 if (status.compareTo(ResponseStatus.OK) == 0) {
                     LOGGER.debug("YubiKey response status [{}] at [{}]", status, response.getTimestamp());
                     return true;

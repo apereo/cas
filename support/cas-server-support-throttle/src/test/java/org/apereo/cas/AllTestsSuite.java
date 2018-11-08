@@ -1,7 +1,8 @@
 package org.apereo.cas;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests;
+import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapterTests;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -12,9 +13,9 @@ import org.junit.runners.Suite;
  * @since 4.2.0
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests.class,
-        InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests.class
+@Suite.SuiteClasses({
+    InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests.class,
+    InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapterTests.class
 })
-@Slf4j
 public class AllTestsSuite {
 }

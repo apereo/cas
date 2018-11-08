@@ -1,10 +1,12 @@
 package org.apereo.cas.adaptors.yubikey.registry;
 
+import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
+import org.apereo.cas.util.ResourceUtils;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
-import org.apereo.cas.util.ResourceUtils;
+import lombok.val;
 import org.springframework.core.io.Resource;
 
 import java.util.HashMap;
@@ -28,28 +30,15 @@ public class JsonYubiKeyAccountRegistry extends WhitelistYubiKeyAccountRegistry 
     }
 
     @SneakyThrows
-    @Override
-    public boolean registerAccountFor(final String uid, final String token) {
-        if (getAccountValidator().isValid(uid, token)) {
-            final var yubikeyPublicId = getAccountValidator().getTokenPublicId(token);
-            final var file = jsonResource.getFile();
-            this.devices.put(uid, getCipherExecutor().encode(yubikeyPublicId));
-            MAPPER.writer().withDefaultPrettyPrinter().writeValue(file, this.devices);
-            return true;
-        }
-        return false;
-    }
-
-    @SneakyThrows
     private static Map<String, String> getDevicesFromJsonResource(final Resource jsonResource) {
         if (!ResourceUtils.doesResourceExist(jsonResource)) {
-            final var res = jsonResource.getFile().createNewFile();
+            val res = jsonResource.getFile().createNewFile();
             if (res) {
                 LOGGER.debug("Created JSON resource @ [{}]", jsonResource);
             }
         }
         if (ResourceUtils.doesResourceExist(jsonResource)) {
-            final var file = jsonResource.getFile();
+            val file = jsonResource.getFile();
             if (file.canRead() && file.length() > 0) {
                 return MAPPER.readValue(file, Map.class);
             }
@@ -57,5 +46,34 @@ public class JsonYubiKeyAccountRegistry extends WhitelistYubiKeyAccountRegistry 
             LOGGER.warn("JSON resource @ [{}] does not exist", jsonResource);
         }
         return new HashMap<>(0);
+    }
+
+    @SneakyThrows
+    @Override
+    public boolean registerAccountFor(final String uid, final String token) {
+        if (getAccountValidator().isValid(uid, token)) {
+            val yubikeyPublicId = getAccountValidator().getTokenPublicId(token);
+            val file = jsonResource.getFile();
+            this.devices.put(uid, getCipherExecutor().encode(yubikeyPublicId));
+            MAPPER.writer().withDefaultPrettyPrinter().writeValue(file, this.devices);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    @SneakyThrows
+    public void delete(final String uid) {
+        this.devices.remove(uid);
+        val file = jsonResource.getFile();
+        MAPPER.writer().withDefaultPrettyPrinter().writeValue(file, this.devices);
+    }
+
+    @Override
+    @SneakyThrows
+    public void deleteAll() {
+        this.devices.clear();
+        val file = jsonResource.getFile();
+        MAPPER.writer().withDefaultPrettyPrinter().writeValue(file, this.devices);
     }
 }

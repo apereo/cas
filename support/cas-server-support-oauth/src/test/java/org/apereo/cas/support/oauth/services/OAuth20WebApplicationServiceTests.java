@@ -1,11 +1,11 @@
 package org.apereo.cas.support.oauth.services;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.services.AbstractRegisteredService;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
 import java.io.File;
@@ -17,7 +17,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@Slf4j
 public class OAuth20WebApplicationServiceTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "oAuthWebApplicationService.json");
@@ -25,15 +24,15 @@ public class OAuth20WebApplicationServiceTests {
 
     @Test
     public void verifySerializeACompletePrincipalToJson() throws IOException {
-        final AbstractRegisteredService service = new OAuthRegisteredService();
+        val service = new OAuthRegisteredService();
         service.setName("checkCloning");
         service.setServiceId("testId");
         service.setTheme("theme");
         service.setDescription("description");
-        final var factory = new WebApplicationServiceFactory();
-        final var serviceWritten = factory.createService(service.getServiceId());
+        val factory = new WebApplicationServiceFactory();
+        val serviceWritten = factory.createService(service.getServiceId());
         MAPPER.writeValue(JSON_FILE, serviceWritten);
-        final var serviceRead = MAPPER.readValue(JSON_FILE, WebApplicationService.class);
+        val serviceRead = MAPPER.readValue(JSON_FILE, WebApplicationService.class);
         assertEquals(serviceWritten, serviceRead);
     }
 }

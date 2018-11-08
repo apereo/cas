@@ -1,11 +1,12 @@
 package org.apereo.cas.web.report;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CasVersion;
 import org.apereo.cas.util.InetAddressUtils;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
+
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.health.HealthEndpoint;
@@ -22,7 +23,6 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.5
  */
-@Slf4j
 @Endpoint(id = "status")
 public class StatusEndpoint extends BaseCasMvcEndpoint {
     private final HealthEndpoint healthEndpoint;
@@ -40,9 +40,9 @@ public class StatusEndpoint extends BaseCasMvcEndpoint {
     @ReadOperation
     public Map<String, Object> handle() {
 
-        final var model = new LinkedHashMap<String, Object>();
-        final var health = this.healthEndpoint.health();
-        final var status = health.getStatus();
+        val model = new LinkedHashMap<String, Object>();
+        val health = this.healthEndpoint.health();
+        val status = health.getStatus();
 
         if (status.equals(Status.DOWN) || status.equals(Status.OUT_OF_SERVICE)) {
             model.put("status", HttpStatus.SERVICE_UNAVAILABLE.value());

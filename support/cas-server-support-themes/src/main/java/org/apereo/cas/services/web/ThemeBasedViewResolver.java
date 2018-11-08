@@ -3,6 +3,7 @@ package org.apereo.cas.services.web;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.core.Ordered;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -42,33 +43,29 @@ public class ThemeBasedViewResolver implements ViewResolver, Ordered {
     @Override
     @SuppressFBWarnings("PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS")
     public View resolveViewName(final String viewName, final Locale locale) {
-        final var theme = Optional.of(RequestContextHolder.currentRequestAttributes())
+        val theme = Optional.of(RequestContextHolder.currentRequestAttributes())
             .filter(ServletRequestAttributes.class::isInstance)
             .map(ServletRequestAttributes.class::cast)
             .map(ServletRequestAttributes::getRequest)
             .map(themeResolver::resolveThemeName);
         try {
-            final var delegate = theme.map(this::getViewResolver);
+            val delegate = theme.map(this::getViewResolver);
             if (delegate.isPresent()) {
                 return delegate.get().resolveViewName(viewName, locale);
             }
         } catch (final Exception e) {
             LOGGER.debug("error resolving view '{}' for theme '{}'", viewName, theme.orElse(null), e);
         }
-        // default to not resolving any view
         return null;
     }
 
     private ViewResolver getViewResolver(final String theme) {
-        // load the actual view resolver (using/updating cache as necessary)
-        final ViewResolver resolver;
         if (resolvers.containsKey(theme)) {
-            resolver = resolvers.get(theme);
-        } else {
-            resolver = viewResolverFactory.create(theme);
-            resolvers.put(theme, resolver);
+            return resolvers.get(theme);
         }
-        // return the resolver
+
+        val resolver = viewResolverFactory.create(theme);
+        resolvers.put(theme, resolver);
         return resolver;
     }
 

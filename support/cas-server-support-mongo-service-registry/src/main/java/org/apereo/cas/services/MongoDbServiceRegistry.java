@@ -1,14 +1,16 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
+
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
+import lombok.val;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.regex.Pattern;
 
 /**
@@ -46,13 +48,13 @@ public class MongoDbServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public RegisteredService findServiceById(final String id) {
-        final var pattern = Pattern.compile(id, Pattern.CASE_INSENSITIVE);
+        val pattern = Pattern.compile(id, Pattern.CASE_INSENSITIVE);
         return this.mongoTemplate.findOne(new Query(Criteria.where("serviceId").regex(pattern)), RegisteredService.class, this.collectionName);
     }
 
     @Override
-    public List<RegisteredService> load() {
-        final var list = this.mongoTemplate.findAll(RegisteredService.class, this.collectionName);
+    public Collection<RegisteredService> load() {
+        val list = this.mongoTemplate.findAll(RegisteredService.class, this.collectionName);
         list.forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));
         return list;
     }

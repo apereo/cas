@@ -4,6 +4,8 @@ import org.apereo.cas.category.MailCategory;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+
+import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.Test;
@@ -28,8 +30,8 @@ public class VerifyPasswordResetRequestActionTests extends BasePasswordManagemen
     @Test
     public void verifyAction() {
         try {
-            final var context = new MockRequestContext();
-            final var request = new MockHttpServletRequest();
+            val context = new MockRequestContext();
+            val request = new MockHttpServletRequest();
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals("error", verifyPasswordResetRequestAction.execute(context).getId());
 
@@ -38,7 +40,7 @@ public class VerifyPasswordResetRequestActionTests extends BasePasswordManagemen
             request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
             ClientInfoHolder.setClientInfo(new ClientInfo(request));
 
-            final var token = passwordManagementService.createToken("casuser");
+            val token = passwordManagementService.createToken("casuser");
             request.addParameter(SendPasswordResetInstructionsAction.PARAMETER_NAME_TOKEN, token);
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals("success", verifyPasswordResetRequestAction.execute(context).getId());

@@ -3,6 +3,8 @@ package org.apereo.cas.pm.web.flow.actions;
 import org.apereo.cas.category.MailCategory;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+
+import lombok.val;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -26,8 +28,8 @@ public class VerifySecurityQuestionsActionTests extends BasePasswordManagementAc
     @Test
     public void verifyAction() {
         try {
-            final var context = new MockRequestContext();
-            final var request = new MockHttpServletRequest();
+            val context = new MockRequestContext();
+            val request = new MockHttpServletRequest();
             request.addParameter("q0", "securityAnswer1");
             context.getFlowScope().put("username", "casuser");
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));

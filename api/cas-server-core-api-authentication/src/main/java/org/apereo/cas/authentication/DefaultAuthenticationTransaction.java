@@ -1,12 +1,13 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.principal.Service;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.principal.Service;
+import lombok.val;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -23,7 +24,6 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@Slf4j
 @Getter
 @RequiredArgsConstructor
 @ToString
@@ -44,7 +44,7 @@ public class DefaultAuthenticationTransaction implements AuthenticationTransacti
      * @return the authentication transaction
      */
     public static DefaultAuthenticationTransaction of(final Service service, final Credential... credentials) {
-        final var creds = sanitizeCredentials(credentials);
+        val creds = sanitizeCredentials(credentials);
         return new DefaultAuthenticationTransaction(service, creds);
     }
 
@@ -57,6 +57,22 @@ public class DefaultAuthenticationTransaction implements AuthenticationTransacti
      */
     public static DefaultAuthenticationTransaction of(final Credential... credentials) {
         return of(null, credentials);
+    }
+
+    /**
+     * Sanitize credentials set. It's important to keep the order of
+     * the credentials in the final set as they were presented.
+     *
+     * @param credentials the credentials
+     * @return the set
+     */
+    private static Set<Credential> sanitizeCredentials(final Credential[] credentials) {
+        if (credentials != null && credentials.length > 0) {
+            return Arrays.stream(credentials)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+        }
+        return new HashSet<>(0);
     }
 
     /**
@@ -76,22 +92,6 @@ public class DefaultAuthenticationTransaction implements AuthenticationTransacti
      */
     public boolean hasCredentialOfType(final Class<? extends Credential> type) {
         return credentials.stream().anyMatch(type::isInstance);
-    }
-
-    /**
-     * Sanitize credentials set. It's important to keep the order of
-     * the credentials in the final set as they were presented.
-     *
-     * @param credentials the credentials
-     * @return the set
-     */
-    private static Set<Credential> sanitizeCredentials(final Credential[] credentials) {
-        if (credentials != null && credentials.length > 0) {
-            return Arrays.stream(credentials)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-        }
-        return new HashSet<>(0);
     }
 }
 

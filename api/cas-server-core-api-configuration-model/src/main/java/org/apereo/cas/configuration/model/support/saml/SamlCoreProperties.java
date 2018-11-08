@@ -1,9 +1,11 @@
 package org.apereo.cas.configuration.model.support.saml;
 
 import org.apereo.cas.configuration.support.RequiresModule;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * This is {@link SamlCoreProperties}.
@@ -12,7 +14,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-saml")
-
 @Getter
 @Setter
 public class SamlCoreProperties implements Serializable {

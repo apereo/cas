@@ -1,6 +1,5 @@
 package org.apereo.cas.support.rest;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -11,8 +10,10 @@ import org.apereo.cas.rest.factory.DefaultUserAuthenticationResourceEntityRespon
 import org.apereo.cas.rest.factory.UsernamePasswordRestHttpRequestCredentialFactory;
 import org.apereo.cas.support.rest.resources.UserAuthenticationResource;
 import org.apereo.cas.util.CollectionUtils;
-import org.junit.Test;
+
+import lombok.val;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -36,7 +37,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 5.3.0
  */
 @RunWith(MockitoJUnitRunner.Silent.class)
-@Slf4j
 @DirtiesContext
 public class UserAuthenticationResourceTests {
     private static final String TICKETS_RESOURCE_URL = "/cas/v1/users";
@@ -64,7 +64,7 @@ public class UserAuthenticationResourceTests {
 
     @Test
     public void verifyStatus() throws Exception {
-        final var result = new DefaultAuthenticationResultBuilder()
+        val result = new DefaultAuthenticationResultBuilder()
             .collect(CoreAuthenticationTestUtils.getAuthentication())
             .build(new DefaultPrincipalElectionStrategy());
         when(authenticationSupport.handleAndFinalizeSingleAuthenticationTransaction(any(), anyCollection())).thenReturn(result);
@@ -84,7 +84,7 @@ public class UserAuthenticationResourceTests {
 
     @Test
     public void verifyStatusAuthnException() throws Exception {
-        final var ex = new AuthenticationException(CollectionUtils.wrap("error", new FailedLoginException()));
+        val ex = new AuthenticationException(CollectionUtils.wrap("error", new FailedLoginException()));
         when(authenticationSupport.handleAndFinalizeSingleAuthenticationTransaction(any(), any(Collection.class))).thenThrow(ex);
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
             .param("username", "casuser")

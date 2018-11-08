@@ -1,11 +1,12 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.discovery.CasServerDiscoveryProfileEndpoint;
 import org.apereo.cas.discovery.CasServerProfileRegistrar;
 import org.apereo.cas.services.ServicesManager;
+
+import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.pac4j.core.client.Clients;
 import org.springframework.beans.factory.ObjectProvider;
@@ -28,12 +29,11 @@ import java.util.Set;
  */
 @Configuration("casDiscoveryProfileConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CasDiscoveryProfileConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -44,11 +44,11 @@ public class CasDiscoveryProfileConfiguration {
 
     @Autowired
     @Qualifier("attributeRepository")
-    private IPersonAttributeDao attributeRepository;
+    private ObjectProvider<IPersonAttributeDao> attributeRepository;
 
     @Bean
     public CasServerProfileRegistrar casServerProfileRegistrar() {
-        return new CasServerProfileRegistrar(this.servicesManager, casProperties,
+        return new CasServerProfileRegistrar(servicesManager.getIfAvailable(), casProperties,
             this.builtClients.getIfAvailable(),
             availableAttributes());
     }
@@ -56,38 +56,35 @@ public class CasDiscoveryProfileConfiguration {
     @Bean
     @ConditionalOnEnabledEndpoint
     public CasServerDiscoveryProfileEndpoint discoveryProfileEndpoint() {
-        return new CasServerDiscoveryProfileEndpoint(casProperties, servicesManager, casServerProfileRegistrar());
+        return new CasServerDiscoveryProfileEndpoint(casProperties, servicesManager.getIfAvailable(), casServerProfileRegistrar());
     }
 
     @Bean
     public Set<String> availableAttributes() {
-        final Set<String> attributes = new LinkedHashSet<>(0);
-        final var possibleUserAttributeNames = attributeRepository.getPossibleUserAttributeNames();
+        val attributes = new LinkedHashSet<String>(0);
+        val possibleUserAttributeNames = attributeRepository.getIfAvailable().getPossibleUserAttributeNames();
         if (possibleUserAttributeNames != null) {
             attributes.addAll(possibleUserAttributeNames);
         }
-        
-        final var ldapProps = casProperties.getAuthn().getLdap();
+
+        val ldapProps = casProperties.getAuthn().getLdap();
         if (ldapProps != null) {
-            ldapProps.stream()
-                .forEach(ldap -> {
-                    attributes.addAll(transformAttributes(ldap.getPrincipalAttributeList()));
-                    attributes.addAll(transformAttributes(ldap.getAdditionalAttributes()));
-                });
+            ldapProps.forEach(ldap -> {
+                attributes.addAll(transformAttributes(ldap.getPrincipalAttributeList()));
+                attributes.addAll(transformAttributes(ldap.getAdditionalAttributes()));
+            });
         }
-        final var jdbcProps = casProperties.getAuthn().getJdbc();
+        val jdbcProps = casProperties.getAuthn().getJdbc();
         if (jdbcProps != null) {
-            jdbcProps.getQuery().stream()
-                .forEach(jdbc -> attributes.addAll(transformAttributes(jdbc.getPrincipalAttributeList())));
+            jdbcProps.getQuery().forEach(jdbc -> attributes.addAll(transformAttributes(jdbc.getPrincipalAttributeList())));
         }
         return attributes;
     }
 
-    private Set<String> transformAttributes(final List<String> attributes) {
-        final Set<String> attributeSet = new LinkedHashSet<>();
+    private static Set<String> transformAttributes(final List<String> attributes) {
+        val attributeSet = new LinkedHashSet<String>();
         CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(attributes)
             .values()
-            .stream()
             .forEach(v -> attributeSet.add(v.toString()));
         return attributeSet;
     }

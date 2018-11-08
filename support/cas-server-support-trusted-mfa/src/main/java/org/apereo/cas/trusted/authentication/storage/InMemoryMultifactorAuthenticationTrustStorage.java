@@ -1,10 +1,12 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import com.github.benmanes.caffeine.cache.LoadingCache;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
+
+import com.github.benmanes.caffeine.cache.LoadingCache;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
@@ -18,7 +20,7 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Getter
 public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
     private final LoadingCache<String, MultifactorAuthenticationTrustRecord> storage;
@@ -30,12 +32,12 @@ public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifact
 
     @Override
     public void expire(final LocalDateTime onOrBefore) {
-        final var results = storage.asMap()
-                .values()
-                .stream()
-                .filter(entry -> entry.getRecordDate().isEqual(onOrBefore) || entry.getRecordDate().isBefore(onOrBefore))
-                .sorted()
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+        val results = storage.asMap()
+            .values()
+            .stream()
+            .filter(entry -> entry.getRecordDate().isEqual(onOrBefore) || entry.getRecordDate().isBefore(onOrBefore))
+            .sorted()
+            .collect(Collectors.toCollection(LinkedHashSet::new));
 
         LOGGER.info("Found [{}] expired records", results.size());
         if (!results.isEmpty()) {
@@ -45,26 +47,26 @@ public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifact
     }
 
     @Override
-    public Set<MultifactorAuthenticationTrustRecord> get(final LocalDateTime onOrAfterDate) {
+    public Set<? extends MultifactorAuthenticationTrustRecord> get(final LocalDateTime onOrAfterDate) {
         expire(onOrAfterDate);
         return storage.asMap()
-                .values()
-                .stream()
-                .filter(entry -> entry.getRecordDate().isEqual(onOrAfterDate) || entry.getRecordDate().isAfter(onOrAfterDate))
-                .sorted()
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+            .values()
+            .stream()
+            .filter(entry -> entry.getRecordDate().isEqual(onOrAfterDate) || entry.getRecordDate().isAfter(onOrAfterDate))
+            .sorted()
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Override
-    public Set<MultifactorAuthenticationTrustRecord> get(final String principal) {
+    public Set<? extends MultifactorAuthenticationTrustRecord> get(final String principal) {
         return storage.asMap()
-                .values()
-                .stream()
-                .filter(entry -> entry.getPrincipal().equalsIgnoreCase(principal))
-                .sorted()
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+            .values()
+            .stream()
+            .filter(entry -> entry.getPrincipal().equalsIgnoreCase(principal))
+            .sorted()
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
-    
+
     @Override
     public MultifactorAuthenticationTrustRecord setInternal(final MultifactorAuthenticationTrustRecord record) {
         this.storage.put(record.getRecordKey(), record);

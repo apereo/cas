@@ -1,10 +1,9 @@
 package org.apereo.cas.adaptors.duo;
 
 import lombok.EqualsAndHashCode;
-import lombok.extern.slf4j.Slf4j;
-import lombok.ToString;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * This is {@link DuoUserAccount}.
@@ -12,7 +11,6 @@ import lombok.Setter;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @ToString
 @Getter
 @Setter

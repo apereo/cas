@@ -6,6 +6,8 @@ import org.apereo.cas.impl.calcs.BaseAuthenticationRequestRiskCalculatorTests;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+
+import lombok.val;
 import org.junit.Test;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.context.annotation.Import;
@@ -27,8 +29,8 @@ public class AuthenticationRiskEmailNotifierTests extends BaseAuthenticationRequ
     public void verifyOperation() {
         try {
             authenticationRiskEmailNotifier.setRegisteredService(CoreAuthenticationTestUtils.getRegisteredService());
-            final var principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("mail", "cas@example.org"));
-            final var authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
+            val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("mail", "cas@example.org"));
+            val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
             authenticationRiskEmailNotifier.setAuthentication(authentication);
             authenticationRiskEmailNotifier.setAuthenticationRiskScore(new AuthenticationRiskScore(BigDecimal.ONE));
             authenticationRiskEmailNotifier.publish();

@@ -1,9 +1,10 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.principal.Principal;
+
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.principal.Principal;
+
 import java.util.Map;
 
 /**
@@ -12,7 +13,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@Slf4j
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public class ReturnAllAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {

@@ -1,13 +1,14 @@
 package org.apereo.cas.monitor;
 
-import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
-import lombok.NonNull;
+import com.hazelcast.instance.HazelcastInstanceProxy;
+import com.hazelcast.memory.MemoryStats;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link HazelcastHealthIndicator}.
@@ -18,25 +19,26 @@ import java.util.List;
 @Slf4j
 @ToString
 public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
-    private final String instanceName;
-    private final long clusterSize;
+
+    /**
+     * CAS Hazelcast Instance.
+     */
+    private final HazelcastInstanceProxy instance;
 
     public HazelcastHealthIndicator(final long evictionThreshold, final long threshold,
-                                    final String instanceName, final long clusterSize) {
+                                    final HazelcastInstance instance) {
         super(evictionThreshold, threshold);
-        this.instanceName = instanceName;
-        this.clusterSize = clusterSize;
+        this.instance = (HazelcastInstanceProxy) instance;
     }
 
     @Override
     protected CacheStatistics[] getStatistics() {
-        final List<CacheStatistics> statsList = new ArrayList<>();
-        LOGGER.debug("Locating hazelcast instance [{}]...", instanceName);
-        @NonNull final var instance = Hazelcast.getHazelcastInstanceByName(this.instanceName);
+        val statsList = new ArrayList<CacheStatistics>();
         instance.getConfig().getMapConfigs().keySet().forEach(key -> {
-            final IMap map = instance.getMap(key);
+            val map = instance.getMap(key);
+            val memoryStats = instance.getOriginal().getMemoryStats();
             LOGGER.debug("Starting to collect hazelcast statistics for map [{}] identified by key [{}]...", map, key);
-            statsList.add(new HazelcastStatistics(map, clusterSize));
+            statsList.add(new HazelcastStatistics(map, instance.getCluster().getMembers().size(), memoryStats));
         });
         return statsList.toArray(new CacheStatistics[0]);
     }
@@ -51,9 +53,12 @@ public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
         private final IMap map;
         private final long clusterSize;
 
-        protected HazelcastStatistics(final IMap map, final long clusterSize) {
+        private final MemoryStats memoryStats;
+
+        protected HazelcastStatistics(final IMap map, final int clusterSize, final MemoryStats memoryStats) {
             this.map = map;
             this.clusterSize = clusterSize;
+            this.memoryStats = memoryStats;
         }
 
         @Override
@@ -63,7 +68,7 @@ public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
 
         @Override
         public long getCapacity() {
-            return this.map.getLocalMapStats() != null ? this.map.getLocalMapStats().total() : 0;
+            return this.memoryStats.getCommittedHeap();
         }
 
         @Override
@@ -81,16 +86,12 @@ public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
 
         @Override
         public long getPercentFree() {
-            final var capacity = getCapacity();
-            if (capacity == 0) {
-                return 0;
-            }
-            return (int) ((capacity - getSize()) * PERCENTAGE_VALUE / capacity);
+            return (int) this.memoryStats.getFreeHeap() * PERCENTAGE_VALUE / this.memoryStats.getCommittedHeap();
         }
 
         @Override
         public String toString(final StringBuilder builder) {
-            final var localMapStats = map.getLocalMapStats();
+            val localMapStats = map.getLocalMapStats();
             builder.append("Creation time: ")
                 .append(localMapStats.getCreationTime())
                 .append(", Cluster size: ")

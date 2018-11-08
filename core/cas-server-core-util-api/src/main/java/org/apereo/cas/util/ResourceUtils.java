@@ -3,6 +3,7 @@ package org.apereo.cas.util;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.ReaderInputStream;
@@ -18,13 +19,10 @@ import org.springframework.core.io.UrlResource;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.Enumeration;
 import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
 
 import static org.springframework.util.ResourceUtils.CLASSPATH_URL_PREFIX;
 import static org.springframework.util.ResourceUtils.FILE_URL_PREFIX;
@@ -51,15 +49,13 @@ public class ResourceUtils {
         if (StringUtils.isBlank(location)) {
             throw new IllegalArgumentException("Provided location does not exist and is empty");
         }
-        final AbstractResource res;
         if (location.toLowerCase().startsWith(HTTP_URL_PREFIX)) {
-            res = new UrlResource(location);
-        } else if (location.toLowerCase().startsWith(CLASSPATH_URL_PREFIX)) {
-            res = new ClassPathResource(location.substring(CLASSPATH_URL_PREFIX.length()));
-        } else {
-            res = new FileSystemResource(StringUtils.remove(location, FILE_URL_PREFIX));
+            return new UrlResource(location);
         }
-        return res;
+        if (location.toLowerCase().startsWith(CLASSPATH_URL_PREFIX)) {
+            return new ClassPathResource(location.substring(CLASSPATH_URL_PREFIX.length()));
+        }
+        return new FileSystemResource(StringUtils.remove(location, FILE_URL_PREFIX));
     }
 
     /**
@@ -72,7 +68,7 @@ public class ResourceUtils {
     public static boolean doesResourceExist(final String resource, final ResourceLoader resourceLoader) {
         try {
             if (StringUtils.isNotBlank(resource)) {
-                final var res = resourceLoader.getResource(resource);
+                val res = resourceLoader.getResource(resource);
                 return doesResourceExist(res);
             }
         } catch (final Exception e) {
@@ -92,6 +88,9 @@ public class ResourceUtils {
             try {
                 IOUtils.read(res.getInputStream(), new byte[1]);
                 return res.contentLength() > 0;
+            } catch (final FileNotFoundException e) {
+                LOGGER.trace(e.getMessage());
+                return false;
             } catch (final Exception e) {
                 LOGGER.trace(e.getMessage(), e);
                 return false;
@@ -123,7 +122,7 @@ public class ResourceUtils {
      * @throws IOException the exception
      */
     public static AbstractResource getResourceFrom(final String location) throws IOException {
-        final var metadataLocationResource = getRawResourceFrom(location);
+        val metadataLocationResource = getRawResourceFrom(location);
         if (!metadataLocationResource.exists() || !metadataLocationResource.isReadable()) {
             throw new FileNotFoundException("Resource " + location + " does not exist or is unreadable");
         }
@@ -159,43 +158,46 @@ public class ResourceUtils {
     public static Resource prepareClasspathResourceIfNeeded(final Resource resource,
                                                             final boolean isDirectory,
                                                             final String containsName) {
+        LOGGER.trace("Preparing possible classpath resource [{}]", resource);
         if (resource == null) {
             LOGGER.debug("No resource defined to prepare. Returning null");
             return null;
         }
 
-        if (resource instanceof ClassPathResource) {
-            return resource;
-        }
         if (org.springframework.util.ResourceUtils.isFileURL(resource.getURL())) {
             return resource;
         }
 
-        final var url = org.springframework.util.ResourceUtils.extractArchiveURL(resource.getURL());
-        final var file = org.springframework.util.ResourceUtils.getFile(url);
+        val url = org.springframework.util.ResourceUtils.extractArchiveURL(resource.getURL());
+        val file = org.springframework.util.ResourceUtils.getFile(url);
 
-        final var casDirectory = new File(FileUtils.getTempDirectory(), "cas");
-        final var destination = new File(casDirectory, resource.getFilename());
+        val casDirectory = new File(FileUtils.getTempDirectory(), "cas");
+        val destination = new File(casDirectory, resource.getFilename());
         if (isDirectory) {
+            LOGGER.trace("Creating resource directory [{}]", destination);
             FileUtils.forceMkdir(destination);
             FileUtils.cleanDirectory(destination);
         } else if (destination.exists()) {
+            LOGGER.trace("Deleting resource directory [{}]", destination);
             FileUtils.forceDelete(destination);
         }
 
-        try (var jFile = new JarFile(file)) {
-            final Enumeration e = jFile.entries();
+        LOGGER.trace("Processing file [{}]", file);
+        try (val jFile = new JarFile(file)) {
+            val e = jFile.entries();
             while (e.hasMoreElements()) {
-                final var entry = (ZipEntry) e.nextElement();
-                if (entry.getName().contains(resource.getFilename()) && entry.getName().contains(containsName)) {
-                    try (var stream = jFile.getInputStream(entry)) {
+                val entry = e.nextElement();
+                val name = entry.getName();
+                LOGGER.trace("Comparing [{}] against [{}] and pattern [{}]", name, resource.getFilename(), containsName);
+                if (name.contains(resource.getFilename()) && RegexUtils.find(containsName, name)) {
+                    try (val stream = jFile.getInputStream(entry)) {
                         var copyDestination = destination;
                         if (isDirectory) {
-                            final var entryFileName = new File(entry.getName());
+                            val entryFileName = new File(name);
                             copyDestination = new File(destination, entryFileName.getName());
                         }
-
-                        try (var writer = Files.newBufferedWriter(copyDestination.toPath(), StandardCharsets.UTF_8)) {
+                        LOGGER.trace("Copying resource entry [{}] to [{}]", name, copyDestination);
+                        try (val writer = Files.newBufferedWriter(copyDestination.toPath(), StandardCharsets.UTF_8)) {
                             IOUtils.copy(stream, writer, StandardCharsets.UTF_8);
                         }
                     }
@@ -204,7 +206,7 @@ public class ResourceUtils {
         }
         return new FileSystemResource(destination);
     }
-    
+
 
     /**
      * Build input stream resource from string value.
@@ -214,8 +216,8 @@ public class ResourceUtils {
      * @return the input stream resource
      */
     public static InputStreamResource buildInputStreamResourceFrom(final String value, final String description) {
-        final var reader = new StringReader(value);
-        final InputStream is = new ReaderInputStream(reader, StandardCharsets.UTF_8);
+        val reader = new StringReader(value);
+        val is = new ReaderInputStream(reader, StandardCharsets.UTF_8);
         return new InputStreamResource(is, description);
     }
 

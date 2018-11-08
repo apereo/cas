@@ -1,12 +1,14 @@
 package org.apereo.cas.support.sms;
 
-import com.textmagic.sdk.RestClient;
-import com.textmagic.sdk.resource.instance.TMNewMessage;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.io.SmsSender;
+
+import com.textmagic.sdk.RestClient;
+import com.textmagic.sdk.resource.instance.TMNewMessage;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * This is {@link TextMagicSmsSender}.
@@ -32,7 +34,7 @@ public class TextMagicSmsSender implements SmsSender {
     @Override
     public boolean send(final String from, final String to, final String message) {
         try {
-            final var m = this.client.getResource(TMNewMessage.class);
+            val m = this.client.getResource(TMNewMessage.class);
             m.setText(message);
             m.setPhones(CollectionUtils.wrap(to));
             m.setFrom(from);

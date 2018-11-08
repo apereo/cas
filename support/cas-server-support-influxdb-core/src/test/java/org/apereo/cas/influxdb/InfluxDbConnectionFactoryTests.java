@@ -4,16 +4,18 @@ import org.apereo.cas.category.InfluxDbCategory;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+
+import lombok.val;
 import org.influxdb.annotation.Column;
 import org.influxdb.annotation.Measurement;
 import org.influxdb.dto.Point;
 import org.influxdb.impl.InfluxDBResultMapper;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.After;
-import org.junit.Before;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
@@ -21,7 +23,6 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.time.Instant;
 import java.util.concurrent.TimeUnit;
-import lombok.extern.slf4j.Slf4j;
 
 import static org.junit.Assert.*;
 
@@ -31,7 +32,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @Category(InfluxDbCategory.class)
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
@@ -63,14 +63,14 @@ public class InfluxDbConnectionFactoryTests {
 
     @Test
     public void verifyWritePoint() {
-        final var p = Point.measurement("events")
+        val p = Point.measurement("events")
             .time(System.currentTimeMillis(), TimeUnit.MILLISECONDS)
             .addField("hostname", "cas.example.org")
             .build();
         factory.write(p, CAS_EVENTS_DATABASE);
-        final var result = factory.query("*", "events", CAS_EVENTS_DATABASE);
-        final var resultMapper = new InfluxDBResultMapper();
-        final var resultEvents = resultMapper.toPOJO(result, InfluxEvent.class);
+        val result = factory.query("*", "events", CAS_EVENTS_DATABASE);
+        val resultMapper = new InfluxDBResultMapper();
+        val resultEvents = resultMapper.toPOJO(result, InfluxEvent.class);
         assertNotNull(resultEvents);
         assertEquals(1, resultEvents.size());
         assertEquals("cas.example.org", resultEvents.iterator().next().hostname);

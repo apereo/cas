@@ -1,10 +1,13 @@
 package org.apereo.cas.configuration.model.webapp;
 
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import java.io.Serializable;
+import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+
+import java.io.Serializable;
 
 /**
  * This is {@link WebflowSessionManagementProperties}.
@@ -12,9 +15,9 @@ import lombok.Setter;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-
 @Getter
 @Setter
+@RequiresModule(name = "cas-server-core-webflow")
 public class WebflowSessionManagementProperties implements Serializable {
 
     private static final long serialVersionUID = 7479028707118198914L;

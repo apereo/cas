@@ -1,13 +1,14 @@
 package org.apereo.cas.services.web.support;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.cas.security.ResponseHeadersEnforcementFilter;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.ArgumentExtractor;
+
+import lombok.RequiredArgsConstructor;
+import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,7 +21,6 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseHeadersEnforcementFilter {
     private final ServicesManager servicesManager;
@@ -88,11 +88,11 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
 
     private boolean shouldHttpHeaderBeInjectedIntoResponse(final HttpServletRequest request,
                                                            final RegisteredServiceProperties property) {
-        final var result = getRegisteredServiceFromRequest(request);
+        val result = getRegisteredServiceFromRequest(request);
         if (result.isPresent()) {
-            final var properties = result.get().getProperties();
+            val properties = result.get().getProperties();
             if (properties.containsKey(property.getPropertyName())) {
-                final var prop = properties.get(property.getPropertyName());
+                val prop = properties.get(property.getPropertyName());
                 return BooleanUtils.toBoolean(prop.getValue());
             }
         }
@@ -112,7 +112,7 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
      * @return the registered service from request
      */
     private Optional<RegisteredService> getRegisteredServiceFromRequest(final HttpServletRequest request) {
-        final var service = this.argumentExtractor.extractService(request);
+        val service = this.argumentExtractor.extractService(request);
         if (service != null) {
             return Optional.ofNullable(this.servicesManager.findServiceBy(service));
         }

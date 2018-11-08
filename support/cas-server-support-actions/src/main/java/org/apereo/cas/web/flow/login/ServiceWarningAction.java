@@ -1,17 +1,17 @@
 package org.apereo.cas.web.flow.login;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
@@ -25,7 +25,6 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class ServiceWarningAction extends AbstractAction {
 
@@ -42,26 +41,26 @@ public class ServiceWarningAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext context) {
-        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        final var response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
 
-        final Service service = WebUtils.getService(context);
-        final var ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
+        val service = WebUtils.getService(context);
+        val ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
         if (StringUtils.isBlank(ticketGrantingTicket)) {
             throw new InvalidTicketException(new AuthenticationException("No ticket-granting ticket could be found in the context"), ticketGrantingTicket);
         }
 
-        final var authentication = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
+        val authentication = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
         if (authentication == null) {
             throw new InvalidTicketException(new AuthenticationException("No authentication found for ticket " + ticketGrantingTicket), ticketGrantingTicket);
         }
 
-        final var credential = WebUtils.getCredential(context);
-        final var authenticationResultBuilder =
+        val credential = WebUtils.getCredential(context);
+        val authenticationResultBuilder =
             authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication, credential);
-        final var authenticationResult = authenticationResultBuilder.build(principalElectionStrategy, service);
+        val authenticationResult = authenticationResultBuilder.build(principalElectionStrategy, service);
 
-        final var serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
+        val serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
         WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
 
         if (request.getParameterMap().containsKey(PARAMETER_NAME_IGNORE_WARNING)) {

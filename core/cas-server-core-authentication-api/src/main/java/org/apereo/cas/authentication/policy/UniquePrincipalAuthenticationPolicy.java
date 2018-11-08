@@ -1,13 +1,18 @@
 package org.apereo.cas.authentication.policy;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.function.FunctionUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.security.GeneralSecurityException;
+import java.util.Set;
 
 /**
  * This is {@link UniquePrincipalAuthenticationPolicy}
@@ -25,15 +30,17 @@ public class UniquePrincipalAuthenticationPolicy implements AuthenticationPolicy
     private final TicketRegistry ticketRegistry;
 
     @Override
-    public boolean isSatisfiedBy(final Authentication authentication) throws Exception {
+    public boolean isSatisfiedBy(final Authentication authentication, final Set<AuthenticationHandler> authenticationHandlers) throws Exception {
         try {
-            final var authPrincipal = authentication.getPrincipal();
-            final var count = this.ticketRegistry.getTickets(t -> {
-                var pass = TicketGrantingTicket.class.isInstance(t) && !t.isExpired();
-                if (pass) {
-                    final var principal = TicketGrantingTicket.class.cast(t).getAuthentication().getPrincipal();
-                    pass = principal.getId().equalsIgnoreCase(authPrincipal.getId());
-                }
+            val authPrincipal = authentication.getPrincipal();
+            val count = this.ticketRegistry.getTickets(t -> {
+                var pass = FunctionUtils.doIf(TicketGrantingTicket.class.isInstance(t) && !t.isExpired(),
+                    () -> {
+                        val principal = TicketGrantingTicket.class.cast(t).getAuthentication().getPrincipal();
+                        return principal.getId().equalsIgnoreCase(authPrincipal.getId());
+                    },
+                    () -> Boolean.TRUE)
+                    .get();
                 return pass;
             }).count();
             if (count == 0) {

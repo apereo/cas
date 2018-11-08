@@ -1,15 +1,17 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 
 import javax.persistence.PostLoad;
@@ -38,16 +40,16 @@ public abstract class BaseRegisteredServiceUsernameAttributeProvider implements 
 
     @Override
     public final String resolveUsername(final Principal principal, final Service service, final RegisteredService registeredService) {
-        final var username = resolveUsernameInternal(principal, service, registeredService);
+        val username = resolveUsernameInternal(principal, service, registeredService);
         if (canonicalizationMode == null) {
             canonicalizationMode = CaseCanonicalizationMode.NONE.name();
         }
-        final var uid = CaseCanonicalizationMode.valueOf(canonicalizationMode).canonicalize(username.trim(), Locale.getDefault());
-        LOGGER.debug("Resolved username for [{}] is [{}]", service.getId(), uid);
+        val uid = CaseCanonicalizationMode.valueOf(canonicalizationMode).canonicalize(username.trim(), Locale.getDefault());
+        LOGGER.debug("Resolved username for [{}] is [{}]", service, uid);
         if (!this.encryptUsername) {
             return uid;
         }
-        final var encryptedId = encryptResolvedUsername(principal, service, registeredService, uid);
+        val encryptedId = encryptResolvedUsername(principal, service, registeredService, uid);
         if (StringUtils.isBlank(encryptedId)) {
             throw new IllegalArgumentException("Could not encrypt username " + uid + " for service " + service);
         }
@@ -64,8 +66,8 @@ public abstract class BaseRegisteredServiceUsernameAttributeProvider implements 
      * @return the encrypted username or null
      */
     protected String encryptResolvedUsername(final Principal principal, final Service service, final RegisteredService registeredService, final String username) {
-        final var applicationContext = ApplicationContextProvider.getApplicationContext();
-        final var cipher = applicationContext.getBean("registeredServiceCipherExecutor", RegisteredServiceCipherExecutor.class);
+        val applicationContext = ApplicationContextProvider.getApplicationContext();
+        val cipher = applicationContext.getBean("registeredServiceCipherExecutor", RegisteredServiceCipherExecutor.class);
         return cipher.encode(username, Optional.of(registeredService));
     }
 

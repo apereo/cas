@@ -15,6 +15,13 @@ import com.datastax.driver.core.policies.RetryPolicy;
 @FunctionalInterface
 public interface CassandraSessionFactory {
     /**
+     * Gets session.
+     *
+     * @return the session
+     */
+    Session getSession();
+
+    /**
      * The enum Retry policy type.
      */
     enum RetryPolicyType {
@@ -55,11 +62,4 @@ public interface CassandraSessionFactory {
             return this.retryPolicy;
         }
     }
-
-    /**
-     * Gets session.
-     *
-     * @return the session
-     */
-    Session getSession();
 }

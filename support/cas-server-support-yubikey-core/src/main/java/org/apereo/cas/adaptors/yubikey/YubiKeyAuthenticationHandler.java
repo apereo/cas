@@ -1,11 +1,5 @@
 package org.apereo.cas.adaptors.yubikey;
 
-import com.yubico.client.v2.ResponseStatus;
-import com.yubico.client.v2.YubicoClient;
-import com.yubico.client.v2.exceptions.YubicoValidationFailure;
-import com.yubico.client.v2.exceptions.YubicoVerificationException;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.yubikey.registry.OpenYubiKeyAccountRegistry;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
@@ -13,6 +7,14 @@ import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessin
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
+
+import com.yubico.client.v2.ResponseStatus;
+import com.yubico.client.v2.YubicoClient;
+import com.yubico.client.v2.exceptions.YubicoValidationFailure;
+import com.yubico.client.v2.exceptions.YubicoVerificationException;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
@@ -62,30 +64,30 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
 
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
-        final var yubiKeyCredential = (YubiKeyCredential) credential;
+        val yubiKeyCredential = (YubiKeyCredential) credential;
 
-        final var otp = yubiKeyCredential.getToken();
+        val otp = yubiKeyCredential.getToken();
 
         if (!YubicoClient.isValidOTPFormat(otp)) {
             LOGGER.debug("Invalid OTP format [{}]", otp);
             throw new AccountNotFoundException("OTP format is invalid");
         }
 
-        final var authentication = WebUtils.getInProgressAuthentication();
+        val authentication = WebUtils.getInProgressAuthentication();
         if (authentication == null) {
             throw new IllegalArgumentException("CAS has no reference to an authentication event to locate a principal");
         }
-        final var principal = authentication.getPrincipal();
-        final var uid = principal.getId();
-        final var publicId = registry.getAccountValidator().getTokenPublicId(otp);
+        val principal = authentication.getPrincipal();
+        val uid = principal.getId();
+        val publicId = registry.getAccountValidator().getTokenPublicId(otp);
         if (!this.registry.isYubiKeyRegisteredFor(uid, publicId)) {
             LOGGER.debug("YubiKey public id [{}] is not registered for user [{}]", publicId, uid);
             throw new AccountNotFoundException("YubiKey id is not recognized in registry");
         }
 
         try {
-            final var response = this.client.verify(otp);
-            final var status = response.getStatus();
+            val response = this.client.verify(otp);
+            val status = response.getStatus();
             if (status.compareTo(ResponseStatus.OK) == 0) {
                 LOGGER.debug("YubiKey response status [{}] at [{}]", status, response.getTimestamp());
                 return createHandlerResult(yubiKeyCredential, this.principalFactory.createPrincipal(uid));
@@ -103,6 +105,11 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
 
     public YubicoClient getClient() {
         return this.client;
+    }
+
+    @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return YubiKeyCredential.class.isAssignableFrom(clazz);
     }
 
     @Override

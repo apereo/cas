@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow;
 import org.springframework.binding.expression.Expression;
 import org.springframework.core.Ordered;
 import org.springframework.webflow.action.EvaluateAction;
+import org.springframework.webflow.action.SetAction;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.DecisionState;
 import org.springframework.webflow.engine.EndState;
@@ -94,7 +95,16 @@ public interface CasWebflowConfigurer extends Ordered {
      * @return the transition
      */
     Transition createTransition(String targetState);
-    
+
+    /**
+     * Create set action set action.
+     *
+     * @param name  the name
+     * @param value the value
+     * @return the set action
+     */
+    SetAction createSetAction(String name, String value);
+
     /**
      * Create evaluate action evaluate action.
      *
@@ -143,7 +153,7 @@ public interface CasWebflowConfigurer extends Ordered {
      * @param state the state
      */
     void setStartState(Flow flow, TransitionableState state);
-    
+
 
     /**
      * Create end state.
@@ -259,6 +269,11 @@ public interface CasWebflowConfigurer extends Ordered {
      */
     Flow buildFlow(String location, String id);
 
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
     default String getName() {
         return getClass().getSimpleName();
     }

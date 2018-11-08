@@ -1,10 +1,12 @@
 package org.apereo.cas.ws.idp.metadata;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.wss4j.common.util.DOM2Writer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ws.idp.WSFederationConstants;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.wss4j.common.util.DOM2Writer;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,10 +22,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Controller("WSFederationMetadataController")
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class WSFederationMetadataController {
-    private static final long serialVersionUID = -6927484130511112872L;
-
     private final CasConfigurationProperties casProperties;
 
     /**
@@ -37,10 +37,10 @@ public class WSFederationMetadataController {
     public void doGet(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         try {
             response.setContentType(MediaType.TEXT_HTML_VALUE);
-            final var out = response.getWriter();
-            final var mw = new WSFederationMetadataWriter();
+            val out = response.getWriter();
+            val mw = new WSFederationMetadataWriter();
 
-            final var metadata = mw.produceMetadataDocument(casProperties);
+            val metadata = mw.produceMetadataDocument(casProperties);
             out.write(DOM2Writer.nodeToString(metadata));
         } catch (final Exception ex) {
             LOGGER.error("Failed to get metadata document", ex);

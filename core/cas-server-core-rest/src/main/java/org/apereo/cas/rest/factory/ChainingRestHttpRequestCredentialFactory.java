@@ -1,11 +1,13 @@
 package org.apereo.cas.rest.factory;
 
+import org.apereo.cas.authentication.Credential;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.Credential;
 import org.springframework.core.OrderComparator;
 import org.springframework.util.MultiValueMap;
+
+import javax.servlet.http.HttpServletRequest;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,7 +19,6 @@ import java.util.stream.Stream;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Slf4j
 @Getter
 @RequiredArgsConstructor
 public class ChainingRestHttpRequestCredentialFactory implements RestHttpRequestCredentialFactory {
@@ -37,11 +38,11 @@ public class ChainingRestHttpRequestCredentialFactory implements RestHttpRequest
     }
 
     @Override
-    public List<Credential> fromRequestBody(final MultiValueMap<String, String> requestBody) {
+    public List<Credential> fromRequest(final HttpServletRequest request, final MultiValueMap<String, String> requestBody) {
         OrderComparator.sort(this.chain);
         return this.chain
             .stream()
-            .map(f -> f.fromRequestBody(requestBody))
+            .map(f -> f.fromRequest(request, requestBody))
             .flatMap(List::stream)
             .collect(Collectors.toList());
     }

@@ -1,8 +1,9 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
+
+import org.apache.commons.lang3.NotImplementedException;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 
 import java.util.Collection;
@@ -21,7 +22,7 @@ public interface SamlRegisteredServiceMetadataResolver {
      * @param service the service
      * @return the list
      */
-    Collection<MetadataResolver> resolve(SamlRegisteredService service);
+    Collection<? extends MetadataResolver> resolve(SamlRegisteredService service);
 
     /**
      * Supports this service?
@@ -48,4 +49,14 @@ public interface SamlRegisteredServiceMetadataResolver {
     default String getName() {
         return getClass().getSimpleName();
     }
+
+    /**
+     * Is the resolver available and able to resolve metadata?
+     * This method may contact the metadata source checking for
+     * the source availability.
+     *
+     * @param service the service
+     * @return true /false
+     */
+    boolean isAvailable(SamlRegisteredService service);
 }

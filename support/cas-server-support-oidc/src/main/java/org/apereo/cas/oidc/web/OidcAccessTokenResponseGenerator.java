@@ -1,20 +1,18 @@
 package org.apereo.cas.oidc.web;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.oidc.token.OidcIdTokenGeneratorService;
 import org.apereo.cas.services.OidcRegisteredService;
-import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20AccessTokenResponseGenerator;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
-import org.apereo.cas.ticket.refreshtoken.RefreshToken;
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20DefaultAccessTokenResponseGenerator;
+import org.apereo.cas.ticket.IdTokenGeneratorService;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 /**
  * This is {@link OidcAccessTokenResponseGenerator}.
@@ -22,29 +20,24 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RequiredArgsConstructor
 @Slf4j
-@AllArgsConstructor
-public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponseGenerator {
-    private final OidcIdTokenGeneratorService idTokenGenerator;
+public class OidcAccessTokenResponseGenerator extends OAuth20DefaultAccessTokenResponseGenerator {
+    private final IdTokenGeneratorService idTokenGenerator;
 
     @Override
-    protected void generateJsonInternal(final HttpServletRequest request,
-                                        final HttpServletResponse response,
-                                        final JsonGenerator jsonGenerator,
-                                        final AccessToken accessTokenId,
-                                        final RefreshToken refreshTokenId,
-                                        final long timeout,
-                                        final Service service,
-                                        final OAuthRegisteredService registeredService,
-                                        final OAuth20ResponseTypes responseType) throws Exception {
+    protected Map getAccessTokenResponseModel(final HttpServletRequest request, final HttpServletResponse response, final OAuth20AccessTokenResponseResult result) {
+        val model = super.getAccessTokenResponseModel(request, response, result);
+        val accessToken = result.getGeneratedToken().getAccessToken();
+        accessToken.ifPresent(token -> {
+            val oidcRegisteredService = (OidcRegisteredService) result.getRegisteredService();
+            val idToken = this.idTokenGenerator.generate(request, response, accessToken.get(),
+                result.getAccessTokenTimeout(), result.getResponseType(), oidcRegisteredService);
 
-        super.generateJsonInternal(request, response, jsonGenerator, accessTokenId,
-                refreshTokenId, timeout, service, registeredService, responseType);
-        final var oidcRegisteredService = (OidcRegisteredService) registeredService;
-        final var idToken = this.idTokenGenerator.generate(request, response, accessTokenId,
-                timeout, responseType, oidcRegisteredService);
-        jsonGenerator.writeStringField(OidcConstants.ID_TOKEN, idToken);
+            LOGGER.debug("Generated ID token [{}]", idToken);
+            model.put(OidcConstants.ID_TOKEN, idToken);
+        });
+        return model;
     }
-
 }
 

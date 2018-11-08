@@ -1,10 +1,11 @@
 package org.apereo.cas.configuration.model.support.saml.idp;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.apereo.cas.configuration.model.support.saml.idp.metadata.SamlIdPMetadataProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -17,7 +18,6 @@ import java.util.List;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-saml-idp")
-
 @Getter
 @Setter
 public class SamlIdPProperties implements Serializable {
@@ -76,5 +76,10 @@ public class SamlIdPProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SamlIdPAlgorithmsProperties algs = new SamlIdPAlgorithmsProperties();
-    
+
+    /**
+     * Settings related to naming saml cache storages.
+     */
+    @NestedConfigurationProperty
+    private SamlIdPTicketProperties ticket = new SamlIdPTicketProperties();
 }

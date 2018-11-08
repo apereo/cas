@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.principal.Principal;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -7,7 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.principal.Principal;
+import lombok.val;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,9 +49,9 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
      * @return the map
      */
     protected Map<String, Object> authorizeReleaseOfAllowedAttributes(final Map<String, Object> attrs) {
-        final Map<String, Object> resolvedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        val resolvedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attrs);
-        final Map<String, Object> attributesToRelease = new HashMap<>();
+        val attributesToRelease = new HashMap<String, Object>();
         getAllowedAttributes()
             .stream()
             .map(attr -> new Object[]{attr, resolvedAttributes.get(attr)})

@@ -1,6 +1,7 @@
 package org.apereo.cas.monitor;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import net.spy.memcached.MemcachedClient;
 import net.spy.memcached.MemcachedClientIF;
 import org.apache.commons.pool2.ObjectPool;
@@ -8,7 +9,6 @@ import org.springframework.boot.actuate.health.Health;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Monitors the memcached hosts known to an instance of {@link net.spy.memcached.MemcachedClientIF}.
@@ -29,15 +29,15 @@ public class MemcachedHealthIndicator extends AbstractCacheHealthIndicator {
     @Override
     protected void doHealthCheck(final Health.Builder builder) {
         try {
-            final var client = (MemcachedClient) getClientFromPool();
+            val client = (MemcachedClient) getClientFromPool();
             if (client.getAvailableServers().isEmpty()) {
                 LOGGER.warn("No available memcached servers can be found");
                 builder.outOfService().withDetail("message", "No memcached servers available.");
                 return;
             }
-            final var unavailableList = client.getUnavailableServers();
+            val unavailableList = client.getUnavailableServers();
             if (!unavailableList.isEmpty()) {
-                final var description = "One or more memcached servers is unavailable: " + unavailableList;
+                val description = "One or more memcached servers is unavailable: " + unavailableList;
                 builder.down().withDetail("message", description);
                 return;
             }
@@ -59,22 +59,19 @@ public class MemcachedHealthIndicator extends AbstractCacheHealthIndicator {
      */
     @Override
     protected CacheStatistics[] getStatistics() {
-        final List<CacheStatistics> statsList = new ArrayList<>();
+        val statsList = new ArrayList<CacheStatistics>();
         try {
-            final var client = getClientFromPool();
+            val client = getClientFromPool();
             client.getStats()
                 .forEach((key, statsMap) -> {
                     if (!statsMap.isEmpty()) {
-                        final var size = Long.parseLong(statsMap.get("bytes"));
-                        final var capacity = Long.parseLong(statsMap.get("limit_maxbytes"));
-                        final var evictions = Long.parseLong(statsMap.get("evictions"));
+                        val size = Long.parseLong(statsMap.get("bytes"));
+                        val capacity = Long.parseLong(statsMap.get("limit_maxbytes"));
+                        val evictions = Long.parseLong(statsMap.get("evictions"));
 
-                        final String name;
-                        if (key instanceof InetSocketAddress) {
-                            name = ((InetSocketAddress) key).getHostName();
-                        } else {
-                            name = key.toString();
-                        }
+                        val name = key instanceof InetSocketAddress
+                            ? ((InetSocketAddress) key).getHostName()
+                            : key.toString();
                         statsList.add(new SimpleCacheStatistics(size, capacity, evictions, name));
                     }
                 });

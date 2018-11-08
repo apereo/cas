@@ -16,7 +16,6 @@ import java.util.List;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-
 @Getter
 @Setter
 @RequiredArgsConstructor

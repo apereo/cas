@@ -1,9 +1,11 @@
 package org.apereo.cas.configuration.support;
 
+import org.apereo.cas.CipherExecutor;
+
 import lombok.Getter;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apereo.cas.CipherExecutor;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.springframework.core.env.Environment;
@@ -23,52 +25,6 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      * Prefix inserted at the beginning of a value to indicate it's encrypted.
      */
     public static final String ENCRYPTED_VALUE_PREFIX = "{cipher}";
-
-    /**
-     * The Jasypt encryption parameters.
-     */
-    public enum JasyptEncryptionParameters {
-
-        /**
-         * Jasypt algorithm name to use.
-         */
-        ALGORITHM("cas.standalone.configurationSecurity.alg", "PBEWithMD5AndTripleDES"),
-        /**
-         * Jasypt provider name to use.
-         */
-        PROVIDER("cas.standalone.configurationSecurity.provider", null),
-        /**
-         * Jasypt number of iterations to use.
-         */
-        ITERATIONS("cas.standalone.configurationSecurity.iteration", null),
-        /**
-         * Jasypt password to use.
-         */
-        PASSWORD("cas.standalone.configurationSecurity.psw", null);
-
-        /**
-         * The Name.
-         */
-        @Getter
-        private final String propertyName;
-        /**
-         * The Default value.
-         */
-        @Getter
-        private final String defaultValue;
-
-        /**
-         * Instantiates a new Jasypt encryption parameters.
-         *
-         * @param name         the name
-         * @param defaultValue the default value
-         */
-        JasyptEncryptionParameters(final String name, final String defaultValue) {
-            this.propertyName = name;
-            this.defaultValue = defaultValue;
-        }
-    }
-
     /**
      * The Jasypt instance.
      */
@@ -83,14 +39,25 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         Security.addProvider(new BouncyCastleProvider());
         this.jasyptInstance = new StandardPBEStringEncryptor();
 
-        final var alg = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.ALGORITHM);
+        val alg = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.ALGORITHM);
         setAlgorithm(alg);
-        final var psw = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.PASSWORD);
+        val psw = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.PASSWORD);
         setPassword(psw);
-        final var pName = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.PROVIDER);
+        val pName = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.PROVIDER);
         setProviderName(pName);
-        final var iter = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.ITERATIONS);
+        val iter = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.ITERATIONS);
         setKeyObtentionIterations(iter);
+    }
+
+    /**
+     * Gets jasypt param from env.
+     *
+     * @param environment the environment
+     * @param param       the param
+     * @return the jasypt param from env
+     */
+    private static String getJasyptParamFromEnv(final Environment environment, final JasyptEncryptionParameters param) {
+        return environment.getProperty(param.getPropertyName(), param.getDefaultValue());
     }
 
     /**
@@ -207,9 +174,9 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         if (StringUtils.isNotBlank(value) && value.startsWith(ENCRYPTED_VALUE_PREFIX)) {
             initializeJasyptInstanceIfNecessary();
 
-            final var encValue = value.substring(ENCRYPTED_VALUE_PREFIX.length());
+            val encValue = value.substring(ENCRYPTED_VALUE_PREFIX.length());
             LOGGER.trace("Decrypting value [{}]...", encValue);
-            final var result = this.jasyptInstance.decrypt(encValue);
+            val result = this.jasyptInstance.decrypt(encValue);
 
             if (StringUtils.isNotBlank(result)) {
                 LOGGER.debug("Decrypted value [{}] successfully.", encValue);
@@ -232,13 +199,47 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
     }
 
     /**
-     * Gets jasypt param from env.
-     *
-     * @param environment the environment
-     * @param param       the param
-     * @return the jasypt param from env
+     * The Jasypt encryption parameters.
      */
-    private static String getJasyptParamFromEnv(final Environment environment, final JasyptEncryptionParameters param) {
-        return environment.getProperty(param.getPropertyName(), param.getDefaultValue());
+    public enum JasyptEncryptionParameters {
+
+        /**
+         * Jasypt algorithm name to use.
+         */
+        ALGORITHM("cas.standalone.configurationSecurity.alg", "PBEWithMD5AndTripleDES"),
+        /**
+         * Jasypt provider name to use.
+         */
+        PROVIDER("cas.standalone.configurationSecurity.provider", null),
+        /**
+         * Jasypt number of iterations to use.
+         */
+        ITERATIONS("cas.standalone.configurationSecurity.iteration", null),
+        /**
+         * Jasypt password to use.
+         */
+        PASSWORD("cas.standalone.configurationSecurity.psw", null);
+
+        /**
+         * The Name.
+         */
+        @Getter
+        private final String propertyName;
+        /**
+         * The Default value.
+         */
+        @Getter
+        private final String defaultValue;
+
+        /**
+         * Instantiates a new Jasypt encryption parameters.
+         *
+         * @param name         the name
+         * @param defaultValue the default value
+         */
+        JasyptEncryptionParameters(final String name, final String defaultValue) {
+            this.propertyName = name;
+            this.defaultValue = defaultValue;
+        }
     }
 }

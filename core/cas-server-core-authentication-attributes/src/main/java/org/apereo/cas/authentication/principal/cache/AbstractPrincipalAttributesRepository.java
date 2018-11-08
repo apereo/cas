@@ -1,14 +1,17 @@
 package org.apereo.cas.authentication.principal.cache;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
+
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.merger.IAttributeMerger;
 import org.apereo.services.persondir.support.merger.MultivaluedAttributeMerger;
@@ -22,7 +25,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import lombok.Setter;
 
 /**
  * Parent class for retrieval principals attributes, provides operations
@@ -66,46 +68,6 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      * are ignored and the source is always consulted.
      */
     protected MergingStrategy mergingStrategy;
-
-    /**
-     * Defines the merging strategy options.
-     */
-    public enum MergingStrategy {
-
-        /**
-         * Replace attributes.
-         */
-        REPLACE, /**
-         * Add attributes.
-         */
-        ADD, /**
-         * No merging.
-         */
-        NONE, /**
-         * Multivalued attributes.
-         */
-        MULTIVALUED;
-
-        /**
-         * Get attribute merger.
-         *
-         * @return the attribute merger
-         */
-        public IAttributeMerger getAttributeMerger() {
-            final var name = this.name().toUpperCase();
-            switch(name.toUpperCase()) {
-                case "REPLACE":
-                    return new ReplacingAttributeAdder();
-                case "ADD":
-                    return new NoncollidingAttributeAdder();
-                case "MULTIVALUED":
-                    return new MultivaluedAttributeMerger();
-                default:
-                    return null;
-            }
-        }
-    }
-
     private transient IPersonAttributeDao attributeRepository;
 
     /**
@@ -127,6 +89,24 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
         this.timeUnit = timeUnit;
     }
 
+    /***
+     * Convert principal attributes to person attributes.
+     * @param p  the principal carrying attributes
+     * @return person attributes
+     */
+    private static Map<String, List<Object>> convertPrincipalAttributesToPersonAttributes(final Principal p) {
+        val convertedAttributes = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
+        val principalAttributes = p.getAttributes();
+        principalAttributes.forEach((key, values) -> {
+            if (values instanceof List) {
+                convertedAttributes.put(key, (List) values);
+            } else {
+                convertedAttributes.put(key, CollectionUtils.wrap(values));
+            }
+        });
+        return convertedAttributes;
+    }
+
     /**
      * Convert person attributes to principal attributes.
      *
@@ -138,26 +118,6 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
             ? entry.getValue().get(0) : entry.getValue(), (e, f) -> f == null ? e : f));
     }
 
-    /***
-     * Convert principal attributes to person attributes.
-     * @param p  the principal carrying attributes
-     * @return person attributes
-     */
-    private static Map<String, List<Object>> convertPrincipalAttributesToPersonAttributes(final Principal p) {
-        final Map<String, List<Object>> convertedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-        final var principalAttributes = p.getAttributes();
-        principalAttributes.entrySet().forEach(entry -> {
-            final var values = entry.getValue();
-            final var key = entry.getKey();
-            if (values instanceof List) {
-                convertedAttributes.put(key, (List) values);
-            } else {
-                convertedAttributes.put(key, CollectionUtils.wrap(values));
-            }
-        });
-        return convertedAttributes;
-    }
-
     /**
      * Obtains attributes first from the repository by calling
      * {@link org.apereo.services.persondir.IPersonAttributeDao#getPerson(String)}.
@@ -166,12 +126,12 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      * @return the map of attributes
      */
     protected Map<String, List<Object>> retrievePersonAttributesToPrincipalAttributes(final String id) {
-        final var attrs = getAttributeRepository().getPerson(id);
+        val attrs = getAttributeRepository().getPerson(id);
         if (attrs == null) {
             LOGGER.debug("Could not find principal [{}] in the repository so no attributes are returned.", id);
             return new HashMap<>(0);
         }
-        final var attributes = attrs.getAttributes();
+        val attributes = attrs.getAttributes();
         if (attributes == null) {
             LOGGER.debug("Principal [{}] has no attributes and so none are returned.", id);
             return new HashMap<>(0);
@@ -181,7 +141,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
 
     @Override
     public Map<String, Object> getAttributes(final Principal p) {
-        final var cachedAttributes = getPrincipalAttributes(p);
+        val cachedAttributes = getPrincipalAttributes(p);
         if (cachedAttributes != null && !cachedAttributes.isEmpty()) {
             LOGGER.debug("Found [{}] cached attributes for principal [{}] that are [{}]", cachedAttributes.size(), p.getId(), cachedAttributes);
             return cachedAttributes;
@@ -190,26 +150,26 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
             LOGGER.debug("No attribute repository is defined for [{}]. Returning default principal attributes for [{}]", getClass().getName(), p.getId());
             return cachedAttributes;
         }
-        final var sourceAttributes = retrievePersonAttributesToPrincipalAttributes(p.getId());
+        val sourceAttributes = retrievePersonAttributesToPrincipalAttributes(p.getId());
         LOGGER.debug("Found [{}] attributes for principal [{}] from the attribute repository.", sourceAttributes.size(), p.getId());
         if (this.mergingStrategy == null || this.mergingStrategy.getAttributeMerger() == null) {
             LOGGER.debug("No merging strategy found, so attributes retrieved from the repository will be used instead.");
             return convertAttributesToPrincipalAttributesAndCache(p, sourceAttributes);
         }
-        final var principalAttributes = convertPrincipalAttributesToPersonAttributes(p);
+        val principalAttributes = convertPrincipalAttributesToPersonAttributes(p);
         LOGGER.debug("Merging current principal attributes with that of the repository via strategy [{}]", this.mergingStrategy);
         try {
-            final var mergedAttributes = this.mergingStrategy.getAttributeMerger().mergeAttributes(principalAttributes, sourceAttributes);
+            val mergedAttributes = this.mergingStrategy.getAttributeMerger().mergeAttributes(principalAttributes, sourceAttributes);
             return convertAttributesToPrincipalAttributesAndCache(p, mergedAttributes);
         } catch (final Exception e) {
-            final var builder = new StringBuilder();
+            val builder = new StringBuilder();
             builder.append(e.getClass().getName().concat("-"));
             if (StringUtils.isNotBlank(e.getMessage())) {
                 builder.append(e.getMessage());
             }
             LOGGER.error("The merging strategy [{}] for [{}] has failed to produce principal attributes because: [{}]. "
-                + "This usually is indicative of a bug and/or configuration mismatch. CAS will skip the merging process "
-                + "and will return the original collection of principal attributes [{}]", this.mergingStrategy, p.getId(),
+                    + "This usually is indicative of a bug and/or configuration mismatch. CAS will skip the merging process "
+                    + "and will return the original collection of principal attributes [{}]", this.mergingStrategy, p.getId(),
                 builder.toString(), principalAttributes);
             return convertAttributesToPrincipalAttributesAndCache(p, principalAttributes);
         }
@@ -223,7 +183,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      * @return the map
      */
     private Map<String, Object> convertAttributesToPrincipalAttributesAndCache(final Principal p, final Map<String, List<Object>> sourceAttributes) {
-        final var finalAttributes = convertPersonAttributesToPrincipalAttributes(sourceAttributes);
+        val finalAttributes = convertPersonAttributesToPrincipalAttributes(sourceAttributes);
         addPrincipalAttributes(p.getId(), finalAttributes);
         return finalAttributes;
     }
@@ -248,7 +208,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
     private IPersonAttributeDao getAttributeRepository() {
         try {
             if (this.attributeRepository == null) {
-                final var context = ApplicationContextProvider.getApplicationContext();
+                val context = ApplicationContextProvider.getApplicationContext();
                 if (context != null) {
                     return context.getBean("attributeRepository", IPersonAttributeDao.class);
                 }
@@ -258,6 +218,48 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
             LOGGER.warn(e.getMessage(), e);
         }
         return this.attributeRepository;
+    }
+
+    /**
+     * Defines the merging strategy options.
+     */
+    public enum MergingStrategy {
+
+        /**
+         * Replace attributes.
+         */
+        REPLACE,
+        /**
+         * Add attributes.
+         */
+        ADD,
+        /**
+         * No merging.
+         */
+        NONE,
+        /**
+         * Multivalued attributes.
+         */
+        MULTIVALUED;
+
+        /**
+         * Get attribute merger.
+         *
+         * @return the attribute merger
+         */
+        public IAttributeMerger getAttributeMerger() {
+            val name = this.name().toUpperCase();
+            switch (name.toUpperCase()) {
+                case "REPLACE":
+                    return new ReplacingAttributeAdder();
+                case "ADD":
+                    return new NoncollidingAttributeAdder();
+                case "MULTIVALUED":
+                    return new MultivaluedAttributeMerger();
+                default:
+                    return null;
+            }
+        }
     }
 
 }

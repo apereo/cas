@@ -2,7 +2,7 @@ package org.apereo.cas.monitor;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.util.Formatter;
 
@@ -12,7 +12,6 @@ import java.util.Formatter;
  * @author Marvin S. Addison
  * @since 3.5.1
  */
-@Slf4j
 @Getter
 @AllArgsConstructor
 public class SimpleCacheStatistics implements CacheStatistics {
@@ -27,7 +26,7 @@ public class SimpleCacheStatistics implements CacheStatistics {
 
     private final long evictions;
 
-    private String name;
+    private final String name;
 
     public SimpleCacheStatistics(final long size, final long capacity, final long evictions) {
         this(size, capacity, evictions, "N/A");
@@ -47,7 +46,7 @@ public class SimpleCacheStatistics implements CacheStatistics {
         if (this.name != null) {
             builder.append(this.name).append(':');
         }
-        try (var formatter = new Formatter(builder)) {
+        try (val formatter = new Formatter(builder)) {
             formatter.format("%.2f", this.size / BYTES_PER_MB);
         }
         builder.append("MB used, ");

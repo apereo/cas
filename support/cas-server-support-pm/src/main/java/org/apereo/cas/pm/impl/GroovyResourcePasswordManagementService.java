@@ -1,14 +1,15 @@
 package org.apereo.cas.pm.impl;
 
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.BasePasswordManagementService;
 import org.apereo.cas.pm.PasswordChangeBean;
 import org.apereo.cas.util.ScriptingUtils;
+
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 
 import java.io.Serializable;
@@ -35,17 +36,22 @@ public class GroovyResourcePasswordManagementService extends BasePasswordManagem
     }
 
     @Override
-    public boolean changeInternal(@NonNull final Credential credential, @NonNull final PasswordChangeBean bean) {
-        return ScriptingUtils.executeGroovyScript(this.groovyResource, "change", new Object[]{credential, bean, LOGGER}, Boolean.class);
+    public boolean changeInternal(final @NonNull Credential credential, final @NonNull PasswordChangeBean bean) {
+        return ScriptingUtils.executeGroovyScript(this.groovyResource, "change", new Object[]{credential, bean, LOGGER}, Boolean.class, true);
     }
 
     @Override
     public String findEmail(final String username) {
-        return ScriptingUtils.executeGroovyScript(this.groovyResource, "findEmail", new Object[]{username, LOGGER}, String.class);
+        return ScriptingUtils.executeGroovyScript(this.groovyResource, "findEmail", new Object[]{username, LOGGER}, String.class, true);
+    }
+
+    @Override
+    public String findUsername(final String email) {
+        return ScriptingUtils.executeGroovyScript(this.groovyResource, "findUsername", new Object[]{email, LOGGER}, String.class, true);
     }
 
     @Override
     public Map<String, String> getSecurityQuestions(final String username) {
-        return ScriptingUtils.executeGroovyScript(this.groovyResource, "getSecurityQuestions", new Object[]{username, LOGGER}, Map.class);
+        return ScriptingUtils.executeGroovyScript(this.groovyResource, "getSecurityQuestions", new Object[]{username, LOGGER}, Map.class, true);
     }
 }

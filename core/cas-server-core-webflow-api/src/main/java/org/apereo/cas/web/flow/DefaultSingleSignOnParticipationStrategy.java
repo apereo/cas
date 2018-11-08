@@ -1,12 +1,13 @@
 package org.apereo.cas.web.flow;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -30,15 +31,15 @@ public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnPar
             return this.createSsoSessionCookieOnRenewAuthentications;
         }
 
-        final var authentication = WebUtils.getAuthentication(ctx);
-        final Service service = WebUtils.getService(ctx);
+        val authentication = WebUtils.getAuthentication(ctx);
+        val service = WebUtils.getService(ctx);
         if (service != null) {
-            final var registeredService = this.servicesManager.findServiceBy(service);
+            val registeredService = this.servicesManager.findServiceBy(service);
             if (registeredService != null) {
-                final var ca = AuthenticationCredentialsThreadLocalBinder.getCurrentAuthentication();
+                val ca = AuthenticationCredentialsThreadLocalBinder.getCurrentAuthentication();
                 try {
                     AuthenticationCredentialsThreadLocalBinder.bindCurrent(authentication);
-                    final var isAllowedForSso = registeredService.getAccessStrategy().isServiceAccessAllowedForSso();
+                    val isAllowedForSso = registeredService.getAccessStrategy().isServiceAccessAllowedForSso();
                     LOGGER.debug("Located [{}] in registry. Service access to participate in SSO is set to [{}]",
                         registeredService.getServiceId(), isAllowedForSso);
                     return isAllowedForSso;

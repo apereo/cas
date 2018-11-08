@@ -1,11 +1,13 @@
 package org.apereo.cas.interrupt;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * This is {@link BaseInterruptInquirer}.
@@ -17,11 +19,12 @@ import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProper
 public abstract class BaseInterruptInquirer implements InterruptInquirer {
     @Override
     public final InterruptResponse inquire(final Authentication authentication, final RegisteredService registeredService,
-                                           final Service service, final Credential credential) {
+                                           final Service service, final Credential credential,
+                                           final RequestContext requestContext) {
         if (shouldSkipInterruptForRegisteredService(registeredService)) {
             return InterruptResponse.none();
         }
-        return inquireInternal(authentication, registeredService, service, credential);
+        return inquireInternal(authentication, registeredService, service, credential, requestContext);
     }
 
     /**
@@ -51,8 +54,12 @@ public abstract class BaseInterruptInquirer implements InterruptInquirer {
      * @param registeredService the registered service
      * @param service           the service
      * @param credential        the credential
+     * @param requestContext    the request context
      * @return the interrupt response
      */
-    protected abstract InterruptResponse inquireInternal(Authentication authentication, RegisteredService registeredService,
-                                                         Service service, Credential credential);
+    protected abstract InterruptResponse inquireInternal(Authentication authentication,
+                                                         RegisteredService registeredService,
+                                                         Service service,
+                                                         Credential credential,
+                                                         RequestContext requestContext);
 }

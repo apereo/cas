@@ -1,7 +1,6 @@
 package org.apereo.cas.util;
 
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 
 
@@ -10,9 +9,7 @@ import org.aspectj.lang.JoinPoint;
  *
  * @author Marvin S. Addison
  * @since 3.4
- *
  */
-@Slf4j
 @UtilityClass
 public class AopUtils {
 

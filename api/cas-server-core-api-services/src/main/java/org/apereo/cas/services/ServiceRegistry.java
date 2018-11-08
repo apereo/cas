@@ -1,6 +1,8 @@
 package org.apereo.cas.services;
 
-import java.util.List;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Collection;
 
 /**
  * Registry of all RegisteredServices.
@@ -32,7 +34,7 @@ public interface ServiceRegistry {
      *
      * @return the collection of services.
      */
-    List<RegisteredService> load();
+    Collection<RegisteredService> load();
 
     /**
      * Find service by the numeric id.
@@ -59,7 +61,7 @@ public interface ServiceRegistry {
     default RegisteredService findServiceByExactServiceId(final String id) {
         return load()
             .stream()
-            .filter(r -> r.getServiceId().equals(id))
+            .filter(r -> StringUtils.isNotBlank(r.getServiceId()) && r.getServiceId().equals(id))
             .findFirst()
             .orElse(null);
     }

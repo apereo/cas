@@ -1,8 +1,6 @@
 package org.apereo.cas.configuration.model.support.pm;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
@@ -10,6 +8,10 @@ import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -23,7 +25,6 @@ import java.util.Map;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-pm-webflow")
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -74,6 +75,11 @@ public class PasswordManagementProperties implements Serializable {
     private Reset reset = new Reset();
 
     /**
+     * Settings related to fetching usernames.
+     */
+    private ForgotUsername forgotUsername = new ForgotUsername();
+
+    /**
      * Handle password policy via Groovy script.
      */
     private Groovy groovy = new Groovy();
@@ -102,6 +108,11 @@ public class PasswordManagementProperties implements Serializable {
         private String sqlFindEmail;
 
         /**
+         * SQL query to locate the user via email.
+         */
+        private String sqlFindUser;
+
+        /**
          * SQL query to locate security questions for the account, if any.
          */
         private String sqlSecurityQuestions;
@@ -118,6 +129,11 @@ public class PasswordManagementProperties implements Serializable {
          * Endpoint URL to use when locating email addresses.
          */
         private String endpointUrlEmail;
+
+        /**
+         * Endpoint URL to use when locating user names.
+         */
+        private String endpointUrlUser;
 
         /**
          * Endpoint URL to use when locating security questions.
@@ -149,7 +165,37 @@ public class PasswordManagementProperties implements Serializable {
          * based on which update operations will be constructed.
          */
         private LdapType type = LdapType.AD;
+
+        /**
+         * Username attribute required by LDAP.
+         */
+        private String usernameAttribute = "uid";
+
+        /**
+         * Search filter used to look up usernames by email.
+         */
+        private String searchFilterUsername;
     }
+
+    @RequiresModule(name = "cas-server-support-pm-webflow")
+    @Getter
+    @Setter
+    public static class ForgotUsername implements Serializable {
+        private static final long serialVersionUID = 4850199066765183587L;
+
+        /**
+         * Email settings for notifications.
+         */
+        @NestedConfigurationProperty
+        private EmailProperties mail = new EmailProperties();
+
+        public ForgotUsername() {
+            this.mail.setAttributeName("mail");
+            this.mail.setText("Your current username is: %s");
+            this.mail.setSubject("Forgot Username");
+        }
+    }
+
 
     @RequiresModule(name = "cas-server-support-pm-webflow")
     @Getter
@@ -179,12 +225,14 @@ public class PasswordManagementProperties implements Serializable {
         /**
          * How long in minutes should the password expiration link remain valid.
          */
-        private float expirationMinutes = 1;
+        private long expirationMinutes = 1;
 
         public Reset() {
-            this.mail.setAttributeName("mail");
-            this.mail.setText("Reset your password via this link: %s");
-            this.mail.setSubject("Password Reset");
+            mail.setAttributeName("mail");
+            mail.setText("Reset your password via this link: %s");
+            mail.setSubject("Password Reset");
+            crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
+            crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
         }
     }
 

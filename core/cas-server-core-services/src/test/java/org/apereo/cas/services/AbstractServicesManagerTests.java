@@ -1,11 +1,12 @@
 package org.apereo.cas.services;
 
-import lombok.extern.slf4j.Slf4j;
-import org.junit.Test;
+import lombok.val;
 import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -17,17 +18,14 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 public abstract class AbstractServicesManagerTests {
-
-
     private static final String TEST = "test";
+    protected final List<RegisteredService> listOfDefaultServices = new ArrayList<>();
     protected ServiceRegistry serviceRegistry;
     protected ServicesManager servicesManager;
-    protected final List<RegisteredService> listOfDefaultServices = new ArrayList<>();
 
     public AbstractServicesManagerTests() {
-        final var r = new RegexRegisteredService();
+        val r = new RegexRegisteredService();
         r.setId(2500);
         r.setServiceId("serviceId");
         r.setName("serviceName");
@@ -43,7 +41,7 @@ public abstract class AbstractServicesManagerTests {
     }
 
     protected ServicesManager getServicesManagerInstance() {
-        return new DefaultServicesManager(serviceRegistry, mock(ApplicationEventPublisher.class));
+        return new DefaultServicesManager(serviceRegistry, mock(ApplicationEventPublisher.class), new HashSet<>());
     }
 
     protected ServiceRegistry getServiceRegistryInstance() {
@@ -52,12 +50,24 @@ public abstract class AbstractServicesManagerTests {
 
     @Test
     public void verifySaveAndGet() {
-        final var r = new RegexRegisteredService();
+        val r = new RegexRegisteredService();
         r.setId(1000);
         r.setName(TEST);
         r.setServiceId(TEST);
 
         this.servicesManager.save(r);
         assertNotNull(this.servicesManager.findServiceBy(1000));
+    }
+
+    @Test
+    public void verifyDelete() {
+        val r = new RegexRegisteredService();
+        r.setId(1000);
+        r.setName(TEST);
+        r.setServiceId(TEST);
+        this.servicesManager.save(r);
+        assertNotNull(this.servicesManager.findServiceBy(r.getServiceId()));
+        this.servicesManager.delete(r);
+        assertNull(this.servicesManager.findServiceBy(r.getId()));
     }
 }

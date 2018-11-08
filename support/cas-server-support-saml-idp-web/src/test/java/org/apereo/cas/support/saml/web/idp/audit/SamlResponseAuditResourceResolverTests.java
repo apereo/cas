@@ -1,9 +1,12 @@
 package org.apereo.cas.support.saml.web.idp.audit;
 
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.val;
 import org.aspectj.lang.JoinPoint;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.soap.soap11.Body;
@@ -13,7 +16,8 @@ import org.opensaml.soap.soap11.FaultActor;
 import org.opensaml.soap.soap11.FaultString;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -24,14 +28,19 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 public class SamlResponseAuditResourceResolverTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
     @Test
     public void verifyAction() {
-        final var r = new SamlResponseAuditResourceResolver();
-        final var response = mock(Response.class);
-        final var issuer = mock(Issuer.class);
+        val r = new SamlResponseAuditResourceResolver();
+        val response = mock(Response.class);
+        val issuer = mock(Issuer.class);
         when(issuer.getValue()).thenReturn("https://idp.example.org");
         when(response.getIssuer()).thenReturn(issuer);
         when(response.getDestination()).thenReturn("https://sp.example.org");
@@ -39,9 +48,9 @@ public class SamlResponseAuditResourceResolverTests {
         var result = r.resolveFrom(mock(JoinPoint.class), response);
         assertNotNull(result);
         assertTrue(result.length > 0);
-        
-        final var envelope = mock(Envelope.class);
-        final var body = mock(Body.class);
+
+        val envelope = mock(Envelope.class);
+        val body = mock(Body.class);
 
         when(body.getUnknownXMLObjects()).thenReturn(CollectionUtils.wrapList(response));
         when(envelope.getBody()).thenReturn(body);
@@ -49,10 +58,10 @@ public class SamlResponseAuditResourceResolverTests {
         assertNotNull(result);
         assertTrue(result.length > 0);
 
-        final var fault = mock(Fault.class);
-        final var actor = mock(FaultActor.class);
+        val fault = mock(Fault.class);
+        val actor = mock(FaultActor.class);
         when(actor.getValue()).thenReturn("actor");
-        final var msg = mock(FaultString.class);
+        val msg = mock(FaultString.class);
         when(msg.getValue()).thenReturn("message");
         when(fault.getMessage()).thenReturn(msg);
         when(fault.getActor()).thenReturn(actor);

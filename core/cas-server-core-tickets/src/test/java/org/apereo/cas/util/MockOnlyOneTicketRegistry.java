@@ -1,22 +1,21 @@
 package org.apereo.cas.util;
 
-import java.util.Collection;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.registry.TicketRegistry;
+
+import java.util.Collection;
+import java.util.function.Predicate;
 
 /**
  * This ticket registry only stores one ticket at the same time and offers the ability to update a ticket.
- * 
+ *
  * @author Jerome Leleu
  * @since 4.0.0
  */
-@Slf4j
 public class MockOnlyOneTicketRegistry implements TicketRegistry {
 
     private Ticket ticket;
-    
+
     @Override
     public void addTicket(final Ticket ticket) {
         this.ticket = ticket;
@@ -42,6 +41,11 @@ public class MockOnlyOneTicketRegistry implements TicketRegistry {
     }
 
     @Override
+    public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
+        return this.ticket;
+    }
+
+    @Override
     public int deleteTicket(final String ticketId) {
         this.ticket = null;
         return 1;
@@ -53,7 +57,7 @@ public class MockOnlyOneTicketRegistry implements TicketRegistry {
     }
 
     @Override
-    public Collection<Ticket> getTickets() {
+    public Collection<? extends Ticket> getTickets() {
         throw new UnsupportedOperationException("Not implemented");
     }
 

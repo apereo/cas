@@ -14,6 +14,7 @@ import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.Resource;
 
@@ -32,38 +33,6 @@ import java.util.function.Function;
 @Getter
 public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
     private final List<AWSCredentialsProvider> chain;
-
-    @Override
-    public AWSCredentials getCredentials() {
-        LOGGER.debug("Attempting to locate AWS credentials from the chain...");
-        for (final var p : this.chain) {
-            AWSCredentials c;
-            try {
-                LOGGER.debug("Calling credential provider [{}] to fetch credentials...", p.getClass().getSimpleName());
-                c = p.getCredentials();
-            } catch (final Throwable e) {
-                LOGGER.trace(e.getMessage(), e);
-                c = null;
-            }
-            if (c != null) {
-                LOGGER.debug("Fetched credentials from [{}] provider successfully.", p.getClass().getSimpleName());
-                return c;
-            }
-        }
-        LOGGER.warn("No AWS credentials could be determined from the chain. Using anonymous credentials...");
-        return new AnonymousAWSCredentials();
-    }
-
-    @Override
-    public void refresh() {
-        for (final var p : this.chain) {
-            try {
-                p.refresh();
-            } catch (final Throwable e) {
-                LOGGER.trace(e.getMessage(), e);
-            }
-        }
-    }
 
     /**
      * Gets instance.
@@ -114,12 +83,12 @@ public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
 
         LOGGER.debug("Attempting to locate AWS credentials...");
 
-        final List<AWSCredentialsProvider> chain = new ArrayList<>();
+        val chain = new ArrayList<AWSCredentialsProvider>();
         chain.add(new InstanceProfileCredentialsProvider(false));
 
         if (credentialPropertiesFile != null) {
             try {
-                final var f = credentialPropertiesFile.getFile();
+                val f = credentialPropertiesFile.getFile();
                 chain.add(new PropertiesFileCredentialsProvider(f.getCanonicalPath()));
             } catch (final Exception e) {
                 LOGGER.error(e.getMessage(), e);
@@ -148,7 +117,7 @@ public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
 
         if (StringUtils.isNotBlank(credentialAccessKey) && StringUtils.isNotBlank(credentialSecretKey)) {
             addProviderToChain(nothing -> {
-                final var credentials = new BasicAWSCredentials(credentialAccessKey, credentialSecretKey);
+                val credentials = new BasicAWSCredentials(credentialAccessKey, credentialSecretKey);
                 chain.add(new AWSStaticCredentialsProvider(credentials));
                 return null;
             });
@@ -163,6 +132,41 @@ public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
             func.apply(null);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public AWSCredentials getCredentials() {
+        LOGGER.debug("Attempting to locate AWS credentials from the chain...");
+        for (val p : this.chain) {
+            val c = getCredentialsFromProvider(p);
+            if (c != null) {
+                LOGGER.debug("Fetched credentials from [{}] provider successfully.", p.getClass().getSimpleName());
+                return c;
+            }
+        }
+        LOGGER.warn("No AWS credentials could be determined from the chain. Using anonymous credentials...");
+        return new AnonymousAWSCredentials();
+    }
+
+    private static AWSCredentials getCredentialsFromProvider(final AWSCredentialsProvider p) {
+        try {
+            LOGGER.debug("Calling credential provider [{}] to fetch credentials...", p.getClass().getSimpleName());
+            return p.getCredentials();
+        } catch (final Throwable e) {
+            LOGGER.trace(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    @Override
+    public void refresh() {
+        for (val p : this.chain) {
+            try {
+                p.refresh();
+            } catch (final Throwable e) {
+                LOGGER.trace(e.getMessage(), e);
+            }
         }
     }
 }

@@ -1,9 +1,10 @@
 package org.apereo.cas.configuration.model.support.cosmosdb;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
+
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
@@ -14,7 +15,6 @@ import java.io.Serializable;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-cosmosdb-core")
-
 @Getter
 @Setter
 public abstract class BaseCosmosDbProperties implements Serializable {

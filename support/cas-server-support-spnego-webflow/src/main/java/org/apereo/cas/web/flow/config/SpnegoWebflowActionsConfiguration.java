@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -13,7 +12,9 @@ import org.apereo.cas.web.flow.client.HostNameSpnegoKnownClientSystemsFilterActi
 import org.apereo.cas.web.flow.client.LdapSpnegoKnownClientSystemsFilterAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
-import org.ldaptive.ConnectionFactory;
+
+import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -23,7 +24,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.webflow.execution.Action;
 
-import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -35,20 +35,19 @@ import java.util.stream.Stream;
  */
 @Configuration("spnegoWebflowActionsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class SpnegoWebflowActionsConfiguration {
 
     @Autowired
     @Qualifier("adaptiveAuthenticationPolicy")
-    private AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
+    private ObjectProvider<AdaptiveAuthenticationPolicy> adaptiveAuthenticationPolicy;
 
     @Autowired
     @Qualifier("serviceTicketRequestWebflowEventResolver")
-    private CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;
+    private ObjectProvider<CasWebflowEventResolver> serviceTicketRequestWebflowEventResolver;
 
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-    private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
+    private ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -56,10 +55,10 @@ public class SpnegoWebflowActionsConfiguration {
     @Bean
     @RefreshScope
     public Action spnego() {
-        final var spnegoProperties = casProperties.getAuthn().getSpnego();
-        return new SpnegoCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
-            serviceTicketRequestWebflowEventResolver,
-            adaptiveAuthenticationPolicy,
+        val spnegoProperties = casProperties.getAuthn().getSpnego();
+        return new SpnegoCredentialsAction(initialAuthenticationAttemptWebflowEventResolver.getIfAvailable(),
+            serviceTicketRequestWebflowEventResolver.getIfAvailable(),
+            adaptiveAuthenticationPolicy.getIfAvailable(),
             spnegoProperties.isNtlm(),
             spnegoProperties.isSend401OnAuthenticationFailure());
     }
@@ -67,15 +66,15 @@ public class SpnegoWebflowActionsConfiguration {
     @Bean
     @RefreshScope
     public Action negociateSpnego() {
-        final var spnegoProperties = casProperties.getAuthn().getSpnego();
-        final var supportedBrowsers = Stream.of(spnegoProperties.getSupportedBrowsers().split(",")).collect(Collectors.toList());
+        val spnegoProperties = casProperties.getAuthn().getSpnego();
+        val supportedBrowsers = Stream.of(spnegoProperties.getSupportedBrowsers().split(",")).collect(Collectors.toList());
         return new SpnegoNegotiateCredentialsAction(supportedBrowsers, spnegoProperties.isNtlm(), spnegoProperties.isMixedModeAuthentication());
     }
 
     @Bean
     @RefreshScope
     public Action baseSpnegoClientAction() {
-        final var spnegoProperties = casProperties.getAuthn().getSpnego();
+        val spnegoProperties = casProperties.getAuthn().getSpnego();
         return new BaseSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern(spnegoProperties.getIpsToCheckPattern()),
             spnegoProperties.getAlternativeRemoteHostAttribute(),
             Beans.newDuration(spnegoProperties.getDnsTimeout()).toMillis());
@@ -84,7 +83,7 @@ public class SpnegoWebflowActionsConfiguration {
     @Bean
     @RefreshScope
     public Action hostnameSpnegoClientAction() {
-        final var spnegoProperties = casProperties.getAuthn().getSpnego();
+        val spnegoProperties = casProperties.getAuthn().getSpnego();
         return new HostNameSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern(spnegoProperties.getIpsToCheckPattern()),
             spnegoProperties.getAlternativeRemoteHostAttribute(),
             Beans.newDuration(spnegoProperties.getDnsTimeout()).toMillis(),
@@ -95,12 +94,11 @@ public class SpnegoWebflowActionsConfiguration {
     @Bean
     @RefreshScope
     public Action ldapSpnegoClientAction() {
-        final var spnegoProperties = casProperties.getAuthn().getSpnego();
-        final ConnectionFactory connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(spnegoProperties.getLdap());
-        final var filter = LdapUtils.newLdaptiveSearchFilter(spnegoProperties.getLdap().getSearchFilter(),
-            "host", new ArrayList<>(0));
+        val spnegoProperties = casProperties.getAuthn().getSpnego();
+        val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(spnegoProperties.getLdap());
+        val filter = LdapUtils.newLdaptiveSearchFilter(spnegoProperties.getLdap().getSearchFilter());
 
-        final var searchRequest = LdapUtils.newLdaptiveSearchRequest(spnegoProperties.getLdap().getBaseDn(), filter);
+        val searchRequest = LdapUtils.newLdaptiveSearchRequest(spnegoProperties.getLdap().getBaseDn(), filter);
         return new LdapSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern(spnegoProperties.getIpsToCheckPattern()),
             spnegoProperties.getAlternativeRemoteHostAttribute(),
             Beans.newDuration(spnegoProperties.getDnsTimeout()).toMillis(),

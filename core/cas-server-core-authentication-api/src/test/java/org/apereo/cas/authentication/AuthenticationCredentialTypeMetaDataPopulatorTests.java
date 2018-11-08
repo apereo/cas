@@ -1,6 +1,9 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.metadata.AuthenticationCredentialTypeMetaDataPopulator;
+
+import lombok.val;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -12,15 +15,15 @@ import static org.junit.Assert.*;
  * @since 5.3.0
  */
 public class AuthenticationCredentialTypeMetaDataPopulatorTests {
-    private AuthenticationCredentialTypeMetaDataPopulator populator =
+    private final AuthenticationCredentialTypeMetaDataPopulator populator =
         new AuthenticationCredentialTypeMetaDataPopulator();
 
     @Test
     public void verifyPopulator() {
-        final var credentials = new UsernamePasswordCredential();
-        final var builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
+        val credentials = new UsernamePasswordCredential();
+        val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
         this.populator.populateAttributes(builder, DefaultAuthenticationTransaction.of(credentials));
-        final var auth = builder.build();
+        val auth = builder.build();
         assertEquals(
             credentials.getClass().getSimpleName(),
             auth.getAttributes().get(Credential.CREDENTIAL_TYPE_ATTRIBUTE));

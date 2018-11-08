@@ -1,13 +1,16 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
+import org.apereo.cas.configuration.model.support.couchdb.BaseCouchDbProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
+
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.Resource;
 
 import java.util.ArrayList;
@@ -21,7 +24,6 @@ import java.util.Map;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-yubikey")
-
 @Getter
 @Setter
 public class YubiKeyMultifactorProperties extends BaseMultifactorProviderProperties {
@@ -40,7 +42,7 @@ public class YubiKeyMultifactorProperties extends BaseMultifactorProviderPropert
     private Integer clientId = 0;
 
     /**
-     *  Yubikey secret key.
+     * Yubikey secret key.
      */
     @RequiredProperty
     private String secretKey = StringUtils.EMPTY;
@@ -68,6 +70,11 @@ public class YubiKeyMultifactorProperties extends BaseMultifactorProviderPropert
     private boolean trustedDeviceEnabled;
 
     /**
+     * Keep device registration records inside a CouchDb resource.
+     */
+    private CouchDb couchDb = new CouchDb();
+
+    /**
      * Keep device registration records inside a JDBC resource.
      */
     private Jpa jpa = new Jpa();
@@ -84,6 +91,20 @@ public class YubiKeyMultifactorProperties extends BaseMultifactorProviderPropert
 
     public YubiKeyMultifactorProperties() {
         setId(DEFAULT_IDENTIFIER);
+        crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
+        crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
+    }
+
+    @RequiresModule(name = "cas-server-support-yubikey-couchdb")
+    @Getter
+    @Setter
+    public static class CouchDb extends BaseCouchDbProperties {
+
+        private static final long serialVersionUID = 3757390989294642185L;
+
+        public CouchDb() {
+            this.setDbName("yubikey");
+        }
     }
 
     @Getter

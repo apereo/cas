@@ -1,11 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import com.unboundid.scim.data.Meta;
-import com.unboundid.scim.data.Name;
-import com.unboundid.scim.data.UserResource;
-import com.unboundid.scim.marshal.json.JsonMarshaller;
-import com.unboundid.scim.schema.CoreSchema;
-import com.unboundid.scim.sdk.Resources;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
@@ -17,8 +11,17 @@ import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.support.WebUtils;
+
+import com.unboundid.scim.data.Meta;
+import com.unboundid.scim.data.Name;
+import com.unboundid.scim.data.UserResource;
+import com.unboundid.scim.marshal.json.JsonMarshaller;
+import com.unboundid.scim.schema.CoreSchema;
+import com.unboundid.scim.sdk.Resources;
+import lombok.val;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,7 +32,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
@@ -47,7 +51,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
     CasScimConfiguration.class,
     CasCoreWebflowConfiguration.class,
@@ -58,39 +61,48 @@ import static org.junit.Assert.*;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     RefreshAutoConfiguration.class
 })
-@TestPropertySource(properties = {"cas.scim.target=http://localhost:8215",
-    "cas.scim.version=1", "cas.scim.username=casuser", "cas.scim.password=Mellon"})
+@TestPropertySource(properties = {
+    "cas.scim.target=http://localhost:8215",
+    "cas.scim.version=1",
+    "cas.scim.username=casuser",
+    "cas.scim.password=Mellon"})
 public class PrincipalScimV1ProvisionerActionTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
     @Autowired
     @Qualifier("principalScimProvisionerAction")
     private Action principalScimProvisionerAction;
 
     @Test
     public void verifyAction() throws Exception {
-        final var context = new MockRequestContext();
-        final var request = new MockHttpServletRequest();
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
 
-        final var user = new UserResource(CoreSchema.USER_DESCRIPTOR);
+        val user = new UserResource(CoreSchema.USER_DESCRIPTOR);
         user.setActive(true);
         user.setDisplayName("CASUser");
         user.setId("casuser");
-        final var name = new Name("formatted", "family",
+        val name = new Name("formatted", "family",
             "middle", "givenMame", "prefix", "prefix2");
         name.setGivenName("casuser");
         user.setName(name);
-        final var meta = new Meta(new Date(), new Date(), new URI("http://localhost:8215"), "1");
+        val meta = new Meta(new Date(), new Date(), new URI("http://localhost:8215"), "1");
         meta.setCreated(new Date());
         user.setMeta(meta);
 
 
-        final var resources = new Resources(CollectionUtils.wrapList(user));
-        final var stream = new ByteArrayOutputStream();
+        val resources = new Resources(CollectionUtils.wrapList(user));
+        val stream = new ByteArrayOutputStream();
         resources.marshal(new JsonMarshaller(), stream);
-        final var data = stream.toString();
-        try (var webServer = new MockWebServer(8215,
+        val data = stream.toString();
+        try (val webServer = new MockWebServer(8215,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, principalScimProvisionerAction.execute(context).getId());

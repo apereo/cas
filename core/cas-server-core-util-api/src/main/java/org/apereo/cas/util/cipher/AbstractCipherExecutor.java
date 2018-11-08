@@ -1,18 +1,19 @@
 package org.apereo.cas.util.cipher;
 
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
+
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jose4j.keys.AesKey;
 import org.jose4j.keys.RsaKeyUtil;
-import org.springframework.core.io.Resource;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -31,10 +32,44 @@ import java.security.Security;
 @NoArgsConstructor
 public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, R> {
 
-    private Key signingKey;
-
     static {
         Security.addProvider(new BouncyCastleProvider());
+    }
+
+    private Key signingKey;
+
+    /**
+     * Extract private key from resource private key.
+     *
+     * @param signingSecretKey the signing secret key
+     * @return the private key
+     */
+    @SneakyThrows
+    public static PrivateKey extractPrivateKeyFromResource(final String signingSecretKey) {
+        LOGGER.debug("Attempting to extract private key...");
+        val resource = ResourceUtils.getResourceFrom(signingSecretKey);
+        val factory = new PrivateKeyFactoryBean();
+        factory.setAlgorithm(RsaKeyUtil.RSA);
+        factory.setLocation(resource);
+        factory.setSingleton(false);
+        return factory.getObject();
+    }
+
+    /**
+     * Extract public key from resource public key.
+     *
+     * @param secretKeyToUse the secret key to use
+     * @return the public key
+     */
+    @SneakyThrows
+    public static PublicKey extractPublicKeyFromResource(final String secretKeyToUse) {
+        LOGGER.debug("Attempting to extract public key from [{}]...", secretKeyToUse);
+        val resource = ResourceUtils.getResourceFrom(secretKeyToUse);
+        val factory = new PublicKeyFactoryBean();
+        factory.setAlgorithm(RsaKeyUtil.RSA);
+        factory.setResource(resource);
+        factory.setSingleton(false);
+        return factory.getObject();
     }
 
     /**
@@ -71,7 +106,7 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
         } finally {
             if (this.signingKey == null) {
                 setSigningKey(new AesKey(signingSecretKey.getBytes(StandardCharsets.UTF_8)));
-                LOGGER.debug("Created signing key instance [{}] based on provided secret key", this.signingKey.getClass().getSimpleName());
+                LOGGER.trace("Created signing key instance [{}] based on provided secret key", this.signingKey.getClass().getSimpleName());
             }
         }
     }
@@ -83,11 +118,10 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
      * @throws Exception the exception
      */
     protected void configureSigningKeyFromPrivateKeyResource(final String signingSecretKey) throws Exception {
-        final var object = extractPrivateKeyFromResource(signingSecretKey);
-        LOGGER.debug("Located signing key resource [{}]", signingSecretKey);
+        val object = extractPrivateKeyFromResource(signingSecretKey);
+        LOGGER.trace("Located signing key resource [{}]", signingSecretKey);
         setSigningKey(object);
     }
-
 
     /**
      * Verify signature.
@@ -106,39 +140,5 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
     @Override
     public boolean isEnabled() {
         return this.signingKey != null;
-    }
-
-    /**
-     * Extract private key from resource private key.
-     *
-     * @param signingSecretKey the signing secret key
-     * @return the private key
-     */
-    @SneakyThrows
-    public static PrivateKey extractPrivateKeyFromResource(final String signingSecretKey) {
-        LOGGER.debug("Attempting to extract private key...");
-        final Resource resource = ResourceUtils.getResourceFrom(signingSecretKey);
-        final var factory = new PrivateKeyFactoryBean();
-        factory.setAlgorithm(RsaKeyUtil.RSA);
-        factory.setLocation(resource);
-        factory.setSingleton(false);
-        return factory.getObject();
-    }
-
-    /**
-     * Extract public key from resource public key.
-     *
-     * @param secretKeyToUse the secret key to use
-     * @return the public key
-     */
-    @SneakyThrows
-    public static PublicKey extractPublicKeyFromResource(final String secretKeyToUse) {
-        LOGGER.debug("Attempting to extract public key from [{}]...", secretKeyToUse);
-        final Resource resource = ResourceUtils.getResourceFrom(secretKeyToUse);
-        final var factory = new PublicKeyFactoryBean();
-        factory.setAlgorithm(RsaKeyUtil.RSA);
-        factory.setResource(resource);
-        factory.setSingleton(false);
-        return factory.getObject();
     }
 }

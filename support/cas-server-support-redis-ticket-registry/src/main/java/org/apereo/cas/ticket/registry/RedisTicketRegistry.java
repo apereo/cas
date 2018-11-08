@@ -1,13 +1,16 @@
 package org.apereo.cas.ticket.registry;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.ticket.Ticket;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.Collection;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -17,16 +20,38 @@ import java.util.stream.Collectors;
  * @since 5.1.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class RedisTicketRegistry extends AbstractTicketRegistry {
     private static final String CAS_TICKET_PREFIX = "CAS_TICKET:";
 
     private final RedisTemplate<String, Ticket> client;
 
+    /**
+     * If not time out value is specified, expire the ticket immediately.
+     *
+     * @param ticket the ticket
+     * @return timeout
+     */
+    private static Long getTimeout(final Ticket ticket) {
+        val ttl = ticket.getExpirationPolicy().getTimeToLive();
+        if (ttl <= 0) {
+            return 1L;
+        }
+        return ttl;
+    }
+
+    private static String getTicketRedisKey(final String ticketId) {
+        return CAS_TICKET_PREFIX + ticketId;
+    }
+
+    private static String getPatternTicketRedisKey() {
+        return CAS_TICKET_PREFIX + '*';
+    }
+
     @Override
     public long deleteAll() {
-        final var redisKeys = this.client.keys(getPatternTicketRedisKey());
-        final var size = redisKeys.size();
+        val redisKeys = this.client.keys(getPatternTicketRedisKey());
+        val size = redisKeys.size();
         this.client.delete(redisKeys);
         return size;
     }
@@ -34,7 +59,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
         try {
-            final var redisKey = getTicketRedisKey(ticketId);
+            val redisKey = getTicketRedisKey(ticketId);
             this.client.delete(redisKey);
             return true;
         } catch (final Exception e) {
@@ -47,29 +72,28 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     public void addTicket(final Ticket ticket) {
         try {
             LOGGER.debug("Adding ticket [{}]", ticket);
-            final var redisKey = getTicketRedisKey(ticket.getId());
-            // Encode first, then add
-            final var encodeTicket = this.encodeTicket(ticket);
-            this.client.boundValueOps(redisKey)
-                .set(encodeTicket, getTimeout(ticket), TimeUnit.SECONDS);
+            val redisKey = getTicketRedisKey(ticket.getId());
+            val encodeTicket = encodeTicket(ticket);
+            val timeout = getTimeout(ticket);
+            this.client.boundValueOps(redisKey).set(encodeTicket, timeout.longValue(), TimeUnit.SECONDS);
         } catch (final Exception e) {
             LOGGER.error("Failed to add [{}]", ticket, e);
         }
     }
 
     @Override
-    public Ticket getTicket(final String ticketId) {
+    public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         try {
-            final var redisKey = getTicketRedisKey(ticketId);
-            final var t = this.client.boundValueOps(redisKey).get();
+            val redisKey = getTicketRedisKey(ticketId);
+            val t = this.client.boundValueOps(redisKey).get();
             if (t != null) {
-                final var result = decodeTicket(t);
-                if (result != null && result.isExpired()) {
-                    LOGGER.debug("Ticket [{}] has expired and is now removed from the cache", result.getId());
-                    deleteSingleTicket(ticketId);
-                    return null;
+                val result = decodeTicket(t);
+                if (predicate.test(result)) {
+                    return result;
                 }
-                return result;
+                LOGGER.debug("The condition enforced by the predicate [{}] cannot successfully accept/test the ticket id [{}]", ticketId,
+                    predicate.getClass().getSimpleName());
+                return null;
             }
         } catch (final Exception e) {
             LOGGER.error("Failed fetching [{}] ", ticketId, e);
@@ -78,10 +102,10 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Collection<Ticket> getTickets() {
+    public Collection<? extends Ticket> getTickets() {
         return this.client.keys(getPatternTicketRedisKey()).stream()
             .map(redisKey -> {
-                final var ticket = this.client.boundValueOps(redisKey).get();
+                val ticket = this.client.boundValueOps(redisKey).get();
                 if (ticket == null) {
                     this.client.delete(redisKey);
                     return null;
@@ -97,37 +121,16 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     public Ticket updateTicket(final Ticket ticket) {
         try {
             LOGGER.debug("Updating ticket [{}]", ticket);
-            final var encodeTicket = this.encodeTicket(ticket);
-            final var redisKey = getTicketRedisKey(ticket.getId());
-            this.client.boundValueOps(redisKey).set(encodeTicket, getTimeout(ticket), TimeUnit.SECONDS);
+            val encodeTicket = this.encodeTicket(ticket);
+            val redisKey = getTicketRedisKey(ticket.getId());
+            LOGGER.debug("Fetched redis key [{}] for ticket [{}]", redisKey, ticket);
+
+            val timeout = getTimeout(ticket);
+            this.client.boundValueOps(redisKey).set(encodeTicket, timeout.longValue(), TimeUnit.SECONDS);
             return encodeTicket;
         } catch (final Exception e) {
             LOGGER.error("Failed to update [{}]", ticket, e);
         }
         return null;
-    }
-
-    /**
-     * If not time out value is specified, expire the ticket immediately.
-     *
-     * @param ticket the ticket
-     * @return timeout
-     */
-    private static int getTimeout(final Ticket ticket) {
-        final var ttl = ticket.getExpirationPolicy().getTimeToLive().intValue();
-        if (ttl == 0) {
-            return 1;
-        }
-        return ttl;
-    }
-
-    // Add a prefix as the key of redis
-    private static String getTicketRedisKey(final String ticketId) {
-        return CAS_TICKET_PREFIX + ticketId;
-    }
-
-    // pattern all ticket redisKey
-    private static String getPatternTicketRedisKey() {
-        return CAS_TICKET_PREFIX + '*';
     }
 }

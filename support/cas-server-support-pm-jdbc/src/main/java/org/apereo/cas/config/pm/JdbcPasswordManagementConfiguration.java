@@ -1,11 +1,12 @@
 package org.apereo.cas.config.pm;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.jdbc.JdbcPasswordManagementService;
+
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -23,26 +24,25 @@ import javax.sql.DataSource;
  */
 @Configuration("jdbcPasswordManagementConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class JdbcPasswordManagementConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("passwordManagementCipherExecutor")
-    private CipherExecutor passwordManagementCipherExecutor;
+    private ObjectProvider<CipherExecutor> passwordManagementCipherExecutor;
 
     @Bean
     public DataSource jdbcPasswordManagementDataSource() {
         return JpaBeans.newDataSource(casProperties.getAuthn().getPm().getJdbc());
     }
-    
+
     @RefreshScope
     @Bean
     public PasswordManagementService passwordChangeService() {
-        return new JdbcPasswordManagementService(passwordManagementCipherExecutor,
-                casProperties.getServer().getPrefix(),
-                casProperties.getAuthn().getPm(),
-                jdbcPasswordManagementDataSource());
+        return new JdbcPasswordManagementService(passwordManagementCipherExecutor.getIfAvailable(),
+            casProperties.getServer().getPrefix(),
+            casProperties.getAuthn().getPm(),
+            jdbcPasswordManagementDataSource());
     }
 }

@@ -4,7 +4,6 @@ package org.apereo.cas.util.gen;
  * Interface to return a new sequential number for each call.
  *
  * @author Scott Battaglia
-
  * @since 3.0.0
  */
 public interface NumericGenerator {

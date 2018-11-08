@@ -1,7 +1,10 @@
 package org.apereo.cas.oidc.web.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.oidc.web.controllers.discovery.OidcWellKnownEndpointController;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.val;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,9 +26,9 @@ public class OidcWellKnownEndpointControllerTests extends AbstractOidcTests {
 
     @Test
     public void verifyOperation() throws Exception {
-        final var res1 = MAPPER.writer().writeValueAsString(oidcWellKnownController.getWellKnownDiscoveryConfiguration());
+        val res1 = MAPPER.writer().writeValueAsString(oidcWellKnownController.getWellKnownDiscoveryConfiguration());
         assertNotNull(res1);
-        final var res2 = MAPPER.writer().writeValueAsString(oidcWellKnownController.getWellKnownOpenIdDiscoveryConfiguration());
+        val res2 = MAPPER.writer().writeValueAsString(oidcWellKnownController.getWellKnownOpenIdDiscoveryConfiguration());
         assertNotNull(res2);
     }
 }

@@ -1,8 +1,9 @@
 package org.apereo.cas.services.resource;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.RegisteredService;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.util.function.Consumer;
@@ -14,7 +15,7 @@ import java.util.function.Consumer;
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public abstract class BaseResourceBasedRegisteredServiceWatcher implements Consumer<File> {
     /**
      * Consumer to log warnings for duplicate service defns.
@@ -24,11 +25,10 @@ public abstract class BaseResourceBasedRegisteredServiceWatcher implements Consu
             + "This will overwrite previous service definitions and is likely a configuration problem. "
             + "Make sure all services have a unique id and try again.", service.getServiceId(), service.getId());
 
-
     /**
      * Service registry instance.
      */
-    protected AbstractResourceBasedServiceRegistry serviceRegistryDao;
+    protected final AbstractResourceBasedServiceRegistry serviceRegistryDao;
 
     @Override
     public void accept(final File file) {

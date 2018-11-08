@@ -1,14 +1,16 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.support.RequiresModule;
+
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link PrincipalAttributesProperties}.
@@ -39,6 +41,9 @@ public class PrincipalAttributesProperties implements Serializable {
     /**
      * Indicates the global cache expiration period, once attributes
      * are fetched from the underlying attribute repository.
+     * A zero or negative value indicates that no attribute caching
+     * should take place where attributes must always be fetched
+     * from the source.
      */
     private int expirationTime = 30;
 

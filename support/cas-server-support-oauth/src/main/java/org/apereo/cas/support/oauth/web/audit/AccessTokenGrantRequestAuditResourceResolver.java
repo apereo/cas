@@ -1,13 +1,15 @@
 package org.apereo.cas.support.oauth.web.audit;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
+
+import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.aspectj.lang.JoinPoint;
 
-import java.util.Objects;
-
-import static org.apache.commons.lang3.builder.ToStringStyle.*;
+import static org.apache.commons.lang3.builder.ToStringStyle.NO_CLASS_NAME_STYLE;
 
 /**
  * The {@link AccessTokenGrantRequestAuditResourceResolver} for audit advice
@@ -20,18 +22,23 @@ public class AccessTokenGrantRequestAuditResourceResolver extends ReturnValueAsS
 
     @Override
     public String[] resolveFrom(final JoinPoint auditableTarget, final Object retval) {
-        Objects.requireNonNull(retval, "AccessTokenRequestDataHolder must not be null");
-        final var accessTokenRequest = AccessTokenRequestDataHolder.class.cast(retval);
-        final var tokenId = accessTokenRequest.getToken() == null ? "N/A" : accessTokenRequest.getToken().getId();
+        val auditResult = (AuditableExecutionResult) retval;
+        val executionResult = auditResult.getExecutionResult();
 
-        final var result = new ToStringBuilder(this, NO_CLASS_NAME_STYLE)
+        if (executionResult.isPresent()) {
+            val accessTokenRequest = (AccessTokenRequestDataHolder) executionResult.get();
+            val tokenId = accessTokenRequest.getToken() == null ? "N/A" : accessTokenRequest.getToken().getId();
+
+            val result = new ToStringBuilder(this, NO_CLASS_NAME_STYLE)
                 .append("token", tokenId)
                 .append("client_id", accessTokenRequest.getRegisteredService().getClientId())
                 .append("service", accessTokenRequest.getService().getId())
                 .append("grant_type", accessTokenRequest.getGrantType().getType())
+                .append("response_type", accessTokenRequest.getResponseType().getType())
                 .append("scopes", accessTokenRequest.getScopes())
                 .toString();
-
-        return new String[]{result};
+            return new String[]{result};
+        }
+        return ArrayUtils.EMPTY_STRING_ARRAY;
     }
 }

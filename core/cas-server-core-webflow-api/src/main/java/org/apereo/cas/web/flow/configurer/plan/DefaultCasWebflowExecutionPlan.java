@@ -1,9 +1,10 @@
 package org.apereo.cas.web.flow.configurer.plan;
 
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
+
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.OrderComparator;
 
 import java.util.ArrayList;
@@ -18,11 +19,11 @@ import java.util.List;
 @Getter
 @Slf4j
 public class DefaultCasWebflowExecutionPlan implements CasWebflowExecutionPlan {
-    private List<CasWebflowConfigurer> webflowConfigurers = new ArrayList<>();
+    private final List<CasWebflowConfigurer> webflowConfigurers = new ArrayList<>();
 
     @Override
     public void registerWebflowConfigurer(final CasWebflowConfigurer cfg) {
-        LOGGER.debug("Registering webflow configurer [{}]", cfg.getName());
+        LOGGER.trace("Registering webflow configurer [{}]", cfg.getName());
         this.webflowConfigurers.add(cfg);
     }
 
@@ -32,7 +33,7 @@ public class DefaultCasWebflowExecutionPlan implements CasWebflowExecutionPlan {
     public void execute() {
         OrderComparator.sortIfNecessary(webflowConfigurers);
         webflowConfigurers.forEach(c -> {
-            LOGGER.debug("Registering webflow configurer [{}]", c.getName());
+            LOGGER.trace("Registering webflow configurer [{}]", c.getName());
             c.initialize();
         });
     }

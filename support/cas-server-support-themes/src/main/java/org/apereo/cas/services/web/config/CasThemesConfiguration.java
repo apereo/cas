@@ -1,6 +1,5 @@
 package org.apereo.cas.services.web.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -14,6 +13,9 @@ import org.apereo.cas.services.web.ThemeBasedViewResolver;
 import org.apereo.cas.services.web.ThemeViewResolver;
 import org.apereo.cas.services.web.ThemeViewResolverFactory;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -52,7 +54,6 @@ import java.util.Set;
 @Configuration("casThemesConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Import(ThymeleafAutoConfiguration.class)
-@Slf4j
 public class CasThemesConfiguration {
 
     @Autowired
@@ -60,11 +61,11 @@ public class CasThemesConfiguration {
 
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
-    private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+    private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -77,7 +78,7 @@ public class CasThemesConfiguration {
 
     @Autowired
     @Qualifier("thymeleafViewResolver")
-    private ThymeleafViewResolver thymeleafViewResolver;
+    private ObjectProvider<ThymeleafViewResolver> thymeleafViewResolver;
 
     @Autowired
     private List<CasThymeleafViewResolverConfigurer> thymeleafViewResolverConfigurers;
@@ -90,22 +91,22 @@ public class CasThemesConfiguration {
 
     @Bean
     public ViewResolver registeredServiceViewResolver() {
-        final var resolver = new ThemeBasedViewResolver(themeResolver(), themeViewResolverFactory());
-        resolver.setOrder(thymeleafViewResolver.getOrder() - 1);
+        val resolver = new ThemeBasedViewResolver(themeResolver(), themeViewResolverFactory());
+        resolver.setOrder(thymeleafViewResolver.getIfAvailable().getOrder() - 1);
         return resolver;
     }
 
     @ConditionalOnMissingBean(name = "themeViewResolverFactory")
     @Bean
     public ThemeViewResolverFactory themeViewResolverFactory() {
-        final var factory = new ThemeViewResolver.Factory(nonCachingThymeleafViewResolver(), thymeleafProperties, casProperties);
+        val factory = new ThemeViewResolver.Factory(nonCachingThymeleafViewResolver(), thymeleafProperties, casProperties);
         factory.setApplicationContext(applicationContext);
         return factory;
     }
 
     @Bean
     public Map serviceThemeResolverSupportedBrowsers() {
-        final Map<String, String> map = new HashMap<>();
+        val map = new HashMap<String, String>();
         map.put(".*iPhone.*", "iphone");
         map.put(".*Android.*", "android");
         map.put(".*Safari.*Pre.*", "safari");
@@ -117,16 +118,16 @@ public class CasThemesConfiguration {
     @ConditionalOnMissingBean(name = "themeResolver")
     @Bean
     public ThemeResolver themeResolver() {
-        final var defaultThemeName = casProperties.getTheme().getDefaultThemeName();
+        val defaultThemeName = casProperties.getTheme().getDefaultThemeName();
 
-        final var fixedResolver = new FixedThemeResolver();
+        val fixedResolver = new FixedThemeResolver();
         fixedResolver.setDefaultThemeName(defaultThemeName);
 
-        final var sessionThemeResolver = new SessionThemeResolver();
+        val sessionThemeResolver = new SessionThemeResolver();
         sessionThemeResolver.setDefaultThemeName(defaultThemeName);
 
-        final var tgc = casProperties.getTgc();
-        final var cookieThemeResolver = new CookieThemeResolver();
+        val tgc = casProperties.getTgc();
+        val cookieThemeResolver = new CookieThemeResolver();
         cookieThemeResolver.setDefaultThemeName(defaultThemeName);
         cookieThemeResolver.setCookieDomain(tgc.getDomain());
         cookieThemeResolver.setCookieHttpOnly(tgc.isHttpOnly());
@@ -134,15 +135,17 @@ public class CasThemesConfiguration {
         cookieThemeResolver.setCookiePath(tgc.getPath());
         cookieThemeResolver.setCookieSecure(tgc.isSecure());
 
-        final var serviceThemeResolver = new RegisteredServiceThemeResolver(servicesManager,
-            serviceThemeResolverSupportedBrowsers(), authenticationRequestServiceSelectionStrategies,
-            this.resourceLoader, new CasConfigurationProperties());
+        val serviceThemeResolver = new RegisteredServiceThemeResolver(servicesManager.getIfAvailable(),
+            serviceThemeResolverSupportedBrowsers(),
+            authenticationRequestServiceSelectionStrategies.getIfAvailable(),
+            this.resourceLoader,
+            new CasConfigurationProperties());
         serviceThemeResolver.setDefaultThemeName(defaultThemeName);
 
-        final var header = new RequestHeaderThemeResolver();
+        val header = new RequestHeaderThemeResolver();
         header.setDefaultThemeName(defaultThemeName);
 
-        final var chainingThemeResolver = new ChainingThemeResolver();
+        val chainingThemeResolver = new ChainingThemeResolver();
         chainingThemeResolver.addResolver(cookieThemeResolver)
             .addResolver(sessionThemeResolver)
             .addResolver(header)
@@ -153,21 +156,23 @@ public class CasThemesConfiguration {
     }
 
     private ThymeleafViewResolver nonCachingThymeleafViewResolver() {
-        final var r = new ThymeleafViewResolver();
+        val r = new ThymeleafViewResolver();
 
-        r.setAlwaysProcessRedirectAndForward(this.thymeleafViewResolver.getAlwaysProcessRedirectAndForward());
-        r.setApplicationContext(this.thymeleafViewResolver.getApplicationContext());
-        r.setCacheUnresolved(this.thymeleafViewResolver.isCacheUnresolved());
-        r.setCharacterEncoding(this.thymeleafViewResolver.getCharacterEncoding());
-        r.setContentType(this.thymeleafViewResolver.getContentType());
-        r.setExcludedViewNames(this.thymeleafViewResolver.getExcludedViewNames());
-        r.setOrder(this.thymeleafViewResolver.getOrder());
-        r.setRedirectContextRelative(this.thymeleafViewResolver.isRedirectContextRelative());
-        r.setRedirectHttp10Compatible(this.thymeleafViewResolver.isRedirectHttp10Compatible());
-        r.setStaticVariables(this.thymeleafViewResolver.getStaticVariables());
-        r.setForceContentType(this.thymeleafViewResolver.getForceContentType());
+        val thymeleafResolver = this.thymeleafViewResolver.getIfAvailable();
 
-        final var engine = SpringTemplateEngine.class.cast(this.thymeleafViewResolver.getTemplateEngine());
+        r.setAlwaysProcessRedirectAndForward(thymeleafResolver.getAlwaysProcessRedirectAndForward());
+        r.setApplicationContext(thymeleafResolver.getApplicationContext());
+        r.setCacheUnresolved(thymeleafResolver.isCacheUnresolved());
+        r.setCharacterEncoding(thymeleafResolver.getCharacterEncoding());
+        r.setContentType(thymeleafResolver.getContentType());
+        r.setExcludedViewNames(thymeleafResolver.getExcludedViewNames());
+        r.setOrder(thymeleafResolver.getOrder());
+        r.setRedirectContextRelative(thymeleafResolver.isRedirectContextRelative());
+        r.setRedirectHttp10Compatible(thymeleafResolver.isRedirectHttp10Compatible());
+        r.setStaticVariables(thymeleafResolver.getStaticVariables());
+        r.setForceContentType(thymeleafResolver.getForceContentType());
+
+        val engine = SpringTemplateEngine.class.cast(thymeleafResolver.getTemplateEngine());
         engine.addDialect(new IPostProcessorDialect() {
             @Override
             public int getDialectPostProcessorPrecedence() {
@@ -187,16 +192,14 @@ public class CasThemesConfiguration {
         });
 
         r.setTemplateEngine(engine);
-        r.setViewNames(this.thymeleafViewResolver.getViewNames());
+        r.setViewNames(thymeleafResolver.getViewNames());
 
-        // disable the cache
         r.setCache(false);
 
         thymeleafViewResolverConfigurers.stream()
             .sorted(OrderComparator.INSTANCE)
             .forEach(configurer -> configurer.configureThymeleafViewResolver(r));
 
-        // return this ViewResolver
         return r;
     }
 

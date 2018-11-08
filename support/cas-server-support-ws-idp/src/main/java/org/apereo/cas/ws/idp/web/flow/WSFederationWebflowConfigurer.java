@@ -1,9 +1,10 @@
 package org.apereo.cas.ws.idp.web.flow;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
+
+import lombok.val;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ViewState;
@@ -16,7 +17,6 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 public class WSFederationWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     private final Action wsfedAction;
@@ -31,9 +31,9 @@ public class WSFederationWebflowConfigurer extends AbstractCasWebflowConfigurer 
 
     @Override
     protected void doInitialize() {
-        final var loginFlow = getLoginFlow();
+        val loginFlow = getLoginFlow();
         if (loginFlow != null) {
-            final var state = getTransitionableState(loginFlow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, ViewState.class);
+            val state = getTransitionableState(loginFlow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, ViewState.class);
             state.getEntryActionList().add(this.wsfedAction);
         }
     }

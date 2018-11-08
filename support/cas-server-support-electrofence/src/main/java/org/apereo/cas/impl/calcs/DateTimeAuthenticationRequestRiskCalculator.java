@@ -1,10 +1,12 @@
 package org.apereo.cas.impl.calcs;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -31,18 +33,18 @@ public class DateTimeAuthenticationRequestRiskCalculator extends BaseAuthenticat
 
     @Override
     protected BigDecimal calculateScore(final HttpServletRequest request, final Authentication authentication,
-                                        final RegisteredService service, final Collection<CasEvent> events) {
-        final var timestamp = ZonedDateTime.now(ZoneOffset.UTC);
+                                        final RegisteredService service, final Collection<? extends CasEvent> events) {
+        val timestamp = ZonedDateTime.now(ZoneOffset.UTC);
         LOGGER.debug("Filtering authentication events for timestamp [{}]", timestamp);
-        
-        final var hoursFromNow = timestamp.plusHours(windowInHours).getHour();
-        final var hoursBeforeNow = timestamp.minusHours(windowInHours).getHour();
 
-        final var count = events
+        val hoursFromNow = timestamp.plusHours(windowInHours).getHour();
+        val hoursBeforeNow = timestamp.minusHours(windowInHours).getHour();
+
+        val count = events
             .stream()
             .map(time -> {
-                final var instant = ChronoZonedDateTime.from(time.getCreationTime()).toInstant();
-                final var zdt = ZonedDateTime.ofInstant(instant, ZoneOffset.UTC);
+                val instant = ChronoZonedDateTime.from(time.getCreationZonedDateTime()).toInstant();
+                val zdt = ZonedDateTime.ofInstant(instant, ZoneOffset.UTC);
                 return zdt.getHour();
             })
             .filter(hour -> hour <= hoursFromNow && hour >= hoursBeforeNow)

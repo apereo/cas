@@ -1,12 +1,14 @@
 package org.apereo.cas.persondir.support;
 
+import org.apereo.cas.configuration.model.core.authentication.CouchbasePrincipalAttributesProperties;
+import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
+import org.apereo.cas.util.CollectionUtils;
+
 import com.couchbase.client.java.document.json.JsonObject;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.configuration.model.core.authentication.CouchbasePrincipalAttributesProperties;
-import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
-import org.apereo.cas.util.CollectionUtils;
+import lombok.val;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.apereo.services.persondir.support.BasePersonAttributeDao;
 import org.apereo.services.persondir.support.CaseInsensitiveNamedPersonImpl;
@@ -35,26 +37,31 @@ public class CouchbasePersonAttributeDao extends BasePersonAttributeDao {
     private final CouchbasePrincipalAttributesProperties couchbaseProperties;
     private final CouchbaseClientFactory couchbase;
 
+    private static Map<String, List<Object>> stuffAttributesIntoList(final Map<String, ?> personAttributesMap) {
+        val entries = (Set<? extends Map.Entry<String, ?>>) personAttributesMap.entrySet();
+        return entries.stream()
+            .collect(Collectors.toMap(Map.Entry::getKey, entry -> CollectionUtils.toCollection(entry.getValue(), ArrayList.class)));
+    }
+
     @Override
     @SneakyThrows
     public IPersonAttributes getPerson(final String uid) {
-        final var result = couchbase.query(couchbaseProperties.getUsernameAttribute(), uid);
-        final Map<String, ?> attributes;
+        val result = couchbase.query(couchbaseProperties.getUsernameAttribute(), uid);
+        val attributes = new LinkedHashMap<String, Object>();
         if (result.allRows().isEmpty()) {
             LOGGER.debug("Couchbase query did not return any results/rows.");
-            attributes = new LinkedHashMap<>();
         } else {
-            attributes = result.allRows()
+            attributes.putAll(result.allRows()
                 .stream()
                 .filter(row -> row.value().containsKey(couchbase.getBucket().name()))
                 .filter(row -> {
-                    final var value = (JsonObject) row.value().get(couchbase.getBucket().name());
+                    val value = (JsonObject) row.value().get(couchbase.getBucket().name());
                     return value.containsKey(couchbaseProperties.getUsernameAttribute());
                 })
                 .map(row -> (JsonObject) row.value().get(couchbase.getBucket().name()))
                 .map(entity -> couchbase.collectAttributesFromEntity(entity, s -> !s.equals(couchbaseProperties.getUsernameAttribute())).entrySet())
                 .flatMap(Collection::stream)
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
         }
         return new CaseInsensitiveNamedPersonImpl(uid, stuffAttributesIntoList(attributes));
     }
@@ -66,9 +73,9 @@ public class CouchbasePersonAttributeDao extends BasePersonAttributeDao {
 
     @Override
     public Set<IPersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> map) {
-        final Set<IPersonAttributes> people = new LinkedHashSet();
-        final var username = this.usernameAttributeProvider.getUsernameFromQuery(map);
-        final var person = this.getPerson(username);
+        val people = new LinkedHashSet();
+        val username = this.usernameAttributeProvider.getUsernameFromQuery(map);
+        val person = this.getPerson(username);
         if (person != null) {
             people.add(person);
         }
@@ -84,11 +91,5 @@ public class CouchbasePersonAttributeDao extends BasePersonAttributeDao {
     @Override
     public Set<String> getAvailableQueryAttributes() {
         return new LinkedHashSet<>(0);
-    }
-
-    private static Map<String, List<Object>> stuffAttributesIntoList(final Map<String, ?> personAttributesMap) {
-        final Set<? extends Map.Entry<String, ?>> entries = personAttributesMap.entrySet();
-        return entries.stream()
-            .collect(Collectors.toMap(Map.Entry::getKey, entry -> CollectionUtils.toCollection(entry.getValue(), ArrayList.class)));
     }
 }

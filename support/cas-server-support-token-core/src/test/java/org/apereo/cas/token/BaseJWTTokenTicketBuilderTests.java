@@ -1,6 +1,5 @@
 package org.apereo.cas.token;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
@@ -16,11 +15,14 @@ import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.val;
 import org.jasig.cas.client.authentication.AttributePrincipalImpl;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.AssertionImpl;
-import org.junit.runner.RunWith;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,7 +30,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.net.URL;
 import java.util.List;
@@ -39,22 +42,25 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    TokenCoreConfiguration.class,
+    BaseJWTTokenTicketBuilderTests.TokenTicketBuilderTestConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
-    BaseJWTTokenTicketBuilderTests.TokenTicketBuilderTestConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreHttpConfiguration.class,
-    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-    TokenCoreConfiguration.class
+    CasDefaultServiceTicketIdGeneratorsConfiguration.class
 })
-@Slf4j
 public abstract class BaseJWTTokenTicketBuilderTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     @Qualifier("tokenTicketBuilder")
@@ -77,14 +83,14 @@ public abstract class BaseJWTTokenTicketBuilderTests {
         @Override
         public void afterPropertiesSet() {
             inMemoryRegisteredServices.add(RegisteredServiceTestUtils.getRegisteredService("https://cas.example.org.+"));
-            final var registeredService = RegisteredServiceTestUtils.getRegisteredService("https://jwt.example.org/cas.*");
+            val registeredService = RegisteredServiceTestUtils.getRegisteredService("https://jwt.example.org/cas.*");
 
-            final var signingKey = new DefaultRegisteredServiceProperty();
+            val signingKey = new DefaultRegisteredServiceProperty();
             signingKey.addValue("pR3Vizkn5FSY5xCg84cIS4m-b6jomamZD68C8ash-TlNmgGPcoLgbgquxHPoi24tRmGpqHgM4mEykctcQzZ-Xg");
             registeredService.getProperties().put(
                 RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_SIGNING_KEY.getPropertyName(), signingKey);
 
-            final var encKey = new DefaultRegisteredServiceProperty();
+            val encKey = new DefaultRegisteredServiceProperty();
             encKey.addValue("0KVXaN-nlXafRUwgsr3H_l6hkufY7lzoTy7OVI5pN0E");
             registeredService.getProperties().put(
                 RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_ENCRYPTION_KEY.getPropertyName(), encKey);
@@ -94,7 +100,7 @@ public abstract class BaseJWTTokenTicketBuilderTests {
 
         @Bean
         public AbstractUrlBasedTicketValidator casClientTicketValidator() {
-            final AbstractUrlBasedTicketValidator validator = new AbstractUrlBasedTicketValidator("https://cas.example.org") {
+            val validator = new AbstractUrlBasedTicketValidator("https://cas.example.org") {
                 @Override
                 protected String getUrlSuffix() {
                     return "/cas";

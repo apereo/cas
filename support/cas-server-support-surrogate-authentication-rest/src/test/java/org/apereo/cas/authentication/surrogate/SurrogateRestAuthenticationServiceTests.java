@@ -1,7 +1,5 @@
 package org.apereo.cas.authentication.surrogate;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -24,16 +22,22 @@ import org.apereo.cas.config.SurrogateAuthenticationConfiguration;
 import org.apereo.cas.config.SurrogateAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.SurrogateRestAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
-import org.apereo.cas.util.junit.ConditionalSpringRunner;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Getter;
+import lombok.val;
+import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,9 +45,9 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
 
 import static org.junit.Assert.*;
 
@@ -53,8 +57,11 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(ConditionalSpringRunner.class)
 @SpringBootTest(classes = {
+    SurrogateRestAuthenticationConfiguration.class,
+    SurrogateAuthenticationConfiguration.class,
+    SurrogateAuthenticationAuditConfiguration.class,
+    SurrogateAuthenticationMetadataConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationPolicyConfiguration.class,
@@ -78,14 +85,14 @@ import static org.junit.Assert.*;
     CasCoreLogoutConfiguration.class,
     CasCookieConfiguration.class,
     CasThemesConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    SurrogateAuthenticationConfiguration.class,
-    SurrogateAuthenticationAuditConfiguration.class,
-    SurrogateAuthenticationMetadataConfiguration.class,
-    SurrogateRestAuthenticationConfiguration.class
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
 })
-@TestPropertySource(properties = "cas.authn.surrogate.rest.url=http://localhost:9293")
-public class SurrogateRestAuthenticationServiceTests {
+@TestPropertySource(properties = "cas.authn.surrogate.rest.url=http://localhost:9301")
+@Getter
+public class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
     private static final ObjectMapper MAPPER = new ObjectMapper()
         .findAndRegisterModules()
         .configure(DeserializationFeature.READ_ENUMS_USING_TO_STRING, false)
@@ -93,26 +100,51 @@ public class SurrogateRestAuthenticationServiceTests {
 
     @Autowired
     @Qualifier("surrogateAuthenticationService")
-    private SurrogateAuthenticationService surrogateAuthenticationService;
+    private SurrogateAuthenticationService service;
 
+    private MockWebServer webServer;
+
+    @Override
     @Test
-    public void verifyAccountsQualifying() throws Exception {
-        final var data = MAPPER.writeValueAsString(CollectionUtils.wrapList("casuser", "otheruser"));
-        try (var webServer = new MockWebServer(9293,
+    public void verifyList() {
+        var data = "";
+        try {
+            data = MAPPER.writeValueAsString(CollectionUtils.wrapList("casuser", "otheruser"));
+        } catch (final JsonProcessingException e) {
+            throw new AssertionError(e);
+        }
+        try (val webServer = new MockWebServer(9301,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
-            webServer.start();
-            final Collection results = surrogateAuthenticationService.getEligibleAccountsForSurrogateToProxy("casuser");
-            assertFalse(results.isEmpty());
+            this.webServer = webServer;
+            this.webServer.start();
+            assertTrue(this.webServer.isRunning());
+            super.verifyList();
         } catch (final Exception e) {
             throw new AssertionError(e.getMessage(), e);
         }
+    }
 
-        try (var webServer = new MockWebServer(9293,
+    @Override
+    @Test
+    public void verifyProxying() {
+        var data = "";
+        try {
+            data = MAPPER.writeValueAsString(CollectionUtils.wrapList("casuser", "otheruser"));
+        } catch (final JsonProcessingException e) {
+            throw new AssertionError(e);
+        }
+        try (val webServer = new MockWebServer(9310,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            final var result = surrogateAuthenticationService.canAuthenticateAs("cassurrogate",
+
+            val props = new CasConfigurationProperties();
+            props.getAuthn().getSurrogate().getRest().setUrl("http://localhost:9310");
+            val surrogateService = new SurrogateRestAuthenticationService(props.getAuthn().getSurrogate().getRest(), servicesManager);
+
+            val result = surrogateService.canAuthenticateAs("cassurrogate",
                 CoreAuthenticationTestUtils.getPrincipal("casuser"),
                 CoreAuthenticationTestUtils.getService());
+            // Can't use super() until the REST classes are completely refactored and don't need an actual server to connect to.
             assertTrue(result);
         } catch (final Exception e) {
             throw new AssertionError(e.getMessage(), e);

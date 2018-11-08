@@ -1,17 +1,17 @@
 package org.apereo.cas.support.saml.idp.metadata.writer;
 
+import org.apereo.cas.util.RandomUtils;
+
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.util.RandomUtils;
+import lombok.val;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
-import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
@@ -34,10 +34,11 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Slf4j
 @NoArgsConstructor
 @Setter
 public class DefaultSamlIdPCertificateAndKeyWriter implements SamlIdPCertificateAndKeyWriter {
+    private static final int X509_CERT_BITS_SIZE = 160;
+
     private int keySize = 2048;
     private String hostname;
     private String keyType = "RSA";
@@ -48,15 +49,14 @@ public class DefaultSamlIdPCertificateAndKeyWriter implements SamlIdPCertificate
     @SneakyThrows
     @Override
     public void writeCertificateAndKey(final Writer privateKeyWriter, final Writer certificateWriter) {
-        final var keypair = generateKeyPair();
-        final var certificate = generateCertificate(keypair);
-
-        try (var keyOut = new JcaPEMWriter(privateKeyWriter)) {
+        val keypair = generateKeyPair();
+        val certificate = generateCertificate(keypair);
+        try (val keyOut = new JcaPEMWriter(privateKeyWriter)) {
             keyOut.writeObject(keypair.getPrivate());
             keyOut.flush();
         }
 
-        try (var certOut = new JcaPEMWriter(certificateWriter)) {
+        try (val certOut = new JcaPEMWriter(certificateWriter)) {
             certOut.writeObject(certificate);
             certOut.flush();
         }
@@ -64,32 +64,32 @@ public class DefaultSamlIdPCertificateAndKeyWriter implements SamlIdPCertificate
 
     @SneakyThrows
     private KeyPair generateKeyPair() {
-        final var generator = KeyPairGenerator.getInstance(keyType);
+        val generator = KeyPairGenerator.getInstance(keyType);
         generator.initialize(keySize);
         return generator.generateKeyPair();
     }
 
     private X509Certificate generateCertificate(final KeyPair keypair) throws Exception {
-        final var dn = new X500Name("CN=" + hostname);
-        final var notBefore = new GregorianCalendar();
-        final var notOnOrAfter = new GregorianCalendar();
+        val dn = new X500Name("CN=" + hostname);
+        val notBefore = new GregorianCalendar();
+        val notOnOrAfter = new GregorianCalendar();
         notOnOrAfter.set(GregorianCalendar.YEAR, notOnOrAfter.get(GregorianCalendar.YEAR) + certificateLifetimeInYears);
 
-        final X509v3CertificateBuilder builder = new JcaX509v3CertificateBuilder(
+        val builder = new JcaX509v3CertificateBuilder(
             dn,
-            new BigInteger(160, RandomUtils.getNativeInstance()),
+            new BigInteger(X509_CERT_BITS_SIZE, RandomUtils.getNativeInstance()),
             notBefore.getTime(),
             notOnOrAfter.getTime(),
             dn,
             keypair.getPublic()
         );
 
-        final var extUtils = new JcaX509ExtensionUtils();
+        val extUtils = new JcaX509ExtensionUtils();
         builder.addExtension(Extension.subjectKeyIdentifier, false, extUtils.createSubjectKeyIdentifier(keypair.getPublic()));
         builder.addExtension(Extension.subjectAlternativeName, false, GeneralNames.getInstance(new DERSequence(buildSubjectAltNames())));
 
-        final var certHldr = builder.build(new JcaContentSignerBuilder(certificateAlgorithm).build(keypair.getPrivate()));
-        final var cert = new JcaX509CertificateConverter().getCertificate(certHldr);
+        val certHldr = builder.build(new JcaContentSignerBuilder(certificateAlgorithm).build(keypair.getPrivate()));
+        val cert = new JcaX509CertificateConverter().getCertificate(certHldr);
         cert.checkValidity(new Date());
         cert.verify(keypair.getPublic());
 
@@ -97,7 +97,7 @@ public class DefaultSamlIdPCertificateAndKeyWriter implements SamlIdPCertificate
     }
 
     private ASN1Encodable[] buildSubjectAltNames() {
-        final ArrayList<ASN1Encodable> subjectAltNames = new ArrayList<>();
+        val subjectAltNames = new ArrayList<ASN1Encodable>();
         subjectAltNames.add(new GeneralName(GeneralName.dNSName, hostname));
 
         if (uriSubjectAltNames != null) {

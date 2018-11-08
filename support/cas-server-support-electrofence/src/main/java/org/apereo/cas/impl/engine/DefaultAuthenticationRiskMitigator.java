@@ -1,13 +1,13 @@
 package org.apereo.cas.impl.engine;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.api.AuthenticationRiskContingencyPlan;
 import org.apereo.cas.api.AuthenticationRiskContingencyResponse;
 import org.apereo.cas.api.AuthenticationRiskMitigator;
 import org.apereo.cas.api.AuthenticationRiskScore;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredService;
+
+import lombok.RequiredArgsConstructor;
 import org.apereo.inspektr.audit.annotation.Audit;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,8 +18,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultAuthenticationRiskMitigator implements AuthenticationRiskMitigator {
     private final AuthenticationRiskContingencyPlan contingencyPlan;
 
@@ -30,7 +29,7 @@ public class DefaultAuthenticationRiskMitigator implements AuthenticationRiskMit
 
     @Audit(action = "MITIGATE_RISKY_AUTHENTICATION",
         actionResolverName = "ADAPTIVE_RISKY_AUTHENTICATION_ACTION_RESOLVER",
-            resourceResolverName = "ADAPTIVE_RISKY_AUTHENTICATION_RESOURCE_RESOLVER")
+        resourceResolverName = "ADAPTIVE_RISKY_AUTHENTICATION_RESOURCE_RESOLVER")
     @Override
     public AuthenticationRiskContingencyResponse mitigate(final Authentication authentication, final RegisteredService service,
                                                           final AuthenticationRiskScore score, final HttpServletRequest request) {

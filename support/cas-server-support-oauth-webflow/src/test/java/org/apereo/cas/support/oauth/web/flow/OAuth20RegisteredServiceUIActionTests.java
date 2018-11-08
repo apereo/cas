@@ -1,6 +1,5 @@
 package org.apereo.cas.support.oauth.web.flow;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -33,13 +32,17 @@ import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.flow.services.DefaultRegisteredServiceUserInterfaceInfo;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.val;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -53,38 +56,42 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
-        RefreshAutoConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        CasCoreWebflowConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasCoreConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        CasCoreTicketIdGeneratorsConfiguration.class,
-        CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasCoreLogoutConfiguration.class,
-        CasWebflowContextConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class,
-        CasRegisteredServicesTestConfiguration.class,
-        CasCoreAuthenticationConfiguration.class,
-        CasCookieConfiguration.class,
-        CasThemesConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreAuthenticationHandlersConfiguration.class,
-        CasCoreAuthenticationMetadataConfiguration.class,
-        CasCoreAuthenticationPolicyConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasCoreServicesAuthenticationConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasOAuthWebflowConfiguration.class})
-@Slf4j
+    RefreshAutoConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    CasCoreWebflowConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasCoreConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
+    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    CasCoreLogoutConfiguration.class,
+    CasWebflowContextConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasPersonDirectoryTestConfiguration.class,
+    CasRegisteredServicesTestConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCookieConfiguration.class,
+    CasThemesConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreAuthenticationHandlersConfiguration.class,
+    CasCoreAuthenticationMetadataConfiguration.class,
+    CasCoreAuthenticationPolicyConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
+    CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasOAuthWebflowConfiguration.class})
 public class OAuth20RegisteredServiceUIActionTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
     @Autowired
     @Qualifier("oauth20RegisteredServiceUIAction")
     private Action oauth20RegisteredServiceUIAction;
@@ -92,20 +99,20 @@ public class OAuth20RegisteredServiceUIActionTests {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-    
+
     @Test
     public void verifyOAuthActionWithoutMDUI() throws Exception {
-        final var ctx = new MockRequestContext();
+        val ctx = new MockRequestContext();
         WebUtils.putService(ctx, RegisteredServiceTestUtils.getService());
-        final var event = oauth20RegisteredServiceUIAction.execute(ctx);
+        val event = oauth20RegisteredServiceUIAction.execute(ctx);
         assertEquals("success", event.getId());
-        final var mdui = WebUtils.getServiceUserInterfaceMetadata(ctx, Serializable.class);
+        val mdui = WebUtils.getServiceUserInterfaceMetadata(ctx, Serializable.class);
         assertNull(mdui);
     }
 
     @Test
     public void verifyOAuthActionWithMDUI() throws Exception {
-        final var svc = new OAuthRegisteredService();
+        val svc = new OAuthRegisteredService();
         svc.setClientId("id");
         svc.setName("oauth");
         svc.setDescription("description");
@@ -115,20 +122,20 @@ public class OAuth20RegisteredServiceUIActionTests {
         svc.setServiceId("https://oauth\\.example\\.org.*");
         svc.setLogo("logo");
         servicesManager.save(svc);
-        
-        final var ctx = new MockRequestContext();
+
+        val ctx = new MockRequestContext();
         WebUtils.putService(ctx, RegisteredServiceTestUtils.getService(
-                "https://www.example.org?client_id=id&client_secret=secret&redirect_uri=https://oauth.example.org"));
-        final var event = oauth20RegisteredServiceUIAction.execute(ctx);
+            "https://www.example.org?client_id=id&client_secret=secret&redirect_uri=https://oauth.example.org"));
+        val event = oauth20RegisteredServiceUIAction.execute(ctx);
         assertEquals("success", event.getId());
-        final var mdui = WebUtils.getServiceUserInterfaceMetadata(ctx, DefaultRegisteredServiceUserInterfaceInfo.class);
+        val mdui = WebUtils.getServiceUserInterfaceMetadata(ctx, DefaultRegisteredServiceUserInterfaceInfo.class);
         assertNotNull(mdui);
-        
+
         assertEquals(mdui.getDisplayName(), svc.getName());
         assertEquals(mdui.getInformationURL(), svc.getInformationUrl());
         assertEquals(mdui.getDescription(), svc.getDescription());
         assertEquals(mdui.getPrivacyStatementURL(), svc.getPrivacyUrl());
         assertEquals(mdui.getLogoUrl(), svc.getLogo());
-        
+
     }
 }

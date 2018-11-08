@@ -1,8 +1,5 @@
 package org.apereo.cas.config.support.authentication;
 
-import com.yubico.client.v2.YubicoClient;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.adaptors.yubikey.DefaultYubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
@@ -13,23 +10,32 @@ import org.apereo.cas.adaptors.yubikey.YubiKeyMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.yubikey.registry.JsonYubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.registry.OpenYubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.registry.WhitelistYubiKeyAccountRegistry;
+import org.apereo.cas.adaptors.yubikey.registry.YubiKeyAccountRegistryEndpoint;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAccountCheckRegistrationAction;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAccountSaveRegistrationAction;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
-import org.apereo.cas.authentication.ByCredentialTypeAuthenticationHandlerResolver;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
+import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
+
+import com.yubico.client.v2.YubicoClient;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -50,26 +56,28 @@ import org.springframework.webflow.execution.Action;
 public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @Autowired
     @Qualifier("yubikeyAccountCipherExecutor")
-    private CipherExecutor yubikeyAccountCipherExecutor;
+    private ObjectProvider<CipherExecutor> yubikeyAccountCipherExecutor;
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("noRedirectHttpClient")
-    private HttpClient httpClient;
+    private ObjectProvider<HttpClient> httpClient;
 
     @Bean
     @RefreshScope
     public AuthenticationMetaDataPopulator yubikeyAuthenticationMetaDataPopulator() {
-        final var authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
-        return new AuthenticationContextAttributeMetaDataPopulator(authenticationContextAttribute,
+        val authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
+        return new AuthenticationContextAttributeMetaDataPopulator(
+            authenticationContextAttribute,
             yubikeyAuthenticationHandler(),
-            yubikeyAuthenticationProvider());
+            yubikeyMultifactorAuthenticationProvider().getId()
+        );
     }
 
     @Bean
@@ -88,7 +96,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "yubicoClient")
     public YubicoClient yubicoClient() {
-        final var yubi = this.casProperties.getAuthn().getMfa().getYubikey();
+        val yubi = this.casProperties.getAuthn().getMfa().getYubikey();
 
         if (StringUtils.isBlank(yubi.getSecretKey())) {
             throw new IllegalArgumentException("Yubikey secret key cannot be blank");
@@ -97,9 +105,9 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
             throw new IllegalArgumentException("Yubikey client id is undefined");
         }
 
-        final var client = YubicoClient.getClient(yubi.getClientId(), yubi.getSecretKey());
+        val client = YubicoClient.getClient(yubi.getClientId(), yubi.getSecretKey());
         if (!yubi.getApiUrls().isEmpty()) {
-            final var urls = yubi.getApiUrls().toArray(new String[]{});
+            val urls = yubi.getApiUrls().toArray(ArrayUtils.EMPTY_STRING_ARRAY);
             client.setWsapiUrls(urls);
         }
         return client;
@@ -109,9 +117,9 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "yubikeyAuthenticationHandler")
     public AuthenticationHandler yubikeyAuthenticationHandler() {
-        final var yubi = this.casProperties.getAuthn().getMfa().getYubikey();
-        final var handler = new YubiKeyAuthenticationHandler(yubi.getName(),
-            servicesManager, yubikeyPrincipalFactory(),
+        val yubi = this.casProperties.getAuthn().getMfa().getYubikey();
+        val handler = new YubiKeyAuthenticationHandler(yubi.getName(),
+            servicesManager.getIfAvailable(), yubikeyPrincipalFactory(),
             yubicoClient(), yubiKeyAccountRegistry());
         return handler;
     }
@@ -139,38 +147,45 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "yubiKeyAccountRegistry")
     public YubiKeyAccountRegistry yubiKeyAccountRegistry() {
-        final var yubi = casProperties.getAuthn().getMfa().getYubikey();
+        val yubi = casProperties.getAuthn().getMfa().getYubikey();
 
         if (yubi.getJsonFile() != null) {
             LOGGER.debug("Using JSON resource [{}] as the YubiKey account registry", yubi.getJsonFile());
-            final var registry = new JsonYubiKeyAccountRegistry(yubi.getJsonFile(), yubiKeyAccountValidator());
-            registry.setCipherExecutor(this.yubikeyAccountCipherExecutor);
+            val registry = new JsonYubiKeyAccountRegistry(yubi.getJsonFile(), yubiKeyAccountValidator());
+            registry.setCipherExecutor(yubikeyAccountCipherExecutor.getIfAvailable());
             return registry;
         }
         if (yubi.getAllowedDevices() != null) {
             LOGGER.debug("Using statically-defined devices for [{}] as the YubiKey account registry",
                 yubi.getAllowedDevices().keySet());
-            final var registry = new WhitelistYubiKeyAccountRegistry(yubi.getAllowedDevices(), yubiKeyAccountValidator());
-            registry.setCipherExecutor(this.yubikeyAccountCipherExecutor);
+            val registry = new WhitelistYubiKeyAccountRegistry(yubi.getAllowedDevices(), yubiKeyAccountValidator());
+            registry.setCipherExecutor(yubikeyAccountCipherExecutor.getIfAvailable());
             return registry;
         }
 
         LOGGER.warn("All credentials are considered eligible for YubiKey authentication. "
                 + "Consider providing an account registry implementation via [{}]",
             YubiKeyAccountRegistry.class.getName());
-        final var registry = new OpenYubiKeyAccountRegistry(new DefaultYubiKeyAccountValidator(yubicoClient()));
-        registry.setCipherExecutor(this.yubikeyAccountCipherExecutor);
+        val registry = new OpenYubiKeyAccountRegistry(new DefaultYubiKeyAccountValidator(yubicoClient()));
+        registry.setCipherExecutor(yubikeyAccountCipherExecutor.getIfAvailable());
         return registry;
     }
 
     @Bean
+    @ConditionalOnEnabledEndpoint
+    public YubiKeyAccountRegistryEndpoint yubiKeyAccountRegistryEndpoint() {
+        return new YubiKeyAccountRegistryEndpoint(yubiKeyAccountRegistry());
+    }
+
+    @Bean
     @RefreshScope
-    public MultifactorAuthenticationProvider yubikeyAuthenticationProvider() {
-        final var p = new YubiKeyMultifactorAuthenticationProvider(yubicoClient(), this.httpClient);
+    public MultifactorAuthenticationProvider yubikeyMultifactorAuthenticationProvider() {
+        val yubi = casProperties.getAuthn().getMfa().getYubikey();
+        val p = new YubiKeyMultifactorAuthenticationProvider(yubicoClient(), httpClient.getIfAvailable());
         p.setBypassEvaluator(yubikeyBypassEvaluator());
-        p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
-        p.setOrder(casProperties.getAuthn().getMfa().getYubikey().getRank());
-        p.setId(casProperties.getAuthn().getMfa().getYubikey().getId());
+        p.setFailureMode(yubi.getFailureMode());
+        p.setOrder(yubi.getRank());
+        p.setId(yubi.getId());
         return p;
     }
 
@@ -178,10 +193,10 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer yubikeyAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
-            final var yubi = casProperties.getAuthn().getMfa().getYubikey();
+            val yubi = casProperties.getAuthn().getMfa().getYubikey();
             if (yubi.getClientId() > 0 && StringUtils.isNotBlank(yubi.getSecretKey())) {
                 plan.registerAuthenticationHandler(yubikeyAuthenticationHandler());
-                plan.registerMetadataPopulator(yubikeyAuthenticationMetaDataPopulator());
+                plan.registerAuthenticationMetadataPopulator(yubikeyAuthenticationMetaDataPopulator());
                 plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(YubiKeyCredential.class));
             }
         };

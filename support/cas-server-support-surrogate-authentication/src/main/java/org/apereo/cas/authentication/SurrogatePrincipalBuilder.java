@@ -1,8 +1,10 @@
 package org.apereo.cas.authentication;
 
-import lombok.RequiredArgsConstructor;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+
+import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 
 import java.util.LinkedHashMap;
@@ -29,9 +31,10 @@ public class SurrogatePrincipalBuilder {
      * @return the principal
      */
     public Principal buildSurrogatePrincipal(final String surrogate, final Principal primaryPrincipal, final Credential credentials) {
-        final var person = attributeRepository.getPerson(surrogate);
-        final Map attributes = person != null ? person.getAttributes() : new LinkedHashMap<>();
-        return new SurrogatePrincipal(primaryPrincipal, principalFactory.createPrincipal(surrogate, attributes));
+        val person = attributeRepository.getPerson(surrogate);
+        val attributes = person != null ? person.getAttributes() : new LinkedHashMap<>();
+        val principal = principalFactory.createPrincipal(surrogate, (Map) attributes);
+        return new SurrogatePrincipal(primaryPrincipal, principal);
     }
 
     /**
@@ -45,11 +48,11 @@ public class SurrogatePrincipalBuilder {
     public Optional<AuthenticationResultBuilder> buildSurrogateAuthenticationResult(final AuthenticationResultBuilder authenticationResultBuilder,
                                                                                     final Credential credential,
                                                                                     final String surrogateTargetId) {
-        final var currentAuthn = authenticationResultBuilder.getInitialAuthentication();
+        val currentAuthn = authenticationResultBuilder.getInitialAuthentication();
         if (currentAuthn.isPresent()) {
-            final var authentication = currentAuthn.get();
-            final var surrogatePrincipal = buildSurrogatePrincipal(surrogateTargetId, authentication.getPrincipal(), credential);
-            final var auth = DefaultAuthenticationBuilder.newInstance(authentication).setPrincipal(surrogatePrincipal).build();
+            val authentication = currentAuthn.get();
+            val surrogatePrincipal = buildSurrogatePrincipal(surrogateTargetId, authentication.getPrincipal(), credential);
+            val auth = DefaultAuthenticationBuilder.newInstance(authentication).setPrincipal(surrogatePrincipal).build();
             return Optional.of(authenticationResultBuilder.collect(auth));
         }
         return Optional.empty();

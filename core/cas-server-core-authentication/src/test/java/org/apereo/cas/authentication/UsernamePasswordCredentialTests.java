@@ -1,6 +1,8 @@
 package org.apereo.cas.authentication;
 
-import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+
+import lombok.val;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -9,13 +11,12 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Slf4j
 public class UsernamePasswordCredentialTests {
 
     @Test
     public void verifySetGetUsername() {
-        final var c = new UsernamePasswordCredential();
-        final var userName = "test";
+        val c = new UsernamePasswordCredential();
+        val userName = "test";
 
         c.setUsername(userName);
 
@@ -24,8 +25,8 @@ public class UsernamePasswordCredentialTests {
 
     @Test
     public void verifySetGetPassword() {
-        final var c = new UsernamePasswordCredential();
-        final var password = "test";
+        val c = new UsernamePasswordCredential();
+        val password = "test";
 
         c.setPassword(password);
 
@@ -36,8 +37,8 @@ public class UsernamePasswordCredentialTests {
     public void verifyEquals() {
         assertNotEquals(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(), null);
         assertFalse(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword().equals(
-                CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
+            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
         assertTrue(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword().equals(
-                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword()));
+            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword()));
     }
 }

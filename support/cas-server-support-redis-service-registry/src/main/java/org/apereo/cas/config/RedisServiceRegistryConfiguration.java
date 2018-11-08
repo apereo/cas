@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.redis.services.RedisServiceRegistry;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.redis.core.RedisObjectFactory;
@@ -8,6 +7,8 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
+
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -25,7 +26,6 @@ import org.springframework.data.redis.core.RedisTemplate;
  */
 @Configuration("redisServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class RedisServiceRegistryConfiguration implements ServiceRegistryExecutionPlanConfigurer {
 
     @Autowired
@@ -34,15 +34,15 @@ public class RedisServiceRegistryConfiguration implements ServiceRegistryExecuti
     @Bean
     @ConditionalOnMissingBean(name = "redisServiceConnectionFactory")
     public RedisConnectionFactory redisServiceConnectionFactory() {
-        final var redis = casProperties.getServiceRegistry().getRedis();
-        final var obj = new RedisObjectFactory();
+        val redis = casProperties.getServiceRegistry().getRedis();
+        val obj = new RedisObjectFactory();
         return obj.newRedisConnectionFactory(redis);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "registeredServiceRedisTemplate")
     public RedisTemplate registeredServiceRedisTemplate() {
-        final var obj = new RedisObjectFactory();
+        val obj = new RedisObjectFactory();
         return obj.newRedisTemplate(redisServiceConnectionFactory(), String.class, RegisteredService.class);
     }
 

@@ -1,6 +1,6 @@
 package org.apereo.cas.util.gen;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -9,7 +9,6 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Slf4j
 public class DefaultLongNumericGeneratorTests {
 
     @Test
@@ -31,7 +30,7 @@ public class DefaultLongNumericGeneratorTests {
 
     @Test
     public void verifyIncrementWithNoWrap2() {
-        final var g = new DefaultLongNumericGenerator();
+        val g = new DefaultLongNumericGenerator();
         g.getNextLong();
         assertEquals(1, g.getNextLong());
     }

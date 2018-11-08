@@ -1,11 +1,13 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SurrogateJdbcAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.services.ServicesManager;
+
+import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -23,11 +25,10 @@ import javax.sql.DataSource;
  */
 @Configuration("surrogateJdbcAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class SurrogateJdbcAuthenticationConfiguration {
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -35,16 +36,16 @@ public class SurrogateJdbcAuthenticationConfiguration {
     @RefreshScope
     @Bean
     public SurrogateAuthenticationService surrogateAuthenticationService() {
-        final var su = casProperties.getAuthn().getSurrogate();
+        val su = casProperties.getAuthn().getSurrogate();
         return new SurrogateJdbcAuthenticationService(su.getJdbc().getSurrogateSearchQuery(),
             surrogateAuthenticationJdbcDataSource(),
             su.getJdbc().getSurrogateAccountQuery(),
-            servicesManager);
+            servicesManager.getIfAvailable());
     }
 
     @Bean
     public DataSource surrogateAuthenticationJdbcDataSource() {
-        final var su = casProperties.getAuthn().getSurrogate();
+        val su = casProperties.getAuthn().getSurrogate();
         return JpaBeans.newDataSource(su.getJdbc());
     }
 }

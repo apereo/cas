@@ -1,10 +1,11 @@
 package org.apereo.cas.token.authentication.principal;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
+
+import lombok.NoArgsConstructor;
+
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import lombok.NoArgsConstructor;
 
 /**
  * This is {@link TokenWebApplicationService}.
@@ -14,7 +15,6 @@ import lombok.NoArgsConstructor;
  */
 @Entity
 @DiscriminatorValue("token")
-@Slf4j
 @NoArgsConstructor
 public class TokenWebApplicationService extends AbstractWebApplicationService {
 

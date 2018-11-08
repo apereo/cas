@@ -1,12 +1,14 @@
 package org.apereo.cas.configuration.model.support.gua;
 
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
-import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * This is {@link GraphicalUserAuthenticationProperties}
@@ -17,7 +19,6 @@ import lombok.Setter;
  * @since 5.1.0
  */
 @RequiresModule(name = "cas-server-support-gua")
-
 @Getter
 @Setter
 public class GraphicalUserAuthenticationProperties implements Serializable {

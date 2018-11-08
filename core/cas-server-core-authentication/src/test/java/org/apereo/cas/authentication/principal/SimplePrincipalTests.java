@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
@@ -15,7 +15,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Slf4j
 public class SimplePrincipalTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "simplePrincipal.json");
@@ -24,22 +23,19 @@ public class SimplePrincipalTests {
 
     @Test
     public void verifySerializeACompletePrincipalToJson() throws IOException {
-        final HashMap<String, Object> attributes = new HashMap<>();
+        val attributes = new HashMap<String, Object>();
         attributes.put("attribute", "value");
-        final var principalWritten = new SimplePrincipal("id", attributes);
-
+        val principalWritten = new SimplePrincipal("id", attributes);
         MAPPER.writeValue(JSON_FILE, principalWritten);
-
-        final var principalRead = MAPPER.readValue(JSON_FILE, SimplePrincipal.class);
-
+        val principalRead = MAPPER.readValue(JSON_FILE, SimplePrincipal.class);
         assertEquals(principalWritten, principalRead);
     }
 
     @Test
     public void verifySerializeAPrincipalWithEmptyAttributesToJson() throws IOException {
-        final var principalWritten = new SimplePrincipal("id", new HashMap<>(0));
+        val principalWritten = new SimplePrincipal("id", new HashMap<>(0));
         MAPPER.writeValue(JSON_FILE, principalWritten);
-        final var principalRead = MAPPER.readValue(JSON_FILE, SimplePrincipal.class);
+        val principalRead = MAPPER.readValue(JSON_FILE, SimplePrincipal.class);
         assertEquals(principalWritten, principalRead);
     }
 

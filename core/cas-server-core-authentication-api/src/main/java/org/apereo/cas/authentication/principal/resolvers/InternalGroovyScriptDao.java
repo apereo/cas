@@ -1,10 +1,12 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ScriptingUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.services.persondir.support.BaseGroovyScriptDaoImpl;
 import org.springframework.context.ApplicationContext;
 
@@ -28,13 +30,13 @@ public class InternalGroovyScriptDao extends BaseGroovyScriptDaoImpl {
     @Override
     public Map<String, List<Object>> getPersonAttributesFromMultivaluedAttributes(final Map<String, List<Object>> attributes) {
         if (attributes.containsKey("username")) {
-            final var username = attributes.get("username");
+            val username = attributes.get("username");
             if (!username.isEmpty()) {
-                final Map<String, List<Object>> results = new HashMap<>();
-                final var attrs = getAttributesForUser(username.get(0).toString());
+                val results = new HashMap<String, List<Object>>();
+                val attrs = getAttributesForUser(username.get(0).toString());
                 LOGGER.debug("Groovy-based attributes found are [{}]", attrs);
                 attrs.forEach((k, v) -> {
-                    final List<Object> values = new ArrayList<>(CollectionUtils.toCollection(v));
+                    val values = new ArrayList<Object>(CollectionUtils.toCollection(v));
                     LOGGER.debug("Adding Groovy-based attribute [{}] with value(s) [{}]", k, values);
                     results.put(k, values);
                 });
@@ -46,12 +48,11 @@ public class InternalGroovyScriptDao extends BaseGroovyScriptDaoImpl {
 
     @Override
     public Map<String, Object> getAttributesForUser(final String uid) {
-        final Map<String, Object> finalAttributes = new HashMap<>();
+        val finalAttributes = new HashMap<String, Object>();
         casProperties.getAuthn().getAttributeRepository().getGroovy()
             .forEach(groovy -> {
-                final Object[] args = {uid, LOGGER, casProperties, applicationContext};
-                final Map<String, Object> personAttributesMap =
-                    ScriptingUtils.executeGroovyScript(groovy.getLocation(), args, Map.class);
+                val args = new Object[] {uid, LOGGER, casProperties, applicationContext};
+                val personAttributesMap = ScriptingUtils.executeGroovyScript(groovy.getLocation(), args, Map.class, true);
                 finalAttributes.putAll(personAttributesMap);
             });
 

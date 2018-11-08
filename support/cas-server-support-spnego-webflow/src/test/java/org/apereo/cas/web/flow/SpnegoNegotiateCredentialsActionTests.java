@@ -1,6 +1,8 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.support.spnego.util.SpnegoConstants;
+
+import lombok.val;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -21,10 +23,10 @@ import static org.junit.Assert.*;
 public class SpnegoNegotiateCredentialsActionTests extends AbstractSpnegoTests {
     @Test
     public void verifyOperation() throws Exception {
-        final var context = new MockRequestContext();
-        final var request = new MockHttpServletRequest();
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
         request.addHeader("User-Agent", "MSIE");
-        final var response = new MockHttpServletResponse();
+        val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         negociateSpnegoAction.execute(context);
         assertNotNull(response.getHeader(SpnegoConstants.HEADER_AUTHENTICATE));

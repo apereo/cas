@@ -1,5 +1,6 @@
 package org.apereo.cas.logging;
 
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
@@ -38,22 +39,6 @@ public class CasAppender extends AbstractAppender {
         this.appenderRef = appenderRef;
     }
 
-    @Override
-    public void append(final LogEvent logEvent) {
-        final var newLogEvent = LoggingUtils.prepareLogEvent(logEvent);
-        final var refName = this.appenderRef.getRef();
-        if (StringUtils.isNotBlank(refName)) {
-            final var appender = this.config.getAppender(refName);
-            if (appender != null) {
-                appender.append(newLogEvent);
-            } else {
-                LOGGER.warn("No log appender could be found for [{}]", refName);
-            }
-        } else {
-            LOGGER.warn("No log appender reference could be located in logging configuration.");
-        }
-    }
-
     /**
      * Create appender cas appender.
      *
@@ -67,5 +52,21 @@ public class CasAppender extends AbstractAppender {
                                     @PluginElement("AppenderRef") final AppenderRef appenderRef,
                                     @PluginConfiguration final Configuration config) {
         return new CasAppender(name, config, appenderRef);
+    }
+
+    @Override
+    public void append(final LogEvent logEvent) {
+        val newLogEvent = LoggingUtils.prepareLogEvent(logEvent);
+        val refName = this.appenderRef.getRef();
+        if (StringUtils.isNotBlank(refName)) {
+            val appender = this.config.getAppender(refName);
+            if (appender != null) {
+                appender.append(newLogEvent);
+            } else {
+                LOGGER.warn("No log appender could be found for [{}]", refName);
+            }
+        } else {
+            LOGGER.warn("No log appender reference could be located in logging configuration.");
+        }
     }
 }

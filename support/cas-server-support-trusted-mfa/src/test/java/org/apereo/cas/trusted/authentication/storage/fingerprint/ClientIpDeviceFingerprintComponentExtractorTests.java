@@ -1,7 +1,9 @@
 package org.apereo.cas.trusted.authentication.storage.fingerprint;
 
-import lombok.NoArgsConstructor;
 import org.apereo.cas.trusted.web.flow.fingerprint.ClientIpDeviceFingerprintComponentExtractor;
+
+import lombok.NoArgsConstructor;
+import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.Test;
@@ -22,17 +24,17 @@ public class ClientIpDeviceFingerprintComponentExtractorTests {
     @Test
     public void verifyClientIpFingerprintNotFound() {
         ClientInfoHolder.setClientInfo(null);
-        final var ex = new ClientIpDeviceFingerprintComponentExtractor();
+        val ex = new ClientIpDeviceFingerprintComponentExtractor();
         assertFalse(ex.extractComponent("casuser", new MockRequestContext(), false).isPresent());
     }
 
     @Test
     public void verifyClientIpFingerprintFound() {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setRemoteAddr("1.2.3.4");
-        final var clientInfo = new ClientInfo(request);
+        val clientInfo = new ClientInfo(request);
         ClientInfoHolder.setClientInfo(clientInfo);
-        final var ex = new ClientIpDeviceFingerprintComponentExtractor();
+        val ex = new ClientIpDeviceFingerprintComponentExtractor();
         assertTrue(ex.extractComponent("casuser", new MockRequestContext(), false).isPresent());
     }
 }

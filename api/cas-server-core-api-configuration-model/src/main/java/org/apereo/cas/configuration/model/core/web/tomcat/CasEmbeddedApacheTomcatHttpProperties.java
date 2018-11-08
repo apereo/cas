@@ -1,11 +1,13 @@
 package org.apereo.cas.configuration.model.core.web.tomcat;
 
 import org.apereo.cas.configuration.support.RequiresModule;
+
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link CasEmbeddedApacheTomcatHttpProperties}.
@@ -14,7 +16,6 @@ import lombok.Setter;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-webapp-tomcat")
-
 @Getter
 @Setter
 public class CasEmbeddedApacheTomcatHttpProperties implements Serializable {

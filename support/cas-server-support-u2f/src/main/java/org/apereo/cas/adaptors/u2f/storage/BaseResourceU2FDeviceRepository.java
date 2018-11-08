@@ -1,10 +1,12 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
+import org.apereo.cas.util.DateTimeUtils;
+
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.yubico.u2f.data.DeviceRegistration;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.util.DateTimeUtils;
+import lombok.val;
 
 import javax.mail.AuthenticationFailedException;
 import java.time.LocalDate;
@@ -40,18 +42,31 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
         this.expirationTimeUnit = expirationTimeUnit;
     }
 
+    private static List<U2FDeviceRegistration> getU2fDeviceRegistrations(final String username, final Collection<DeviceRegistration> devices) {
+        return devices
+            .stream()
+            .map(d -> {
+                val current = new U2FDeviceRegistration();
+                current.setUsername(username);
+                current.setRecord(d.toJson());
+                current.setCreatedDate(LocalDate.now());
+                return current;
+            })
+            .collect(Collectors.toList());
+    }
+
     @Override
-    public Collection<DeviceRegistration> getRegisteredDevices(final String username) {
+    public Collection<? extends DeviceRegistration> getRegisteredDevices(final String username) {
         try {
-            final var devices = readDevicesFromResource();
+            val devices = readDevicesFromResource();
 
             if (!devices.isEmpty()) {
-                final var devs = devices.get(MAP_KEY_DEVICES);
-                final var expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+                val devs = devices.get(MAP_KEY_DEVICES);
+                val expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
                 LOGGER.debug("Filtering devices for [{}] based on device expiration date [{}]", username, expirationDate);
-                final var list = devs
+                val list = devs
                     .stream()
-                    .filter(d -> d.getUsername().equals(username) && (d.getCreatedDate().isAfter(expirationDate)))
+                    .filter(d -> d.getUsername().equals(username) && d.getCreatedDate().isAfter(expirationDate))
                     .collect(Collectors.toList());
 
                 LOGGER.debug("There are [{}] device(s) remaining in repository for [{}]", list.size(), username);
@@ -73,46 +88,32 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
         return new ArrayList<>(0);
     }
 
-
     @Override
     @SneakyThrows
     public void authenticateDevice(final String username, final DeviceRegistration registration) {
-        final var devices = getRegisteredDevices(username);
-        final var matched = devices.stream().anyMatch(d -> d.equals(registration));
+        val devices = getRegisteredDevices(username);
+        val matched = devices.stream().anyMatch(d -> d.equals(registration));
         if (!matched) {
             throw new AuthenticationFailedException("Failed to authenticate U2F device because "
                 + "no matching record was found. Is device registered?");
         }
     }
 
-    private static List<U2FDeviceRegistration> getU2fDeviceRegistrations(final String username, final Collection<DeviceRegistration> devices) {
-        return devices
-            .stream()
-            .map(d -> {
-                final var current = new U2FDeviceRegistration();
-                current.setUsername(username);
-                current.setRecord(d.toJson());
-                current.setCreatedDate(LocalDate.now());
-                return current;
-            })
-            .collect(Collectors.toList());
-    }
-
     @Override
     public void registerDevice(final String username, final DeviceRegistration registration) {
         try {
-            final var device = new U2FDeviceRegistration();
+            val device = new U2FDeviceRegistration();
             device.setUsername(username);
             device.setRecord(registration.toJson());
             device.setCreatedDate(LocalDate.now());
 
-            final var devices = readDevicesFromResource();
-            final List<U2FDeviceRegistration> list = new ArrayList<>(0);
+            val devices = readDevicesFromResource();
+            val list = new ArrayList<U2FDeviceRegistration>(0);
 
             if (!devices.isEmpty()) {
-                final var devs = devices.get(MAP_KEY_DEVICES);
+                val devs = devices.get(MAP_KEY_DEVICES);
                 LOGGER.debug("Located [{}] devices in repository", devs.size());
-                list.addAll(devs.stream().collect(Collectors.toList()));
+                list.addAll(new ArrayList<>(devs));
             }
             list.add(device);
             LOGGER.debug("There are [{}] device(s) remaining in repository. Storing...", list.size());
@@ -131,14 +132,14 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
     @Override
     public void clean() {
         try {
-            final var devices = readDevicesFromResource();
+            val devices = readDevicesFromResource();
             if (!devices.isEmpty()) {
-                final var devs = devices.get(MAP_KEY_DEVICES);
+                val devs = devices.get(MAP_KEY_DEVICES);
                 LOGGER.debug("Located [{}] devices in repository", devs.size());
 
-                final var expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+                val expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
                 LOGGER.debug("Filtering devices based on device expiration date [{}]", expirationDate);
-                final var list = devs.stream()
+                val list = devs.stream()
                     .filter(d -> d.getCreatedDate().isAfter(expirationDate))
                     .collect(Collectors.toList());
 

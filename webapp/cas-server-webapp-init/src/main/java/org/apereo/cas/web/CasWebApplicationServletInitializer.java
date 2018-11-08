@@ -1,6 +1,8 @@
 package org.apereo.cas.web;
 
 import org.apereo.cas.CasEmbeddedContainerUtils;
+
+import lombok.val;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
@@ -14,7 +16,7 @@ public class CasWebApplicationServletInitializer extends SpringBootServletInitia
 
     @Override
     protected SpringApplicationBuilder configure(final SpringApplicationBuilder builder) {
-        final var properties = CasEmbeddedContainerUtils.getRuntimeProperties(Boolean.FALSE);
+        val properties = CasEmbeddedContainerUtils.getRuntimeProperties(Boolean.FALSE);
         return builder
             .sources(CasWebApplication.class)
             .properties(properties)

@@ -1,14 +1,14 @@
 package org.apereo.cas.impl.notify;
 
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.api.AuthenticationRiskNotifier;
 import org.apereo.cas.api.AuthenticationRiskScore;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This is {@link BaseAuthenticationRiskNotifier}.
@@ -16,7 +16,6 @@ import lombok.Setter;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @Setter
 @Getter
 public abstract class BaseAuthenticationRiskNotifier implements AuthenticationRiskNotifier {

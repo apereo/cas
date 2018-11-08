@@ -1,8 +1,11 @@
 package org.apereo.cas.memcached;
 
+import org.apereo.cas.configuration.model.support.memcached.BaseMemcachedProperties;
+
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import net.spy.memcached.ConnectionFactoryBuilder;
 import net.spy.memcached.DefaultHashAlgorithm;
 import net.spy.memcached.FailureMode;
@@ -15,7 +18,6 @@ import org.apache.commons.pool2.ObjectPool;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
 import org.apache.commons.pool2.impl.GenericObjectPool;
-import org.apereo.cas.configuration.model.support.memcached.BaseMemcachedProperties;
 
 /**
  * This is {@link MemcachedPooledClientConnectionFactory}.
@@ -33,7 +35,7 @@ public class MemcachedPooledClientConnectionFactory extends BasePooledObjectFact
     @Override
     @SneakyThrows
     public MemcachedClientIF create() {
-        final var factoryBean = new MemcachedClientFactoryBean();
+        val factoryBean = new MemcachedClientFactoryBean();
         factoryBean.setServers(memcachedProperties.getServers());
         factoryBean.setTranscoder(this.transcoder);
 
@@ -89,7 +91,7 @@ public class MemcachedPooledClientConnectionFactory extends BasePooledObjectFact
      * @return the object pool
      */
     public ObjectPool<MemcachedClientIF> getObjectPool() {
-        final GenericObjectPool<MemcachedClientIF> pool = new GenericObjectPool<>(this);
+        val pool = new GenericObjectPool<MemcachedClientIF>(this);
         pool.setMaxIdle(memcachedProperties.getMaxIdle());
         pool.setMinIdle(memcachedProperties.getMinIdle());
         pool.setMaxTotal(memcachedProperties.getMaxTotal());

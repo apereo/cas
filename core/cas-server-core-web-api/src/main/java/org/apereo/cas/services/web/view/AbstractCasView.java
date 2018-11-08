@@ -1,27 +1,27 @@
 package org.apereo.cas.services.web.view;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationAttributeReleasePolicy;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
-import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.Assertion;
+import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
+import org.apereo.cas.validation.CasProtocolAttributesRenderer;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.web.servlet.view.AbstractView;
 
-import java.time.ZonedDateTime;
 import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -53,15 +53,19 @@ public abstract class AbstractCasView extends AbstractView {
     protected final ServicesManager servicesManager;
 
     /**
-     * authentication context attribute name.
-     */
-    protected final String authenticationContextAttribute;
-
-    /**
      * Authentication attribute release policy.
      */
     protected final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy;
 
+    /**
+     * The Service selection strategy.
+     */
+    protected final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+
+    /**
+     * CAS attribute renderer.
+     */
+    protected final CasProtocolAttributesRenderer attributesRenderer;
 
     /**
      * Gets the assertion from the model.
@@ -93,15 +97,6 @@ public abstract class AbstractCasView extends AbstractView {
         return model.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_ERROR_DESCRIPTION).toString();
     }
 
-    /**
-     * Gets the PGT from the model.
-     *
-     * @param model the model
-     * @return the pgt id
-     */
-    protected String getProxyGrantingTicketId(final Map<String, Object> model) {
-        return (String) model.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET);
-    }
 
     /**
      * Gets the PGT-IOU from the model.
@@ -134,28 +129,6 @@ public abstract class AbstractCasView extends AbstractView {
         return (Map<String, Object>) model.get(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES);
     }
 
-    /**
-     * Gets authentication attributes from the primary authentication object.
-     *
-     * @param model the model
-     * @return the authentication attribute
-     */
-    protected Map<String, Object> getAuthenticationAttributes(final Map<String, Object> model) {
-        final var authn = getPrimaryAuthenticationFrom(model);
-        return authn.getAttributes();
-    }
-
-    /**
-     * Gets an authentication attribute from the primary authentication object.
-     *
-     * @param model         the model
-     * @param attributeName the attribute name
-     * @return the authentication attribute
-     */
-    protected String getAuthenticationAttribute(final Map<String, Object> model, final String attributeName) {
-        final var authn = getPrimaryAuthenticationFrom(model);
-        return (String) authn.getAttributes().get(attributeName);
-    }
 
     /**
      * Gets the principal from the model.
@@ -175,91 +148,12 @@ public abstract class AbstractCasView extends AbstractView {
      *
      * @param model the model
      * @return the attributes
-     * @see #convertAttributeValuesToMultiValuedObjects(java.util.Map)
      * @since 4.1.0
      */
     protected Map<String, Object> getPrincipalAttributesAsMultiValuedAttributes(final Map<String, Object> model) {
-        return convertAttributeValuesToMultiValuedObjects(getPrincipal(model).getAttributes());
+        return CoreAuthenticationUtils.convertAttributeValuesToMultiValuedObjects(getPrincipal(model).getAttributes());
     }
 
-    /**
-     * Gets authentication attributes.
-     * Single-valued attributes are converted to a collection
-     * so the review can easily loop through all.
-     *
-     * @param model the model
-     * @return the attributes
-     * @see #convertAttributeValuesToMultiValuedObjects(java.util.Map)
-     * @since 4.1.0
-     */
-    protected Map<String, Object> getAuthenticationAttributesAsMultiValuedAttributes(final Map<String, Object> model) {
-        return convertAttributeValuesToMultiValuedObjects(getPrimaryAuthenticationFrom(model).getAttributes());
-    }
-
-    /**
-     * Is remember me authentication?
-     * looks at the authentication object to find {@link RememberMeCredential#AUTHENTICATION_ATTRIBUTE_REMEMBER_ME}
-     * and expects the assertion to also note a new login session.
-     *
-     * @param model the model
-     * @return true if remember-me, false if otherwise.
-     */
-    protected boolean isRememberMeAuthentication(final Map<String, Object> model) {
-        final var authnAttributes = getAuthenticationAttributesAsMultiValuedAttributes(model);
-        final var authnMethod = (Collection) authnAttributes.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
-        return authnMethod != null && authnMethod.contains(Boolean.TRUE) && isAssertionBackedByNewLogin(model);
-    }
-
-    /**
-     * Gets satisfied multifactor authentication provider.
-     *
-     * @param model the model
-     * @return the satisfied multifactor authentication provider
-     */
-    protected String getSatisfiedMultifactorAuthenticationProviderId(final Map<String, Object> model) {
-        if (StringUtils.isNotBlank(authenticationContextAttribute) && model.containsKey(this.authenticationContextAttribute)) {
-            return model.get(this.authenticationContextAttribute).toString();
-        }
-        return null;
-    }
-
-    /**
-     * Is assertion backed by new login?
-     *
-     * @param model the model
-     * @return true/false.
-     */
-    protected boolean isAssertionBackedByNewLogin(final Map<String, Object> model) {
-        return getAssertionFrom(model).isFromNewLogin();
-    }
-
-    /**
-     * Convert attribute values to multi valued objects.
-     *
-     * @param attributes the attributes
-     * @return the map of attributes to return
-     */
-    private static Map<String, Object> convertAttributeValuesToMultiValuedObjects(final Map<String, Object> attributes) {
-        final var entries = attributes.entrySet();
-        return entries.stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> {
-            final var value = entry.getValue();
-            if (value instanceof Collection || value instanceof Map || value instanceof Object[] || value instanceof Iterator || value instanceof Enumeration) {
-                return value;
-            }
-            return CollectionUtils.wrap(value);
-        }));
-    }
-
-    /**
-     * Gets authentication date.
-     *
-     * @param model the model
-     * @return the authentication date
-     * @since 4.1.0
-     */
-    protected ZonedDateTime getAuthenticationDate(final Map<String, Object> model) {
-        return getPrimaryAuthenticationFrom(model).getAuthenticationDate();
-    }
 
     /**
      * Gets validated service from the model.
@@ -284,72 +178,9 @@ public abstract class AbstractCasView extends AbstractView {
      * @return the chained authentications
      */
     protected Collection<Authentication> getChainedAuthentications(final Map<String, Object> model) {
-        final var assertion = getAssertionFrom(model);
-        final var chainedAuthentications = assertion.getChainedAuthentications();
+        val assertion = getAssertionFrom(model);
+        val chainedAuthentications = assertion.getChainedAuthentications();
         return chainedAuthentications.stream().limit(chainedAuthentications.size() - 1).collect(Collectors.toList());
-    }
-
-    /**
-     * Decide if credential password should be released as attribute.
-     * The credential must have been cached as an authentication attribute
-     * and the attribute release policy must be allowed to release the
-     * attribute.
-     *
-     * @param attributes the attributes
-     * @param model      the model
-     * @param service    the service
-     */
-    protected void decideIfCredentialPasswordShouldBeReleasedAsAttribute(final Map<String, Object> attributes, final Map<String, Object> model,
-                                                                         final RegisteredService service) {
-        final var policy = service.getAttributeReleasePolicy();
-        final var isAuthorized = policy != null && policy.isAuthorizedToReleaseCredentialPassword();
-        decideAttributeReleaseBasedOnServiceAttributePolicy(attributes, getAuthenticationAttribute(model,
-            CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL),
-            CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL, service, isAuthorized);
-    }
-
-    /**
-     * Decide if PGT should be released as attribute.
-     * The PGT must have been cached as an authentication attribute
-     * and the attribute release policy must be allowed to release the
-     * attribute.
-     *
-     * @param attributes the attributes
-     * @param model      the model
-     * @param service    the service
-     */
-    protected void decideIfProxyGrantingTicketShouldBeReleasedAsAttribute(final Map<String, Object> attributes,
-                                                                          final Map<String, Object> model, final RegisteredService service) {
-        final var policy = service.getAttributeReleasePolicy();
-        final var isAuthorized = policy != null && policy.isAuthorizedToReleaseProxyGrantingTicket();
-        decideAttributeReleaseBasedOnServiceAttributePolicy(attributes, getProxyGrantingTicketId(model),
-            CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, service, isAuthorized);
-    }
-
-    /**
-     * Decide attribute release based on service attribute policy.
-     *
-     * @param attributes               the attributes
-     * @param attributeValue           the attribute value
-     * @param attributeName            the attribute name
-     * @param service                  the service
-     * @param doesAttributePolicyAllow does attribute policy allow release of this attribute?
-     */
-    protected void decideAttributeReleaseBasedOnServiceAttributePolicy(final Map<String, Object> attributes, final String attributeValue,
-                                                                       final String attributeName, final RegisteredService service,
-                                                                       final boolean doesAttributePolicyAllow) {
-        if (StringUtils.isNotBlank(attributeValue)) {
-            LOGGER.debug("Obtained [{}] as an authentication attribute", attributeName);
-            if (doesAttributePolicyAllow) {
-                LOGGER.debug("Obtained [{}] is passed to the CAS validation payload", attributeName);
-                attributes.put(attributeName, CollectionUtils.wrap(attributeValue));
-            } else {
-                LOGGER.debug("Attribute release policy for [{}] does not authorize the release of [{}]", service.getServiceId(), attributeName);
-                attributes.remove(attributeName);
-            }
-        } else {
-            LOGGER.trace("[{}] is not available and will not be released to the validation response.", attributeName);
-        }
     }
 
     /**
@@ -365,13 +196,85 @@ public abstract class AbstractCasView extends AbstractView {
     }
 
     /**
-     * Put all into model.
+     * Put cas authentication attributes into model.
      *
-     * @param model  the model
-     * @param values the values
+     * @param model             the model
+     * @param registeredService the registered service
+     * @return the cas authentication attributes
      */
-    protected void putAllIntoModel(final Map<String, Object> model, final Map<String, Object> values) {
-        model.putAll(values);
+    protected Map<String, Object> getCasProtocolAuthenticationAttributes(final Map<String, Object> model,
+                                                                         final RegisteredService registeredService) {
+        val authn = getPrimaryAuthenticationFrom(model);
+        val assertion = getAssertionFrom(model);
+
+        return authenticationAttributeReleasePolicy.getAuthenticationAttributesForRelease(authn, assertion, model, registeredService);
     }
 
+    /**
+     * Prepare view model with authentication principal.
+     *
+     * @param model the model
+     * @return the map
+     */
+    protected Map prepareViewModelWithAuthenticationPrincipal(final Map<String, Object> model) {
+        putIntoModel(model, CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL, getPrincipal(model));
+        putIntoModel(model, CasViewConstants.MODEL_ATTRIBUTE_NAME_CHAINED_AUTHENTICATIONS, getChainedAuthentications(model));
+        putIntoModel(model, CasViewConstants.MODEL_ATTRIBUTE_NAME_PRIMARY_AUTHENTICATION, getPrimaryAuthenticationFrom(model));
+        LOGGER.debug("Prepared CAS response output model with attribute names [{}]", model.keySet());
+        return model;
+    }
+
+    /**
+     * Prepare cas response attributes for view model.
+     *
+     * @param model the model
+     */
+    protected void prepareCasResponseAttributesForViewModel(final Map<String, Object> model) {
+        val service = authenticationRequestServiceSelectionStrategies.resolveService(getServiceFrom(model));
+        val registeredService = this.servicesManager.findServiceBy(service);
+
+        val principalAttributes = getCasPrincipalAttributes(model, registeredService);
+        val attributes = new HashMap<String, Object>(principalAttributes);
+
+        LOGGER.trace("Processed principal attributes from the output model to be [{}]", principalAttributes.keySet());
+        val protocolAttributes = getCasProtocolAuthenticationAttributes(model, registeredService);
+        attributes.putAll(protocolAttributes);
+
+        LOGGER.debug("Final collection of attributes for the response are [{}].", attributes.keySet());
+        putCasResponseAttributesIntoModel(model, attributes, registeredService, this.attributesRenderer);
+    }
+
+    /**
+     * Put cas principal attributes into model.
+     *
+     * @param model             the model
+     * @param registeredService the registered service
+     * @return the cas principal attributes
+     */
+    protected Map<String, Object> getCasPrincipalAttributes(final Map<String, Object> model, final RegisteredService registeredService) {
+        return getPrincipalAttributesAsMultiValuedAttributes(model);
+    }
+
+    /**
+     * Put cas response attributes into model.
+     *
+     * @param model              the model
+     * @param attributes         the attributes
+     * @param registeredService  the registered service
+     * @param attributesRenderer the attributes renderer
+     */
+    protected void putCasResponseAttributesIntoModel(final Map<String, Object> model,
+                                                     final Map<String, Object> attributes,
+                                                     final RegisteredService registeredService,
+                                                     final CasProtocolAttributesRenderer attributesRenderer) {
+
+        LOGGER.trace("Beginning to encode attributes for the response");
+        val encodedAttributes = this.protocolAttributeEncoder.encodeAttributes(attributes, registeredService);
+
+        LOGGER.debug("Encoded attributes for the response are [{}]", encodedAttributes);
+        putIntoModel(model, CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES, encodedAttributes);
+
+        val formattedAttributes = attributesRenderer.render(encodedAttributes);
+        putIntoModel(model, CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FORMATTED_ATTRIBUTES, formattedAttributes);
+    }
 }

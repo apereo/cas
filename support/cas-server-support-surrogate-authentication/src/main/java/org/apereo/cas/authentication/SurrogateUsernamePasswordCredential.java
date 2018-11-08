@@ -1,10 +1,11 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.credential.RememberMeUsernamePasswordCredential;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link SurrogateUsernamePasswordCredential},
@@ -14,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @ToString(callSuper = true)
 @Setter
 @Getter

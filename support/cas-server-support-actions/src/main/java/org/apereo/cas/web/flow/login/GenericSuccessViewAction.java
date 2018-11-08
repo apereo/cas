@@ -1,8 +1,5 @@
 package org.apereo.cas.web.flow.login;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.Principal;
@@ -12,6 +9,11 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -23,7 +25,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 4.1.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class GenericSuccessViewAction extends AbstractAction {
     private final CentralAuthenticationService centralAuthenticationService;
     private final ServicesManager servicesManager;
@@ -33,12 +35,12 @@ public class GenericSuccessViewAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         if (StringUtils.isNotBlank(this.redirectUrl)) {
-            final var service = this.serviceFactory.createService(this.redirectUrl);
-            final var registeredService = this.servicesManager.findServiceBy(service);
+            val service = this.serviceFactory.createService(this.redirectUrl);
+            val registeredService = this.servicesManager.findServiceBy(service);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
             requestContext.getExternalContext().requestExternalRedirect(service.getId());
         } else {
-            final var tgt = WebUtils.getTicketGrantingTicketId(requestContext);
+            val tgt = WebUtils.getTicketGrantingTicketId(requestContext);
             WebUtils.putPrincipal(requestContext, getAuthenticationPrincipal(tgt));
         }
         return success();
@@ -53,13 +55,13 @@ public class GenericSuccessViewAction extends AbstractAction {
      */
     public Principal getAuthenticationPrincipal(final String ticketGrantingTicketId) {
         try {
-            final var ticketGrantingTicket = this.centralAuthenticationService.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+            val ticketGrantingTicket = this.centralAuthenticationService.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
             return ticketGrantingTicket.getAuthentication().getPrincipal();
         } catch (final InvalidTicketException e) {
             LOGGER.warn("Ticket-granting ticket [{}] cannot be found in the ticket registry.", e.getMessage());
             LOGGER.debug(e.getMessage(), e);
         }
-        LOGGER.warn("In the absence of valid TGT, the authentication principal cannot be determined. Returning [{}]", NullPrincipal.class.getSimpleName());
+        LOGGER.warn("In the absence of valid ticket-granting ticket, the authentication principal cannot be determined. Returning [{}]", NullPrincipal.class.getSimpleName());
         return NullPrincipal.getInstance();
     }
 }

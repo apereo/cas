@@ -3,10 +3,10 @@ package org.apereo.cas.authentication.principal;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.extern.slf4j.Slf4j;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import lombok.NoArgsConstructor;
 
 /**
  * Represents a service which wishes to use the CAS protocol.
@@ -17,7 +17,6 @@ import lombok.NoArgsConstructor;
 @Entity
 @DiscriminatorValue("simple")
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Slf4j
 @NoArgsConstructor
 public class SimpleWebApplicationServiceImpl extends AbstractWebApplicationService {
 

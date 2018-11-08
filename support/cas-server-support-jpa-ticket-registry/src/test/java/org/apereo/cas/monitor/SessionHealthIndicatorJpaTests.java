@@ -1,8 +1,6 @@
 package org.apereo.cas.monitor;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -32,8 +30,11 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.SchedulingUtils;
+
+import lombok.val;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -45,7 +46,8 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.*;
@@ -57,9 +59,9 @@ import static org.junit.Assert.*;
  * @author Marvin S. Addison
  * @since 3.5.0
  */
-@RunWith(SpringRunner.class)
 @Transactional
 @SpringBootTest(classes = {
+    JpaTicketRegistryConfiguration.class,
     SessionHealthIndicatorJpaTests.JpaTestConfiguration.class,
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class,
@@ -79,19 +81,47 @@ import static org.junit.Assert.*;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
-    JpaTicketRegistryConfiguration.class,
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class})
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
-@Slf4j
 public class SessionHealthIndicatorJpaTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
 
     private static final ExpirationPolicy TEST_EXP_POLICY = new HardTimeoutExpirationPolicy(10000);
     private static final UniqueTicketIdGenerator GENERATOR = new DefaultUniqueTicketIdGenerator();
 
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
+
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry jpaRegistry;
+
+    private static void addTicketsToRegistry(final TicketRegistry registry, final int tgtCount, final int stCount) {
+        for (var i = 0; i < tgtCount; i++) {
+            val ticket = new TicketGrantingTicketImpl(GENERATOR.getNewTicketId("TGT"), CoreAuthenticationTestUtils.getAuthentication(), TEST_EXP_POLICY);
+            registry.addTicket(ticket);
+            val testService = RegisteredServiceTestUtils.getService("junit");
+            for (var j = 0; j < stCount; j++) {
+                registry.addTicket(ticket.grantServiceTicket(GENERATOR.getNewTicketId("ST"),
+                    testService,
+                    TEST_EXP_POLICY,
+                    false, true));
+            }
+        }
+    }
+
+    @Test
+    @Rollback(false)
+    public void verifyObserveOkJpaTicketRegistry() {
+        addTicketsToRegistry(jpaRegistry, 5, 5);
+        assertEquals(30, jpaRegistry.getTickets().size());
+        val monitor = new SessionMonitor(jpaRegistry, -1, -1);
+        val status = monitor.health();
+        assertEquals(Status.UP, status.getStatus());
+    }
 
     @TestConfiguration
     public static class JpaTestConfiguration implements InitializingBean {
@@ -101,34 +131,6 @@ public class SessionHealthIndicatorJpaTests {
         @Override
         public void afterPropertiesSet() {
             SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
-        }
-    }
-
-    @Test
-    @Rollback(false)
-    public void verifyObserveOkJpaTicketRegistry() {
-        addTicketsToRegistry(jpaRegistry, 5, 5);
-        assertEquals(10, jpaRegistry.getTickets().size());
-        final var monitor = new SessionMonitor(jpaRegistry, -1, -1);
-        final var status = monitor.health();
-        assertEquals(Status.UP, status.getStatus());
-    }
-
-    private static void addTicketsToRegistry(final TicketRegistry registry, final int tgtCount, final int stCount) {
-        TicketGrantingTicketImpl ticket = null;
-        for (var i = 0; i < tgtCount; i++) {
-            ticket = new TicketGrantingTicketImpl(GENERATOR.getNewTicketId("TGT"), CoreAuthenticationTestUtils.getAuthentication(), TEST_EXP_POLICY);
-            registry.addTicket(ticket);
-        }
-
-        if (ticket != null) {
-            final Service testService = RegisteredServiceTestUtils.getService("junit");
-            for (var i = 0; i < stCount; i++) {
-                registry.addTicket(ticket.grantServiceTicket(GENERATOR.getNewTicketId("ST"),
-                    testService,
-                    TEST_EXP_POLICY,
-                    false, true));
-            }
         }
     }
 }

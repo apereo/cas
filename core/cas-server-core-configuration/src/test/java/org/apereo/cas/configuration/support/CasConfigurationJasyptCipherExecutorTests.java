@@ -1,12 +1,15 @@
 package org.apereo.cas.configuration.support;
 
-import lombok.extern.slf4j.Slf4j;
-import org.junit.Test;
+import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Before;
-import org.junit.runner.RunWith;
+import org.junit.ClassRule;
+import org.junit.Rule;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import static org.junit.Assert.*;
 
@@ -16,15 +19,19 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RunWith(SpringRunner.class)
-@Slf4j
 public class CasConfigurationJasyptCipherExecutorTests {
-    @Autowired
-    private Environment environment;
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     static {
         System.setProperty(CasConfigurationJasyptCipherExecutor.JasyptEncryptionParameters.PASSWORD.getPropertyName(), "P@$$w0rd");
     }
+
+    @Autowired
+    private Environment environment;
 
     private CasConfigurationJasyptCipherExecutor jasypt;
 
@@ -35,15 +42,15 @@ public class CasConfigurationJasyptCipherExecutorTests {
 
     @Test
     public void verifyDecryptionEncryption() {
-        final var result = jasypt.encryptValue(getClass().getSimpleName());
+        val result = jasypt.encryptValue(getClass().getSimpleName());
         assertNotNull(result);
-        final var plain = jasypt.decryptValue(result);
+        val plain = jasypt.decryptValue(result);
         assertEquals(plain, getClass().getSimpleName());
     }
 
     @Test
     public void verifyDecryptionEncryptionPairNotNeeded() {
-        final var result = jasypt.decryptValue("keyValue");
+        val result = jasypt.decryptValue("keyValue");
         assertNotNull(result);
         assertEquals("keyValue", result);
 
@@ -51,15 +58,15 @@ public class CasConfigurationJasyptCipherExecutorTests {
 
     @Test
     public void verifyDecryptionEncryptionPairFails() {
-        final var encVal = CasConfigurationJasyptCipherExecutor.ENCRYPTED_VALUE_PREFIX + "keyValue";
-        final var result = jasypt.decode(encVal, new Object[]{});
+        val encVal = CasConfigurationJasyptCipherExecutor.ENCRYPTED_VALUE_PREFIX + "keyValue";
+        val result = jasypt.decode(encVal, ArrayUtils.EMPTY_OBJECT_ARRAY);
         assertNull(result);
     }
 
     @Test
     public void verifyDecryptionEncryptionPairSuccess() {
-        final var value = jasypt.encryptValue("Testing");
-        final var result = jasypt.decode(value, new Object[]{});
+        val value = jasypt.encryptValue("Testing");
+        val result = jasypt.decode(value, ArrayUtils.EMPTY_OBJECT_ARRAY);
         assertNotNull(result);
         assertEquals("Testing", result);
     }

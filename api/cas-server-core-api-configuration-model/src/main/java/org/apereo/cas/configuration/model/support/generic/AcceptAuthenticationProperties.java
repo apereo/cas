@@ -1,13 +1,16 @@
 package org.apereo.cas.configuration.model.support.generic;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
+import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.io.Serializable;
 
 /**
  * This is {@link AcceptAuthenticationProperties}.
@@ -16,7 +19,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-authentication")
-
 @Getter
 @Setter
 public class AcceptAuthenticationProperties implements Serializable {
@@ -55,4 +57,10 @@ public class AcceptAuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
+
+    /**
+     * Password policy settings.
+     */
+    @NestedConfigurationProperty
+    private PasswordPolicyProperties passwordPolicy = new PasswordPolicyProperties();
 }

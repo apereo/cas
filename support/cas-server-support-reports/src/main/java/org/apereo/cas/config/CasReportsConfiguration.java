@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -10,26 +9,33 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.report.AuditLogEndpoint;
-import org.apereo.cas.web.report.AuthenticationAuditLogEndpoint;
 import org.apereo.cas.web.report.CasInfoEndpointContributor;
 import org.apereo.cas.web.report.CasReleaseAttributesReportEndpoint;
 import org.apereo.cas.web.report.CasResolveAttributesReportEndpoint;
+import org.apereo.cas.web.report.ExportRegisteredServicesEndpoint;
 import org.apereo.cas.web.report.LoggingConfigurationEndpoint;
 import org.apereo.cas.web.report.RegisteredServicesEndpoint;
+import org.apereo.cas.web.report.SingleSignOnSessionStatusEndpoint;
 import org.apereo.cas.web.report.SingleSignOnSessionsEndpoint;
 import org.apereo.cas.web.report.SpringWebflowEndpoint;
 import org.apereo.cas.web.report.StatisticsEndpoint;
 import org.apereo.cas.web.report.StatusEndpoint;
+import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
+import org.springframework.boot.actuate.autoconfigure.jdbc.DataSourceHealthIndicatorAutoConfiguration;
 import org.springframework.boot.actuate.health.HealthEndpoint;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 
@@ -42,7 +48,6 @@ import org.springframework.core.io.ResourceLoader;
  */
 @Configuration("casReportsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CasReportsConfiguration {
 
     @Autowired
@@ -50,6 +55,14 @@ public class CasReportsConfiguration {
 
     @Autowired
     private Environment environment;
+
+    @Autowired
+    @Qualifier("defaultTicketRegistrySupport")
+    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
+
+    @Autowired
+    @Qualifier("ticketGrantingTicketCookieGenerator")
+    private ObjectProvider<CookieRetrievingCookieGenerator> ticketGrantingTicketCookieGenerator;
 
     @Autowired
     @Qualifier("auditTrailExecutionPlan")
@@ -60,30 +73,30 @@ public class CasReportsConfiguration {
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport;
+    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")
-    private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+    private ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory;
 
     @Autowired
-    @Qualifier("personDirectoryPrincipalResolver")
-    private PrincipalResolver personDirectoryPrincipalResolver;
+    @Qualifier("defaultPrincipalResolver")
+    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
 
     @Autowired
     @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService centralAuthenticationService;
+    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("principalFactory")
-    private PrincipalFactory principalFactory;
+    private ObjectProvider<PrincipalFactory> principalFactory;
 
     @Bean
     @ConditionalOnEnabledEndpoint
@@ -97,6 +110,74 @@ public class CasReportsConfiguration {
         return new AuditLogEndpoint(auditTrailExecutionPlan.getIfAvailable(), casProperties);
     }
 
+    @Bean
+    @ConditionalOnEnabledEndpoint
+    public LoggingConfigurationEndpoint loggingConfigurationEndpoint() {
+        return new LoggingConfigurationEndpoint(casProperties, resourceLoader, environment);
+    }
+
+    @Bean
+    @ConditionalOnEnabledEndpoint
+    public RegisteredServicesEndpoint registeredServicesReportEndpoint() {
+        return new RegisteredServicesEndpoint(casProperties, servicesManager.getIfAvailable());
+    }
+
+    @Bean
+    @ConditionalOnEnabledEndpoint
+    public ExportRegisteredServicesEndpoint exportRegisteredServicesEndpoint() {
+        return new ExportRegisteredServicesEndpoint(casProperties, servicesManager.getIfAvailable());
+    }
+
+    @Bean
+    public CasInfoEndpointContributor casInfoEndpointContributor() {
+        return new CasInfoEndpointContributor();
+    }
+
+    @Bean
+    @ConditionalOnEnabledEndpoint
+    public SingleSignOnSessionsEndpoint singleSignOnSessionsEndpoint() {
+        return new SingleSignOnSessionsEndpoint(centralAuthenticationService.getIfAvailable(), casProperties);
+    }
+
+    @Bean
+    @ConditionalOnEnabledEndpoint
+    public SingleSignOnSessionStatusEndpoint singleSignOnSessionStatusEndpoint() {
+        return new SingleSignOnSessionStatusEndpoint(ticketGrantingTicketCookieGenerator.getIfAvailable(), ticketRegistrySupport.getIfAvailable());
+    }
+
+    @Bean
+    @ConditionalOnEnabledEndpoint
+    public StatisticsEndpoint statisticsReportEndpoint() {
+        return new StatisticsEndpoint(centralAuthenticationService.getIfAvailable(), casProperties);
+    }
+
+    @Bean
+    @ConditionalOnEnabledEndpoint
+    public CasResolveAttributesReportEndpoint resolveAttributesReportEndpoint() {
+        return new CasResolveAttributesReportEndpoint(casProperties, defaultPrincipalResolver.getIfAvailable());
+    }
+
+    @Bean
+    @ConditionalOnEnabledEndpoint
+    public CasReleaseAttributesReportEndpoint releaseAttributesReportEndpoint() {
+        return new CasReleaseAttributesReportEndpoint(casProperties,
+            servicesManager.getIfAvailable(),
+            authenticationSystemSupport.getIfAvailable(),
+            webApplicationServiceFactory.getIfAvailable(),
+            principalFactory.getIfAvailable());
+    }
+
+    /**
+     * This this {@link ConditionalDataSourceHealthIndicatorConfiguration}.
+     *
+     * @author Misagh Moayyed
+     * @since 6.0.0
+     */
+    @ConditionalOnBean(name = "dataSource")
+    @Configuration("conditionalDataSourceHealthIndicatorConfiguration")
+    @Import(DataSourceHealthIndicatorAutoConfiguration.class)
+    public static class ConditionalDataSourceHealthIndicatorConfiguration {
+    }
 
     /**
      * This this {@link StatusEndpointConfiguration}.
@@ -115,56 +196,5 @@ public class CasReportsConfiguration {
         public StatusEndpoint statusEndpoint(final HealthEndpoint healthEndpoint) {
             return new StatusEndpoint(casProperties, healthEndpoint);
         }
-    }
-
-    @Bean
-    @ConditionalOnEnabledEndpoint
-    public LoggingConfigurationEndpoint loggingConfigurationEndpoint() {
-        return new LoggingConfigurationEndpoint(casProperties, resourceLoader, environment);
-    }
-
-    @Bean
-    @ConditionalOnEnabledEndpoint
-    public RegisteredServicesEndpoint registeredServicesReportEndpoint() {
-        return new RegisteredServicesEndpoint(casProperties, servicesManager);
-    }
-
-    @Bean
-    public CasInfoEndpointContributor casInfoEndpointContributor() {
-        return new CasInfoEndpointContributor();
-    }
-
-    @Bean
-    @ConditionalOnEnabledEndpoint
-    public SingleSignOnSessionsEndpoint singleSignOnSessionsEndpoint() {
-        return new SingleSignOnSessionsEndpoint(centralAuthenticationService, casProperties);
-    }
-
-    @Bean
-    @ConditionalOnEnabledEndpoint
-    public StatisticsEndpoint statisticsReportEndpoint() {
-        return new StatisticsEndpoint(centralAuthenticationService, casProperties);
-    }
-
-    @Bean
-    @ConditionalOnEnabledEndpoint
-    public AuthenticationAuditLogEndpoint authenticationAuditLogEndpoint() {
-        return new AuthenticationAuditLogEndpoint(auditTrailExecutionPlan.getIfAvailable(), casProperties);
-    }
-
-    @Bean
-    @ConditionalOnEnabledEndpoint
-    public CasResolveAttributesReportEndpoint resolveAttributesReportEndpoint() {
-        return new CasResolveAttributesReportEndpoint(casProperties, personDirectoryPrincipalResolver);
-    }
-
-    @Bean
-    @ConditionalOnEnabledEndpoint
-    public CasReleaseAttributesReportEndpoint releaseAttributesReportEndpoint() {
-        return new CasReleaseAttributesReportEndpoint(casProperties,
-            servicesManager,
-            authenticationSystemSupport,
-            webApplicationServiceFactory,
-            principalFactory);
     }
 }

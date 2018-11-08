@@ -1,16 +1,17 @@
 package org.apereo.cas.support.sms;
 
+import org.apereo.cas.configuration.model.support.sms.AmazonSnsProperties;
+import org.apereo.cas.util.io.SmsSender;
+
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.model.MessageAttributeValue;
 import com.amazonaws.services.sns.model.PublishRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.configuration.model.support.sms.AmazonSnsProperties;
-import org.apereo.cas.util.io.SmsSender;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link AmazonSimpleNotificationServiceSmsSender}.
@@ -27,7 +28,7 @@ public class AmazonSimpleNotificationServiceSmsSender implements SmsSender {
     @Override
     public boolean send(final String from, final String to, final String message) {
         try {
-            final Map<String, MessageAttributeValue> smsAttributes = new HashMap<>();
+            val smsAttributes = new HashMap<String, MessageAttributeValue>();
             if (StringUtils.isNotBlank(snsProperties.getSenderId())) {
                 smsAttributes.put("AWS.SNS.SMS.SenderID", new MessageAttributeValue().withStringValue("mySenderID").withDataType("String"));
             }
@@ -37,7 +38,7 @@ public class AmazonSimpleNotificationServiceSmsSender implements SmsSender {
             if (StringUtils.isNotBlank(snsProperties.getSmsType())) {
                 smsAttributes.put("AWS.SNS.SMS.SMSType", new MessageAttributeValue().withStringValue("Promotional").withDataType("String"));
             }
-            final var result = snsClient.publish(new PublishRequest()
+            val result = snsClient.publish(new PublishRequest()
                 .withMessage(message)
                 .withPhoneNumber(to)
                 .withMessageAttributes(smsAttributes));

@@ -1,9 +1,12 @@
 package org.apereo.cas.web.support;
 
+import org.apereo.cas.CipherExecutor;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.CipherExecutor;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -18,24 +21,30 @@ import java.io.Serializable;
 @Slf4j
 @RequiredArgsConstructor
 public class EncryptedCookieValueManager implements CookieValueManager {
+    private static final long serialVersionUID = 6362136147071376270L;
     /**
      * The cipher exec that is responsible for encryption and signing of the cookie.
      */
-    private final CipherExecutor<Serializable, Serializable> cipherExecutor;
+    private final transient CipherExecutor<Serializable, Serializable> cipherExecutor;
 
     @Override
     public final String buildCookieValue(final String givenCookieValue, final HttpServletRequest request) {
-        final var res = buildCompoundCookieValue(givenCookieValue, request);
-        LOGGER.debug("Encoding cookie value [{}]", res);
-        return cipherExecutor.encode(res, new Object[]{}).toString();
+        val res = buildCompoundCookieValue(givenCookieValue, request);
+        LOGGER.trace("Encoding cookie value [{}]", res);
+        return cipherExecutor.encode(res, ArrayUtils.EMPTY_OBJECT_ARRAY).toString();
     }
 
     @Override
     public final String obtainCookieValue(final Cookie cookie, final HttpServletRequest request) {
-        final var cookieValue = cipherExecutor.decode(cookie.getValue(), new Object[]{}).toString();
-        LOGGER.debug("Decoded cookie value is [{}]", cookieValue);
+        val decoded = cipherExecutor.decode(cookie.getValue(), ArrayUtils.EMPTY_OBJECT_ARRAY);
+        if (decoded == null) {
+            LOGGER.trace("Could not decode cookie value [{}] for cookie [{}]", cookie.getValue(), cookie.getName());
+            return null;
+        }
+        val cookieValue = decoded.toString();
+        LOGGER.trace("Decoded cookie value is [{}]", cookieValue);
         if (StringUtils.isBlank(cookieValue)) {
-            LOGGER.debug("Retrieved decoded cookie value is blank. Failed to decode cookie [{}]", cookie.getName());
+            LOGGER.trace("Retrieved decoded cookie value is blank. Failed to decode cookie [{}]", cookie.getName());
             return null;
         }
 

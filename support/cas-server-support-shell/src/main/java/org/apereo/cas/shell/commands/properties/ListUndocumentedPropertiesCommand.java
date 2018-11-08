@@ -1,8 +1,10 @@
 package org.apereo.cas.shell.commands.properties;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
@@ -31,7 +33,7 @@ public class ListUndocumentedPropertiesCommand {
      */
     @ShellMethod(key = "list-undocumented", value = "List all CAS undocumented properties.")
     public void listUndocumented() {
-        final var repository = new CasConfigurationMetadataRepository();
+        val repository = new CasConfigurationMetadataRepository();
         repository.getRepository().getAllProperties()
             .entrySet()
             .stream()

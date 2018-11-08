@@ -11,6 +11,8 @@ import org.apereo.cas.config.CassandraCoreConfiguration;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+
+import lombok.val;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -47,7 +49,12 @@ import static org.junit.Assert.*;
     CassandraAuthenticationConfiguration.class
 })
 @EnableConfigurationProperties
-@TestPropertySource(locations = {"classpath:/cassandra-authn.properties"})
+@TestPropertySource(properties = {
+    "cas.authn.cassandra.tableName=users_table",
+    "cas.authn.cassandra.usernameAttribute=user_attr",
+    "cas.authn.cassandra.passwordAttribute=pwd_attr",
+    "cas.authn.cassandra.keyspace=cas"
+})
 @Category(CassandraCategory.class)
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 public class DefaultCassandraRepositoryTests {
@@ -70,22 +77,22 @@ public class DefaultCassandraRepositoryTests {
 
     @Test
     public void verifyUserNotFound() throws Exception {
-        final var c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("baduser", "Mellon");
+        val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("baduser", "Mellon");
         thrown.expect(AccountNotFoundException.class);
         cassandraAuthenticationHandler.authenticate(c);
     }
 
     @Test
     public void verifyUserBadPassword() throws Exception {
-        final var c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "bad");
+        val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "bad");
         thrown.expect(FailedLoginException.class);
         cassandraAuthenticationHandler.authenticate(c);
     }
 
     @Test
     public void verifyUser() throws Exception {
-        final var c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
-        final var result = cassandraAuthenticationHandler.authenticate(c);
+        val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
+        val result = cassandraAuthenticationHandler.authenticate(c);
         assertNotNull(result);
         assertEquals("casuser", result.getPrincipal().getId());
     }

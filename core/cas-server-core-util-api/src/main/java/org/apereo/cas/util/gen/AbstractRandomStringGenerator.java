@@ -1,29 +1,32 @@
 package org.apereo.cas.util.gen;
 
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.RandomUtils;
+
+import lombok.Getter;
+import lombok.val;
 
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 
 /**
  * This is {@link AbstractRandomStringGenerator}.
- *
+ * <p>
  * Implementation of the RandomStringGenerator that allows you to define the
  * length of the random part.
  *
  * @author Timur Duehr
-
  * @since 5.2.0
  */
-@Slf4j
 @Getter
-public abstract class AbstractRandomStringGenerator implements RandomStringGenerator{
-    /** An instance of secure random to ensure randomness is secure. */
+public abstract class AbstractRandomStringGenerator implements RandomStringGenerator {
+    /**
+     * An instance of secure random to ensure randomness is secure.
+     */
     protected final SecureRandom randomizer = RandomUtils.getNativeInstance();
 
-    /** Default string length before encoding. */
+    /**
+     * Default string length before encoding.
+     */
     protected final int defaultLength;
 
     /**
@@ -60,7 +63,7 @@ public abstract class AbstractRandomStringGenerator implements RandomStringGener
 
     @Override
     public String getNewString(final int size) {
-        final var random = getNewStringAsBytes(size);
+        val random = getNewStringAsBytes(size);
         return convertBytesToString(random);
     }
 
@@ -71,7 +74,7 @@ public abstract class AbstractRandomStringGenerator implements RandomStringGener
 
     @Override
     public byte[] getNewStringAsBytes(final int size) {
-        final var random = new byte[size];
+        val random = new byte[size];
         this.randomizer.nextBytes(random);
         return random;
     }

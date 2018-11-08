@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
@@ -12,16 +11,19 @@ import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.SurrogateAuthenticationAuditConfiguration;
 import org.apereo.cas.config.SurrogateAuthenticationConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+
+import lombok.val;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -32,23 +34,27 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(SpringRunner.class)
-@Slf4j
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    SurrogateAuthenticationConfiguration.class,
+    SurrogateAuthenticationAuditConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
-    SurrogateAuthenticationAuditConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    SurrogateAuthenticationConfiguration.class
+    CasCoreHttpConfiguration.class
 })
-@TestPropertySource(locations = {"classpath:/surrogate.properties"})
+@TestPropertySource(properties = {"cas.authn.surrogate.simple.surrogates.casuser=cassurrogate"})
 public class SurrogateAuthenticationPostProcessorTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
@@ -64,11 +70,11 @@ public class SurrogateAuthenticationPostProcessorTests {
 
     @Test
     public void verifySurrogateCredentialNotFound() {
-        final var c = new SurrogateUsernamePasswordCredential();
+        val c = new SurrogateUsernamePasswordCredential();
         c.setUsername("casuser");
         c.setPassword("Mellon");
-        final AuthenticationTransaction transaction = DefaultAuthenticationTransaction.of(RegisteredServiceTestUtils.getService("service"), c);
-        final var builder = mock(AuthenticationBuilder.class);
+        val transaction = DefaultAuthenticationTransaction.of(RegisteredServiceTestUtils.getService("service"), c);
+        val builder = mock(AuthenticationBuilder.class);
         when(builder.build()).thenReturn(CoreAuthenticationTestUtils.getAuthentication("casuser"));
         thrown.expect(AuthenticationException.class);
         surrogateAuthenticationPostProcessor.process(builder, transaction);
@@ -76,13 +82,13 @@ public class SurrogateAuthenticationPostProcessorTests {
 
     @Test
     public void verifyProcessorWorks() {
-        final var c = new SurrogateUsernamePasswordCredential();
+        val c = new SurrogateUsernamePasswordCredential();
         c.setUsername("casuser");
         c.setPassword("Mellon");
         c.setSurrogateUsername("cassurrogate");
-        final AuthenticationTransaction transaction = DefaultAuthenticationTransaction.of(
+        val transaction = DefaultAuthenticationTransaction.of(
             RegisteredServiceTestUtils.getService("https://localhost"), c);
-        final var builder = mock(AuthenticationBuilder.class);
+        val builder = mock(AuthenticationBuilder.class);
         when(builder.build()).thenReturn(CoreAuthenticationTestUtils.getAuthentication("casuser"));
         surrogateAuthenticationPostProcessor.process(builder, transaction);
     }

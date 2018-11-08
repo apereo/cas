@@ -1,7 +1,8 @@
 package org.apereo.cas.ws.idp.services;
 
-import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apereo.cas.ws.idp.web.WSFederationRequest;
+
+import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.jasig.cas.client.validation.Assertion;
 
 import javax.servlet.http.HttpServletRequest;

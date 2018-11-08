@@ -1,6 +1,5 @@
 package org.apereo.cas.util.cipher;
 
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link TicketGrantingCookieCipherExecutor} that reads TGC keys from the CAS config
@@ -9,22 +8,25 @@ import lombok.extern.slf4j.Slf4j;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 public class TicketGrantingCookieCipherExecutor extends BaseStringCipherExecutor {
 
     public TicketGrantingCookieCipherExecutor(final String secretKeyEncryption,
                                               final String secretKeySigning,
-                                              final String alg) {
-        super(secretKeyEncryption, secretKeySigning, alg);
+                                              final String alg,
+                                              final int signingKeySize,
+                                              final int encryptionKeySize) {
+        super(secretKeyEncryption, secretKeySigning, alg, signingKeySize, encryptionKeySize);
     }
 
     public TicketGrantingCookieCipherExecutor(final String secretKeyEncryption,
-                                              final String secretKeySigning) {
-        super(secretKeyEncryption, secretKeySigning);
+                                              final String secretKeySigning,
+                                              final int signingKeySize,
+                                              final int encryptionKeySize) {
+        super(secretKeyEncryption, secretKeySigning, signingKeySize, encryptionKeySize);
     }
 
     public TicketGrantingCookieCipherExecutor() {
-        super(null, null);
+        super(null, null, 0, 0);
     }
 
     @Override

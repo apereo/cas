@@ -1,12 +1,15 @@
 package org.apereo.cas.configuration.model.core.events;
 
+import org.apereo.cas.configuration.model.support.couchdb.BaseAsynchronousCouchDbProperties;
 import org.apereo.cas.configuration.model.support.influxdb.InfluxDbProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * Configuration properties class for events.
@@ -49,7 +52,12 @@ public class EventsProperties implements Serializable {
      * Track authentication events inside a mongodb instance.
      */
     private MongoDb mongo = new MongoDb();
-    
+
+    /**
+     * Track authentication events inside a couchdb instance.
+     */
+    private CouchDb couchDb = new CouchDb();
+
     @RequiresModule(name = "cas-server-support-events-jpa")
     @Getter
     @Setter
@@ -79,6 +87,18 @@ public class EventsProperties implements Serializable {
 
         public InfluxDb() {
             setDatabase("CasInfluxDbEvents");
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-events-couchdb")
+    @Getter
+    @Setter
+    public static class CouchDb extends BaseAsynchronousCouchDbProperties {
+
+        private static final long serialVersionUID = -1587160128953366615L;
+
+        public CouchDb() {
+            setDbName("events");
         }
     }
 }

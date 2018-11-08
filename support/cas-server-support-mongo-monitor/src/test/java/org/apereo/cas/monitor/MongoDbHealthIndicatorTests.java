@@ -1,6 +1,5 @@
 package org.apereo.cas.monitor;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -22,6 +21,10 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.monitor.config.MongoDbMonitoringConfiguration;
 import org.apereo.cas.util.junit.ConditionalIgnoreRule;
+
+import lombok.val;
+import org.apereo.inspektr.audit.AuditActionContext;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -32,10 +35,12 @@ import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.actuate.health.Status;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
+import java.util.Date;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -70,8 +75,14 @@ import static org.junit.Assert.*;
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
 })
-@TestPropertySource(locations = "classpath:mongomonitor.properties")
-@Slf4j
+@TestPropertySource(properties = {
+    "cas.monitor.mongo.userId=root",
+    "cas.monitor.mongo.password=secret",
+    "cas.monitor.mongo.host=localhost",
+    "cas.monitor.mongo.port=27017",
+    "cas.monitor.mongo.authenticationDatabaseName=admin",
+    "cas.monitor.mongo.databaseName=monitor"
+})
 public class MongoDbHealthIndicatorTests {
 
     @ClassRule
@@ -87,11 +98,22 @@ public class MongoDbHealthIndicatorTests {
     @Qualifier("mongoHealthIndicator")
     private HealthIndicator mongoHealthIndicator;
 
+    @Autowired
+    @Qualifier("mongoHealthIndicatorTemplate")
+    private MongoTemplate template;
+
+    @Before
+    public void bootstrap(){
+        template.save(new AuditActionContext("casuser", "resource",
+            "action", "appcode", new Date(), "clientIp",
+            "serverIp"), "monitor");
+    }
+
     @Test
     public void verifyMonitor() {
-        final var health = mongoHealthIndicator.health();
+        val health = mongoHealthIndicator.health();
         assertEquals(Status.UP, health.getStatus());
-        final var details = health.getDetails();
+        val details = health.getDetails();
         details.values().stream()
             .map(Map.class::cast)
             .forEach(map -> {

@@ -1,17 +1,21 @@
 package org.apereo.cas.ticket.support;
 
+import org.apereo.cas.ticket.TicketState;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.ticket.TicketState;
+import lombok.val;
 import org.springframework.util.Assert;
+
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import lombok.NoArgsConstructor;
 
 /**
  * ExpirationPolicy that is based on certain number of uses of a ticket or a
@@ -24,11 +28,12 @@ import lombok.NoArgsConstructor;
 @Slf4j
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     private static final long serialVersionUID = -5704993954986738308L;
 
-    @JsonProperty("timeToLive")
+    @JsonProperty(value = "timeToLive")
     private long timeToKillInSeconds;
 
     @JsonProperty("numberOfUses")
@@ -54,14 +59,14 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
             LOGGER.debug("Ticket state is null for [{}]. Ticket has expired.", this.getClass().getSimpleName());
             return true;
         }
-        final long countUses = ticketState.getCountOfUses();
+        val countUses = ticketState.getCountOfUses();
         if (countUses >= this.numberOfUses) {
             LOGGER.debug("Ticket usage count [{}] is greater than or equal to [{}]. Ticket has expired", countUses, this.numberOfUses);
             return true;
         }
-        final var systemTime = getCurrentSystemTime();
-        final var lastTimeUsed = ticketState.getLastTimeUsed();
-        final var expirationTime = lastTimeUsed.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+        val systemTime = getCurrentSystemTime();
+        val lastTimeUsed = ticketState.getLastTimeUsed();
+        val expirationTime = lastTimeUsed.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
         if (systemTime.isAfter(expirationTime)) {
             LOGGER.debug("Ticket has expired because the difference between current time [{}] and ticket time [{}] is greater than or equal to [{}].",
                 systemTime, lastTimeUsed, this.timeToKillInSeconds);
@@ -94,6 +99,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
      * The Proxy ticket expiration policy.
      */
     @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
+    @ToString(callSuper = true)
     public static class ProxyTicketExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPolicy {
 
         private static final long serialVersionUID = -5814201080268311070L;
@@ -105,7 +111,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
          * @param timeToKillInSeconds the time to kill in seconds
          */
         @JsonCreator
-        public ProxyTicketExpirationPolicy(@JsonProperty("numberOfUses") final int numberOfUses, @JsonProperty("timeToKillInSeconds") final long timeToKillInSeconds) {
+        public ProxyTicketExpirationPolicy(@JsonProperty("numberOfUses") final int numberOfUses, @JsonProperty("timeToLive") final long timeToKillInSeconds) {
             super(numberOfUses, timeToKillInSeconds);
         }
     }
@@ -114,6 +120,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
      * The Service ticket expiration policy.
      */
     @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
+    @ToString(callSuper = true)
     public static class ServiceTicketExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPolicy {
 
         private static final long serialVersionUID = -5814201080268311070L;
