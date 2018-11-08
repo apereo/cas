@@ -9,13 +9,13 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
 import org.apereo.cas.authentication.DefaultPrincipalElectionStrategy;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.rest.factory.DefaultTicketGrantingTicketResourceEntityResponseFactory;
 import org.apereo.cas.rest.factory.UsernamePasswordRestHttpRequestCredentialFactory;
 import org.apereo.cas.support.rest.resources.TicketGrantingTicketResource;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.ServiceTicket;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 
 import lombok.val;
