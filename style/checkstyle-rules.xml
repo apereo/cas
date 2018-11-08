@@ -567,6 +567,9 @@
             <property name="sortImportsInGroupAlphabetically" value="true"/>
             <property name="separateLineBetweenGroups" value="false"/>
         </module>
+        <module name="ImportControl">
+            <property name="file" value="${checkstyle.importcontrol.file}"/>
+        </module>
     </module>
 
     <!-- Checker module checks -->
