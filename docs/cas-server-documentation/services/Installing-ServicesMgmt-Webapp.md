@@ -10,8 +10,6 @@ The management web application is purely an administrative interface that may be
 
 ## Overlay Installation
 
-- [Maven Overlay](https://github.com/apereo/cas-management-overlay)
-- [Gradle Overlay](https://github.com/apereo/cas-management-gradle-overlay)
-
+- [WAR Overlay](https://github.com/apereo/cas-management-overlay)
 
 The services management webapp is not part of the CAS server and is a standalone web application [located here](https://github.com/apereo/cas-management).
