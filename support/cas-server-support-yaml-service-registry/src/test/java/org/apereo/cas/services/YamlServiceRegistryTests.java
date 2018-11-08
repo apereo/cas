@@ -33,11 +33,11 @@ public class YamlServiceRegistryTests extends AbstractResourceBasedServiceRegist
 
     @Override
     @SneakyThrows
-    public void initializeServiceRegistry() {
+    public ServiceRegistry getNewServiceRegistry() {
         this.dao = new YamlServiceRegistry(RESOURCE, false,
             mock(ApplicationEventPublisher.class),
             new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy());
-        super.initializeServiceRegistry();
+        return this.dao;
     }
 }
