@@ -24,8 +24,7 @@ public class CheckWebAuthenticationRequestAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-
-        LOGGER.debug("Checking request content type [{}] against [{}]", request.getContentType(), this.contentType);
+        LOGGER.trace("Checking request content type [{}] against [{}]", request.getContentType(), this.contentType);
         if (this.contentType.equalsIgnoreCase(request.getContentType())) {
             LOGGER.debug("Authentication request via type [{}] is not web-based", this.contentType);
             return new EventFactorySupport().no(this);

@@ -14,13 +14,24 @@ import java.util.function.Consumer;
 @Slf4j
 public class FileWatcherService extends PathWatcherService {
 
+    public FileWatcherService(final File watchableFile, final Consumer<File> onCreate,
+                              final Consumer<File> onModify, final Consumer<File> onDelete) {
+        super(watchableFile.toPath(),
+            getWatchedFileConsumer(watchableFile, onCreate),
+            getWatchedFileConsumer(watchableFile, onModify),
+            getWatchedFileConsumer(watchableFile, onDelete));
+    }
 
     public FileWatcherService(final File watchableFile, final Consumer<File> onModify) {
-        super(watchableFile.getParentFile(), file -> {
+        super(watchableFile.getParentFile(), getWatchedFileConsumer(watchableFile, onModify));
+    }
+
+    private static Consumer<File> getWatchedFileConsumer(final File watchableFile, final Consumer<File> consumer) {
+        return file -> {
             if (file.getPath().equals(watchableFile.getPath())) {
-                LOGGER.debug("Detected change in file [{}] and calling change consumer to handle event", file);
-                onModify.accept(file);
+                LOGGER.trace("Detected change in file [{}] and calling change consumer to handle event", file);
+                consumer.accept(file);
             }
-        });
+        };
     }
 }
