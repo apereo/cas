@@ -120,8 +120,10 @@ public class CasCoreUtilConfiguration implements InitializingBean {
         val conversionService = new DefaultFormattingConversionService(true);
         conversionService.setEmbeddedValueResolver(new CasEmbeddedValueResolver(ctx));
         ctx.getEnvironment().setConversionService(conversionService);
-        val env = (ConfigurableEnvironment) ctx.getParent().getEnvironment();
-        env.setConversionService(conversionService);
+        if (ctx.getParent() != null) {
+            var env = (ConfigurableEnvironment) ctx.getParent().getEnvironment();
+            env.setConversionService(conversionService);
+        }
         val registry = (ConverterRegistry) DefaultConversionService.getSharedInstance();
         registry.addConverter(zonedDateTimeToStringConverter());
     }
