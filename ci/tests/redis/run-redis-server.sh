@@ -3,7 +3,7 @@
 # while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
 
 echo "Running Redis docker image..."
-docker run -p 6379:6379 --name redis-server redis:latest
+docker run -d -p 6379:6379 --name redis-server redis:latest
 
 docker ps | grep "redis-server"
 retVal=$?
