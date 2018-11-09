@@ -30,7 +30,7 @@ import java.time.temporal.ChronoUnit;
  * @since 5.0.0
  */
 @Entity
-@Table(name = "MultifactorAuthenticationTrustRecord")
+@Table(name = "MultifactorAuthnTrustRecord")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ToString
 @Getter
