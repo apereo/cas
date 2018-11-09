@@ -74,6 +74,7 @@ import org.springframework.test.context.ContextConfiguration;
         CasCoreWebConfiguration.class},
     properties = {
         "cas.authn.mfa.gauth.crypto.enabled=false",
+        "cas.authn.mfa.gauth.couchDb.dbName=gauth_token",
         "cas.authn.mfa.gauth.couchDb.username=cas",
         "cas.authn.mfa.gauth.couchdb.password=password"
     })

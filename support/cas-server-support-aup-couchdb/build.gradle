@@ -1,4 +1,9 @@
 description = "Apereo CAS AUP CouchDb Support"
+
+ext {
+    maxParallelForksForTests = 1
+}
+
 dependencies {
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-ticket")
