@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyPrope
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.support.WebUtils;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.webflow.execution.RequestContext;
@@ -20,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public class DefaultAcceptableUsagePolicyRepository extends AbstractPrincipalAttributeAcceptableUsagePolicyRepository {
 
     private static final long serialVersionUID = -3059445754626980894L;
@@ -64,6 +66,10 @@ public class DefaultAcceptableUsagePolicyRepository extends AbstractPrincipalAtt
     private Pair<String, Map> getKeyAndMap(final RequestContext requestContext, final Credential credential) {
         switch (scope) {
             case GLOBAL:
+                if (credential == null) {
+                    LOGGER.debug("Falling back to AUP scope AUTHENTICATION because credential is null");
+                    return Pair.of(AUP_ACCEPTED, requestContext.getFlowScope().asMap());
+                }
                 return Pair.of(credential.getId(), policyMap);
             case AUTHENTICATION:
                 return Pair.of(AUP_ACCEPTED, requestContext.getFlowScope().asMap());
