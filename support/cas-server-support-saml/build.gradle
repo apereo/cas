@@ -3,6 +3,7 @@ description = "Apereo CAS SAML Server and Validation Support"
 dependencies {
     
     implementation project(":support:cas-server-support-saml-core")
+    implementation project(":support:cas-server-support-saml-idp-core")
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-tickets-api")
