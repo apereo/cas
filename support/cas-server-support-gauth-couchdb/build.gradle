@@ -1,4 +1,5 @@
 description = "Apereo CAS Google Authenticator CouchDb"
+
 dependencies {
     implementation project(":support:cas-server-support-gauth")
     implementation project(":support:cas-server-support-gauth-core")
