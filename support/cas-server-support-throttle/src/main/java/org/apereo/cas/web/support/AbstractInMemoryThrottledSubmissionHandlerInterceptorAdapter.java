@@ -33,7 +33,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
                                                                         final AuditTrailExecutionPlan auditTrailExecutionPlan,
                                                                         final String applicationCode,
                                                                         final ThrottledRequestResponseHandler throttledRequestResponseHandler,
-                                                                        final ConcurrentMap map) {
+                                                                        final ConcurrentMap<String, ZonedDateTime> map) {
         super(failureThreshold, failureRangeInSeconds, usernameParameter,
             authenticationFailureCode, auditTrailExecutionPlan, applicationCode, throttledRequestResponseHandler);
         this.ipMap = map;

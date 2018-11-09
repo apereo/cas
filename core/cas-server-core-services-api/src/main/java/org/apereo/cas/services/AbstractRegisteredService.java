@@ -138,13 +138,13 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @CollectionTable(name = "RegexRegisteredService_RegexRegisteredServiceProperty")
     @MapKeyColumn(name = "RegexRegisteredServiceProperty_name")
     @Column(name = "RegexRegisteredServiceProperty_value")
-    private Map<String, DefaultRegisteredServiceProperty> properties = new HashMap<>();
+    private Map<String, RegisteredServiceProperty> properties = new HashMap<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Cascade(CascadeType.ALL)
     @CollectionTable(name = "RegexRegisteredService_RegisteredServiceImplContact")
     @OrderColumn
-    private List<DefaultRegisteredServiceContact> contacts = new ArrayList<>();
+    private List<RegisteredServiceContact> contacts = new ArrayList<>();
 
     @Override
     public void initialize() {
@@ -154,9 +154,9 @@ public abstract class AbstractRegisteredService implements RegisteredService {
         this.requiredHandlers = ObjectUtils.defaultIfNull(this.requiredHandlers, new HashSet<>());
         this.accessStrategy = ObjectUtils.defaultIfNull(this.accessStrategy, new DefaultRegisteredServiceAccessStrategy());
         this.multifactorPolicy = ObjectUtils.defaultIfNull(this.multifactorPolicy, new DefaultRegisteredServiceMultifactorPolicy());
-        this.properties = ObjectUtils.defaultIfNull(this.properties, new LinkedHashMap());
+        this.properties = ObjectUtils.defaultIfNull(this.properties, new LinkedHashMap<>());
         this.attributeReleasePolicy = ObjectUtils.defaultIfNull(this.attributeReleasePolicy, new ReturnAllowedAttributeReleasePolicy());
-        this.contacts = ObjectUtils.defaultIfNull(this.contacts, new ArrayList());
+        this.contacts = ObjectUtils.defaultIfNull(this.contacts, new ArrayList<>());
         this.expirationPolicy = ObjectUtils.defaultIfNull(this.expirationPolicy, new DefaultRegisteredServiceExpirationPolicy());
     }
 
@@ -182,22 +182,4 @@ public abstract class AbstractRegisteredService implements RegisteredService {
      * @return the registered service
      */
     protected abstract AbstractRegisteredService newInstance();
-
-    @Override
-    public Map<String, RegisteredServiceProperty> getProperties() {
-        return (Map) this.properties;
-    }
-
-    public void setProperties(final Map<String, RegisteredServiceProperty> properties) {
-        this.properties = (Map) properties;
-    }
-
-    @Override
-    public List<RegisteredServiceContact> getContacts() {
-        return (List) this.contacts;
-    }
-
-    public void setContacts(final List<RegisteredServiceContact> contacts) {
-        this.contacts = (List) contacts;
-    }
 }

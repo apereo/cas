@@ -640,6 +640,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param source the source
      * @param target the target
      */
+    @SuppressWarnings("unchecked")
     public void cloneActionState(final ActionState source, final ActionState target) {
         source.getActionList().forEach(a -> target.getActionList().add(a));
         source.getExitActionList().forEach(a -> target.getExitActionList().add(a));
@@ -659,6 +660,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param def the def
      * @return the transition execution criteria chain for transition
      */
+    @SuppressWarnings("unchecked")
     public List<TransitionCriteria> getTransitionExecutionCriteriaChainForTransition(final Transition def) {
         if (def.getExecutionCriteria() instanceof TransitionCriteriaChain) {
             val chain = (TransitionCriteriaChain) def.getExecutionCriteria();

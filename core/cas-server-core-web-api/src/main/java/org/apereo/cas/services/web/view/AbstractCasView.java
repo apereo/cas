@@ -125,6 +125,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @param model the model
      * @return the model attributes
      */
+    @SuppressWarnings("unchecked")
     protected Map<String, Object> getModelAttributes(final Map<String, Object> model) {
         return (Map<String, Object>) model.get(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES);
     }

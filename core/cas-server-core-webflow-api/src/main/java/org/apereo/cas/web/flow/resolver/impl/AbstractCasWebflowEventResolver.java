@@ -88,7 +88,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @return the event
      */
     protected Event newEvent(final String id, final Throwable error) {
-        return newEvent(id, new LocalAttributeMap(CasWebflowConstants.TRANSITION_ID_ERROR, error));
+        return newEvent(id, new LocalAttributeMap<>(CasWebflowConstants.TRANSITION_ID_ERROR, error));
     }
 
     /**
@@ -108,6 +108,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @param attributes the attributes
      * @return the event
      */
+    @SuppressWarnings("unchecked")
     protected Event newEvent(final String id, final AttributeMap attributes) {
         return new Event(this, id, attributes);
     }
@@ -195,6 +196,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @param context the context
      * @return the resolved events as attribute
      */
+    @SuppressWarnings("unchecked")
     protected Set<Event> getResolvedEventsAsAttribute(final RequestContext context) {
         return context.getAttributes().get(RESOLVED_AUTHENTICATION_EVENTS, Set.class);
     }

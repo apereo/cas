@@ -108,7 +108,7 @@ public abstract class AbstractRadiusServer implements RadiusServer {
     }
 
     @Override
-    public final CasRadiusResponse authenticate(final String username, final String password, final Optional state) throws Exception {
+    public final CasRadiusResponse authenticate(final String username, final String password, final Optional<Serializable> state) throws Exception {
         val attributeList = new AttributeList();
 
         if (StringUtils.isNotBlank(username)) {
@@ -127,7 +127,7 @@ public abstract class AbstractRadiusServer implements RadiusServer {
             attributeList.add(clientIpAttribute);
         }
 
-        state.ifPresent(value -> attributeList.add(new Attr_State(Serializable.class.cast(value))));
+        state.ifPresent(value -> attributeList.add(new Attr_State(value)));
 
         if (StringUtils.isNotBlank(this.nasIpAddress)) {
             attributeList.add(new Attr_NASIPAddress(this.nasIpAddress));

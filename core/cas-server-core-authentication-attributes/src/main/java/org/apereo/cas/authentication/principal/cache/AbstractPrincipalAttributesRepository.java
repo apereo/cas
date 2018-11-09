@@ -94,6 +94,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      * @param p  the principal carrying attributes
      * @return person attributes
      */
+    @SuppressWarnings("unchecked")
     private static Map<String, List<Object>> convertPrincipalAttributesToPersonAttributes(final Principal p) {
         val convertedAttributes = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
         val principalAttributes = p.getAttributes();

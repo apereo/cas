@@ -51,6 +51,7 @@ public class MultifactorAuthenticationTestUtils {
         return getAuthentication(principal, new HashMap<>());
     }
 
+    @SuppressWarnings("unchecked")
     public static Authentication getAuthentication(final Principal principal, final Map<String, Object> attributes) {
         val authentication = mock(Authentication.class);
         when(authentication.getAttributes()).thenReturn(attributes);

@@ -48,6 +48,7 @@ public abstract class AbstractGeoLocationService implements GeoLocationService {
         return loc;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     @SneakyThrows
     public GeoLocationResponse locate(final String address) {
