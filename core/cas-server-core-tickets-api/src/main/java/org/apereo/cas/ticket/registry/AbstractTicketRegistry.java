@@ -18,7 +18,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -64,7 +63,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         if (!clazz.isAssignableFrom(ticket.getClass())) {
             throw new ClassCastException("Ticket [" + ticket.getId() + " is of type " + ticket.getClass() + " when we were expecting " + clazz);
         }
-        return (T) ticket;
+        return clazz.cast(ticket);
     }
 
     @Override
@@ -138,7 +137,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     }
 
     private void deleteLinkedProxyGrantingTickets(final AtomicInteger count, final TicketGrantingTicket tgt) {
-        val pgts = new LinkedHashSet<>(tgt.getProxyGrantingTickets().keySet());
+        val pgts = tgt.getProxyGrantingTickets().keySet();
         val hasPgts = !pgts.isEmpty();
         count.getAndAdd(deleteTickets(pgts));
         if (hasPgts) {
@@ -149,9 +148,8 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     }
 
     private void deleteProxyGrantingTicketFromParent(final ProxyGrantingTicket ticket) {
-        val thePgt = ticket;
-        thePgt.getTicketGrantingTicket().getProxyGrantingTickets().remove(thePgt.getId());
-        updateTicket(thePgt.getTicketGrantingTicket());
+        ticket.getTicketGrantingTicket().getProxyGrantingTickets().remove(ticket.getId());
+        updateTicket(ticket.getTicketGrantingTicket());
     }
 
     /**

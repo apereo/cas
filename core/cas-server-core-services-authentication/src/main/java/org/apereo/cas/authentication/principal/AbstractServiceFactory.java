@@ -69,7 +69,7 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
         if (!clazz.isAssignableFrom(service.getClass())) {
             throw new ClassCastException("Service [" + service.getId() + " is of type " + service.getClass() + " when we were expecting " + clazz);
         }
-        return (T) service;
+        return clazz.cast(service);
     }
 
     @Override
@@ -78,6 +78,6 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
         if (!clazz.isAssignableFrom(service.getClass())) {
             throw new ClassCastException("Service [" + service.getId() + " is of type " + service.getClass() + " when we were expecting " + clazz);
         }
-        return (T) service;
+        return clazz.cast(service);
     }
 }
