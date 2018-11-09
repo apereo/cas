@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.support;
 
+import java.util.Collection;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -51,9 +53,9 @@ public class RememberMeDelegatingExpirationPolicy extends BaseDelegatingExpirati
     @Override
     protected String getExpirationPolicyNameFor(final TicketState ticketState) {
         final Map<String, Object> attrs = ticketState.getAuthentication().getAttributes();
-        final Boolean b = (Boolean) attrs.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
+        final Collection c = (Collection) attrs.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
 
-        if (b == null || b.equals(Boolean.FALSE)) {
+        if (c == null || c.contains(Boolean.FALSE)) {
             LOGGER.debug("Ticket is not associated with a remember-me authentication.");
             return PolicyTypes.DEFAULT.name();
         }
