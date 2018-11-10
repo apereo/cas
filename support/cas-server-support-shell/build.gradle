@@ -16,6 +16,7 @@ dependencies {
     implementation project(":core:cas-server-core-logging-config")
     implementation project(":core:cas-server-core-configuration-metadata-repository")
 
+    implementation project(":support:cas-server-support-jpa-util")
     implementation project(":support:cas-server-support-oauth-services")
     implementation project(":support:cas-server-support-oidc-services")
     implementation project(":support:cas-server-support-saml-idp-core")

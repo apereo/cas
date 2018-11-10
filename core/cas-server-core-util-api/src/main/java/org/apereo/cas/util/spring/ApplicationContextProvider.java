@@ -3,12 +3,13 @@ package org.apereo.cas.util.spring;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.val;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.ResourceLoader;
+
+import java.util.Optional;
 
 /**
  * @author Misagh Moayyed
@@ -74,20 +75,19 @@ public class ApplicationContextProvider implements ApplicationContextAware, Reso
      *
      * @return the cas properties
      */
-    public static CasConfigurationProperties getCasProperties() {
-        return getApplicationContext().getBean(CasConfigurationProperties.class);
+    public static Optional<CasConfigurationProperties> getCasProperties() {
+        if (CONTEXT != null) {
+            return Optional.of(CONTEXT.getBean(CasConfigurationProperties.class));
+        }
+        return Optional.empty();
     }
 
     @Override
-    public void setResourceLoader(final org.springframework.core.io.ResourceLoader resourceLoader) {
+    public void setResourceLoader(final ResourceLoader resourceLoader) {
         RESOURCE_LOADER = resourceLoader;
     }
 
-    public ConfigurableApplicationContext getConfigurableApplicationContext() {
+    public static ConfigurableApplicationContext getConfigurableApplicationContext() {
         return (ConfigurableApplicationContext) CONTEXT;
-    }
-
-    public AutowireCapableBeanFactory getAutowireCapableBeanFactory() {
-        return getConfigurableApplicationContext().getAutowireCapableBeanFactory();
     }
 }

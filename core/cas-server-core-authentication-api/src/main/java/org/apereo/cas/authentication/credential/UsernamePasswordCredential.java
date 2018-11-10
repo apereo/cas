@@ -78,13 +78,14 @@ public class UsernamePasswordCredential implements Credential {
                 .code("password.required")
                 .build());
         }
-        val casProperties = ApplicationContextProvider.getCasProperties();
-        if (StringUtils.isBlank(source) && casProperties.getAuthn().getPolicy().isSourceSelectionEnabled()) {
-            messages.addMessage(new MessageBuilder()
-                .error()
-                .source("source")
-                .code("source.required")
-                .build());
-        }
+        ApplicationContextProvider.getCasProperties().ifPresent(props -> {
+            if (StringUtils.isBlank(source) && props.getAuthn().getPolicy().isSourceSelectionEnabled()) {
+                messages.addMessage(new MessageBuilder()
+                    .error()
+                    .source("source")
+                    .code("source.required")
+                    .build());
+            }
+        });
     }
 }

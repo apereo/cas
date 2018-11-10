@@ -9,6 +9,7 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-webflow")
+    implementation project(":support:cas-server-support-jpa-util")
     implementation project(":support:cas-server-support-u2f")
     implementation project(":support:cas-server-support-u2f-core")
 
