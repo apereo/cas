@@ -4,12 +4,13 @@ dependencies {
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 
     implementation project(":core:cas-server-core-util-api")
-    implementation project(":support:cas-server-support-yubikey-core-mfa")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-util-api")
-    implementation project(":support:cas-server-support-yubikey-core")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-webflow")
+    implementation project(":support:cas-server-support-jpa-util")
+    implementation project(":support:cas-server-support-yubikey-core-mfa")
+    implementation project(":support:cas-server-support-yubikey-core")
     implementation project(":support:cas-server-support-yubikey")
 
     testImplementation project(":core:cas-server-core-web")

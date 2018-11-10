@@ -5,6 +5,8 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")
 
+    implementation project(":support:cas-server-support-jpa-util")
+    
     implementation libraries.shiro
 
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
