@@ -14,6 +14,7 @@ import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.io.PathWatcherService;
 import org.apereo.cas.util.serialization.StringSerializer;
 
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -62,6 +63,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
     /**
      * The Service registry directory.
      */
+    @Getter
     protected Path serviceRegistryDirectory;
 
     /**
@@ -249,7 +251,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         LOGGER.trace("Loading files from [{}]", this.serviceRegistryDirectory);
         val files = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), getExtensions(), true);
         LOGGER.trace("Located [{}] files from [{}] are [{}]", getExtensions(), this.serviceRegistryDirectory, files);
-        
+
         this.serviceMap = files
             .stream()
             .map(this::load)

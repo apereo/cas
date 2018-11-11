@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.CasServiceRegistryInitializerConfigurationEventListener;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryInitializer;
 import org.apereo.cas.services.ServicesManager;
@@ -9,6 +10,7 @@ import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistry;
 import org.apereo.cas.services.util.CasAddonsRegisteredServicesJsonSerializer;
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.serialization.StringSerializer;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +30,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * This is {@link CasServiceRegistryInitializationConfiguration}.
@@ -101,7 +103,7 @@ public class CasServiceRegistryInitializationConfiguration {
             super(location, getRegisteredServiceSerializers(), publisher);
         }
 
-        private static List getRegisteredServiceSerializers() {
+        static Collection<StringSerializer<RegisteredService>> getRegisteredServiceSerializers() {
             return CollectionUtils.wrapList(
                 new CasAddonsRegisteredServicesJsonSerializer(),
                 new DefaultRegisteredServiceJsonSerializer());
