@@ -4,6 +4,9 @@
         <cve>CVE-2016-7048</cve>
     </suppress>
     <suppress>
+        <cve>CVE-2018-16132</cve>
+    </suppress>
+    <suppress>
         <cve>CVE-2018-15728</cve>
     </suppress>
     <suppress>
