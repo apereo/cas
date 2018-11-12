@@ -13,6 +13,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -30,8 +31,8 @@ import java.security.GeneralSecurityException;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
 @Slf4j
+@Getter
 public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     private final IGoogleAuthenticator googleAuthenticatorInstance;
@@ -59,19 +60,19 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
                 new IllegalArgumentException("Invalid token " + tokenCredential.getToken()));
         }
         val otp = Integer.parseInt(tokenCredential.getToken());
-        LOGGER.debug("Received OTP [{}]", otp);
+        LOGGER.trace("Received OTP [{}]", otp);
 
         @NonNull
         val authentication = WebUtils.getInProgressAuthentication();
         val uid = authentication.getPrincipal().getId();
 
-        LOGGER.debug("Received principal id [{}]. Attempting to locate account in credential repository...", uid);
+        LOGGER.trace("Received principal id [{}]. Attempting to locate account in credential repository...", uid);
         val acct = this.credentialRepository.get(uid);
         if (acct == null || StringUtils.isBlank(acct.getSecretKey())) {
             throw new AccountNotFoundException(uid + " cannot be found in the registry");
         }
 
-        LOGGER.debug("Attempting to locate OTP token [{}] in token repository for [{}]...", otp, uid);
+        LOGGER.trace("Attempting to locate OTP token [{}] in token repository for [{}]...", otp, uid);
         if (this.tokenRepository.exists(uid, otp)) {
             throw new AccountExpiredException(uid + " cannot reuse OTP " + otp + " as it may be expired/invalid");
         }
