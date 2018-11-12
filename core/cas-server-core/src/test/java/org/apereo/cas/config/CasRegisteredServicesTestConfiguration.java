@@ -18,10 +18,12 @@ import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.util.CollectionUtils;
 
+import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +43,7 @@ public class CasRegisteredServicesTestConfiguration {
     }
 
     @Bean
+    @SneakyThrows
     public List inMemoryRegisteredServices() {
         val l = new ArrayList();
 
@@ -160,7 +163,9 @@ public class CasRegisteredServicesTestConfiguration {
         l.add(svc17);
 
         val svc18 = RegisteredServiceTestUtils.getRegisteredService("https://github.com/apereo/cas");
-        svc18.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy());
+        val accessStrategy = new DefaultRegisteredServiceAccessStrategy();
+        accessStrategy.setUnauthorizedRedirectUrl(new URI("https://www.github.com"));
+        svc18.setAccessStrategy(accessStrategy);
         svc18.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
         svc18.setEvaluationOrder(98);
         l.add(svc18);
