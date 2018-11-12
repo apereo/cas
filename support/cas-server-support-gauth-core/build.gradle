@@ -1,7 +1,9 @@
 description = "Apereo CAS Core Google Authenticator Support"
 dependencies {
-    api libraries.googleauth
-    api libraries.zxingbarcode
+    implementation libraries.googleauth
+    implementation libraries.zxingbarcode
+    implementation libraries.caffein
+    
     api project(":api:cas-server-core-api-webflow")
     
     implementation project(":core:cas-server-core-authentication-api")
@@ -26,6 +28,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-webflow-mfa")
 
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     
