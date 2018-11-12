@@ -3338,13 +3338,11 @@ LDAP settings for this feature are
 available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.monitor.ldap`.
 The default for ```cas.monitor.ldap.minPoolSize``` is zero to prevent failed ldap pool initialization to impact server startup.
 
-```properties
-# cas.monitor.ldap.maxWait=5000
-```
-
 The following properties are specific to the ldap monitor and configure the thread pool 
 that will ping on the LDAP monitor connection pool.
+
 ```properties
+# cas.monitor.ldap.maxWait=5000
 # cas.monitor.ldap.pool.minSize=6
 # cas.monitor.ldap.pool.maxSize=18
 ```
