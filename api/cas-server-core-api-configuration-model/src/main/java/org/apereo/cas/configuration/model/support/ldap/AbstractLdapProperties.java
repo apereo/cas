@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 

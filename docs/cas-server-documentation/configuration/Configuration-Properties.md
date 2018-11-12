@@ -3336,6 +3336,7 @@ available [here](Configuration-Properties-Common.html#database-settings) under t
 Decide how CAS should monitor the LDAP server it uses for authentication, etc.  
 LDAP settings for this feature are 
 available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.monitor.ldap`.
+The default for ```cas.monitor.ldap.minPoolSize``` is zero to prevent failed ldap pool initialization to impact server startup.
 
 ```properties
 # cas.monitor.ldap.maxWait=5000
@@ -3346,7 +3347,6 @@ that will ping on the LDAP monitor connection pool.
 ```properties
 # cas.monitor.ldap.pool.minSize=6
 # cas.monitor.ldap.pool.maxSize=18
-# cas.monitor.ldap.pool.maxWait=2000
 ```
 
 ### Memory
