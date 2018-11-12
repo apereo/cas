@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
 import org.apereo.cas.authentication.principal.AbstractServiceFactory;
+import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
 
@@ -35,6 +36,15 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
 
     @Override
     public SamlService createService(final HttpServletRequest request) {
+        /**
+          * As per http://docs.oasis-open.org/security/saml/Post2.0/saml-ecp/v2.0/saml-ecp-v2.0.html we cannot create service from SAML ECP Request.
+          * This will result in NullPointerException, when trying to get samlp:Request from S:Body.
+          */
+        if (request.getRequestURI().contains(SamlIdPConstants.ENDPOINT_SAML2_IDP_ECP_PROFILE_SSO)) {
+            LOGGER.trace("The {} request on {} seems to be a SOAP ECP Request, skip creating service from it.", request.getMethod(), request.getRequestURI());
+            return null;
+        }
+
         final String service = request.getParameter(SamlProtocolConstants.CONST_PARAM_TARGET);
         final String requestBody = request.getMethod().equalsIgnoreCase(HttpMethod.POST.name()) ? getRequestBody(request) : null;
 
