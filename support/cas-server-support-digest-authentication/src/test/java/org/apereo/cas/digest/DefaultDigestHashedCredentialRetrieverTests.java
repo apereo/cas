@@ -1,9 +1,7 @@
 package org.apereo.cas.digest;
 
 import lombok.val;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 
 import javax.security.auth.login.AccountNotFoundException;
 import java.util.Collections;
@@ -16,11 +14,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class DefaultDigestHashedCredentialRetrieverTests {
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Test
-    public void verifyCanFindAnExistingUser() throws Exception {
+    public void verifyCanFindAnExistingUser() throws AccountNotFoundException {
         val expectedPassword = "password";
         val credentialRetriever = new DefaultDigestHashedCredentialRetriever(
             Collections.singletonMap("user", expectedPassword));
@@ -31,14 +26,11 @@ public class DefaultDigestHashedCredentialRetrieverTests {
     }
 
     @Test
-    public void verifyAnExceptionIsThrownIfUsedDoesNotExist() throws Exception {
+    public void verifyAnExceptionIsThrownIfUsedDoesNotExist() {
         val username = "user";
         val credentialRetriever = new DefaultDigestHashedCredentialRetriever(
             Collections.singletonMap("anotherUsername", "password"));
 
-        thrown.expect(AccountNotFoundException.class);
-
-
-        credentialRetriever.findCredential(username, "ignored");
+        assertThrows(AccountNotFoundException.class, () -> credentialRetriever.findCredential(username, "ignored"));
     }
 }

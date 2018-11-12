@@ -11,10 +11,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import java.io.File;
@@ -34,9 +32,6 @@ public class TicketGrantingTicketImplTests {
     private static final File TGT_JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "tgt.json");
     private static final String TGT_ID = "test";
     private static final UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator();
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     private ObjectMapper mapper;
 
@@ -69,14 +64,14 @@ public class TicketGrantingTicketImplTests {
             CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
 
         assertNotNull(t);
-        assertFalse(t.equals(new Object()));
-        assertTrue(t.equals(t));
+        assertNotEquals(t, new Object());
+        assertEquals(t, t);
     }
 
     @Test
     public void verifyNullAuthentication() {
-        this.thrown.expect(Exception.class);
-        new TicketGrantingTicketImpl(TGT_ID, null, null, null, new NeverExpiresExpirationPolicy());
+        assertThrows(IllegalArgumentException.class,
+            () -> new TicketGrantingTicketImpl(TGT_ID, null, null, null, new NeverExpiresExpirationPolicy()));
     }
 
     @Test

@@ -1,18 +1,18 @@
 package org.apereo.cas.adaptors.generic;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 
 import lombok.val;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.GeneralSecurityException;
 import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,9 +22,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 public class RejectUsersAuthenticationHandlerTests {
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     private final RejectUsersAuthenticationHandler authenticationHandler;
 
@@ -38,7 +35,7 @@ public class RejectUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifySupportsProperUserCredentials() throws Exception {
+    public void verifySupportsProperUserCredentials() throws GeneralSecurityException, PreventedException {
         val c = new UsernamePasswordCredential();
 
         c.setUsername("fff");
@@ -58,19 +55,17 @@ public class RejectUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyFailsUserInMap() throws Exception {
+    public void verifyFailsUserInMap() {
         val c = new UsernamePasswordCredential();
 
         c.setUsername("scott");
         c.setPassword("rutgers");
 
-        this.thrown.expect(FailedLoginException.class);
-
-        this.authenticationHandler.authenticate(c);
+        assertThrows(FailedLoginException.class, () -> this.authenticationHandler.authenticate(c));
     }
 
     @Test
-    public void verifyPassesUserNotInMap() throws Exception {
+    public void verifyPassesUserNotInMap() throws GeneralSecurityException, PreventedException {
         val c = new UsernamePasswordCredential();
 
         c.setUsername("fds");
@@ -80,23 +75,17 @@ public class RejectUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyPassesNullUserName() throws Exception {
+    public void verifyPassesNullUserName() {
         val c = new UsernamePasswordCredential();
 
         c.setUsername(null);
         c.setPassword("user");
 
-        this.thrown.expect(AccountNotFoundException.class);
-
-
-        this.authenticationHandler.authenticate(c);
+        assertThrows(AccountNotFoundException.class, () -> this.authenticationHandler.authenticate(c));
     }
 
     @Test
-    public void verifyPassesNullUserNameAndPassword() throws Exception {
-        this.thrown.expect(AccountNotFoundException.class);
-
-
-        this.authenticationHandler.authenticate(new UsernamePasswordCredential());
+    public void verifyPassesNullUserNameAndPassword() {
+        assertThrows(AccountNotFoundException.class, () -> this.authenticationHandler.authenticate(new UsernamePasswordCredential()));
     }
 }

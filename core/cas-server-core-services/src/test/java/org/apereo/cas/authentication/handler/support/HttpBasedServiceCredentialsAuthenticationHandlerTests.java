@@ -5,10 +5,8 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 
 import lombok.val;
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 
 import javax.security.auth.login.FailedLoginException;
 
@@ -19,9 +17,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 public class HttpBasedServiceCredentialsAuthenticationHandlerTests {
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     private HttpBasedServiceCredentialsAuthenticationHandler authenticationHandler;
 
@@ -47,11 +42,9 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyRejectsInProperCertificateCredentials() throws Exception {
-        this.thrown.expect(FailedLoginException.class);
-
-
-        this.authenticationHandler.authenticate(RegisteredServiceTestUtils.getHttpBasedServiceCredentials("https://clearinghouse.ja-sig.org"));
+    public void verifyRejectsInProperCertificateCredentials() {
+        assertThrows(FailedLoginException.class,
+            () -> this.authenticationHandler.authenticate(RegisteredServiceTestUtils.getHttpBasedServiceCredentials("https://clearinghouse.ja-sig.org")));
     }
 
     @Test
@@ -60,18 +53,18 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyNoAcceptableStatusCode() throws Exception {
-        this.thrown.expect(FailedLoginException.class);
-        this.authenticationHandler.authenticate(RegisteredServiceTestUtils.getHttpBasedServiceCredentials("https://clue.acs.rutgers.edu"));
+    public void verifyNoAcceptableStatusCode() {
+        assertThrows(FailedLoginException.class,
+            () -> this.authenticationHandler.authenticate(RegisteredServiceTestUtils.getHttpBasedServiceCredentials("https://clue.acs.rutgers.edu")));
     }
 
     @Test
-    public void verifyNoAcceptableStatusCodeButOneSet() throws Exception {
+    public void verifyNoAcceptableStatusCodeButOneSet() {
         val clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setAcceptableCodes(CollectionUtils.wrapList(900));
         val httpClient = clientFactory.getObject();
         this.authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler("", null, null, null, httpClient);
-        this.thrown.expect(FailedLoginException.class);
-        this.authenticationHandler.authenticate(RegisteredServiceTestUtils.getHttpBasedServiceCredentials("https://www.ja-sig.org"));
+        assertThrows(FailedLoginException.class,
+            () -> this.authenticationHandler.authenticate(RegisteredServiceTestUtils.getHttpBasedServiceCredentials("https://www.ja-sig.org")));
     }
 }

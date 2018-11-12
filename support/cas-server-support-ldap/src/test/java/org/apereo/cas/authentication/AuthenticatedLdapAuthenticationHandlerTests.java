@@ -4,11 +4,13 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
 
 import org.jooq.lambda.Unchecked;
+import org.jooq.lambda.UncheckedException;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
 import javax.security.auth.login.AccountNotFoundException;
 
+import static org.apereo.cas.util.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -31,23 +33,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfContinuousIntegration
 public class AuthenticatedLdapAuthenticationHandlerTests extends BaseLdapAuthenticationHandlerTests {
     @Test
-    public void verifyAuthenticateNotFound() throws Throwable {
-        try {
-            this.thrown.expect(AccountNotFoundException.class);
-            this.handler.forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("notfound", "badpassword"))));
-        } catch (final Exception e) {
-            throw e.getCause();
-        }
+    public void verifyAuthenticateNotFound() {
+        assertThrowsWithRootCause(UncheckedException.class, AccountNotFoundException.class,
+            () -> this.handler.forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("notfound", "badpassword")))));
     }
 
     @Test
-    public void verifyAuthenticateFailureNotFound() throws Throwable {
+    public void verifyAuthenticateFailureNotFound() {
         assertNotEquals(handler.size(), 0);
-        this.thrown.expect(AccountNotFoundException.class);
-        try {
-            this.handler.forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("bad", "bad"))));
-        } catch (final Exception e) {
-            throw e.getCause();
-        }
+        assertThrowsWithRootCause(UncheckedException.class, AccountNotFoundException.class,
+            () -> this.handler.forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("bad", "bad")))));
     }
 }

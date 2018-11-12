@@ -20,8 +20,9 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
-import static org.junit.jupiter.api.Assertions.*;
 import java.io.Serializable;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link VerifyPasswordResetRequestActionTests}.

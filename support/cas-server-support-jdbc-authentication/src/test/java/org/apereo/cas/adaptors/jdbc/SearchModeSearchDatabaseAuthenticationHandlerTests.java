@@ -1,13 +1,12 @@
 package org.apereo.cas.adaptors.jdbc;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.PreventedException;
 
 import lombok.val;
-import org.junit.Rule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,6 +19,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
+import java.security.GeneralSecurityException;
+import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,9 +36,6 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @DirtiesContext
 public class SearchModeSearchDatabaseAuthenticationHandlerTests {
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     private SearchModeSearchDatabaseAuthenticationHandler handler;
 
     @Autowired
@@ -49,7 +47,7 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests {
     }
 
     @BeforeEach
-    public void initialize() throws Exception {
+    public void initialize() throws SQLException {
         this.handler = new SearchModeSearchDatabaseAuthenticationHandler("", null, null, null, this.dataSource, "username", "password", "cassearchusers");
 
         val c = this.dataSource.getConnection();
@@ -65,7 +63,7 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests {
     }
 
     @AfterEach
-    public void afterEachTest() throws Exception {
+    public void afterEachTest() throws SQLException {
         val c = this.dataSource.getConnection();
         val s = c.createStatement();
         c.setAutoCommit(true);
@@ -74,23 +72,20 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyNotFoundUser() throws Exception {
+    public void verifyNotFoundUser() {
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("hello", "world");
 
-        this.thrown.expect(FailedLoginException.class);
-
-
-        this.handler.authenticate(c);
+        assertThrows(FailedLoginException.class, () -> this.handler.authenticate(c));
     }
 
     @Test
-    public void verifyFoundUser() throws Exception {
+    public void verifyFoundUser() throws GeneralSecurityException, PreventedException {
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "psw3");
         assertNotNull(this.handler.authenticate(c));
     }
 
     @Test
-    public void verifyMultipleUsersFound() throws Exception {
+    public void verifyMultipleUsersFound() throws GeneralSecurityException, PreventedException {
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0");
         assertNotNull(this.handler.authenticate(c));
     }

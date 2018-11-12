@@ -233,7 +233,7 @@ tasks.withType(Test) {
         showCauses = true
     }
     useJUnitPlatform {
-        includeEngines 'junit-jupiter'
+        includeEngines 'junit-jupiter', 'junit-vintage'
     }
 }
 

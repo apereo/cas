@@ -6,10 +6,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
 
 import lombok.val;
-import org.junit.Rule;
 import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.ldaptive.LdapAttribute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -38,9 +36,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnabledIfContinuousIntegration
 public class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Autowired
     private CasConfigurationProperties casProperties;
 

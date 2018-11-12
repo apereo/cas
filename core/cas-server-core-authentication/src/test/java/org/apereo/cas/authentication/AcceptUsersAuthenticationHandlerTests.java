@@ -5,9 +5,7 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 
 import lombok.val;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
@@ -26,9 +24,6 @@ public class AcceptUsersAuthenticationHandlerTests {
     private static final String SCOTT = "scott";
     private static final String RUTGERS = "rutgers";
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     private final AcceptUsersAuthenticationHandler authenticationHandler;
 
     public AcceptUsersAuthenticationHandlerTests() {
@@ -42,7 +37,7 @@ public class AcceptUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifySupportsSpecialCharacters() throws Exception {
+    public void verifySupportsSpecialCharacters() throws GeneralSecurityException, PreventedException {
         val c = new UsernamePasswordCredential();
         c.setUsername("brian");
         c.setPassword("t�st");
@@ -59,77 +54,59 @@ public class AcceptUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyDoesntSupportBadUserCredentials() {
-        try {
-            assertFalse(this.authenticationHandler
-                .supports(new HttpBasedServiceCredential(new URL(
-                    "http://www.rutgers.edu"), CoreAuthenticationTestUtils.getRegisteredService("https://some.app.edu"))));
-        } catch (final MalformedURLException e) {
-            throw new AssertionError("Could not resolve URL.", e);
-        }
+    public void verifyDoesntSupportBadUserCredentials() throws MalformedURLException {
+        assertFalse(this.authenticationHandler
+            .supports(new HttpBasedServiceCredential(new URL(
+                "http://www.rutgers.edu"), CoreAuthenticationTestUtils.getRegisteredService("https://some.app.edu"))));
     }
 
     @Test
-    public void verifyAuthenticatesUserInMap() throws Exception {
+    public void verifyAuthenticatesUserInMap() throws GeneralSecurityException, PreventedException {
         val c = new UsernamePasswordCredential();
 
         c.setUsername(SCOTT);
         c.setPassword(RUTGERS);
 
-        try {
-            assertEquals(SCOTT, this.authenticationHandler.authenticate(c).getPrincipal().getId());
-        } catch (final GeneralSecurityException e) {
-            throw new AssertionError("Authentication exception caught but it should not have been thrown.", e);
-        }
+        assertEquals(SCOTT, this.authenticationHandler.authenticate(c).getPrincipal().getId());
     }
 
     @Test
-    public void verifyFailsUserNotInMap() throws Exception {
+    public void verifyFailsUserNotInMap() {
         val c = new UsernamePasswordCredential();
 
         c.setUsername("fds");
         c.setPassword(RUTGERS);
 
-        this.thrown.expect(AccountNotFoundException.class);
-
-
-        this.authenticationHandler.authenticate(c);
+        assertThrows(AccountNotFoundException.class, () -> this.authenticationHandler.authenticate(c));
     }
 
     @Test
-    public void verifyFailsNullUserName() throws Exception {
+    public void verifyFailsNullUserName() {
         val c = new UsernamePasswordCredential();
 
         c.setUsername(null);
         c.setPassword("user");
 
-        this.thrown.expect(AccountNotFoundException.class);
-        this.authenticationHandler.authenticate(c);
+        assertThrows(AccountNotFoundException.class, () -> this.authenticationHandler.authenticate(c));
     }
 
     @Test
-    public void verifyFailsNullUserNameAndPassword() throws Exception {
+    public void verifyFailsNullUserNameAndPassword() {
         val c = new UsernamePasswordCredential();
 
         c.setUsername(null);
         c.setPassword(null);
 
-        this.thrown.expect(AccountNotFoundException.class);
-
-
-        this.authenticationHandler.authenticate(c);
+        assertThrows(AccountNotFoundException.class, () -> this.authenticationHandler.authenticate(c));
     }
 
     @Test
-    public void verifyFailsNullPassword() throws Exception {
+    public void verifyFailsNullPassword() {
         val c = new UsernamePasswordCredential();
 
         c.setUsername(SCOTT);
         c.setPassword(null);
 
-        this.thrown.expect(FailedLoginException.class);
-
-
-        this.authenticationHandler.authenticate(c);
+        assertThrows(FailedLoginException.class, () -> this.authenticationHandler.authenticate(c));
     }
 }

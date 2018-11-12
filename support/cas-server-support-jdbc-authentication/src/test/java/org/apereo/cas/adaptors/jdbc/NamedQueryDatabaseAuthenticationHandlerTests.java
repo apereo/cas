@@ -2,15 +2,14 @@ package org.apereo.cas.adaptors.jdbc;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
+import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
-import org.junit.Rule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +23,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
+import java.security.GeneralSecurityException;
+import java.sql.SQLException;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 
@@ -41,9 +42,6 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @DirtiesContext
 public class NamedQueryDatabaseAuthenticationHandlerTests {
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Autowired
     @Qualifier("dataSource")
     private DataSource dataSource;
@@ -54,7 +52,7 @@ public class NamedQueryDatabaseAuthenticationHandlerTests {
     }
 
     @BeforeEach
-    public void initialize() throws Exception {
+    public void initialize() throws SQLException {
         val c = this.dataSource.getConnection();
         val s = c.createStatement();
         c.setAutoCommit(true);
@@ -63,7 +61,7 @@ public class NamedQueryDatabaseAuthenticationHandlerTests {
     }
 
     @AfterEach
-    public void afterEachTest() throws Exception {
+    public void afterEachTest() throws SQLException {
         val c = this.dataSource.getConnection();
         val s = c.createStatement();
         c.setAutoCommit(true);
@@ -72,7 +70,7 @@ public class NamedQueryDatabaseAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifySuccess() throws Exception {
+    public void verifySuccess() throws GeneralSecurityException, PreventedException {
         val sql = "SELECT * FROM cas_named_users where username=:username";
         val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(Collections.singletonList("phone:phoneNumber"));
         val q = new QueryDatabaseAuthenticationHandler("namedHandler",
@@ -88,7 +86,7 @@ public class NamedQueryDatabaseAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifySuccessWithCount() throws Exception {
+    public void verifySuccessWithCount() throws GeneralSecurityException, PreventedException {
         val sql = "SELECT count(*) as total FROM cas_named_users where username=:username AND password=:password";
         val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(Collections.singletonList("phone:phoneNumber"));
         val q = new QueryDatabaseAuthenticationHandler("namedHandler",
@@ -104,15 +102,14 @@ public class NamedQueryDatabaseAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyFailsWithMissingTotalField() throws Exception {
+    public void verifyFailsWithMissingTotalField() {
         val sql = "SELECT count(*) FROM cas_named_users where username=:username AND password=:password";
         val q = new QueryDatabaseAuthenticationHandler("namedHandler",
             null, PrincipalFactoryUtils.newPrincipalFactory(), 0,
             this.dataSource, sql, null,
             null, null,
             new LinkedHashMap<>());
-        thrown.expect(FailedLoginException.class);
-        q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("whatever", "psw0"));
+        assertThrows(FailedLoginException.class, () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("whatever", "psw0")));
     }
 
     @Entity(name = "cas_named_users")

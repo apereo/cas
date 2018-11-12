@@ -11,10 +11,8 @@ import org.apereo.cas.config.CassandraCoreConfiguration;
 import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
 
 import lombok.val;
-import org.junit.Rule;
 import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -24,6 +22,8 @@ import org.springframework.test.context.TestPropertySource;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
+
+import java.security.GeneralSecurityException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -54,29 +54,24 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfContinuousIntegration
 public class DefaultCassandraRepositoryTests {
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Autowired
     @Qualifier("cassandraAuthenticationHandler")
     private AuthenticationHandler cassandraAuthenticationHandler;
 
     @Test
-    public void verifyUserNotFound() throws Exception {
+    public void verifyUserNotFound() {
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("baduser", "Mellon");
-        thrown.expect(AccountNotFoundException.class);
-        cassandraAuthenticationHandler.authenticate(c);
+        assertThrows(AccountNotFoundException.class, () -> cassandraAuthenticationHandler.authenticate(c));
     }
 
     @Test
-    public void verifyUserBadPassword() throws Exception {
+    public void verifyUserBadPassword() {
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "bad");
-        thrown.expect(FailedLoginException.class);
-        cassandraAuthenticationHandler.authenticate(c);
+        assertThrows(FailedLoginException.class, () -> cassandraAuthenticationHandler.authenticate(c));
     }
 
     @Test
-    public void verifyUser() throws Exception {
+    public void verifyUser() throws GeneralSecurityException, PreventedException {
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
         val result = cassandraAuthenticationHandler.authenticate(c);
         assertNotNull(result);

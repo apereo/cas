@@ -10,12 +10,10 @@ import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.test.junit.EnabledIfPortOpen;
 
 import lombok.val;
-import org.junit.Rule;
 import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -59,9 +57,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class QueryDatabaseAuthenticationHandlerPostgresTests {
     private static final String SQL = "SELECT * FROM caspgusers where username=?";
     private static final String PASSWORD_FIELD = "password";
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @Autowired
     @Qualifier("dataSource")

@@ -7,9 +7,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
@@ -51,9 +49,6 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Slf4j
 public class CasTomcatServletWebServerFactoryTests {
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Autowired
     protected CasConfigurationProperties casProperties;
 

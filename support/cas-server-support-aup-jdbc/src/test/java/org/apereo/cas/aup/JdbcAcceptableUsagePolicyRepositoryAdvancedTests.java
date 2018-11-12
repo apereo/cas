@@ -5,12 +5,9 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
-import org.hamcrest.Matchers;
-import org.junit.Rule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -37,9 +34,6 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.acceptableUsagePolicy.jdbc.sqlUpdateAUP=UPDATE %s SET %s=true WHERE lower(%s)=lower(?)"
 })
 public class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAcceptableUsagePolicyRepositoryTests {
-    @Rule
-    public final ExpectedException expectedException = ExpectedException.none();
-
     @BeforeEach
     public void initialize() throws Exception {
         try (val c = this.acceptableUsagePolicyDataSource.getConnection()) {
@@ -74,16 +68,16 @@ public class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAc
     
     @Test
     public void raiseMissingPrincipalAttributeError() {
-        expectedException.expect(IllegalStateException.class);
-        expectedException.expectMessage(Matchers.containsString("cannot be found"));
-        raiseException(CollectionUtils.wrap("aupAccepted", "false", "wrong-attribute", "CASuser@example.org"));
+        val exception = assertThrows(IllegalStateException.class,
+            () -> raiseException(CollectionUtils.wrap("aupAccepted", "false", "wrong-attribute", "CASuser@example.org")));
+        assertTrue(exception.getMessage().contains("cannot be found"));
     }
     
     @Test
     public void raiseEmptyPrincipalAttributeError() {
-        expectedException.expect(IllegalStateException.class);
-        expectedException.expectMessage(Matchers.containsString("empty or multi-valued with an empty element"));
-        raiseException(CollectionUtils.wrap("aupAccepted", "false", "email", ""));
+        val exception = assertThrows(IllegalStateException.class,
+            () -> raiseException(CollectionUtils.wrap("aupAccepted", "false", "email", "")));
+        assertTrue(exception.getMessage().contains("empty or multi-valued with an empty element"));
     }
     
     private void raiseException(final Map<String, Object> profileAttributes) {

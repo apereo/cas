@@ -9,10 +9,8 @@ import org.apereo.cas.web.support.WebUtils;
 import com.yubico.client.v2.YubicoClient;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
@@ -36,9 +34,6 @@ public class YubiKeyAuthenticationHandlerTests {
     private static final String SECRET_KEY = "iBIehjui12aK8x82oe5qzGeb0As=";
     private static final String OTP = "cccccccvlidcnlednilgctgcvcjtivrjidfbdgrefcvi";
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @BeforeEach
     public void before() {
         val ctx = mock(RequestContext.class);
@@ -54,23 +49,21 @@ public class YubiKeyAuthenticationHandlerTests {
     }
 
     @Test
-    public void checkReplayedAuthn() throws Exception {
+    public void checkReplayedAuthn() {
         val handler = new YubiKeyAuthenticationHandler(YubicoClient.getClient(CLIENT_ID, SECRET_KEY));
 
-        this.thrown.expect(FailedLoginException.class);
-        handler.authenticate(new YubiKeyCredential(OTP));
+        assertThrows(FailedLoginException.class, () -> handler.authenticate(new YubiKeyCredential(OTP)));
     }
 
     @Test
-    public void checkBadConfigAuthn() throws Exception {
+    public void checkBadConfigAuthn() {
         val handler = new YubiKeyAuthenticationHandler(YubicoClient.getClient(123456, "123456"));
 
-        this.thrown.expect(AccountNotFoundException.class);
-        handler.authenticate(new YubiKeyCredential("casuser"));
+        assertThrows(AccountNotFoundException.class, () -> handler.authenticate(new YubiKeyCredential("casuser")));
     }
 
     @Test
-    public void checkAccountNotFound() throws Exception {
+    public void checkAccountNotFound() {
         val registry = new WhitelistYubiKeyAccountRegistry(new HashMap<>(),
             new DefaultYubiKeyAccountValidator(YubicoClient.getClient(CLIENT_ID, SECRET_KEY)));
         registry.setCipherExecutor(CipherExecutor.noOpOfSerializableToString());
@@ -78,8 +71,7 @@ public class YubiKeyAuthenticationHandlerTests {
             null, new DefaultPrincipalFactory(),
             YubicoClient.getClient(CLIENT_ID, SECRET_KEY),
             registry, null);
-        this.thrown.expect(AccountNotFoundException.class);
-        handler.authenticate(new YubiKeyCredential(OTP));
+        assertThrows(AccountNotFoundException.class, () -> handler.authenticate(new YubiKeyCredential(OTP)));
     }
 
     @Test

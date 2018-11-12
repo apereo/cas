@@ -17,10 +17,8 @@ import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import com.warrenstrange.googleauth.ICredentialRepository;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.val;
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -44,9 +42,6 @@ import static org.mockito.Mockito.*;
  * @since 6.0.0
  */
 public class GoogleAuthenticatorAuthenticationHandlerTests {
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     private IGoogleAuthenticator googleAuthenticator;
     private GoogleAuthenticatorAuthenticationHandler handler;
     private GoogleAuthenticatorKey googleAuthenticatorAccount;
@@ -81,20 +76,18 @@ public class GoogleAuthenticatorAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyAuthnAccountNotFound() throws Exception {
+    public void verifyAuthnAccountNotFound() {
         val credential = getGoogleAuthenticatorTokenCredential();
-        thrown.expect(AccountNotFoundException.class);
-        handler.authenticate(credential);
+        assertThrows(AccountNotFoundException.class, () -> handler.authenticate(credential));
     }
 
     @Test
-    public void verifyAuthnFailsTokenNotFound() throws Exception {
+    public void verifyAuthnFailsTokenNotFound() {
         val credential = getGoogleAuthenticatorTokenCredential();
         handler.getTokenRepository().store(new OneTimeToken(Integer.valueOf(credential.getToken()), "casuser"));
         handler.getCredentialRepository().save("casuser", googleAuthenticatorAccount.getKey(),
             googleAuthenticatorAccount.getVerificationCode(), googleAuthenticatorAccount.getScratchCodes());
-        thrown.expect(AccountExpiredException.class);
-        handler.authenticate(credential);
+        assertThrows(AccountExpiredException.class, () -> handler.authenticate(credential));
     }
 
     @Test

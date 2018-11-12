@@ -98,9 +98,8 @@ public class CasEmbeddedContainerTomcatConfiguration {
     }
 
     private void finalizeConnectors(final TomcatServletWebServerFactory tomcat) {
-        tomcat.addConnectorCustomizers((TomcatConnectorCustomizer) connector -> {
-            connector.setAttribute("Server", casProperties.getServer().getTomcat().getServerName());
-        });
+        tomcat.addConnectorCustomizers(
+            (TomcatConnectorCustomizer) connector -> connector.setAttribute("Server", casProperties.getServer().getTomcat().getServerName()));
     }
 
     private static void configureConnectorForProtocol(final Connector connector, final String protocol) {

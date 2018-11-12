@@ -4,9 +4,7 @@ import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCred
 import org.apereo.cas.util.crypto.CertUtils;
 
 import lombok.val;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.util.LinkedMultiValueMap;
@@ -28,9 +26,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class X509RestTlsClientCertCredentialFactoryTests {
 
     private static final String REQUEST_ATTRIBUTE_X509_CERTIFICATE = "javax.servlet.request.X509Certificate";
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     private final X509RestTlsClientCertCredentialFactory factory = new X509RestTlsClientCertCredentialFactory();
 

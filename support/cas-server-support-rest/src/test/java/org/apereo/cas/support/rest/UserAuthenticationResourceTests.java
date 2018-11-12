@@ -12,10 +12,8 @@ import org.apereo.cas.support.rest.resources.UserAuthenticationResource;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -43,9 +41,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DirtiesContext
 public class UserAuthenticationResourceTests {
     private static final String TICKETS_RESOURCE_URL = "/cas/v1/users";
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @Mock
     private AuthenticationSystemSupport authenticationSupport;

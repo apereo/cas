@@ -42,8 +42,7 @@ public class MonitorEndpointLdapAuthenticationProviderRolesBasedTests extends Ba
         val securityProperties = new SecurityProperties();
         securityProperties.getUser().setRoles(Collections.singletonList("SOME_BAD_ROLE"));
         val provider = new MonitorEndpointLdapAuthenticationProvider(casProperties.getMonitor().getEndpoints().getLdap(), securityProperties);
-        thrown.expect(BadCredentialsException.class);
-        provider.authenticate(new UsernamePasswordAuthenticationToken("authzcas", "123456"));
+        assertThrows(BadCredentialsException.class, () -> provider.authenticate(new UsernamePasswordAuthenticationToken("authzcas", "123456")));
     }
 
     @Test
@@ -51,8 +50,7 @@ public class MonitorEndpointLdapAuthenticationProviderRolesBasedTests extends Ba
         val securityProperties = new SecurityProperties();
         securityProperties.getUser().setRoles(Collections.singletonList("SOME_BAD_ROLE"));
         val provider = new MonitorEndpointLdapAuthenticationProvider(casProperties.getMonitor().getEndpoints().getLdap(), securityProperties);
-        thrown.expect(BadCredentialsException.class);
-        provider.authenticate(new UsernamePasswordAuthenticationToken("UNKNOWN_USER", "123456"));
+        assertThrows(BadCredentialsException.class, () -> provider.authenticate(new UsernamePasswordAuthenticationToken("UNKNOWN_USER", "123456")));
     }
 
     @Test
@@ -60,8 +58,7 @@ public class MonitorEndpointLdapAuthenticationProviderRolesBasedTests extends Ba
         val securityProperties = new SecurityProperties();
         securityProperties.getUser().setRoles(Collections.singletonList("SOME_BAD_ROLE"));
         val provider = new MonitorEndpointLdapAuthenticationProvider(casProperties.getMonitor().getEndpoints().getLdap(), securityProperties);
-        thrown.expect(BadCredentialsException.class);
-        provider.authenticate(new UsernamePasswordAuthenticationToken("authzcas", "BAD_PASSWORD"));
+        assertThrows(BadCredentialsException.class, () -> provider.authenticate(new UsernamePasswordAuthenticationToken("authzcas", "BAD_PASSWORD")));
     }
 
 }

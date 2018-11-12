@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.rest;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.category.RestfulApiCategory;
@@ -24,11 +25,9 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
-import org.junit.Rule;
 import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -47,7 +46,9 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
+import java.io.IOException;
 import java.io.StringWriter;
+import java.security.GeneralSecurityException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.client.ExpectedCount.*;
@@ -88,9 +89,6 @@ public class RestAuthenticationHandlerTests {
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Autowired
     @Qualifier("restAuthenticationHandler")
     private AuthenticationHandler authenticationHandler;
@@ -109,7 +107,7 @@ public class RestAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifySuccess() throws Exception {
+    public void verifySuccess() throws GeneralSecurityException, PreventedException, IOException {
         val principalWritten = new DefaultPrincipalFactory().createPrincipal("casuser");
 
         val writer = new StringWriter();
@@ -122,24 +120,24 @@ public class RestAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyDisabledAccount() throws Exception {
+    public void verifyDisabledAccount() {
         server.andRespond(withStatus(HttpStatus.FORBIDDEN).contentType(MediaType.APPLICATION_JSON));
-        this.thrown.expect(AccountDisabledException.class);
-        authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+        assertThrows(AccountDisabledException.class,
+            () -> authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
     }
 
     @Test
-    public void verifyUnauthorized() throws Exception {
+    public void verifyUnauthorized() {
         server.andRespond(withStatus(HttpStatus.UNAUTHORIZED));
-        this.thrown.expect(FailedLoginException.class);
-        authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+        assertThrows(FailedLoginException.class,
+            () -> authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
     }
 
     @Test
-    public void verifyNotFound() throws Exception {
+    public void verifyNotFound() {
         server.andRespond(withStatus(HttpStatus.NOT_FOUND));
-        this.thrown.expect(AccountNotFoundException.class);
-        authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+        assertThrows(AccountNotFoundException.class,
+            () -> authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
     }
 }
 
