@@ -24,6 +24,7 @@ import org.apache.commons.lang3.RandomUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -127,6 +128,7 @@ public class RegisteredServiceTestUtils {
         val accessStrategy = new DefaultRegisteredServiceAccessStrategy(true, true);
         accessStrategy.setRequireAllAttributes(true);
         accessStrategy.setRequiredAttributes(getTestAttributes());
+        accessStrategy.setUnauthorizedRedirectUrl(new URI("https://www.github.com"));
         s.setAccessStrategy(accessStrategy);
         s.setLogo("https://logo.example.org/logo.png");
         s.setLogoutType(RegisteredServiceLogoutType.BACK_CHANNEL);
