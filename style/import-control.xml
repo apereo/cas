@@ -3,6 +3,7 @@
 <import-control pkg="org.apereo.cas" strategyOnMismatch="allowed">
     <!--Use JUnit5 annotations.-->
     <allow pkg="org.junit.jupiter"/>
+    <allow pkg="org.junit.platform"/>
     <disallow pkg="org.junit" exact-match="true"/>
     <disallow pkg="org\.junit\.runners?" regex="true"/>
 </import-control>

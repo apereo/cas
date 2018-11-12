@@ -3,10 +3,8 @@ package org.apereo.cas.support.x509.rest;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 
 import lombok.val;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.rules.ExpectedException;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.LinkedMultiValueMap;
