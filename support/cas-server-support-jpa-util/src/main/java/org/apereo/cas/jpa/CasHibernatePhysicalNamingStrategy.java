@@ -48,4 +48,15 @@ public class CasHibernatePhysicalNamingStrategy extends SpringPhysicalNamingStra
         }
         return super.toPhysicalTableName(name, jdbcEnvironment);
     }
+
+    @Override
+    protected boolean isCaseInsensitive(final JdbcEnvironment jdbcEnvironment) {
+        val propsResult = ApplicationContextProvider.getCasProperties();
+        if (propsResult.isEmpty()) {
+            LOGGER.error("Could not load configuration settings to determine case insensitivity.");
+            return super.isCaseInsensitive(jdbcEnvironment);
+        }
+        val casProperties = propsResult.get();
+        return casProperties.getJdbc().isCaseInsensitive();
+    }
 }
