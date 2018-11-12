@@ -1042,6 +1042,7 @@ The following  options apply  to features that integrate with an LDAP server (i.
 #${configurationKey}.validatePeriod=PT5M
 #${configurationKey}.validateTimeout=PT5S
 #${configurationKey}.failFast=true
+#${configurationKey}.connectOnCreate=false
 #${configurationKey}.idleTime=PT10M
 #${configurationKey}.prunePeriod=PT2H
 #${configurationKey}.blockWaitTime=PT3S

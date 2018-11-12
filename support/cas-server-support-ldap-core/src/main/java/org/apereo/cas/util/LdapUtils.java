@@ -921,6 +921,7 @@ public class LdapUtils {
         }
 
         cp.setFailFastInitialize(l.isFailFast());
+        cp.setConnectOnCreate(l.isConnectOnCreate());
 
         if (StringUtils.isNotBlank(l.getPoolPassivator())) {
             val pass =

@@ -83,6 +83,11 @@ public abstract class AbstractLdapProperties implements Serializable {
      */
     private boolean failFast = true;
     /**
+     * Whether to connect to the ldap on connection creation.
+     * Setting this to true may cause on an ldap monitor may cause server not to start up if connection fails.
+     */
+    private boolean connectOnCreate;
+    /**
      * Removes connections from the pool based on how long they have been idle in the available queue.
      * Prunes connections that have been idle for more than the indicated amount.
      */
