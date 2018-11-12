@@ -33,7 +33,7 @@ public class CreateResourceBasedRegisteredServiceWatcher extends BaseResourceBas
                 if (serviceRegistryDao.findServiceById(service.getId()) != null) {
                     LOG_SERVICE_DUPLICATE.accept(service);
                 }
-                LOGGER.debug("Updating service definitions with [{}]", service);
+                LOGGER.trace("Updating service definitions with [{}]", service);
                 serviceRegistryDao.publishEvent(new CasRegisteredServicePreSaveEvent(this, service));
                 serviceRegistryDao.update(service);
                 serviceRegistryDao.publishEvent(new CasRegisteredServiceSavedEvent(this, service));

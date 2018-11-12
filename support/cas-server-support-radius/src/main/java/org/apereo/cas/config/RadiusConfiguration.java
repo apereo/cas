@@ -163,6 +163,7 @@ public class RadiusConfiguration {
         return new PasswordPolicyConfiguration();
     }
 
+    @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "radiusAccessChallengedMultifactorAuthenticationTrigger")
     public MultifactorAuthenticationTrigger radiusAccessChallengedMultifactorAuthenticationTrigger() {

@@ -131,6 +131,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "timedMultifactorAuthenticationTrigger")
+    @RefreshScope
     public MultifactorAuthenticationTrigger timedMultifactorAuthenticationTrigger() {
         return new TimedMultifactorAuthenticationTrigger(casProperties);
     }
@@ -152,6 +153,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "principalAttributeMultifactorAuthenticationTrigger")
     @Bean
+    @RefreshScope
     public MultifactorAuthenticationTrigger principalAttributeMultifactorAuthenticationTrigger() {
         return new PrincipalAttributeMultifactorAuthenticationTrigger(casProperties, multifactorAuthenticationProviderResolver());
     }
@@ -173,6 +175,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "predicatedPrincipalAttributeMultifactorAuthenticationTrigger")
+    @RefreshScope
     public MultifactorAuthenticationTrigger predicatedPrincipalAttributeMultifactorAuthenticationTrigger() {
         return new PredicatedPrincipalAttributeMultifactorAuthenticationTrigger(casProperties);
     }
@@ -210,6 +213,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "authenticationAttributeMultifactorAuthenticationTrigger")
     @Bean
+    @RefreshScope
     public MultifactorAuthenticationTrigger authenticationAttributeMultifactorAuthenticationTrigger() {
         return new AuthenticationAttributeMultifactorAuthenticationTrigger(casProperties, multifactorAuthenticationProviderResolver());
     }
@@ -281,6 +285,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "restEndpointMultifactorAuthenticationTrigger")
+    @RefreshScope
     public MultifactorAuthenticationTrigger restEndpointMultifactorAuthenticationTrigger() {
         return new RestEndpointMultifactorAuthenticationTrigger(casProperties, multifactorAuthenticationProviderResolver());
     }
@@ -302,6 +307,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "globalAuthenticationPolicyWebflowEventResolver")
     @Bean
+    @RefreshScope
     public MultifactorAuthenticationTrigger globalMultifactorAuthenticationTrigger() {
         return new GlobalMultifactorAuthenticationTrigger(casProperties);
     }
@@ -323,6 +329,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "groovyScriptMultifactorAuthenticationTrigger")
     @Bean
+    @RefreshScope
     public MultifactorAuthenticationTrigger groovyScriptMultifactorAuthenticationTrigger() {
         return new GroovyScriptMultifactorAuthenticationTrigger(casProperties);
     }
@@ -358,6 +365,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "httpRequestMultifactorAuthenticationTrigger")
     @Bean
+    @RefreshScope
     public MultifactorAuthenticationTrigger httpRequestMultifactorAuthenticationTrigger() {
         return new HttpRequestMultifactorAuthenticationTrigger(casProperties);
     }
@@ -378,6 +386,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "registeredServicePrincipalAttributeMultifactorAuthenticationTrigger")
+    @RefreshScope
     public MultifactorAuthenticationTrigger registeredServicePrincipalAttributeMultifactorAuthenticationTrigger() {
         return new RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger(casProperties, multifactorAuthenticationProviderResolver());
     }
@@ -399,6 +408,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "registeredServiceMultifactorAuthenticationTrigger")
+    @RefreshScope
     public MultifactorAuthenticationTrigger registeredServiceMultifactorAuthenticationTrigger() {
         return new RegisteredServiceMultifactorAuthenticationTrigger(casProperties, multifactorAuthenticationProviderResolver(),
             multifactorAuthenticationProviderSelector());
