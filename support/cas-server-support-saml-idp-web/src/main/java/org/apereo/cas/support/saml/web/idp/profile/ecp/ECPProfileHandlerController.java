@@ -119,21 +119,20 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
         val authnRequest = (AuthnRequest) soapContext.getMessage();
         val authenticationContext = Pair.of(authnRequest, soapContext);
         try {
-            LOGGER.debug("Verifying ECP authentication request [{}]", authnRequest);
-            val serviceRequest =
-                verifySamlAuthenticationRequest(authenticationContext, request);
+            LOGGER.trace("Verifying ECP authentication request [{}]", authnRequest);
+            val serviceRequest = verifySamlAuthenticationRequest(authenticationContext, request);
 
-            LOGGER.debug("Attempting to authenticate ECP request for credential id [{}]", credential.getId());
+            LOGGER.trace("Attempting to authenticate ECP request for credential id [{}]", credential.getId());
             val authentication = authenticateEcpRequest(credential, authenticationContext);
             LOGGER.debug("Authenticated [{}] successfully with authenticated principal [{}]",
                 credential.getId(), authentication.getPrincipal());
 
-            LOGGER.debug("Building ECP SAML response for [{}]", credential.getId());
+            LOGGER.trace("Building ECP SAML response for [{}]", credential.getId());
             val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
             val service = webApplicationServiceFactory.createService(issuer);
             val casAssertion = buildCasAssertion(authentication, service, serviceRequest.getKey(), new LinkedHashMap<>());
 
-            LOGGER.debug("CAS assertion to use for building ECP SAML response is [{}]", casAssertion);
+            LOGGER.trace("CAS assertion to use for building ECP SAML response is [{}]", casAssertion);
             buildSamlResponse(response, request, authenticationContext, casAssertion, binding);
         } catch (final AuthenticationException e) {
             LOGGER.error(e.getMessage(), e);
