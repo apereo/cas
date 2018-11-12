@@ -74,6 +74,48 @@ public class CasJdbcAuthenticationConfiguration {
         return handlers;
     }
 
+    @ConditionalOnMissingBean(name = "jdbcPrincipalFactory")
+    @Bean
+    @RefreshScope
+    public PrincipalFactory jdbcPrincipalFactory() {
+        return PrincipalFactoryUtils.newPrincipalFactory();
+    }
+
+    @ConditionalOnMissingBean(name = "queryAndEncodePasswordPolicyConfiguration")
+    @Bean
+    @RefreshScope
+    public PasswordPolicyConfiguration queryAndEncodePasswordPolicyConfiguration() {
+        return new PasswordPolicyConfiguration();
+    }
+
+    @ConditionalOnMissingBean(name = "searchModePasswordPolicyConfiguration")
+    @Bean
+    @RefreshScope
+    public PasswordPolicyConfiguration searchModePasswordPolicyConfiguration() {
+        return new PasswordPolicyConfiguration();
+    }
+
+    @ConditionalOnMissingBean(name = "queryPasswordPolicyConfiguration")
+    @Bean
+    @RefreshScope
+    public PasswordPolicyConfiguration queryPasswordPolicyConfiguration() {
+        return new PasswordPolicyConfiguration();
+    }
+
+    @ConditionalOnMissingBean(name = "bindSearchPasswordPolicyConfiguration")
+    @Bean
+    @RefreshScope
+    public PasswordPolicyConfiguration bindSearchPasswordPolicyConfiguration() {
+        return new PasswordPolicyConfiguration();
+    }
+
+    @ConditionalOnMissingBean(name = "jdbcAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    @RefreshScope
+    public AuthenticationEventExecutionPlanConfigurer jdbcAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> jdbcAuthenticationHandlers().forEach(h -> plan.registerAuthenticationHandlerWithPrincipalResolver(h, defaultPrincipalResolver.getIfAvailable()));
+    }
+
     private AuthenticationHandler bindModeSearchDatabaseAuthenticationHandler(final BindJdbcAuthenticationProperties b) {
         val h = new BindModeSearchDatabaseAuthenticationHandler(b.getName(), servicesManager.getIfAvailable(),
             jdbcPrincipalFactory(), b.getOrder(), JpaBeans.newDataSource(b));
@@ -93,7 +135,7 @@ public class CasJdbcAuthenticationConfiguration {
 
     private AuthenticationHandler queryDatabaseAuthenticationHandler(final QueryJdbcAuthenticationProperties b) {
         val attributes = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(b.getPrincipalAttributeList());
-        LOGGER.debug("Created and mapped principal attributes [{}] for [{}]...", attributes, b.getUrl());
+        LOGGER.trace("Created and mapped principal attributes [{}] for [{}]...", attributes, b.getUrl());
 
         val h = new QueryDatabaseAuthenticationHandler(b.getName(), servicesManager.getIfAvailable(),
             jdbcPrincipalFactory(), b.getOrder(),
@@ -113,43 +155,6 @@ public class CasJdbcAuthenticationConfiguration {
         return h;
     }
 
-    @ConditionalOnMissingBean(name = "jdbcPrincipalFactory")
-    @Bean
-    @RefreshScope
-    public PrincipalFactory jdbcPrincipalFactory() {
-        return PrincipalFactoryUtils.newPrincipalFactory();
-    }
-
-    @ConditionalOnMissingBean(name = "queryAndEncodePasswordPolicyConfiguration")
-    @Bean
-    public PasswordPolicyConfiguration queryAndEncodePasswordPolicyConfiguration() {
-        return new PasswordPolicyConfiguration();
-    }
-
-    @ConditionalOnMissingBean(name = "searchModePasswordPolicyConfiguration")
-    @Bean
-    public PasswordPolicyConfiguration searchModePasswordPolicyConfiguration() {
-        return new PasswordPolicyConfiguration();
-    }
-
-    @ConditionalOnMissingBean(name = "queryPasswordPolicyConfiguration")
-    @Bean
-    public PasswordPolicyConfiguration queryPasswordPolicyConfiguration() {
-        return new PasswordPolicyConfiguration();
-    }
-
-    @ConditionalOnMissingBean(name = "bindSearchPasswordPolicyConfiguration")
-    @Bean
-    public PasswordPolicyConfiguration bindSearchPasswordPolicyConfiguration() {
-        return new PasswordPolicyConfiguration();
-    }
-
-    @ConditionalOnMissingBean(name = "jdbcAuthenticationEventExecutionPlanConfigurer")
-    @Bean
-    public AuthenticationEventExecutionPlanConfigurer jdbcAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> jdbcAuthenticationHandlers().forEach(h -> plan.registerAuthenticationHandlerWithPrincipalResolver(h, defaultPrincipalResolver.getIfAvailable()));
-    }
-
     private void configureJdbcAuthenticationHandler(final AbstractJdbcUsernamePasswordAuthenticationHandler handler,
                                                     final BaseJdbcAuthenticationProperties properties) {
         handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(properties.getPasswordEncoder()));
@@ -159,6 +164,6 @@ public class CasJdbcAuthenticationConfiguration {
         if (StringUtils.isNotBlank(properties.getCredentialCriteria())) {
             handler.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(properties.getCredentialCriteria()));
         }
-        LOGGER.debug("Configured authentication handler [{}] to handle database url at [{}]", handler.getName(), properties.getUrl());
+        LOGGER.trace("Configured authentication handler [{}] to handle database url at [{}]", handler.getName(), properties.getUrl());
     }
 }
