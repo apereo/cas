@@ -30,6 +30,12 @@ public class DatabaseProperties implements Serializable {
     private boolean genDdl = true;
 
     /**
+     * When choosing physical table names, determine whether names
+     * should be considered case-insensitive.
+     */
+    private boolean caseInsensitive;
+
+    /**
      * Indicate a physical table name
      * to be used by the hibernate naming strategy
      * in case table names need to be customized for the

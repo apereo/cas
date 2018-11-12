@@ -1,5 +1,7 @@
 package org.apereo.cas.audit.spi;
 
+import org.apereo.cas.util.junit.ConditionalIgnoreRule;
+
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;
@@ -27,6 +29,9 @@ public abstract class BaseAuditConfigurationTests {
     @Rule
     public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
+    @Rule
+    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
+    
     public abstract AuditTrailManager getAuditTrailManager();
 
     @Test

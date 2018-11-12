@@ -85,6 +85,7 @@ public class GrouperMultifactorAuthenticationConfiguration {
     }
 
     @Bean
+    @RefreshScope
     public MultifactorAuthenticationTrigger grouperMultifactorAuthenticationTrigger() {
         return new GrouperMultifactorAuthenticationTrigger(casProperties,
             multifactorAuthenticationProviderResolver.getIfAvailable(), grouperFacade());

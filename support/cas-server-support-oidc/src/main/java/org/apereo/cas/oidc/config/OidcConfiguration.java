@@ -508,6 +508,7 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
     }
 
     @Bean
+    @RefreshScope
     public MultifactorAuthenticationTrigger oidcMultifactorAuthenticationTrigger() {
         return new OidcMultifactorAuthenticationTrigger(casProperties, multifactorAuthenticationProviderResolver.getIfAvailable());
     }
