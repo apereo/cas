@@ -246,6 +246,8 @@ sudo keytool -import -file /etc/cas/config/cas.crt -alias cas -keystore $JAVA_HO
 
 ...where `JAVA_HOME` is where you have the JDK installed (i.e `/Library/Java/JavaVirtualMachines/jdk[version].jdk/Contents/Home`).
 
+On Windows, Administration right should be granted to the concole instead of sudo, and `$JAVA_HOME/lib/security/cacerts` should be changed to `"%JAVA_HOME%/lib/security/cacerts"` instead.
+
 ### Deploy
 
 Execute the following command:
