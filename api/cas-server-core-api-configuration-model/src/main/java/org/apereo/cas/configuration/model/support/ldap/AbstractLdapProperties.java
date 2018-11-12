@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -17,6 +18,7 @@ import java.io.Serializable;
 public abstract class AbstractLdapProperties implements Serializable {
 
     private static final long serialVersionUID = 2682743362616979324L;
+
     /**
      * Path of the trust certificates to use for the SSL connection.
      * Ignores keystore-related settings when activated and used.
