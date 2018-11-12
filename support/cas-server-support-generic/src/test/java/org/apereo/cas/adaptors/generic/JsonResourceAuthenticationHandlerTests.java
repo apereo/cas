@@ -14,9 +14,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.val;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
@@ -39,9 +37,6 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 public class JsonResourceAuthenticationHandlerTests {
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     private final Resource resource;
     private final JsonResourceAuthenticationHandler handler;
 
@@ -119,41 +114,41 @@ public class JsonResourceAuthenticationHandlerTests {
 
     @Test
     public void verifyNotFoundAccount() throws Exception {
-        this.thrown.expect(AccountNotFoundException.class);
-        val c =
-            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("nobody", "Mellon");
-        handler.authenticate(c);
+        val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("nobody", "Mellon");
+        assertThrows(AccountNotFoundException.class, () -> {
+            handler.authenticate(c);
+        });
     }
 
     @Test
     public void verifyExpiredAccount() throws Exception {
-        this.thrown.expect(AccountExpiredException.class);
-        val c =
-            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casexpired", "Mellon");
-        handler.authenticate(c);
+        val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casexpired", "Mellon");
+        assertThrows(AccountExpiredException.class, () -> {
+            handler.authenticate(c);
+        });
     }
 
     @Test
     public void verifyDisabledAccount() throws Exception {
-        this.thrown.expect(AccountDisabledException.class);
-        val c =
-            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casdisabled", "Mellon");
-        handler.authenticate(c);
+        val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casdisabled", "Mellon");
+        assertThrows(AccountDisabledException.class, () -> {
+            handler.authenticate(c);
+        });
     }
 
     @Test
     public void verifyLockedAccount() throws Exception {
-        this.thrown.expect(AccountLockedException.class);
-        val c =
-            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("caslocked", "Mellon");
-        handler.authenticate(c);
+        val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("caslocked", "Mellon");
+        assertThrows(AccountLockedException.class, () -> {
+            handler.authenticate(c);
+        });
     }
 
     @Test
     public void verifyMustChangePswAccount() throws Exception {
-        this.thrown.expect(AccountPasswordMustChangeException.class);
-        val c =
-            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casmustchange", "Mellon");
-        handler.authenticate(c);
+        val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casmustchange", "Mellon");
+        assertThrows(AccountPasswordMustChangeException.class, () -> {
+            handler.authenticate(c);
+        });
     }
 }

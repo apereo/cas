@@ -6,11 +6,9 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
-import org.junit.Rule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,9 +39,6 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @DirtiesContext
 public class NamedQueryDatabaseAuthenticationHandlerTests {
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Autowired
     @Qualifier("dataSource")
     private DataSource dataSource;
@@ -111,8 +106,9 @@ public class NamedQueryDatabaseAuthenticationHandlerTests {
             this.dataSource, sql, null,
             null, null,
             new LinkedHashMap<>());
-        thrown.expect(FailedLoginException.class);
-        q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("whatever", "psw0"));
+        assertThrows(FailedLoginException.class, () -> {
+            q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("whatever", "psw0"));
+        });
     }
 
     @Entity(name = "casusers")

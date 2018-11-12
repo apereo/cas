@@ -10,9 +10,7 @@ import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.EncodingUtils;
 
 import lombok.val;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.exception.CredentialsException;
@@ -31,9 +29,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20AuthenticatorTests {
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     protected OAuth20ProofKeyCodeExchangeAuthenticator authenticator;
 
     @Override
@@ -82,7 +77,8 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
         ticketRegistry.addTicket(ticket);
         request.addParameter(OAuth20Constants.CODE, ticket.getId());
         val ctx = new J2EContext(request, new MockHttpServletResponse());
-        thrown.expect(CredentialsException.class);
-        authenticator.validate(credentials, ctx);
+        assertThrows(CredentialsException.class, () -> {
+            authenticator.validate(credentials, ctx);
+        });
     }
 }

@@ -6,16 +6,16 @@ import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomUtils;
-import org.junit.Rule;
 import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.core.io.ClassPathResource;
 
 import java.util.Arrays;
 import java.util.Collection;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link AbstractResourceBasedServiceRegistryTests}.
@@ -27,9 +27,6 @@ import java.util.Collection;
 @RunWith(Parameterized.class)
 public abstract class AbstractResourceBasedServiceRegistryTests extends AbstractServiceRegistryTests {
     public static final ClassPathResource RESOURCE = new ClassPathResource("services");
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     protected ServiceRegistry dao;
 
@@ -53,8 +50,9 @@ public abstract class AbstractResourceBasedServiceRegistryTests extends Abstract
     public void verifyServiceWithInvalidFileName() {
         val r = buildRegisteredServiceInstance(RandomUtils.nextInt());
         r.setName("hell/o@world:*");
-        this.thrown.expect(IllegalArgumentException.class);
-        this.dao.save(r);
+        assertThrows(IllegalArgumentException.class, () -> {
+            this.dao.save(r);
+        });
     }
 
     @Override

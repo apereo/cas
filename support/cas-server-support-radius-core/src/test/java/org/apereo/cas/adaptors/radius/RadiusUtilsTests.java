@@ -4,12 +4,9 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import net.jradius.dictionary.Attr_ClientId;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 
 import javax.security.auth.login.FailedLoginException;
-
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,9 +19,6 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 public class RadiusUtilsTests {
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Test
     public void verifyActionPasses() throws Exception {
         val server = mock(RadiusServer.class);
@@ -41,17 +35,19 @@ public class RadiusUtilsTests {
     public void verifyActionFails() throws Exception {
         val server = mock(RadiusServer.class);
         when(server.authenticate(anyString(), anyString())).thenReturn(null);
-        thrown.expect(FailedLoginException.class);
-        RadiusUtils.authenticate("casuser", "Mellon",
-            CollectionUtils.wrapList(server), false, false, Optional.empty());
+        assertThrows(FailedLoginException.class, () -> {
+            RadiusUtils.authenticate("casuser", "Mellon",
+                CollectionUtils.wrapList(server), false, false, Optional.empty());
+        });
     }
 
     @Test
     public void verifyActionFailsWithException() throws Exception {
         val server = mock(RadiusServer.class);
         when(server.authenticate(anyString(), anyString())).thenThrow(FailedLoginException.class);
-        thrown.expect(FailedLoginException.class);
-        RadiusUtils.authenticate("casuser", "Mellon",
-            CollectionUtils.wrapList(server), false, false, Optional.empty());
+        assertThrows(FailedLoginException.class, () -> {
+            RadiusUtils.authenticate("casuser", "Mellon",
+                CollectionUtils.wrapList(server), false, false, Optional.empty());
+        });
     }
 }

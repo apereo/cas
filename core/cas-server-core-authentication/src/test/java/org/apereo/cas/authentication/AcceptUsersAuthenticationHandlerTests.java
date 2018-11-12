@@ -5,9 +5,7 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 
 import lombok.val;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
@@ -25,9 +23,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class AcceptUsersAuthenticationHandlerTests {
     private static final String SCOTT = "scott";
     private static final String RUTGERS = "rutgers";
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     private final AcceptUsersAuthenticationHandler authenticationHandler;
 
@@ -90,10 +85,9 @@ public class AcceptUsersAuthenticationHandlerTests {
         c.setUsername("fds");
         c.setPassword(RUTGERS);
 
-        this.thrown.expect(AccountNotFoundException.class);
-
-
-        this.authenticationHandler.authenticate(c);
+        assertThrows(AccountNotFoundException.class, () -> {
+            this.authenticationHandler.authenticate(c);
+        });
     }
 
     @Test
@@ -103,8 +97,9 @@ public class AcceptUsersAuthenticationHandlerTests {
         c.setUsername(null);
         c.setPassword("user");
 
-        this.thrown.expect(AccountNotFoundException.class);
-        this.authenticationHandler.authenticate(c);
+        assertThrows(AccountNotFoundException.class, () -> {
+            this.authenticationHandler.authenticate(c);
+        });
     }
 
     @Test
@@ -114,10 +109,9 @@ public class AcceptUsersAuthenticationHandlerTests {
         c.setUsername(null);
         c.setPassword(null);
 
-        this.thrown.expect(AccountNotFoundException.class);
-
-
-        this.authenticationHandler.authenticate(c);
+        assertThrows(AccountNotFoundException.class, () -> {
+            this.authenticationHandler.authenticate(c);
+        });
     }
 
     @Test
@@ -127,9 +121,8 @@ public class AcceptUsersAuthenticationHandlerTests {
         c.setUsername(SCOTT);
         c.setPassword(null);
 
-        this.thrown.expect(FailedLoginException.class);
-
-
-        this.authenticationHandler.authenticate(c);
+        assertThrows(FailedLoginException.class, () -> {
+            this.authenticationHandler.authenticate(c);
+        });
     }
 }

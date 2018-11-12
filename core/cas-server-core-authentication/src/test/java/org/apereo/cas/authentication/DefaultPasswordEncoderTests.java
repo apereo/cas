@@ -4,9 +4,7 @@ import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 
 import lombok.val;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,9 +16,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.1.0
  */
 public class DefaultPasswordEncoderTests {
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @Test
     public void verifyPasswordEncoderByCustomClassName() {

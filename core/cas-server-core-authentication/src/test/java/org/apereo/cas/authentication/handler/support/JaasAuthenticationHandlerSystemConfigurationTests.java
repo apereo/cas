@@ -5,10 +5,8 @@ import org.apereo.cas.authentication.handler.support.jaas.JaasAuthenticationHand
 
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.springframework.core.io.ClassPathResource;
 
 import javax.security.auth.login.LoginException;
@@ -26,9 +24,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class JaasAuthenticationHandlerSystemConfigurationTests {
 
     private static final String USERNAME = "test";
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     private JaasAuthenticationHandler handler;
 
@@ -48,9 +43,10 @@ public class JaasAuthenticationHandlerSystemConfigurationTests {
 
     @Test
     public void verifyWithAlternativeRealm() throws Exception {
-        this.thrown.expect(LoginException.class);
         this.handler.setRealm("TEST");
-        this.handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(USERNAME, "test1"));
+        assertThrows(LoginException.class, () -> {
+            this.handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(USERNAME, "test1"));
+        });
     }
 
     @Test
@@ -66,7 +62,8 @@ public class JaasAuthenticationHandlerSystemConfigurationTests {
 
     @Test
     public void verifyWithInvalidCredentials() throws Exception {
-        this.thrown.expect(LoginException.class);
-        this.handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(USERNAME, "test1"));
+        assertThrows(LoginException.class, () -> {
+            this.handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(USERNAME, "test1"));
+        });
     }
 }

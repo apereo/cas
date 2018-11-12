@@ -11,9 +11,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.test.annotation.DirtiesContext;
 
@@ -38,9 +36,6 @@ import static org.mockito.Mockito.*;
 public class PolicyBasedAuthenticationManagerTests {
     private static final String HANDLER_A = "HandlerA";
     private static final String HANDLER_B = "HandlerB";
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     private final AuthenticationTransaction transaction = DefaultAuthenticationTransaction.of(CoreAuthenticationTestUtils.getService(),
         mock(Credential.class), mock(Credential.class));
@@ -133,10 +128,9 @@ public class PolicyBasedAuthenticationManagerTests {
         val manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
             false, mock(ApplicationEventPublisher.class));
 
-        this.thrown.expect(AuthenticationException.class);
-        manager.authenticate(transaction);
-
-        throw new AssertionError("Should have thrown authentication exception");
+        assertThrows(AuthenticationException.class, () -> {
+            manager.authenticate(transaction);
+        });
     }
 
     @Test
@@ -167,10 +161,9 @@ public class PolicyBasedAuthenticationManagerTests {
         val manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
             false, mock(ApplicationEventPublisher.class));
 
-        this.thrown.expect(AuthenticationException.class);
-        manager.authenticate(transaction);
-
-        throw new AssertionError("Should have thrown authentication exception");
+        assertThrows(AuthenticationException.class, () -> {
+            manager.authenticate(transaction);
+        });
     }
 
     @Test
@@ -201,9 +194,9 @@ public class PolicyBasedAuthenticationManagerTests {
         val manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
             false, mock(ApplicationEventPublisher.class));
 
-        this.thrown.expect(AuthenticationException.class);
-        manager.authenticate(transaction);
-        throw new AssertionError("Should have thrown AuthenticationException");
+        assertThrows(AuthenticationException.class, () -> {
+            manager.authenticate(transaction);
+        });
     }
 
     @Test

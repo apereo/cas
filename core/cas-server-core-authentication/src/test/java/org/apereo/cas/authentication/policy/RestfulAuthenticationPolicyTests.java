@@ -13,12 +13,10 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 
-import org.hamcrest.CustomMatcher;
-import org.junit.Rule;
+import lombok.val;
 import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -33,8 +31,10 @@ import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
+import java.security.GeneralSecurityException;
 import java.util.LinkedHashSet;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
@@ -61,24 +61,25 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 public class RestfulAuthenticationPolicyTests {
     private static final String URI = "http://rest.endpoint.com";
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
-    private final RestTemplate restTemplate = new RestTemplate();
-
-    private MockRestServiceServer mockServer;
-
-    private RestfulAuthenticationPolicy policy;
-
     @BeforeEach
     public void initialize() {
         MockitoAnnotations.initMocks(this);
-        mockServer = MockRestServiceServer.createServer(restTemplate);
-        policy = new RestfulAuthenticationPolicy(this.restTemplate, URI);
+    }
+
+    private RestfulAuthenticationPolicy newPolicy(final RestTemplate restTemplate) {
+        return new RestfulAuthenticationPolicy(restTemplate, URI);
+    }
+
+    private MockRestServiceServer newServer(final RestTemplate restTemplate) {
+        return MockRestServiceServer.createServer(restTemplate);
     }
 
     @Test
     public void verifyPolicyGood() throws Exception {
+        val restTemplate = new RestTemplate();
+        val mockServer = newServer(restTemplate);
+        val policy = newPolicy(restTemplate);
+
         mockServer.expect(requestTo(URI))
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
             .andExpect(method(HttpMethod.POST))
@@ -100,19 +101,21 @@ public class RestfulAuthenticationPolicyTests {
     }
 
 
-    private void verifyPolicyFails(final Class exceptionClass, final HttpStatus status) throws Exception {
-        thrown.expectCause(new CustomMatcher<>("policy") {
-            @Override
-            public boolean matches(final Object o) {
-                return o.getClass().equals(exceptionClass);
-            }
-        });
+    private void verifyPolicyFails(final Class<? extends Throwable> exceptionClass, final HttpStatus status) throws Exception {
+        val restTemplate = new RestTemplate();
+        val mockServer = newServer(restTemplate);
+        val policy = newPolicy(restTemplate);
 
         mockServer.expect(requestTo(URI))
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
             .andExpect(method(HttpMethod.POST))
             .andRespond(withStatus(status));
-        assertTrue(policy.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"), new LinkedHashSet<>()));
+
+        val exception = assertThrows(GeneralSecurityException.class, () -> {
+            assertTrue(policy.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"), new LinkedHashSet<>()));
+        });
+        assertThat(exception).hasRootCauseInstanceOf(exceptionClass);
         mockServer.verify();
+
     }
 }

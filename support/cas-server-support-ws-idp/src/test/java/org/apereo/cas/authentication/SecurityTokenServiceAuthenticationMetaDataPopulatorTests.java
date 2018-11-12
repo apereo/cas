@@ -26,14 +26,14 @@ import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 
 import lombok.val;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link SecurityTokenServiceAuthenticationMetaDataPopulatorTests}.
@@ -66,9 +66,6 @@ import org.springframework.test.context.TestPropertySource;
 })
 @TestPropertySource(locations = "classpath:ws-idp.properties")
 public class SecurityTokenServiceAuthenticationMetaDataPopulatorTests {
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -99,7 +96,8 @@ public class SecurityTokenServiceAuthenticationMetaDataPopulatorTests {
             + WSFederationConstants.WTREALM + '=' + realm);
         val transaction = DefaultAuthenticationTransaction.of(service, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
 
-        thrown.expect(AuthenticationException.class);
-        populator.populateAttributes(builder, transaction);
+        assertThrows(AuthenticationException.class, () -> {
+            populator.populateAttributes(builder, transaction);
+        });
     }
 }

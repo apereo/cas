@@ -10,10 +10,8 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 
 import lombok.val;
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.ArrayList;
@@ -29,9 +27,6 @@ import static org.mockito.Mockito.*;
  * @since 3.5.0
  */
 public class ServiceAuthorizationCheckTests {
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     private final WebApplicationService authorizedService = mock(WebApplicationService.class);
     private final WebApplicationService unauthorizedService = mock(WebApplicationService.class);
     private final WebApplicationService undefinedService = mock(WebApplicationService.class);
@@ -77,10 +72,9 @@ public class ServiceAuthorizationCheckTests {
         val mockRequestContext = new MockRequestContext();
         mockRequestContext.getFlowScope().put("service", this.unauthorizedService);
 
-        this.thrown.expect(UnauthorizedServiceException.class);
-
-
-        this.serviceAuthorizationCheck.doExecute(mockRequestContext);
+        assertThrows(UnauthorizedServiceException.class, () -> {
+            this.serviceAuthorizationCheck.doExecute(mockRequestContext);
+        });
         fail("Should have thrown UnauthorizedServiceException");
     }
 
@@ -89,10 +83,9 @@ public class ServiceAuthorizationCheckTests {
         val mockRequestContext = new MockRequestContext();
         mockRequestContext.getFlowScope().put("service", this.undefinedService);
 
-        this.thrown.expect(UnauthorizedServiceException.class);
-
-
-        this.serviceAuthorizationCheck.doExecute(mockRequestContext);
+        assertThrows(UnauthorizedServiceException.class, () -> {
+            this.serviceAuthorizationCheck.doExecute(mockRequestContext);
+        });
         throw new AssertionError("Should have thrown UnauthorizedServiceException");
     }
 }

@@ -663,9 +663,9 @@
         <property name="message" value="Name of the test class MUST end in 'Tests'"/>
     </module>
     <module name="RegexpSingleline">
-        <metadata name="net.sf.eclipsecs.core.comment" value="Use @Rule instead of expect an exception"/>
+        <metadata name="net.sf.eclipsecs.core.comment" value="Use assertThrows instead of expect an exception"/>
         <property name="severity" value="error"/>
-        <property name="format" value="@Test\(expect"/>
+        <property name="format" value="(@Test\(expect|ExpectedException)"/>
         <property name="message" value="Use @Rule ExpectedException instead of expecting an exception"/>
     </module>
     <module name="RegexpSingleline">

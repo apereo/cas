@@ -9,10 +9,8 @@ import org.apache.directory.fortress.core.GlobalErrIds;
 import org.apache.directory.fortress.core.PasswordException;
 import org.apache.directory.fortress.core.model.Session;
 import org.apache.directory.fortress.core.model.User;
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -35,9 +33,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
 public class FortressAuthenticationHandlerTests {
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Mock
     private AccessMgr accessManager;
 
@@ -54,9 +49,10 @@ public class FortressAuthenticationHandlerTests {
     public void verifyUnauthorizedUserLoginIncorrect() throws Exception {
         Mockito.when(accessManager.createSession(ArgumentMatchers.any(User.class), ArgumentMatchers.anyBoolean()))
             .thenThrow(new PasswordException(GlobalErrIds.USER_PW_INVLD, "error message"));
-        this.thrown.expect(FailedLoginException.class);
-        fortressAuthenticationHandler.authenticateUsernamePasswordInternal(
-            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), null);
+        assertThrows(FailedLoginException.class, () -> {
+            fortressAuthenticationHandler.authenticateUsernamePasswordInternal(
+                CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), null);
+        });
     }
 
     @Test

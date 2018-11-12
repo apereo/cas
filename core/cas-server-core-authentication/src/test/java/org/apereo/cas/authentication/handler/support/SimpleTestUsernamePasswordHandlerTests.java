@@ -4,10 +4,8 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.credential.RememberMeUsernamePasswordCredential;
 
 import lombok.val;
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 
 import javax.security.auth.login.FailedLoginException;
 
@@ -20,9 +18,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 public class SimpleTestUsernamePasswordHandlerTests {
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     private SimpleTestUsernamePasswordAuthenticationHandler authenticationHandler;
 
@@ -55,8 +50,8 @@ public class SimpleTestUsernamePasswordHandlerTests {
 
     @Test
     public void verifyInvalidUsernamePassword() throws Exception {
-        this.thrown.expect(FailedLoginException.class);
-
-        this.authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword());
+        assertThrows(FailedLoginException.class, () -> {
+            this.authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword());
+        });
     }
 }

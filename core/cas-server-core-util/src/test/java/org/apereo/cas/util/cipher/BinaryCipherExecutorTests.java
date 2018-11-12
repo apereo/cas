@@ -4,9 +4,7 @@ import org.apereo.cas.CipherExecutor;
 
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
@@ -21,9 +19,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class BinaryCipherExecutorTests {
     private static final String TEST_VALUE = "ThisIsATestValueThatIsGoingToBeEncodedAndDecodedAgainAndAgain";
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @Test
     public void checkEncodingDecoding() {
@@ -42,8 +37,9 @@ public class BinaryCipherExecutorTests {
             "1234", 512, 16) {
         };
 
-        this.thrown.expect(InvalidKeyException.class);
-        cc.encode(TEST_VALUE.getBytes(StandardCharsets.UTF_8), ArrayUtils.EMPTY_OBJECT_ARRAY);
+        assertThrows(InvalidKeyException.class, () -> {
+            cc.encode(TEST_VALUE.getBytes(StandardCharsets.UTF_8), ArrayUtils.EMPTY_OBJECT_ARRAY);
+        });
     }
 
     @Test

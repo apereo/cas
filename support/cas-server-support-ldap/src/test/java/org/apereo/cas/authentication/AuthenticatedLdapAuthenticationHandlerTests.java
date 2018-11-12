@@ -33,8 +33,9 @@ public class AuthenticatedLdapAuthenticationHandlerTests extends BaseLdapAuthent
     @Test
     public void verifyAuthenticateNotFound() throws Throwable {
         try {
-            this.thrown.expect(AccountNotFoundException.class);
-            this.handler.forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("notfound", "badpassword"))));
+            assertThrows(AccountNotFoundException.class, () -> {
+                this.handler.forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("notfound", "badpassword"))));
+            });
         } catch (final Exception e) {
             throw e.getCause();
         }
@@ -43,11 +44,12 @@ public class AuthenticatedLdapAuthenticationHandlerTests extends BaseLdapAuthent
     @Test
     public void verifyAuthenticateFailureNotFound() throws Throwable {
         assertNotEquals(handler.size(), 0);
-        this.thrown.expect(AccountNotFoundException.class);
-        try {
-            this.handler.forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("bad", "bad"))));
-        } catch (final Exception e) {
-            throw e.getCause();
-        }
+        assertThrows(AccountNotFoundException.class, () -> {
+            try {
+                this.handler.forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("bad", "bad"))));
+            } catch (final Exception e) {
+                throw e.getCause();
+            }
+        });
     }
 }

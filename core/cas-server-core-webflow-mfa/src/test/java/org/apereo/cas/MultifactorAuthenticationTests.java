@@ -15,9 +15,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 
 import lombok.val;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
@@ -42,9 +40,6 @@ public class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAut
     private static final Service HIGH_SERVICE = newService("https://example.com/high/");
     private static final String ALICE = "alice";
     private static final String PASSWORD_31415 = "31415";
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
@@ -86,10 +81,11 @@ public class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAut
     @Test
     public void verifyDeniesAccessToHighSecurityServiceWithPassword() {
         val ctx = processAuthenticationAttempt(HIGH_SERVICE, newUserPassCredentials(ALICE, ALICE));
-        this.thrown.expect(UnsatisfiedAuthenticationPolicyException.class);
         val tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
-        cas.grantServiceTicket(tgt.getId(), HIGH_SERVICE, ctx);
+        assertThrows(UnsatisfiedAuthenticationPolicyException.class, () -> {
+            cas.grantServiceTicket(tgt.getId(), HIGH_SERVICE, ctx);
+        });
     }
 
     @Test
@@ -97,9 +93,10 @@ public class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAut
         val ctx = processAuthenticationAttempt(HIGH_SERVICE, new OneTimePasswordCredential(ALICE, PASSWORD_31415));
         val tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
-        this.thrown.expect(UnsatisfiedAuthenticationPolicyException.class);
-        val st = cas.grantServiceTicket(tgt.getId(), HIGH_SERVICE, ctx);
-        assertNotNull(st);
+        assertThrows(UnsatisfiedAuthenticationPolicyException.class, () -> {
+            val st = cas.grantServiceTicket(tgt.getId(), HIGH_SERVICE, ctx);
+            assertNotNull(st);
+        });
     }
 
     @Test

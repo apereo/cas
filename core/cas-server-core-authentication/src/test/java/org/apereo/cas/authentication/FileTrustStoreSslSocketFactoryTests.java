@@ -5,9 +5,7 @@ import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -27,9 +25,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class FileTrustStoreSslSocketFactoryTests {
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("truststore.jks");
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @SneakyThrows
     private static SSLConnectionSocketFactory sslFactory(final Resource resource, final String password) {
@@ -60,14 +55,16 @@ public class FileTrustStoreSslSocketFactoryTests {
 
     @Test
     public void verifyTrustStoreNotFound() {
-        this.thrown.expect(IOException.class);
-        sslFactory(new FileSystemResource("test.jks"), "changeit");
+        assertThrows(IOException.class, () -> {
+            sslFactory(new FileSystemResource("test.jks"), "changeit");
+        });
     }
 
     @Test
     public void verifyTrustStoreBadPassword() {
-        this.thrown.expect(IOException.class);
-        sslFactory(RESOURCE, "invalid");
+        assertThrows(IOException.class, () -> {
+            sslFactory(RESOURCE, "invalid");
+        });
     }
 
     @Test

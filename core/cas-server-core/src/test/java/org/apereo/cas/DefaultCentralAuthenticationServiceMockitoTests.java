@@ -44,10 +44,8 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 
 import lombok.val;
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.mockito.ArgumentMatcher;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -81,9 +79,6 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
     private static final String SVC2_ID = "test2";
 
     private static final String PRINCIPAL = "principal";
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     private DefaultCentralAuthenticationService cas;
     private Authentication authentication;
@@ -223,32 +218,37 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
 
     @Test
     public void verifyNonExistentServiceWhenDelegatingTicketGrantingTicket() {
-        this.thrown.expect(InvalidTicketException.class);
-        this.cas.createProxyGrantingTicket("bad-st", getAuthenticationContext());
+        assertThrows(InvalidTicketException.class, () -> {
+            this.cas.createProxyGrantingTicket("bad-st", getAuthenticationContext());
+        });
     }
 
     @Test
     public void verifyInvalidServiceWhenDelegatingTicketGrantingTicket() {
-        this.thrown.expect(UnauthorizedServiceException.class);
-        this.cas.createProxyGrantingTicket(ST_ID, getAuthenticationContext());
+        assertThrows(UnauthorizedServiceException.class, () -> {
+            this.cas.createProxyGrantingTicket(ST_ID, getAuthenticationContext());
+        });
     }
 
     @Test
     public void disallowVendingServiceTicketsWhenServiceIsNotAllowedToProxyCAS1019() {
-        this.thrown.expect(UnauthorizedProxyingException.class);
-        this.cas.grantServiceTicket(TGT_ID, RegisteredServiceTestUtils.getService(SVC1_ID), getAuthenticationContext());
+        assertThrows(UnauthorizedProxyingException.class, () -> {
+            this.cas.grantServiceTicket(TGT_ID, RegisteredServiceTestUtils.getService(SVC1_ID), getAuthenticationContext());
+        });
     }
 
     @Test
     public void getTicketGrantingTicketIfTicketIdIsNull() throws InvalidTicketException {
-        this.thrown.expect(NullPointerException.class);
-        this.cas.getTicket(null, TicketGrantingTicket.class);
+        assertThrows(NullPointerException.class, () -> {
+            this.cas.getTicket(null, TicketGrantingTicket.class);
+        });
     }
 
     @Test
     public void getTicketGrantingTicketIfTicketIdIsMissing() throws InvalidTicketException {
-        this.thrown.expect(InvalidTicketException.class);
-        this.cas.getTicket("TGT-9000", TicketGrantingTicket.class);
+        assertThrows(InvalidTicketException.class, () -> {
+            this.cas.getTicket("TGT-9000", TicketGrantingTicket.class);
+        });
     }
 
     @Test

@@ -9,9 +9,7 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.SneakyThrows;
 import lombok.val;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -34,9 +32,6 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 public class SurrogateAuthorizationActionTests extends BaseSurrogateInitialAuthenticationActionTests {
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @Autowired
     @Qualifier("surrogateAuthorizationCheck")
@@ -80,7 +75,8 @@ public class SurrogateAuthorizationActionTests extends BaseSurrogateInitialAuthe
         WebUtils.putRegisteredService(context, registeredService);
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        thrown.expect(PrincipalException.class);
-        surrogateAuthorizationCheck.execute(context);
+        assertThrows(PrincipalException.class, () -> {
+            surrogateAuthorizationCheck.execute(context);
+        });
     }
 }

@@ -24,11 +24,9 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
-import org.junit.Rule;
 import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -88,9 +86,6 @@ public class RestAuthenticationHandlerTests {
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Autowired
     @Qualifier("restAuthenticationHandler")
     private AuthenticationHandler authenticationHandler;
@@ -124,22 +119,25 @@ public class RestAuthenticationHandlerTests {
     @Test
     public void verifyDisabledAccount() throws Exception {
         server.andRespond(withStatus(HttpStatus.FORBIDDEN).contentType(MediaType.APPLICATION_JSON));
-        this.thrown.expect(AccountDisabledException.class);
-        authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+        assertThrows(AccountDisabledException.class, () -> {
+            authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+        });
     }
 
     @Test
     public void verifyUnauthorized() throws Exception {
         server.andRespond(withStatus(HttpStatus.UNAUTHORIZED));
-        this.thrown.expect(FailedLoginException.class);
-        authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+        assertThrows(FailedLoginException.class, () -> {
+            authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+        });
     }
 
     @Test
     public void verifyNotFound() throws Exception {
         server.andRespond(withStatus(HttpStatus.NOT_FOUND));
-        this.thrown.expect(AccountNotFoundException.class);
-        authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+        assertThrows(AccountNotFoundException.class, () -> {
+            authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+        });
     }
 }
 

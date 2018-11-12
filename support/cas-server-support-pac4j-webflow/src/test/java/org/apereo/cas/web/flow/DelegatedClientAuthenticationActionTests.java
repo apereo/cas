@@ -42,9 +42,7 @@ import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 
 import lombok.val;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.Pac4jConstants;
@@ -89,9 +87,6 @@ public class DelegatedClientAuthenticationActionTests {
     private static final String MY_SERVICE = "http://myservice";
 
     private static final String MY_THEME = "my_theme";
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @Test
     public void verifyStartAuthenticationNoService() throws Exception {
@@ -198,8 +193,9 @@ public class DelegatedClientAuthenticationActionTests {
         val strategy = new DefaultRegisteredServiceAccessStrategy();
         strategy.setEnabled(false);
 
-        thrown.expect(UnauthorizedServiceException.class);
-        getDelegatedClientAction(facebookClient, service, clients, mockRequest, strategy).execute(mockRequestContext);
+        assertThrows(UnauthorizedServiceException.class, () -> {
+            getDelegatedClientAction(facebookClient, service, clients, mockRequest, strategy).execute(mockRequestContext);
+        });
     }
 
     @Test

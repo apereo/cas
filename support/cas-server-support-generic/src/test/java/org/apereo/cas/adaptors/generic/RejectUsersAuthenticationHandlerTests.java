@@ -5,9 +5,7 @@ import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 
 import lombok.val;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
@@ -22,9 +20,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 public class RejectUsersAuthenticationHandlerTests {
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     private final RejectUsersAuthenticationHandler authenticationHandler;
 
@@ -64,9 +59,9 @@ public class RejectUsersAuthenticationHandlerTests {
         c.setUsername("scott");
         c.setPassword("rutgers");
 
-        this.thrown.expect(FailedLoginException.class);
-
-        this.authenticationHandler.authenticate(c);
+        assertThrows(FailedLoginException.class, () -> {
+            this.authenticationHandler.authenticate(c);
+        });
     }
 
     @Test
@@ -86,17 +81,15 @@ public class RejectUsersAuthenticationHandlerTests {
         c.setUsername(null);
         c.setPassword("user");
 
-        this.thrown.expect(AccountNotFoundException.class);
-
-
-        this.authenticationHandler.authenticate(c);
+        assertThrows(AccountNotFoundException.class, () -> {
+            this.authenticationHandler.authenticate(c);
+        });
     }
 
     @Test
     public void verifyPassesNullUserNameAndPassword() throws Exception {
-        this.thrown.expect(AccountNotFoundException.class);
-
-
-        this.authenticationHandler.authenticate(new UsernamePasswordCredential());
+        assertThrows(AccountNotFoundException.class, () -> {
+            this.authenticationHandler.authenticate(new UsernamePasswordCredential());
+        });
     }
 }

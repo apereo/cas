@@ -21,10 +21,8 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-import org.junit.Rule;
 import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -64,9 +62,6 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Category(LdapCategory.class)
 public abstract class BaseLdapAuthenticationHandlerTests {
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Autowired
     @Qualifier("ldapAuthenticationHandlers")
     protected Collection<AuthenticationHandler> handler;
@@ -74,12 +69,13 @@ public abstract class BaseLdapAuthenticationHandlerTests {
     @Test
     public void verifyAuthenticateFailure() throws Throwable {
         assertNotEquals(handler.size(), 0);
-        this.thrown.expect(FailedLoginException.class);
-        try {
-            this.handler.forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("admin", "bad"))));
-        } catch (final Exception e) {
-            throw e.getCause();
-        }
+        assertThrows(FailedLoginException.class, () -> {
+            try {
+                this.handler.forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("admin", "bad"))));
+            } catch (final Exception e) {
+                throw e.getCause();
+            }
+        });
     }
 
     @Test

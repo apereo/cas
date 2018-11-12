@@ -9,11 +9,9 @@ import lombok.SneakyThrows;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.junit.Rule;
 import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -43,9 +41,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @SpringBootTest
 public abstract class BaseMonitorEndpointLdapAuthenticationProviderTests {
     private static final int LDAP_PORT = 10389;
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @Autowired
     protected CasConfigurationProperties casProperties;

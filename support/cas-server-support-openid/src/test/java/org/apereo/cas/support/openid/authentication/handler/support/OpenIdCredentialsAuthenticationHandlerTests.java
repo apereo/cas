@@ -11,9 +11,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 
 import lombok.val;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -29,9 +27,6 @@ public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdT
 
     private static final String TGT_ID = "test";
     private static final String USERNAME = "test";
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @Autowired
     @Qualifier("openIdCredentialsAuthenticationHandler")
@@ -63,8 +58,9 @@ public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdT
         this.ticketRegistry.addTicket(t);
         t.markTicketExpired();
         this.ticketRegistry.updateTicket(t);
-        this.thrown.expect(FailedLoginException.class);
-        this.openIdCredentialsAuthenticationHandler.authenticate(c);
+        assertThrows(FailedLoginException.class, () -> {
+            this.openIdCredentialsAuthenticationHandler.authenticate(c);
+        });
     }
 
     @Test
@@ -73,10 +69,9 @@ public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdT
         val t = getTicketGrantingTicket();
         this.ticketRegistry.addTicket(t);
 
-        this.thrown.expect(FailedLoginException.class);
-
-
-        this.openIdCredentialsAuthenticationHandler.authenticate(c);
+        assertThrows(FailedLoginException.class, () -> {
+            this.openIdCredentialsAuthenticationHandler.authenticate(c);
+        });
     }
 
     private static TicketGrantingTicket getTicketGrantingTicket() {

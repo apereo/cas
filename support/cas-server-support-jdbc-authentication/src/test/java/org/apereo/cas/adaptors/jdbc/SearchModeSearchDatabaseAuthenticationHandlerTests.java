@@ -3,11 +3,9 @@ package org.apereo.cas.adaptors.jdbc;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 
 import lombok.val;
-import org.junit.Rule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,9 +33,6 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @DirtiesContext
 public class SearchModeSearchDatabaseAuthenticationHandlerTests {
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     private SearchModeSearchDatabaseAuthenticationHandler handler;
 
     @Autowired
@@ -77,10 +72,9 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests {
     public void verifyNotFoundUser() throws Exception {
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("hello", "world");
 
-        this.thrown.expect(FailedLoginException.class);
-
-
-        this.handler.authenticate(c);
+        assertThrows(FailedLoginException.class, () -> {
+            this.handler.authenticate(c);
+        });
     }
 
     @Test
