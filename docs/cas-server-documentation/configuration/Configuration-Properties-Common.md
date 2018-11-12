@@ -219,6 +219,7 @@ connections and queries.
 ```properties
 # cas.jdbc.showSql=true
 # cas.jdbc.genDdl=true
+# cas.jdbc.caseInsensitive=false
 # cas.jdbc.physicalTableNames.{table-name}={new-table-name}
 ```
 
