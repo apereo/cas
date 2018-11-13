@@ -32,6 +32,12 @@ public class HttpRequestUtils {
     public static final String USER_AGENT_HEADER = "user-agent";
 
     /**
+     * Constant representing the request header for accept language.
+     */
+    public static final String ACCEPT_LANGUAGE_HEADER = "accept-language";
+
+
+    /**
      * Gets http servlet request from request attributes.
      *
      * @return the http servlet request from request attributes
@@ -110,6 +116,20 @@ public class HttpRequestUtils {
         }
         return null;
     }
+
+    /**
+     * Gets http servlet request accept language.
+     *
+     * @param request the request
+     * @return the http servlet request accept language
+     */
+    public static String getHttpServletRequestAcceptLanguage(final HttpServletRequest request) {
+        if (request != null) {
+            return request.getHeader(ACCEPT_LANGUAGE_HEADER);
+        }
+        return null;
+    }
+
 
     /**
      * Gets the service from the request based on given extractors.

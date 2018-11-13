@@ -12,6 +12,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.interrupt.InterruptProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.web.support.WebUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -47,9 +48,14 @@ public class RestEndpointInterruptInquirer extends BaseInterruptInquirer {
             if (registeredService != null) {
                 parameters.put("registeredService", registeredService.getServiceId());
             }
+            final String language = WebUtils.getHttpServletRequestAcceptLanguageFromRequestContext();
+            final Map<String, Object> headers = new HashMap<>();
+            if (language != null) {
+                headers.put("Accept-Language", language);
+            }
             response = HttpUtils.execute(restProperties.getUrl(), restProperties.getMethod(),
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
-                parameters, new HashMap<>());
+                parameters, headers);
             if (response != null && response.getEntity() != null) {
                 return MAPPER.readValue(response.getEntity().getContent(), InterruptResponse.class);
             }
