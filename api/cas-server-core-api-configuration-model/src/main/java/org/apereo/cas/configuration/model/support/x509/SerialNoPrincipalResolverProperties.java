@@ -16,6 +16,7 @@ import java.io.Serializable;
 @Setter
 public class SerialNoPrincipalResolverProperties implements Serializable {
 
+    private static final long serialVersionUID = -4935371089672080311L;
     /**
      * Radix used when {@link X509Properties.PrincipalTypes} is {@link X509Properties.PrincipalTypes#SERIAL_NO}.
      */

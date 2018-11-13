@@ -38,6 +38,8 @@ public class Saml20ObjectBuilderTests {
 
     private static class TestableSaml20ObjectBuilder extends AbstractSaml20ObjectBuilder {
 
+        private static final long serialVersionUID = 42320924814250494L;
+
         TestableSaml20ObjectBuilder() {
             super(null);
         }
