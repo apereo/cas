@@ -18,7 +18,7 @@ public class ConnectionPoolingProperties implements Serializable {
     private static final long serialVersionUID = -5307463292890944799L;
 
     /**
-     * Controls the maximum size that the pool is allowed to reach, including both idle and in-use connections.
+     * Controls the minimum size that the pool is allowed to reach, including both idle and in-use connections.
      */
     private int minSize = 6;
 

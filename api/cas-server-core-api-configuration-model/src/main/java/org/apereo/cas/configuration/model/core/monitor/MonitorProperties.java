@@ -124,10 +124,19 @@ public class MonitorProperties implements Serializable {
         private String maxWait = "PT5S";
 
         /**
-         * Options that define the LDAP connection pool to monitor.
+         * Options that define the thread pool that will ping on the ldap pool.
          */
         @NestedConfigurationProperty
         private ConnectionPoolingProperties pool = new ConnectionPoolingProperties();
+
+        /**
+         * Initialize minPoolSize for the monitor to zero.
+         * This prevents a bad ldap connection from causing server to fail startup.
+         * User can override this default via configuration.
+         */
+        public Ldap() {
+            setMinPoolSize(0);
+        }
     }
 
     @RequiresModule(name = "cas-server-support-memcached-monitor")
