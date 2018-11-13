@@ -15,6 +15,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class SerialNoDnPrincipalResolverProperties implements Serializable {
+    private static final long serialVersionUID = 1259126639860604739L;
     /**
      * The serial number prefix used for principal resolution
      * when type is set to {@link X509Properties.PrincipalTypes#SERIAL_NO_DN}.
