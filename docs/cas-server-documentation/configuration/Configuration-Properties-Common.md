@@ -219,6 +219,8 @@ connections and queries.
 ```properties
 # cas.jdbc.showSql=true
 # cas.jdbc.genDdl=true
+# cas.jdbc.caseInsensitive=false
+# cas.jdbc.physicalTableNames.{table-name}={new-table-name}
 ```
 
 ### Database Settings
@@ -242,6 +244,7 @@ The following options related to JPA/JDBC support in CAS apply equally to a numb
 # ${configurationKey}.defaultCatalog=
 # ${configurationKey}.defaultSchema=
 # ${configurationKey}.ddlAuto=create-drop
+# ${configurationKey}.physicalNamingStrategyClassName=org.apereo.cas.jpa.CasHibernatePhysicalNamingStrategy
 
 # ${configurationKey}.autocommit=false
 # ${configurationKey}.idleTimeout=5000

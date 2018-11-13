@@ -63,6 +63,7 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
         val service = request.getParameter(SamlProtocolConstants.CONST_PARAM_TARGET);
         val requestBody = request.getMethod().equalsIgnoreCase(HttpMethod.POST.name()) ? getRequestBody(request) : null;
 
+        LOGGER.debug("Request Body: [{}]", requestBody);
         if (!StringUtils.hasText(service) && !StringUtils.hasText(requestBody)) {
             LOGGER.trace("Request does not specify a [{}] or request body is empty", SamlProtocolConstants.CONST_PARAM_TARGET);
             return null;
@@ -72,7 +73,6 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
         if (StringUtils.hasText(requestBody)) {
             request.setAttribute(SamlProtocolConstants.PARAMETER_SAML_REQUEST, requestBody);
         }
-        LOGGER.debug("Request Body: [{}]", requestBody);
         val requestChild = getRequestDocumentElement(requestBody);
         val artifactId = getArtifactIdFromRequest(requestChild);
         val requestId = getRequestIdFromRequest(requestChild);
