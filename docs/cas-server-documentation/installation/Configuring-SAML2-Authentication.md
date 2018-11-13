@@ -81,7 +81,7 @@ Here is a generated metadata file as an example:
 
 SAML2 identity provider metadata can be managed in dynamics ways as well. To learn more, please [review this guide](Configuring-SAML2-DynamicMetadata.html).
 
-## SP Metadata
+## Service Provider Metadata
 
 If the SP you wish to integrate with does not produce SAML metadata, you may be able to
 use [this service](https://www.samltool.com/sp_metadata.php) to create the metadata,
@@ -197,7 +197,7 @@ will resort to actually resolving the metadata by loading or contacting the conf
 Each service provider definition that is registered with CAS may optionally also specifically an expiration period of 
 metadata resolution to override the default global value.
 
-#### Dynamic Metadata
+#### Dynamic Metadata Resolution
 
 In addition to the more traditional means of managing service provider metadata such as direct XML files or URLs, CAS 
 provides support for a number of other strategies to fetch metadata more dynamically with the likes of MDQ and more.
@@ -281,7 +281,7 @@ CAS and the underlying ticket registry to keep track of attributes and responses
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#saml-idp).
 
-## SP Integrations
+## Service Provider Integrations
 
 A number of SAML2 service provider integrations are provided natively by CAS. To learn more,
 please [review this guide](../integration/Configuring-SAML-SP-Integrations.html).
