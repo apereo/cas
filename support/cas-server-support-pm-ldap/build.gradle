@@ -9,6 +9,8 @@ dependencies {
     implementation project(":support:cas-server-support-pm")
     
     implementation libraries.pac4j
+    implementation libraries.ldaptive
+    implementation libraries.nimbus
 
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-tickets")

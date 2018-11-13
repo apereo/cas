@@ -2,6 +2,7 @@ description = "Apereo CAS REST JWT Tickets Implementation"
 dependencies {
     implementation libraries.casclient
     implementation libraries.pac4j
+    implementation libraries.nimbus
     
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-authentication")

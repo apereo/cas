@@ -1,10 +1,9 @@
 package org.apereo.cas.dynamodb;
 
+import org.apereo.cas.aws.AmazonClientConfigurationBuilder;
 import org.apereo.cas.aws.ChainingAWSCredentialsProvider;
 import org.apereo.cas.configuration.model.support.dynamodb.AbstractDynamoDbProperties;
 
-import com.amazonaws.ClientConfiguration;
-import com.amazonaws.Protocol;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
@@ -12,8 +11,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
-import java.net.InetAddress;
 
 /**
  * This is {@link AmazonDynamoDbClientFactory}.
@@ -43,35 +40,10 @@ public class AmazonDynamoDbClientFactory {
         }
 
         val provider = ChainingAWSCredentialsProvider.getInstance(props.getCredentialAccessKey(),
-                props.getCredentialSecretKey(), props.getCredentialsPropertiesFile());
+            props.getCredentialSecretKey(), props.getCredentialsPropertiesFile());
 
         LOGGER.trace("Creating DynamoDb client configuration...");
-        val cfg = new ClientConfiguration();
-        cfg.setConnectionTimeout(props.getConnectionTimeout());
-        cfg.setMaxConnections(props.getMaxConnections());
-        cfg.setRequestTimeout(props.getRequestTimeout());
-        cfg.setSocketTimeout(props.getSocketTimeout());
-        cfg.setUseGzip(props.isUseGzip());
-        cfg.setUseReaper(props.isUseReaper());
-        cfg.setUseThrottleRetries(props.isUseThrottleRetries());
-        cfg.setUseTcpKeepAlive(props.isUseTcpKeepAlive());
-        cfg.setProtocol(Protocol.valueOf(props.getProtocol().toUpperCase()));
-        cfg.setClientExecutionTimeout(props.getClientExecutionTimeout());
-        if (props.getMaxErrorRetry() > 0) {
-            cfg.setMaxErrorRetry(props.getMaxErrorRetry());
-        }
-        cfg.setProxyHost(props.getProxyHost());
-        cfg.setProxyPassword(props.getProxyPassword());
-        if (props.getProxyPort() > 0) {
-            cfg.setProxyPort(props.getProxyPort());
-        }
-        cfg.setProxyUsername(props.getProxyUsername());
-        cfg.setCacheResponseMetadata(props.isCacheResponseMetadata());
-
-        if (StringUtils.isNotBlank(props.getLocalAddress())) {
-            LOGGER.trace("Creating DynamoDb client local address [{}]", props.getLocalAddress());
-            cfg.setLocalAddress(InetAddress.getByName(props.getLocalAddress()));
-        }
+        val cfg = AmazonClientConfigurationBuilder.buildClientConfiguration(props);
 
         LOGGER.debug("Creating DynamoDb client instance...");
         val clientBuilder = AmazonDynamoDBClientBuilder

@@ -6,6 +6,8 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":support:cas-server-support-mongo-core")
+
+    implementation libraries.nimbus
     implementation libraries.pac4j
     implementation libraries.mongo
 

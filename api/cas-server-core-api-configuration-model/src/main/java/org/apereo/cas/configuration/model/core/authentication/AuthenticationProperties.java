@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.model.support.cassandra.authentication.CassandraAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.clouddirectory.CloudDirectoryProperties;
+import org.apereo.cas.configuration.model.support.cognito.AmazonCognitoAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.couchbase.authentication.CouchbaseAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.couchdb.authentication.CouchDbAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.digest.DigestProperties;
@@ -97,6 +98,12 @@ public class AuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private CloudDirectoryProperties cloudDirectory = new CloudDirectoryProperties();
+
+    /**
+     * Configuration settings for cognito authentication.
+     */
+    @NestedConfigurationProperty
+    private AmazonCognitoAuthenticationProperties cognito = new AmazonCognitoAuthenticationProperties();
 
     /**
      * Surrogate authentication settings.
