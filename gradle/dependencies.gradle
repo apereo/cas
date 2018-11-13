@@ -3050,7 +3050,34 @@ ext.libraries = [
                     force = true
                 }
         ],
-
+        springws : [
+                dependencies.create("org.springframework.boot:spring-boot-starter-ws:$springBootVersion") {
+                    exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-dom")
+                    exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-common")
+                    force = true
+                },
+                dependencies.create("org.springframework.ws:spring-ws-security:$springWsVersion") {
+                    exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-dom")
+                    exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-common")
+                    force = true
+                },
+                dependencies.create("org.apache.wss4j:wss4j-ws-security-dom:$wss4jVersion") {
+                    force = true
+                },
+                dependencies.create("org.apache.wss4j:wss4j-ws-security-common:$wss4jVersion") {
+                    force = true
+                },
+                dependencies.create("wsdl4j:wsdl4j:$wsdl4jVersion") {
+                    exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-dom")
+                    exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-common")
+                    force = true
+                },
+                dependencies.create("com.sun.xml.messaging.saaj:saaj-impl:$saajImplVersion") {
+                    exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-dom")
+                    exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-common")
+                    force = true
+                }
+        ],
         validationapi           : dependencies.create("javax.validation:validation-api:$javaxValidationVersion"),
         xmlapis                 : dependencies.create("xml-apis:xml-apis:$xmlapisVersion") {
             force = true

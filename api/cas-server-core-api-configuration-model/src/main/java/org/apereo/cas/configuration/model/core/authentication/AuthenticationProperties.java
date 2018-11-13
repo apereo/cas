@@ -30,6 +30,7 @@ import org.apereo.cas.configuration.model.support.radius.RadiusProperties;
 import org.apereo.cas.configuration.model.support.rest.RestAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.configuration.model.support.saml.shibboleth.ShibbolethIdPProperties;
+import org.apereo.cas.configuration.model.support.soap.SoapAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.spnego.SpnegoProperties;
 import org.apereo.cas.configuration.model.support.surrogate.SurrogateAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.syncope.SyncopeAuthenticationProperties;
@@ -104,6 +105,12 @@ public class AuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private AmazonCognitoAuthenticationProperties cognito = new AmazonCognitoAuthenticationProperties();
+
+    /**
+     * Settings that control SOAP authentication.
+     */
+    @NestedConfigurationProperty
+    private SoapAuthenticationProperties soap = new SoapAuthenticationProperties();
 
     /**
      * Surrogate authentication settings.

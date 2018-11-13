@@ -16,6 +16,7 @@
     <suppress checks="InterfaceIsType"  files=".*Constants\.java"/>
     <suppress checks="\w+" files="(\.(crt|crl|class|keystore))|rebel.xml"/>
     <suppress checks="." files="com[\\/]duosecurity[\\/]duoweb[\\/]"/>
+    <suppress checks="." files="org[\\/]apereo[\\/]cas[\\/]authentication[\\/]soap[\\/]"/>
     <suppress id="stackTraceConsoleLogs" files="(.*Tests*|Mock.*|Test.*)\.java" />
     <suppress id="objectProvider" files="(.*Tests*|Mock.*|Test.*)\.java" />
     <suppress id="forbiddenAnnotations" files="(.*Tests*|Mock.*|Test.*|.*TestConfiguration.*)\.java" />
