@@ -136,7 +136,9 @@ and analyzing offline using some analysis tool.
 
 Finally, review the eviction policy of your ticket registry and ensure the values that determine object lifetime are appropriate for your environment. 
 
-## PKIX Path Building Failed
+## SSL & Certificates
+
+### PKIX Path Building Failed
 
 ```bash
 Sep 28, 2009 4:13:26 PM org.apereo.cas.client.validation.AbstractCasProtocolUrlBasedTicketValidator retrieveResponseFromServer
@@ -168,7 +170,7 @@ If you have multiple java editions installed on your machine, make sure that the
 (The one to which the certificate has been exported correctly) One common mistake that occurs while generating self-validated certificates is that the `JAVA_HOME` might be different than that used by the server.
 
 
-## No subject alternative names
+### No subject alternative names
 
 ```bash
 javax.net.ssl.SSLHandshakeException: java.security.cert.CertificateException: No subject alternative names present
@@ -177,7 +179,7 @@ javax.net.ssl.SSLHandshakeException: java.security.cert.CertificateException: No
 This is a hostname/SSL certificate CN mismatch. This commonly happens when a self-signed certificate issued to localhost is placed on a machine that 
 is accessed by IP address. It should be noted that generating a certificate with an IP address for a common name, e.g. `CN=192.168.1.1,OU=Middleware,dc=vt,dc=edu`, will not work in most cases where the client making the connection is Java.
 
-## HTTPS hostname wrong
+### HTTPS hostname wrong
 
 ```bash
 java.lang.RuntimeException: java.io.IOException: HTTPS hostname wrong:  should be <eiger.iad.vt.edu>
@@ -195,7 +197,7 @@ CN does not match the fully-qualified host name of the CAS server. There are a f
 
 It is also worth checking that the certificate your CAS server is using for SSL encryption matches the one the client is checking against. 
 
-## No name matching X found
+### No name matching X found
 
 ```bash
 Caused by: java.security.cert.CertificateException: No name matching cas.server found
@@ -205,11 +207,11 @@ Caused by: java.security.cert.CertificateException: No name matching cas.server 
 
 Same as above.
 
-## Wildcard Certificates
+### Wildcard Certificates
 
 Java support for wildcard certificates is limited to hosts strictly in the same domain as the wildcard. For example, a certificate with `CN=.vt.edu` matches hosts **`a.vt.edu`** and **`b.vt.edu`**, but *not* **`a.b.vt.edu`**.
 
-## Unrecognized Name Error
+### Unrecognized Name Error
 
 ```bash
 javax.net.ssl.SSLProtocolException: handshake alert: unrecognized_name
@@ -230,7 +232,8 @@ Alternatively, you can disable the SNI detection in JDK, by adding this flag to 
 -Djsse.enableSNIExtension=false
 ```
 
-## When All Else Fails
+### When All Else Fails
+
 If you have read, understood, and tried all the troubleshooting tips on this page and continue to have problems, 
 please perform an SSL trace and attach it to a posting to the 
 CAS mailing lists. An SSL trace is written to 
