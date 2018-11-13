@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.interrupt.InterruptProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.web.support.WebUtils;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -52,9 +54,17 @@ public class RestEndpointInterruptInquirer extends BaseInterruptInquirer {
             if (registeredService != null) {
                 parameters.put("registeredService", registeredService.getServiceId());
             }
+
+            val headers = new HashMap<String, Object>();
+            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+            val acceptedLanguage = request.getHeader("accept-language");
+            if (StringUtils.isNotBlank(acceptedLanguage)) {
+                headers.put("Accept-Language", acceptedLanguage);
+            }
+
             response = HttpUtils.execute(restProperties.getUrl(), restProperties.getMethod(),
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
-                parameters, new HashMap<>());
+                parameters, headers);
             if (response != null && response.getEntity() != null) {
                 val content = response.getEntity().getContent();
                 val result = IOUtils.toString(content, StandardCharsets.UTF_8);
