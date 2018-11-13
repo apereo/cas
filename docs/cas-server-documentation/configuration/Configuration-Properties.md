@@ -2002,6 +2002,20 @@ AWS settings for this feature are available [here](Configuration-Properties-Comm
 # cas.authn.cognito.userPoolId=
 ```
 
+
+## SOAP Authentication
+
+To learn more about this topic, [please review this guide](../installation/SOAP-Authentication.html).
+
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.soap`.
+Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.soap`.
+
+```properties
+# cas.authn.soap.name=
+# cas.authn.soap.order=
+# cas.authn.soap.url=
+```
+
 ## Remote Address Authentication
 
 To learn more about this topic, [please review this guide](../installation/Remote-Address-Authentication.html).
