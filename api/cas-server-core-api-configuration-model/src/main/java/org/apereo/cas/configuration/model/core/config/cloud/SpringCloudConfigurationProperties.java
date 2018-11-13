@@ -30,6 +30,7 @@ public class SpringCloudConfigurationProperties implements Serializable {
     @Getter
     @Setter
     public static class Cloud implements Serializable {
+        private static final long serialVersionUID = -6326706651416825269L;
         /**
          * MongoDb config settings.
          */
@@ -50,6 +51,7 @@ public class SpringCloudConfigurationProperties implements Serializable {
     @Getter
     @Setter
     public static class MongoDb implements Serializable {
+        private static final long serialVersionUID = -6509143371334754469L;
         /**
          * Mongodb URI.
          */
@@ -61,6 +63,7 @@ public class SpringCloudConfigurationProperties implements Serializable {
     @Getter
     @Setter
     public static class Jdbc implements Serializable {
+        private static final long serialVersionUID = -7575240387340025345L;
         /**
          * SQL statement.
          */
