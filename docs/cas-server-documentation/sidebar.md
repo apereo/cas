@@ -61,6 +61,7 @@ layout: null
         *   [Pac4J](/$version/installation/Pac4j-Authentication.html)
         *   [Whitelist](/$version/installation/Whitelist-Authentication.html)
         *   [Blacklist](/$version/installation/Blacklist-Authentication.html)
+        *   [SOAP](/$version/installation/SOAP-Authentication.html)
         *   [Custom](/$version/installation/Configuring-Custom-Authentication.html)
     *   [Delegation](/$version/integration/Delegate-Authentication.html)
         *   [ADFS](/$version/integration/ADFS-Integration.html)

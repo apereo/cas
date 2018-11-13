@@ -24,6 +24,16 @@
         <Logger name="org.springframework.ws" level="warn" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
+        <Logger name="org.apache.ws" level="warn" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
+        <Logger name="org.apache.wss4j" level="warn" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
+        <Logger name="org.springframework.oxm" level="warn" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
+
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>

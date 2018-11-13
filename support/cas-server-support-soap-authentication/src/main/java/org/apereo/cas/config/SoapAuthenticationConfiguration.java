@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.soap.GetSoapAuthenticationRequest;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -25,6 +26,11 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
+
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.helpers.DefaultValidationEventHandler;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 
 /**
  * This is {@link SoapAuthenticationConfiguration}.
@@ -78,7 +84,12 @@ public class SoapAuthenticationConfiguration {
     @Bean
     public Jaxb2Marshaller soapAuthenticationMarshaller() {
         val marshaller = new Jaxb2Marshaller();
-        marshaller.setContextPath("org.apereo.cas.authentication.soap");
+        marshaller.setContextPath(GetSoapAuthenticationRequest.class.getPackageName());
+        val props = new HashMap<String, Object>();
+        props.put(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        props.put(Marshaller.JAXB_ENCODING, StandardCharsets.UTF_8.name());
+        marshaller.setMarshallerProperties(props);
+        marshaller.setValidationEventHandler(new DefaultValidationEventHandler());
         return marshaller;
     }
 

@@ -26,5 +26,4 @@
             <xs:element name="value" type="xs:anyType"/>
         </xs:sequence>
     </xs:complexType>
-
 </xs:schema>
