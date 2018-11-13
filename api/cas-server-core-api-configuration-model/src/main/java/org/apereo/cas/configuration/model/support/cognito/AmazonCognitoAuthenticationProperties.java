@@ -20,6 +20,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Getter
 @Setter
 public class AmazonCognitoAuthenticationProperties extends BaseAmazonWebServicesProperties {
+    private static final long serialVersionUID = -4748558614314096213L;
     /**
      * The name of the authentication handler.
      */
