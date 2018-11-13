@@ -542,6 +542,28 @@ public class WebUtils {
     }
 
     /**
+     * Gets http servlet request accept language.
+     *
+     * @return the http servlet request accept language
+     */
+    public static String getHttpServletRequestAcceptLanguageFromRequestContext() {
+        final HttpServletRequest request = getHttpServletRequestFromExternalWebflowContext();
+        return HttpRequestUtils.getHttpServletRequestAcceptLanguage(request);
+    }
+
+    /**
+     * Gets http servlet request accept language from request context.
+     *
+     * @param context the context
+     * @return the http servlet request accept language from request context
+     */
+    public static String getHttpServletRequestAcceptLanguageFromRequestContext(final RequestContext context) {
+        final HttpServletRequest request = getHttpServletRequestFromExternalWebflowContext(context);
+        return HttpRequestUtils.getHttpServletRequestAcceptLanguage(request);
+    }
+
+
+    /**
      * Gets http servlet request geo location.
      *
      * @return the http servlet request geo location
