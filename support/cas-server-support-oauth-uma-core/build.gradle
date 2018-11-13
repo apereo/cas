@@ -21,7 +21,9 @@ dependencies {
     implementation project(":support:cas-server-support-jpa-util")
     
     implementation libraries.pac4j
-
+    implementation libraries.nimbus
+    implementation libraries.jose4j
+    
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
     
     testImplementation project(":support:cas-server-support-person-directory")

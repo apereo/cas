@@ -1985,6 +1985,23 @@ under the configuration key `cas.authn.cloudDirectory`.
 # cas.authn.cloudDirectory.order=
 ```
 
+## Amazon Cognito Authentication
+
+To learn more about this topic, [please review this guide](../installation/AWS-Cognito-Authentication.html).
+
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.cognito`.
+Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.cognito`.
+
+AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) under the configuration key `cas.authn.cognito`.
+
+```properties
+# cas.authn.cognito.name=
+# cas.authn.cognito.order=
+
+# cas.authn.cognito.clientId=
+# cas.authn.cognito.userPoolId=
+```
+
 ## Remote Address Authentication
 
 To learn more about this topic, [please review this guide](../installation/Remote-Address-Authentication.html).

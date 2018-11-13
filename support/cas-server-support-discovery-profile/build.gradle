@@ -31,6 +31,7 @@ dependencies {
     api project(":api:cas-server-core-api-web")
 
     implementation libraries.pac4j
+    implementation libraries.nimbus
     
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-web")

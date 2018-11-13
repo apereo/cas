@@ -13,6 +13,8 @@ dependencies {
     implementation project(":support:cas-server-support-pac4j-authentication")
 
     implementation libraries.pac4j
+    implementation libraries.jose4j
+    implementation libraries.nimbus
     
     testImplementation project(":core:cas-server-core-webflow")
     testImplementation project(":support:cas-server-support-person-directory")

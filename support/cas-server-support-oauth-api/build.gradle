@@ -3,5 +3,8 @@ dependencies {
     api project(":api:cas-server-core-api-throttle")
     
     compileOnly project(":core:cas-server-core-tickets")
+
+    implementation libraries.nimbus
     implementation libraries.pac4j
+    implementation libraries.jose4j
 }
