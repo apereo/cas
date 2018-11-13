@@ -36,7 +36,8 @@ public class Beans {
      * @return the thread pool executor factory bean
      */
     public static ThreadPoolExecutorFactoryBean newThreadPoolExecutorFactoryBean(final ConnectionPoolingProperties config) {
-        val bean = newThreadPoolExecutorFactoryBean(config.getMaxSize(), config.getMaxSize());
+        val bean = new ThreadPoolExecutorFactoryBean();
+        bean.setMaxPoolSize(config.getMaxSize());
         bean.setCorePoolSize(config.getMinSize());
         return bean;
     }
