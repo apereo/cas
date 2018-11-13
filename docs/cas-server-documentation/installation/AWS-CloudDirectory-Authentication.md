@@ -33,3 +33,15 @@ AWS credentials are fetched from the following sources automatically, where rele
 5. Environment variables that include `AWS_ACCESS_KEY_ID`, `AWS_SECRET_KEY` and `AWS_SESSION_TOKEN`.
 6. Properties file on the classpath as `awscredentials.properties` that contains `accessKey` and `secretKey` as property keys.
 7. Static credentials for access key and secret provided directly by the configuration at hand (logging, etc).
+
+## Troubleshooting
+
+To enable additional logging, configure the log4j configuration file to add the following levels:
+
+```xml
+...
+<AsyncLogger name="com.amazonaws" level="debug" additivity="false">
+    <AppenderRef ref="console"/>
+    <AppenderRef ref="file"/>
+</AsyncLogger>
+...
