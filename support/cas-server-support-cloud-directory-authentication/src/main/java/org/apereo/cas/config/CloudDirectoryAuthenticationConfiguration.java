@@ -55,7 +55,7 @@ public class CloudDirectoryAuthenticationConfiguration {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
-    @ConditionalOnMissingBean(name = "amazonCloudDirectory")
+    @ConditionalOnMissingBean(name = "cloudDirectoryAuthenticationHandler")
     @Bean
     @RefreshScope
     public AuthenticationHandler cloudDirectoryAuthenticationHandler() {

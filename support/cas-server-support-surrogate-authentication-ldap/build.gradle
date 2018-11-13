@@ -1,5 +1,7 @@
 description = "Apereo CAS Surrogate Authentication LDAP Support"
 dependencies {
+    implementation libraries.ldaptive
+    
     implementation project(":support:cas-server-support-surrogate-authentication")
     implementation project(":support:cas-server-support-ldap-core")
     implementation project(":core:cas-server-core-authentication-api")

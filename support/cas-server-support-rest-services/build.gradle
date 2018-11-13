@@ -13,6 +13,7 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-api")
 
     implementation libraries.pac4j
+    implementation libraries.nimbus
 
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-configuration")
