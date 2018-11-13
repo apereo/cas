@@ -1,8 +1,10 @@
 description = "Apereo CAS Web Application Configuration"
 dependencies {
-
+    implementation libraries.nimbus
     implementation libraries.pac4j
+    implementation libraries.jose4j
     implementation libraries.metrics
+    implementation libraries.ldaptive
     implementation libraries.cassecurityfilter
 
     api project(":api:cas-server-core-api-webflow")

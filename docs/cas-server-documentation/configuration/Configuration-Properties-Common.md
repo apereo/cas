@@ -660,27 +660,7 @@ The following options related to DynamoDb support in CAS apply equally to a numb
 ```properties
 # ${configurationKey}.dynamoDb.dropTablesOnStartup=false
 # ${configurationKey}.dynamoDb.preventTableCreationOnStartup=false
-
 # ${configurationKey}.dynamoDb.localInstance=false
-# ${configurationKey}.dynamoDb.maxErrorRetry=-1
-# ${configurationKey}.dynamoDb.proxyHost=
-# ${configurationKey}.dynamoDb.proxyPassword=
-# ${configurationKey}.dynamoDb.proxyPort=-1
-
-# ${configurationKey}.dynamoDb.readCapacity=10
-# ${configurationKey}.dynamoDb.writeCapacity=10
-# ${configurationKey}.dynamoDb.connectionTimeout=5000
-# ${configurationKey}.dynamoDb.requestTimeout=5000
-# ${configurationKey}.dynamoDb.socketTimeout=5000
-# ${configurationKey}.dynamoDb.useGzip=false
-# ${configurationKey}.dynamoDb.useReaper=false
-# ${configurationKey}.dynamoDb.useThrottleRetries=false
-# ${configurationKey}.dynamoDb.useTcpKeepAlive=false
-# ${configurationKey}.dynamoDb.protocol=HTTPS
-# ${configurationKey}.dynamoDb.clientExecutionTimeout=10000
-# ${configurationKey}.dynamoDb.cacheResponseMetadata=false
-# ${configurationKey}.dynamoDb.localAddress=
-# ${configurationKey}.dynamoDb.maxConnections=10
 ```
     
 AWS settings for this feature are available [here](#amazon-integration-settings).
@@ -860,6 +840,25 @@ Amazon Web Service features, given the provider's *configuration key*:
 # ${configurationKey}.region=US_WEST_2|US_EAST_2|EU_WEST_2|<REGION-NAME>
 # ${configurationKey}.regionOverride=
 # ${configurationKey}.localAddress=
+
+# ${configurationKey}.maxErrorRetry=-1
+# ${configurationKey}.proxyHost=
+# ${configurationKey}.proxyPassword=
+# ${configurationKey}.proxyPort=-1
+
+# ${configurationKey}.readCapacity=10
+# ${configurationKey}.writeCapacity=10
+# ${configurationKey}.connectionTimeout=5000
+# ${configurationKey}.requestTimeout=5000
+# ${configurationKey}.socketTimeout=5000
+# ${configurationKey}.useGzip=false
+# ${configurationKey}.useReaper=false
+# ${configurationKey}.useThrottleRetries=false
+# ${configurationKey}.useTcpKeepAlive=false
+# ${configurationKey}.protocol=HTTPS
+# ${configurationKey}.clientExecutionTimeout=10000
+# ${configurationKey}.cacheResponseMetadata=false
+# ${configurationKey}.maxConnections=10
 ```
 
 ## Memcached Integration Settings

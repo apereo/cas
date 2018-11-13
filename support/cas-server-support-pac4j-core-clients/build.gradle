@@ -11,6 +11,7 @@ dependencies {
     api project(":api:cas-server-core-api")
     
     implementation libraries.pac4j
+    implementation libraries.nimbus
     implementation libraries.opensaml
     
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

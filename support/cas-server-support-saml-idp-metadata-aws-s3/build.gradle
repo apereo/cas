@@ -21,6 +21,7 @@ dependencies {
     implementation libraries.shibidp
     implementation libraries.pac4j
     implementation libraries.caffein
+    implementation libraries.nimbus
     
     runtimeOnly libraries.groovy
 
