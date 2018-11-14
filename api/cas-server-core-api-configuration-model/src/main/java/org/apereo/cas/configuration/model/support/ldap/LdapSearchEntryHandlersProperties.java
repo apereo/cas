@@ -26,7 +26,7 @@ public class LdapSearchEntryHandlersProperties implements Serializable {
      * Provides the ability to modify the case of search entry DNs, attribute names, and attribute values.
      */
     @NestedConfigurationProperty
-    private CaseChangeSearchEntryHandlersProperties casChange = new CaseChangeSearchEntryHandlersProperties();
+    private CaseChangeSearchEntryHandlersProperties caseChange = new CaseChangeSearchEntryHandlersProperties();
     /**
      * Adds the entry DN as an attribute to the result set. Provides a client side implementation of RFC 5020.
      */
