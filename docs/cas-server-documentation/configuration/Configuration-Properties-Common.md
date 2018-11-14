@@ -1172,9 +1172,7 @@ The following authentication types are supported:
 ### LDAP Search Entry Handlers
 
 ```properties
-# ${configurationKey}.searchEntryHandlers[0].type=CASE_CHANGE|DN_ATTRIBUTE_ENTRY|MERGE| \
-#                                               OBJECT_GUID|OBJECT_SID|PRIMARY_GROUP| \
-#                                               RANGE_ENTRY|RECURSIVE_ENTRY
+# ${configurationKey}.searchEntryHandlers[0].type=
 
 # ${configurationKey}.searchEntryHandlers[0].caseChange.dnCaseChange=NONE|LOWER|UPPER
 # ${configurationKey}.searchEntryHandlers[0].caseChange.attributeNameCaseChange=NONE|LOWER|UPPER
@@ -1193,3 +1191,16 @@ The following authentication types are supported:
 # ${configurationKey}.searchEntryHandlers[0].recursive.searchAttribute=
 # ${configurationKey}.searchEntryHandlers[0].recursive.mergeAttributes=
 ```
+
+The following types are supported:
+
+| Type                    | Description                            
+|-------------------------|----------------------------------------------------------------------------------------------------
+| `CASE_CHANGE` | Provides the ability to modify the case of search entry DNs, attribute names, and attribute values.
+| `DN_ATTRIBUTE_ENTRY` | Adds the entry DN as an attribute to the result set. Provides a client side implementation of RFC 5020.
+| `MERGE` | Merges the values of one or more attributes into a single attribute.
+| `OBJECT_GUID` | Handles the `objectGUID` attribute fetching and conversion. 
+| `OBJECT_SID` | Handles the `objectSid` attribute fetching and conversion. 
+| `PRIMARY_GROUP` | Constructs the primary group SID and then searches for that group and puts it's DN in the 'memberOf' attribute of the original search entry. 
+| `RANGE_ENTRY` |  Rewrites attributes returned from Active Directory to include all values by performing additional searches.
+| `RECURSIVE_ENTRY` | This recursively searches based on a supplied attribute and merges those results into the original entry.

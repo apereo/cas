@@ -988,22 +988,25 @@ public class LdapUtils {
             switch (h.getType()) {
                 case CASE_CHANGE:
                     val eh = new CaseChangeEntryHandler();
-                    eh.setAttributeNameCaseChange(CaseChangeEntryHandler.CaseChange.valueOf(h.getCasChange().getAttributeNameCaseChange()));
-                    eh.setAttributeNames(h.getCasChange().getAttributeNames().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
-                    eh.setAttributeValueCaseChange(CaseChangeEntryHandler.CaseChange.valueOf(h.getCasChange().getAttributeValueCaseChange()));
-                    eh.setDnCaseChange(CaseChangeEntryHandler.CaseChange.valueOf(h.getCasChange().getDnCaseChange()));
+                    val caseChange = h.getCaseChange();
+                    eh.setAttributeNameCaseChange(CaseChangeEntryHandler.CaseChange.valueOf(caseChange.getAttributeNameCaseChange()));
+                    eh.setAttributeNames(caseChange.getAttributeNames().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
+                    eh.setAttributeValueCaseChange(CaseChangeEntryHandler.CaseChange.valueOf(caseChange.getAttributeValueCaseChange()));
+                    eh.setDnCaseChange(CaseChangeEntryHandler.CaseChange.valueOf(caseChange.getDnCaseChange()));
                     handlers.add(eh);
                     break;
                 case DN_ATTRIBUTE_ENTRY:
                     val ehd = new DnAttributeEntryHandler();
-                    ehd.setAddIfExists(h.getDnAttribute().isAddIfExists());
-                    ehd.setDnAttributeName(h.getDnAttribute().getDnAttributeName());
+                    val dnAttribute = h.getDnAttribute();
+                    ehd.setAddIfExists(dnAttribute.isAddIfExists());
+                    ehd.setDnAttributeName(dnAttribute.getDnAttributeName());
                     handlers.add(ehd);
                     break;
                 case MERGE:
                     val ehm = new MergeAttributeEntryHandler();
-                    ehm.setAttributeNames(h.getMergeAttribute().getAttributeNames().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
-                    ehm.setMergeAttributeName(h.getMergeAttribute().getMergeAttributeName());
+                    val mergeAttribute = h.getMergeAttribute();
+                    ehm.setAttributeNames(mergeAttribute.getAttributeNames().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
+                    ehm.setMergeAttributeName(mergeAttribute.getMergeAttributeName());
                     handlers.add(ehm);
                     break;
                 case OBJECT_GUID:
@@ -1014,16 +1017,17 @@ public class LdapUtils {
                     break;
                 case PRIMARY_GROUP:
                     val ehp = new PrimaryGroupIdHandler();
-                    ehp.setBaseDn(h.getPrimaryGroupId().getBaseDn());
-                    ehp.setGroupFilter(h.getPrimaryGroupId().getGroupFilter());
+                    val primaryGroupId = h.getPrimaryGroupId();
+                    ehp.setBaseDn(primaryGroupId.getBaseDn());
+                    ehp.setGroupFilter(primaryGroupId.getGroupFilter());
                     handlers.add(ehp);
                     break;
                 case RANGE_ENTRY:
                     handlers.add(new RangeEntryHandler());
                     break;
                 case RECURSIVE_ENTRY:
-                    handlers.add(new RecursiveEntryHandler(h.getRecursive().getSearchAttribute(),
-                        h.getRecursive().getMergeAttributes().toArray(ArrayUtils.EMPTY_STRING_ARRAY)));
+                    val recursive = h.getRecursive();
+                    handlers.add(new RecursiveEntryHandler(recursive.getSearchAttribute(), recursive.getMergeAttributes().toArray(ArrayUtils.EMPTY_STRING_ARRAY)));
                     break;
                 default:
                     break;
