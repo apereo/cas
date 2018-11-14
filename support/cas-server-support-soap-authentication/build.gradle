@@ -49,15 +49,15 @@ dependencies {
 jaxb2 {
     xjc {
         "classes" {
-            basePackage = "org.apereo.cas.authentication.soap"
+            basePackage = "org.apereo.cas.authentication.soap.generated"
             schema = "src/main/resources/xsd/users.xsd"
         }
     }
 }
 
 task moveGeneratedSourceFiles(type: Copy, description: "Move generated files by JAXB into source") {
-    from "src/generated/java/org/apereo/cas/authentication/soap"
-    into "src/main/java/org/apereo/cas/authentication/soap"
+    from "src/generated/java/org/apereo/cas/authentication/soap/generated"
+    into "src/main/java/org/apereo/cas/authentication/soap/generated"
     doLast {
         file("src/generated").deleteDir()
     }
