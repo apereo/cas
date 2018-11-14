@@ -36,18 +36,6 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
     private final YubiKeyAccountRegistry registry;
     private final YubicoClient client;
 
-    /**
-     * Prepares the Yubico client with the received clientId and secretKey. If you wish to
-     * limit the usage of this handler only to a particular set of yubikey accounts for a special
-     * group of users, you may verify an compliant implementation of {@link YubiKeyAccountRegistry}.
-     * By default, all accounts are allowed.
-     *
-     * @param name             the name
-     * @param servicesManager  the services manager
-     * @param principalFactory the principal factory
-     * @param client           the client
-     * @param registry         the account registry which holds registrations.
-     */
     public YubiKeyAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                         final PrincipalFactory principalFactory,
                                         final YubicoClient client,
