@@ -3054,26 +3054,32 @@ ext.libraries = [
                 dependencies.create("org.springframework.boot:spring-boot-starter-web-services:$springBootVersion") {
                     exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-dom")
                     exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-common")
+                    exclude(group: "org.jvnet.mimepull", module: "mimepull")
                     force = true
                 },
                 dependencies.create("org.springframework.ws:spring-ws-security:$springWsVersion") {
                     exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-dom")
                     exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-common")
+                    exclude(group: "org.jvnet.mimepull", module: "mimepull")
                     force = true
                 },
                 dependencies.create("org.apache.wss4j:wss4j-ws-security-dom:$wss4jVersion") {
+                    exclude(group: "org.jvnet.mimepull", module: "mimepull")
                     force = true
                 },
                 dependencies.create("org.apache.wss4j:wss4j-ws-security-common:$wss4jVersion") {
+                    exclude(group: "org.jvnet.mimepull", module: "mimepull")
                     force = true
                 },
                 dependencies.create("wsdl4j:wsdl4j:$wsdl4jVersion") {
                     exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-dom")
                     exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-common")
+                    exclude(group: "org.jvnet.mimepull", module: "mimepull")
                     force = true
                 },
                 dependencies.create("com.sun.xml.messaging.saaj:saaj-impl:$saajImplVersion") {
                     exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-dom")
+                    exclude(group: "org.jvnet.mimepull", module: "mimepull")
                     exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-common")
                     force = true
                 }
