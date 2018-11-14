@@ -245,7 +245,7 @@ To see the relevant list of CAS properties and tune this behavior, please [revie
 
 As part of the CAS Security Filter, the CAS project automatically provides the necessary configuration to
 insert HTTP Security headers into the web response to prevent against HSTS, XSS, X-FRAME and other attacks.
-These settings are presently off by default.
+These settings are presently on by default.
 To see the relevant list of CAS properties and tune this behavior, please [review this guide](../configuration/Configuration-Properties.html#http-web-requests).
 
 To review and learn more about these options, please visit [this guide][cas-sec-filter].
