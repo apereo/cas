@@ -1,8 +1,8 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
-import org.apereo.cas.authentication.soap.GetSoapAuthenticationRequest;
-import org.apereo.cas.authentication.soap.GetSoapAuthenticationResponse;
+import org.apereo.cas.authentication.soap.generated.GetSoapAuthenticationRequest;
+import org.apereo.cas.authentication.soap.generated.GetSoapAuthenticationResponse;
 
 import lombok.val;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
