@@ -36,7 +36,6 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
     private final YubiKeyAccountRegistry registry;
     private final YubicoClient client;
 
-     * @param order            the order
     public YubiKeyAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                         final PrincipalFactory principalFactory,
                                         final YubicoClient client,
