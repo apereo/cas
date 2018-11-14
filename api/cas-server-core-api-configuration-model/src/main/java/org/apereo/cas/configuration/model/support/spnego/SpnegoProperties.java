@@ -128,6 +128,11 @@ public class SpnegoProperties implements Serializable {
      */
     private String name;
 
+    /**
+     * The order of the authentication handler in the chain.
+     */
+    private int order = Integer.MAX_VALUE;
+
     @Getter
     @Setter
     public static class Ldap extends AbstractLdapSearchProperties {

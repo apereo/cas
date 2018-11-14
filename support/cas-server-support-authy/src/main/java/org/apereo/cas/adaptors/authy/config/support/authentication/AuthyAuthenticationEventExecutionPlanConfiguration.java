@@ -69,7 +69,7 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
         val authy = casProperties.getAuthn().getMfa().getAuthy();
         val forceVerification = authy.isForceVerification();
         return new AuthyAuthenticationHandler(authy.getName(), servicesManager.getIfAvailable(),
-            authyPrincipalFactory(), authyClientInstance(), forceVerification);
+            authyPrincipalFactory(), authyClientInstance(), forceVerification, authy.getOrder());
     }
 
     @ConditionalOnMissingBean(name = "authyPrincipalFactory")

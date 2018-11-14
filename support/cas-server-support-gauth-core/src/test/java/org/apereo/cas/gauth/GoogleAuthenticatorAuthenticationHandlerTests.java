@@ -71,7 +71,8 @@ public class GoogleAuthenticatorAuthenticationHandlerTests {
             PrincipalFactoryUtils.newPrincipalFactory(),
             googleAuthenticator,
             new CachingOneTimeTokenRepository(Caffeine.newBuilder().initialCapacity(10).build(s -> null)),
-            new InMemoryGoogleAuthenticatorTokenCredentialRepository(CipherExecutor.noOpOfStringToString(), googleAuthenticator));
+            new InMemoryGoogleAuthenticatorTokenCredentialRepository(CipherExecutor.noOpOfStringToString(), googleAuthenticator),
+            null);
 
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();

@@ -39,7 +39,6 @@ import java.util.Arrays;
 @Slf4j
 public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
-
     private static final int NBT_ADDRESS_TYPE = 0x1C;
     private static final int NTLM_TOKEN_TYPE_FIELD_INDEX = 8;
     private static final int NTLM_TOKEN_TYPE_ONE = 1;
@@ -51,11 +50,12 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
      */
     private final String domainController;
     private final String includePattern;
-    private boolean loadBalance = true;
+    private final boolean loadBalance;
 
     public NtlmAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
-                                     final boolean loadBalance, final String domainController, final String includePattern) {
-        super(name, servicesManager, principalFactory, null);
+                                     final boolean loadBalance, final String domainController, final String includePattern,
+                                     final Integer order) {
+        super(name, servicesManager, principalFactory, order);
         this.loadBalance = loadBalance;
         if (StringUtils.isBlank(domainController)) {
             this.domainController = DEFAULT_DOMAIN_CONTROLLER;
