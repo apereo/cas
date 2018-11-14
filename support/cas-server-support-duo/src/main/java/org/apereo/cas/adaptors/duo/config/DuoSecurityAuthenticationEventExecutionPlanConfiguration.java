@@ -130,7 +130,8 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
             .map(d -> new DuoAuthenticationHandler(d.getId(),
                 servicesManager.getIfAvailable(),
                 duoPrincipalFactory(),
-                duoProviderBean().getProvider(d.getId()))
+                duoProviderBean().getProvider(d.getId()),
+                d.getOrder())
             ).collect(Collectors.toList());
     }
 

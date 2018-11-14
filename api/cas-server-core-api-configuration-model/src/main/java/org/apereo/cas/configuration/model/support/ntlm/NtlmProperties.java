@@ -42,4 +42,9 @@ public class NtlmProperties implements Serializable {
      * The name of the authentication handler.
      */
     private String name;
+
+    /**
+     * The order of the authentication handler in the chain.
+     */
+    private int order = Integer.MAX_VALUE;
 }

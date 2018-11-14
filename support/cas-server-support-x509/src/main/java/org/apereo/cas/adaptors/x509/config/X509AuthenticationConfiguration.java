@@ -147,7 +147,7 @@ public class X509AuthenticationConfiguration {
             crlFetcher(),
             x509CrlResources);
     }
-    
+
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "crlFetcher")
@@ -168,21 +168,25 @@ public class X509AuthenticationConfiguration {
     public AuthenticationHandler x509CredentialsAuthenticationHandler() {
         val x509 = casProperties.getAuthn().getX509();
         val revChecker = getRevocationCheckerFrom(x509);
+        val subjectDnPattern = StringUtils.isNotBlank(x509.getRegExSubjectDnPattern())
+            ? RegexUtils.createPattern(x509.getRegExSubjectDnPattern())
+            : null;
+        val trustedIssuerDnPattern = StringUtils.isNotBlank(x509.getRegExTrustedIssuerDnPattern())
+            ? RegexUtils.createPattern(x509.getRegExTrustedIssuerDnPattern())
+            : null;
+
         return new X509CredentialsAuthenticationHandler(
             x509.getName(),
             servicesManager.getIfAvailable(),
             x509PrincipalFactory(),
-            StringUtils.isNotBlank(x509.getRegExTrustedIssuerDnPattern())
-                ? RegexUtils.createPattern(x509.getRegExTrustedIssuerDnPattern())
-                : null,
+            trustedIssuerDnPattern,
             x509.getMaxPathLength(),
             x509.isMaxPathLengthAllowUnspecified(),
             x509.isCheckKeyUsage(),
             x509.isRequireKeyUsage(),
-            StringUtils.isNotBlank(x509.getRegExSubjectDnPattern())
-                ? RegexUtils.createPattern(x509.getRegExSubjectDnPattern())
-                : null,
-            revChecker);
+            subjectDnPattern,
+            revChecker,
+            x509.getOrder());
     }
 
     @Bean
