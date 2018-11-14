@@ -97,6 +97,14 @@ POST /cas/v1/tickets/{TGT id} HTTP/1.0
 service={form encoded parameter for the service url}
 ```
 
+You may also specify a `renew` parameter to obtain a service ticket that can be accepted by a service that only wants tickets issued from the presentation of the user's primary credentials. In that case, user credentials have to be passed in the request, for example, as `username` and `password` parameters.
+
+```bash
+POST /cas/v1/tickets/{TGT id} HTTP/1.0
+
+service={form encoded parameter for the service url}&renew=true&username=battags&password=password
+```
+
 You may also submit service ticket requests using the semantics [SAML1 protocol](SAML-Protocol.html).
 
 ### Successful Response
