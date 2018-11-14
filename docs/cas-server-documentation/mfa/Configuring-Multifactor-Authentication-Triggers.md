@@ -270,7 +270,7 @@ class SampleGroovyEventResolver {
         def service = args[0]
         def registeredService = args[1]
         def authentication = args[2]
-        def requestContext = args[3]
+        def httpRequest = args[3]
         def logger = args[4]
 
         ...
@@ -287,6 +287,7 @@ The parameters passed are as follows:
 | `service`             | The object representing the incoming service provided in the request, if any.
 | `registeredService`   | The object representing the corresponding service definition in the registry.
 | `authentication`      | The object representing the established authentication event, containing the principal.
+| `httpRequest`         | The object representing the `HttpServletRequest`.
 | `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
 
 As an example, the following script triggers multifactor authentication via Duo Security, if the requesting application is `https://www.example.com` and the authenticated principal contains a `mail` attribute whose values contain `email@example.org`.
