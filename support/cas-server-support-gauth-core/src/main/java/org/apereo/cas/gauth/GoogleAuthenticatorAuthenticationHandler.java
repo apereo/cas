@@ -44,8 +44,9 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
                                                     final PrincipalFactory principalFactory,
                                                     final IGoogleAuthenticator googleAuthenticatorInstance,
                                                     final OneTimeTokenRepository tokenRepository,
-                                                    final OneTimeTokenCredentialRepository credentialRepository) {
-        super(name, servicesManager, principalFactory, null);
+                                                    final OneTimeTokenCredentialRepository credentialRepository,
+                                                    final Integer order) {
+        super(name, servicesManager, principalFactory, order);
         this.googleAuthenticatorInstance = googleAuthenticatorInstance;
         this.tokenRepository = tokenRepository;
         this.credentialRepository = credentialRepository;

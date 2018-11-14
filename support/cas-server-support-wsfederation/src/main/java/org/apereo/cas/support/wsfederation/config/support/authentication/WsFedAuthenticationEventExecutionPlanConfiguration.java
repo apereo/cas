@@ -137,7 +137,6 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
-
     @ConditionalOnMissingBean(name = "wsfedAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer wsfedAuthenticationEventExecutionPlanConfigurer() {
@@ -146,7 +145,8 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
             .filter(wsfed -> StringUtils.isNotBlank(wsfed.getIdentityProviderUrl())
                 && StringUtils.isNotBlank(wsfed.getIdentityProviderIdentifier()))
             .forEach(wsfed -> {
-                val handler = new WsFederationAuthenticationHandler(wsfed.getName(), servicesManager.getIfAvailable(), wsfedPrincipalFactory());
+                val handler = new WsFederationAuthenticationHandler(wsfed.getName(), servicesManager.getIfAvailable(),
+                    wsfedPrincipalFactory(), wsfed.getOrder());
                 if (!wsfed.isAttributeResolverEnabled()) {
                     plan.registerAuthenticationHandler(handler);
                 } else {

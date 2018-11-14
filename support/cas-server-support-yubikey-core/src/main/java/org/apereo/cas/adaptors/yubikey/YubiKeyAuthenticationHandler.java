@@ -51,15 +51,16 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
     public YubiKeyAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                         final PrincipalFactory principalFactory,
                                         final YubicoClient client,
-                                        final YubiKeyAccountRegistry registry) {
-        super(name, servicesManager, principalFactory, null);
+                                        final YubiKeyAccountRegistry registry,
+                                        final Integer order) {
+        super(name, servicesManager, principalFactory, order);
         this.registry = registry;
         this.client = client;
     }
 
     public YubiKeyAuthenticationHandler(final YubicoClient client) {
         this(StringUtils.EMPTY, null, null,
-            client, new OpenYubiKeyAccountRegistry(new AcceptAllYubiKeyAccountValidator()));
+            client, new OpenYubiKeyAccountRegistry(new AcceptAllYubiKeyAccountValidator()), null);
     }
 
     @Override
