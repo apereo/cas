@@ -1,8 +1,8 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.authentication.soap.GetSoapAuthenticationRequest;
-import org.apereo.cas.authentication.soap.GetSoapAuthenticationResponse;
-import org.apereo.cas.authentication.soap.MapItemType;
+import org.apereo.cas.authentication.soap.generated.GetSoapAuthenticationRequest;
+import org.apereo.cas.authentication.soap.generated.GetSoapAuthenticationResponse;
+import org.apereo.cas.authentication.soap.generated.MapItemType;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
