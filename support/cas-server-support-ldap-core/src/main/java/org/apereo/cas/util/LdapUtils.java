@@ -679,6 +679,17 @@ public class LdapUtils {
         if (StringUtils.isBlank(l.getDnFormat())) {
             throw new IllegalArgumentException("Dn format cannot be empty/blank for direct bind authentication");
         }
+        return getAuthenticatorViaDnFormat(l);
+    }
+
+    private static Authenticator getActiveDirectoryAuthenticator(final AbstractLdapAuthenticationProperties l) {
+        if (StringUtils.isBlank(l.getDnFormat())) {
+            throw new IllegalArgumentException("Dn format cannot be empty/blank for active directory authentication");
+        }
+        return getAuthenticatorViaDnFormat(l);
+    }
+
+    private static Authenticator getAuthenticatorViaDnFormat(final AbstractLdapAuthenticationProperties l) {
         val resolver = new FormatDnResolver(l.getDnFormat());
         val authenticator = new Authenticator(resolver, getPooledBindAuthenticationHandler(l, newLdaptivePooledConnectionFactory(l)));
 
@@ -686,19 +697,6 @@ public class LdapUtils {
             authenticator.setEntryResolver(newLdaptiveSearchEntryResolver(l, newLdaptivePooledConnectionFactory(l)));
         }
         return authenticator;
-    }
-
-    private static Authenticator getActiveDirectoryAuthenticator(final AbstractLdapAuthenticationProperties l) {
-        if (StringUtils.isBlank(l.getDnFormat())) {
-            throw new IllegalArgumentException("Dn format cannot be empty/blank for active directory authentication");
-        }
-        val resolver = new FormatDnResolver(l.getDnFormat());
-        val authn = new Authenticator(resolver, getPooledBindAuthenticationHandler(l, newLdaptivePooledConnectionFactory(l)));
-
-        if (l.isEnhanceWithEntryResolver()) {
-            authn.setEntryResolver(newLdaptiveSearchEntryResolver(l, newLdaptivePooledConnectionFactory(l)));
-        }
-        return authn;
     }
 
     private static PooledBindAuthenticationHandler getPooledBindAuthenticationHandler(final AbstractLdapAuthenticationProperties l,
@@ -979,10 +977,10 @@ public class LdapUtils {
         entryResolver.setUserFilter(l.getSearchFilter());
         entryResolver.setSubtreeSearch(l.isSubtreeSearch());
         entryResolver.setConnectionFactory(factory);
+
         if (StringUtils.isNotBlank(l.getDerefAliases())) {
             entryResolver.setDerefAliases(DerefAliases.valueOf(l.getDerefAliases()));
         }
-
         val handlers = new ArrayList<SearchEntryHandler>();
         l.getSearchEntryHandlers().forEach(h -> {
             switch (h.getType()) {
@@ -1041,5 +1039,4 @@ public class LdapUtils {
         entryResolver.setReferralHandler(new SearchReferralHandler());
         return entryResolver;
     }
-
 }
