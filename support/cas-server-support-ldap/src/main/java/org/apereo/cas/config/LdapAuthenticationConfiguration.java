@@ -114,7 +114,8 @@ public class LdapAuthenticationConfiguration {
 
                 LOGGER.debug("Creating LDAP authentication handler for [{}]", l.getLdapUrl());
                 val handler = new LdapAuthenticationHandler(l.getName(),
-                    servicesManager.getIfAvailable(), ldapPrincipalFactory(), l.getOrder(), authenticator, strategy);
+                    servicesManager.getIfAvailable(), ldapPrincipalFactory(),
+                    l.getOrder(), authenticator, strategy);
                 handler.setCollectDnAttribute(l.isCollectDnAttribute());
 
                 val additionalAttributes = l.getAdditionalAttributes();
