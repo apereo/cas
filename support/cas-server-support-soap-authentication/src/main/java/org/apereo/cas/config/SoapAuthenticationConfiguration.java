@@ -86,7 +86,7 @@ public class SoapAuthenticationConfiguration {
         val marshaller = new Jaxb2Marshaller();
         marshaller.setContextPath(GetSoapAuthenticationRequest.class.getPackageName());
         val props = new HashMap<String, Object>();
-        props.put(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        props.put(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
         props.put(Marshaller.JAXB_ENCODING, StandardCharsets.UTF_8.name());
         marshaller.setMarshallerProperties(props);
         marshaller.setValidationEventHandler(new DefaultValidationEventHandler());

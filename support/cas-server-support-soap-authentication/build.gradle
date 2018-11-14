@@ -51,8 +51,8 @@ jaxb2 {
         "classes" {
             basePackage = "org.apereo.cas.authentication.soap.generated"
             schema = "src/main/resources/xsd/users.xsd"
+            additionalArgs = '-no-header'
         }
-        additionalArgs = '-no-header'
     }
 }
 

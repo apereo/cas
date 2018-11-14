@@ -54,22 +54,22 @@ public class SoapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             return createHandlerResult(credential, principal, new ArrayList<>());
         }
         val httpStatus = HttpStatus.valueOf(response.getStatus());
-        if (httpStatus == HttpStatus.FORBIDDEN) {
+        if (httpStatus.equals(HttpStatus.FORBIDDEN)) {
             throw new AccountDisabledException("Could not authenticate forbidden account for " + credential.getUsername());
         }
-        if (httpStatus == HttpStatus.UNAUTHORIZED) {
+        if (httpStatus.equals(HttpStatus.UNAUTHORIZED)) {
             throw new FailedLoginException("Could not authenticate account for " + credential.getUsername());
         }
-        if (httpStatus == HttpStatus.NOT_FOUND) {
+        if (httpStatus.equals(HttpStatus.NOT_FOUND)) {
             throw new AccountNotFoundException("Could not locate account for " + credential.getUsername());
         }
-        if (httpStatus == HttpStatus.LOCKED) {
+        if (httpStatus.equals(HttpStatus.LOCKED)) {
             throw new AccountLockedException("Could not authenticate locked account for " + credential.getUsername());
         }
-        if (httpStatus == HttpStatus.PRECONDITION_FAILED) {
+        if (httpStatus.equals(HttpStatus.PRECONDITION_FAILED)) {
             throw new AccountExpiredException("Could not authenticate expired account for " + credential.getUsername());
         }
-        if (httpStatus == HttpStatus.PRECONDITION_REQUIRED) {
+        if (httpStatus.equals(HttpStatus.PRECONDITION_REQUIRED)) {
             throw new AccountPasswordMustChangeException("Account password must change for " + credential.getUsername());
         }
         throw new FailedLoginException("SOAP endpoint returned an unknown status code "
