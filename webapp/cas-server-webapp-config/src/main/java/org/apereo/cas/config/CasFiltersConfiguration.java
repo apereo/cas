@@ -110,13 +110,9 @@ public class CasFiltersConfiguration {
         initParams.put("enableXContentTypeOptions", BooleanUtils.toStringTrueFalse(header.isXcontent()));
         initParams.put("enableStrictTransportSecurity", BooleanUtils.toStringTrueFalse(header.isHsts()));
         initParams.put("enableXFrameOptions", BooleanUtils.toStringTrueFalse(header.isXframe()));
-        if (header.isXframe()) {
-            initParams.put("XFrameOptions", header.getXframeOptions());
-        }
+        initParams.put("XFrameOptions", header.getXframeOptions());
         initParams.put("enableXSSProtection", BooleanUtils.toStringTrueFalse(header.isXss()));
-        if (header.isXss()) {
-            initParams.put("XSSProtection", header.getXssOptions());
-        }
+        initParams.put("XSSProtection", header.getXssOptions());
         if (StringUtils.isNotBlank(header.getContentSecurityPolicy())) {
             initParams.put("contentSecurityPolicy", header.getContentSecurityPolicy());
         }
