@@ -1,3 +1,4 @@
+
 package org.apereo.cas.authentication.soap.generated;
 
 import javax.xml.bind.annotation.XmlAccessType;
