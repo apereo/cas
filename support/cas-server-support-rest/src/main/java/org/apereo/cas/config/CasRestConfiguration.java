@@ -85,11 +85,13 @@ public class CasRestConfiguration implements RestHttpRequestCredentialFactoryCon
     @Bean
     @Autowired
     public ServiceTicketResource serviceTicketResource(
-        @Qualifier("serviceTicketResourceEntityResponseFactory") final ServiceTicketResourceEntityResponseFactory serviceTicketResourceEntityResponseFactory) {
+        @Qualifier("serviceTicketResourceEntityResponseFactory") final ServiceTicketResourceEntityResponseFactory serviceTicketResourceEntityResponseFactory,
+        @Qualifier("restHttpRequestCredentialFactory") final RestHttpRequestCredentialFactory restHttpRequestCredentialFactory) {
         return new ServiceTicketResource(authenticationSystemSupport.getIfAvailable(),
             ticketRegistrySupport.getIfAvailable(),
             argumentExtractor.getIfAvailable(),
-            serviceTicketResourceEntityResponseFactory);
+            serviceTicketResourceEntityResponseFactory,
+            restHttpRequestCredentialFactory);
     }
 
     @Bean
