@@ -3051,7 +3051,7 @@ ext.libraries = [
                 }
         ],
         springws : [
-                dependencies.create("org.springframework.boot:spring-boot-starter-ws:$springBootVersion") {
+                dependencies.create("org.springframework.boot:spring-boot-starter-web-services:$springBootVersion") {
                     exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-dom")
                     exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-common")
                     force = true
