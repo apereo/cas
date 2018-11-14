@@ -77,7 +77,7 @@ public class YubiKeyAuthenticationHandlerTests {
         val handler = new YubiKeyAuthenticationHandler(StringUtils.EMPTY,
             null, new DefaultPrincipalFactory(),
             YubicoClient.getClient(CLIENT_ID, SECRET_KEY),
-            registry);
+            registry, null);
         this.thrown.expect(AccountNotFoundException.class);
         handler.authenticate(new YubiKeyCredential(OTP));
     }

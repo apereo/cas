@@ -1849,6 +1849,9 @@ Principal resolution and Person Directory settings for this feature are availabl
 # cas.authn.spnego[0].timeout=300000
 # cas.authn.spnego[0].jcifsServicePrincipal=HTTP/cas.example.com@EXAMPLE.COM
 # cas.authn.spnego[0].jcifsNetbiosWins=
+
+# cas.authn.spnego[0].name=
+# cas.authn.spnego[0].order=
 ```
 
 ### SPNEGO Client Selection Strategy
@@ -1881,6 +1884,7 @@ LDAP settings for this feature are available [here](Configuration-Properties-Com
 # cas.authn.ntlm.loadBalance=true
 # cas.authn.ntlm.domainController=
 # cas.authn.ntlm.name=
+# cas.authn.ntlm.order=
 ```
 
 ## JAAS Authentication
@@ -2126,6 +2130,8 @@ To fetch CRLs, the following options are available:
 # cas.authn.x509.regExTrustedIssuerDnPattern=.+
 
 # cas.authn.x509.name=
+# cas.authn.x509.order=
+
 # cas.authn.x509.principalDescriptor=
 # cas.authn.x509.maxPathLength=1
 # cas.authn.x509.throwOnFetchFailure=false
@@ -2390,6 +2396,7 @@ To learn more about this topic, [please review this guide](../mfa/Simple-Multifa
 
 ```properties
 # cas.authn.mfa.simple.name=
+# cas.authn.mfa.simple.order=
 # cas.authn.mfa.simple.timeToKillInSeconds=30
 ```
 
@@ -2413,7 +2420,9 @@ To learn more about this topic, [please review this guide](../mfa/GoogleAuthenti
 # cas.authn.mfa.gauth.timeStepSize=30
 # cas.authn.mfa.gauth.rank=0
 # cas.authn.mfa.gauth.trustedDeviceEnabled=false
+
 # cas.authn.mfa.gauth.name=
+# cas.authn.mfa.gauth.order=
 
 # cas.authn.mfa.gauth.cleaner.enabled=true
 # cas.authn.mfa.gauth.cleaner.schedule.startDelay=20000
@@ -2463,7 +2472,9 @@ To learn more about this topic, [please review this guide](../mfa/YubiKey-Authen
 # cas.authn.mfa.yubikey.rank=0
 # cas.authn.mfa.yubikey.apiUrls=
 # cas.authn.mfa.yubikey.trustedDeviceEnabled=false
+
 # cas.authn.mfa.yubikey.name=
+# cas.authn.mfa.yubikey.order=
 ```
 
 Multifactor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.yubikey`.
@@ -2510,6 +2521,7 @@ To learn more about this topic, [please review this guide](../mfa/RADIUS-Authent
 # cas.authn.mfa.radius.trustedDeviceEnabled=false
 # cas.authn.mfa.radius.allowedAuthenticationAttempts=-1
 # cas.authn.mfa.radius.name=
+# cas.authn.mfa.radius.order=
 ```
 
 Radius  settings for this feature are available [here](Configuration-Properties-Common.html#radius-configuration) under the configuration key `cas.authn.mfa.radius`.
@@ -2530,6 +2542,7 @@ To learn more about this topic, [please review this guide](../mfa/DuoSecurity-Au
 # cas.authn.mfa.duo[0].id=mfa-duo
 # cas.authn.mfa.duo[0].registrationUrl=https://registration.example.org/duo-enrollment
 # cas.authn.mfa.duo[0].name=
+# cas.authn.mfa.duo[0].order=
 ```
 
 The `duoApplicationKey` is a string, at least 40 characters long, that you generate and keep secret from Duo.
@@ -2549,6 +2562,7 @@ To learn more about this topic, [please review this guide](../mfa/FIDO-U2F-Authe
 ```properties
 # cas.authn.mfa.u2f.rank=0
 # cas.authn.mfa.u2f.name=
+# cas.authn.mfa.u2f.order=
 
 # cas.authn.mfa.u2f.expireRegistrations=30
 # cas.authn.mfa.u2f.expireRegistrationsTimeUnit=SECONDS
@@ -2609,6 +2623,7 @@ To learn more about this topic, [please review this guide](../mfa/SwivelSecure-A
 # cas.authn.mfa.swivel.ignoreSslErrors=false
 # cas.authn.mfa.swivel.rank=0
 # cas.authn.mfa.swivel.name=
+# cas.authn.mfa.swivel.order=
 ```
 
 Multifactor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.swivel`.
@@ -2627,6 +2642,7 @@ To learn more about this topic, [please review this guide](../mfa/AuthyAuthentic
 # cas.authn.mfa.authy.forceVerification=true
 # cas.authn.mfa.authy.trustedDeviceEnabled=false
 # cas.authn.mfa.authy.name=
+# cas.authn.mfa.authy.order=
 ```
 
 Multifactor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.authy`.

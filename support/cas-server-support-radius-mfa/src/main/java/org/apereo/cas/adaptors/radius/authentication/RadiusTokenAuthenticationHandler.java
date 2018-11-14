@@ -39,8 +39,9 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
                                             final PrincipalFactory principalFactory,
                                             final List<RadiusServer> servers,
                                             final boolean failoverOnException,
-                                            final boolean failoverOnAuthenticationFailure) {
-        super(name, servicesManager, principalFactory, null);
+                                            final boolean failoverOnAuthenticationFailure,
+                                            final Integer order) {
+        super(name, servicesManager, principalFactory, order);
         this.servers = servers;
         this.failoverOnException = failoverOnException;
         this.failoverOnAuthenticationFailure = failoverOnAuthenticationFailure;

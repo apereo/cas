@@ -27,6 +27,11 @@ public class AmazonCognitoAuthenticationProperties extends BaseAmazonWebServices
     private String name;
 
     /**
+     * The order of this authentication handler in the chain.
+     */
+    private int order = Integer.MAX_VALUE;
+
+    /**
      * Password encoding properties.
      */
     @NestedConfigurationProperty
@@ -37,11 +42,6 @@ public class AmazonCognitoAuthenticationProperties extends BaseAmazonWebServices
      */
     @NestedConfigurationProperty
     private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
-
-    /**
-     * The order of this authentication handler in the chain.
-     */
-    private int order = Integer.MAX_VALUE;
 
     /**
      * The application client id, created in Cognito without a secret key.

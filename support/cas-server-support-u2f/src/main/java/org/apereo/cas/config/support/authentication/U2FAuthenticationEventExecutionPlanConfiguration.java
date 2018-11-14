@@ -78,7 +78,8 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     public AuthenticationHandler u2fAuthenticationHandler() {
         val u2f = this.casProperties.getAuthn().getMfa().getU2f();
-        return new U2FAuthenticationHandler(u2f.getName(), servicesManager.getIfAvailable(), u2fPrincipalFactory(), u2fDeviceRepository.getIfAvailable());
+        return new U2FAuthenticationHandler(u2f.getName(), servicesManager.getIfAvailable(),
+            u2fPrincipalFactory(), u2fDeviceRepository.getIfAvailable(), u2f.getOrder());
     }
 
     @ConditionalOnMissingBean(name = "u2fMultifactorAuthenticationProvider")

@@ -215,6 +215,11 @@ public class X509Properties implements Serializable {
      */
     private String name;
     /**
+     * The order of the authentication handler in the chain.
+     */
+    private int order = Integer.MAX_VALUE;
+
+    /**
      * Whether to extract certificate from request.
      * <p>
      * The default implementation extracts certificate from header via Tomcat SSLValve parsing logic

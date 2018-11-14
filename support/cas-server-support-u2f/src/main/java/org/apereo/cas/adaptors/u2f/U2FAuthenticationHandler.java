@@ -30,8 +30,9 @@ public class U2FAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
 
     public U2FAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                     final PrincipalFactory principalFactory,
-                                    final U2FDeviceRepository u2FDeviceRepository) {
-        super(name, servicesManager, principalFactory, null);
+                                    final U2FDeviceRepository u2FDeviceRepository,
+                                    final Integer order) {
+        super(name, servicesManager, principalFactory, order);
         this.u2FDeviceRepository = u2FDeviceRepository;
     }
 

@@ -12,7 +12,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -85,27 +84,18 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
      */
     private final RevocationChecker revocationChecker;
 
-    /**
-     * Instantiates a new X 509 credentials authentication handler.
-     *
-     * @param name                          the name
-     * @param servicesManager               the services manager
-     * @param principalFactory              the principal factory
-     * @param regExTrustedIssuerDnPattern   the regex trusted issuer dn pattern
-     * @param maxPathLength                 the max path length
-     * @param maxPathLengthAllowUnspecified the max path length allow unspecified
-     * @param checkKeyUsage                 the check key usage
-     * @param requireKeyUsage               the require key usage
-     * @param regExSubjectDnPattern         the regex subject dn pattern
-     * @param revocationChecker             the revocation checker. Sets the component responsible for evaluating certificate revocation status for client
-     *                                      certificates presented to handler. The default checker is a NO-OP implementation
-     *                                      for backward compatibility with previous versions that do not perform revocation checking.
-     */
-    public X509CredentialsAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
-                                                final Pattern regExTrustedIssuerDnPattern, final int maxPathLength,
-                                                final boolean maxPathLengthAllowUnspecified, final boolean checkKeyUsage, final boolean requireKeyUsage,
-                                                final Pattern regExSubjectDnPattern, final @NonNull RevocationChecker revocationChecker) {
-        super(name, servicesManager, principalFactory, null);
+    public X509CredentialsAuthenticationHandler(final String name,
+                                                final ServicesManager servicesManager,
+                                                final PrincipalFactory principalFactory,
+                                                final Pattern regExTrustedIssuerDnPattern,
+                                                final int maxPathLength,
+                                                final boolean maxPathLengthAllowUnspecified,
+                                                final boolean checkKeyUsage,
+                                                final boolean requireKeyUsage,
+                                                final Pattern regExSubjectDnPattern,
+                                                final RevocationChecker revocationChecker,
+                                                final Integer order) {
+        super(name, servicesManager, principalFactory, order);
         this.regExTrustedIssuerDnPattern = regExTrustedIssuerDnPattern;
         this.maxPathLength = maxPathLength;
         this.maxPathLengthAllowUnspecified = maxPathLengthAllowUnspecified;
@@ -125,7 +115,8 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
         this(StringUtils.EMPTY, null, null, regExTrustedIssuerDnPattern,
             Integer.MAX_VALUE, maxPathLengthAllowUnspecified, false,
             false, regExSubjectDnPattern,
-            new NoOpRevocationChecker());
+            new NoOpRevocationChecker(),
+            null);
     }
 
     public X509CredentialsAuthenticationHandler(final Pattern regExTrustedIssuerDnPattern,
@@ -135,13 +126,16 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
         this(StringUtils.EMPTY, null, null, regExTrustedIssuerDnPattern,
             Integer.MAX_VALUE, maxPathLengthAllowUnspecified,
             checkKeyUsage, requireKeyUsage, null,
-            new NoOpRevocationChecker());
+            new NoOpRevocationChecker(),
+            null);
     }
 
     public X509CredentialsAuthenticationHandler(final Pattern regExTrustedIssuerDnPattern, final RevocationChecker revocationChecker) {
-        this(StringUtils.EMPTY, null, null, regExTrustedIssuerDnPattern, Integer.MAX_VALUE, false,
+        this(StringUtils.EMPTY, null, null,
+            regExTrustedIssuerDnPattern, Integer.MAX_VALUE, false,
             false, false, null,
-            revocationChecker);
+            revocationChecker,
+            null);
     }
 
     /**
@@ -189,6 +183,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
     /**
      * Note: The call to getBasicConstraints returns pathLenConstraints which is generally greater than or equal to zero
      * when this is a CA cert and -1 when it's not.
+     *
      * @param credential Credential to authenticate.
      * @return Authn handler execution result.
      * @throws GeneralSecurityException security exception

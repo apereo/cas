@@ -28,8 +28,9 @@ public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPos
     public CasSimpleMultifactorAuthenticationHandler(final String name,
                                                      final ServicesManager servicesManager,
                                                      final PrincipalFactory principalFactory,
-                                                     final TicketRegistry ticketRegistry) {
-        super(name, servicesManager, principalFactory, null);
+                                                     final TicketRegistry ticketRegistry,
+                                                     final Integer order) {
+        super(name, servicesManager, principalFactory, order);
         this.ticketRegistry = ticketRegistry;
     }
 

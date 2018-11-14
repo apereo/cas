@@ -22,8 +22,10 @@ import java.util.Map;
  */
 public class WsFederationAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
-    public WsFederationAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory) {
-        super(name, servicesManager, principalFactory, null);
+    public WsFederationAuthenticationHandler(final String name, final ServicesManager servicesManager,
+                                             final PrincipalFactory principalFactory,
+                                             final Integer order) {
+        super(name, servicesManager, principalFactory, order);
     }
 
     /**

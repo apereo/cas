@@ -93,17 +93,25 @@ public class SpnegoConfiguration {
     @ConditionalOnMissingBean(name = "spnegoHandler")
     public AuthenticationHandler spnegoHandler() {
         val spnegoProperties = casProperties.getAuthn().getSpnego();
-        return new JcifsSpnegoAuthenticationHandler(spnegoProperties.getName(), servicesManager.getIfAvailable(), spnegoPrincipalFactory(),
-            spnegoAuthentications(), spnegoProperties.isPrincipalWithDomainName(), spnegoProperties.isNtlmAllowed());
+        return new JcifsSpnegoAuthenticationHandler(spnegoProperties.getName(),
+            servicesManager.getIfAvailable(),
+            spnegoPrincipalFactory(),
+            spnegoAuthentications(),
+            spnegoProperties.isPrincipalWithDomainName(),
+            spnegoProperties.isNtlmAllowed(),
+            spnegoProperties.getOrder());
     }
 
     @Bean
     @RefreshScope
     public AuthenticationHandler ntlmAuthenticationHandler() {
         val ntlmProperties = casProperties.getAuthn().getNtlm();
-        return new NtlmAuthenticationHandler(ntlmProperties.getName(), servicesManager.getIfAvailable(), ntlmPrincipalFactory(),
+        return new NtlmAuthenticationHandler(ntlmProperties.getName(),
+            servicesManager.getIfAvailable(), ntlmPrincipalFactory(),
             ntlmProperties.isLoadBalance(),
-            ntlmProperties.getDomainController(), ntlmProperties.getIncludePattern());
+            ntlmProperties.getDomainController(),
+            ntlmProperties.getIncludePattern(),
+            ntlmProperties.getOrder());
     }
 
     @ConditionalOnMissingBean(name = "ntlmPrincipalFactory")

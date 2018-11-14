@@ -44,8 +44,9 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
 
     public JcifsSpnegoAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                             final PrincipalFactory principalFactory, final List<Authentication> authentications,
-                                            final boolean principalWithDomainName, final boolean ntlmAllowed) {
-        super(name, servicesManager, principalFactory, null);
+                                            final boolean principalWithDomainName, final boolean ntlmAllowed,
+                                            final Integer order) {
+        super(name, servicesManager, principalFactory, order);
         this.authentications = authentications;
         this.principalWithDomainName = principalWithDomainName;
         this.ntlmAllowed = ntlmAllowed;

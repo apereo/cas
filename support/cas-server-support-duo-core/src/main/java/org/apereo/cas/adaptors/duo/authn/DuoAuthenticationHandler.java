@@ -28,8 +28,9 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
 
     public DuoAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                     final PrincipalFactory principalFactory,
-                                    final DuoMultifactorAuthenticationProvider provider) {
-        super(name, servicesManager, principalFactory, null);
+                                    final DuoMultifactorAuthenticationProvider provider,
+                                    final Integer order) {
+        super(name, servicesManager, principalFactory, order);
         this.provider = provider;
     }
 

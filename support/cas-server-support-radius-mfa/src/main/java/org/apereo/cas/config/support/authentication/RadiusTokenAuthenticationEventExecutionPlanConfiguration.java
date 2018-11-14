@@ -101,7 +101,9 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
         val radius = casProperties.getAuthn().getMfa().getRadius();
         return new RadiusTokenAuthenticationHandler(radius.getName(), servicesManager.getIfAvailable(),
             radiusTokenPrincipalFactory(), radiusTokenServers(),
-            radius.isFailoverOnException(), radius.isFailoverOnAuthenticationFailure());
+            radius.isFailoverOnException(),
+            radius.isFailoverOnAuthenticationFailure(),
+            radius.getOrder());
     }
 
     @Bean

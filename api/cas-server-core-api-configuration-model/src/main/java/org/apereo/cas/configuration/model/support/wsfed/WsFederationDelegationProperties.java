@@ -105,6 +105,11 @@ public class WsFederationDelegationProperties implements Serializable {
     private String name;
 
     /**
+     * The order of the authentication handler in the chain.
+     */
+    private int order = Integer.MAX_VALUE;
+
+    /**
      * Path to attribute mutator groovy script
      * that allows one to modify wsfed attributes before
      * establishing a final principal.
