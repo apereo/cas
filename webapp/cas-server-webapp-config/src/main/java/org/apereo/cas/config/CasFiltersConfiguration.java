@@ -1,8 +1,5 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.web.security.HttpCorsRequestProperties;
 import org.apereo.cas.configuration.model.core.web.security.HttpHeadersRequestProperties;
@@ -14,6 +11,10 @@ import org.apereo.cas.services.web.support.RegisteredServiceResponseHeadersEnfor
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.AuthenticationCredentialsThreadLocalBinderClearingFilter;
+
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -45,7 +46,7 @@ public class CasFiltersConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
@@ -113,13 +114,10 @@ public class CasFiltersConfiguration {
         initParams.put("enableXContentTypeOptions", BooleanUtils.toStringTrueFalse(header.isXcontent()));
         initParams.put("enableStrictTransportSecurity", BooleanUtils.toStringTrueFalse(header.isHsts()));
         initParams.put("enableXFrameOptions", BooleanUtils.toStringTrueFalse(header.isXframe()));
-        if (header.isXframe()) {
-            initParams.put("XFrameOptions", header.getXframeOptions());
-        }
+        initParams.put("XFrameOptions", header.getXframeOptions());
         initParams.put("enableXSSProtection", BooleanUtils.toStringTrueFalse(header.isXss()));
-        if (header.isXss()) {
-            initParams.put("XSSProtection", header.getXssOptions());
-        }
+        initParams.put("XSSProtection", header.getXssOptions());
+
         if (StringUtils.isNotBlank(header.getContentSecurityPolicy())) {
             initParams.put("contentSecurityPolicy", header.getContentSecurityPolicy());
         }
