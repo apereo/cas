@@ -95,28 +95,30 @@ public class CasEmbeddedContainerTomcatConfiguration {
     }
 
     private static void configureConnectorForProtocol(final Connector connector, final String protocol) {
-        val field = ReflectionUtils.findField(connector.getClass(), "protocolHandler");
-        ReflectionUtils.makeAccessible(field);
+        val handler = ReflectionUtils.findField(connector.getClass(), "protocolHandler");
+        val handlerClass = ReflectionUtils.findField(connector.getClass(), "protocolHandlerClassName");
+        ReflectionUtils.makeAccessible(handler);
+        ReflectionUtils.makeAccessible(handlerClass);
         switch (protocol) {
             case "AJP/2":
-                ReflectionUtils.setField(field, connector, new AjpNio2Protocol());
+                ReflectionUtils.setField(handler, connector, new AjpNio2Protocol());
                 break;
             case "AJP/1.3":
-                ReflectionUtils.setField(field, connector, new AjpNioProtocol());
+                ReflectionUtils.setField(handler, connector, new AjpNioProtocol());
                 break;
             case "HTTP/2":
-                ReflectionUtils.setField(field, connector, new Http2Protocol());
+                ReflectionUtils.setField(handler, connector, new Http2Protocol());
                 break;
             case "HTTP/1.2":
-                ReflectionUtils.setField(field, connector, new Http11Nio2Protocol());
+                ReflectionUtils.setField(handler, connector, new Http11Nio2Protocol());
                 break;
             case "HTTP/1.1":
             default:
-                ReflectionUtils.setField(field, connector, new Http11NioProtocol());
+                ReflectionUtils.setField(handler, connector, new Http11NioProtocol());
                 break;
         }
+        ReflectionUtils.setField(handlerClass, connector, connector.getProtocolHandler().getClass().getName());
     }
-
 
     private void configureBasicAuthn(final TomcatServletWebServerFactory tomcat) {
         val basic = casProperties.getServer().getTomcat().getBasicAuthn();
@@ -221,7 +223,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
             tomcat.getTomcatConnectorCustomizers().add(connector -> {
                 connector.setSecure(proxy.isSecure());
                 connector.setScheme(proxy.getScheme());
-
+                
                 if (StringUtils.isNotBlank(proxy.getProtocol())) {
                     LOGGER.debug("Setting HTTP proxying protocol to [{}]", proxy.getProtocol());
                     configureConnectorForProtocol(connector, proxy.getProtocol());

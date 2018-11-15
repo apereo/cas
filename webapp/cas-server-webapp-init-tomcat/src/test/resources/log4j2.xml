@@ -21,6 +21,12 @@
         <Logger name="org.springframework.boot" level="warn" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
+        <Logger name="org.apache.tomcat" level="warn" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
+        <Logger name="org.apache.tomcat.util.scan" level="error" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>
