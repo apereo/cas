@@ -1,5 +1,7 @@
 package org.apereo.cas.services.web.support;
 
+import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
@@ -99,6 +101,8 @@ public class RegisteredServiceResponseHeadersEnforcementFilterTests {
         props.put(p.getPropertyName(), prop);
         when(registeredService.getProperties()).thenReturn(props);
         when(servicesManager.findServiceBy(any(Service.class))).thenReturn(registeredService);
-        return new RegisteredServiceResponseHeadersEnforcementFilter(servicesManager, argumentExtractor);
+        return new RegisteredServiceResponseHeadersEnforcementFilter(servicesManager, argumentExtractor,
+            new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
+
     }
 }
