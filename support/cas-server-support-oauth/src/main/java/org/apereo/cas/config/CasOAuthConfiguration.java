@@ -133,7 +133,7 @@ import java.util.Set;
  */
 @Configuration("oauthConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConfigurer, ServiceRegistryExecutionPlanConfigurer {
+public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConfigurer {
 
     @Autowired
     @Qualifier("registeredServiceAccessStrategyEnforcer")
@@ -734,16 +734,22 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
         return webApplicationServiceFactory.getIfAvailable().createService(oAuthCallbackUrl);
     }
 
-    @Override
-    public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-        val service = new RegexRegisteredService();
-        service.setId(RandomUtils.getNativeInstance().nextLong());
-        service.setEvaluationOrder(0);
-        service.setName(service.getClass().getSimpleName());
-        service.setDescription("OAuth Authentication Callback Request URL");
-        service.setServiceId(oauthCallbackService().getId());
-        service.setAttributeReleasePolicy(new DenyAllAttributeReleasePolicy());
-        plan.registerServiceRegistry(new OAuth20ServiceRegistry(service));
+    @Bean
+    @ConditionalOnMissingBean(name = "oauthServiceRegistryExecutionPlanConfigurer")
+    public ServiceRegistryExecutionPlanConfigurer oauthServiceRegistryExecutionPlanConfigurer() {
+        return new ServiceRegistryExecutionPlanConfigurer() {
+            @Override
+            public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
+                val service = new RegexRegisteredService();
+                service.setId(RandomUtils.getNativeInstance().nextLong());
+                service.setEvaluationOrder(Integer.MAX_VALUE);
+                service.setName(service.getClass().getSimpleName());
+                service.setDescription("OAuth Authentication Callback Request URL");
+                service.setServiceId(oauthCallbackService().getId());
+                service.setAttributeReleasePolicy(new DenyAllAttributeReleasePolicy());
+                plan.registerServiceRegistry(new OAuth20ServiceRegistry(service));
+            }
+        };
     }
 
     @Bean
