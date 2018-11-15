@@ -193,6 +193,11 @@ public abstract class AbstractLdapProperties implements Serializable {
     private String name;
 
     /**
+     * Set if multiple Entries are allowed.
+     */
+    private boolean allowMultipleEntries;
+
+    /**
      * The ldap type used to handle specific ops.
      */
     public enum LdapType {
