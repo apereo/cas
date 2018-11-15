@@ -12,6 +12,6 @@ public interface ServiceRegistryExecutionPlanConfigurer {
      *
      * @param plan the plan
      */
-    default void configureServiceRegistry(ServiceRegistryExecutionPlan plan) {
+    default void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
     }
 }
