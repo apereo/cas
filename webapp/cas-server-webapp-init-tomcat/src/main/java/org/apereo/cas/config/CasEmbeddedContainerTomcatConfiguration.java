@@ -97,7 +97,6 @@ public class CasEmbeddedContainerTomcatConfiguration {
 
     private static void configureConnectorForProtocol(final Connector connector, final String protocol) {
         val handler = ReflectionUtils.findField(connector.getClass(), "protocolHandler");
-
         if (handler != null) {
             ReflectionUtils.makeAccessible(handler);
             if ("HTTP/2".equalsIgnoreCase(protocol)) {
