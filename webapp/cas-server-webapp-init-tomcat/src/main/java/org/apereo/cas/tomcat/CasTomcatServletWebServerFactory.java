@@ -1,5 +1,6 @@
 package org.apereo.cas.tomcat;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatClusteringProperties;
 
 import lombok.Getter;
@@ -24,6 +25,8 @@ import org.apache.catalina.tribes.membership.StaticMember;
 import org.apache.catalina.tribes.transport.ReplicationTransmitter;
 import org.apache.catalina.tribes.transport.nio.NioReceiver;
 import org.apache.catalina.tribes.transport.nio.PooledParallelSender;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.embedded.tomcat.TomcatWebServer;
 
@@ -39,10 +42,15 @@ import org.springframework.boot.web.embedded.tomcat.TomcatWebServer;
 @Slf4j
 public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFactory {
 
-    private final CasEmbeddedApacheTomcatClusteringProperties clusteringProperties;
+    private final CasConfigurationProperties casProperties;
 
-    public CasTomcatServletWebServerFactory(final CasEmbeddedApacheTomcatClusteringProperties clusteringProperties) {
-        this.clusteringProperties = clusteringProperties;
+    public CasTomcatServletWebServerFactory(final CasConfigurationProperties casProperties,
+                                            final ServerProperties serverProperties) {
+        super(serverProperties.getPort());
+        if (StringUtils.isNotBlank(serverProperties.getServlet().getContextPath())) {
+            setContextPath(serverProperties.getServlet().getContextPath());
+        }
+        this.casProperties = casProperties;
         configureContextForSessionClustering();
     }
 
@@ -53,6 +61,7 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
     }
 
     private void configureSessionClustering(final Tomcat tomcat) {
+        val clusteringProperties = casProperties.getServer().getTomcat().getClustering();
         if (!clusteringProperties.isSessionClusteringEnabled()) {
             LOGGER.trace("Tomcat session clustering/replication is turned off");
             return;
@@ -113,6 +122,7 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
     }
 
     private void configureContextForSessionClustering() {
+        val clusteringProperties = casProperties.getServer().getTomcat().getClustering();
         if (!clusteringProperties.isSessionClusteringEnabled()) {
             LOGGER.trace("Tomcat session clustering/replication is turned off");
             return;
@@ -126,6 +136,7 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
     }
 
     private ClusterManagerBase getClusteringManagerInstance() {
+        val clusteringProperties = casProperties.getServer().getTomcat().getClustering();
         val type = clusteringProperties.getManagerType().toUpperCase();
         if ("DELTA".equalsIgnoreCase(type)) {
             val manager = new DeltaManager();
