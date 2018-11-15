@@ -1,5 +1,6 @@
 package org.apereo.cas.services.web.support;
 
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.security.ResponseHeadersEnforcementFilter;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
@@ -25,6 +26,7 @@ import java.util.Optional;
 public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseHeadersEnforcementFilter {
     private final ServicesManager servicesManager;
     private final ArgumentExtractor argumentExtractor;
+    private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
     @Override
     protected void decideInsertContentSecurityPolicyHeader(final HttpServletResponse httpServletResponse, final HttpServletRequest httpServletRequest) {
@@ -107,7 +109,8 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
     private Optional<RegisteredService> getRegisteredServiceFromRequest(final HttpServletRequest request) {
         val service = this.argumentExtractor.extractService(request);
         if (service != null) {
-            return Optional.ofNullable(this.servicesManager.findServiceBy(service));
+            val resolved = authenticationRequestServiceSelectionStrategies.resolveService(service);
+            return Optional.ofNullable(this.servicesManager.findServiceBy(resolved));
         }
         return Optional.empty();
     }
