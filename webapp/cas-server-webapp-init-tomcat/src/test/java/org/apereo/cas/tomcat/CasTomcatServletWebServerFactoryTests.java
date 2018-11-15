@@ -40,7 +40,6 @@ import static org.junit.Assert.*;
     "server.port=8182",
     "cas.server.tomcat.clustering.sessionClusteringEnabled=false",
     "cas.server.tomcat.sslValve.enabled=true",
-    "cas.server.tomcat.httpProxy.enabled=true",
     "cas.server.tomcat.http.enabled=true",
     "cas.server.tomcat.http.port=9190",
     "cas.server.tomcat.ajp.enabled=true",
