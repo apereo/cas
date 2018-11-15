@@ -341,7 +341,7 @@ public class SamlIdPEndpointsConfiguration implements ServiceRegistryExecutionPl
         LOGGER.debug("Initializing callback service [{}]", callbackService);
         val service = new RegexRegisteredService();
         service.setId(RandomUtils.getNativeInstance().nextLong());
-        service.setEvaluationOrder(0);
+        service.setEvaluationOrder(Integer.MAX_VALUE);
         service.setName(service.getClass().getSimpleName());
         service.setDescription("SAML Authentication Request Callback");
         service.setServiceId(callbackService);
