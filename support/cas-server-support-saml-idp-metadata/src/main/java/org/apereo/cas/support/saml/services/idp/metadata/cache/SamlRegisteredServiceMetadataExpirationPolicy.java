@@ -53,7 +53,7 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Sam
     public long expireAfterUpdate(@Nonnull final SamlRegisteredServiceCacheKey cacheKey,
                                   @Nonnull final MetadataResolver chainingMetadataResolver,
                                   final long currentTime, final long currentDuration) {
-        LOGGER.debug("Cache expiration duration after updates is set to [{}]", currentDuration);
+        LOGGER.trace("Cache expiration duration after updates is set to [{}]", currentDuration);
         return currentDuration;
     }
 
@@ -61,7 +61,7 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Sam
     public long expireAfterRead(@Nonnull final SamlRegisteredServiceCacheKey cacheKey,
                                 @Nonnull final MetadataResolver chainingMetadataResolver,
                                 final long currentTime, final long currentDuration) {
-        LOGGER.debug("Cache expiration duration after reads is set to [{}]", currentDuration);
+        LOGGER.trace("Cache expiration duration after reads is set to [{}]", currentDuration);
         return currentDuration;
     }
 
