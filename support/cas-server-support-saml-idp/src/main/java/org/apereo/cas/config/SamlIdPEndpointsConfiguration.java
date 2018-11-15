@@ -58,7 +58,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("samlIdPEndpointsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class SamlIdPEndpointsConfiguration implements ServiceRegistryExecutionPlanConfigurer {
+public class SamlIdPEndpointsConfiguration {
     @Autowired
     @Qualifier("casClientTicketValidator")
     private ObjectProvider<AbstractUrlBasedTicketValidator> casClientTicketValidator;
@@ -335,16 +335,22 @@ public class SamlIdPEndpointsConfiguration implements ServiceRegistryExecutionPl
         return this.webApplicationServiceFactory.getIfAvailable().createService(service);
     }
 
-    @Override
-    public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-        val callbackService = samlIdPCallbackService().getId().concat(".*");
-        LOGGER.debug("Initializing callback service [{}]", callbackService);
-        val service = new RegexRegisteredService();
-        service.setId(RandomUtils.getNativeInstance().nextLong());
-        service.setEvaluationOrder(Integer.MAX_VALUE);
-        service.setName(service.getClass().getSimpleName());
-        service.setDescription("SAML Authentication Request Callback");
-        service.setServiceId(callbackService);
-        plan.registerServiceRegistry(new SamlIdPServiceRegistry(service));
+    @Bean
+    @ConditionalOnMissingBean(name = "samlIdPServiceRegistryExecutionPlanConfigurer")
+    public ServiceRegistryExecutionPlanConfigurer samlIdPServiceRegistryExecutionPlanConfigurer() {
+        return new ServiceRegistryExecutionPlanConfigurer() {
+            @Override
+            public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
+                val callbackService = samlIdPCallbackService().getId().concat(".*");
+                LOGGER.debug("Initializing SAML IdP callback service [{}]", callbackService);
+                val service = new RegexRegisteredService();
+                service.setId(RandomUtils.getNativeInstance().nextLong());
+                service.setEvaluationOrder(Integer.MAX_VALUE);
+                service.setName(service.getClass().getSimpleName());
+                service.setDescription("SAML Authentication Request Callback");
+                service.setServiceId(callbackService);
+                plan.registerServiceRegistry(new SamlIdPServiceRegistry(service));
+            }
+        };
     }
 }
