@@ -15,6 +15,7 @@ import org.apache.catalina.valves.ExtendedAccessLogValve;
 import org.apache.catalina.valves.SSLValve;
 import org.apache.catalina.valves.rewrite.RewriteValve;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.coyote.AbstractProtocol;
 import org.apache.coyote.ajp.AjpNio2Protocol;
 import org.apache.coyote.ajp.AjpNioProtocol;
 import org.apache.coyote.http11.Http11Nio2Protocol;
@@ -96,28 +97,37 @@ public class CasEmbeddedContainerTomcatConfiguration {
 
     private static void configureConnectorForProtocol(final Connector connector, final String protocol) {
         val handler = ReflectionUtils.findField(connector.getClass(), "protocolHandler");
-        val handlerClass = ReflectionUtils.findField(connector.getClass(), "protocolHandlerClassName");
-        ReflectionUtils.makeAccessible(handler);
-        ReflectionUtils.makeAccessible(handlerClass);
-        switch (protocol) {
-            case "AJP/2":
-                ReflectionUtils.setField(handler, connector, new AjpNio2Protocol());
-                break;
-            case "AJP/1.3":
-                ReflectionUtils.setField(handler, connector, new AjpNioProtocol());
-                break;
-            case "HTTP/2":
+
+        if (handler != null) {
+            ReflectionUtils.makeAccessible(handler);
+            if ("HTTP/2".equalsIgnoreCase(protocol)) {
                 ReflectionUtils.setField(handler, connector, new Http2Protocol());
-                break;
-            case "HTTP/1.2":
-                ReflectionUtils.setField(handler, connector, new Http11Nio2Protocol());
-                break;
-            case "HTTP/1.1":
-            default:
-                ReflectionUtils.setField(handler, connector, new Http11NioProtocol());
-                break;
+            } else {
+                var protocolHandlerInstance = (AbstractProtocol) null;
+                switch (protocol) {
+                    case "AJP/2":
+                        protocolHandlerInstance = new AjpNio2Protocol();
+                        break;
+                    case "AJP/1.3":
+                        protocolHandlerInstance = new AjpNioProtocol();
+                        break;
+                    case "HTTP/1.2":
+                        protocolHandlerInstance = new Http11Nio2Protocol();
+                        break;
+                    case "HTTP/1.1":
+                    default:
+                        protocolHandlerInstance = new Http11NioProtocol();
+                        break;
+                }
+                protocolHandlerInstance.setPort(connector.getPort());
+                ReflectionUtils.setField(handler, connector, protocolHandlerInstance);
+            }
+            val handlerClass = ReflectionUtils.findField(connector.getClass(), "protocolHandlerClassName");
+            if (handlerClass != null) {
+                ReflectionUtils.makeAccessible(handlerClass);
+                ReflectionUtils.setField(handlerClass, connector, connector.getProtocolHandler().getClass().getName());
+            }
         }
-        ReflectionUtils.setField(handlerClass, connector, connector.getProtocolHandler().getClass().getName());
     }
 
     private void configureBasicAuthn(final TomcatServletWebServerFactory tomcat) {
@@ -223,7 +233,6 @@ public class CasEmbeddedContainerTomcatConfiguration {
             tomcat.getTomcatConnectorCustomizers().add(connector -> {
                 connector.setSecure(proxy.isSecure());
                 connector.setScheme(proxy.getScheme());
-                
                 if (StringUtils.isNotBlank(proxy.getProtocol())) {
                     LOGGER.debug("Setting HTTP proxying protocol to [{}]", proxy.getProtocol());
                     configureConnectorForProtocol(connector, proxy.getProtocol());
