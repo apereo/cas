@@ -22,8 +22,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
-import static org.junit.Assert.*;
-
 /**
  * This is {@link CasTomcatServletWebServerFactoryTests}.
  *
@@ -85,9 +83,6 @@ public class CasTomcatServletWebServerFactoryTests {
         val server = casServletWebServerFactory.getWebServer();
         try {
             server.start();
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            fail(e.getMessage());
         } finally {
             server.stop();
         }

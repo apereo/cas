@@ -43,6 +43,7 @@ dependencies {
 dependencies {
     jaxb2 libraries.jaxb
     jaxb2 "javax.activation:activation:1.1.1"
+    jaxb2 "commons-beanutils:commons-beanutils:$commonsBeansVersion" // need to override this in jaxb2-plugin:1.0.9
 }
 
 /*
