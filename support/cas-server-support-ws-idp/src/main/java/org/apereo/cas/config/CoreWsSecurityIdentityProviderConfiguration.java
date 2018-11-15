@@ -33,6 +33,7 @@ import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -50,8 +51,7 @@ import org.springframework.context.annotation.Lazy;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ImportResource(locations = {"classpath:META-INF/cxf/cxf.xml"})
 @Slf4j
-public class CoreWsSecurityIdentityProviderConfiguration implements AuthenticationServiceSelectionStrategyConfigurer,
-    ServiceRegistryExecutionPlanConfigurer {
+public class CoreWsSecurityIdentityProviderConfiguration implements AuthenticationServiceSelectionStrategyConfigurer {
 
     @Autowired
     @Qualifier("casClientTicketValidator")
@@ -154,19 +154,25 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
         plan.registerStrategy(wsFederationAuthenticationServiceSelectionStrategy());
     }
 
-    @Override
-    public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-        val callbackService = wsFederationCallbackService();
-        LOGGER.debug("Initializing callback service [{}]", callbackService);
-
-        val service = new RegexRegisteredService();
-        service.setId(RandomUtils.getNativeInstance().nextLong());
-        service.setEvaluationOrder(0);
-        service.setName(service.getClass().getSimpleName());
-        service.setDescription("WS-Federation Authentication Request");
-        service.setServiceId(callbackService.getId().concat(".+"));
-
-        LOGGER.debug("Saving callback service [{}] into the registry", service);
-        plan.registerServiceRegistry(new WSFederationServiceRegistry(service));
+    @Bean
+    @ConditionalOnMissingBean(name = "wsFederationServiceRegistryExecutionPlanConfigurer")
+    public ServiceRegistryExecutionPlanConfigurer wsFederationServiceRegistryExecutionPlanConfigurer() {
+        return new ServiceRegistryExecutionPlanConfigurer() {
+            @Override
+            public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
+                val callbackService = wsFederationCallbackService();
+                LOGGER.debug("Initializing WS Federation callback service [{}]", callbackService);
+                val service = new RegexRegisteredService();
+                service.setId(RandomUtils.getNativeInstance().nextLong());
+                service.setEvaluationOrder(Integer.MAX_VALUE);
+                service.setName(service.getClass().getSimpleName());
+                service.setDescription("WS-Federation Authentication Request");
+                service.setServiceId(callbackService.getId().concat(".+"));
+                LOGGER.debug("Saving callback service [{}] into the registry", service);
+                plan.registerServiceRegistry(new WSFederationServiceRegistry(service));
+            }
+        };
     }
+
+
 }

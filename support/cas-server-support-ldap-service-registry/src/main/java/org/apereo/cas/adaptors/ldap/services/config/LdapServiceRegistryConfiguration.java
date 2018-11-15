@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("ldapServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class LdapServiceRegistryConfiguration implements ServiceRegistryExecutionPlanConfigurer {
+public class LdapServiceRegistryConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -45,8 +45,14 @@ public class LdapServiceRegistryConfiguration implements ServiceRegistryExecutio
         return new LdapServiceRegistry(connectionFactory, ldap.getBaseDn(), ldapServiceRegistryMapper(), ldap);
     }
 
-    @Override
-    public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-        plan.registerServiceRegistry(ldapServiceRegistry());
+    @Bean
+    @ConditionalOnMissingBean(name = "ldapServiceRegistryExecutionPlanConfigurer")
+    public ServiceRegistryExecutionPlanConfigurer ldaplServiceRegistryExecutionPlanConfigurer() {
+        return new ServiceRegistryExecutionPlanConfigurer() {
+            @Override
+            public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
+                plan.registerServiceRegistry(ldapServiceRegistry());
+            }
+        };
     }
 }

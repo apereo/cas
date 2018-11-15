@@ -12,6 +12,7 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -25,7 +26,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("dynamoDbServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class DynamoDbServiceRegistryConfiguration implements ServiceRegistryExecutionPlanConfigurer {
+public class DynamoDbServiceRegistryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -42,9 +43,15 @@ public class DynamoDbServiceRegistryConfiguration implements ServiceRegistryExec
         return new DynamoDbServiceRegistry(dynamoDbServiceRegistryFacilitator());
     }
 
-    @Override
-    public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-        plan.registerServiceRegistry(dynamoDbServiceRegistry());
+    @Bean
+    @ConditionalOnMissingBean(name = "dynamoDbServiceRegistryExecutionPlanConfigurer")
+    public ServiceRegistryExecutionPlanConfigurer dynamoDbServiceRegistryExecutionPlanConfigurer() {
+        return new ServiceRegistryExecutionPlanConfigurer() {
+            @Override
+            public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
+                plan.registerServiceRegistry(dynamoDbServiceRegistry());
+            }
+        };
     }
 
     @RefreshScope

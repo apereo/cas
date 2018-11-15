@@ -23,7 +23,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
  */
 @Configuration("mongoDbServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class MongoDbServiceRegistryConfiguration implements ServiceRegistryExecutionPlanConfigurer {
+public class MongoDbServiceRegistryConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -47,8 +47,14 @@ public class MongoDbServiceRegistryConfiguration implements ServiceRegistryExecu
             mongo.getCollection());
     }
 
-    @Override
-    public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-        plan.registerServiceRegistry(mongoDbServiceRegistry());
+    @Bean
+    @ConditionalOnMissingBean(name = "mongoDbServiceRegistryExecutionPlanConfigurer")
+    public ServiceRegistryExecutionPlanConfigurer mongoDbServiceRegistryExecutionPlanConfigurer() {
+        return new ServiceRegistryExecutionPlanConfigurer() {
+            @Override
+            public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
+                plan.registerServiceRegistry(mongoDbServiceRegistry());
+            }
+        };
     }
 }

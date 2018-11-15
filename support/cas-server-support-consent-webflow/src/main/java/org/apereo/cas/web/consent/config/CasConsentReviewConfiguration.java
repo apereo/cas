@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -26,7 +27,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("casConsentReviewConfiguration")
 @Slf4j
-public class CasConsentReviewConfiguration implements ServiceRegistryExecutionPlanConfigurer {
+public class CasConsentReviewConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -40,20 +41,26 @@ public class CasConsentReviewConfiguration implements ServiceRegistryExecutionPl
             casProperties.getServer().getPrefix().concat("/consentReview/callback"));
     }
 
-    @Override
-    public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-        val service = new RegexRegisteredService();
-        service.setEvaluationOrder(0);
-        service.setName("CAS Consent Review");
-        service.setDescription("Review consent decisions for attribute release");
-        service.setServiceId(consentCallbackService().getId());
-        val policy = new ReturnAllowedAttributeReleasePolicy();
-        val consentPolicy = new DefaultRegisteredServiceConsentPolicy();
-        consentPolicy.setEnabled(false);
-        policy.setConsentPolicy(consentPolicy);
-        service.setAttributeReleasePolicy(policy);
+    @Bean
+    @ConditionalOnMissingBean(name = "consentServiceRegistryExecutionPlanConfigurer")
+    public ServiceRegistryExecutionPlanConfigurer consentServiceRegistryExecutionPlanConfigurer() {
+        return new ServiceRegistryExecutionPlanConfigurer() {
+            @Override
+            public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
+                val service = new RegexRegisteredService();
+                service.setEvaluationOrder(Integer.MAX_VALUE);
+                service.setName("CAS Consent Review");
+                service.setDescription("Review consent decisions for attribute release");
+                service.setServiceId(consentCallbackService().getId());
+                val policy = new ReturnAllowedAttributeReleasePolicy();
+                val consentPolicy = new DefaultRegisteredServiceConsentPolicy();
+                consentPolicy.setEnabled(false);
+                policy.setConsentPolicy(consentPolicy);
+                service.setAttributeReleasePolicy(policy);
 
-        LOGGER.debug("Saving consent service [{}] into the registry", service);
-        plan.registerServiceRegistry(new ConsentServiceRegistry(service));
+                LOGGER.debug("Saving consent service [{}] into the registry", service);
+                plan.registerServiceRegistry(new ConsentServiceRegistry(service));
+            }
+        };
     }
 }

@@ -11,6 +11,7 @@ import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -25,11 +26,11 @@ import org.springframework.util.StringUtils;
  */
 @Configuration("couchbaseServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CouchbaseServiceRegistryConfiguration implements ServiceRegistryExecutionPlanConfigurer {
+public class CouchbaseServiceRegistryConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @RefreshScope
     @Bean
     public CouchbaseClientFactory serviceRegistryCouchbaseClientFactory() {
@@ -46,8 +47,14 @@ public class CouchbaseServiceRegistryConfiguration implements ServiceRegistryExe
         return new CouchbaseServiceRegistry(serviceRegistryCouchbaseClientFactory(), new DefaultRegisteredServiceJsonSerializer());
     }
 
-    @Override
-    public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-        plan.registerServiceRegistry(couchbaseServiceRegistry());
+    @Bean
+    @ConditionalOnMissingBean(name = "couchbaseServiceRegistryExecutionPlanConfigurer")
+    public ServiceRegistryExecutionPlanConfigurer couchbaseServiceRegistryExecutionPlanConfigurer() {
+        return new ServiceRegistryExecutionPlanConfigurer() {
+            @Override
+            public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
+                plan.registerServiceRegistry(couchbaseServiceRegistry());
+            }
+        };
     }
 }

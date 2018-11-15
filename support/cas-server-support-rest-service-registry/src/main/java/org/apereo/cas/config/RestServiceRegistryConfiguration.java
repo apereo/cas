@@ -11,6 +11,7 @@ import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -27,7 +28,7 @@ import org.springframework.web.client.RestTemplate;
  */
 @Configuration("restServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class RestServiceRegistryConfiguration implements ServiceRegistryExecutionPlanConfigurer {
+public class RestServiceRegistryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -47,11 +48,18 @@ public class RestServiceRegistryConfiguration implements ServiceRegistryExecutio
         return new RestfulServiceRegistry(restTemplate, registry.getUrl(), headers);
     }
 
-    @Override
-    public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-        val registry = casProperties.getServiceRegistry().getRest();
-        if (StringUtils.isNotBlank(registry.getUrl())) {
-            plan.registerServiceRegistry(restfulServiceRegistry());
-        }
+    @Bean
+    @ConditionalOnMissingBean(name = "restfulServiceRegistryExecutionPlanConfigurer")
+    public ServiceRegistryExecutionPlanConfigurer restfulServiceRegistryExecutionPlanConfigurer() {
+        return new ServiceRegistryExecutionPlanConfigurer() {
+            @Override
+            public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
+                val registry = casProperties.getServiceRegistry().getRest();
+                if (StringUtils.isNotBlank(registry.getUrl())) {
+                    plan.registerServiceRegistry(restfulServiceRegistry());
+                }
+            }
+        };
     }
+
 }
