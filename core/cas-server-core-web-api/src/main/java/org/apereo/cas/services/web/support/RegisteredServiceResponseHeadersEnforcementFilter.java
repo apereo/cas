@@ -89,14 +89,7 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
     private boolean shouldHttpHeaderBeInjectedIntoResponse(final HttpServletRequest request,
                                                            final RegisteredServiceProperties property) {
         val result = getRegisteredServiceFromRequest(request);
-        if (result.isPresent()) {
-            val properties = result.get().getProperties();
-            if (properties.containsKey(property.getPropertyName())) {
-                val prop = properties.get(property.getPropertyName());
-                return BooleanUtils.toBoolean(prop.getValue());
-            }
-        }
-        return false;
+        return result.filter(registeredService -> property.isAssignedTo(registeredService, BooleanUtils::toBoolean)).isPresent();
     }
 
     /**

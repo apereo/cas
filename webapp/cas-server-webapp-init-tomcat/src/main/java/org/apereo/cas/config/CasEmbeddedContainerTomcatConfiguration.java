@@ -66,11 +66,10 @@ public class CasEmbeddedContainerTomcatConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-
     @ConditionalOnMissingBean(name = "casServletWebServerFactory")
     @Bean
     public ConfigurableServletWebServerFactory casServletWebServerFactory() {
-        return new CasTomcatServletWebServerFactory(casProperties.getServer().getTomcat().getClustering());
+        return new CasTomcatServletWebServerFactory(casProperties, serverProperties);
     }
 
     @ConditionalOnMissingBean(name = "casTomcatEmbeddedServletContainerCustomizer")

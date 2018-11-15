@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
     CasEmbeddedContainerTomcatConfiguration.class,
     CasEmbeddedContainerTomcatFiltersConfiguration.class
 },
-    webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+    webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @EnableConfigurationProperties({CasConfigurationProperties.class, ServerProperties.class})
 @TestPropertySource(properties = {
     "server.port=8182",
