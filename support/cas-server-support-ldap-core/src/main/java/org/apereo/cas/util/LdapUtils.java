@@ -978,7 +978,6 @@ public class LdapUtils {
         entryResolver.setSubtreeSearch(l.isSubtreeSearch());
         entryResolver.setConnectionFactory(factory);
         entryResolver.setAllowMultipleEntries(l.isAllowMultipleEntries());
-        entryResolver.setReferralHandler(new SearchReferralHandler());
         if (StringUtils.isNotBlank(l.getDerefAliases())) {
             entryResolver.setDerefAliases(DerefAliases.valueOf(l.getDerefAliases()));
         }
