@@ -38,8 +38,12 @@ import static org.junit.Assert.*;
 @EnableConfigurationProperties({CasConfigurationProperties.class, ServerProperties.class})
 @TestPropertySource(properties = {
     "server.port=8182",
+    "server.ssl.enabled=false",
     "cas.server.tomcat.clustering.sessionClusteringEnabled=false",
     "cas.server.tomcat.sslValve.enabled=true",
+    "cas.server.tomcat.httpProxy.enabled=true",
+    "cas.server.tomcat.httpProxy.secure=true",
+    "cas.server.tomcat.httpProxy.scheme=https",
     "cas.server.tomcat.http.enabled=true",
     "cas.server.tomcat.http.port=9190",
     "cas.server.tomcat.ajp.enabled=true",
