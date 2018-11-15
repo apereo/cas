@@ -3,7 +3,6 @@ package org.apereo.cas.web.consent.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.consent.ConsentRepository;
-import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.web.consent.CasConsentReviewController;
 import org.apereo.cas.web.pac4j.CasSecurityInterceptor;
 
@@ -34,7 +33,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * @since 5.2.0
  */
 @Configuration("casConsentReviewWebConfiguration")
-public class CasConsentReviewWebConfiguration implements WebMvcConfigurer, ServiceRegistryExecutionPlanConfigurer {
+public class CasConsentReviewWebConfiguration implements WebMvcConfigurer {
     private static final String CAS_CONSENT_CLIENT = "CasConsentClient";
 
     @Autowired

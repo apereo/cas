@@ -26,7 +26,7 @@ import org.springframework.data.redis.core.RedisTemplate;
  */
 @Configuration("redisServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class RedisServiceRegistryConfiguration implements ServiceRegistryExecutionPlanConfigurer {
+public class RedisServiceRegistryConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -52,8 +52,15 @@ public class RedisServiceRegistryConfiguration implements ServiceRegistryExecuti
         return new RedisServiceRegistry(registeredServiceRedisTemplate());
     }
 
-    @Override
-    public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-        plan.registerServiceRegistry(redisServiceRegistry());
+    @Bean
+    @ConditionalOnMissingBean(name = "redisServiceRegistryExecutionPlanConfigurer")
+    public ServiceRegistryExecutionPlanConfigurer redisServiceRegistryExecutionPlanConfigurer() {
+        return new ServiceRegistryExecutionPlanConfigurer() {
+            @Override
+            public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
+                plan.registerServiceRegistry(redisServiceRegistry());
+            }
+        };
     }
+
 }

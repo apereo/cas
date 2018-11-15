@@ -17,6 +17,7 @@ import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -43,7 +44,7 @@ import java.util.stream.Collectors;
 @Configuration("jpaServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
-public class JpaServiceRegistryConfiguration implements ServiceRegistryExecutionPlanConfigurer {
+public class JpaServiceRegistryConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -95,8 +96,14 @@ public class JpaServiceRegistryConfiguration implements ServiceRegistryExecution
         return new JpaServiceRegistry();
     }
 
-    @Override
-    public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-        plan.registerServiceRegistry(jpaServiceRegistry());
+    @Bean
+    @ConditionalOnMissingBean(name = "jpaServiceRegistryExecutionPlanConfigurer")
+    public ServiceRegistryExecutionPlanConfigurer jpaServiceRegistryExecutionPlanConfigurer() {
+        return new ServiceRegistryExecutionPlanConfigurer() {
+            @Override
+            public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
+                plan.registerServiceRegistry(jpaServiceRegistry());
+            }
+        };
     }
 }
