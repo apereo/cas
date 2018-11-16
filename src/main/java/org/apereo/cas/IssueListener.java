@@ -25,22 +25,22 @@ import org.apereo.cas.github.Issue;
  */
 public interface IssueListener {
 
-	/**
-	 * Notification that the given {@code issue} is open.
-	 *
-	 * @param issue the open issue
-	 */
-	default void onOpenIssue(Issue issue) {
+    /**
+     * Notification that the given {@code issue} is open.
+     *
+     * @param issue the open issue
+     */
+    default void onOpenIssue(Issue issue) {
 
-	}
+    }
 
-	/**
-	 * Notification that the given {@code issue} is being closed.
-	 *
-	 * @param issue the open issue
-	 */
-	default void onIssueClosure(Issue issue) {
+    /**
+     * Notification that the given {@code issue} is being closed.
+     *
+     * @param issue the open issue
+     */
+    default void onIssueClosure(Issue issue) {
 
-	}
+    }
 
 }

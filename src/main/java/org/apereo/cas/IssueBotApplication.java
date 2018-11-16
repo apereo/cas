@@ -17,8 +17,8 @@
 package org.apereo.cas;
 
 import org.apereo.cas.github.GitHubOperations;
-
-import java.util.List;
+import org.apereo.cas.github.GitHubTemplate;
+import org.apereo.cas.github.RegexLinkParser;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -26,8 +26,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-import org.apereo.cas.github.GitHubTemplate;
-import org.apereo.cas.github.RegexLinkParser;
+import java.util.List;
 
 /**
  * Main class for launching Issue Bot.
@@ -39,24 +38,24 @@ import org.apereo.cas.github.RegexLinkParser;
 @EnableConfigurationProperties(GitHubProperties.class)
 public class IssueBotApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(IssueBotApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(IssueBotApplication.class, args);
+    }
 
-	@Bean
-	GitHubTemplate gitHubTemplate(GitHubProperties gitHubProperties) {
-		return new GitHubTemplate(gitHubProperties.getCredentials().getUsername(),
-				gitHubProperties.getCredentials().getPassword(), new RegexLinkParser());
-	}
+    @Bean
+    GitHubTemplate gitHubTemplate(GitHubProperties gitHubProperties) {
+        return new GitHubTemplate(gitHubProperties.getCredentials().getUsername(),
+            gitHubProperties.getCredentials().getPassword(), new RegexLinkParser());
+    }
 
-	@Bean
-	RepositoryMonitor repositoryMonitor(GitHubOperations gitHub,
+    @Bean
+    RepositoryMonitor repositoryMonitor(GitHubOperations gitHub,
                                         GitHubProperties gitHubProperties, List<IssueListener> issueListeners) {
-		return new RepositoryMonitor(gitHub,
-				new MonitoredRepository(
-						gitHubProperties.getRepository().getOrganization(),
-						gitHubProperties.getRepository().getName()),
-				issueListeners);
-	}
+        return new RepositoryMonitor(gitHub,
+            new MonitoredRepository(
+                gitHubProperties.getRepository().getOrganization(),
+                gitHubProperties.getRepository().getName()),
+            issueListeners);
+    }
 
 }

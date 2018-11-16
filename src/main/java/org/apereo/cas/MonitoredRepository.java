@@ -28,14 +28,14 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public class MonitoredRepository {
 
-	/**
-	 * The name of the organization that owns the repository.
-	 */
-	private final String organization;
+    /**
+     * The name of the organization that owns the repository.
+     */
+    private final String organization;
 
-	/**
-	 * The name of the repository.
-	 */
-	private final String name;
+    /**
+     * The name of the repository.
+     */
+    private final String name;
 
 }

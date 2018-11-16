@@ -1,8 +1,8 @@
-issuebot:
+casbot:
   github:
     repository:
-      organization: spring-projects
-      name: spring-boot
+      organization: apereo
+      name: cas
       collaborators:
         - bclozel
         - mbhave

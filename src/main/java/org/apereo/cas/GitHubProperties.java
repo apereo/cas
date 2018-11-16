@@ -16,70 +16,70 @@
 
 package org.apereo.cas;
 
-import java.util.List;
-
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.util.List;
 
 /**
  * {@link ConfigurationProperties} for connecting to GitHub.
  *
  * @author Andy Wilkinson
  */
-@ConfigurationProperties(prefix = "issuebot.github")
+@ConfigurationProperties(prefix = "casbot.github")
 @Getter
 @Setter
 public class GitHubProperties {
 
-	@NestedConfigurationProperty
-	private Repository repository = new Repository();
+    @NestedConfigurationProperty
+    private Repository repository = new Repository();
 
-	@NestedConfigurationProperty
-	private Credentials credentials = new Credentials();
+    @NestedConfigurationProperty
+    private Credentials credentials = new Credentials();
 
-	/**
-	 * Configuration for a GitHub repository.
-	 */
-	@Getter
-	@Setter
-	public static class Repository {
+    /**
+     * Configuration for a GitHub repository.
+     */
+    @Getter
+    @Setter
+    public static class Repository {
 
-		/**
-		 * The name of the organization that owns the repository.
-		 */
-		private String organization;
+        /**
+         * The name of the organization that owns the repository.
+         */
+        private String organization;
 
-		/**
-		 * The name of the repository.
-		 */
-		private String name;
+        /**
+         * The name of the repository.
+         */
+        private String name;
 
-		/**
-		 * The names of the repository's collaborators.
-		 */
-		private List<String> collaborators;
+        /**
+         * The names of the repository's collaborators.
+         */
+        private List<String> collaborators;
 
-	}
+    }
 
-	/**
-	 * Configuration for the credentials used to authenticate with GitHub.
-	 */
-	@Getter
-	@Setter
-	public static class Credentials {
+    /**
+     * Configuration for the credentials used to authenticate with GitHub.
+     */
+    @Getter
+    @Setter
+    public static class Credentials {
 
-		/**
-		 * The username used for authentication with GitHub.
-		 */
-		private String username;
+        /**
+         * The username used for authentication with GitHub.
+         */
+        private String username;
 
-		/**
-		 * The password used for authentication with GitHub.
-		 */
-		private String password;
+        /**
+         * The password used for authentication with GitHub.
+         */
+        private String password;
 
-	}
+    }
 
 }
