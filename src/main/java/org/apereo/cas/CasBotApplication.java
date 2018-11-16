@@ -36,10 +36,10 @@ import java.util.List;
 @SpringBootApplication
 @EnableScheduling
 @EnableConfigurationProperties(GitHubProperties.class)
-public class IssueBotApplication {
+public class CasBotApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(IssueBotApplication.class, args);
+        SpringApplication.run(CasBotApplication.class, args);
     }
 
     @Bean
