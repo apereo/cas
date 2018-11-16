@@ -48,7 +48,6 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
     "cas.server.tomcat.ajp.port=9944",
     "cas.server.tomcat.basicAuthn.enabled=true",
     "cas.server.tomcat.extAccessLog.enabled=true",
-    "cas.server.tomcat.extAccessLog.pattern=true",
     "cas.server.tomcat.rewriteValve.location=classpath:/container/tomcat/rewrite.config"
 })
 @Slf4j
