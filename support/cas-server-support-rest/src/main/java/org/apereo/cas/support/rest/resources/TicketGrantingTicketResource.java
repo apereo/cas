@@ -64,7 +64,7 @@ public class TicketGrantingTicketResource {
             val tgtId = createTicketGrantingTicketForRequest(requestBody, request);
             return createResponseEntityForTicket(request, tgtId);
         } catch (final AuthenticationException e) {
-            return RestResourceUtils.createResponseEntityForAuthnFailure(e);
+            return RestResourceUtils.createResponseEntityForAuthnFailure(e, request);
         } catch (final BadRestRequestException e) {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

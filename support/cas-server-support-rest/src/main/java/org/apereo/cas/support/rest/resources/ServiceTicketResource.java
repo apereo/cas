@@ -93,7 +93,7 @@ public class ServiceTicketResource {
         } catch (final InvalidTicketException e) {
             return new ResponseEntity<>(tgtId + " could not be found or is considered invalid", HttpStatus.NOT_FOUND);
         } catch (final AuthenticationException e) {
-            return RestResourceUtils.createResponseEntityForAuthnFailure(e);
+            return RestResourceUtils.createResponseEntityForAuthnFailure(e, httpServletRequest);
         } catch (final BadRestRequestException e) {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
