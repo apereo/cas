@@ -14,7 +14,6 @@ dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     
     implementation project(":support:cas-server-support-person-directory")
-
     
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-services")
@@ -63,4 +62,5 @@ task moveGeneratedSourceFiles(type: Copy, description: "Move generated files by 
         file("src/generated").deleteDir()
     }
 }
-generateJaxb2Classes.finalizedBy moveGeneratedSourceFiles
+compileJava.dependsOn(generateJaxb2Classes).finalizedBy(moveGeneratedSourceFiles)
+generateJaxb2Classes.finalizedBy(moveGeneratedSourceFiles)
