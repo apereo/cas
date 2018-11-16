@@ -4,7 +4,6 @@ import org.apereo.cas.GitHubProperties;
 import org.apereo.cas.PullRequestListener;
 import org.apereo.cas.github.GitHubOperations;
 
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

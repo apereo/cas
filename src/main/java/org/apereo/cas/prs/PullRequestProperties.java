@@ -1,7 +1,5 @@
 package org.apereo.cas.prs;
 
-import org.apereo.cas.github.Label;
-
 import lombok.Getter;
 import lombok.Setter;
 
