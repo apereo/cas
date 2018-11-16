@@ -36,7 +36,7 @@ public class User {
      * @param login the login
      */
     @JsonCreator
-    public User(@JsonProperty("login") String login) {
+    public User(@JsonProperty("login") final String login) {
         this.login = login;
     }
 

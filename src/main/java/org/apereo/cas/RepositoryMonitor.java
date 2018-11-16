@@ -17,8 +17,8 @@
 package org.apereo.cas;
 
 import org.apereo.cas.github.GitHubOperations;
-import org.apereo.cas.github.Issue;
 import org.apereo.cas.github.Page;
+import org.apereo.cas.github.PullRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,20 +32,19 @@ import java.util.List;
  * @author Andy Wilkinson
  */
 class RepositoryMonitor {
-
     private static final Logger log = LoggerFactory.getLogger(RepositoryMonitor.class);
 
     private final GitHubOperations gitHub;
 
     private final MonitoredRepository repository;
 
-    private final List<IssueListener> issueListeners;
+    private final List<PullRequestListener> pullRequestListeners;
 
-    RepositoryMonitor(GitHubOperations gitHub, MonitoredRepository repository,
-                      List<IssueListener> issueListeners) {
+    RepositoryMonitor(final GitHubOperations gitHub, final MonitoredRepository repository,
+                      final List<PullRequestListener> pullRequestListeners) {
         this.gitHub = gitHub;
         this.repository = repository;
-        this.issueListeners = issueListeners;
+        this.pullRequestListeners = pullRequestListeners;
     }
 
     @Scheduled(fixedRate = 5 * 60 * 1000)
@@ -53,26 +52,23 @@ class RepositoryMonitor {
         log.info("Monitoring {}/{}", this.repository.getOrganization(),
             this.repository.getName());
         try {
-            Page<Issue> page = this.gitHub.getIssues(this.repository.getOrganization(),
-                this.repository.getName());
+            Page<PullRequest> page = this.gitHub.getPullRequests(this.repository.getOrganization(), this.repository.getName());
             while (page != null) {
-                for (Issue issue : page.getContent()) {
-                    for (IssueListener issueListener : this.issueListeners) {
+                for (final PullRequest pr : page.getContent()) {
+                    for (final PullRequestListener listner : this.pullRequestListeners) {
                         try {
-                            issueListener.onOpenIssue(issue);
-                        } catch (Exception ex) {
-                            log.warn("Listener '{}' failed when handling issue '{}'",
-                                issueListener, issue, ex);
+                            listner.onOpenPullRequest(pr);
+                        } catch (final Exception ex) {
+                            log.warn("Listener '{}' failed when handling pr '{}'", listner, pr, ex);
                         }
                     }
                 }
                 page = page.next();
             }
-        } catch (Exception ex) {
-            log.warn("A failure occurred during issue monitoring", ex);
+        } catch (final Exception ex) {
+            log.warn("A failure occurred during monitoring", ex);
         }
-        log.info("Monitoring of {}/{} completed", this.repository.getOrganization(),
-            this.repository.getName());
+        log.info("Monitoring of {}/{} completed", this.repository.getOrganization(), this.repository.getName());
     }
 
 }

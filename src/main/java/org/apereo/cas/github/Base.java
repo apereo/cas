@@ -14,25 +14,31 @@
  * limitations under the License.
  */
 
-package org.apereo.cas;
+package org.apereo.cas.github;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
 
 /**
- * Tests for {@link CasBotApplication}.
+ * A label that can be applied to a GitHub issue.
  *
  * @author Andy Wilkinson
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest
-public class IssueBotApplicationTests {
+@Getter
+public class Base {
 
-    @Test
-    public void contextLoads() {
+    private final String label;
+    private final String master;
+    private final String sha;
 
+    @JsonCreator
+    public Base(@JsonProperty("label") final String label,
+                @JsonProperty("master") final String master,
+                @JsonProperty("sha") final String sha) {
+        this.label = label;
+        this.master = master;
+        this.sha = sha;
     }
 
 }

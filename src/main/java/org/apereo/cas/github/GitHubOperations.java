@@ -34,6 +34,15 @@ public interface GitHubOperations {
     Page<Issue> getIssues(String organization, String repository);
 
     /**
+     * Gets pull requests.
+     *
+     * @param organization the organization
+     * @param repository   the repository
+     * @return the pull requests
+     */
+    Page<PullRequest> getPullRequests(String organization, String repository);
+
+    /**
      * Returns the comments that have been made on the given {@code issue}.
      *
      * @param issue the issue
@@ -67,6 +76,15 @@ public interface GitHubOperations {
      * @return the added comment
      */
     Comment addComment(Issue issue, String comment);
+
+    /**
+     * Add comment comment.
+     *
+     * @param pullRequest the pull request
+     * @param comment     the command
+     * @return the comment
+     */
+    Comment addComment(PullRequest pullRequest, String comment);
 
     /**
      * Closes the given {@code issue}.

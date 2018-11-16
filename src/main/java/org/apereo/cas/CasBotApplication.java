@@ -28,34 +28,28 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.List;
 
-/**
- * Main class for launching Issue Bot.
- *
- * @author Andy Wilkinson
- */
 @SpringBootApplication
 @EnableScheduling
 @EnableConfigurationProperties(GitHubProperties.class)
 public class CasBotApplication {
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         SpringApplication.run(CasBotApplication.class, args);
     }
 
     @Bean
-    GitHubTemplate gitHubTemplate(GitHubProperties gitHubProperties) {
+    public GitHubTemplate gitHubTemplate(final GitHubProperties gitHubProperties) {
         return new GitHubTemplate(gitHubProperties.getCredentials().getUsername(),
             gitHubProperties.getCredentials().getPassword(), new RegexLinkParser());
     }
 
     @Bean
-    RepositoryMonitor repositoryMonitor(GitHubOperations gitHub,
-                                        GitHubProperties gitHubProperties, List<IssueListener> issueListeners) {
-        return new RepositoryMonitor(gitHub,
-            new MonitoredRepository(
-                gitHubProperties.getRepository().getOrganization(),
-                gitHubProperties.getRepository().getName()),
-            issueListeners);
+    public RepositoryMonitor repositoryMonitor(final GitHubOperations gitHub,
+                                               final GitHubProperties gitHubProperties,
+                                               final List<PullRequestListener> pullRequestListeners) {
+        final GitHubProperties.Repository repoSettings = gitHubProperties.getRepository();
+        final MonitoredRepository repo = new MonitoredRepository(repoSettings.getOrganization(), repoSettings.getName());
+        return new RepositoryMonitor(gitHub, repo, pullRequestListeners);
     }
 
 }

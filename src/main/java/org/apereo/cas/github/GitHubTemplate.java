@@ -71,20 +71,20 @@ public class GitHubTemplate implements GitHubOperations {
      * @param password   the password
      * @param linkParser the link parser
      */
-    public GitHubTemplate(String username, String password, LinkParser linkParser) {
+    public GitHubTemplate(final String username, final String password, final LinkParser linkParser) {
         this(createDefaultRestTemplate(username, password), linkParser);
     }
 
-    GitHubTemplate(RestOperations rest, LinkParser linkParser) {
+    GitHubTemplate(final RestOperations rest, final LinkParser linkParser) {
         this.rest = rest;
         this.linkParser = linkParser;
     }
 
-    static RestTemplate createDefaultRestTemplate(String username, String password) {
-        RestTemplate rest = new RestTemplate();
+    static RestTemplate createDefaultRestTemplate(final String username, final String password) {
+        final RestTemplate rest = new RestTemplate();
         rest.setErrorHandler(new DefaultResponseErrorHandler() {
             @Override
-            public void handleError(ClientHttpResponse response) throws IOException {
+            public void handleError(final ClientHttpResponse response) throws IOException {
                 if (response.getStatusCode() == HttpStatus.FORBIDDEN && response
                     .getHeaders().getFirst("X-RateLimit-Remaining").equals("0")) {
                     throw new IllegalStateException(
@@ -96,7 +96,7 @@ public class GitHubTemplate implements GitHubOperations {
                 }
             }
         });
-        BufferingClientHttpRequestFactory bufferingClient = new BufferingClientHttpRequestFactory(
+        final BufferingClientHttpRequestFactory bufferingClient = new BufferingClientHttpRequestFactory(
             new HttpComponentsClientHttpRequestFactory());
         rest.setRequestFactory(bufferingClient);
         rest.setInterceptors(Collections
@@ -107,40 +107,46 @@ public class GitHubTemplate implements GitHubOperations {
     }
 
     @Override
-    public Page<Issue> getIssues(String organization, String repository) {
-        String url = "https://api.github.com/repos/" + organization + "/" + repository
+    public Page<Issue> getIssues(final String organization, final String repository) {
+        final String url = "https://api.github.com/repos/" + organization + "/" + repository
             + "/issues";
         return getPage(url, Issue[].class);
     }
 
     @Override
-    public Page<Comment> getComments(Issue issue) {
+    public Page<PullRequest> getPullRequests(final String organization, final String repository) {
+        final String url = "https://api.github.com/repos/" + organization + "/" + repository + "/pulls";
+        return getPage(url, PullRequest[].class);
+    }
+
+    @Override
+    public Page<Comment> getComments(final Issue issue) {
         return getPage(issue.getCommentsUrl(), Comment[].class);
     }
 
     @Override
-    public Page<Event> getEvents(Issue issue) {
+    public Page<Event> getEvents(final Issue issue) {
         return getPage(issue.getEventsUrl(), Event[].class);
     }
 
-    private <T> Page<T> getPage(String url, Class<T[]> type) {
+    private <T> Page<T> getPage(final String url, final Class<T[]> type) {
         if (!StringUtils.hasText(url)) {
             return null;
         }
-        ResponseEntity<T[]> contents = this.rest.getForEntity(url, type);
+        final ResponseEntity<T[]> contents = this.rest.getForEntity(url, type);
         return new StandardPage<T>(Arrays.asList(contents.getBody()),
             () -> getPage(getNextUrl(contents), type));
     }
 
-    private String getNextUrl(ResponseEntity<?> response) {
+    private String getNextUrl(final ResponseEntity<?> response) {
         return this.linkParser.parse(response.getHeaders().getFirst("Link")).get("next");
     }
 
     @Override
-    public Issue addLabel(Issue issue, String labelName) {
-        URI uri = URI.create(issue.getLabelsUrl().replace("{/name}", ""));
+    public Issue addLabel(final Issue issue, final String labelName) {
+        final URI uri = URI.create(issue.getLabelsUrl().replace("{/name}", ""));
         log.info("Adding label {} to {}", labelName, uri);
-        ResponseEntity<Label[]> response = this.rest.exchange(
+        final ResponseEntity<Label[]> response = this.rest.exchange(
             new RequestEntity<>(Arrays.asList(labelName), HttpMethod.POST, uri),
             Label[].class);
         if (response.getStatusCode() != HttpStatus.OK) {
@@ -153,14 +159,14 @@ public class GitHubTemplate implements GitHubOperations {
     }
 
     @Override
-    public Issue removeLabel(Issue issue, String labelName) {
-        String encodedName;
+    public Issue removeLabel(final Issue issue, final String labelName) {
+        final String encodedName;
         try {
             encodedName = new URI(null, null, labelName, null).toString();
-        } catch (URISyntaxException ex) {
+        } catch (final URISyntaxException ex) {
             throw new RuntimeException(ex);
         }
-        ResponseEntity<Label[]> response = this.rest.exchange(
+        final ResponseEntity<Label[]> response = this.rest.exchange(
             new RequestEntity<Void>(HttpMethod.DELETE, URI.create(
                 issue.getLabelsUrl().replace("{/name}", "/" + encodedName))),
             Label[].class);
@@ -174,18 +180,24 @@ public class GitHubTemplate implements GitHubOperations {
     }
 
     @Override
-    public Comment addComment(Issue issue, String comment) {
-        Map<String, String> body = new HashMap<>();
+    public Comment addComment(final Issue issue, final String comment) {
+        final Map<String, String> body = new HashMap<>();
         body.put("body", comment);
-        return this.rest.postForEntity(issue.getCommentsUrl(), body, Comment.class)
-            .getBody();
+        return this.rest.postForEntity(issue.getCommentsUrl(), body, Comment.class).getBody();
     }
 
     @Override
-    public Issue close(Issue issue) {
-        Map<String, String> body = new HashMap<>();
+    public Comment addComment(final PullRequest pullRequest, final String comment) {
+        final Map<String, String> body = new HashMap<>();
+        body.put("body", comment);
+        return this.rest.postForEntity(pullRequest.getCommentsUrl(), body, Comment.class).getBody();
+    }
+
+    @Override
+    public Issue close(final Issue issue) {
+        final Map<String, String> body = new HashMap<>();
         body.put("state", "closed");
-        ResponseEntity<Issue> response = this.rest.exchange(
+        final ResponseEntity<Issue> response = this.rest.exchange(
             new RequestEntity<>(body, HttpMethod.PATCH, URI.create(issue.getUrl())),
             Issue.class);
         if (response.getStatusCode() != HttpStatus.OK) {
@@ -201,21 +213,21 @@ public class GitHubTemplate implements GitHubOperations {
         private static final Charset CHARSET_UTF_8 = Charset.forName("UTF-8");
 
         @Override
-        public Object read(Type type, Class<?> contextClass,
-                           HttpInputMessage inputMessage)
+        public Object read(final Type type, final Class<?> contextClass,
+                           final HttpInputMessage inputMessage)
             throws IOException, HttpMessageNotReadableException {
             try {
                 return super.read(type, contextClass, inputMessage);
-            } catch (IOException ex) {
+            } catch (final IOException ex) {
                 throw ex;
-            } catch (HttpMessageNotReadableException ex) {
+            } catch (final HttpMessageNotReadableException ex) {
                 log.error("Failed to create {} from {}", type.getTypeName(),
                     read(inputMessage), ex);
                 throw ex;
             }
         }
 
-        private String read(HttpInputMessage inputMessage) throws IOException {
+        private String read(final HttpInputMessage inputMessage) throws IOException {
             return StreamUtils.copyToString(inputMessage.getBody(), CHARSET_UTF_8);
         }
 
@@ -230,15 +242,15 @@ public class GitHubTemplate implements GitHubOperations {
 
         private final String password;
 
-        BasicAuthorizationInterceptor(String username, String password) {
+        BasicAuthorizationInterceptor(final String username, final String password) {
             this.username = username;
             this.password = (password == null ? "" : password);
         }
 
         @Override
-        public ClientHttpResponse intercept(HttpRequest request, byte[] body,
-                                            ClientHttpRequestExecution execution) throws IOException {
-            String token = Base64Utils.encodeToString(
+        public ClientHttpResponse intercept(final HttpRequest request, final byte[] body,
+                                            final ClientHttpRequestExecution execution) throws IOException {
+            final String token = Base64Utils.encodeToString(
                 (this.username + ":" + this.password).getBytes(UTF_8));
             request.getHeaders().add("Authorization", "Basic " + token);
             return execution.execute(request, body);

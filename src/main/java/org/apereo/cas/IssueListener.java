@@ -30,7 +30,7 @@ public interface IssueListener {
      *
      * @param issue the open issue
      */
-    default void onOpenIssue(Issue issue) {
+    default void onOpenIssue(final Issue issue) {
 
     }
 
@@ -39,7 +39,7 @@ public interface IssueListener {
      *
      * @param issue the open issue
      */
-    default void onIssueClosure(Issue issue) {
+    default void onIssueClosure(final Issue issue) {
 
     }
 

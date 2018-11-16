@@ -20,6 +20,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
+import java.util.List;
+
 /**
  * Details of a GitHub pull request.
  *
@@ -30,14 +32,44 @@ public class PullRequest {
 
     private final String url;
 
-    /**
-     * Creates a new {@code PullRequest} that has the given {@code url} in the GitHub API.
-     *
-     * @param url the url
-     */
+    private final String commentsUrl;
+
+    private final String labelsUrl;
+
+    private final User user;
+
+    private final Milestone milestone;
+
+    private final List<Label> labels;
+
+    private final String state;
+
+    private final String title;
+
+    private final Base base;
+    
     @JsonCreator
-    public PullRequest(@JsonProperty("url") String url) {
+    public PullRequest(@JsonProperty("url") final String url,
+                       @JsonProperty("comments_url") final String commentsUrl,
+                       @JsonProperty("labels_url") final String labelsUrl,
+                       @JsonProperty("user") final User user,
+                       @JsonProperty("labels") final List<Label> labels,
+                       @JsonProperty("milestone") final Milestone milestone,
+                       @JsonProperty("state") final String state,
+                       @JsonProperty("title") final String title,
+                       @JsonProperty("base") final Base base) {
         this.url = url;
+        this.commentsUrl = commentsUrl;
+        this.user = user;
+        this.labelsUrl = labelsUrl;
+        this.labels = labels;
+        this.milestone = milestone;
+        this.title = title;
+        this.base = base;
+        this.state = state;
     }
 
+    public boolean isOpen() {
+        return "open".equalsIgnoreCase(this.state);
+    }
 }

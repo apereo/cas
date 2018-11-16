@@ -27,9 +27,9 @@ import java.util.function.Supplier;
  */
 public class StandardPage<T> implements Page<T> {
 
-    private List<T> content;
+    private final List<T> content;
 
-    private Supplier<Page<T>> nextSupplier;
+    private final Supplier<Page<T>> nextSupplier;
 
     /**
      * Creates a new {@code StandardPage} that has the given {@code content}. The given
@@ -39,7 +39,7 @@ public class StandardPage<T> implements Page<T> {
      * @param content      the content
      * @param nextSupplier the supplier of the next page
      */
-    public StandardPage(List<T> content, Supplier<Page<T>> nextSupplier) {
+    public StandardPage(final List<T> content, final Supplier<Page<T>> nextSupplier) {
         this.content = content;
         this.nextSupplier = nextSupplier;
     }

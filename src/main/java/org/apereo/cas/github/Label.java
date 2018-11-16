@@ -36,7 +36,7 @@ public class Label {
      * @param name the name of the label
      */
     @JsonCreator
-    public Label(@JsonProperty("name") String name) {
+    public Label(@JsonProperty("name") final String name) {
         this.name = name;
     }
 

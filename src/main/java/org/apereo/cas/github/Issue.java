@@ -49,7 +49,7 @@ public class Issue {
     @Getter
     private final PullRequest pullRequest;
     @Getter
-    private List<Label> labels;
+    private final List<Label> labels;
 
     /**
      * Creates a new {@code Issue}.
@@ -64,13 +64,13 @@ public class Issue {
      * @param pullRequest details of the pull request (if this issue is a pull request)
      */
     @JsonCreator
-    public Issue(@JsonProperty("url") String url,
-                 @JsonProperty("comments_url") String commentsUrl,
-                 @JsonProperty("events_url") String eventsUrl,
-                 @JsonProperty("labels_url") String labelsUrl, @JsonProperty("user") User user,
-                 @JsonProperty("labels") List<Label> labels,
-                 @JsonProperty("milestone") Milestone milestone,
-                 @JsonProperty("pull_request") PullRequest pullRequest) {
+    public Issue(@JsonProperty("url") final String url,
+                 @JsonProperty("comments_url") final String commentsUrl,
+                 @JsonProperty("events_url") final String eventsUrl,
+                 @JsonProperty("labels_url") final String labelsUrl, @JsonProperty("user") final User user,
+                 @JsonProperty("labels") final List<Label> labels,
+                 @JsonProperty("milestone") final Milestone milestone,
+                 @JsonProperty("pull_request") final PullRequest pullRequest) {
         this.url = url;
         this.commentsUrl = commentsUrl;
         this.eventsUrl = eventsUrl;

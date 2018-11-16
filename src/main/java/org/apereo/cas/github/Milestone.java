@@ -36,7 +36,7 @@ public class Milestone {
      * @param title the title
      */
     @JsonCreator
-    public Milestone(@JsonProperty("title") String title) {
+    public Milestone(@JsonProperty("title") final String title) {
         this.title = title;
     }
 

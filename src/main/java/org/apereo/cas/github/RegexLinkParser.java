@@ -33,10 +33,10 @@ public class RegexLinkParser implements LinkParser {
     private static final Pattern LINK_PATTERN = Pattern.compile("<(.+)>; rel=\"(.+)\"");
 
     @Override
-    public Map<String, String> parse(String input) {
-        Map<String, String> links = new HashMap<>();
-        for (String link : StringUtils.commaDelimitedListToStringArray(input)) {
-            Matcher matcher = LINK_PATTERN.matcher(link.trim());
+    public Map<String, String> parse(final String input) {
+        final Map<String, String> links = new HashMap<>();
+        for (final String link : StringUtils.commaDelimitedListToStringArray(input)) {
+            final Matcher matcher = LINK_PATTERN.matcher(link.trim());
             if (matcher.matches()) {
                 links.put(matcher.group(2), matcher.group(1));
             }

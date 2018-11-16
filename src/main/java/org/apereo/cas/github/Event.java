@@ -44,9 +44,9 @@ public class Event {
      * @param label        the label associated with the event
      */
     @JsonCreator
-    public Event(@JsonProperty("event") String type,
-                 @JsonProperty("created_at") OffsetDateTime creationTime,
-                 @JsonProperty("label") Label label) {
+    public Event(@JsonProperty("event") final String type,
+                 @JsonProperty("created_at") final OffsetDateTime creationTime,
+                 @JsonProperty("label") final Label label) {
         this.type = Type.valueFrom(type);
         this.creationTime = creationTime;
         this.label = label;
@@ -149,14 +149,14 @@ public class Event {
          */
         HEAD_REF_RESTORED("head_ref_restored");
 
-        private String type;
+        private final String type;
 
-        Type(String type) {
+        Type(final String type) {
             this.type = type;
         }
 
-        static Type valueFrom(String type) {
-            for (Type value : values()) {
+        static Type valueFrom(final String type) {
+            for (final Type value : values()) {
                 if (type.equals(value.type)) {
                     return value;
                 }
