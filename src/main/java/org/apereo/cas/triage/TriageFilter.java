@@ -25,13 +25,13 @@ import org.apereo.cas.github.Issue;
  */
 interface TriageFilter {
 
-	/**
-	 * Returns {@code true} if the given issue has already been triaged, otherwise
-	 * {@code false}.
-	 *
-	 * @param issue the issue
-	 * @return {@code true} if the issue has been triaged, {@code false} otherwise
-	 */
-	boolean triaged(Issue issue);
+    /**
+     * Returns {@code true} if the given issue has already been triaged, otherwise
+     * {@code false}.
+     *
+     * @param issue the issue
+     * @return {@code true} if the issue has been triaged, {@code false} otherwise
+     */
+    boolean triaged(Issue issue);
 
 }

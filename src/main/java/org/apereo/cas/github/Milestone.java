@@ -28,16 +28,16 @@ import lombok.Getter;
 @Getter
 public class Milestone {
 
-	private final String title;
+    private final String title;
 
-	/**
-	 * Creates a new {@code Milestone} with the given {@code title}.
-	 *
-	 * @param title the title
-	 */
-	@JsonCreator
-	public Milestone(@JsonProperty("title") String title) {
-		this.title = title;
-	}
+    /**
+     * Creates a new {@code Milestone} with the given {@code title}.
+     *
+     * @param title the title
+     */
+    @JsonCreator
+    public Milestone(@JsonProperty("title") String title) {
+        this.title = title;
+    }
 
 }

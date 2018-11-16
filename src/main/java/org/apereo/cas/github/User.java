@@ -28,21 +28,21 @@ import lombok.Getter;
 @Getter
 public class User {
 
-	private final String login;
+    private final String login;
 
-	/**
-	 * Creates a new {@code User} with the given login.
-	 *
-	 * @param login the login
-	 */
-	@JsonCreator
-	public User(@JsonProperty("login") String login) {
-		this.login = login;
-	}
+    /**
+     * Creates a new {@code User} with the given login.
+     *
+     * @param login the login
+     */
+    @JsonCreator
+    public User(@JsonProperty("login") String login) {
+        this.login = login;
+    }
 
-	@Override
-	public String toString() {
-		return this.login;
-	}
+    @Override
+    public String toString() {
+        return this.login;
+    }
 
 }

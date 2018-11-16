@@ -28,15 +28,16 @@ import lombok.Getter;
 @Getter
 public class PullRequest {
 
-	private final String url;
+    private final String url;
 
-	/**
-	 * Creates a new {@code PullRequest} that has the given {@code url} in the GitHub API.
-	 * @param url the url
-	 */
-	@JsonCreator
-	public PullRequest(@JsonProperty("url") String url) {
-		this.url = url;
-	}
+    /**
+     * Creates a new {@code PullRequest} that has the given {@code url} in the GitHub API.
+     *
+     * @param url the url
+     */
+    @JsonCreator
+    public PullRequest(@JsonProperty("url") String url) {
+        this.url = url;
+    }
 
 }

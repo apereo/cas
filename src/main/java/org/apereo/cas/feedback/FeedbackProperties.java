@@ -32,30 +32,30 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 @ConfigurationProperties(prefix = "issuebot.feedback")
 final class FeedbackProperties {
 
-	/**
-	 * Name of the label that is applied when feedback is required.
-	 */
-	private String requiredLabel;
+    /**
+     * Name of the label that is applied when feedback is required.
+     */
+    private String requiredLabel;
 
-	/**
-	 * Name of the label that is applied when feedback has been provided.
-	 */
-	private String providedLabel;
+    /**
+     * Name of the label that is applied when feedback has been provided.
+     */
+    private String providedLabel;
 
-	/**
-	 * Name of the label that is applied when the feedback reminder comment has been made.
-	 */
-	private String reminderLabel;
+    /**
+     * Name of the label that is applied when the feedback reminder comment has been made.
+     */
+    private String reminderLabel;
 
-	/**
-	 * The text of the comment that is added as a reminder that feedback is required.
-	 */
-	private String reminderComment;
+    /**
+     * The text of the comment that is added as a reminder that feedback is required.
+     */
+    private String reminderComment;
 
-	/**
-	 * The text of the comment that is added when an issue is clsed as feedback has not
-	 * been provided.
-	 */
-	private String closeComment;
+    /**
+     * The text of the comment that is added when an issue is clsed as feedback has not
+     * been provided.
+     */
+    private String closeComment;
 
 }

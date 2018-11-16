@@ -16,15 +16,15 @@
 
 package org.apereo.cas.feedback;
 
-import java.util.List;
+import org.apereo.cas.GitHubProperties;
+import org.apereo.cas.IssueListener;
+import org.apereo.cas.github.GitHubOperations;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import org.apereo.cas.GitHubProperties;
-import org.apereo.cas.IssueListener;
-import org.apereo.cas.github.GitHubOperations;
+import java.util.List;
 
 /**
  * Central configuration for the beans involved in managing issues that are waiting for
@@ -36,19 +36,19 @@ import org.apereo.cas.github.GitHubOperations;
 @EnableConfigurationProperties(FeedbackProperties.class)
 class FeedbackConfiguration {
 
-	@Bean
-	FeedbackIssueListener feedbackIssueListener(GitHubOperations gitHub,
-			GitHubProperties githubProperties, FeedbackProperties feedbackProperties,
-			List<IssueListener> issueListener) {
-		return new FeedbackIssueListener(gitHub, feedbackProperties.getRequiredLabel(),
-				githubProperties.getRepository().getCollaborators(),
-				githubProperties.getCredentials().getUsername(),
-				new StandardFeedbackListener(gitHub,
-						feedbackProperties.getProvidedLabel(),
-						feedbackProperties.getRequiredLabel(),
-						feedbackProperties.getReminderLabel(),
-						feedbackProperties.getReminderComment(),
-						feedbackProperties.getCloseComment(), issueListener));
-	}
+    @Bean
+    FeedbackIssueListener feedbackIssueListener(GitHubOperations gitHub,
+                                                GitHubProperties githubProperties, FeedbackProperties feedbackProperties,
+                                                List<IssueListener> issueListener) {
+        return new FeedbackIssueListener(gitHub, feedbackProperties.getRequiredLabel(),
+            githubProperties.getRepository().getCollaborators(),
+            githubProperties.getCredentials().getUsername(),
+            new StandardFeedbackListener(gitHub,
+                feedbackProperties.getProvidedLabel(),
+                feedbackProperties.getRequiredLabel(),
+                feedbackProperties.getReminderLabel(),
+                feedbackProperties.getReminderComment(),
+                feedbackProperties.getCloseComment(), issueListener));
+    }
 
 }

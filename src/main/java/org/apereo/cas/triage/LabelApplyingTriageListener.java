@@ -26,31 +26,31 @@ import org.apereo.cas.github.Issue;
  */
 final class LabelApplyingTriageListener implements TriageListener {
 
-	private final GitHubOperations gitHub;
+    private final GitHubOperations gitHub;
 
-	private final String label;
+    private final String label;
 
-	/**
-	 * Creates a new {@code LabelApplyingTriageListener} that will use the given
-	 * {@code gitHubOperations} to apply the given {@code label} to any issues that
-	 * require triage.
-	 *
-	 * @param gitHubOperations the GitHubOperations
-	 * @param label the label
-	 */
-	LabelApplyingTriageListener(GitHubOperations gitHubOperations, String label) {
-		this.gitHub = gitHubOperations;
-		this.label = label;
-	}
+    /**
+     * Creates a new {@code LabelApplyingTriageListener} that will use the given
+     * {@code gitHubOperations} to apply the given {@code label} to any issues that
+     * require triage.
+     *
+     * @param gitHubOperations the GitHubOperations
+     * @param label            the label
+     */
+    LabelApplyingTriageListener(GitHubOperations gitHubOperations, String label) {
+        this.gitHub = gitHubOperations;
+        this.label = label;
+    }
 
-	@Override
-	public void requiresTriage(Issue issue) {
-		this.gitHub.addLabel(issue, this.label);
-	}
+    @Override
+    public void requiresTriage(Issue issue) {
+        this.gitHub.addLabel(issue, this.label);
+    }
 
-	@Override
-	public void doesNotRequireTriage(Issue issue) {
-		this.gitHub.removeLabel(issue, this.label);
-	}
+    @Override
+    public void doesNotRequireTriage(Issue issue) {
+        this.gitHub.removeLabel(issue, this.label);
+    }
 
 }

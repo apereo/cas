@@ -28,16 +28,16 @@ import lombok.Getter;
 @Getter
 public class Label {
 
-	private final String name;
+    private final String name;
 
-	/**
-	 * Creates a new label with the given {@code name}.
-	 *
-	 * @param name the name of the label
-	 */
-	@JsonCreator
-	public Label(@JsonProperty("name") String name) {
-		this.name = name;
-	}
+    /**
+     * Creates a new label with the given {@code name}.
+     *
+     * @param name the name of the label
+     */
+    @JsonCreator
+    public Label(@JsonProperty("name") String name) {
+        this.name = name;
+    }
 
 }

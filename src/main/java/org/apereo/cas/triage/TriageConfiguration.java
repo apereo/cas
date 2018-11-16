@@ -16,15 +16,14 @@
 
 package org.apereo.cas.triage;
 
+import org.apereo.cas.GitHubProperties;
 import org.apereo.cas.github.GitHubOperations;
-
-import java.util.Arrays;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import org.apereo.cas.GitHubProperties;
+import java.util.Arrays;
 
 /**
  * Central configuration for the beans involved in identifying issues that require triage.
@@ -35,15 +34,15 @@ import org.apereo.cas.GitHubProperties;
 @EnableConfigurationProperties(TriageProperties.class)
 class TriageConfiguration {
 
-	@Bean
-	TriageIssueListener triageIssueListener(GitHubOperations gitHubOperations,
+    @Bean
+    TriageIssueListener triageIssueListener(GitHubOperations gitHubOperations,
                                             TriageProperties triageProperties, GitHubProperties gitHubProperties) {
-		return new TriageIssueListener(
-				Arrays.asList(
-						new OpenedByCollaboratorTriageFilter(
-								gitHubProperties.getRepository().getCollaborators()),
-						new LabelledTriageFilter(), new MilestoneAppliedTriageFilter()),
-				new LabelApplyingTriageListener(gitHubOperations,
-						triageProperties.getLabel()));
-	}
+        return new TriageIssueListener(
+            Arrays.asList(
+                new OpenedByCollaboratorTriageFilter(
+                    gitHubProperties.getRepository().getCollaborators()),
+                new LabelledTriageFilter(), new MilestoneAppliedTriageFilter()),
+            new LabelApplyingTriageListener(gitHubOperations,
+                triageProperties.getLabel()));
+    }
 }

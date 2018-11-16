@@ -18,11 +18,11 @@ package org.apereo.cas.triage;
 
 import org.apereo.cas.github.Issue;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * A {@link TriageFilter} that considers an issue as having been triaged if it was opened
@@ -32,23 +32,23 @@ import org.slf4j.LoggerFactory;
  */
 final class OpenedByCollaboratorTriageFilter implements TriageFilter {
 
-	private static final Logger log = LoggerFactory
-			.getLogger(OpenedByCollaboratorTriageFilter.class);
+    private static final Logger log = LoggerFactory
+        .getLogger(OpenedByCollaboratorTriageFilter.class);
 
-	private final List<String> collaborators;
+    private final List<String> collaborators;
 
-	OpenedByCollaboratorTriageFilter(List<String> collaborators) {
-		this.collaborators = collaborators == null ? Collections.emptyList()
-				: collaborators;
-	}
+    OpenedByCollaboratorTriageFilter(List<String> collaborators) {
+        this.collaborators = collaborators == null ? Collections.emptyList()
+            : collaborators;
+    }
 
-	@Override
-	public boolean triaged(Issue issue) {
-		if (this.collaborators.contains(issue.getUser().getLogin())) {
-			log.debug("{} has been triaged. It was opened by {}", issue, issue.getUser());
-			return true;
-		}
-		return false;
-	}
+    @Override
+    public boolean triaged(Issue issue) {
+        if (this.collaborators.contains(issue.getUser().getLogin())) {
+            log.debug("{} has been triaged. It was opened by {}", issue, issue.getUser());
+            return true;
+        }
+        return false;
+    }
 
 }

@@ -32,9 +32,9 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 @ConfigurationProperties(prefix = "issuebot.triage")
 class TriageProperties {
 
-	/**
-	 * The name of the label that should be applied to issues that are waiting for triage.
-	 */
-	private String label;
+    /**
+     * The name of the label that should be applied to issues that are waiting for triage.
+     */
+    private String label;
 
 }

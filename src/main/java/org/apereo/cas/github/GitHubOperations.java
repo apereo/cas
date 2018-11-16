@@ -23,65 +23,65 @@ package org.apereo.cas.github;
  */
 public interface GitHubOperations {
 
-	/**
-	 * Returns the open issues in the {@code repository} owned by the given
-	 * {@code organization}.
-	 *
-	 * @param organization the name of the organization
-	 * @param repository the name of the repository
-	 * @return the issues
-	 */
-	Page<Issue> getIssues(String organization, String repository);
+    /**
+     * Returns the open issues in the {@code repository} owned by the given
+     * {@code organization}.
+     *
+     * @param organization the name of the organization
+     * @param repository   the name of the repository
+     * @return the issues
+     */
+    Page<Issue> getIssues(String organization, String repository);
 
-	/**
-	 * Returns the comments that have been made on the given {@code issue}.
-	 *
-	 * @param issue the issue
-	 * @return the comments
-	 */
-	Page<Comment> getComments(Issue issue);
+    /**
+     * Returns the comments that have been made on the given {@code issue}.
+     *
+     * @param issue the issue
+     * @return the comments
+     */
+    Page<Comment> getComments(Issue issue);
 
-	/**
-	 * Adds the given {@code label} to the given {@code issue}.
-	 *
-	 * @param issue the issue
-	 * @param label the label
-	 * @return the modified issue
-	 */
-	Issue addLabel(Issue issue, String label);
+    /**
+     * Adds the given {@code label} to the given {@code issue}.
+     *
+     * @param issue the issue
+     * @param label the label
+     * @return the modified issue
+     */
+    Issue addLabel(Issue issue, String label);
 
-	/**
-	 * Removes the given {@code label} from the given {@code issue}.
-	 *
-	 * @param issue the issue
-	 * @param label the label
-	 * @return the modified issue
-	 */
-	Issue removeLabel(Issue issue, String label);
+    /**
+     * Removes the given {@code label} from the given {@code issue}.
+     *
+     * @param issue the issue
+     * @param label the label
+     * @return the modified issue
+     */
+    Issue removeLabel(Issue issue, String label);
 
-	/**
-	 * Adds the given {@code comment} to the given {@code issue}.
-	 *
-	 * @param issue the issue
-	 * @param comment the comment
-	 * @return the added comment
-	 */
-	Comment addComment(Issue issue, String comment);
+    /**
+     * Adds the given {@code comment} to the given {@code issue}.
+     *
+     * @param issue   the issue
+     * @param comment the comment
+     * @return the added comment
+     */
+    Comment addComment(Issue issue, String comment);
 
-	/**
-	 * Closes the given {@code issue}.
-	 *
-	 * @param issue the issue
-	 * @return the modified issue
-	 */
-	Issue close(Issue issue);
+    /**
+     * Closes the given {@code issue}.
+     *
+     * @param issue the issue
+     * @return the modified issue
+     */
+    Issue close(Issue issue);
 
-	/**
-	 * Returns the events that have occurred on the given {@code issue}.
-	 *
-	 * @param issue the issue
-	 * @return the events
-	 */
-	Page<Event> getEvents(Issue issue);
+    /**
+     * Returns the events that have occurred on the given {@code issue}.
+     *
+     * @param issue the issue
+     * @return the events
+     */
+    Page<Event> getEvents(Issue issue);
 
 }

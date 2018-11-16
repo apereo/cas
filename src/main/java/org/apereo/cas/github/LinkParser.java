@@ -27,12 +27,12 @@ import java.util.Map;
  */
 interface LinkParser {
 
-	/**
-	 * Parse the given {@code header} into a map of rel:url pairs.
-	 *
-	 * @param header the header to parse
-	 * @return the map of links
-	 */
-	Map<String, String> parse(String header);
+    /**
+     * Parse the given {@code header} into a map of rel:url pairs.
+     *
+     * @param header the header to parse
+     * @return the map of links
+     */
+    Map<String, String> parse(String header);
 
 }

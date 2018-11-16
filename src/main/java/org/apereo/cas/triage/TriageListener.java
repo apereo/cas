@@ -25,18 +25,18 @@ import org.apereo.cas.github.Issue;
  */
 interface TriageListener {
 
-	/**
-	 * Notification that the given {@code issue} requires triage.
-	 *
-	 * @param issue the issue
-	 */
-	void requiresTriage(Issue issue);
+    /**
+     * Notification that the given {@code issue} requires triage.
+     *
+     * @param issue the issue
+     */
+    void requiresTriage(Issue issue);
 
-	/**
-	 * Notification that the given {@code issue} does not require triage.
-	 *
-	 * @param issue the issue
-	 */
-	void doesNotRequireTriage(Issue issue);
+    /**
+     * Notification that the given {@code issue} does not require triage.
+     *
+     * @param issue the issue
+     */
+    void doesNotRequireTriage(Issue issue);
 
 }

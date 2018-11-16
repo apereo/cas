@@ -26,18 +26,18 @@ import java.util.List;
  */
 public interface Page<T> {
 
-	/**
-	 * Returns the next page, if any.
-	 *
-	 * @return The next page or {@code null}
-	 */
-	Page<T> next();
+    /**
+     * Returns the next page, if any.
+     *
+     * @return The next page or {@code null}
+     */
+    Page<T> next();
 
-	/**
-	 * Returns the contents of the page.
-	 *
-	 * @return the contents
-	 */
-	List<T> getContent();
+    /**
+     * Returns the contents of the page.
+     *
+     * @return the contents
+     */
+    List<T> getContent();
 
 }

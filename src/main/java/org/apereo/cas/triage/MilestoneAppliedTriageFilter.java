@@ -29,16 +29,16 @@ import org.slf4j.LoggerFactory;
  */
 final class MilestoneAppliedTriageFilter implements TriageFilter {
 
-	private static final Logger log = LoggerFactory.getLogger(LabelledTriageFilter.class);
+    private static final Logger log = LoggerFactory.getLogger(LabelledTriageFilter.class);
 
-	@Override
-	public boolean triaged(Issue issue) {
-		if (issue.getMilestone() != null) {
-			log.debug("Issue has been triaged. It has been added to milestone {}",
-					issue.getMilestone().getTitle());
-			return true;
-		}
-		return false;
-	}
+    @Override
+    public boolean triaged(Issue issue) {
+        if (issue.getMilestone() != null) {
+            log.debug("Issue has been triaged. It has been added to milestone {}",
+                issue.getMilestone().getTitle());
+            return true;
+        }
+        return false;
+    }
 
 }

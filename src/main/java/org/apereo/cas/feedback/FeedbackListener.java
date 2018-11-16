@@ -16,9 +16,9 @@
 
 package org.apereo.cas.feedback;
 
-import java.time.OffsetDateTime;
-
 import org.apereo.cas.github.Issue;
+
+import java.time.OffsetDateTime;
 
 /**
  * A {@code FeedbackListener} is notified when feedback has been provided or is still
@@ -28,20 +28,20 @@ import org.apereo.cas.github.Issue;
  */
 public interface FeedbackListener {
 
-	/**
-	 * Notification that feedback has been provided for the given {@code issue}.
-	 *
-	 * @param issue the issue
-	 */
-	void feedbackProvided(Issue issue);
+    /**
+     * Notification that feedback has been provided for the given {@code issue}.
+     *
+     * @param issue the issue
+     */
+    void feedbackProvided(Issue issue);
 
-	/**
-	 * Notification that feedback is still required for the given {@code issue} having
-	 * been requested at the given {@code requestTime}.
-	 *
-	 * @param issue the issue
-	 * @param requestTime the time when feedback was requested
-	 */
-	void feedbackRequired(Issue issue, OffsetDateTime requestTime);
+    /**
+     * Notification that feedback is still required for the given {@code issue} having
+     * been requested at the given {@code requestTime}.
+     *
+     * @param issue       the issue
+     * @param requestTime the time when feedback was requested
+     */
+    void feedbackRequired(Issue issue, OffsetDateTime requestTime);
 
 }

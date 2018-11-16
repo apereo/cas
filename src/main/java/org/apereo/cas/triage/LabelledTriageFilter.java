@@ -29,15 +29,15 @@ import org.slf4j.LoggerFactory;
  */
 final class LabelledTriageFilter implements TriageFilter {
 
-	private static final Logger log = LoggerFactory.getLogger(LabelledTriageFilter.class);
+    private static final Logger log = LoggerFactory.getLogger(LabelledTriageFilter.class);
 
-	@Override
-	public boolean triaged(Issue issue) {
-		if (issue.getLabels() != null && !issue.getLabels().isEmpty()) {
-			log.debug("{} has been triaged. It has been labelled.", issue);
-			return true;
-		}
-		return false;
-	}
+    @Override
+    public boolean triaged(Issue issue) {
+        if (issue.getLabels() != null && !issue.getLabels().isEmpty()) {
+            log.debug("{} has been triaged. It has been labelled.", issue);
+            return true;
+        }
+        return false;
+    }
 
 }

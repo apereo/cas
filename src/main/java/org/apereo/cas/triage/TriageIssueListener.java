@@ -16,11 +16,10 @@
 
 package org.apereo.cas.triage;
 
+import org.apereo.cas.IssueListener;
 import org.apereo.cas.github.Issue;
 
 import java.util.List;
-
-import org.apereo.cas.IssueListener;
 
 /**
  * {@link IssueListener} that identifies open issues that require triage.
@@ -29,42 +28,42 @@ import org.apereo.cas.IssueListener;
  */
 final class TriageIssueListener implements IssueListener {
 
-	private final List<TriageFilter> triageFilters;
+    private final List<TriageFilter> triageFilters;
 
-	private final TriageListener triageListener;
+    private final TriageListener triageListener;
 
-	/**
-	 * Creates a new {@code TriageIssueListener} that will use the given
-	 * {@code triageFilters} to identify issues that require triage and notify the given
-	 * {@code triageListener} of those that do.
-	 *
-	 * @param triageFilters the triage filters
-	 * @param triageListener the triage listener
-	 */
-	TriageIssueListener(List<TriageFilter> triageFilters, TriageListener triageListener) {
-		this.triageFilters = triageFilters;
-		this.triageListener = triageListener;
-	}
+    /**
+     * Creates a new {@code TriageIssueListener} that will use the given
+     * {@code triageFilters} to identify issues that require triage and notify the given
+     * {@code triageListener} of those that do.
+     *
+     * @param triageFilters  the triage filters
+     * @param triageListener the triage listener
+     */
+    TriageIssueListener(List<TriageFilter> triageFilters, TriageListener triageListener) {
+        this.triageFilters = triageFilters;
+        this.triageListener = triageListener;
+    }
 
-	@Override
-	public void onOpenIssue(Issue issue) {
-		if (requiresTriage(issue)) {
-			this.triageListener.requiresTriage(issue);
-		}
-	}
+    @Override
+    public void onOpenIssue(Issue issue) {
+        if (requiresTriage(issue)) {
+            this.triageListener.requiresTriage(issue);
+        }
+    }
 
-	private boolean requiresTriage(Issue issue) {
-		for (TriageFilter filter : this.triageFilters) {
-			if (filter.triaged(issue)) {
-				return false;
-			}
-		}
-		return true;
-	}
+    private boolean requiresTriage(Issue issue) {
+        for (TriageFilter filter : this.triageFilters) {
+            if (filter.triaged(issue)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-	@Override
-	public void onIssueClosure(Issue issue) {
-		this.triageListener.doesNotRequireTriage(issue);
-	}
+    @Override
+    public void onIssueClosure(Issue issue) {
+        this.triageListener.doesNotRequireTriage(issue);
+    }
 
 }
