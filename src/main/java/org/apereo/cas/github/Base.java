@@ -22,7 +22,7 @@ import lombok.Getter;
 import lombok.ToString;
 
 @Getter
-@ToString(of = {"ref", "label"}, includeFieldNames = false)
+@ToString(of = {"label"}, includeFieldNames = false)
 public class Base {
 
     private final String label;
