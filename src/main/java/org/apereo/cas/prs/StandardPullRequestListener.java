@@ -3,13 +3,11 @@ package org.apereo.cas.prs;
 import org.apereo.cas.GitHubProperties;
 import org.apereo.cas.PullRequestListener;
 import org.apereo.cas.github.GitHubOperations;
+import org.apereo.cas.github.PullRequest;
 
-/**
- * This is {@link StandardPullRequestListener}.
- *
- * @author Misagh Moayyed
- * @since 6.0.0
- */
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class StandardPullRequestListener implements PullRequestListener {
     private final GitHubOperations gitHub;
     private final GitHubProperties githubProperties;
@@ -19,5 +17,10 @@ public class StandardPullRequestListener implements PullRequestListener {
         this.gitHub = gitHub;
         this.githubProperties = githubProperties;
         this.pullRequestProperties = pullRequestProperties;
+    }
+
+    @Override
+    public void onOpenPullRequest(final PullRequest pr) {
+        log.info(pr.getTitle());
     }
 }

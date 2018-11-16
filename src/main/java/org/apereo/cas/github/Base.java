@@ -20,25 +20,23 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
-/**
- * A label that can be applied to a GitHub issue.
- *
- * @author Andy Wilkinson
- */
 @Getter
 public class Base {
 
     private final String label;
-    private final String master;
+    private final String ref;
     private final String sha;
 
     @JsonCreator
     public Base(@JsonProperty("label") final String label,
-                @JsonProperty("master") final String master,
+                @JsonProperty("ref") final String ref,
                 @JsonProperty("sha") final String sha) {
         this.label = label;
-        this.master = master;
+        this.ref = ref;
         this.sha = sha;
     }
 
+    public boolean isRefMaster() {
+        return "master".equalsIgnoreCase(this.ref);
+    }
 }

@@ -20,8 +20,7 @@ import org.apereo.cas.github.GitHubOperations;
 import org.apereo.cas.github.Page;
 import org.apereo.cas.github.PullRequest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.List;
@@ -31,8 +30,8 @@ import java.util.List;
  *
  * @author Andy Wilkinson
  */
+@Slf4j
 class RepositoryMonitor {
-    private static final Logger log = LoggerFactory.getLogger(RepositoryMonitor.class);
 
     private final GitHubOperations gitHub;
 
@@ -47,19 +46,20 @@ class RepositoryMonitor {
         this.pullRequestListeners = pullRequestListeners;
     }
 
-    @Scheduled(fixedRate = 5 * 60 * 1000)
+    @Scheduled(fixedRate = 30 * 60 * 1000)
     void monitor() {
-        log.info("Monitoring {}/{}", this.repository.getOrganization(),
-            this.repository.getName());
+        log.info("Monitoring {}/{}", this.repository.getOrganization(),this.repository.getName());
         try {
             Page<PullRequest> page = this.gitHub.getPullRequests(this.repository.getOrganization(), this.repository.getName());
             while (page != null) {
                 for (final PullRequest pr : page.getContent()) {
-                    for (final PullRequestListener listner : this.pullRequestListeners) {
+                    for (final PullRequestListener listener : this.pullRequestListeners) {
                         try {
-                            listner.onOpenPullRequest(pr);
+                            if (pr.isOpen()) {
+                                listener.onOpenPullRequest(pr);
+                            }
                         } catch (final Exception ex) {
-                            log.warn("Listener '{}' failed when handling pr '{}'", listner, pr, ex);
+                            log.warn("Listener '{}' failed when handling pr '{}'", listener, pr, ex);
                         }
                     }
                 }

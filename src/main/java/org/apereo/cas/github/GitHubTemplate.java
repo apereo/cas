@@ -115,7 +115,7 @@ public class GitHubTemplate implements GitHubOperations {
 
     @Override
     public Page<PullRequest> getPullRequests(final String organization, final String repository) {
-        final String url = "https://api.github.com/repos/" + organization + "/" + repository + "/pulls";
+        final String url = "https://api.github.com/repos/" + organization + "/" + repository + "/pulls?state=open";
         return getPage(url, PullRequest[].class);
     }
 
