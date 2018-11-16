@@ -24,7 +24,12 @@ public class ApereoCasPullRequestListener implements PullRequestListener {
 
         if (!properties.getMaintainedBranches().contains(pr.getBase().getRef()) && !pr.isLabeledAsSeeMaintenancePolicy()) {
             log.warn("{} is targeted at a branch {} that is no longer maintained. See maintenance policy", pr, pr.getBase());
+            return;
         }
 
+        if (!pr.getBase().isRefMaster() && !pr.isLabeledAsPendingPortForward()) {
+            log.warn("{} is targeted at a branch {} and should be ported forward to the master branch in a separate pull request.", pr, pr.getBase());
+            return;
+        }
     }
 }
