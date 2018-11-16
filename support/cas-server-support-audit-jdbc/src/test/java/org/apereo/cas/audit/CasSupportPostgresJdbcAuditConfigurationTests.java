@@ -19,7 +19,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.audit.jdbc.user=postgres",
     "cas.audit.jdbc.password=password",
     "cas.audit.jdbc.driverClass=org.postgresql.Driver",
-    "cas.audit.jdbc.url=jdbc:postgresql://localhost:5432/postgres",
+    "cas.audit.jdbc.url=jdbc:postgresql://localhost:5432/audit",
     "cas.audit.jdbc.dialect=org.hibernate.dialect.PostgreSQL95Dialect"
 })
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 5432)
