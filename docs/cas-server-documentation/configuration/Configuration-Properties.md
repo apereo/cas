@@ -387,6 +387,8 @@ The following settings affect the runtime behavior of the embedded Apache Tomcat
 # server.tomcat.protocolHeaderHttpsValue=https
 # server.tomcat.remoteIpHeader=X-FORWARDED-FOR
 # server.tomcat.uriEncoding=UTF-8
+
+# cas.server.tomcat.serverName=Apereo CAS
 ```
 
 #### HTTP Proxying

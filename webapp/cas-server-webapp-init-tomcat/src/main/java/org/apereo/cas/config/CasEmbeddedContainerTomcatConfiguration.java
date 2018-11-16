@@ -34,6 +34,7 @@ import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.embedded.tomcat.TomcatConnectorCustomizer;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
@@ -88,11 +89,18 @@ public class CasEmbeddedContainerTomcatConfiguration {
                     configureRewriteValve(tomcat);
                     configureSSLValve(tomcat);
                     configureBasicAuthn(tomcat);
+                    finalizeConnectors(tomcat);
                 } else {
                     LOGGER.error("Servlet web server factory [{}] does not support Apache Tomcat and cannot be customized!", factory);
                 }
             }
         };
+    }
+
+    private void finalizeConnectors(final TomcatServletWebServerFactory tomcat) {
+        tomcat.addConnectorCustomizers((TomcatConnectorCustomizer) connector -> {
+            connector.setAttribute("Server", casProperties.getServer().getTomcat().getServerName());
+        });
     }
 
     private static void configureConnectorForProtocol(final Connector connector, final String protocol) {
@@ -232,6 +240,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
             tomcat.getTomcatConnectorCustomizers().add(connector -> {
                 connector.setSecure(proxy.isSecure());
                 connector.setScheme(proxy.getScheme());
+
                 if (StringUtils.isNotBlank(proxy.getProtocol())) {
                     LOGGER.debug("Setting HTTP proxying protocol to [{}]", proxy.getProtocol());
                     configureConnectorForProtocol(connector, proxy.getProtocol());
