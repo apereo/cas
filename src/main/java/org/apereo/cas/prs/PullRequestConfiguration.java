@@ -15,13 +15,11 @@ import org.springframework.context.annotation.Configuration;
  * @since 6.0.0
  */
 @Configuration
-@EnableConfigurationProperties(PullRequestProperties.class)
 class PullRequestConfiguration {
     @Bean
-    PullRequestListener pullRequestListener(GitHubOperations gitHub,
-                                            GitHubProperties githubProperties,
-                                            PullRequestProperties pullRequestProperties) {
-        return new StandardPullRequestListener(gitHub, githubProperties, pullRequestProperties);
+    public PullRequestListener pullRequestListener(final GitHubOperations gitHub,
+                                            final GitHubProperties githubProperties) {
+        return new ApereoCasPullRequestListener(gitHub, githubProperties);
     }
 
 }

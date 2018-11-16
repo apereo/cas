@@ -19,16 +19,18 @@ package org.apereo.cas.github;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.List;
 
-/**
- * Details of a GitHub pull request.
- *
- * @author Andy Wilkinson
- */
 @Getter
+@ToString(of = {"title", "url"}, includeFieldNames = false)
 public class PullRequest {
+    public static final Label LABEL_SEE_MAINTENANCE_POLICY = new Label("See Maintenance Policy");
+    public static final Label LABEL_PENDING_PORT_BACK = new Label("Pending: Port Back");
+    public static final Label LABEL_PENDING_PORT_FORWARD = new Label("Pending: Port Forward");
+
+    private final String number;
 
     private final String url;
 
@@ -48,7 +50,7 @@ public class PullRequest {
 
     private final Base base;
     private final Base head;
-    
+
     @JsonCreator
     public PullRequest(@JsonProperty("url") final String url,
                        @JsonProperty("comments_url") final String commentsUrl,
@@ -58,6 +60,7 @@ public class PullRequest {
                        @JsonProperty("milestone") final Milestone milestone,
                        @JsonProperty("state") final String state,
                        @JsonProperty("title") final String title,
+                       @JsonProperty("number") final String number,
                        @JsonProperty("base") final Base base,
                        @JsonProperty("head") final Base head) {
         this.url = url;
@@ -70,9 +73,22 @@ public class PullRequest {
         this.base = base;
         this.state = state;
         this.head = head;
+        this.number = number;
     }
 
     public boolean isOpen() {
         return "open".equalsIgnoreCase(this.state);
+    }
+
+    public boolean isLabeledAsSeeMaintenancePolicy() {
+        return this.labels.contains(LABEL_SEE_MAINTENANCE_POLICY);
+    }
+
+    public boolean isLabeledAsPendingPortForward() {
+        return this.labels.contains(LABEL_PENDING_PORT_FORWARD);
+    }
+
+    public boolean isLabeledAsPendingPortBack() {
+        return this.labels.contains(LABEL_PENDING_PORT_BACK);
     }
 }

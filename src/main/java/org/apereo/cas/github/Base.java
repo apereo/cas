@@ -19,8 +19,10 @@ package org.apereo.cas.github;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
+@ToString(of = {"ref", "label"}, includeFieldNames = false)
 public class Base {
 
     private final String label;

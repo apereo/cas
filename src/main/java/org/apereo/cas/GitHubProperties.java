@@ -16,6 +16,8 @@
 
 package org.apereo.cas;
 
+import org.apereo.cas.prs.PullRequestProperties;
+
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -28,7 +30,7 @@ import java.util.List;
  *
  * @author Andy Wilkinson
  */
-@ConfigurationProperties(prefix = "casbot.github")
+@ConfigurationProperties(prefix = "casbot.github", ignoreUnknownFields = false)
 @Getter
 @Setter
 public class GitHubProperties {
@@ -38,6 +40,9 @@ public class GitHubProperties {
 
     @NestedConfigurationProperty
     private Credentials credentials = new Credentials();
+
+    @NestedConfigurationProperty
+    private PullRequestProperties prs = new PullRequestProperties();
 
     /**
      * Configuration for a GitHub repository.
