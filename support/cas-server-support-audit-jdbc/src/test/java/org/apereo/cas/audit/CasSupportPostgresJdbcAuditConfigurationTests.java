@@ -2,8 +2,10 @@ package org.apereo.cas.audit;
 
 import org.apereo.cas.category.PostgresCategory;
 import org.apereo.cas.util.junit.ConditionalIgnore;
+import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
+import org.junit.Rule;
 import org.junit.experimental.categories.Category;
 import org.springframework.test.context.TestPropertySource;
 
@@ -23,4 +25,6 @@ import org.springframework.test.context.TestPropertySource;
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 5432)
 @Category(PostgresCategory.class)
 public class CasSupportPostgresJdbcAuditConfigurationTests extends CasSupportJdbcAuditConfigurationTests {
+    @Rule
+    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
 }
