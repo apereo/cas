@@ -3,6 +3,7 @@ package org.apereo.cas;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
+import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 
 import lombok.Cleanup;
 import lombok.SneakyThrows;
@@ -34,6 +35,9 @@ import java.sql.Statement;
 public abstract class BaseJdbcAttributeRepositoryTests {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
 
     @Rule
     public final SpringMethodRule springMethodRule = new SpringMethodRule();
