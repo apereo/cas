@@ -23,8 +23,9 @@ import lombok.val;
  */
 @Slf4j
 public class PrincipalBearingCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
-    public PrincipalBearingCredentialsAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory) {
-        super(name, servicesManager, principalFactory, null);
+    public PrincipalBearingCredentialsAuthenticationHandler(final String name, final ServicesManager servicesManager,
+                                                            final PrincipalFactory principalFactory, final Integer order) {
+        super(name, servicesManager, principalFactory, order);
     }
 
     @Override

@@ -49,7 +49,8 @@ public class OpenIdAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationHandler openIdCredentialsAuthenticationHandler() {
         val openid = casProperties.getAuthn().getOpenid();
         return new OpenIdCredentialsAuthenticationHandler(openid.getName(), servicesManager.getIfAvailable(),
-            openidPrincipalFactory(), ticketRegistry.getIfAvailable());
+            openidPrincipalFactory(), ticketRegistry.getIfAvailable(),
+            openid.getOrder());
     }
 
     @Bean

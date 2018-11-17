@@ -89,7 +89,8 @@ public class CasRemoteAuthenticationConfiguration implements CasWebflowExecution
         val remoteAddress = casProperties.getAuthn().getRemoteAddress();
         val bean = new RemoteAddressAuthenticationHandler(remoteAddress.getName(),
             servicesManager.getIfAvailable(),
-            remoteAddressPrincipalFactory());
+            remoteAddressPrincipalFactory(),
+            remoteAddress.getOrder());
         bean.configureIpNetworkRange(remoteAddress.getIpAddressRange());
         return bean;
     }

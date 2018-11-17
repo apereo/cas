@@ -21,8 +21,10 @@ import java.security.GeneralSecurityException;
  */
 public class DigestAuthenticationHandler extends AbstractAuthenticationHandler {
 
-    public DigestAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory) {
-        super(name, servicesManager, principalFactory, null);
+    public DigestAuthenticationHandler(final String name, final ServicesManager servicesManager,
+                                       final PrincipalFactory principalFactory,
+                                       final Integer order) {
+        super(name, servicesManager, principalFactory, order);
     }
 
     @Override

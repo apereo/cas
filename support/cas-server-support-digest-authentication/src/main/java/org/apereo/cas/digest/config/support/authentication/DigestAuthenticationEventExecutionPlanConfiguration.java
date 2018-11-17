@@ -50,7 +50,8 @@ public class DigestAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     public AuthenticationHandler digestAuthenticationHandler() {
         val digest = casProperties.getAuthn().getDigest();
-        return new DigestAuthenticationHandler(digest.getName(), servicesManager.getIfAvailable(), digestAuthenticationPrincipalFactory());
+        return new DigestAuthenticationHandler(digest.getName(), servicesManager.getIfAvailable(),
+            digestAuthenticationPrincipalFactory(), digest.getOrder());
     }
 
     @ConditionalOnMissingBean(name = "digestAuthenticationEventExecutionPlanConfigurer")

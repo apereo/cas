@@ -659,7 +659,10 @@ public class LdapUtils {
         resolver.setAllowMultipleDns(l.isAllowMultipleDns());
         resolver.setConnectionFactory(connectionFactoryForSearch);
         resolver.setUserFilter(l.getSearchFilter());
-        resolver.setReferralHandler(new SearchReferralHandler());
+
+        if (l.isFollowReferrals()) {
+            resolver.setReferralHandler(new SearchReferralHandler());
+        }
 
         if (StringUtils.isNotBlank(l.getDerefAliases())) {
             resolver.setDerefAliases(DerefAliases.valueOf(l.getDerefAliases()));
@@ -898,7 +901,10 @@ public class LdapUtils {
                 compareRequest.setDn(l.getValidator().getDn());
                 compareRequest.setAttribute(new LdapAttribute(l.getValidator().getAttributeName(),
                     l.getValidator().getAttributeValues().toArray(ArrayUtils.EMPTY_STRING_ARRAY)));
-                compareRequest.setReferralHandler(new SearchReferralHandler());
+
+                if (l.isFollowReferrals()) {
+                    compareRequest.setReferralHandler(new SearchReferralHandler());
+                }
                 cp.setValidator(new CompareValidator(compareRequest));
                 break;
             case "none":
@@ -912,7 +918,9 @@ public class LdapUtils {
                 searchRequest.setReturnAttributes(ReturnAttributes.NONE.value());
                 searchRequest.setSearchScope(SearchScope.valueOf(l.getValidator().getScope()));
                 searchRequest.setSizeLimit(1L);
-                searchRequest.setReferralHandler(new SearchReferralHandler());
+                if (l.isFollowReferrals()) {
+                    searchRequest.setReferralHandler(new SearchReferralHandler());
+                }
                 cp.setValidator(new SearchValidator(searchRequest));
                 break;
         }
@@ -1035,7 +1043,9 @@ public class LdapUtils {
             LOGGER.debug("Search entry handlers defined for the entry resolver of [{}] are [{}]", l.getLdapUrl(), handlers);
             entryResolver.setSearchEntryHandlers(handlers.toArray(new SearchEntryHandler[]{}));
         }
-        entryResolver.setReferralHandler(new SearchReferralHandler());
+        if (l.isFollowReferrals()) {
+            entryResolver.setReferralHandler(new SearchReferralHandler());
+        }
         return entryResolver;
     }
 }

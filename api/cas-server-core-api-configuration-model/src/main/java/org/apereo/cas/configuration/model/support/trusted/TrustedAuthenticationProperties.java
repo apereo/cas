@@ -29,4 +29,9 @@ public class TrustedAuthenticationProperties extends PersonDirectoryPrincipalRes
      * Indicates the name of the authentication handler.
      */
     private String name;
+
+    /**
+     * Order of the authentication handler in the chain.
+     */
+    private Integer order;
 }
