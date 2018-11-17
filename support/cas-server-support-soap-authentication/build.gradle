@@ -45,6 +45,7 @@ dependencies {
     jaxb2 "javax.activation:activation:1.1.1"
 }
 
+/*
 jaxb2 {
     xjc {
         "classes" {
@@ -64,3 +65,4 @@ task moveGeneratedSourceFiles(type: Copy, description: "Move generated files by 
 }
 compileJava.dependsOn(generateJaxb2Classes).finalizedBy(moveGeneratedSourceFiles)
 generateJaxb2Classes.finalizedBy(moveGeneratedSourceFiles)
+*/
