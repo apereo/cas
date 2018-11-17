@@ -61,7 +61,7 @@ public class CouchDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
 
     @Override
     public void deleteAll() {
-        couchDb.getAll().forEach(t -> couchDb.deleteTokenAccount(t));
+        couchDb.getAll().forEach(couchDb::deleteTokenAccount);
     }
 
     @Override
