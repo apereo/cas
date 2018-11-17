@@ -73,7 +73,9 @@ public class TrustedAuthenticationConfiguration {
     @RefreshScope
     public AuthenticationHandler principalBearingCredentialsAuthenticationHandler() {
         val trusted = casProperties.getAuthn().getTrusted();
-        return new PrincipalBearingCredentialsAuthenticationHandler(trusted.getName(), servicesManager.getIfAvailable(), trustedPrincipalFactory());
+        return new PrincipalBearingCredentialsAuthenticationHandler(trusted.getName(),
+            servicesManager.getIfAvailable(), trustedPrincipalFactory(),
+            trusted.getOrder());
     }
 
     @Bean
