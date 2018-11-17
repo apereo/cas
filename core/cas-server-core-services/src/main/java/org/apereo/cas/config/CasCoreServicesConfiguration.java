@@ -201,7 +201,7 @@ public class CasCoreServicesConfiguration {
             LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and persisting service definitions. "
                 + "Changes that are made to service definitions during runtime WILL be LOST when the CAS server is restarted. "
                 + "Ideally for production, you should choose a storage option (JSON, JDBC, MongoDb, etc) to track service definitions.");
-            val services = getInMemoryRegisteredServices().orElse(new ArrayList<>());
+            val services = getInMemoryRegisteredServices().orElseGet(ArrayList::new);
             chainingRegistry.addServiceRegistry(new InMemoryServiceRegistry(services));
         }
 
