@@ -1550,6 +1550,7 @@ To learn more about this topic, [please review this guide](../installation/Diges
 # cas.authn.digest.users.anotheruser=7530292c24102bac7ced2022e5f1036b
 # cas.authn.digest.realm=CAS
 # cas.authn.digest.name=
+# cas.authn.digest.order=
 # cas.authn.digest.authenticationMethod=auth
 ```
 
@@ -1810,6 +1811,7 @@ are available [here](Configuration-Properties-Common.html#person-directory-princ
 ```properties
 # cas.authn.openid.enforceRpId=false
 # cas.authn.openid.name=
+# cas.authn.openid.order=
 ```
 
 ## SPNEGO Authentication
@@ -2029,6 +2031,7 @@ To learn more about this topic, [please review this guide](../installation/Remot
 ```properties
 # cas.authn.remoteAddress.ipAddressRange=
 # cas.authn.remoteAddress.name=
+# cas.authn.remoteAddress.order=
 ```
 
 
@@ -2223,7 +2226,7 @@ To learn more about this topic, [please review this guide](../installation/Trust
 
 ```properties
 # cas.authn.trusted.name=
-
+# cas.authn.trusted.order=
 # cas.authn.trusted.remotePrincipalHeader=
 ```
 
