@@ -23,7 +23,7 @@ public class SsoProperties implements Serializable {
     /**
      * Flag that indicates whether to create SSO session on re-newed authentication event.
      */
-    private boolean createSsoCookieOnRenewAuthn = true;
+    private boolean createSsoCookieOnRenewAuthn = false;
 
     /**
      * Flag that indicates whether to allow SSO session with a missing target service.
