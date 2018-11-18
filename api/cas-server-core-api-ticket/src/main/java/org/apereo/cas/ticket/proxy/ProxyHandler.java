@@ -31,7 +31,7 @@ public interface ProxyHandler {
      * @param credential the credential object containing the proxy request details.
      * @return true, if successful
      */
-    default boolean canHandle(Credential credential) {
+    default boolean canHandle(final Credential credential) {
         return true;
     }
 }
