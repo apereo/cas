@@ -43,7 +43,7 @@ public class TicketValidationResourceResolver extends TicketAsFirstParameterReso
             try (val writer = new StringWriter()) {
                 val objectWriter = mapper.writer();
 
-                val results = new LinkedHashMap<>();
+                val results = new LinkedHashMap<String, Object>();
                 results.put("principal", authn.getPrincipal().getId());
 
                 val attributes = new HashMap<String, Object>(authn.getAttributes());

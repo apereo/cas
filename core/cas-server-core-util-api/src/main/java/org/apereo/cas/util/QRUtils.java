@@ -48,7 +48,7 @@ public class QRUtils {
     @SneakyThrows
     public static void generateQRCode(final OutputStream stream, final String key,
                                       final int width, final int height) {
-        val hintMap = new EnumMap<>(EncodeHintType.class);
+        val hintMap = new EnumMap<EncodeHintType, Object>(EncodeHintType.class);
         hintMap.put(EncodeHintType.CHARACTER_SET, StandardCharsets.UTF_8.name());
         hintMap.put(EncodeHintType.MARGIN, 2);
         hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);

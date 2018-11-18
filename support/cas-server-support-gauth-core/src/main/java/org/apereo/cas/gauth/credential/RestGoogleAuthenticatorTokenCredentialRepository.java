@@ -49,11 +49,13 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
         val headers = new HttpHeaders();
         headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
 
-        val entity = new HttpEntity<>(headers);
+        val entity = new HttpEntity<Object>(headers);
         val result = restTemplate.exchange(rest.getEndpointUrl(), HttpMethod.GET, entity, List.class);
         if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
             val results = (List<GoogleAuthenticatorAccount>) result.getBody();
-            return results.stream().map(this::decode).collect(Collectors.toList());
+            if (results != null) {
+                return results.stream().map(this::decode).collect(Collectors.toList());
+            }
         }
         return new ArrayList<>();
     }
@@ -65,7 +67,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
         headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
         headers.put("username", CollectionUtils.wrap(username));
 
-        val entity = new HttpEntity<>(headers);
+        val entity = new HttpEntity<Object>(headers);
         val result = restTemplate.exchange(rest.getEndpointUrl(), HttpMethod.GET, entity, OneTimeTokenAccount.class);
         if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
             return decode(result.getBody());
@@ -91,7 +93,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
         val headers = new HttpHeaders();
         headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
         headers.put("username", CollectionUtils.wrap(username));
-        val entity = new HttpEntity<>(headers);
+        val entity = new HttpEntity<Object>(headers);
         restTemplate.exchange(rest.getEndpointUrl(), HttpMethod.DELETE, entity, Long.class);
     }
 
@@ -114,7 +116,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
         headers.put("secretKey", CollectionUtils.wrap(account.getSecretKey()));
         headers.put("scratchCodes", account.getScratchCodes().stream().map(String::valueOf).collect(Collectors.toList()));
 
-        val entity = new HttpEntity<>(headers);
+        val entity = new HttpEntity<Object>(headers);
         val result = restTemplate.exchange(rest.getEndpointUrl(), HttpMethod.POST, entity, Object.class);
         if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
             LOGGER.debug("Posted google authenticator account successfully");
