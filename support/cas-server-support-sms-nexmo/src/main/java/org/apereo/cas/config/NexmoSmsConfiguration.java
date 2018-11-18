@@ -25,6 +25,6 @@ public class NexmoSmsConfiguration {
     @Bean
     public SmsSender smsSender() {
         val nexmo = casProperties.getSmsProvider().getNexmo();
-        return new NexmoSmsSender(nexmo.getApiToken(), nexmo.getApiSecret());
+        return new NexmoSmsSender(nexmo);
     }
 }

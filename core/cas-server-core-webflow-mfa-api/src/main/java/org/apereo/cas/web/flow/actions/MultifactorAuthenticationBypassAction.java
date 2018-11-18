@@ -20,7 +20,7 @@ import org.springframework.webflow.execution.RequestContext;
 public class MultifactorAuthenticationBypassAction extends AbstractMultifactorAuthenticationAction {
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecute(final RequestContext requestContext) {
         val authentication = WebUtils.getAuthentication(requestContext);
         val service = WebUtils.getRegisteredService(requestContext);
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext();

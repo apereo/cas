@@ -22,7 +22,7 @@ public class MongoDbAuthenticationHandler extends UsernamePasswordWrapperAuthent
     }
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         close();
     }
 

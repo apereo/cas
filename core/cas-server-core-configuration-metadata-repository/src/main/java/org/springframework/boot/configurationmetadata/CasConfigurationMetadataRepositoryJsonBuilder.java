@@ -38,9 +38,8 @@ public class CasConfigurationMetadataRepositoryJsonBuilder {
      *
      * @param inputStream the source input stream
      * @return this builder
-     * @throws IOException in case of I/O errors
      */
-    public CasConfigurationMetadataRepositoryJsonBuilder withJsonResource(final InputStream inputStream) throws IOException {
+    public CasConfigurationMetadataRepositoryJsonBuilder withJsonResource(final InputStream inputStream) {
         return withJsonResource(inputStream, this.defaultCharset);
     }
 
@@ -55,9 +54,8 @@ public class CasConfigurationMetadataRepositoryJsonBuilder {
      * @param inputStream the source input stream
      * @param charset     the charset of the input
      * @return this builder
-     * @throws IOException in case of I/O errors
      */
-    public CasConfigurationMetadataRepositoryJsonBuilder withJsonResource(final InputStream inputStream, final Charset charset) throws IOException {
+    public CasConfigurationMetadataRepositoryJsonBuilder withJsonResource(final InputStream inputStream, final Charset charset) {
         if (inputStream == null) {
             throw new IllegalArgumentException("InputStream must not be null.");
         }
