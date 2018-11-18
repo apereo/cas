@@ -61,7 +61,7 @@ CAS will consult the current configuration in the event that the provider being 
 The failure mode can be configured at these locations and CAS will use the first defined failure mode in this order:
 
 - Registered Service Multifactor Authentication Policy
-- Mulifactor Authentication Provider Configuration
+- Multifactor Authentication Provider Configuration
 - Global Multifactor Authentication Configuration  
 
 If no actionable failure mode is encountered the user will be shown a generic "Authentication Failed" message.
@@ -85,11 +85,11 @@ Set as part of the "multifactorPolicy".  This location will override a failure a
 
 ### Failure Mode by Multifactor Authentication Provider
 
-Each defined multifactor authentication provider can set its own failure mode policy. Failure modes set at this location will override the glovbal failure mode, but defer to any failure mode set by the registered service.
+Each defined multifactor authentication provider can set its own failure mode policy. Failure modes set at this location will override the global failure mode, but defer to any failure mode set by the registered service.
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties-Common.html#multifactor-authentication-providers).
 
-### Gloabal Failure Mode
+### Global Failure Mode
 
 A default failure mode can be specified globally via CAS properties and will be used in the case where no failure mode is set in either the provider or the registered service.
 

@@ -1471,6 +1471,7 @@ Send text messaging using Nexmo.
 ```properties
 # cas.smsProvider.nexmo.apiToken=
 # cas.smsProvider.nexmo.apiSecret=
+# cas.smsProvider.nexmo.applicationId=CAS
 ```
 
 ### Amazon SNS
