@@ -18,6 +18,8 @@ import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link RedisObjectFactory}.
@@ -125,14 +127,15 @@ public class RedisObjectFactory {
     }
 
     private static List<RedisNode> createRedisNodesForProperties(final BaseRedisProperties redis) {
-        val redisNodes = new ArrayList<RedisNode>();
         if (redis.getSentinel().getNode() != null) {
             val nodes = redis.getSentinel().getNode();
-            for (val hostAndPort : nodes) {
-                val args = StringUtils.split(hostAndPort, ":");
-                redisNodes.add(new RedisNode(args[0], Integer.parseInt(args[1])));
-            }
+            return nodes
+                .stream()
+                .map(hostAndPort -> StringUtils.split(hostAndPort, ":"))
+                .filter(Objects::nonNull)
+                .map(args -> new RedisNode(args[0], Integer.parseInt(args[1])))
+                .collect(Collectors.toCollection(ArrayList::new));
         }
-        return redisNodes;
+        return new ArrayList<>();
     }
 }

@@ -131,8 +131,8 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
             val pswdResetSubFlowState = createSubflowState(flow, CasWebflowConstants.STATE_ID_PASSWORD_RESET_SUBFLOW, FLOW_ID_PASSWORD_RESET);
 
             val realSubmit = getTransitionableState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT);
-            realSubmit.getEntryActionList().add(createEvaluateAction("flowScope." + DO_CHANGE_PASSWORD_PARAMETER
-                + " = requestParameters." + DO_CHANGE_PASSWORD_PARAMETER + " != null"));
+            realSubmit.getEntryActionList().add(
+                createEvaluateAction(String.join(DO_CHANGE_PASSWORD_PARAMETER, "flowScope.", " = requestParameters.", " != null")));
 
             createDecisionState(flow, CasWebflowConstants.DECISION_STATE_CHECK_FOR_PASSWORD_RESET_TOKEN_ACTION, "requestParameters."
                 + SendPasswordResetInstructionsAction.PARAMETER_NAME_TOKEN + " != null", CasWebflowConstants.STATE_ID_PASSWORD_RESET_SUBFLOW, originalTargetState);

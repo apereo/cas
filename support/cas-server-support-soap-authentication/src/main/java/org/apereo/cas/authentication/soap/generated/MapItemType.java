@@ -59,7 +59,7 @@ public class MapItemType {
      *     {@link Object }
      *     
      */
-    public void setKey(Object value) {
+    public void setKey(final Object value) {
         this.key = value;
     }
 
@@ -83,7 +83,7 @@ public class MapItemType {
      *     {@link Object }
      *     
      */
-    public void setValue(Object value) {
+    public void setValue(final Object value) {
         this.value = value;
     }
 

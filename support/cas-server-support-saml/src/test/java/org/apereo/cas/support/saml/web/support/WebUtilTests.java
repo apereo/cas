@@ -10,7 +10,6 @@ import lombok.val;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import java.util.Arrays;
 import java.util.Collections;
 
 import static org.junit.Assert.*;
@@ -28,7 +27,7 @@ public class WebUtilTests {
         val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "test");
 
-        val service = HttpRequestUtils.getService(Arrays.asList(casArgumentExtractor), request);
+        val service = HttpRequestUtils.getService(Collections.singletonList(casArgumentExtractor), request);
 
         assertNotNull(service);
         assertEquals("test", service.getId());

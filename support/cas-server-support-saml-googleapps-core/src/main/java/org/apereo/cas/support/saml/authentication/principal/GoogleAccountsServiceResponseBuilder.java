@@ -32,6 +32,7 @@ import java.security.PublicKey;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
+import java.util.stream.Stream;
 
 /**
  * Builds the google accounts service response.
@@ -192,9 +193,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
     }
 
     private boolean isValidConfiguration() {
-        return StringUtils.isNotBlank(this.privateKeyLocation)
-            || StringUtils.isNotBlank(this.publicKeyLocation)
-            || StringUtils.isNotBlank(this.keyAlgorithm);
+        return Stream.of(this.privateKeyLocation, this.publicKeyLocation, this.keyAlgorithm).anyMatch(StringUtils::isNotBlank);
     }
 
     @Override

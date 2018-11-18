@@ -53,6 +53,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 /**
  * This class represents an action to put at the beginning of the webflow.
@@ -148,7 +149,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
      */
     public static Optional<ModelAndView> hasDelegationRequestFailed(final HttpServletRequest request, final int status) {
         val params = request.getParameterMap();
-        if (params.containsKey("error") || params.containsKey("error_code") || params.containsKey("error_description") || params.containsKey("error_message")) {
+        if (Stream.of("error", "error_code", "error_description", "error_message").anyMatch(params::containsKey)) {
             val model = new HashMap<String, Object>();
             if (params.containsKey("error_code")) {
                 model.put("code", StringEscapeUtils.escapeHtml4(request.getParameter("error_code")));

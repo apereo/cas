@@ -27,7 +27,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 
 import static org.junit.Assert.*;
@@ -83,7 +83,7 @@ public class NamedQueryDatabaseAuthenticationHandlerTests {
     @Test
     public void verifySuccess() throws Exception {
         val sql = "SELECT * FROM casusers where username=:username";
-        val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(Arrays.asList("phone:phoneNumber"));
+        val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(Collections.singletonList("phone:phoneNumber"));
         val q = new QueryDatabaseAuthenticationHandler("namedHandler",
             null, PrincipalFactoryUtils.newPrincipalFactory(), 0,
             this.dataSource, sql, "password",
@@ -99,7 +99,7 @@ public class NamedQueryDatabaseAuthenticationHandlerTests {
     @Test
     public void verifySuccessWithCount() throws Exception {
         val sql = "SELECT count(*) as total FROM casusers where username=:username AND password=:password";
-        val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(Arrays.asList("phone:phoneNumber"));
+        val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(Collections.singletonList("phone:phoneNumber"));
         val q = new QueryDatabaseAuthenticationHandler("namedHandler",
             null, PrincipalFactoryUtils.newPrincipalFactory(), 0,
             this.dataSource, sql, null,

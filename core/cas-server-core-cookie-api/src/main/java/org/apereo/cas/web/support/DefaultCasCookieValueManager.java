@@ -12,6 +12,7 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
+import java.util.stream.Stream;
 
 /**
  * The {@link DefaultCasCookieValueManager} is responsible creating
@@ -72,7 +73,7 @@ public class DefaultCasCookieValueManager extends EncryptedCookieValueManager {
         val remoteAddr = cookieParts.get(1);
         val userAgent = cookieParts.get(2);
 
-        if (StringUtils.isBlank(value) || StringUtils.isBlank(remoteAddr) || StringUtils.isBlank(userAgent)) {
+        if (Stream.of(value, remoteAddr, userAgent).anyMatch(StringUtils::isBlank)) {
             throw new IllegalStateException("Invalid cookie. Required fields are empty");
         }
 

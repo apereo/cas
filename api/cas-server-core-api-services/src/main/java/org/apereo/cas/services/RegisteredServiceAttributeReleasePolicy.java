@@ -51,7 +51,7 @@ public interface RegisteredServiceAttributeReleasePolicy extends Serializable {
      *
      * @param filter the new attribute filter
      */
-    default void setAttributeFilter(RegisteredServiceAttributeFilter filter) {
+    default void setAttributeFilter(final RegisteredServiceAttributeFilter filter) {
     }
 
     /**

@@ -109,7 +109,7 @@ public interface CentralAuthenticationService {
      *
      * @param ticketId the ticket id
      */
-    default void deleteTicket(String ticketId) {
+    default void deleteTicket(final String ticketId) {
     }
 
     /**

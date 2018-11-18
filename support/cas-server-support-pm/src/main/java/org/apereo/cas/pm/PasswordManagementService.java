@@ -23,7 +23,7 @@ public interface PasswordManagementService {
      * @return true /false
      * @throws InvalidPasswordException if new password fails downstream validation
      */
-    default boolean change(Credential c, PasswordChangeBean bean) throws InvalidPasswordException {
+    default boolean change(final Credential c, final PasswordChangeBean bean) throws InvalidPasswordException {
         return false;
     }
 
@@ -33,7 +33,7 @@ public interface PasswordManagementService {
      * @param username the username
      * @return the string
      */
-    default String findEmail(String username) {
+    default String findEmail(final String username) {
         return null;
     }
 
@@ -43,7 +43,7 @@ public interface PasswordManagementService {
      * @param email the email
      * @return the string
      */
-    default String findUsername(String email) {
+    default String findUsername(final String email) {
         return null;
     }
 
@@ -53,7 +53,7 @@ public interface PasswordManagementService {
      * @param username the username
      * @return the string
      */
-    default String createToken(String username) {
+    default String createToken(final String username) {
         return null;
     }
 
@@ -63,7 +63,7 @@ public interface PasswordManagementService {
      * @param token the token
      * @return the username
      */
-    default String parseToken(String token) {
+    default String parseToken(final String token) {
         return null;
     }
 
@@ -76,7 +76,7 @@ public interface PasswordManagementService {
      * @param username the username
      * @return the security questions
      */
-    default Map<String, String> getSecurityQuestions(String username) {
+    default Map<String, String> getSecurityQuestions(final String username) {
         return new LinkedHashMap<>(0);
     }
 

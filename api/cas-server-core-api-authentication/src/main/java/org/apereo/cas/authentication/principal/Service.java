@@ -25,7 +25,7 @@ public interface Service extends Principal {
      *
      * @param principal the new principal
      */
-    default void setPrincipal(String principal) {
+    default void setPrincipal(final String principal) {
     }
 
     /**
@@ -34,7 +34,7 @@ public interface Service extends Principal {
      * @param service the service
      * @return true, if successful
      */
-    default boolean matches(Service service) {
+    default boolean matches(final Service service) {
         try {
             val thisUrl = URLDecoder.decode(getId(), StandardCharsets.UTF_8.name());
             val serviceUrl = URLDecoder.decode(service.getId(), StandardCharsets.UTF_8.name());
