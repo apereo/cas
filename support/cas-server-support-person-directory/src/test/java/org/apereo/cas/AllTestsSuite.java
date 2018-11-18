@@ -15,7 +15,8 @@ import org.junit.runners.Suite;
     JdbcMultiRowAttributeRepositoryTests.class,
     JdbcSingleRowAttributeRepositoryTests.class,
     RestfulPersonAttributeDaoTests.class,
-    CachingAttributeRepositoryTests.class
+    CachingAttributeRepositoryTests.class,
+    JdbcSingleRowAttributeRepositoryPostgresTests.class
 })
 public class AllTestsSuite {
 }
