@@ -23,6 +23,7 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -90,10 +91,8 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
         val id = event.getId();
         LOGGER.debug("Resolved event from the initial authentication leg is [{}]", id);
 
-        if (id.equals(CasWebflowConstants.TRANSITION_ID_ERROR)
-            || id.equals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE)
-            || id.equals(CasWebflowConstants.TRANSITION_ID_SUCCESS)
-            || id.equals(CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS)) {
+        if (List.of(CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE,
+            CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS).contains(id)) {
             LOGGER.debug("Returning webflow event as [{}]", id);
             return CollectionUtils.wrapSet(event);
         }

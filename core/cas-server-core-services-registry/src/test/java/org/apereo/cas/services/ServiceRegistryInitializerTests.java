@@ -3,7 +3,6 @@ package org.apereo.cas.services;
 import lombok.val;
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -22,7 +21,7 @@ public class ServiceRegistryInitializerTests {
 
         val servicesManager = mock(ServicesManager.class);
         val jsonServiceRegistry = mock(ServiceRegistry.class);
-        when(jsonServiceRegistry.load()).thenReturn((Collection) Arrays.asList(initialService));
+        when(jsonServiceRegistry.load()).thenReturn((Collection) Collections.singletonList(initialService));
 
         val serviceRegistry = new InMemoryServiceRegistry();
         val serviceRegistryInitializer = new ServiceRegistryInitializer(jsonServiceRegistry, serviceRegistry, servicesManager);

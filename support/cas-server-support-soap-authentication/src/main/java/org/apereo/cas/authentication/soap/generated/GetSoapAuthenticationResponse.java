@@ -87,7 +87,7 @@ public class GetSoapAuthenticationResponse {
      * Sets the value of the status property.
      * 
      */
-    public void setStatus(int value) {
+    public void setStatus(final int value) {
         this.status = value;
     }
 
@@ -111,7 +111,7 @@ public class GetSoapAuthenticationResponse {
      *     {@link String }
      *     
      */
-    public void setUsername(String value) {
+    public void setUsername(final String value) {
         this.username = value;
     }
 
@@ -135,7 +135,7 @@ public class GetSoapAuthenticationResponse {
      *     {@link String }
      *     
      */
-    public void setMessage(String value) {
+    public void setMessage(final String value) {
         this.message = value;
     }
 

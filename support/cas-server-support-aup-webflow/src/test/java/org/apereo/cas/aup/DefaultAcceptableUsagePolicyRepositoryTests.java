@@ -43,7 +43,7 @@ public class DefaultAcceptableUsagePolicyRepositoryTests extends BaseAcceptableU
         verifyAction(AcceptableUsagePolicyProperties.Scope.AUTHENTICATION);
     }
 
-    private void verifyAction(final AcceptableUsagePolicyProperties.Scope scope) {
+    private static void verifyAction(final AcceptableUsagePolicyProperties.Scope scope) {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));

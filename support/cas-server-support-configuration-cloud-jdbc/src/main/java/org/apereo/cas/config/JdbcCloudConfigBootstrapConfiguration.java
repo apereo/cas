@@ -14,6 +14,7 @@ import org.springframework.core.env.PropertySource;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link JdbcCloudConfigBootstrapConfiguration}.
@@ -25,7 +26,7 @@ import java.util.Properties;
 @Slf4j
 public class JdbcCloudConfigBootstrapConfiguration implements PropertySourceLocator {
 
-    static final String CAS_CONFIGURATION_PREFIX = "cas.spring.cloud.jdbc";
+    private static final String CAS_CONFIGURATION_PREFIX = "cas.spring.cloud.jdbc";
 
     @Override
     public PropertySource<?> locate(final Environment environment) {
@@ -36,9 +37,9 @@ public class JdbcCloudConfigBootstrapConfiguration implements PropertySourceLoca
             val dataSource = JpaBeans.newDataSource(connection);
             val jdbcTemplate = new JdbcTemplate(dataSource);
             val rows = jdbcTemplate.queryForList(connection.getSql());
-            for (val row : rows) {
-                props.put(row.get("name"), row.get("value"));
-            }
+            props.putAll(rows
+                .stream()
+                .collect(Collectors.toMap(row -> row.get("name"), row -> row.get("value"), (a, b) -> b, Properties::new)));
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -59,7 +60,7 @@ public class JdbcCloudConfigBootstrapConfiguration implements PropertySourceLoca
             return environment.getProperty(CAS_CONFIGURATION_PREFIX + '.' + key);
         }
 
-        public String getSql() {
+        String getSql() {
             return StringUtils.defaultIfBlank(getSetting(environment, "sql"), SQL);
         }
 

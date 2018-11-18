@@ -24,7 +24,7 @@ public interface RegisteredServiceCipherExecutor {
      * @param data the data
      * @return the string
      */
-    default String encode(String data) {
+    default String encode(final String data) {
         return encode(data, Optional.empty());
     }
 
