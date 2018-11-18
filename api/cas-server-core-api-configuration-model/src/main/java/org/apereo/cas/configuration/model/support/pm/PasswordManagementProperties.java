@@ -43,7 +43,7 @@ public class PasswordManagementProperties implements Serializable {
     private boolean autoLogin;
 
     /**
-     * A String value representing password policy regex pattarn.
+     * A String value representing password policy regex pattern.
      * <p>
      * Minimum 8 and Maximum 10 characters at least 1 Uppercase Alphabet, 1 Lowercase Alphabet, 1 Number and 1 Special Character.
      */

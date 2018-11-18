@@ -107,7 +107,7 @@ public class SpnegoProperties implements Serializable {
     private boolean mixedModeAuthentication;
 
     /**
-     * Begins negotiating spenego if the user-agent is one of the supported browsers.
+     * Begins negotiating spnego if the user-agent is one of the supported browsers.
      */
     private String supportedBrowsers = "MSIE,Trident,Firefox,AppleWebKit";
 
