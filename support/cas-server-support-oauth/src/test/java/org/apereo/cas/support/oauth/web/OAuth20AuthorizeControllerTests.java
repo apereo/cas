@@ -23,7 +23,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.web.servlet.view.RedirectView;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 
 import static org.junit.Assert.*;
@@ -64,7 +64,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         registeredServiceImpl.setName(name);
         registeredServiceImpl.setServiceId(serviceId);
         registeredServiceImpl.setClientId(CLIENT_ID);
-        registeredServiceImpl.setAttributeReleasePolicy(new ReturnAllowedAttributeReleasePolicy(Arrays.asList(FIRST_NAME_ATTRIBUTE)));
+        registeredServiceImpl.setAttributeReleasePolicy(new ReturnAllowedAttributeReleasePolicy(Collections.singletonList(FIRST_NAME_ATTRIBUTE)));
         return registeredServiceImpl;
     }
 

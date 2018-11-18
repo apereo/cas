@@ -23,7 +23,7 @@ import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.Cookie;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 
 import static org.junit.Assert.*;
@@ -126,7 +126,7 @@ public class LogoutActionTests extends AbstractWebflowActionsTests {
             .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
             .build();
         logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
-        WebUtils.putLogoutRequests(this.requestContext, Arrays.asList(logoutRequest));
+        WebUtils.putLogoutRequests(this.requestContext, Collections.singletonList(logoutRequest));
         val properties = new LogoutProperties();
         this.logoutAction = new LogoutAction(getWebApplicationServiceFactory(), this.serviceManager, properties);
         val event = this.logoutAction.doExecute(this.requestContext);
@@ -141,7 +141,7 @@ public class LogoutActionTests extends AbstractWebflowActionsTests {
             .registeredService(RegisteredServiceTestUtils.getRegisteredService())
             .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
             .build();
-        WebUtils.putLogoutRequests(this.requestContext, Arrays.asList(logoutRequest));
+        WebUtils.putLogoutRequests(this.requestContext, Collections.singletonList(logoutRequest));
         val properties = new LogoutProperties();
         this.logoutAction = new LogoutAction(getWebApplicationServiceFactory(), this.serviceManager, properties);
         val event = this.logoutAction.doExecute(this.requestContext);
