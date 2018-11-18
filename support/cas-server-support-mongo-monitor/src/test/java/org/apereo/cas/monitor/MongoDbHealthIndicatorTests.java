@@ -20,7 +20,9 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.monitor.config.MongoDbMonitoringConfiguration;
+import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.ConditionalIgnoreRule;
+import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
@@ -83,6 +85,7 @@ import static org.junit.Assert.*;
     "cas.monitor.mongo.authenticationDatabaseName=admin",
     "cas.monitor.mongo.databaseName=monitor"
 })
+@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 27017)
 public class MongoDbHealthIndicatorTests {
 
     @ClassRule

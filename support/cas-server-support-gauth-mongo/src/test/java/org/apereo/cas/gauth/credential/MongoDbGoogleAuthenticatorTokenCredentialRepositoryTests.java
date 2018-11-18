@@ -25,6 +25,8 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.SchedulingUtils;
+import org.apereo.cas.util.junit.ConditionalIgnore;
+import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
 import lombok.val;
 import org.junit.Before;
@@ -95,6 +97,7 @@ import static org.junit.Assert.*;
 @EnableScheduling
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @Category(MongoDbCategory.class)
+@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 public class MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();

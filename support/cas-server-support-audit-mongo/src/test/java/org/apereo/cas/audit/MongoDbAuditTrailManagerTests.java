@@ -7,6 +7,8 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasSupportMongoDbAuditConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.util.junit.ConditionalIgnore;
+import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
 import lombok.Getter;
 import org.apereo.inspektr.audit.AuditTrailManager;
@@ -43,6 +45,7 @@ import org.springframework.test.context.TestPropertySource;
 })
 @Category(MongoDbCategory.class)
 @Getter
+@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 27017)
 public class MongoDbAuditTrailManagerTests extends BaseAuditConfigurationTests {
 
     @Autowired
