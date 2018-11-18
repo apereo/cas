@@ -23,7 +23,6 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -39,7 +38,6 @@ import org.springframework.test.context.TestPropertySource;
  */
 @TestPropertySource(properties = {"cas.authn.throttle.usernameParameter=username"})
 @EnableScheduling
-@Slf4j
 @SpringBootTest(classes = {
     CasThrottlingConfiguration.class,
     CasCoreAuditConfiguration.class,
@@ -65,7 +63,7 @@ import org.springframework.test.context.TestPropertySource;
     CasWebApplicationServiceFactoryConfiguration.class})
 @Getter
 public class InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests
-        extends BaseThrottledSubmissionHandlerInterceptorAdapterTests {
+    extends BaseThrottledSubmissionHandlerInterceptorAdapterTests {
 
     @Autowired
     @Qualifier("authenticationThrottle")

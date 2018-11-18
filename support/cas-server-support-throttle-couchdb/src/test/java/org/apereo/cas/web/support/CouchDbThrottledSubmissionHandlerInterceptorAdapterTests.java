@@ -78,6 +78,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.audit.couchdb.password=password"
 })
 @Getter
+@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 public class CouchDbThrottledSubmissionHandlerInterceptorAdapterTests extends
     BaseThrottledSubmissionHandlerInterceptorAdapterTests {
 
