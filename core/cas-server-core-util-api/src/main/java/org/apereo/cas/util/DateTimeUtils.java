@@ -171,7 +171,7 @@ public class DateTimeUtils {
     /**
      * Utility for creating a ZonedDateTime object from a millisecond timestamp.
      *
-     * @param time   Miliseconds since Epoch
+     * @param time   Milliseconds since Epoch
      * @param zoneId Time zone
      * @return ZonedDateTime representing time
      */
