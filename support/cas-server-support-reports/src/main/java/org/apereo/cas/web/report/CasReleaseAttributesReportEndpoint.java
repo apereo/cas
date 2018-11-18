@@ -57,7 +57,7 @@ public class CasReleaseAttributesReportEndpoint extends BaseCasMvcEndpoint {
     @ReadOperation
     public Map<String, Object> releasePrincipalAttributes(final String username,
                                                           final String password,
-                                                          final String service) throws Exception {
+                                                          final String service) {
 
 
         val selectedService = this.serviceFactory.createService(service);
