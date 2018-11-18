@@ -147,7 +147,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
 
     @Override
     protected Map<String, List<Object>> retrievePersonAttributes(final String principalId, final Credential credential) {
-        val attributes = new LinkedHashMap<>(super.retrievePersonAttributes(principalId, credential));
+        val attributes = new LinkedHashMap<String, List<Object>>(super.retrievePersonAttributes(principalId, credential));
         val certificate = ((X509CertificateCredential) credential).getCertificate();
         attributes.putAll(extractPersonAttributes(certificate));
         return attributes;

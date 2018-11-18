@@ -75,7 +75,7 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
                                                                final WSFederationRequest fedRequest) {
         val postUrl = StringUtils.isNotBlank(fedRequest.getWreply()) ? fedRequest.getWreply() : fedRequest.getWtrealm();
 
-        val parameters = new HashMap<>();
+        val parameters = new HashMap<String, Object>();
         parameters.put(WSFederationConstants.WA, WSFederationConstants.WSIGNIN10);
         parameters.put(WSFederationConstants.WRESULT, StringEscapeUtils.unescapeHtml4(rpToken));
         parameters.put(WSFederationConstants.WTREALM, fedRequest.getWtrealm());

@@ -31,10 +31,10 @@ public class OAuth20DefaultUserProfileViewRendererNestedTests extends AbstractOA
 
     @Test
     public void verifyNestedOption() {
-        final Map map = CollectionUtils.wrap(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID, "cas",
+        val map = CollectionUtils.wrap(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID, "cas",
             OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES, CollectionUtils.wrap("email", "cas@example.org"),
             "something", CollectionUtils.wrapList("something"));
-        val json = oauthUserProfileViewRenderer.render(map, mock(AccessToken.class));
+        val json = oauthUserProfileViewRenderer.render((Map) map, mock(AccessToken.class));
         val value = JsonValue.readJSON(json).asObject();
         assertNotNull(value.get(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID));
         assertNotNull(value.get(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES));

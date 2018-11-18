@@ -73,7 +73,7 @@ public class CollectionUtils {
      * @return The collection instance containing the object provided
      */
     public static Set<Object> toCollection(final Object obj) {
-        val c = new LinkedHashSet<>();
+        val c = new LinkedHashSet<Object>();
         if (obj == null) {
             LOGGER.debug("Converting null obj to empty collection");
         } else if (obj instanceof Collection) {
@@ -108,7 +108,7 @@ public class CollectionUtils {
     public static <K, V> Map<K, V> wrap(final Multimap<K, V> source) {
         if (source != null && !source.isEmpty()) {
             val inner = source.asMap();
-            val map = new HashMap<>();
+            val map = new HashMap<Object, Object>();
             inner.forEach((k, v) -> map.put(k, wrap(v)));
             return (Map) map;
         }

@@ -166,7 +166,7 @@ public class CasWebflowContextConfiguration {
     @Lazy
     @Bean
     public Object[] loginFlowHandlerMappingInterceptors() {
-        val interceptors = new ArrayList<>();
+        val interceptors = new ArrayList<Object>();
         interceptors.add(localeChangeInterceptor());
         val plan = authenticationThrottlingExecutionPlan.getIfAvailable();
         if (plan != null) {

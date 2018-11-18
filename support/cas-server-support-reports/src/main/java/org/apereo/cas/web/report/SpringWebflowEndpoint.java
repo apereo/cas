@@ -24,7 +24,6 @@ import org.springframework.webflow.engine.ViewState;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -88,7 +87,7 @@ public class SpringWebflowEndpoint extends BaseCasMvcEndpoint {
                         stateMap.put("caption", state.getCaption());
                     }
 
-                    List acts = StreamSupport.stream(state.getEntryActionList().spliterator(), false)
+                    var acts = StreamSupport.stream(state.getEntryActionList().spliterator(), false)
                         .map(Object::toString)
                         .collect(Collectors.toList());
 
@@ -163,8 +162,7 @@ public class SpringWebflowEndpoint extends BaseCasMvcEndpoint {
                 flowDetails.put("possibleOutcomes", def.getPossibleOutcomes());
                 flowDetails.put("stateCount", def.getStateCount());
 
-
-                List acts = StreamSupport.stream(def.getEndActionList().spliterator(), false)
+                var acts = StreamSupport.stream(def.getEndActionList().spliterator(), false)
                     .map(Object::toString)
                     .collect(Collectors.toList());
                 if (!acts.isEmpty()) {
