@@ -42,7 +42,7 @@ public abstract class BaseUmaTokenAuthenticator implements Authenticator<TokenCr
         val authentication = at.getAuthentication();
         val principal = authentication.getPrincipal();
         profile.setId(principal.getId());
-        val attributes = new LinkedHashMap<>(authentication.getAttributes());
+        val attributes = new LinkedHashMap<String, Object>(authentication.getAttributes());
         attributes.putAll(principal.getAttributes());
 
         profile.addAttributes(attributes);

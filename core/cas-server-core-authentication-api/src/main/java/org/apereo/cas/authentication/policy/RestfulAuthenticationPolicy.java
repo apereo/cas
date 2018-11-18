@@ -44,13 +44,9 @@ public class RestfulAuthenticationPolicy implements AuthenticationPolicy {
         try {
             val acceptHeaders = new HttpHeaders();
             acceptHeaders.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
-            val entity = new HttpEntity<>(principal, acceptHeaders);
+            val entity = new HttpEntity<Principal>(principal, acceptHeaders);
             LOGGER.warn("Checking authentication policy for [{}] via POST at [{}]", principal, this.endpoint);
             val resp = restTemplate.exchange(this.endpoint, HttpMethod.POST, entity, String.class);
-            if (resp == null) {
-                LOGGER.warn("[{}] returned no responses", this.endpoint);
-                throw new GeneralSecurityException("No response returned from REST endpoint to determine authentication policy");
-            }
             val statusCode = resp.getStatusCode();
             if (statusCode != HttpStatus.OK) {
                 val ex = handleResponseStatusCode(statusCode, principal);

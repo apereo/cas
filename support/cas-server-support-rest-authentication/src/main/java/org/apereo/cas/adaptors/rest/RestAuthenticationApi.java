@@ -33,7 +33,7 @@ public class RestAuthenticationApi {
      * @return the response entity
      */
     public ResponseEntity<SimplePrincipal> authenticate(final UsernamePasswordCredential c) {
-        val entity = new HttpEntity<>(HttpUtils.createBasicAuthHeaders(c.getUsername(), c.getPassword()));
+        val entity = new HttpEntity<Object>(HttpUtils.createBasicAuthHeaders(c.getUsername(), c.getPassword()));
         return restTemplate.exchange(authenticationUri, HttpMethod.POST, entity, SimplePrincipal.class);
     }
 }

@@ -72,7 +72,7 @@ public class SimplePrincipal implements Principal {
      */
     @Override
     public Map<String, Object> getAttributes() {
-        val attrs = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        val attrs = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
         attrs.putAll(this.attributes);
         return attrs;
     }

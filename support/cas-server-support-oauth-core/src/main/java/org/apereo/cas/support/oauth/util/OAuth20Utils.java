@@ -125,7 +125,7 @@ public class OAuth20Utils {
             .filter(a -> StringUtils.isNotBlank(context.getParameter(a)))
             .map(m -> {
                 val values = context.getParameterValues(m);
-                val valuesSet = new LinkedHashSet<>();
+                val valuesSet = new LinkedHashSet<Object>();
                 if (values != null && values.length > 0) {
                     Arrays.stream(values).forEach(v -> valuesSet.addAll(Arrays.stream(v.split(" ")).collect(Collectors.toSet())));
                 }

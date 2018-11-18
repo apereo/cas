@@ -33,7 +33,7 @@ public class GroovyConfigurationPropertiesLoader extends BaseConfigurationProper
 
     @Override
     public PropertySource load() {
-        val properties = new LinkedHashMap<>();
+        val properties = new LinkedHashMap<Object, Object>();
         val slurper = new ConfigSlurper();
         applicationProfiles.forEach(Unchecked.consumer(profile -> {
             slurper.setEnvironment(profile);

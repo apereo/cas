@@ -103,7 +103,7 @@ public class OAuth20DeviceUserCodeApprovalEndpointController extends BaseOAuth20
     }
 
     private static Map getApprovalModel(final String errorCode) {
-        val map = new LinkedHashMap<>();
+        val map = new LinkedHashMap<String, Object>();
         map.put("prefix", DeviceUserCode.PREFIX);
         if (StringUtils.isNotBlank(errorCode)) {
             map.put("error", errorCode);

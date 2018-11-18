@@ -91,8 +91,8 @@ public class LoggingConfigurationEndpoint extends BaseCasMvcEndpoint implements 
      * @throws Exception the exception
      */
     @ReadOperation
-    public Map<String, Object> configuration() throws Exception {
-        val configuredLoggers = new HashSet<>();
+    public Map<String, Object> configuration() {
+        val configuredLoggers = new HashSet<Object>();
         getLoggerConfigurations().forEach(config -> {
             val loggerMap = new HashMap<String, Object>();
             loggerMap.put("name", StringUtils.defaultIfBlank(config.getName(), LOGGER_NAME_ROOT));
@@ -102,7 +102,7 @@ public class LoggingConfigurationEndpoint extends BaseCasMvcEndpoint implements 
             }
             loggerMap.put("additive", config.isAdditive());
             loggerMap.put("level", config.getLevel().name());
-            val appenders = new HashSet<>();
+            val appenders = new HashSet<Object>();
             config.getAppenders().keySet().stream().map(key -> config.getAppenders().get(key)).forEach(appender -> {
                 val builder = new ToStringBuilder(this, ToStringStyle.JSON_STYLE);
                 builder.append("name", appender.getName());

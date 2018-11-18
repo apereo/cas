@@ -140,7 +140,7 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
                                                     final UmaResourceSetClaimPermissionResult analysisResult,
                                                     final UmaPermissionTicket permissionTicket) {
 
-        val model = new LinkedHashMap<>();
+        val model = new LinkedHashMap<String, Object>();
         model.put(OAuth20Constants.ERROR, OAuth20Constants.NEED_INFO);
 
         val claims = new UmaAuthorizationNeedInfoResponse();
