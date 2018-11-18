@@ -39,7 +39,7 @@ public class OAuth20DefaultUserProfileViewRenderer implements OAuth20UserProfile
      */
     protected String getRenderedUserProfile(final Map<String, Object> model) {
         if (oauthProperties.getUserProfileViewType() == OAuthProperties.UserProfileViewTypes.FLAT) {
-            val flattened = new LinkedHashMap<>();
+            val flattened = new LinkedHashMap<String, Object>();
             if (model.containsKey(MODEL_ATTRIBUTE_ATTRIBUTES)) {
                 val attributes = Map.class.cast(model.get(MODEL_ATTRIBUTE_ATTRIBUTES));
                 flattened.putAll(attributes);

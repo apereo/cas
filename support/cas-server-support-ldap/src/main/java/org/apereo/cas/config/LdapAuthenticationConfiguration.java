@@ -182,7 +182,7 @@ public class LdapAuthenticationConfiguration {
                                                                                      final Authenticator authenticator,
                                                                                      final Multimap<String, Object> attributes) {
         val cfg = new PasswordPolicyConfiguration(passwordPolicy);
-        val handlers = new HashSet<>();
+        val handlers = new HashSet<Object>();
 
         val customPolicyClass = passwordPolicy.getCustomPolicyClass();
         if (StringUtils.isNotBlank(customPolicyClass)) {

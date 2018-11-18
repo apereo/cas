@@ -222,7 +222,7 @@ public class CasCoreAuditConfiguration implements AuditTrailExecutionPlanConfigu
     @Bean
     public AuditPrincipalIdProvider auditPrincipalIdProvider() {
         val resolvers = applicationContext.getBeansOfType(AuditPrincipalIdProvider.class, false, true);
-        val providers = new ArrayList<>(resolvers.values());
+        val providers = new ArrayList<AuditPrincipalIdProvider>(resolvers.values());
         AnnotationAwareOrderComparator.sort(providers);
         return new ChainingAuditPrincipalIdProvider(providers);
     }
