@@ -152,7 +152,7 @@ public class SamlIdPObjectSigner {
      */
     protected <T extends SAMLObject> void prepareSecurityParametersContext(final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                                            final MessageContext<T> outboundContext,
-                                                                           final SamlRegisteredService service) throws SAMLException {
+                                                                           final SamlRegisteredService service) {
         @NonNull
         val secParametersContext = outboundContext.getSubcontext(SecurityParametersContext.class, true);
         val roleDesc = adaptor.getSsoDescriptor();

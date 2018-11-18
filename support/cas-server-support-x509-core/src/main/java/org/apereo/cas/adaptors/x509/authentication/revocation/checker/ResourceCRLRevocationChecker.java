@@ -122,7 +122,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker i
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         init();
     }
 
@@ -216,7 +216,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker i
     }
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         shutdown();
     }
 

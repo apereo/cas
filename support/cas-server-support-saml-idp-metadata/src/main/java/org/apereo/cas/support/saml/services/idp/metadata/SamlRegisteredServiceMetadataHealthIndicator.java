@@ -27,7 +27,7 @@ public class SamlRegisteredServiceMetadataHealthIndicator extends AbstractHealth
     private final ServicesManager servicesManager;
 
     @Override
-    protected void doHealthCheck(final Health.Builder builder) throws Exception {
+    protected void doHealthCheck(final Health.Builder builder) {
         val samlServices = servicesManager.findServiceBy(registeredService -> registeredService instanceof SamlRegisteredService);
         val availableResolvers = this.metadataResolutionPlan.getRegisteredMetadataResolvers();
         LOGGER.debug("There are [{}] metadata resolver(s) available in the chain", availableResolvers.size());

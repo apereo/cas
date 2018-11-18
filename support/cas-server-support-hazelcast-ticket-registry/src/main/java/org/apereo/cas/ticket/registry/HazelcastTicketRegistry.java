@@ -136,7 +136,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
     }
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         close();
     }
 

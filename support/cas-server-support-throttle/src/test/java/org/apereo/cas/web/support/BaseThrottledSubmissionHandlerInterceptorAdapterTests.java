@@ -101,7 +101,7 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
     }
 
     @SneakyThrows
-    protected void failLoop(final int trials, final int period, final int expected) throws Exception {
+    protected void failLoop(final int trials, final int period, final int expected) {
         // Seed with something to compare against
         loginUnsuccessfully("mog", "1.2.3.4");
 

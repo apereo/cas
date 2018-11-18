@@ -25,7 +25,7 @@ public class SetServiceUnauthorizedRedirectUrlAction extends AbstractAction {
     protected final ServicesManager servicesManager;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecute(final RequestContext requestContext) {
         val registeredService = WebUtils.getRegisteredService(requestContext);
         if (registeredService != null && registeredService.getAccessStrategy() != null) {
             WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(requestContext, registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());

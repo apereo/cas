@@ -19,7 +19,7 @@ import org.springframework.webflow.execution.RequestContext;
 public class MultifactorAuthenticationAvailableAction extends AbstractMultifactorAuthenticationAction {
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecute(final RequestContext requestContext) {
         val service = WebUtils.getRegisteredService(requestContext);
         if (provider.isAvailable(service)) {
             return yes();

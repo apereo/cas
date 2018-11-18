@@ -126,7 +126,7 @@ public abstract class BaseTicketResourceEntityResponseFactoryTests {
         }
 
         @Override
-        public void afterPropertiesSet() throws Exception {
+        public void afterPropertiesSet() {
             init();
         }
 

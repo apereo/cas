@@ -398,7 +398,7 @@ public abstract class AbstractOAuth20Tests {
         }
 
         @Override
-        public void afterPropertiesSet() throws Exception {
+        public void afterPropertiesSet() {
             init();
         }
 

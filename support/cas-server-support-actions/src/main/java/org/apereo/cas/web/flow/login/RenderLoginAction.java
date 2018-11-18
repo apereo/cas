@@ -37,7 +37,7 @@ public class RenderLoginAction extends AbstractAction {
     protected final ApplicationContext applicationContext;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecute(final RequestContext requestContext) {
         val decorator = casProperties.getWebflow().getLoginDecorator();
 
         val groovyScript = decorator.getGroovy().getLocation();

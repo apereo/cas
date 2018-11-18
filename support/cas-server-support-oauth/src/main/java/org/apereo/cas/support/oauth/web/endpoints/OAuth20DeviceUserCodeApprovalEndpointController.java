@@ -59,10 +59,9 @@ public class OAuth20DeviceUserCodeApprovalEndpointController extends BaseOAuth20
      * @param request  the request
      * @param response the response
      * @return the model and view
-     * @throws Exception the exception
      */
     @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.DEVICE_AUTHZ_URL)
-    public static ModelAndView handleGetRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public static ModelAndView handleGetRequest(final HttpServletRequest request, final HttpServletResponse response) {
         val model = getApprovalModel(StringUtils.EMPTY);
         return new ModelAndView(OAuth20Constants.DEVICE_CODE_APPROVAL_VIEW, model);
     }
@@ -73,10 +72,9 @@ public class OAuth20DeviceUserCodeApprovalEndpointController extends BaseOAuth20
      * @param request  the request
      * @param response the response
      * @return the model and view
-     * @throws Exception the exception
      */
     @PostMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.DEVICE_AUTHZ_URL)
-    public ModelAndView handlePostRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public ModelAndView handlePostRequest(final HttpServletRequest request, final HttpServletResponse response) {
         val userCode = request.getParameter(PARAMETER_USER_CODE);
         val codeNotfound = getModelAndViewForFailure("codenotfound");
         if (StringUtils.isBlank(userCode)) {
