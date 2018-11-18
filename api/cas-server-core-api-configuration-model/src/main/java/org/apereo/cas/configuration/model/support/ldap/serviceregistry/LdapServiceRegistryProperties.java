@@ -31,7 +31,7 @@ public class LdapServiceRegistryProperties extends AbstractLdapSearchProperties 
     private String idAttribute = "uid";
 
     /**
-     * Service definintion attribute used for the registered service entry in LDAP
+     * Service definition attribute used for the registered service entry in LDAP
      * to keep a representation of the service body.
      */
     private String serviceDefinitionAttribute = "description";

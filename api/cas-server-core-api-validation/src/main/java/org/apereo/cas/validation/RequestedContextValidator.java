@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 /**
- * Functional interface to provide a method to validate an authenticaion against a requested context.
+ * Functional interface to provide a method to validate an authentication against a requested context.
  *
  * @author Travis Schmidt
  * @since 6.0
