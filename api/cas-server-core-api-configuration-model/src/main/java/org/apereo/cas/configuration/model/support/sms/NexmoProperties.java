@@ -31,4 +31,9 @@ public class NexmoProperties implements Serializable {
      */
     @RequiredProperty
     private String apiSecret;
+
+    /**
+     * The nexmo application id.
+     */
+    private String applicationId = "CAS";
 }

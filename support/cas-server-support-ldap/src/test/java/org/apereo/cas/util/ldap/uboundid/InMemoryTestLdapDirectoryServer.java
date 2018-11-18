@@ -160,7 +160,7 @@ public class InMemoryTestLdapDirectoryServer implements AutoCloseable, Disposabl
     }
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         close();
     }
 

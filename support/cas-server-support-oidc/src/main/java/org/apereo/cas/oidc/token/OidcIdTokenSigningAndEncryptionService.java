@@ -51,7 +51,7 @@ public class OidcIdTokenSigningAndEncryptionService extends BaseIdTokenSigningAn
         return innerJwt;
     }
 
-    private String encryptIdToken(final OidcRegisteredService svc, final JsonWebSignature jws, final String innerJwt) throws Exception {
+    private String encryptIdToken(final OidcRegisteredService svc, final JsonWebSignature jws, final String innerJwt) {
         LOGGER.debug("Service [{}] is set to encrypt id tokens", svc);
         val jwks = this.serviceJsonWebKeystoreCache.get(svc);
         if (jwks.isEmpty()) {

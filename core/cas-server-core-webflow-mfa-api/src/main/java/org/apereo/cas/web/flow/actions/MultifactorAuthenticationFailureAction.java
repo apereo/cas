@@ -26,7 +26,7 @@ public class MultifactorAuthenticationFailureAction extends AbstractMultifactorA
     private final CasConfigurationProperties casProperties;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecute(final RequestContext requestContext) {
         val service = WebUtils.getRegisteredService(requestContext);
 
         var failureMode = FailureModes.valueOf(casProperties.getAuthn().getMfa().getGlobalFailureMode());
