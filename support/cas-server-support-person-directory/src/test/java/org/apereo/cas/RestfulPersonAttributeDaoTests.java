@@ -34,7 +34,8 @@ import static org.junit.Assert.*;
  */
 @SpringBootTest(classes = {
     CasPersonDirectoryConfiguration.class,
-    RefreshAutoConfiguration.class})
+    RefreshAutoConfiguration.class
+})
 @TestPropertySource(properties = {
     "cas.authn.attributeRepository.rest[0].method=GET",
     "cas.authn.attributeRepository.rest[0].url=http://localhost:8085"
