@@ -31,7 +31,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.events.mongo.authenticationDatabaseName=admin",
     "cas.events.mongo.databaseName=events",
     "cas.events.mongo.dropCollection=true"
-    })
+})
 @Getter
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 public class MongoDbCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
