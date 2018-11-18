@@ -12,7 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * Default implementation of {@link UniqueTicketIdGenerator}. Implementation
- * utilizes a DefaultLongNumericGeneraor and a DefaultRandomStringGenerator to
+ * utilizes a {@link DefaultLongNumericGenerator} and a {@link org.apereo.cas.util.gen.DefaultRandomStringGenerator} to
  * construct the ticket id.
  * <p>
  * Tickets are of the form [PREFIX]-[SEQUENCE NUMBER]-[RANDOM STRING]-[SUFFIX]

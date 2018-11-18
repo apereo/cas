@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * Creates a singular Hazelcast Instance that other hazelcast modules add maps to
- * instead of creating thier own instance.
+ * instead of creating their own instance.
  *
  * @author Travis Schmidt
  * @since 5.3.4
