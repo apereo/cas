@@ -24,6 +24,8 @@ import org.apereo.cas.config.CasSupportMongoDbAuditConfiguration;
 import org.apereo.cas.config.CasThrottlingConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.util.junit.ConditionalIgnore;
+import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
 import lombok.Getter;
 import org.junit.experimental.categories.Category;
@@ -77,6 +79,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.audit.mongo.authenticationDatabaseName=admin",
     "cas.audit.mongo.asynchronous=false"})
 @Getter
+@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 27017)
 public class MongoDbThrottledSubmissionHandlerInterceptorAdapterTests extends
     BaseThrottledSubmissionHandlerInterceptorAdapterTests {
 
