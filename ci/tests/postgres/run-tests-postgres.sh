@@ -28,6 +28,13 @@ echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
 ./ci/tests/postgres/run-postgres-server.sh
+retVal=$?
+if [ $retVal != 0 ]; then
+    echo "Setup failed"
+    exit $retVal
+fi
+
+
 
 gradleBuild="$gradleBuild testPostgres jacocoRootReport -x test -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \

@@ -1,4 +1,8 @@
 description = "Apereo CAS SAML Identity Provider Support"
+ext {
+    maxParallelForksForTests = 1
+}
+
 dependencies {
     api project(":api:cas-server-core-api-audit")
     api project(":api:cas-server-core-api-webflow")
