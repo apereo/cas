@@ -11,6 +11,7 @@ import org.apereo.cas.support.openid.authentication.principal.OpenIdPrincipalRes
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,11 +56,14 @@ public class OpenIdAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     public OpenIdPrincipalResolver openIdPrincipalResolver() {
+        val personDirectory = casProperties.getPersonDirectory();
         val principal = casProperties.getAuthn().getOpenid().getPrincipal();
+        val principalAttribute = StringUtils.defaultIfBlank(principal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
         return new OpenIdPrincipalResolver(attributeRepository.getIfAvailable(),
             openidPrincipalFactory(),
-            principal.isReturnNull(),
-            principal.getPrincipalAttribute());
+            principal.isReturnNull() || personDirectory.isReturnNull(),
+            principalAttribute,
+            principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId());
     }
 
     @ConditionalOnMissingBean(name = "openidPrincipalFactory")

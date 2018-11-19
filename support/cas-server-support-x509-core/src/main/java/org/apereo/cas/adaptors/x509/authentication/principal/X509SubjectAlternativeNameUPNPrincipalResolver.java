@@ -46,8 +46,9 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
     public X509SubjectAlternativeNameUPNPrincipalResolver(final IPersonAttributeDao attributeRepository,
                                                           final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
                                                           final String principalAttributeName,
-                                                          final String alternatePrincipalAttribute) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName, alternatePrincipalAttribute);
+                                                          final String alternatePrincipalAttribute,
+                                                          final boolean useCurrentPrincipalId) {
+        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName, alternatePrincipalAttribute, useCurrentPrincipalId);
     }
 
     /**

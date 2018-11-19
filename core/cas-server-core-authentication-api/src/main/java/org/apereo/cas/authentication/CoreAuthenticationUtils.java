@@ -162,16 +162,15 @@ public class CoreAuthenticationUtils {
             if (selectionCriteria.endsWith(".groovy")) {
                 val loader = new DefaultResourceLoader();
                 val resource = loader.getResource(selectionCriteria);
-                if (resource != null) {
-                    val script = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
+                val script = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
 
-                    val clz = AccessController.doPrivileged((PrivilegedAction<Class<Predicate>>) () -> {
-                        val classLoader = new GroovyClassLoader(Beans.class.getClassLoader(),
-                            new CompilerConfiguration(), true);
-                        return classLoader.parseClass(script);
-                    });
-                    return clz.getDeclaredConstructor().newInstance();
-                }
+                val clz = AccessController.doPrivileged((PrivilegedAction<Class<Predicate>>) () -> {
+                    val classLoader = new GroovyClassLoader(Beans.class.getClassLoader(),
+                        new CompilerConfiguration(), true);
+                    return classLoader.parseClass(script);
+                });
+                return clz.getDeclaredConstructor().newInstance();
+
             }
 
             val predicateClazz = ClassUtils.getClass(selectionCriteria);
