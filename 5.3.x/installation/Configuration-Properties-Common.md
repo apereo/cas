@@ -963,6 +963,7 @@ The following  options apply  to features that integrate with an LDAP server (i.
 #${configurationKey}.useStartTls=false
 #${configurationKey}.responseTimeout=PT5S
 #${configurationKey}.allowMultipleDns=false
+#${configurationKey}.allowMultipleEntries=false
 #${configurationKey}.name=
 ```
 
