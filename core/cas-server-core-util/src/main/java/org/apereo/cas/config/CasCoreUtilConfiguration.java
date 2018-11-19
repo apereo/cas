@@ -11,6 +11,7 @@ import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.Converters;
 import org.apereo.cas.util.spring.SpringAwareMessageMessageInterpolator;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -115,6 +116,7 @@ public class CasCoreUtilConfiguration implements InitializingBean {
     }
 
     @Override
+    @SuppressFBWarnings("NIR_NEEDLESS_INSTANCE_RETRIEVAL")
     public void afterPropertiesSet() {
         val ctx = applicationContextProvider().getConfigurableApplicationContext();
         val conversionService = new DefaultFormattingConversionService(true);
