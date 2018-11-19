@@ -44,12 +44,16 @@ public class CasBotApplication {
     }
 
     @Bean
+    public MonitoredRepository monitoredRepository(final GitHubOperations gitHub,
+                                                   final GitHubProperties gitHubProperties) {
+        return new MonitoredRepository(gitHub, gitHubProperties);
+    }
+
+    @Bean
     public RepositoryMonitor repositoryMonitor(final GitHubOperations gitHub,
-                                               final GitHubProperties gitHubProperties,
+                                               final MonitoredRepository repository,
                                                final List<PullRequestListener> pullRequestListeners) {
-        final GitHubProperties.Repository repoSettings = gitHubProperties.getRepository();
-        final MonitoredRepository repo = new MonitoredRepository(repoSettings.getOrganization(), repoSettings.getName());
-        return new RepositoryMonitor(gitHub, repo, pullRequestListeners);
+        return new RepositoryMonitor(gitHub, repository, pullRequestListeners);
     }
 
 }

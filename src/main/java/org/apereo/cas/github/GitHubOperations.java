@@ -60,6 +60,15 @@ public interface GitHubOperations {
     Issue addLabel(Issue issue, String label);
 
     /**
+     * Add label pull request.
+     *
+     * @param pr    the pr
+     * @param label the label
+     * @return the pull request
+     */
+    PullRequest addLabel(PullRequest pr, String label);
+
+    /**
      * Removes the given {@code label} from the given {@code issue}.
      *
      * @param issue the issue
@@ -102,4 +111,7 @@ public interface GitHubOperations {
      */
     Page<Event> getEvents(Issue issue);
 
+    Page<Milestone> getMilestones(String organization, String name);
+
+    void setMilestone(PullRequest pr, Milestone milestone);
 }

@@ -6,41 +6,7 @@ logging:
         cas: info
 casbot:
   github:
-    prs:
-      maintained-branches:
-        - 5.3.x
-        - 6.0.x
-        - 6.1.x
-        - 6.2.x
-        - 6.3.x
-        - 6.4.x
-        - 6.5.x
-        - 6.6.x
-        - 6.7.x
-        - 6.8.x
-        - 6.9.x
-        - 7.0.x
-        - 7.1.x
-        - 7.2.x
-        - 7.3.x
-        - 7.4.x
-        - 7.5.x
-        - 7.6.x
-        - 7.7.x
-        - 7.8.x
-        - 7.9.x
-        - 8.0.x
-        - master
     repository:
       organization: apereo
       name: cas
-      collaborators:
-        - mmoayyed
-        - leleuj
-        - tduehr
-        - tsschmidt
-        - mindblender
-        - hdeadman
-        - dima767
-        - frett
-        - wgthom
+      url: https://github.com/apereo/cas

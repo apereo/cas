@@ -19,25 +19,26 @@ package org.apereo.cas.github;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import lombok.ToString;
 
-/**
- * A milestone to which a GitHub Issue can be added.
- *
- * @author Andy Wilkinson
- */
 @Getter
+@ToString(of = {"title"})
 public class Milestone {
 
     private final String title;
+    private final String description;
+    private final String url;
+    private final String number;
 
-    /**
-     * Creates a new {@code Milestone} with the given {@code title}.
-     *
-     * @param title the title
-     */
     @JsonCreator
-    public Milestone(@JsonProperty("title") final String title) {
+    public Milestone(@JsonProperty("title") final String title,
+                     @JsonProperty("description") final String description,
+                     @JsonProperty("url") final String url,
+                     @JsonProperty("number") final String number) {
         this.title = title;
+        this.description = description;
+        this.url = url;
+        this.number = number;
     }
 
 }

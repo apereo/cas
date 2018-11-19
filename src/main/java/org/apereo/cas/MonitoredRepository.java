@@ -16,8 +16,23 @@
 
 package org.apereo.cas;
 
+import org.apereo.cas.github.GitHubOperations;
+import org.apereo.cas.github.Milestone;
+import org.apereo.cas.github.Page;
+
+import com.github.zafarkhaja.semver.Version;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
+
+import java.io.StringReader;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Properties;
 
 /**
  * A repository that should be monitored.
@@ -26,16 +41,60 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 @Getter
-public class MonitoredRepository {
+public class MonitoredRepository implements InitializingBean {
+    private final GitHubOperations gitHub;
+    private final GitHubProperties gitHubProperties;
+    private final List<Milestone> milestones = new ArrayList<>();
+    private Version currentVersionInMaster;
 
-    /**
-     * The name of the organization that owns the repository.
-     */
-    private final String organization;
+    public String getOrganization() {
+        return this.gitHubProperties.getRepository().getOrganization();
+    }
 
-    /**
-     * The name of the repository.
-     */
-    private final String name;
+    public String getName() {
+        return this.gitHubProperties.getRepository().getName();
+    }
 
+    public Optional<Milestone> getMilestoneForMaster() {
+        final String currentVersion = currentVersionInMaster.toString().replace("-SNAPSHOT", "");
+        return milestones.stream()
+            .filter(milestone -> {
+                final String milestoneVersion = Version.valueOf(milestone.getTitle()).toString();
+                if (milestoneVersion.equalsIgnoreCase(currentVersion)) {
+                    return true;
+                }
+                return false;
+            })
+            .findFirst();
+    }
+
+    public Optional<Milestone> getMilestoneForBranch(final String branch) {
+        final Version branchVersion = Version.valueOf(branch.replace(".x", "." + Integer.MAX_VALUE));
+        return milestones.stream()
+            .filter(milestone -> {
+                final Version milestoneVersion = Version.valueOf(milestone.getTitle());
+                if (milestoneVersion.getMajorVersion() == branchVersion.getMajorVersion()
+                    && milestoneVersion.getMinorVersion() == branchVersion.getMinorVersion()) {
+                    return true;
+                }
+                return false;
+            })
+            .findFirst();
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        final RestTemplate rest = new RestTemplate();
+        final URI uri = URI.create(gitHubProperties.getRepository().getUrl() + "/raw/master/gradle.properties");
+        final ResponseEntity entity = rest.getForEntity(uri, String.class);
+        final Properties properties = new Properties();
+        properties.load(new StringReader(entity.getBody().toString()));
+        currentVersionInMaster = Version.valueOf(properties.get("version").toString());
+
+        Page<Milestone> page = gitHub.getMilestones(getOrganization(), getName());
+        while (page != null) {
+            milestones.addAll(page.getContent());
+            page = page.next();
+        }
+    }
 }

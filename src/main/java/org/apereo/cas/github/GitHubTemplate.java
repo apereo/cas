@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -129,6 +130,26 @@ public class GitHubTemplate implements GitHubOperations {
         return getPage(issue.getEventsUrl(), Event[].class);
     }
 
+    @Override
+    public Page<Milestone> getMilestones(final String organization, final String name) {
+        final String url = "https://api.github.com/repos/" + organization + "/" + name + "/milestones?state=open";
+        return getPage(url, Milestone[].class);
+    }
+
+    @Override
+    public void setMilestone(final PullRequest pr, final Milestone milestone) {
+        final URI uri = URI.create(pr.getMilestonesUrl());
+        log.info("Adding milestone {} to pull request {}", milestone, uri);
+
+        final Map<String, String> body = new HashMap<>();
+        body.put("milestone", milestone.getNumber());
+
+        final ResponseEntity response = this.rest.exchange(new RequestEntity(body, HttpMethod.PATCH, uri), PullRequest.class);
+        if (response.getStatusCode() != HttpStatus.OK) {
+            log.warn("Failed to add milestone to pull request. Response status: " + response.getStatusCode());
+        }
+    }
+
     private <T> Page<T> getPage(final String url, final Class<T[]> type) {
         if (!StringUtils.hasText(url)) {
             return null;
@@ -140,6 +161,24 @@ public class GitHubTemplate implements GitHubOperations {
 
     private String getNextUrl(final ResponseEntity<?> response) {
         return this.linkParser.parse(response.getHeaders().getFirst("Link")).get("next");
+    }
+
+    @Override
+    public PullRequest addLabel(final PullRequest pr, final String label) {
+        final URI uri = URI.create(pr.getLabelsUrl());
+        log.info("Adding label {} to pull request {}", label, uri);
+        final ResponseEntity<Label[]> response = this.rest.exchange(
+            new RequestEntity<>(Arrays.asList(label), HttpMethod.POST, uri),
+            Label[].class);
+        if (response.getStatusCode() != HttpStatus.OK) {
+            log.warn("Failed to add label to pull request. Response status: "
+                + response.getStatusCode());
+        }
+        return new PullRequest(pr.getUrl(), pr.getCommentsUrl(),
+            pr.getUser(), pr.getLabels(),
+            pr.getMilestone(), pr.getState(),
+            pr.getTitle(), pr.getNumber(),
+            pr.getBase(), pr.getHead());
     }
 
     @Override

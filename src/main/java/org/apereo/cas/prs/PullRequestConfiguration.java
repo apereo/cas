@@ -1,8 +1,7 @@
 package org.apereo.cas.prs;
 
-import org.apereo.cas.GitHubProperties;
+import org.apereo.cas.MonitoredRepository;
 import org.apereo.cas.PullRequestListener;
-import org.apereo.cas.github.GitHubOperations;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,9 +15,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 class PullRequestConfiguration {
     @Bean
-    public PullRequestListener pullRequestListener(final GitHubOperations gitHub,
-                                            final GitHubProperties githubProperties) {
-        return new ApereoCasPullRequestListener(gitHub, githubProperties);
+    public PullRequestListener pullRequestListener(final MonitoredRepository repository) {
+        return new ApereoCasPullRequestListener(repository);
     }
 
 }

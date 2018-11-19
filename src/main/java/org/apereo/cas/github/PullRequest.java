@@ -36,8 +36,6 @@ public class PullRequest {
 
     private final String commentsUrl;
 
-    private final String labelsUrl;
-
     private final User user;
 
     private final Milestone milestone;
@@ -54,7 +52,6 @@ public class PullRequest {
     @JsonCreator
     public PullRequest(@JsonProperty("url") final String url,
                        @JsonProperty("comments_url") final String commentsUrl,
-                       @JsonProperty("labels_url") final String labelsUrl,
                        @JsonProperty("user") final User user,
                        @JsonProperty("labels") final List<Label> labels,
                        @JsonProperty("milestone") final Milestone milestone,
@@ -66,7 +63,6 @@ public class PullRequest {
         this.url = url;
         this.commentsUrl = commentsUrl;
         this.user = user;
-        this.labelsUrl = labelsUrl;
         this.labels = labels;
         this.milestone = milestone;
         this.title = title;
@@ -90,5 +86,17 @@ public class PullRequest {
 
     public boolean isLabeledAsPendingPortBack() {
         return this.labels.contains(LABEL_PENDING_PORT_BACK);
+    }
+
+    public String getLabelsUrl() {
+        return this.url.replace("pulls", "issues") + "/labels";
+    }
+
+    public String getMilestonesUrl() {
+        return this.url.replace("pulls", "issues");
+    }
+
+    public boolean isTargettedAtMasterBranch() {
+        return this.base.getRef().equalsIgnoreCase("master");
     }
 }

@@ -61,11 +61,7 @@ public class GitHubProperties {
          */
         private String name;
 
-        /**
-         * The names of the repository's collaborators.
-         */
-        private List<String> collaborators;
-
+        private String url;
     }
 
     /**
