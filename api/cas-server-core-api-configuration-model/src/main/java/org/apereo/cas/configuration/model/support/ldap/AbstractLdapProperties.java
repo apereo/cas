@@ -230,6 +230,11 @@ public abstract class AbstractLdapProperties implements Serializable {
      */
     private boolean allowMultipleDns;
 
+    /** 
+     * Set if multiple Entries are allowed.
+     */
+    private boolean allowMultipleEntries;
+    
     /**
      * The bind DN to use when connecting to LDAP.
      * LDAP connection configuration injected into the LDAP connection pool can be initialized with the following parameters:
