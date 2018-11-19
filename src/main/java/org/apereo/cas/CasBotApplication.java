@@ -20,6 +20,7 @@ import org.apereo.cas.github.GitHubOperations;
 import org.apereo.cas.github.GitHubTemplate;
 import org.apereo.cas.github.RegexLinkParser;
 
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -39,6 +40,12 @@ public class CasBotApplication {
 
     @Bean
     public GitHubTemplate gitHubTemplate(final GitHubProperties gitHubProperties) {
+        if (gitHubProperties.getCredentials().getPassword() == null) {
+            throw new BeanCreationException("No credential password is specified");
+        }
+        if (gitHubProperties.getCredentials().getUsername() == null) {
+            throw new BeanCreationException("No credential username is specified");
+        }
         return new GitHubTemplate(gitHubProperties.getCredentials().getUsername(),
             gitHubProperties.getCredentials().getPassword(), new RegexLinkParser());
     }

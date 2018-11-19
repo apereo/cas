@@ -66,5 +66,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
+
+        <finalName>casbot</finalName>
     </build>
 </project>
