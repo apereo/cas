@@ -140,6 +140,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "wsfedAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer wsfedAuthenticationEventExecutionPlanConfigurer() {
+        val personDirectory = casProperties.getPersonDirectory();
         return plan -> casProperties.getAuthn().getWsfed()
             .stream()
             .filter(wsfed -> StringUtils.isNotBlank(wsfed.getIdentityProviderUrl())
@@ -156,10 +157,14 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
                         .findFirst()
                         .orElseThrow(() -> new RuntimeException("Unable to find configuration for identity provider " + wsfed.getIdentityProviderUrl()));
 
-                    val r = new WsFederationCredentialsToPrincipalResolver(attributeRepository.getIfAvailable(), wsfedPrincipalFactory(),
-                        wsfed.getPrincipal().isReturnNull(),
-                        wsfed.getPrincipal().getPrincipalAttribute(),
-                        cfg);
+                    val principal = wsfed.getPrincipal();
+                    val principalAttribute = StringUtils.defaultIfBlank(principal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
+                    val r = new WsFederationCredentialsToPrincipalResolver(attributeRepository.getIfAvailable(),
+                        wsfedPrincipalFactory(),
+                        principal.isReturnNull() || personDirectory.isReturnNull(),
+                        principalAttribute,
+                        cfg,
+                        personDirectory.isUseExistingPrincipalId() || principal.isUseExistingPrincipalId());
                     plan.registerAuthenticationHandlerWithPrincipalResolver(handler, r);
                 }
             });

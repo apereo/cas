@@ -19,8 +19,9 @@ import java.security.cert.X509Certificate;
 public class X509SubjectDNPrincipalResolver extends AbstractX509PrincipalResolver {
 
     public X509SubjectDNPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,
-                                          final boolean returnNullIfNoAttributes, final String principalAttributeName) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
+                                          final boolean returnNullIfNoAttributes, final String principalAttributeName,
+                                          final boolean useCurrentPrincipalId) {
+        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName, useCurrentPrincipalId);
     }
 
     @Override

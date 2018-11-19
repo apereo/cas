@@ -169,13 +169,19 @@ public class CasCoreAuthenticationHandlersConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "jaasPersonDirectoryPrincipalResolvers")
         public List<PrincipalResolver> jaasPersonDirectoryPrincipalResolvers() {
+            val personDirectory = casProperties.getPersonDirectory();
             return casProperties.getAuthn().getJaas()
                 .stream()
                 .filter(jaas -> StringUtils.isNotBlank(jaas.getRealm()))
-                .map(jaas -> new PersonDirectoryPrincipalResolver(attributeRepository.getIfAvailable(),
-                    jaasPrincipalFactory(),
-                    jaas.getPrincipal().isReturnNull(),
-                    StringUtils.defaultIfBlank(jaas.getPrincipal().getPrincipalAttribute(), casProperties.getPersonDirectory().getPrincipalAttribute())))
+                .map(jaas -> {
+                    val jaasPrincipal = jaas.getPrincipal();
+                    val principalAttribute = StringUtils.defaultIfBlank(jaasPrincipal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
+                    return new PersonDirectoryPrincipalResolver(attributeRepository.getIfAvailable(),
+                        jaasPrincipalFactory(),
+                        jaasPrincipal.isReturnNull() || personDirectory.isReturnNull(),
+                        principalAttribute,
+                        jaasPrincipal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId());
+                })
                 .collect(Collectors.toList());
         }
 

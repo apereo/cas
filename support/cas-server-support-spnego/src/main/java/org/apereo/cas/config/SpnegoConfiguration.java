@@ -16,6 +16,7 @@ import org.apereo.cas.support.spnego.authentication.principal.SpnegoPrincipalRes
 
 import jcifs.spnego.Authentication;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,12 +125,16 @@ public class SpnegoConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "spnegoPrincipalResolver")
     public PrincipalResolver spnegoPrincipalResolver() {
+        val personDirectory = casProperties.getPersonDirectory();
         val spnegoProperties = casProperties.getAuthn().getSpnego();
+        val spnegoPrincipal = spnegoProperties.getPrincipal();
+        val principalAttribute = StringUtils.defaultIfBlank(spnegoPrincipal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
         return new SpnegoPrincipalResolver(attributeRepository.getIfAvailable(),
             spnegoPrincipalFactory(),
-            spnegoProperties.getPrincipal().isReturnNull(),
+            spnegoPrincipal.isReturnNull() || personDirectory.isReturnNull(),
             PrincipalNameTransformerUtils.newPrincipalNameTransformer(spnegoProperties.getPrincipalTransformation()),
-            spnegoProperties.getPrincipal().getPrincipalAttribute());
+            principalAttribute,
+            spnegoPrincipal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId());
     }
 
     @ConditionalOnMissingBean(name = "spnegoPrincipalFactory")

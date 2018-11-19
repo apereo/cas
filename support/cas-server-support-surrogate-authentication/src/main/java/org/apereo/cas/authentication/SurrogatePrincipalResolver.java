@@ -28,8 +28,9 @@ public class SurrogatePrincipalResolver extends PersonDirectoryPrincipalResolver
     }
 
     public SurrogatePrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,
-                                      final boolean returnNullIfNoAttributes, final String principalAttributeName) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
+                                      final boolean returnNullIfNoAttributes, final String principalAttributeName,
+                                      final boolean useCurrentPrincipalId) {
+        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName, useCurrentPrincipalId);
     }
 
     @Override

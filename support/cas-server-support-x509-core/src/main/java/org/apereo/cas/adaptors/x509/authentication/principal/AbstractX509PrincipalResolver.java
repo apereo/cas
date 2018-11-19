@@ -39,17 +39,21 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
     private String alternatePrincipalAttribute;
 
     public AbstractX509PrincipalResolver(final IPersonAttributeDao attributeRepository,
-                                         final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
+                                         final PrincipalFactory principalFactory,
+                                         final boolean returnNullIfNoAttributes,
                                          final String principalAttributeName,
-                                         final String alternatePrincipalAttribute) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
+                                         final String alternatePrincipalAttribute,
+                                         final boolean useCurrentPrincipalId) {
+        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName, useCurrentPrincipalId);
         this.alternatePrincipalAttribute = alternatePrincipalAttribute;
     }
 
     public AbstractX509PrincipalResolver(final IPersonAttributeDao attributeRepository,
-                                         final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
-                                         final String principalAttributeName) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
+                                         final PrincipalFactory principalFactory,
+                                         final boolean returnNullIfNoAttributes,
+                                         final String principalAttributeName,
+                                         final boolean useCurrentPrincipalId) {
+        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName, useCurrentPrincipalId);
     }
 
     @Override

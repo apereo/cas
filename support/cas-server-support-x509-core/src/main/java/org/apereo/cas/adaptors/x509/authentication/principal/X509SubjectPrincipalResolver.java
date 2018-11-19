@@ -75,8 +75,9 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
      */
     public X509SubjectPrincipalResolver(final IPersonAttributeDao attributeRepository,
                                         final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
-                                        final String principalAttributeName, final String descriptor) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
+                                        final String principalAttributeName, final String descriptor,
+                                        final boolean useCurrentPrincipalId) {
+        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName, useCurrentPrincipalId);
         this.descriptor = descriptor;
     }
 

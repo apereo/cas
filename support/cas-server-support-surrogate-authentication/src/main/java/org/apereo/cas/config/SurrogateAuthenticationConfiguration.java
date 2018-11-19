@@ -164,11 +164,13 @@ public class SurrogateAuthenticationConfiguration {
     @RefreshScope
     public PrincipalResolver surrogatePrincipalResolver() {
         val principal = casProperties.getAuthn().getSurrogate().getPrincipal();
+        val personDirectory = casProperties.getPersonDirectory();
+        val principalAttribute = org.apache.commons.lang3.StringUtils.defaultIfBlank(principal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
         return new SurrogatePrincipalResolver(attributeRepository.getIfAvailable(),
             surrogatePrincipalFactory(),
-            principal.isReturnNull(),
-            org.apache.commons.lang3.StringUtils.defaultIfBlank(principal.getPrincipalAttribute(),
-                casProperties.getPersonDirectory().getPrincipalAttribute()));
+            principal.isReturnNull() || personDirectory.isReturnNull(),
+            principalAttribute,
+            personDirectory.isUseExistingPrincipalId() || principal.isUseExistingPrincipalId());
     }
 
     @ConditionalOnMissingBean(name = "surrogatePrincipalResolutionExecutionPlanConfigurer")

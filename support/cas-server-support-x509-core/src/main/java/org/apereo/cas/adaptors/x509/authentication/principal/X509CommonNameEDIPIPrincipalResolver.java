@@ -37,8 +37,9 @@ public class X509CommonNameEDIPIPrincipalResolver extends AbstractX509PrincipalR
     public X509CommonNameEDIPIPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,
                                                 final boolean returnNullIfNoAttributes,
                                                 final String principalAttributeName,
-                                                final String alternatePrincipalAttribute) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName, alternatePrincipalAttribute);
+                                                final String alternatePrincipalAttribute,
+                                                final boolean useCurrentPrincipalId) {
+        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName, alternatePrincipalAttribute, useCurrentPrincipalId);
     }
 
     @Override

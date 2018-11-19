@@ -71,30 +71,35 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     /**
      * Use the current principal id for extraction.
      */
-    protected boolean useCurrentPrincipalId;
+    protected final boolean useCurrentPrincipalId;
 
     public PersonDirectoryPrincipalResolver() {
         this(new StubPersonAttributeDao(new HashMap<>()), PrincipalFactoryUtils.newPrincipalFactory(), false,
-            String::trim, null);
+            String::trim, null, false);
     }
 
     public PersonDirectoryPrincipalResolver(final IPersonAttributeDao attributeRepository, final String principalAttributeNames) {
-        this(attributeRepository, PrincipalFactoryUtils.newPrincipalFactory(), false, formUserId -> formUserId, principalAttributeNames);
+        this(attributeRepository, PrincipalFactoryUtils.newPrincipalFactory(),
+            false, formUserId -> formUserId, principalAttributeNames, false);
     }
 
     public PersonDirectoryPrincipalResolver(final IPersonAttributeDao attributeRepository) {
-        this(attributeRepository, PrincipalFactoryUtils.newPrincipalFactory(), false, formUserId -> formUserId, null);
+        this(attributeRepository, PrincipalFactoryUtils.newPrincipalFactory(),
+            false, formUserId -> formUserId, null, false);
     }
 
     public PersonDirectoryPrincipalResolver(final boolean returnNullIfNoAttributes, final String principalAttributeNames) {
         this(new StubPersonAttributeDao(new HashMap<>()), PrincipalFactoryUtils.newPrincipalFactory(),
-            returnNullIfNoAttributes, String::trim, principalAttributeNames);
+            returnNullIfNoAttributes, String::trim, principalAttributeNames, false);
     }
 
     public PersonDirectoryPrincipalResolver(final IPersonAttributeDao attributeRepository,
-                                            final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
-                                            final String principalAttributeNames) {
-        this(attributeRepository, principalFactory, returnNullIfNoAttributes, formUserId -> formUserId, principalAttributeNames);
+                                            final PrincipalFactory principalFactory,
+                                            final boolean returnNullIfNoAttributes,
+                                            final String principalAttributeNames,
+                                            final boolean useCurrentPrincipalId) {
+        this(attributeRepository, principalFactory, returnNullIfNoAttributes,
+            formUserId -> formUserId, principalAttributeNames, useCurrentPrincipalId);
     }
 
     @Override
