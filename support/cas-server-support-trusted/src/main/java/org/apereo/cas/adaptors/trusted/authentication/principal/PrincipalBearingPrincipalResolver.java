@@ -24,8 +24,9 @@ import java.util.Optional;
 public class PrincipalBearingPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     public PrincipalBearingPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,
-                                             final boolean returnNullIfNoAttributes, final String principalAttributeName) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
+                                             final boolean returnNullIfNoAttributes, final String principalAttributeName,
+                                             final boolean useCurrentPrincipalId) {
+        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName, useCurrentPrincipalId);
     }
 
     @Override
