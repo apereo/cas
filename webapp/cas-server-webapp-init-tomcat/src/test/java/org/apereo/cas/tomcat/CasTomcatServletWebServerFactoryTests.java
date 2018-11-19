@@ -22,8 +22,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
-import static org.junit.Assert.*;
-
 /**
  * This is {@link CasTomcatServletWebServerFactoryTests}.
  *
@@ -50,7 +48,6 @@ import static org.junit.Assert.*;
     "cas.server.tomcat.ajp.port=9944",
     "cas.server.tomcat.basicAuthn.enabled=true",
     "cas.server.tomcat.extAccessLog.enabled=true",
-    "cas.server.tomcat.extAccessLog.pattern=true",
     "cas.server.tomcat.rewriteValve.location=classpath:/container/tomcat/rewrite.config"
 })
 @Slf4j
@@ -85,9 +82,6 @@ public class CasTomcatServletWebServerFactoryTests {
         val server = casServletWebServerFactory.getWebServer();
         try {
             server.start();
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            fail(e.getMessage());
         } finally {
             server.stop();
         }
