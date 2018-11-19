@@ -214,7 +214,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         LOGGER.debug("Extracting credential id based on existing credential [{}]", credential);
         if (currentPrincipal != null && currentPrincipal.isPresent()) {
             final Principal principal = currentPrincipal.get();
-            LOGGER.debug("Principal is currently resolved is [{}]", principal);
+            LOGGER.debug("Principal is currently resolved as [{}]", principal);
             if (useCurrentPrincipalId) {
                 LOGGER.debug("Using the existing resolved principal id [{}]", principal.getId());
                 return principal.getId();
