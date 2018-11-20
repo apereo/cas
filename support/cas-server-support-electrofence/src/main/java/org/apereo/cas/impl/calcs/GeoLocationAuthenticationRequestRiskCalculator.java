@@ -3,6 +3,7 @@ package org.apereo.cas.impl.calcs;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
@@ -28,8 +29,9 @@ public class GeoLocationAuthenticationRequestRiskCalculator extends BaseAuthenti
     private final GeoLocationService geoLocationService;
 
     public GeoLocationAuthenticationRequestRiskCalculator(final CasEventRepository casEventRepository,
+                                                          final CasConfigurationProperties casProperties,
                                                           final GeoLocationService geoLocationService) {
-        super(casEventRepository);
+        super(casEventRepository, casProperties);
         this.geoLocationService = geoLocationService;
     }
 
@@ -41,11 +43,7 @@ public class GeoLocationAuthenticationRequestRiskCalculator extends BaseAuthenti
             LOGGER.debug("Filtering authentication events for geolocation [{}]", loc);
             val count = events.stream().filter(e -> e.getGeoLocation().equals(loc)).count();
             LOGGER.debug("Total authentication events found for [{}]: [{}]", loc, count);
-            if (count == events.size()) {
-                LOGGER.debug("Principal [{}] has always authenticated from [{}]", authentication.getPrincipal(), loc);
-                return LOWEST_RISK_SCORE;
-            }
-            return getFinalAveragedScore(count, events.size());
+            return calculateScoreBasedOnEventsCount(authentication, events, count);
         }
         val remoteAddr = ClientInfoHolder.getClientInfo().getClientIpAddress();
         LOGGER.debug("Filtering authentication events for location based on ip [{}]", remoteAddr);
@@ -56,11 +54,7 @@ public class GeoLocationAuthenticationRequestRiskCalculator extends BaseAuthenti
                 .filter(e -> e.getGeoLocation().equals(new GeoLocationRequest(response.getLatitude(), response.getLongitude())))
                 .count();
             LOGGER.debug("Total authentication events found for location of [{}]: [{}]", remoteAddr, count);
-            if (count == events.size()) {
-                LOGGER.debug("Principal [{}] has always authenticated from [{}]", authentication.getPrincipal(), loc);
-                return LOWEST_RISK_SCORE;
-            }
-            return getFinalAveragedScore(count, events.size());
+            return calculateScoreBasedOnEventsCount(authentication, events, count);
         }
         LOGGER.debug("Request does not contain enough geolocation data");
         return HIGHEST_RISK_SCORE;

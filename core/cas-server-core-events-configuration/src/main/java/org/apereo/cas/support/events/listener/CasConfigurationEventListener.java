@@ -3,11 +3,9 @@ package org.apereo.cas.support.events.listener;
 import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
 import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.cloud.context.refresh.ContextRefresher;
@@ -24,22 +22,16 @@ import java.util.Collection;
  * @since 5.1.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class CasConfigurationEventListener {
 
     private final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager;
 
-    @Autowired
-    private ConfigurationPropertiesBindingPostProcessor binder;
+    private final ConfigurationPropertiesBindingPostProcessor binder;
 
-    @Autowired
-    private ObjectProvider<ContextRefresher> contextRefresher;
+    private final ContextRefresher contextRefresher;
 
-    @Autowired
-    private ApplicationContext applicationContext;
-
-    public CasConfigurationEventListener(final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager) {
-        this.configurationPropertiesEnvironmentManager = configurationPropertiesEnvironmentManager;
-    }
+    private final ApplicationContext applicationContext;
 
     /**
      * Handle refresh event when issued to this CAS server locally.
@@ -68,11 +60,8 @@ public class CasConfigurationEventListener {
             LOGGER.info("Received event [{}]. Refreshing CAS configuration...", event);
             Collection<String> keys = null;
             try {
-                val refresher = this.contextRefresher.getIfAvailable();
-                if (refresher != null) {
-                    keys = refresher.refresh();
-                    LOGGER.debug("Refreshed the following settings: [{}].", keys);
-                }
+                keys = contextRefresher.refresh();
+                LOGGER.debug("Refreshed the following settings: [{}].", keys);
             } catch (final Exception e) {
                 LOGGER.trace(e.getMessage(), e);
             } finally {

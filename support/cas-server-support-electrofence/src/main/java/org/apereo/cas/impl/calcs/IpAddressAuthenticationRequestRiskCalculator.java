@@ -1,6 +1,7 @@
 package org.apereo.cas.impl.calcs;
 
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
@@ -23,8 +24,9 @@ import java.util.Collection;
 public class IpAddressAuthenticationRequestRiskCalculator extends BaseAuthenticationRequestRiskCalculator {
 
 
-    public IpAddressAuthenticationRequestRiskCalculator(final CasEventRepository casEventRepository) {
-        super(casEventRepository);
+    public IpAddressAuthenticationRequestRiskCalculator(final CasEventRepository casEventRepository,
+                                                        final CasConfigurationProperties casProperties) {
+        super(casEventRepository, casProperties);
     }
 
     @Override
@@ -36,10 +38,6 @@ public class IpAddressAuthenticationRequestRiskCalculator extends BaseAuthentica
         LOGGER.debug("Filtering authentication events for ip address [{}]", remoteAddr);
         val count = events.stream().filter(e -> e.getClientIpAddress().equalsIgnoreCase(remoteAddr)).count();
         LOGGER.debug("Total authentication events found for [{}]: [{}]", remoteAddr, count);
-        if (count == events.size()) {
-            LOGGER.debug("Principal [{}] has always authenticated from [{}]", authentication.getPrincipal(), remoteAddr);
-            return LOWEST_RISK_SCORE;
-        }
-        return getFinalAveragedScore(count, events.size());
+        return calculateScoreBasedOnEventsCount(authentication, events, count);
     }
 }

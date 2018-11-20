@@ -1,9 +1,9 @@
 package org.apereo.cas.impl.notify;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.io.CommunicationsManager;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -18,9 +18,14 @@ import org.apache.commons.lang3.StringUtils;
 @Slf4j
 @Getter
 @Setter
-@RequiredArgsConstructor
 public class AuthenticationRiskSmsNotifier extends BaseAuthenticationRiskNotifier {
     private final CommunicationsManager communicationsManager;
+
+    public AuthenticationRiskSmsNotifier(final CasConfigurationProperties casProperties,
+                                         final CommunicationsManager communicationsManager) {
+        super(casProperties);
+        this.communicationsManager = communicationsManager;
+    }
 
     @Override
     public void publish() {
