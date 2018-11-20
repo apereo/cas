@@ -14,7 +14,7 @@ public interface AuthenticationThrottlingExecutionPlanConfigurer {
      *
      * @param plan the plan
      */
-    default void configureAuthenticationThrottlingExecutionPlan(AuthenticationThrottlingExecutionPlan plan) {
+    default void configureAuthenticationThrottlingExecutionPlan(final AuthenticationThrottlingExecutionPlan plan) {
     }
 
     /**

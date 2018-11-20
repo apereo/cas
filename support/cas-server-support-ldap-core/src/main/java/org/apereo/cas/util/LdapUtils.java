@@ -659,7 +659,10 @@ public class LdapUtils {
         resolver.setAllowMultipleDns(l.isAllowMultipleDns());
         resolver.setConnectionFactory(connectionFactoryForSearch);
         resolver.setUserFilter(l.getSearchFilter());
-        resolver.setReferralHandler(new SearchReferralHandler());
+
+        if (l.isFollowReferrals()) {
+            resolver.setReferralHandler(new SearchReferralHandler());
+        }
 
         if (StringUtils.isNotBlank(l.getDerefAliases())) {
             resolver.setDerefAliases(DerefAliases.valueOf(l.getDerefAliases()));
@@ -679,6 +682,17 @@ public class LdapUtils {
         if (StringUtils.isBlank(l.getDnFormat())) {
             throw new IllegalArgumentException("Dn format cannot be empty/blank for direct bind authentication");
         }
+        return getAuthenticatorViaDnFormat(l);
+    }
+
+    private static Authenticator getActiveDirectoryAuthenticator(final AbstractLdapAuthenticationProperties l) {
+        if (StringUtils.isBlank(l.getDnFormat())) {
+            throw new IllegalArgumentException("Dn format cannot be empty/blank for active directory authentication");
+        }
+        return getAuthenticatorViaDnFormat(l);
+    }
+
+    private static Authenticator getAuthenticatorViaDnFormat(final AbstractLdapAuthenticationProperties l) {
         val resolver = new FormatDnResolver(l.getDnFormat());
         val authenticator = new Authenticator(resolver, getPooledBindAuthenticationHandler(l, newLdaptivePooledConnectionFactory(l)));
 
@@ -686,19 +700,6 @@ public class LdapUtils {
             authenticator.setEntryResolver(newLdaptiveSearchEntryResolver(l, newLdaptivePooledConnectionFactory(l)));
         }
         return authenticator;
-    }
-
-    private static Authenticator getActiveDirectoryAuthenticator(final AbstractLdapAuthenticationProperties l) {
-        if (StringUtils.isBlank(l.getDnFormat())) {
-            throw new IllegalArgumentException("Dn format cannot be empty/blank for active directory authentication");
-        }
-        val resolver = new FormatDnResolver(l.getDnFormat());
-        val authn = new Authenticator(resolver, getPooledBindAuthenticationHandler(l, newLdaptivePooledConnectionFactory(l)));
-
-        if (l.isEnhanceWithEntryResolver()) {
-            authn.setEntryResolver(newLdaptiveSearchEntryResolver(l, newLdaptivePooledConnectionFactory(l)));
-        }
-        return authn;
     }
 
     private static PooledBindAuthenticationHandler getPooledBindAuthenticationHandler(final AbstractLdapAuthenticationProperties l,
@@ -752,8 +753,7 @@ public class LdapUtils {
         cc.setResponseTimeout(Beans.newDuration(l.getResponseTimeout()));
 
         if (StringUtils.isNotBlank(l.getConnectionStrategy())) {
-            val strategy =
-                AbstractLdapProperties.LdapConnectionStrategy.valueOf(l.getConnectionStrategy());
+            val strategy = AbstractLdapProperties.LdapConnectionStrategy.valueOf(l.getConnectionStrategy());
             switch (strategy) {
                 case RANDOM:
                     cc.setConnectionStrategy(new RandomConnectionStrategy());
@@ -901,7 +901,10 @@ public class LdapUtils {
                 compareRequest.setDn(l.getValidator().getDn());
                 compareRequest.setAttribute(new LdapAttribute(l.getValidator().getAttributeName(),
                     l.getValidator().getAttributeValues().toArray(ArrayUtils.EMPTY_STRING_ARRAY)));
-                compareRequest.setReferralHandler(new SearchReferralHandler());
+
+                if (l.isFollowReferrals()) {
+                    compareRequest.setReferralHandler(new SearchReferralHandler());
+                }
                 cp.setValidator(new CompareValidator(compareRequest));
                 break;
             case "none":
@@ -915,7 +918,9 @@ public class LdapUtils {
                 searchRequest.setReturnAttributes(ReturnAttributes.NONE.value());
                 searchRequest.setSearchScope(SearchScope.valueOf(l.getValidator().getScope()));
                 searchRequest.setSizeLimit(1L);
-                searchRequest.setReferralHandler(new SearchReferralHandler());
+                if (l.isFollowReferrals()) {
+                    searchRequest.setReferralHandler(new SearchReferralHandler());
+                }
                 cp.setValidator(new SearchValidator(searchRequest));
                 break;
         }
@@ -979,31 +984,34 @@ public class LdapUtils {
         entryResolver.setUserFilter(l.getSearchFilter());
         entryResolver.setSubtreeSearch(l.isSubtreeSearch());
         entryResolver.setConnectionFactory(factory);
+        entryResolver.setAllowMultipleEntries(l.isAllowMultipleEntries());
         if (StringUtils.isNotBlank(l.getDerefAliases())) {
             entryResolver.setDerefAliases(DerefAliases.valueOf(l.getDerefAliases()));
         }
-
         val handlers = new ArrayList<SearchEntryHandler>();
         l.getSearchEntryHandlers().forEach(h -> {
             switch (h.getType()) {
                 case CASE_CHANGE:
                     val eh = new CaseChangeEntryHandler();
-                    eh.setAttributeNameCaseChange(CaseChangeEntryHandler.CaseChange.valueOf(h.getCasChange().getAttributeNameCaseChange()));
-                    eh.setAttributeNames(h.getCasChange().getAttributeNames().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
-                    eh.setAttributeValueCaseChange(CaseChangeEntryHandler.CaseChange.valueOf(h.getCasChange().getAttributeValueCaseChange()));
-                    eh.setDnCaseChange(CaseChangeEntryHandler.CaseChange.valueOf(h.getCasChange().getDnCaseChange()));
+                    val caseChange = h.getCaseChange();
+                    eh.setAttributeNameCaseChange(CaseChangeEntryHandler.CaseChange.valueOf(caseChange.getAttributeNameCaseChange()));
+                    eh.setAttributeNames(caseChange.getAttributeNames().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
+                    eh.setAttributeValueCaseChange(CaseChangeEntryHandler.CaseChange.valueOf(caseChange.getAttributeValueCaseChange()));
+                    eh.setDnCaseChange(CaseChangeEntryHandler.CaseChange.valueOf(caseChange.getDnCaseChange()));
                     handlers.add(eh);
                     break;
                 case DN_ATTRIBUTE_ENTRY:
                     val ehd = new DnAttributeEntryHandler();
-                    ehd.setAddIfExists(h.getDnAttribute().isAddIfExists());
-                    ehd.setDnAttributeName(h.getDnAttribute().getDnAttributeName());
+                    val dnAttribute = h.getDnAttribute();
+                    ehd.setAddIfExists(dnAttribute.isAddIfExists());
+                    ehd.setDnAttributeName(dnAttribute.getDnAttributeName());
                     handlers.add(ehd);
                     break;
                 case MERGE:
                     val ehm = new MergeAttributeEntryHandler();
-                    ehm.setAttributeNames(h.getMergeAttribute().getAttributeNames().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
-                    ehm.setMergeAttributeName(h.getMergeAttribute().getMergeAttributeName());
+                    val mergeAttribute = h.getMergeAttribute();
+                    ehm.setAttributeNames(mergeAttribute.getAttributeNames().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
+                    ehm.setMergeAttributeName(mergeAttribute.getMergeAttributeName());
                     handlers.add(ehm);
                     break;
                 case OBJECT_GUID:
@@ -1014,16 +1022,17 @@ public class LdapUtils {
                     break;
                 case PRIMARY_GROUP:
                     val ehp = new PrimaryGroupIdHandler();
-                    ehp.setBaseDn(h.getPrimaryGroupId().getBaseDn());
-                    ehp.setGroupFilter(h.getPrimaryGroupId().getGroupFilter());
+                    val primaryGroupId = h.getPrimaryGroupId();
+                    ehp.setBaseDn(primaryGroupId.getBaseDn());
+                    ehp.setGroupFilter(primaryGroupId.getGroupFilter());
                     handlers.add(ehp);
                     break;
                 case RANGE_ENTRY:
                     handlers.add(new RangeEntryHandler());
                     break;
                 case RECURSIVE_ENTRY:
-                    handlers.add(new RecursiveEntryHandler(h.getRecursive().getSearchAttribute(),
-                        h.getRecursive().getMergeAttributes().toArray(ArrayUtils.EMPTY_STRING_ARRAY)));
+                    val recursive = h.getRecursive();
+                    handlers.add(new RecursiveEntryHandler(recursive.getSearchAttribute(), recursive.getMergeAttributes().toArray(ArrayUtils.EMPTY_STRING_ARRAY)));
                     break;
                 default:
                     break;
@@ -1034,8 +1043,9 @@ public class LdapUtils {
             LOGGER.debug("Search entry handlers defined for the entry resolver of [{}] are [{}]", l.getLdapUrl(), handlers);
             entryResolver.setSearchEntryHandlers(handlers.toArray(new SearchEntryHandler[]{}));
         }
-        entryResolver.setReferralHandler(new SearchReferralHandler());
+        if (l.isFollowReferrals()) {
+            entryResolver.setReferralHandler(new SearchReferralHandler());
+        }
         return entryResolver;
     }
-
 }

@@ -123,7 +123,7 @@ public class PasswordlessAuthenticationConfiguration implements CasWebflowExecut
             return new RestfulPasswordlessUserAccountStore(accounts.getRest());
         }
 
-        final Map simple = accounts.getSimple()
+        var simple = accounts.getSimple()
             .entrySet()
             .stream()
             .collect(Collectors.toMap(Map.Entry::getKey, entry -> {
@@ -137,7 +137,7 @@ public class PasswordlessAuthenticationConfiguration implements CasWebflowExecut
                 }
                 return account;
             }));
-        return new SimplePasswordlessUserAccountStore(simple);
+        return new SimplePasswordlessUserAccountStore((Map) simple);
     }
 
     @Bean

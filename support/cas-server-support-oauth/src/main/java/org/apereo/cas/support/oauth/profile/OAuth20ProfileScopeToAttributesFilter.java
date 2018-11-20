@@ -39,6 +39,6 @@ public interface OAuth20ProfileScopeToAttributesFilter {
      *
      * @param service the service
      */
-    default void reconcile(RegisteredService service) {
+    default void reconcile(final RegisteredService service) {
     }
 }

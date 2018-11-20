@@ -107,7 +107,7 @@ public class SpnegoProperties implements Serializable {
     private boolean mixedModeAuthentication;
 
     /**
-     * Begins negotiating spenego if the user-agent is one of the supported browsers.
+     * Begins negotiating spnego if the user-agent is one of the supported browsers.
      */
     private String supportedBrowsers = "MSIE,Trident,Firefox,AppleWebKit";
 
@@ -127,6 +127,11 @@ public class SpnegoProperties implements Serializable {
      * Name of the authentication handler.
      */
     private String name;
+
+    /**
+     * The order of the authentication handler in the chain.
+     */
+    private int order = Integer.MAX_VALUE;
 
     @Getter
     @Setter

@@ -1,6 +1,13 @@
 description = "Apereo CAS LDAP Service Registry Support"
+
+ext {
+    maxParallelForksForTests = 1
+}
+
 dependencies {
     api project(":api:cas-server-core-api-services")
+
+    implementation libraries.ldaptive
     
     implementation project(":core:cas-server-core-services")
     implementation project(":support:cas-server-support-ldap-core")

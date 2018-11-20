@@ -30,6 +30,7 @@ dependencies {
 
     implementation libraries.pac4j
     implementation libraries.jose4j
+    implementation libraries.nimbus
     implementation libraries.caffein
 
     testImplementation project(":core:cas-server-core-util")

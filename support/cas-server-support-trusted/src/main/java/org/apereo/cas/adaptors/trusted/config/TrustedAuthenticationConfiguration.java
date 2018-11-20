@@ -24,6 +24,7 @@ import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,17 +74,23 @@ public class TrustedAuthenticationConfiguration {
     @RefreshScope
     public AuthenticationHandler principalBearingCredentialsAuthenticationHandler() {
         val trusted = casProperties.getAuthn().getTrusted();
-        return new PrincipalBearingCredentialsAuthenticationHandler(trusted.getName(), servicesManager.getIfAvailable(), trustedPrincipalFactory());
+        return new PrincipalBearingCredentialsAuthenticationHandler(trusted.getName(),
+            servicesManager.getIfAvailable(), trustedPrincipalFactory(),
+            trusted.getOrder());
     }
 
     @Bean
     @RefreshScope
     public PrincipalResolver trustedPrincipalResolver() {
         val resolver = new ChainingPrincipalResolver();
-
+        val personDirectory = casProperties.getPersonDirectory();
         val trusted = casProperties.getAuthn().getTrusted();
+        val principalAttribute = StringUtils.defaultIfBlank(trusted.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
         val bearingPrincipalResolver = new PrincipalBearingPrincipalResolver(attributeRepository.getIfAvailable(),
-            trustedPrincipalFactory(), trusted.isReturnNull(), trusted.getPrincipalAttribute());
+            trustedPrincipalFactory(),
+            trusted.isReturnNull() || personDirectory.isReturnNull(),
+            principalAttribute,
+            trusted.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId());
         resolver.setChain(CollectionUtils.wrapList(new EchoingPrincipalResolver(), bearingPrincipalResolver));
         return resolver;
     }

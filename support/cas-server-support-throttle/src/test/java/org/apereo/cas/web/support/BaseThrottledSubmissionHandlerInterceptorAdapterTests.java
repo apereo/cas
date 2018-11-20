@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.DefaultAuthenticationTransaction;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasThrottlingConfiguration;
+import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -65,6 +66,9 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
     @Rule
     public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
+    @Rule
+    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
+
     @Autowired
     @Qualifier("casAuthenticationManager")
     protected AuthenticationManager authenticationManager;
@@ -97,7 +101,7 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
     }
 
     @SneakyThrows
-    protected void failLoop(final int trials, final int period, final int expected) throws Exception {
+    protected void failLoop(final int trials, final int period, final int expected) {
         // Seed with something to compare against
         loginUnsuccessfully("mog", "1.2.3.4");
 

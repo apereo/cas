@@ -1,7 +1,6 @@
 
 package org.apereo.cas;
 
-import org.apereo.cas.services.web.support.RegisteredServiceResponseHeadersEnforcementFilterTests;
 import org.apereo.cas.web.view.ChainingTemplateViewResolverTests;
 import org.apereo.cas.web.view.RestfulUrlTemplateResolverTests;
 
@@ -17,8 +16,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
     ChainingTemplateViewResolverTests.class,
-    RestfulUrlTemplateResolverTests.class,
-    RegisteredServiceResponseHeadersEnforcementFilterTests.class
+    RestfulUrlTemplateResolverTests.class
 })
 public class AllTestsSuite {
 }

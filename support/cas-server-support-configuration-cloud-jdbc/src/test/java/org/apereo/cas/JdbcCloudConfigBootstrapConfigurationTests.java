@@ -64,5 +64,6 @@ public class JdbcCloudConfigBootstrapConfigurationTests {
     }
 
     public static class Jpa extends AbstractJpaProperties {
+        private static final long serialVersionUID = 1210163210567513705L;
     }
 }

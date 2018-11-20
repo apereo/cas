@@ -51,7 +51,7 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
             if (reader != null) {
                 return reader.lines().collect(Collectors.joining());
             }
-            LOGGER.debug("Request body could not be read because it's empty.");
+            LOGGER.trace("Request body could not be read because it's empty.");
         } catch (final Exception e) {
             LOGGER.trace("Could not obtain the saml request body from the http request", e);
         }
@@ -63,7 +63,7 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
         val service = request.getParameter(SamlProtocolConstants.CONST_PARAM_TARGET);
         val requestBody = request.getMethod().equalsIgnoreCase(HttpMethod.POST.name()) ? getRequestBody(request) : null;
 
-        LOGGER.debug("Request Body: [{}]", requestBody);
+        LOGGER.trace("Request Body: [{}]", requestBody);
         if (!StringUtils.hasText(service) && !StringUtils.hasText(requestBody)) {
             LOGGER.trace("Request does not specify a [{}] or request body is empty", SamlProtocolConstants.CONST_PARAM_TARGET);
             return null;
@@ -76,7 +76,7 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
         val requestChild = getRequestDocumentElement(requestBody);
         val artifactId = getArtifactIdFromRequest(requestChild);
         val requestId = getRequestIdFromRequest(requestChild);
-        LOGGER.debug("Extracted ArtifactId: [{}]. Extracted Request Id: [{}]", artifactId, requestId);
+        LOGGER.trace("Extracted ArtifactId: [{}]. Extracted Request Id: [{}]", artifactId, requestId);
 
         val samlService = new SamlService(id, service, artifactId, requestId);
         samlService.setSource(SamlProtocolConstants.CONST_PARAM_TARGET);

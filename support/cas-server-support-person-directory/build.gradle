@@ -4,8 +4,13 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-util-api")
+    implementation project(":support:cas-server-support-jpa-util")
     implementation project(":support:cas-server-support-ldap-core")
 
     implementation libraries.caffein
+    implementation libraries.ldaptive
+
+    runtimeOnly project(":support:cas-server-support-jdbc-drivers")
+    
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
 }

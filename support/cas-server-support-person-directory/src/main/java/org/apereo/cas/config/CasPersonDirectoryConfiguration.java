@@ -10,7 +10,6 @@ import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
 
-import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -49,6 +48,7 @@ import javax.naming.directory.SearchControls;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -320,11 +320,11 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
 
         val impl = new CachingPersonAttributeDaoImpl();
         impl.setCacheNullResults(false);
-        final Cache graphs = Caffeine.newBuilder()
+        val graphs = Caffeine.newBuilder()
             .maximumSize(props.getMaximumCacheSize())
             .expireAfterWrite(props.getExpirationTime(), TimeUnit.valueOf(props.getExpirationTimeUnit().toUpperCase()))
             .build();
-        impl.setUserInfoCache(graphs.asMap());
+        impl.setUserInfoCache((Map) graphs.asMap());
         impl.setCachedPersonAttributesDao(aggregatingAttributeRepository());
         LOGGER.trace("Configured cache expiration policy for merging attribute sources to be [{}] minute(s)", props.getExpirationTime());
         return impl;

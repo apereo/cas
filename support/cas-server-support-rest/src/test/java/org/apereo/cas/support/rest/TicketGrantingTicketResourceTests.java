@@ -27,6 +27,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.support.GenericWebApplicationContext;
 
 import javax.security.auth.login.LoginException;
 import java.util.HashMap;
@@ -72,7 +73,8 @@ public class TicketGrantingTicketResourceTests {
         this.ticketGrantingTicketResourceUnderTest = new TicketGrantingTicketResource(
             new DefaultAuthenticationSystemSupport(new DefaultAuthenticationTransactionManager(publisher, manager),
                 new DefaultPrincipalElectionStrategy()), new UsernamePasswordRestHttpRequestCredentialFactory(),
-            casMock, new WebApplicationServiceFactory(), new DefaultTicketGrantingTicketResourceEntityResponseFactory());
+            casMock, new WebApplicationServiceFactory(), new DefaultTicketGrantingTicketResourceEntityResponseFactory(),
+            new GenericWebApplicationContext());
 
         this.mockMvc = MockMvcBuilders.standaloneSetup(this.ticketGrantingTicketResourceUnderTest)
             .defaultRequest(get("/")

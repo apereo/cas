@@ -47,8 +47,6 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
     public RadiusAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
                                        final List<RadiusServer> servers, final boolean failoverOnException, final boolean failoverOnAuthenticationFailure) {
         super(name, servicesManager, principalFactory, null);
-        LOGGER.debug("Using [{}]", getClass().getSimpleName());
-
         this.servers = servers;
         this.failoverOnException = failoverOnException;
         this.failoverOnAuthenticationFailure = failoverOnAuthenticationFailure;
@@ -61,7 +59,7 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
         try {
             val username = credential.getUsername();
             val result = RadiusUtils.authenticate(username, credential.getPassword(), this.servers,
-                    this.failoverOnAuthenticationFailure, this.failoverOnException, Optional.empty());
+                this.failoverOnAuthenticationFailure, this.failoverOnException, Optional.empty());
             if (result.getKey()) {
                 return createHandlerResult(credential,
                     principalFactory.createPrincipal(username, result.getValue().get()),

@@ -29,7 +29,7 @@ import org.springframework.context.annotation.Configuration;
 @RequiresModule(name = "cas-server-support-couchdb-service-registry")
 @Configuration("couchDbServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CouchDbServiceRegistryConfiguration implements ServiceRegistryExecutionPlanConfigurer {
+public class CouchDbServiceRegistryConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -64,11 +64,18 @@ public class CouchDbServiceRegistryConfiguration implements ServiceRegistryExecu
     @RefreshScope
     @ConditionalOnMissingBean(name = "couchDbServiceRegistry")
     public ServiceRegistry couchDbServiceRegistry() {
-        return new CouchDbServiceRegistry(serviceRegistryCouchDbRepository(), casProperties.getServiceRegistry().getCouchDb().getRetries());
+        return new CouchDbServiceRegistry(serviceRegistryCouchDbRepository());
     }
 
-    @Override
-    public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-        plan.registerServiceRegistry(couchDbServiceRegistry());
+    @Bean
+    @ConditionalOnMissingBean(name = "couchDbServiceRegistryExecutionPlanConfigurer")
+    public ServiceRegistryExecutionPlanConfigurer couchDbServiceRegistryExecutionPlanConfigurer() {
+        return new ServiceRegistryExecutionPlanConfigurer() {
+            @Override
+            public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
+                plan.registerServiceRegistry(couchDbServiceRegistry());
+            }
+        };
     }
+
 }

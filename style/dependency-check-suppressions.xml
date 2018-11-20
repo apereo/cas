@@ -4,6 +4,12 @@
         <cve>CVE-2016-7048</cve>
     </suppress>
     <suppress>
+        <cve>CVE-2015-6420</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2017-15708</cve>
+    </suppress>
+    <suppress>
         <cve>CVE-2018-16132</cve>
     </suppress>
     <suppress>
@@ -696,5 +702,27 @@
    ]]></notes>
         <gav regex="true">^io\.fabric8:kubernetes-client:.*$</gav>
         <cpe>cpe:/a:kubernetes:kubernetes</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: hazelcast-docker-swarm-discovery-spi-1.0-RC8.jar
+   ]]></notes>
+        <gav regex="true">^org\.bitsofinfo:hazelcast-docker-swarm-discovery-spi:.*$</gav>
+        <cpe>cpe:/a:docker:docker</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: wink-client-apache-httpclient-1.4.jar
+   ]]></notes>
+        <gav regex="true">^org\.apache\.wink:wink-client-apache-httpclient:.*$</gav>
+        <cpe>cpe:/a:apache:apache_http_server</cpe>
+        <cpe>cpe:/a:wink:wink</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: spring-session-data-mongodb-2.1.0.RELEASE.jar
+   ]]></notes>
+        <gav regex="true">^org\.springframework\.session:spring-session-data-mongodb:.*$</gav>
+        <cpe>cpe:/a:mongodb:mongodb</cpe>
     </suppress>
 </suppressions>

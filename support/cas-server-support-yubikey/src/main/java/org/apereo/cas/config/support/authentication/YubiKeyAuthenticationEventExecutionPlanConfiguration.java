@@ -71,6 +71,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "yubikeyAuthenticationMetaDataPopulator")
     public AuthenticationMetaDataPopulator yubikeyAuthenticationMetaDataPopulator() {
         val authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
         return new AuthenticationContextAttributeMetaDataPopulator(
@@ -82,12 +83,14 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "yubikeyBypassEvaluator")
     public MultifactorAuthenticationProviderBypass yubikeyBypassEvaluator() {
         return MultifactorAuthenticationUtils.newMultifactorAuthenticationProviderBypass(casProperties.getAuthn().getMfa().getYubikey().getBypass());
     }
 
     @ConditionalOnMissingBean(name = "yubikeyPrincipalFactory")
     @Bean
+    @RefreshScope
     public PrincipalFactory yubikeyPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
@@ -118,20 +121,22 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "yubikeyAuthenticationHandler")
     public AuthenticationHandler yubikeyAuthenticationHandler() {
         val yubi = this.casProperties.getAuthn().getMfa().getYubikey();
-        val handler = new YubiKeyAuthenticationHandler(yubi.getName(),
+        return new YubiKeyAuthenticationHandler(yubi.getName(),
             servicesManager.getIfAvailable(), yubikeyPrincipalFactory(),
-            yubicoClient(), yubiKeyAccountRegistry());
-        return handler;
+            yubicoClient(), yubiKeyAccountRegistry(),
+            yubi.getOrder());
     }
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "yubiKeyAccountRegistrationAction")
     public Action yubiKeyAccountRegistrationAction() {
         return new YubiKeyAccountCheckRegistrationAction(yubiKeyAccountRegistry());
     }
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "yubiKeySaveAccountRegistrationAction")
     public Action yubiKeySaveAccountRegistrationAction() {
         return new YubiKeyAccountSaveRegistrationAction(yubiKeyAccountRegistry());
     }

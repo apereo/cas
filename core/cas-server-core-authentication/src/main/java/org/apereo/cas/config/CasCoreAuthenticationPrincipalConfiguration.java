@@ -87,14 +87,13 @@ public class CasCoreAuthenticationPrincipalConfiguration implements PrincipalRes
     @ConditionalOnMissingBean(name = "personDirectoryAttributeRepositoryPrincipalResolver")
     public PrincipalResolver personDirectoryAttributeRepositoryPrincipalResolver() {
         val personDirectory = casProperties.getPersonDirectory();
-        val resolver = new PersonDirectoryPrincipalResolver(
+        return new PersonDirectoryPrincipalResolver(
             attributeRepository.getIfAvailable(),
             principalFactory(),
             personDirectory.isReturnNull(),
-            personDirectory.getPrincipalAttribute()
+            personDirectory.getPrincipalAttribute(),
+            personDirectory.isUseExistingPrincipalId()
         );
-        resolver.setUseCurrentPrincipalId(personDirectory.isUseExistingPrincipalId());
-        return resolver;
     }
 
     @Bean

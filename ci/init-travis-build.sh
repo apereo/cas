@@ -29,6 +29,7 @@ echo -e "************************************"
 
 echo -e "Stopping current services...\n"
 sudo service mysql stop
+sudo service postgresql stop
 
 echo -e "Setting build environment...\n"
 sudo mkdir -p /etc/cas/config /etc/cas/saml /etc/cas/services

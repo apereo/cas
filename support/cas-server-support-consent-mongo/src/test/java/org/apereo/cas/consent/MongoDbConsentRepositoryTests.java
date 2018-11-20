@@ -4,6 +4,8 @@ import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.CasConsentCoreConfiguration;
 import org.apereo.cas.config.CasConsentMongoDbConfiguration;
+import org.apereo.cas.util.junit.ConditionalIgnore;
+import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
 import lombok.Getter;
 import org.junit.experimental.categories.Category;
@@ -36,6 +38,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.consent.mongo.databaseName=consent"
     })
 @Getter
+@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 public class MongoDbConsentRepositoryTests extends BaseConsentRepositoryTests {
 
     @Autowired

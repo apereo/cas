@@ -46,8 +46,9 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
     public X509SubjectAlternativeNameUPNPrincipalResolver(final IPersonAttributeDao attributeRepository,
                                                           final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
                                                           final String principalAttributeName,
-                                                          final String alternatePrincipalAttribute) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName, alternatePrincipalAttribute);
+                                                          final String alternatePrincipalAttribute,
+                                                          final boolean useCurrentPrincipalId) {
+        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName, alternatePrincipalAttribute, useCurrentPrincipalId);
     }
 
     /**
@@ -147,7 +148,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
 
     @Override
     protected Map<String, List<Object>> retrievePersonAttributes(final String principalId, final Credential credential) {
-        val attributes = new LinkedHashMap<>(super.retrievePersonAttributes(principalId, credential));
+        val attributes = new LinkedHashMap<String, List<Object>>(super.retrievePersonAttributes(principalId, credential));
         val certificate = ((X509CertificateCredential) credential).getCertificate();
         attributes.putAll(extractPersonAttributes(certificate));
         return attributes;

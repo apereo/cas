@@ -47,7 +47,7 @@ public class FileAuthenticationProperties implements Serializable {
     private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
 
     /**
-     * Authentication hanler name used to verify credentials in the file.
+     * Authentication handler name used to verify credentials in the file.
      */
     private String name;
 }

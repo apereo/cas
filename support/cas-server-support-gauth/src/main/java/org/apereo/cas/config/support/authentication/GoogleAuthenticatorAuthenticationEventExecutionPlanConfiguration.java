@@ -98,12 +98,14 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationHandler googleAuthenticatorAuthenticationHandler() {
-        return new GoogleAuthenticatorAuthenticationHandler(casProperties.getAuthn().getMfa().getGauth().getName(),
+        val gauth = casProperties.getAuthn().getMfa().getGauth();
+        return new GoogleAuthenticatorAuthenticationHandler(gauth.getName(),
             servicesManager.getIfAvailable(),
             googlePrincipalFactory(),
             googleAuthenticatorInstance(),
             oneTimeTokenAuthenticatorTokenRepository.getIfAvailable(),
-            googleAuthenticatorAccountRegistry.getIfAvailable());
+            googleAuthenticatorAccountRegistry.getIfAvailable(),
+            gauth.getOrder());
     }
 
     @Bean

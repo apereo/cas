@@ -85,7 +85,7 @@ public class JsonWebKeySetStringCipherExecutor extends BaseStringCipherExecutor 
     }
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         close();
     }
 

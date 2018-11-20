@@ -144,10 +144,13 @@ public class EncodingUtils {
      * @return the encoded string
      */
     public static String encodeBase64(final byte[] data, final boolean chunked) {
-        if (chunked) {
-            return BASE64_CHUNKED_ENCODER.encodeToString(data).trim();
+        if (data != null && data.length > 0) {
+            if (chunked) {
+                return BASE64_CHUNKED_ENCODER.encodeToString(data).trim();
+            }
+            return BASE64_UNCHUNKED_ENCODER.encodeToString(data).trim();
         }
-        return BASE64_UNCHUNKED_ENCODER.encodeToString(data).trim();
+        return StringUtils.EMPTY;
     }
 
     /**

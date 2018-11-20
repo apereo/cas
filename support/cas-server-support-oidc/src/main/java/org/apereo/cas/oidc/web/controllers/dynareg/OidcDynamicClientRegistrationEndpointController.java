@@ -117,7 +117,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
             supportedScopes.retainAll(registrationRequest.getScopes());
             val clientResponse = getClientRegistrationResponse(registrationRequest, registeredService);
             registeredService.setScopes(supportedScopes);
-            val processedScopes = new LinkedHashSet<>(supportedScopes);
+            val processedScopes = new LinkedHashSet<String>(supportedScopes);
             registeredService.setScopes(processedScopes);
             registeredService.setDescription("Dynamically registered service "
                 .concat(registeredService.getName())

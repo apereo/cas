@@ -3,6 +3,7 @@ package org.apereo.cas.gauth.token;
 import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.util.SchedulingUtils;
+import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 
 import lombok.Getter;
 import lombok.val;
@@ -36,6 +37,9 @@ public abstract class BaseOneTimeTokenRepositoryTests {
 
     @Rule
     public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
+    @Rule
+    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
 
     @Autowired
     @Qualifier("oneTimeTokenAuthenticatorTokenRepository")

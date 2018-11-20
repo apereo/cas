@@ -15,6 +15,7 @@ import org.apache.catalina.valves.ExtendedAccessLogValve;
 import org.apache.catalina.valves.SSLValve;
 import org.apache.catalina.valves.rewrite.RewriteValve;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.coyote.AbstractProtocol;
 import org.apache.coyote.ajp.AjpNio2Protocol;
 import org.apache.coyote.ajp.AjpNioProtocol;
 import org.apache.coyote.http11.Http11Nio2Protocol;
@@ -33,6 +34,7 @@ import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.embedded.tomcat.TomcatConnectorCustomizer;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
@@ -66,11 +68,10 @@ public class CasEmbeddedContainerTomcatConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-
     @ConditionalOnMissingBean(name = "casServletWebServerFactory")
     @Bean
     public ConfigurableServletWebServerFactory casServletWebServerFactory() {
-        return new CasTomcatServletWebServerFactory(casProperties.getServer().getTomcat().getClustering());
+        return new CasTomcatServletWebServerFactory(casProperties, serverProperties);
     }
 
     @ConditionalOnMissingBean(name = "casTomcatEmbeddedServletContainerCustomizer")
@@ -88,6 +89,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
                     configureRewriteValve(tomcat);
                     configureSSLValve(tomcat);
                     configureBasicAuthn(tomcat);
+                    finalizeConnectors(tomcat);
                 } else {
                     LOGGER.error("Servlet web server factory [{}] does not support Apache Tomcat and cannot be customized!", factory);
                 }
@@ -95,29 +97,45 @@ public class CasEmbeddedContainerTomcatConfiguration {
         };
     }
 
-    private static void configureConnectorForProtocol(final Connector connector, final String protocol) {
-        val field = ReflectionUtils.findField(connector.getClass(), "protocolHandler");
-        ReflectionUtils.makeAccessible(field);
-        switch (protocol) {
-            case "AJP/2":
-                ReflectionUtils.setField(field, connector, new AjpNio2Protocol());
-                break;
-            case "AJP/1.3":
-                ReflectionUtils.setField(field, connector, new AjpNioProtocol());
-                break;
-            case "HTTP/2":
-                ReflectionUtils.setField(field, connector, new Http2Protocol());
-                break;
-            case "HTTP/1.2":
-                ReflectionUtils.setField(field, connector, new Http11Nio2Protocol());
-                break;
-            case "HTTP/1.1":
-            default:
-                ReflectionUtils.setField(field, connector, new Http11NioProtocol());
-                break;
-        }
+    private void finalizeConnectors(final TomcatServletWebServerFactory tomcat) {
+        tomcat.addConnectorCustomizers((TomcatConnectorCustomizer) connector -> {
+            connector.setAttribute("Server", casProperties.getServer().getTomcat().getServerName());
+        });
     }
 
+    private static void configureConnectorForProtocol(final Connector connector, final String protocol) {
+        val handler = ReflectionUtils.findField(connector.getClass(), "protocolHandler");
+        if (handler != null) {
+            ReflectionUtils.makeAccessible(handler);
+            if ("HTTP/2".equalsIgnoreCase(protocol)) {
+                ReflectionUtils.setField(handler, connector, new Http2Protocol());
+            } else {
+                var protocolHandlerInstance = (AbstractProtocol) null;
+                switch (protocol) {
+                    case "AJP/2":
+                        protocolHandlerInstance = new AjpNio2Protocol();
+                        break;
+                    case "AJP/1.3":
+                        protocolHandlerInstance = new AjpNioProtocol();
+                        break;
+                    case "HTTP/1.2":
+                        protocolHandlerInstance = new Http11Nio2Protocol();
+                        break;
+                    case "HTTP/1.1":
+                    default:
+                        protocolHandlerInstance = new Http11NioProtocol();
+                        break;
+                }
+                protocolHandlerInstance.setPort(connector.getPort());
+                ReflectionUtils.setField(handler, connector, protocolHandlerInstance);
+            }
+            val handlerClass = ReflectionUtils.findField(connector.getClass(), "protocolHandlerClassName");
+            if (handlerClass != null) {
+                ReflectionUtils.makeAccessible(handlerClass);
+                ReflectionUtils.setField(handlerClass, connector, connector.getProtocolHandler().getClass().getName());
+            }
+        }
+    }
 
     private void configureBasicAuthn(final TomcatServletWebServerFactory tomcat) {
         val basic = casProperties.getServer().getTomcat().getBasicAuthn();

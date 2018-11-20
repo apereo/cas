@@ -45,6 +45,11 @@ public abstract class BaseMultifactorProviderProperties implements Serializable 
     private int rank;
 
     /**
+     * The order of the authentication handler in the chain.
+     */
+    private int order = Integer.MAX_VALUE;
+
+    /**
      * The identifier for the multifactor provider.
      * In most cases, this need not be configured explicitly, unless
      * multiple instances of the same provider type are configured in CAS.

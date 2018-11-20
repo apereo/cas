@@ -56,13 +56,15 @@ dependencies {
     implementation project(":webapp:cas-server-webapp-init")
 
     implementation libraries.pac4j
+    implementation libraries.nimbus
     implementation libraries.thymeleaf
 
     implementation libraries.cassecurityfilter
     implementation libraries.metrics
     implementation libraries.bouncycastle
     implementation libraries.springcloudconfigclient
-    
+
+
     developmentOnly libraries.springbootdevtools
     runtimeOnly libraries.webjars
 }

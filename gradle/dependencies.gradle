@@ -734,6 +734,17 @@ ext.libraries = [
                     force = true
                 }
         ],
+        awscognito                   : [
+                dependencies.create("com.amazonaws:aws-java-sdk-cognitoidp:$amazonSdkVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                }
+        ],
         awssecretsmanager       : [
                 dependencies.create("com.amazonaws:aws-java-sdk-secretsmanager:$amazonSdkVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
@@ -1882,7 +1893,9 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "jcl-over-slf4j")
                     exclude(group: "commons-collections", module: "commons-collections")
                     force = true
-                },
+                }
+        ],
+        nimbus : [
                 dependencies.create("com.nimbusds:nimbus-jose-jwt:$nimbusJoseVersion") {
                     exclude(group: "net.minidev", module: "json-smart")
                     exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
@@ -1900,7 +1913,6 @@ ext.libraries = [
                     force = true
                 }
         ],
-
         pac4jCouchDb            : dependencies.create("org.pac4j:pac4j-couch:$pac4jVersion") {
             exclude(group: "org.pac4j", module: "pac4j-core")
             exclude(group: "org.ektorp", module: "org.ektorp")
@@ -3038,7 +3050,40 @@ ext.libraries = [
                     force = true
                 }
         ],
-
+        springws : [
+                dependencies.create("org.springframework.boot:spring-boot-starter-web-services:$springBootVersion") {
+                    exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-dom")
+                    exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-common")
+                    exclude(group: "org.jvnet.mimepull", module: "mimepull")
+                    force = true
+                },
+                dependencies.create("org.springframework.ws:spring-ws-security:$springWsVersion") {
+                    exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-dom")
+                    exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-common")
+                    exclude(group: "org.jvnet.mimepull", module: "mimepull")
+                    force = true
+                },
+                dependencies.create("org.apache.wss4j:wss4j-ws-security-dom:$wss4jVersion") {
+                    exclude(group: "org.jvnet.mimepull", module: "mimepull")
+                    force = true
+                },
+                dependencies.create("org.apache.wss4j:wss4j-ws-security-common:$wss4jVersion") {
+                    exclude(group: "org.jvnet.mimepull", module: "mimepull")
+                    force = true
+                },
+                dependencies.create("wsdl4j:wsdl4j:$wsdl4jVersion") {
+                    exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-dom")
+                    exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-common")
+                    exclude(group: "org.jvnet.mimepull", module: "mimepull")
+                    force = true
+                },
+                dependencies.create("com.sun.xml.messaging.saaj:saaj-impl:$saajImplVersion") {
+                    exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-dom")
+                    exclude(group: "org.jvnet.mimepull", module: "mimepull")
+                    exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-common")
+                    force = true
+                }
+        ],
         validationapi           : dependencies.create("javax.validation:validation-api:$javaxValidationVersion"),
         xmlapis                 : dependencies.create("xml-apis:xml-apis:$xmlapisVersion") {
             force = true

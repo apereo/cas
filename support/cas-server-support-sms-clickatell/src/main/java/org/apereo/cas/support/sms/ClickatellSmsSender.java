@@ -52,13 +52,13 @@ public class ClickatellSmsSender implements SmsSender {
             val stringify = new StringWriter();
             mapper.writeValue(stringify, map);
 
-            val request = new HttpEntity<>(stringify.toString(), headers);
+            val request = new HttpEntity<String>(stringify.toString(), headers);
             val response = restTemplate.postForEntity(new URI(this.serverUrl), request, Map.class);
             if (response.hasBody()) {
                 val body = response.getBody();
                 LOGGER.debug("Received response [{}]", body);
 
-                if (!body.containsKey("messages")) {
+                if (body == null || !body.containsKey("messages")) {
                     LOGGER.error("Response body does not contain any messages");
                     return false;
                 }
