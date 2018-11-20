@@ -21,6 +21,7 @@ dependencies {
     
     implementation libraries.pac4j
     implementation libraries.nimbus
+    implementation libraries.cassecurityfilter
     implementation libraries.thymeleaf
     implementation libraries.springintegration
 }
