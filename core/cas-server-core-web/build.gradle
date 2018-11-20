@@ -14,6 +14,14 @@ dependencies {
     implementation libraries.pac4j
     implementation libraries.thymeleaf
     implementation libraries.springintegration
+
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    
+    testImplementation project(":core:cas-server-core-services-registry")
+    testImplementation project(":core:cas-server-core-services-api")
+    testImplementation project(":core:cas-server-core-services-authentication")
 }
 
 // Filter properties from gradle.properties into this sub-project's property file resources  
