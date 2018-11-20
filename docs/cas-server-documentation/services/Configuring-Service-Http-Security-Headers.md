@@ -36,5 +36,7 @@ Supported HTTP headers in form of service properties are:
 | `httpHeaderEnableXFrameOptions`      | Insert `X-Frame-Options` headers into the response for this service.
 | `httpHeaderEnableContentSecurityPolicy`      | Insert `Content-Security-Policy` headers into the response for this service.
 | `httpHeaderEnableXSSProtection`      | Insert `X-XSS-Protection` headers into the response for this service.
+| `httpHeaderXFrameOptions`      | Override the `X-Frame-Options` header of the response for this service.
 
 The headers values are picked up from CAS properties. See [this guide](../configuration/Configuration-Properties.html#http-web-requests) for relevant settings.
+
