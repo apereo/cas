@@ -24,8 +24,6 @@ public class CouchDbServiceRegistry extends AbstractServiceRegistry {
 
     private final RegisteredServiceCouchDbRepository dbClient;
 
-    private final int conflictRetries;
-
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
         LOGGER.debug("Saving service [{}]", registeredService.getName());
