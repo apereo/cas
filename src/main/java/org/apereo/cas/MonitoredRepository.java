@@ -104,30 +104,12 @@ public class MonitoredRepository implements InitializingBean {
             .findFirst();
     }
 
-    public static boolean isPullRequestLabeledAsSeeMaintenancePolicy(final PullRequest pr) {
-        return pr.getLabels().stream().anyMatch(getLabelPredicateMaintenancePolicy());
+    private static Predicate<Label> getLabelPredicateByName(final CasLabels name) {
+        return l -> l.getName().contains(name.getTitle());
     }
 
-    public static boolean isPullRequestLabeledAsPendingPortForward(final PullRequest pr) {
-        return pr.getLabels().stream().anyMatch(getLabelPredicatePortForward());
-    }
-
-    private static Predicate<Label> getLabelPredicatePortForward() {
-        return l -> l.getName().contains("Port Forward");
-    }
-
-    public void labelPullRequestAsSeeMaintenancePolicy(final PullRequest pr) {
-        this.labels.stream().filter(getLabelPredicateMaintenancePolicy()).findFirst().ifPresent(l -> {
-            this.gitHub.addLabel(pr, l.getName());
-        });
-    }
-
-    private static Predicate<Label> getLabelPredicateMaintenancePolicy() {
-        return l -> l.getName().contains("Maintenance Policy");
-    }
-
-    public void labelPullRequestAsPendingPortForward(final PullRequest pr) {
-        this.labels.stream().filter(getLabelPredicatePortForward()).findFirst().ifPresent(l -> {
+    public void labelPullRequestAs(final PullRequest pr, final CasLabels labelName) {
+        this.labels.stream().filter(getLabelPredicateByName(labelName)).findFirst().ifPresent(l -> {
             this.gitHub.addLabel(pr, l.getName());
         });
     }

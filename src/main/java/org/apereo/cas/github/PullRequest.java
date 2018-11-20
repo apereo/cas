@@ -16,12 +16,15 @@
 
 package org.apereo.cas.github;
 
+import org.apereo.cas.CasLabels;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.ToString;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 @Getter
 @ToString(of = {"title", "url"}, includeFieldNames = false)
@@ -84,5 +87,13 @@ public class PullRequest {
 
     public boolean isTargettedAtMasterBranch() {
         return this.base.getRef().equalsIgnoreCase("master");
+    }
+
+    private static Predicate<Label> getLabelPredicateByName(final CasLabels name) {
+        return l -> l.getName().contains(name.getTitle());
+    }
+
+    public boolean isLabeledAs(final CasLabels labelName) {
+        return this.labels.stream().anyMatch(getLabelPredicateByName(labelName));
     }
 }

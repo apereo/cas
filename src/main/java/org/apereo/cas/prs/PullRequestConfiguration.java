@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
 class PullRequestConfiguration {
     @Bean
     public PullRequestListener pullRequestListener(final MonitoredRepository repository) {
-        return new ApereoCasPullRequestListener(repository);
+        return new CasPullRequestListener(repository);
     }
 
 }
