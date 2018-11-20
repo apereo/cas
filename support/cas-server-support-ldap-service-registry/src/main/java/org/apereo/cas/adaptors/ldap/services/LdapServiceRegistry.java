@@ -139,7 +139,10 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
         try {
             val response = getSearchResultResponse();
             if (LdapUtils.containsResultEntry(response)) {
-                return response.getResult().size();
+                return response.getResult().getEntries()
+                    .stream()
+                    .map(this.ldapServiceMapper::mapToRegisteredService)
+                    .filter(Objects::nonNull).count();
             }
         } catch (final LdapException e) {
             LOGGER.error(e.getMessage(), e);

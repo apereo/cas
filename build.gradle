@@ -111,8 +111,8 @@ allprojects {
     apply plugin: "maven"
     apply plugin: "signing"
     apply plugin: "jacoco"
-    apply plugin: "groovy"
-
+    apply plugin: "java"
+    
     project.ext["forceBootifulArtifact"] = null
 
     if (!rootProject.publishSnapshots && !Boolean.getBoolean("skipGradleLint")) {
