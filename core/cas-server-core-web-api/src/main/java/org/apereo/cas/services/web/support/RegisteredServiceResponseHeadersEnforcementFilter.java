@@ -54,7 +54,6 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
             RegisteredServiceProperties.HTTP_HEADER_ENABLE_XFRAME_OPTIONS)) {
             val xFrameOptions = getStringProperty(httpServletRequest, RegisteredServiceProperties.HTTP_HEADER_XFRAME_OPTIONS);
             super.insertXFrameOptionsHeader(httpServletResponse, httpServletRequest, xFrameOptions);
-
         } else {
             super.decideInsertXFrameOptionsHeader(httpServletResponse, httpServletRequest);
         }
