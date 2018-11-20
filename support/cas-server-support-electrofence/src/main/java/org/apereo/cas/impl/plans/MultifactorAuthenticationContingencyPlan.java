@@ -6,11 +6,13 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.execution.Event;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,15 +26,16 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 public class MultifactorAuthenticationContingencyPlan extends BaseAuthenticationRiskContingencyPlan {
 
+    public MultifactorAuthenticationContingencyPlan(final CasConfigurationProperties casProperties, final ApplicationContext applicationContext) {
+        super(casProperties, applicationContext);
+    }
 
     @Override
     protected AuthenticationRiskContingencyResponse executeInternal(final Authentication authentication,
                                                                     final RegisteredService service,
                                                                     final AuthenticationRiskScore score,
                                                                     final HttpServletRequest request) {
-
-        val providerMap =
-            MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+        val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             LOGGER.warn("No multifactor authentication providers are available in the application context");
             throw new AuthenticationException();

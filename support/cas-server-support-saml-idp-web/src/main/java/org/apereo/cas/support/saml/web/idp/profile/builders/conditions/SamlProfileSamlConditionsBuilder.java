@@ -14,7 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,11 +30,11 @@ import java.util.ArrayList;
 public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<Conditions> {
     private static final long serialVersionUID = 126393045912318783L;
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
+    private final CasConfigurationProperties casProperties;
 
-    public SamlProfileSamlConditionsBuilder(final OpenSamlConfigBean configBean) {
+    public SamlProfileSamlConditionsBuilder(final OpenSamlConfigBean configBean, final CasConfigurationProperties casProperties) {
         super(configBean);
+        this.casProperties = casProperties;
     }
 
     @Override

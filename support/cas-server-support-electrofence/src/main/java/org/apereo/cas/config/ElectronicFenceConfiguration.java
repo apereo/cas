@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -69,6 +70,9 @@ public class ElectronicFenceConfiguration implements AuditTrailRecordResolutionP
     private ObjectProvider<CasEventRepository> casEventRepository;
 
     @Autowired
+    private ApplicationContext applicationContext;
+
+    @Autowired
     private CasConfigurationProperties casProperties;
 
     @ConditionalOnMissingBean(name = "authenticationRiskEmailNotifier")
@@ -89,7 +93,7 @@ public class ElectronicFenceConfiguration implements AuditTrailRecordResolutionP
     @Bean
     @RefreshScope
     public AuthenticationRiskContingencyPlan blockAuthenticationContingencyPlan() {
-        val b = new BlockAuthenticationContingencyPlan();
+        val b = new BlockAuthenticationContingencyPlan(casProperties, applicationContext);
         configureContingencyPlan(b);
         return b;
     }
@@ -98,7 +102,7 @@ public class ElectronicFenceConfiguration implements AuditTrailRecordResolutionP
     @Bean
     @RefreshScope
     public AuthenticationRiskContingencyPlan multifactorAuthenticationContingencyPlan() {
-        val b = new MultifactorAuthenticationContingencyPlan();
+        val b = new MultifactorAuthenticationContingencyPlan(casProperties, applicationContext);
         configureContingencyPlan(b);
         return b;
     }

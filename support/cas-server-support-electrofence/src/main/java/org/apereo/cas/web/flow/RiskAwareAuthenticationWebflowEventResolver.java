@@ -41,8 +41,10 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
     private final double threshold;
 
     public RiskAwareAuthenticationWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
-                                                       final CentralAuthenticationService centralAuthenticationService, final ServicesManager servicesManager,
-                                                       final TicketRegistrySupport ticketRegistrySupport, final CookieGenerator warnCookieGenerator,
+                                                       final CentralAuthenticationService centralAuthenticationService,
+                                                       final ServicesManager servicesManager,
+                                                       final TicketRegistrySupport ticketRegistrySupport,
+                                                       final CookieGenerator warnCookieGenerator,
                                                        final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
                                                        final AuthenticationRiskEvaluator authenticationRiskEvaluator,
                                                        final AuthenticationRiskMitigator authenticationRiskMitigator,

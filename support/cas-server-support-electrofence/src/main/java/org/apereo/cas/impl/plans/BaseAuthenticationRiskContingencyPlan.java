@@ -8,8 +8,8 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,18 +23,17 @@ import java.util.Set;
  * @since 5.1.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public abstract class BaseAuthenticationRiskContingencyPlan implements AuthenticationRiskContingencyPlan {
 
     /**
      * CAS properties.
      */
-    @Autowired
-    protected CasConfigurationProperties casProperties;
+    protected final CasConfigurationProperties casProperties;
     /**
      * App context.
      */
-    @Autowired
-    protected ApplicationContext applicationContext;
+    protected final ApplicationContext applicationContext;
 
     private final Set<AuthenticationRiskNotifier> notifiers = new LinkedHashSet<>();
 
