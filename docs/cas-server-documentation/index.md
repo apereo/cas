@@ -52,7 +52,7 @@ The following demos are provided by the Apereo CAS project:
 | [CAS Zipkin Server](monitoring/Monitoring-Statistics.html#distributed-tracing)          | `heroku-zipkinserver`    | [Link](https://caszipkinserver.herokuapp.com/) | ![](https://heroku-badge.herokuapp.com/?app=caszipkinserver)
 | [CAS Service Discovery Server](installation/Service-Discovery-Guide.html)                 | `heroku-discoveryserver` | [Link](https://caseureka.herokuapp.com/) | ![](https://heroku-badge.herokuapp.com/?app=caseureka)
 | [CAS Configuration Server](configuration/Configuration-Server-Management.html)             | `heroku-casconfigserver` | [Link](https://casconfigserver.herokuapp.com/casconfigserver/env) | ![](https://heroku-badge.herokuapp.com/?app=casconfigserver&root=casconfigserver)
-| CAS GitHub Repository Bot | `apereocas-githubbot` | [Link](https://apereocas-githubbot.herokuapp.com/) | ![](https://heroku-badge.herokuapp.com/?app=apereocas-githubbot)
+| CAS GitHub Repository Bot | `heroku-githubbot` | [Link](https://apereocas-githubbot.herokuapp.com/) | ![](https://heroku-badge.herokuapp.com/?app=apereocas-githubbot)
 
 Credentials used for the above demos, where needed, are: `casuser` / `Mellon`.
 
