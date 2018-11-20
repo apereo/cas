@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.web.security.HttpCorsRequestProperties;
 import org.apereo.cas.configuration.model.core.web.security.HttpHeadersRequestProperties;
@@ -54,6 +55,11 @@ public class CasFiltersConfiguration {
     @Autowired
     @Qualifier("argumentExtractor")
     private ArgumentExtractor argumentExtractor;
+
+    @Autowired
+    @Qualifier("authenticationServiceSelectionPlan")
+    private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+
 
     @RefreshScope
     @Bean
@@ -122,7 +128,7 @@ public class CasFiltersConfiguration {
             initParams.put("contentSecurityPolicy", header.getContentSecurityPolicy());
         }
         final FilterRegistrationBean bean = new FilterRegistrationBean();
-        bean.setFilter(new RegisteredServiceResponseHeadersEnforcementFilter(servicesManager, argumentExtractor));
+        bean.setFilter(new RegisteredServiceResponseHeadersEnforcementFilter(servicesManager, argumentExtractor, authenticationRequestServiceSelectionStrategies));
         bean.setUrlPatterns(CollectionUtils.wrap("/*"));
         bean.setInitParameters(initParams);
         bean.setName("responseHeadersSecurityFilter");

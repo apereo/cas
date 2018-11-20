@@ -1,8 +1,7 @@
 package org.apereo.cas.services.web.support;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.BooleanUtils;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.security.ResponseHeadersEnforcementFilter;
 import org.apereo.cas.services.RegisteredService;
@@ -10,6 +9,10 @@ import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.ArgumentExtractor;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.BooleanUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,6 +31,7 @@ import java.util.Optional;
 public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseHeadersEnforcementFilter {
     private final ServicesManager servicesManager;
     private final ArgumentExtractor argumentExtractor;
+    private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
     @Override
     protected void decideInsertContentSecurityPolicyHeader(final HttpServletResponse httpServletResponse, final HttpServletRequest httpServletRequest) {
@@ -134,7 +138,9 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
     private Optional<RegisteredService> getRegisteredServiceFromRequest(final HttpServletRequest request) {
         final WebApplicationService service = this.argumentExtractor.extractService(request);
         if (service != null) {
-            return Optional.ofNullable(this.servicesManager.findServiceBy(service));
+            final Service resolved = authenticationRequestServiceSelectionStrategies.resolveService(service);
+            return Optional.ofNullable(this.servicesManager.findServiceBy(resolved));
+
         }
         return Optional.empty();
     }
