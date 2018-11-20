@@ -189,7 +189,8 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
             samlArtifactTicketFactory(),
             ticketGrantingTicketCookieGenerator.getIfAvailable(),
             samlArtifactMap(),
-            samlAttributeQueryTicketFactory());
+            samlAttributeQueryTicketFactory(),
+            casProperties);
     }
 
     @ConditionalOnMissingBean(name = "samlArtifactTicketFactory")
@@ -237,7 +238,8 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
             velocityEngineFactory.getIfAvailable(),
             samlProfileSamlAssertionBuilder(),
             samlProfileSamlResponseBuilder(),
-            samlObjectEncrypter());
+            samlObjectEncrypter(),
+            casProperties);
     }
 
     @ConditionalOnMissingBean(name = "samlProfileSamlSoap11ResponseBuilder")
@@ -250,7 +252,8 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
             velocityEngineFactory.getIfAvailable(),
             samlProfileSamlAssertionBuilder(),
             samlProfileSamlResponseBuilder(),
-            samlObjectEncrypter());
+            samlObjectEncrypter(),
+            casProperties);
     }
 
 
@@ -264,7 +267,8 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
             velocityEngineFactory.getIfAvailable(),
             samlProfileSamlAssertionBuilder(),
             samlProfileSamlResponseBuilder(),
-            samlObjectEncrypter());
+            samlObjectEncrypter(),
+            casProperties);
     }
 
     @ConditionalOnMissingBean(name = "samlProfileSamlArtifactResponseBuilder")
@@ -277,7 +281,8 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
             velocityEngineFactory.getIfAvailable(),
             samlProfileSamlAssertionBuilder(),
             samlProfileSamlResponseBuilder(),
-            samlObjectEncrypter());
+            samlObjectEncrypter(),
+            casProperties);
     }
 
     @ConditionalOnMissingBean(name = "samlProfileSamlNameIdBuilder")
@@ -369,7 +374,8 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
             velocityEngineFactory.getIfAvailable(),
             samlProfileSamlAssertionBuilder(),
             samlProfileSamlResponseBuilder(),
-            samlObjectEncrypter());
+            samlObjectEncrypter(),
+            casProperties);
     }
 
     @ConditionalOnMissingBean(name = "samlProfileSamlAttributeQueryResponseBuilder")
@@ -382,7 +388,8 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
             velocityEngineFactory.getIfAvailable(),
             samlProfileSamlAssertionBuilder(),
             samlProfileSamlResponseBuilder(),
-            samlObjectEncrypter());
+            samlObjectEncrypter(),
+            casProperties);
     }
 
     @ConditionalOnMissingBean(name = "samlAttributeQueryTicketFactory")

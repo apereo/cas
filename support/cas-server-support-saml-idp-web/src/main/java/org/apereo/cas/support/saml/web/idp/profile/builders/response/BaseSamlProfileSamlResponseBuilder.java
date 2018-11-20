@@ -22,7 +22,6 @@ import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,26 +43,28 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
     /**
      * The Saml object encoder.
      */
-    protected SamlIdPObjectSigner samlObjectSigner;
+    protected final SamlIdPObjectSigner samlObjectSigner;
     /**
      * CAS settings.
      */
-    @Autowired
-    protected CasConfigurationProperties casProperties;
+    protected final CasConfigurationProperties casProperties;
 
     private final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder;
+
     private final SamlIdPObjectEncrypter samlObjectEncrypter;
 
     public BaseSamlProfileSamlResponseBuilder(final OpenSamlConfigBean openSamlConfigBean,
                                               final SamlIdPObjectSigner samlObjectSigner,
                                               final VelocityEngine velocityEngineFactory,
                                               final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
-                                              final SamlIdPObjectEncrypter samlObjectEncrypter) {
+                                              final SamlIdPObjectEncrypter samlObjectEncrypter,
+                                              final CasConfigurationProperties casProperties) {
         super(openSamlConfigBean);
         this.samlObjectSigner = samlObjectSigner;
         this.velocityEngineFactory = velocityEngineFactory;
         this.samlProfileSamlAssertionBuilder = samlProfileSamlAssertionBuilder;
         this.samlObjectEncrypter = samlObjectEncrypter;
+        this.casProperties = casProperties;
     }
 
     @Audit(
