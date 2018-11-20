@@ -28,6 +28,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -81,7 +82,8 @@ public class ServiceTicketResourceTests {
                 new DefaultPrincipalElectionStrategy()),
             ticketSupport, new DefaultArgumentExtractor(new WebApplicationServiceFactory()),
             new CasProtocolServiceTicketResourceEntityResponseFactory(casMock),
-            new UsernamePasswordRestHttpRequestCredentialFactory());
+            new UsernamePasswordRestHttpRequestCredentialFactory(),
+            new GenericApplicationContext());
 
         this.mockMvc = MockMvcBuilders.standaloneSetup(this.serviceTicketResource)
             .defaultRequest(get("/")

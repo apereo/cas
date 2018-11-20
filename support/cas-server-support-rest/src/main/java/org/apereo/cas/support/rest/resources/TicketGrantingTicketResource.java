@@ -12,7 +12,6 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -51,9 +50,7 @@ public class TicketGrantingTicketResource {
     private final CentralAuthenticationService centralAuthenticationService;
     private final ServiceFactory serviceFactory;
     private final TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory;
-
-    @Autowired
-    private ApplicationContext applicationContext;
+    private final ApplicationContext applicationContext;
 
     /**
      * Create new ticket granting ticket.

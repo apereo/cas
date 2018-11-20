@@ -45,16 +45,6 @@ public class X509SerialNumberAndIssuerDNPrincipalResolver extends AbstractX509Pr
             null, serialNumberPrefix, valueDelimiter, false);
     }
 
-    /**
-     * Creates a new instance.
-     *
-     * @param attributeRepository      the attribute repository
-     * @param principalFactory         the principal factory
-     * @param returnNullIfNoAttributes the return null if no attributes
-     * @param principalAttributeName   the principal attribute name
-     * @param serialNumberPrefix       prefix for the certificate serialnumber (default: "SERIALNUMBER=").
-     * @param valueDelimiter           delimiter to separate the two certificate properties in the string. (default: ", ")
-     */
     public X509SerialNumberAndIssuerDNPrincipalResolver(final IPersonAttributeDao attributeRepository,
                                                         final PrincipalFactory principalFactory,
                                                         final boolean returnNullIfNoAttributes,

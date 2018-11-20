@@ -52,7 +52,6 @@ public class CasReleaseAttributesReportEndpoint extends BaseCasMvcEndpoint {
      * @param password the password
      * @param service  the service
      * @return the map
-     * @throws Exception the exception
      */
     @ReadOperation
     public Map<String, Object> releasePrincipalAttributes(final String username,

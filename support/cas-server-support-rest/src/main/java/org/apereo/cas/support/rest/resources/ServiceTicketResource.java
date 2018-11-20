@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -53,9 +52,7 @@ public class ServiceTicketResource {
     private final ArgumentExtractor argumentExtractor;
     private final ServiceTicketResourceEntityResponseFactory serviceTicketResourceEntityResponseFactory;
     private final RestHttpRequestCredentialFactory credentialFactory;
-
-    @Autowired
-    private ApplicationContext applicationContext;
+    private final ApplicationContext applicationContext;
 
     /**
      * Create new service ticket.
@@ -67,7 +64,7 @@ public class ServiceTicketResource {
      */
     @PostMapping(value = "/v1/tickets/{tgtId:.+}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<String> createServiceTicket(final HttpServletRequest httpServletRequest,
-                                                      @RequestBody(required=false) final MultiValueMap<String, String> requestBody,
+                                                      @RequestBody(required = false) final MultiValueMap<String, String> requestBody,
                                                       @PathVariable("tgtId") final String tgtId) {
         try {
             val authn = this.ticketRegistrySupport.getAuthenticationFrom(tgtId);

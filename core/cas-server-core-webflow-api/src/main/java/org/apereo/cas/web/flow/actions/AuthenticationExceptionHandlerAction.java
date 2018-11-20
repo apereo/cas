@@ -1,11 +1,13 @@
 package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
 import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.binding.message.MessageBuilder;
@@ -33,9 +35,9 @@ import java.util.stream.Collectors;
  * @since 4.0.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class AuthenticationExceptionHandlerAction extends AbstractAction {
 
-    private static final String DEFAULT_MESSAGE_BUNDLE_PREFIX = "authenticationFailure.";
     private static final String UNKNOWN = "UNKNOWN";
 
     /**
@@ -46,15 +48,16 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
     /**
      * String appended to exception class name to create a message bundle key for that particular error.
      */
-    private final String messageBundlePrefix = DEFAULT_MESSAGE_BUNDLE_PREFIX;
+    private final String messageBundlePrefix;
 
     public AuthenticationExceptionHandlerAction() {
-        this(new LinkedHashSet<>());
+        this(MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
     }
 
-    public AuthenticationExceptionHandlerAction(final Set<Class<? extends Throwable>> errors) {
-        this.errors = errors;
+    public AuthenticationExceptionHandlerAction(final String messageBundlePrefix) {
+        this(new LinkedHashSet<>(), messageBundlePrefix);
     }
+
 
     public Set<Class<? extends Throwable>> getErrors() {
         return new LinkedHashSet<>(this.errors);

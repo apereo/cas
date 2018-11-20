@@ -13,6 +13,7 @@ import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
 import org.apereo.cas.authentication.principal.ResponseBuilderLocator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
@@ -173,7 +174,8 @@ public class CasCoreWebflowConfiguration {
     @ConditionalOnMissingBean(name = "authenticationExceptionHandler")
     @Bean
     public Action authenticationExceptionHandler() {
-        return new AuthenticationExceptionHandlerAction(handledAuthenticationExceptions());
+        return new AuthenticationExceptionHandlerAction(handledAuthenticationExceptions(),
+            MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
     }
 
     @RefreshScope

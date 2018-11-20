@@ -88,7 +88,6 @@ public class LoggingConfigurationEndpoint extends BaseCasMvcEndpoint implements 
      * Configuration map.
      *
      * @return the map
-     * @throws Exception the exception
      */
     @ReadOperation
     public Map<String, Object> configuration() {
