@@ -22,6 +22,11 @@ import java.util.stream.Stream;
 @Setter
 public class MessageBundleProperties implements Serializable {
 
+    /**
+     * Default message bundle prefix for authentication-failure messages.
+     */
+    public static final String DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE = "authenticationFailure.";
+
     private static final long serialVersionUID = 3769733438559663237L;
 
     /**

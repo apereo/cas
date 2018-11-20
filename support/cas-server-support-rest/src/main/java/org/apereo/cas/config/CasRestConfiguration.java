@@ -38,6 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -77,6 +78,9 @@ public class CasRestConfiguration implements RestHttpRequestCredentialFactoryCon
     @Qualifier("argumentExtractor")
     private ObjectProvider<ArgumentExtractor> argumentExtractor;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
     @Bean
     public TicketStatusResource ticketStatusResource() {
         return new TicketStatusResource(centralAuthenticationService.getIfAvailable());
@@ -91,7 +95,8 @@ public class CasRestConfiguration implements RestHttpRequestCredentialFactoryCon
             ticketRegistrySupport.getIfAvailable(),
             argumentExtractor.getIfAvailable(),
             serviceTicketResourceEntityResponseFactory,
-            restHttpRequestCredentialFactory);
+            restHttpRequestCredentialFactory,
+            applicationContext);
     }
 
     @Bean
@@ -124,7 +129,8 @@ public class CasRestConfiguration implements RestHttpRequestCredentialFactoryCon
             restHttpRequestCredentialFactory,
             centralAuthenticationService.getIfAvailable(),
             webApplicationServiceFactory.getIfAvailable(),
-            ticketGrantingTicketResourceEntityResponseFactory());
+            ticketGrantingTicketResourceEntityResponseFactory(),
+            applicationContext);
     }
 
     @Autowired
@@ -134,16 +140,17 @@ public class CasRestConfiguration implements RestHttpRequestCredentialFactoryCon
         return new UserAuthenticationResource(authenticationSystemSupport.getIfAvailable(),
             restHttpRequestCredentialFactory,
             webApplicationServiceFactory.getIfAvailable(),
-            userAuthenticationResourceEntityResponseFactory());
+            userAuthenticationResourceEntityResponseFactory(),
+            applicationContext);
     }
 
     @Autowired
     @Bean
     public RestHttpRequestCredentialFactory restHttpRequestCredentialFactory(final List<RestHttpRequestCredentialFactoryConfigurer> configurers) {
-        LOGGER.debug("building chainingRestHttpRequestCredentialFactory from {}", configurers);
+        LOGGER.trace("building REST credential factory from {}", configurers);
         val factory = new ChainingRestHttpRequestCredentialFactory();
         configurers.forEach(c -> {
-            LOGGER.debug("Configuring credential factory: {}", c);
+            LOGGER.trace("Configuring credential factory: {}", c);
             c.configureCredentialFactory(factory);
         });
         return factory;
