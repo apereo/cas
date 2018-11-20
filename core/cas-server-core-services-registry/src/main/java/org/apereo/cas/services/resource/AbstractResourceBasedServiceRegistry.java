@@ -277,6 +277,10 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             LOGGER.debug("[{}] appears to be empty so no service definition will be loaded", fileName);
             return new ArrayList<>(0);
         }
+        if (fileName.startsWith(".")) {
+            LOGGER.debug("[{}] starts with ., ignoring", fileName);
+            return new ArrayList<>(0);
+        }
         if (!RegexUtils.matches(this.serviceFileNamePattern, fileName)) {
             LOGGER.warn("[{}] does not match the recommended pattern [{}]. "
                     + "While CAS tries to be forgiving as much as possible, it's recommended "
