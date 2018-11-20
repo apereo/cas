@@ -22,7 +22,6 @@ import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.core.SubjectLocality;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,13 +37,14 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
 
     private static final long serialVersionUID = 8761566449790497226L;
     private final transient AuthnContextClassRefBuilder authnContextClassRefBuilder;
-    @Autowired
-    private CasConfigurationProperties casProperties;
+    private final CasConfigurationProperties casProperties;
 
     public SamlProfileSamlAuthNStatementBuilder(final OpenSamlConfigBean configBean,
-                                                final AuthnContextClassRefBuilder authnContextClassRefBuilder) {
+                                                final AuthnContextClassRefBuilder authnContextClassRefBuilder,
+                                                final CasConfigurationProperties casProperties) {
         super(configBean);
         this.authnContextClassRefBuilder = authnContextClassRefBuilder;
+        this.casProperties = casProperties;
     }
 
     @Override
