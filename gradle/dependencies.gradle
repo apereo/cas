@@ -3047,6 +3047,7 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "junit", module: "junit")
                     exclude(group: "org.mockito", module: "mockito-core")
+                    exclude(group: "xerces", module: "xercesImpl")
                     force = true
                 }
         ],
