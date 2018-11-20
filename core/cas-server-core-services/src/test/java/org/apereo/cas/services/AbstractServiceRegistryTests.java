@@ -89,8 +89,8 @@ public abstract class AbstractServiceRegistryTests {
 
     @Test
     public void verifyEmptyRegistry() {
-        val results = this.serviceRegistry.load();
-        assertEquals(0, results.size());
+        assertEquals("Loaded too many", 0, serviceRegistry.load().size());
+        assertEquals("Counted too many", 0, serviceRegistry.size());
     }
 
     @Test
@@ -121,9 +121,11 @@ public abstract class AbstractServiceRegistryTests {
         this.serviceRegistry.save(buildRegisteredServiceInstance(100));
         val services = this.serviceRegistry.load();
         assertEquals(1, services.size());
+        assertEquals(1, serviceRegistry.size());
         this.serviceRegistry.save(buildRegisteredServiceInstance(101));
         val services2 = this.serviceRegistry.load();
         assertEquals(2, services2.size());
+        assertEquals(2, serviceRegistry.size());
     }
 
     @Test
