@@ -25,7 +25,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -134,6 +133,12 @@ public class GitHubTemplate implements GitHubOperations {
     public Page<Milestone> getMilestones(final String organization, final String name) {
         final String url = "https://api.github.com/repos/" + organization + "/" + name + "/milestones?state=open";
         return getPage(url, Milestone[].class);
+    }
+
+    @Override
+    public Page<Label> getLabels(final String organization, final String name) {
+        final String url = "https://api.github.com/repos/" + organization + "/" + name + "/labels";
+        return getPage(url, Label[].class);
     }
 
     @Override

@@ -17,8 +17,10 @@
 package org.apereo.cas;
 
 import org.apereo.cas.github.GitHubOperations;
+import org.apereo.cas.github.Label;
 import org.apereo.cas.github.Milestone;
 import org.apereo.cas.github.Page;
+import org.apereo.cas.github.PullRequest;
 
 import com.github.zafarkhaja.semver.Version;
 import lombok.Getter;
@@ -33,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.function.Predicate;
 
 /**
  * A repository that should be monitored.
@@ -44,43 +47,11 @@ import java.util.Properties;
 public class MonitoredRepository implements InitializingBean {
     private final GitHubOperations gitHub;
     private final GitHubProperties gitHubProperties;
+
     private final List<Milestone> milestones = new ArrayList<>();
+    private final List<Label> labels = new ArrayList<>();
+
     private Version currentVersionInMaster;
-
-    public String getOrganization() {
-        return this.gitHubProperties.getRepository().getOrganization();
-    }
-
-    public String getName() {
-        return this.gitHubProperties.getRepository().getName();
-    }
-
-    public Optional<Milestone> getMilestoneForMaster() {
-        final String currentVersion = currentVersionInMaster.toString().replace("-SNAPSHOT", "");
-        return milestones.stream()
-            .filter(milestone -> {
-                final String milestoneVersion = Version.valueOf(milestone.getTitle()).toString();
-                if (milestoneVersion.equalsIgnoreCase(currentVersion)) {
-                    return true;
-                }
-                return false;
-            })
-            .findFirst();
-    }
-
-    public Optional<Milestone> getMilestoneForBranch(final String branch) {
-        final Version branchVersion = Version.valueOf(branch.replace(".x", "." + Integer.MAX_VALUE));
-        return milestones.stream()
-            .filter(milestone -> {
-                final Version milestoneVersion = Version.valueOf(milestone.getTitle());
-                if (milestoneVersion.getMajorVersion() == branchVersion.getMajorVersion()
-                    && milestoneVersion.getMinorVersion() == branchVersion.getMinorVersion()) {
-                    return true;
-                }
-                return false;
-            })
-            .findFirst();
-    }
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -96,5 +67,68 @@ public class MonitoredRepository implements InitializingBean {
             milestones.addAll(page.getContent());
             page = page.next();
         }
+
+        Page<Label> lbl = gitHub.getLabels(getOrganization(), getName());
+        while (lbl != null) {
+            labels.addAll(lbl.getContent());
+            lbl = lbl.next();
+        }
+    }
+
+    public String getOrganization() {
+        return this.gitHubProperties.getRepository().getOrganization();
+    }
+
+    public String getName() {
+        return this.gitHubProperties.getRepository().getName();
+    }
+
+    public Optional<Milestone> getMilestoneForMaster() {
+        final String currentVersion = currentVersionInMaster.toString().replace("-SNAPSHOT", "");
+        return milestones.stream()
+            .filter(milestone -> {
+                final String milestoneVersion = Version.valueOf(milestone.getTitle()).toString();
+                return milestoneVersion.equalsIgnoreCase(currentVersion);
+            })
+            .findFirst();
+    }
+
+    public Optional<Milestone> getMilestoneForBranch(final String branch) {
+        final Version branchVersion = Version.valueOf(branch.replace(".x", "." + Integer.MAX_VALUE));
+        return milestones.stream()
+            .filter(milestone -> {
+                final Version milestoneVersion = Version.valueOf(milestone.getTitle());
+                return milestoneVersion.getMajorVersion() == branchVersion.getMajorVersion()
+                    && milestoneVersion.getMinorVersion() == branchVersion.getMinorVersion();
+            })
+            .findFirst();
+    }
+
+    public static boolean isPullRequestLabeledAsSeeMaintenancePolicy(final PullRequest pr) {
+        return pr.getLabels().stream().anyMatch(getLabelPredicateMaintenancePolicy());
+    }
+
+    public static boolean isPullRequestLabeledAsPendingPortForward(final PullRequest pr) {
+        return pr.getLabels().stream().anyMatch(getLabelPredicatePortForward());
+    }
+
+    private static Predicate<Label> getLabelPredicatePortForward() {
+        return l -> l.getName().contains("Port Forward");
+    }
+
+    public void labelPullRequestAsSeeMaintenancePolicy(final PullRequest pr) {
+        this.labels.stream().filter(getLabelPredicateMaintenancePolicy()).findFirst().ifPresent(l -> {
+            this.gitHub.addLabel(pr, l.getName());
+        });
+    }
+
+    private static Predicate<Label> getLabelPredicateMaintenancePolicy() {
+        return l -> l.getName().contains("Maintenance Policy");
+    }
+
+    public void labelPullRequestAsPendingPortForward(final PullRequest pr) {
+        this.labels.stream().filter(getLabelPredicatePortForward()).findFirst().ifPresent(l -> {
+            this.gitHub.addLabel(pr, l.getName());
+        });
     }
 }

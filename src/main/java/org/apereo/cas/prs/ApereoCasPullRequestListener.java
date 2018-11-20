@@ -19,18 +19,18 @@ public class ApereoCasPullRequestListener implements PullRequestListener {
     public void onOpenPullRequest(final PullRequest pr) {
         log.debug("Processing {}", pr);
 
-        if (!pr.isTargettedAtMasterBranch() && !pr.isLabeledAsSeeMaintenancePolicy()) {
+        if (!pr.isTargettedAtMasterBranch() && !MonitoredRepository.isPullRequestLabeledAsSeeMaintenancePolicy(pr)) {
             final Optional<Milestone> milestone = repository.getMilestoneForBranch(pr.getBase().getRef());
-            if (!milestone.isPresent()) {
+            if (milestone.isEmpty()) {
                 log.info("{} is targeted at a branch {} that is no longer maintained. See maintenance policy", pr, pr.getBase());
-                repository.getGitHub().addLabel(pr, PullRequest.LABEL_SEE_MAINTENANCE_POLICY.getName());
+                repository.labelPullRequestAsSeeMaintenancePolicy(pr);
                 return;
             }
         }
 
-        if (!pr.getBase().isRefMaster() && !pr.isLabeledAsPendingPortForward()) {
+        if (!pr.getBase().isRefMaster() && !MonitoredRepository.isPullRequestLabeledAsPendingPortForward(pr)) {
             log.info("{} is targeted at a branch {} and should be ported forward to the master branch in a separate pull request.", pr, pr.getBase());
-            repository.getGitHub().addLabel(pr, PullRequest.LABEL_PENDING_PORT_FORWARD.getName());
+            repository.labelPullRequestAsPendingPortForward(pr);
         }
 
         if (pr.getMilestone() == null) {

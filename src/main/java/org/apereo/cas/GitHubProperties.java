@@ -23,8 +23,6 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
-import java.util.List;
-
 /**
  * {@link ConfigurationProperties} for connecting to GitHub.
  *

@@ -21,25 +21,27 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
-/**
- * A label that can be applied to a GitHub issue.
- *
- * @author Andy Wilkinson
- */
 @Getter
 @EqualsAndHashCode
 public class Label {
 
     private final String name;
+    private final String id;
+    private final String url;
+    private final String description;
+    private final String color;
 
-    /**
-     * Creates a new label with the given {@code name}.
-     *
-     * @param name the name of the label
-     */
     @JsonCreator
-    public Label(@JsonProperty("name") final String name) {
+    public Label(@JsonProperty("name") final String name,
+                 @JsonProperty("id") final String id,
+                 @JsonProperty("url") final String url,
+                 @JsonProperty("description") final String description,
+                 @JsonProperty("color") final String color) {
         this.name = name;
+        this.id = id;
+        this.url = url;
+        this.description = description;
+        this.color = color;
     }
 
 }

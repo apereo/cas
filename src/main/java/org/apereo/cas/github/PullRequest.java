@@ -26,9 +26,6 @@ import java.util.List;
 @Getter
 @ToString(of = {"title", "url"}, includeFieldNames = false)
 public class PullRequest {
-    public static final Label LABEL_SEE_MAINTENANCE_POLICY = new Label("See Maintenance Policy");
-    public static final Label LABEL_PENDING_PORT_BACK = new Label("Pending: Port Back");
-    public static final Label LABEL_PENDING_PORT_FORWARD = new Label("Pending: Port Forward");
 
     private final String number;
 
@@ -76,17 +73,6 @@ public class PullRequest {
         return "open".equalsIgnoreCase(this.state);
     }
 
-    public boolean isLabeledAsSeeMaintenancePolicy() {
-        return this.labels.contains(LABEL_SEE_MAINTENANCE_POLICY);
-    }
-
-    public boolean isLabeledAsPendingPortForward() {
-        return this.labels.contains(LABEL_PENDING_PORT_FORWARD);
-    }
-
-    public boolean isLabeledAsPendingPortBack() {
-        return this.labels.contains(LABEL_PENDING_PORT_BACK);
-    }
 
     public String getLabelsUrl() {
         return this.url.replace("pulls", "issues") + "/labels";

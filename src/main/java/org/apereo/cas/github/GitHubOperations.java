@@ -16,102 +16,31 @@
 
 package org.apereo.cas.github;
 
-/**
- * Operations that can be performed against the GitHub API.
- *
- * @author Andy Wilkinson
- */
 public interface GitHubOperations {
 
-    /**
-     * Returns the open issues in the {@code repository} owned by the given
-     * {@code organization}.
-     *
-     * @param organization the name of the organization
-     * @param repository   the name of the repository
-     * @return the issues
-     */
     Page<Issue> getIssues(String organization, String repository);
 
-    /**
-     * Gets pull requests.
-     *
-     * @param organization the organization
-     * @param repository   the repository
-     * @return the pull requests
-     */
     Page<PullRequest> getPullRequests(String organization, String repository);
 
-    /**
-     * Returns the comments that have been made on the given {@code issue}.
-     *
-     * @param issue the issue
-     * @return the comments
-     */
     Page<Comment> getComments(Issue issue);
 
-    /**
-     * Adds the given {@code label} to the given {@code issue}.
-     *
-     * @param issue the issue
-     * @param label the label
-     * @return the modified issue
-     */
     Issue addLabel(Issue issue, String label);
 
-    /**
-     * Add label pull request.
-     *
-     * @param pr    the pr
-     * @param label the label
-     * @return the pull request
-     */
     PullRequest addLabel(PullRequest pr, String label);
 
-    /**
-     * Removes the given {@code label} from the given {@code issue}.
-     *
-     * @param issue the issue
-     * @param label the label
-     * @return the modified issue
-     */
     Issue removeLabel(Issue issue, String label);
 
-    /**
-     * Adds the given {@code comment} to the given {@code issue}.
-     *
-     * @param issue   the issue
-     * @param comment the comment
-     * @return the added comment
-     */
     Comment addComment(Issue issue, String comment);
 
-    /**
-     * Add comment comment.
-     *
-     * @param pullRequest the pull request
-     * @param comment     the command
-     * @return the comment
-     */
     Comment addComment(PullRequest pullRequest, String comment);
 
-    /**
-     * Closes the given {@code issue}.
-     *
-     * @param issue the issue
-     * @return the modified issue
-     */
     Issue close(Issue issue);
 
-    /**
-     * Returns the events that have occurred on the given {@code issue}.
-     *
-     * @param issue the issue
-     * @return the events
-     */
     Page<Event> getEvents(Issue issue);
 
     Page<Milestone> getMilestones(String organization, String name);
+
+    Page<Label> getLabels(String organization, String name);
 
     void setMilestone(PullRequest pr, Milestone milestone);
 }
