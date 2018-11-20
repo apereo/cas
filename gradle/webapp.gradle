@@ -63,7 +63,8 @@ dependencies {
     implementation libraries.metrics
     implementation libraries.bouncycastle
     implementation libraries.springcloudconfigclient
-    
+
+
     developmentOnly libraries.springbootdevtools
     runtimeOnly libraries.webjars
 }
