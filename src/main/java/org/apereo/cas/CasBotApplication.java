@@ -21,13 +21,19 @@ import org.apereo.cas.github.GitHubTemplate;
 import org.apereo.cas.github.RegexLinkParser;
 
 import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @SpringBootApplication
 @EnableScheduling
@@ -63,4 +69,19 @@ public class CasBotApplication {
         return new RepositoryMonitor(gitHub, repository, pullRequestListeners);
     }
 
+    @RestController
+    public static class HomeController {
+
+        @Autowired
+        private MonitoredRepository repository;
+
+        @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+        public Map<String, String> home() {
+             var map = new LinkedHashMap<String, String>();
+             map.put("name", repository.getOrganization() + "/" + repository.getName());
+             map.put("repository", repository.getGitHubProperties().getRepository().getUrl());
+             map.put("version", repository.getCurrentVersionInMaster().toString());
+             return map;
+        }
+    }
 }
