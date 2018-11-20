@@ -16,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -51,6 +53,9 @@ public class ServiceTicketResource {
     private final ArgumentExtractor argumentExtractor;
     private final ServiceTicketResourceEntityResponseFactory serviceTicketResourceEntityResponseFactory;
     private final RestHttpRequestCredentialFactory credentialFactory;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     /**
      * Create new service ticket.
@@ -93,7 +98,7 @@ public class ServiceTicketResource {
         } catch (final InvalidTicketException e) {
             return new ResponseEntity<>(tgtId + " could not be found or is considered invalid", HttpStatus.NOT_FOUND);
         } catch (final AuthenticationException e) {
-            return RestResourceUtils.createResponseEntityForAuthnFailure(e);
+            return RestResourceUtils.createResponseEntityForAuthnFailure(e, httpServletRequest, applicationContext);
         } catch (final BadRestRequestException e) {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
