@@ -14,7 +14,7 @@ import java.util.stream.Stream;
  * convenience methods for creating service objects.
  *
  * @author Misagh Moayyed
- * @since 4.2
+ * @since 4.2.0
  */
 @SuppressWarnings("TypeParameterShadowing")
 @ToString
