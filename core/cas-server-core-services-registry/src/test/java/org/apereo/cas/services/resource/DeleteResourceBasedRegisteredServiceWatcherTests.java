@@ -4,7 +4,6 @@ import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesLoadedEvent;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
@@ -23,9 +22,8 @@ import static org.junit.Assert.*;
  */
 public class DeleteResourceBasedRegisteredServiceWatcherTests {
 
-    @SneakyThrows
     @Test
-    public void verifyOperationNotFound() {
+    public void verifyOperationNotFound() throws Exception {
         val result = new AtomicBoolean(false);
         val watcher = new DeleteResourceBasedRegisteredServiceWatcher(new AbstractResourceBasedServiceRegistry(new ClassPathResource("services"),
             Collections.singletonList(new DefaultRegisteredServiceJsonSerializer()), o -> result.set(o.getClass().equals(CasRegisteredServicesLoadedEvent.class))) {
@@ -38,9 +36,8 @@ public class DeleteResourceBasedRegisteredServiceWatcherTests {
         assertTrue(result.get());
     }
 
-    @SneakyThrows
     @Test
-    public void verifyOperationFoundDeleted() {
+    public void verifyOperationFoundDeleted() throws Exception {
         val result = new AtomicBoolean(false);
         val registry = new AbstractResourceBasedServiceRegistry(new ClassPathResource("services"),
             Collections.singletonList(new DefaultRegisteredServiceJsonSerializer()), o -> result.set(o.getClass().equals(CasRegisteredServiceDeletedEvent.class))) {

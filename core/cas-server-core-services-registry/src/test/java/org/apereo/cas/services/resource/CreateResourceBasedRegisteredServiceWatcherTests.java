@@ -3,7 +3,6 @@ package org.apereo.cas.services.resource;
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
@@ -22,9 +21,8 @@ import static org.junit.Assert.*;
  */
 public class CreateResourceBasedRegisteredServiceWatcherTests {
 
-    @SneakyThrows
     @Test
-    public void verifyOperationFoundCreated() {
+    public void verifyOperationFoundCreated() throws Exception {
         val result = new AtomicBoolean(false);
         val registry = new AbstractResourceBasedServiceRegistry(new ClassPathResource("services"),
             Collections.singletonList(new DefaultRegisteredServiceJsonSerializer()), o -> result.set(o.getClass().equals(CasRegisteredServiceSavedEvent.class))) {
