@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response.query;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
@@ -23,8 +24,9 @@ public class SamlProfileAttributeQueryFaultResponseBuilder extends SamlProfileSa
                                                          final VelocityEngine velocityEngineFactory,
                                                          final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
                                                          final SamlProfileObjectBuilder<? extends SAMLObject> saml2ResponseBuilder,
-                                                         final SamlIdPObjectEncrypter samlObjectEncrypter) {
+                                                         final SamlIdPObjectEncrypter samlObjectEncrypter,
+                                                         final CasConfigurationProperties casProperties) {
         super(openSamlConfigBean, samlObjectSigner, velocityEngineFactory, samlProfileSamlAssertionBuilder,
-            saml2ResponseBuilder, samlObjectEncrypter);
+            saml2ResponseBuilder, samlObjectEncrypter, casProperties);
     }
 }

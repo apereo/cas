@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response.soap;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlUtils;
@@ -45,14 +46,16 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
      */
     protected final SamlProfileObjectBuilder<? extends SAMLObject> saml2ResponseBuilder;
 
-    public SamlProfileSamlSoap11ResponseBuilder(
-        final OpenSamlConfigBean openSamlConfigBean,
-        final SamlIdPObjectSigner samlObjectSigner,
-        final VelocityEngine velocityEngineFactory,
-        final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
-        final SamlProfileObjectBuilder<? extends SAMLObject> saml2ResponseBuilder,
-        final SamlIdPObjectEncrypter samlObjectEncrypter) {
-        super(openSamlConfigBean, samlObjectSigner, velocityEngineFactory, samlProfileSamlAssertionBuilder, samlObjectEncrypter);
+    public SamlProfileSamlSoap11ResponseBuilder(final OpenSamlConfigBean openSamlConfigBean,
+                                                final SamlIdPObjectSigner samlObjectSigner,
+                                                final VelocityEngine velocityEngineFactory,
+                                                final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
+                                                final SamlProfileObjectBuilder<? extends SAMLObject> saml2ResponseBuilder,
+                                                final SamlIdPObjectEncrypter samlObjectEncrypter,
+                                                final CasConfigurationProperties casProperties) {
+
+        super(openSamlConfigBean, samlObjectSigner, velocityEngineFactory,
+            samlProfileSamlAssertionBuilder, samlObjectEncrypter, casProperties);
         this.saml2ResponseBuilder = saml2ResponseBuilder;
     }
 
