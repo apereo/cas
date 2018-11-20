@@ -10,6 +10,8 @@ import org.apereo.cas.rest.factory.UserAuthenticationResourceEntityResponseFacto
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +47,9 @@ public class UserAuthenticationResource {
     private final ServiceFactory serviceFactory;
     private final UserAuthenticationResourceEntityResponseFactory userAuthenticationResourceEntityResponseFactory;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
     /**
      * Create new ticket granting ticket.
      *
@@ -68,7 +73,7 @@ public class UserAuthenticationResource {
             }
             return this.userAuthenticationResourceEntityResponseFactory.build(authenticationResult, request);
         } catch (final AuthenticationException e) {
-            return RestResourceUtils.createResponseEntityForAuthnFailure(e);
+            return RestResourceUtils.createResponseEntityForAuthnFailure(e, request, applicationContext);
         } catch (final BadRestRequestException e) {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
