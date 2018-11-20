@@ -1,6 +1,8 @@
 package org.apereo.cas.support.rest.resources;
 
 import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -11,12 +13,12 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,9 +35,6 @@ public class RestResourceUtils {
 
     private static final ObjectMapper MAPPER;
 
-    private static final String DEFAULT_MESSAGE_BUNDLE_PREFIX = "authenticationFailure.";
-    private static final String NO_MESSAGE = "No message found";
-
     static {
         MAPPER = new ObjectMapper()
             .findAndRegisterModules()
@@ -48,8 +47,8 @@ public class RestResourceUtils {
     /**
      * Create response entity for authn failure response.
      *
-     * @param e the e
-     * @param request the http request
+     * @param e                  the e
+     * @param request            the http request
      * @param applicationContext the application context
      * @return the response entity
      */
@@ -59,11 +58,7 @@ public class RestResourceUtils {
         try {
             val authnExceptions = e.getHandlerErrors().values()
                 .stream()
-                .map(ex -> ex.getClass().getSimpleName()
-                     + ": "
-                     + StringUtils.defaultIfBlank(ex.getMessage(), "Authentication Failure: " + e.getMessage())
-                     + ": "
-                     + getMessage(ex.getClass().getSimpleName(), request, applicationContext))
+                .map(ex -> mapExceptionToMessage(e, request, applicationContext, ex))
                 .collect(Collectors.toList());
             val errorsMap = new HashMap<String, List<String>>();
             errorsMap.put("authentication_exceptions", authnExceptions);
@@ -76,13 +71,25 @@ public class RestResourceUtils {
         }
     }
 
-    private String getMessage(final String className,
-                              final HttpServletRequest request,
-                              final ApplicationContext applicationContext) {
+    @NotNull
+    private static String mapExceptionToMessage(final AuthenticationException authnhandlerErrors,
+                                                final HttpServletRequest request,
+                                                final ApplicationContext applicationContext,
+                                                final Throwable ex) {
+        val authnMsg = StringUtils.defaultIfBlank(ex.getMessage(), "Authentication Failure: " + authnhandlerErrors.getMessage());
+        val authnBundleMsg = getTranslatedMessageForExceptionClass(ex.getClass().getSimpleName(), request, applicationContext);
+        return String.format("%s:%s:%s", ex.getClass().getSimpleName(), authnMsg, authnBundleMsg);
+    }
+
+    private String getTranslatedMessageForExceptionClass(final String className,
+                                                         final HttpServletRequest request,
+                                                         final ApplicationContext applicationContext) {
         try {
-            return applicationContext.getMessage(DEFAULT_MESSAGE_BUNDLE_PREFIX + className, null, request.getLocale());
+            val msgKey = MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE + className;
+            return applicationContext.getMessage(msgKey, null, request.getLocale());
         } catch (final Exception e) {
-            return NO_MESSAGE;
+            LOGGER.trace(e.getMessage(), e);
+            return StringUtils.EMPTY;
         }
     }
 }
