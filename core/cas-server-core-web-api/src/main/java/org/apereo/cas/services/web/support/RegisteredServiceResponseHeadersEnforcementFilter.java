@@ -50,6 +50,10 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
 
     @Override
     protected void decideInsertXFrameOptionsHeader(final HttpServletResponse httpServletResponse, final HttpServletRequest httpServletRequest) {
+        val xFrameOptions = getStringProperty(httpServletRequest, RegisteredServiceProperties.HTTP_HEADER_XFRAME_OPTIONS);
+        if (xFrameOptions != null) {
+            super.setXFrameOptions(xFrameOptions);
+        }
         if (shouldHttpHeaderBeInjectedIntoResponse(httpServletRequest,
             RegisteredServiceProperties.HTTP_HEADER_ENABLE_XFRAME_OPTIONS)) {
             val xFrameOptions = getStringProperty(httpServletRequest, RegisteredServiceProperties.HTTP_HEADER_XFRAME_OPTIONS);
@@ -88,6 +92,19 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
         } else {
             super.decideInsertStrictTransportSecurityHeader(httpServletResponse, httpServletRequest);
         }
+    }
+
+    private String getStringProperty(final HttpServletRequest request,
+                                     final RegisteredServiceProperties property) {
+        val result = getRegisteredServiceFromRequest(request);
+        if (result.isPresent()) {
+            val properties = result.get().getProperties();
+            if (properties.containsKey(property.getPropertyName())) {
+                val prop = properties.get(property.getPropertyName());
+                return prop.getValue();
+            }
+        }
+        return null;
     }
 
     private boolean shouldHttpHeaderBeInjectedIntoResponse(final HttpServletRequest request,
