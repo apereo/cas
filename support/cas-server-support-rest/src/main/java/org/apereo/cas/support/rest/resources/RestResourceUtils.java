@@ -1,7 +1,6 @@
 package org.apereo.cas.support.rest.resources;
 
 import org.apereo.cas.authentication.AuthenticationException;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -12,6 +11,7 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -50,10 +50,12 @@ public class RestResourceUtils {
      *
      * @param e the e
      * @param request the http request
+     * @param applicationContext the application context
      * @return the response entity
      */
     public static ResponseEntity<String> createResponseEntityForAuthnFailure(final AuthenticationException e,
-                                                                             final HttpServletRequest request) {
+                                                                             final HttpServletRequest request,
+                                                                             final ApplicationContext applicationContext) {
         try {
             val authnExceptions = e.getHandlerErrors().values()
                 .stream()
@@ -61,7 +63,7 @@ public class RestResourceUtils {
                      + ": "
                      + StringUtils.defaultIfBlank(ex.getMessage(), "Authentication Failure: " + e.getMessage())
                      + ": "
-                     + getMessage(ex.getClass().getSimpleName(), request))
+                     + getMessage(ex.getClass().getSimpleName(), request, applicationContext))
                 .collect(Collectors.toList());
             val errorsMap = new HashMap<String, List<String>>();
             errorsMap.put("authentication_exceptions", authnExceptions);
@@ -74,11 +76,11 @@ public class RestResourceUtils {
         }
     }
 
-    private String getMessage(final String className, final HttpServletRequest request) {
+    private String getMessage(final String className,
+                              final HttpServletRequest request,
+                              final ApplicationContext applicationContext) {
         try {
-            return ApplicationContextProvider
-                .getApplicationContext()
-                .getMessage(DEFAULT_MESSAGE_BUNDLE_PREFIX + className, null, request.getLocale());
+            return applicationContext.getMessage(DEFAULT_MESSAGE_BUNDLE_PREFIX + className, null, request.getLocale());
         } catch (final Exception e) {
             return NO_MESSAGE;
         }
