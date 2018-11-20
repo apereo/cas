@@ -3,8 +3,10 @@ package org.apereo.cas.impl.plans;
 import org.apereo.cas.api.AuthenticationRiskContingencyResponse;
 import org.apereo.cas.api.AuthenticationRiskScore;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 
+import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.execution.Event;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +22,10 @@ public class BlockAuthenticationContingencyPlan extends BaseAuthenticationRiskCo
      * Block authentication event.
      */
     public static final String EVENT_ID_BLOCK_AUTHN = "blockedAuthentication";
+
+    public BlockAuthenticationContingencyPlan(final CasConfigurationProperties casProperties, final ApplicationContext applicationContext) {
+        super(casProperties, applicationContext);
+    }
 
     @Override
     protected AuthenticationRiskContingencyResponse executeInternal(final Authentication authentication, final RegisteredService service,

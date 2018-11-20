@@ -298,7 +298,7 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @Bean
     @RefreshScope
     public SamlProfileObjectBuilder<Conditions> samlProfileSamlConditionsBuilder() {
-        return new SamlProfileSamlConditionsBuilder(openSamlConfigBean.getIfAvailable());
+        return new SamlProfileSamlConditionsBuilder(openSamlConfigBean.getIfAvailable(), casProperties);
     }
 
     @ConditionalOnMissingBean(name = "defaultAuthnContextClassRefBuilder")
@@ -326,7 +326,7 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @Bean
     @RefreshScope
     public SamlProfileObjectBuilder<AuthnStatement> samlProfileSamlAuthNStatementBuilder() {
-        return new SamlProfileSamlAuthNStatementBuilder(openSamlConfigBean.getIfAvailable(), defaultAuthnContextClassRefBuilder());
+        return new SamlProfileSamlAuthNStatementBuilder(openSamlConfigBean.getIfAvailable(), defaultAuthnContextClassRefBuilder(), casProperties);
     }
 
     @ConditionalOnMissingBean(name = "samlProfileSamlAttributeStatementBuilder")
