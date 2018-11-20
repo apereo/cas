@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.cfg.AvailableSettings;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -100,6 +101,7 @@ public abstract class AbstractJpaProperties implements Serializable {
     /**
      * Database connection pooling settings.
      */
+    @NestedConfigurationProperty
     private ConnectionPoolingProperties pool = new ConnectionPoolingProperties();
 
     /**
