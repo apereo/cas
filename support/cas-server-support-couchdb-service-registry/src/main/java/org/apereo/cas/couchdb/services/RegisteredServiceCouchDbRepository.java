@@ -33,7 +33,7 @@ public class RegisteredServiceCouchDbRepository extends CouchDbRepositorySupport
      * @param serviceId The serviceId of the service to find.
      * @return The service found or +null+.
      */
-    @View(name = "by_serviceId", map = "function(doc) { emit(doc.service.serviceId, doc._id) }")
+    @View(name = "by_serviceId", map = "function(doc) { if (doc.service) { emit(doc.service.serviceId, doc._id) }}")
     public RegisteredServiceDocument findByServiceId(final String serviceId) {
         return queryView("by_serviceId", serviceId).stream().findFirst().orElse(null);
     }
@@ -44,7 +44,7 @@ public class RegisteredServiceCouchDbRepository extends CouchDbRepositorySupport
      * @param serviceName The service name of the service to find.
      * @return The service found or +null+.
      */
-    @View(name = "by_serviceName", map = "function(doc) { emit(doc.service.name, doc._id) }")
+    @View(name = "by_serviceName", map = "function(doc) { if (doc.service) { emit(doc.service.name, doc._id) }}")
     public RegisteredServiceDocument findByServiceName(final String serviceName) {
         try {
             return queryView("by_serviceName", serviceName).stream().findFirst().orElse(null);
@@ -74,9 +74,15 @@ public class RegisteredServiceCouchDbRepository extends CouchDbRepositorySupport
      *
      * @return The service count in the database.
      */
-    @View(name = "size", map = "function(doc) {emit(null, doc._id)}", reduce = "function(keys, values, combine) {return values.length}")
+    @View(name = "size", map = "function(doc) { if (doc.service) { emit(doc, doc._id) }}", reduce = "_count")
     public int size() {
         val r = db.queryView(createQuery("size"));
+        LOGGER.trace("r.isEmpty [{}]", r.isEmpty());
+        LOGGER.trace("r.getRows [{}]", r.getRows());
+        if (r.isEmpty()) {
+            return 0;
+        }
+
         return r.getRows().get(0).getValueAsInt();
     }
 
