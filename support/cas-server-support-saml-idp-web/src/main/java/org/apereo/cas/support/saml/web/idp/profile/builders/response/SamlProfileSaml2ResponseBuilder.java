@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
@@ -63,8 +64,10 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
                                            final SamlArtifactTicketFactory samlArtifactTicketFactory,
                                            final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
                                            final SAMLArtifactMap samlArtifactMap,
-                                           final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory) {
-        super(openSamlConfigBean, samlObjectSigner, velocityEngineFactory, samlProfileSamlAssertionBuilder, samlObjectEncrypter);
+                                           final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
+                                           final CasConfigurationProperties casProperties) {
+        super(openSamlConfigBean, samlObjectSigner, velocityEngineFactory,
+            samlProfileSamlAssertionBuilder, samlObjectEncrypter, casProperties);
         this.ticketRegistry = ticketRegistry;
         this.samlArtifactTicketFactory = samlArtifactTicketFactory;
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
