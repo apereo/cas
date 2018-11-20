@@ -1,0 +1,103 @@
+{
+  "properties": [
+    {
+      "name": "cas.authn.releaseProtocolAttributes",
+      "type": "java.lang.Boolean",
+      "description": "Whether to release authentication attributes.",
+      "defaultValue": true,
+      "deprecation": {
+        "replacement": "cas.authn.authenticationAttributeRelease.enabled",
+        "reason": "Property renamed due to new cas.authn.authenticationAttributeRelease.* settings.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.x509.principalSNRadix",
+      "type": "java.lang.Integer",
+      "description": "X509 principal extraction config.",
+      "defaultValue": 10,
+      "deprecation": {
+        "replacement": "cas.authn.x509.serialNo.principalSNRadix",
+        "reason": "Property renamed due to x509 settings reorganization.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.x509.principalHexSNZeroPadding",
+      "type": "java.lang.Boolean",
+      "description": "X509 principal extraction config.",
+      "defaultValue": true,
+      "deprecation": {
+        "replacement": "cas.authn.x509.serialNo.principalHexSNZeroPadding",
+        "reason": "Property renamed due to x509 settings reorganization.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.x509.valueDelimiter",
+      "type": "java.lang.String",
+      "description": "X509 principal extraction config.",
+      "defaultValue": ",",
+      "deprecation": {
+        "replacement": "cas.authn.x509.serialNoDn.valueDelimiter",
+        "reason": "Property renamed due to x509 settings reorganization.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.x509.serialNumberPrefix",
+      "type": "java.lang.String",
+      "description": "X509 principal extraction config.",
+      "defaultValue": "SERIALNUMBER=",
+      "deprecation": {
+        "replacement": "cas.authn.x509.serialNoDn.serialNumberPrefix",
+        "reason": "Property renamed due to x509 settings reorganization.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.server.basicAuthn.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enable basic auth on tomcat.",
+      "defaultValue": false,
+      "deprecation": {
+        "replacement": "cas.server.tomcat.basicAuthn.enabled",
+        "reason": "cas.server.* moved to cas.server.tomcat.*.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.tomcat.clustering.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enable tomcat clustering.",
+      "defaultValue": false,
+      "deprecation": {
+        "replacement": "cas.server.tomcat.clustering.enabled",
+        "reason": "cas.server.* moved to cas.server.tomcat.*.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.adminPagesSecurity.actuatorEndpointsEnabled",
+      "type": "java.lang.Boolean",
+      "description": "Enable actuator endpoints.",
+      "defaultValue": false,
+      "deprecation": {
+        "replacement": "management.endpoints.enabled-by-default",
+        "reason": "cas.adminPagesSecurity.* moved to management.endpoints.*.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.adminPagesSecurity.ip",
+      "type": "java.lang.String",
+      "description": "Enable actuator endpoints.",
+      "defaultValue": "127.0.0.1",
+      "deprecation": {
+        "replacement": "cas.monitor.endpoints.endpoint.defaults.access[0]",
+        "reason": "management endpoints security under cas.monitor.endpoints.endpoint.*.",
+        "level": "error"
+      }
+    }
+  ]
+}
