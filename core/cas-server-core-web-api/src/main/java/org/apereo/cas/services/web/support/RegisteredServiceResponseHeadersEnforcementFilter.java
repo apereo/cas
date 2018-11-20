@@ -58,6 +58,8 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
         final String xFrameOptions = getStringProperty(httpServletRequest, RegisteredServiceProperties.HTTP_HEADER_XFRAME_OPTIONS);
         if (xFrameOptions != null) {
             super.setXFrameOptions(xFrameOptions);
+        } else {
+            super.setXFrameOptions(RegisteredServiceProperties.HTTP_HEADER_XFRAME_OPTIONS.getDefaultValue());
         }
         if (shouldHttpHeaderBeInjectedIntoResponse(httpServletRequest,
             RegisteredServiceProperties.HTTP_HEADER_ENABLE_XFRAME_OPTIONS)) {
