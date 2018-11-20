@@ -72,6 +72,7 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
      *                                 <li>L</li><li>O</li><li>OU</li><li>SERIALNUMBER</li>
      *                                 <li>ST</li><li>UID</li><li>UNIQUEIDENTIFIER</li></ul>
      *                                 For a complete list of supported attributes, see {@link org.cryptacular.x509.dn.StandardAttributeType}.
+     * @param useCurrentPrincipalId    whether the principal id from the resolved principal should be used
      */
     public X509SubjectPrincipalResolver(final IPersonAttributeDao attributeRepository,
                                         final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
