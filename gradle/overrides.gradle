@@ -25,6 +25,7 @@ ext["hikariVersion"] = "3.2.0"
 ext["groovyVersion"] = "2.5.4"
 ext["log4jVersion"] = "2.11.1"
 ext["commonsBeansVersion"] = "1.9.3"
+ext["logbackVersion"] = "1.3.0-alpha4"
 ext["caffeinVersion"] = "2.6.2"
 ext["couchbaseVersion"] = "2.7.1"
 
@@ -51,6 +52,7 @@ ext["httpcore.version"] = ext["httpCoreVersion"]
 ext["hikaricp.version"] = ext["hikariVersion"]
 ext["groovy.version"] = ext["groovyVersion"]
 ext["log4j2.version"] = ext["log4jVersion"]
+ext["logback.version"] = ext["logbackVersion"]
 ext["commons-beanutils.version"] = ext["commonsBeansVersion"]
 ext["mysql.version"] = ext["mysqlVersion"]
 ext["postgresql.version"] = ext["postgresqlVersion"]

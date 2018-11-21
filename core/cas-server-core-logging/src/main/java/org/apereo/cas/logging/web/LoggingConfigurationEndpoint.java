@@ -1,14 +1,17 @@
-package org.apereo.cas.web.report;
+package org.apereo.cas.logging.web;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
-import org.apereo.cas.web.report.util.ControllerUtils;
 
+import lombok.Getter;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.FileAppender;
@@ -16,6 +19,7 @@ import org.apache.logging.log4j.core.appender.MemoryMappedFileAppender;
 import org.apache.logging.log4j.core.appender.RandomAccessFileAppender;
 import org.apache.logging.log4j.core.appender.RollingFileAppender;
 import org.apache.logging.log4j.core.appender.RollingRandomAccessFileAppender;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.apache.logging.slf4j.Log4jLoggerFactory;
 import org.slf4j.ILoggerFactory;
@@ -33,6 +37,7 @@ import org.springframework.core.io.ResourceLoader;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -43,6 +48,7 @@ import java.util.Set;
  */
 @Slf4j
 @Endpoint(id = "loggingConfig", enableByDefault = false)
+@Getter
 public class LoggingConfigurationEndpoint extends BaseCasMvcEndpoint implements InitializingBean {
 
     private static final String LOGGER_NAME_ROOT = "root";
@@ -77,7 +83,7 @@ public class LoggingConfigurationEndpoint extends BaseCasMvcEndpoint implements 
      * given there is not an explicit property mapping for it provided by Boot, etc.
      */
     public void initialize() {
-        val pair = ControllerUtils.buildLoggerContext(environment, resourceLoader);
+        val pair = buildLoggerContext(environment, resourceLoader);
         pair.ifPresent(it -> {
             this.logConfigurationFile = it.getKey();
             this.loggerContext = it.getValue();
@@ -186,5 +192,23 @@ public class LoggingConfigurationEndpoint extends BaseCasMvcEndpoint implements 
                 cfg.setAdditive(additive);
             });
         this.loggerContext.updateLoggers();
+    }
+
+    @SneakyThrows
+    private static Optional<Pair<Resource, LoggerContext>> buildLoggerContext(final Environment environment, final ResourceLoader
+        resourceLoader) {
+        val logFile = environment.getProperty("logging.config", "classpath:/log4j2.xml");
+        LOGGER.info("Located logging configuration reference in the environment as [{}]", logFile);
+
+        if (ResourceUtils.doesResourceExist(logFile, resourceLoader)) {
+            val logConfigurationFile = resourceLoader.getResource(logFile);
+            LOGGER.trace("Loaded logging configuration resource [{}]. Initializing logger context...", logConfigurationFile);
+            val loggerContext = Configurator.initialize("CAS", null, logConfigurationFile.getURI());
+            LOGGER.trace("Installing log configuration listener to detect changes and update");
+            loggerContext.getConfiguration().addListener(reconfigurable -> loggerContext.updateLoggers(reconfigurable.reconfigure()));
+            return Optional.of(Pair.of(logConfigurationFile, loggerContext));
+        }
+        LOGGER.warn("Logging configuration cannot be found in the environment settings");
+        return Optional.empty();
     }
 }
