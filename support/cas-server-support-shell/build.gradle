@@ -13,7 +13,7 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-audit-api")
     implementation project(":core:cas-server-core-services-api")
-    implementation project(":core:cas-server-core-logging-config")
+    implementation project(":core:cas-server-core-logging-api")
     implementation project(":core:cas-server-core-configuration-metadata-repository")
 
     implementation project(":support:cas-server-support-jpa-util")

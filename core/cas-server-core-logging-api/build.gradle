@@ -1,10 +1,12 @@
 description = "Apereo CAS Core Logging Configuration"
 dependencies {
     api project(":api:cas-server-core-api-ticket")
+    
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-cookie-api")
 
+    implementation libraries.log4j
     annotationProcessor libraries.log4j
 }
 
