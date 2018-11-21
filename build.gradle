@@ -166,6 +166,7 @@ subprojects {
         mavenLocal()
         mavenCentral()
         maven { url "https://build.shibboleth.net/nexus/content/repositories/releases" }
+        maven { url "https://oss.sonatype.org/content/repositories/releases" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
         maven { url "https://repo.spring.io/plugins-release/" }
         maven { url "https://dl.bintray.com/uniconiam/maven" }
