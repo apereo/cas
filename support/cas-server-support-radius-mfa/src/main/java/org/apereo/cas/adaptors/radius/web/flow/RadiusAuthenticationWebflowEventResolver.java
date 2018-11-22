@@ -11,6 +11,8 @@ import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProvi
 
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -36,10 +38,12 @@ public class RadiusAuthenticationWebflowEventResolver extends BaseMultifactorAut
                                                     final CookieGenerator warnCookieGenerator,
                                                     final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
                                                     final MultifactorAuthenticationProviderSelector selector,
-                                                    final long allowedAuthenticationAttempts) {
+                                                    final long allowedAuthenticationAttempts,
+                                                    final ApplicationEventPublisher eventPublisher,
+                                                    final ConfigurableApplicationContext applicationContext) {
         super(authenticationSystemSupport, centralAuthenticationService,
             servicesManager, ticketRegistrySupport, warnCookieGenerator,
-            authenticationSelectionStrategies, selector);
+            authenticationSelectionStrategies, selector, eventPublisher, applicationContext);
         this.allowedAuthenticationAttempts = allowedAuthenticationAttempts;
     }
 

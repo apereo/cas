@@ -18,6 +18,8 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -43,10 +45,12 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
                                                     final CookieGenerator warnCookieGenerator,
                                                     final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
                                                     final AuditableExecution registeredServiceAccessStrategyEnforcer,
-                                                    final CasConfigurationProperties casProperties) {
+                                                    final CasConfigurationProperties casProperties,
+                                                    final ApplicationEventPublisher eventPublisher,
+                                                    final ConfigurableApplicationContext applicationContext) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager,
             ticketRegistrySupport, warnCookieGenerator,
-            authenticationSelectionStrategies);
+            authenticationSelectionStrategies, eventPublisher, applicationContext);
         this.registeredServiceAccessStrategyEnforcer = registeredServiceAccessStrategyEnforcer;
         this.casProperties = casProperties;
     }

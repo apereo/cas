@@ -18,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -48,9 +50,11 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
                                                                        final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
                                                                        final MultifactorAuthenticationProviderSelector selector,
                                                                        final MultifactorAuthenticationContextValidator authenticationContextValidator,
-                                                                       final CasDelegatingWebflowEventResolver casDelegatingWebflowEventResolver) {
+                                                                       final CasDelegatingWebflowEventResolver casDelegatingWebflowEventResolver,
+                                                                       final ApplicationEventPublisher eventPublisher,
+                                                                       final ConfigurableApplicationContext applicationContext) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport, warnCookieGenerator,
-            authenticationSelectionStrategies, selector);
+            authenticationSelectionStrategies, selector, eventPublisher, applicationContext);
         this.authenticationContextValidator = authenticationContextValidator;
         this.casDelegatingWebflowEventResolver = casDelegatingWebflowEventResolver;
     }
