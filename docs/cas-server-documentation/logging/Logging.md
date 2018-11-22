@@ -7,23 +7,24 @@ category: Logs & Audits
 # Logging
 
 CAS provides a logging facility that logs important informational events like authentication success and
-failure; it can be customized to produce additional information for troubleshooting. CAS uses the Slf4J
-Logging framework as a facade for the [Log4J engine](http://logging.apache.org) by default.
+failure; it can be customized to produce additional information for troubleshooting. CAS uses the Slf4j
+Logging framework as a facade for the [Log4j engine](http://logging.apache.org) by default.
 
 The default log4j configuration file is located in `src/main/resources/log4j2.xml`.
 By default logging is set to `INFO` for all functionality related to `org.apereo.cas` code.
-For debugging and diagnostic purposes you may want to set these levels to  `DEBUG`.
+For debugging and diagnostic purposes you may want to set these levels to `DEBUG`.
 
 <div class="alert alert-warning"><strong>Production</strong><p>You should always run everything under
-<code>WARN</code>. In production
-warnings and errors are things you care about. Everything else is just diagnostics. Only
+<code>WARN</code>. In production warnings and errors are things you care about. Everything else is just diagnostics. Only
 turn up <code>DEBUG</code> or <code>INFO</code> if you need to research a particular issue.</p></div>
 
 ## Configuration
 
-It is often time helpful to externalize the `log4j2.xml` file to a system path to preserve settings between upgrades.
+It is often helpful to externalize the `log4j2.xml` file to a system path to preserve settings between upgrades.
 The location of `log4j2.xml` file by default is on the runtime classpath and can be controlled
-via the CAS properties. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#logging).
+via the CAS properties. 
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#logging).
 
 ### Log Levels
 
@@ -113,9 +114,10 @@ To find more a comprehensive documentation, please [review the guides here](http
 
 ## Log Data Sanitation
 
-For security purposes, CAS by default will attempt to remove TGT and PGT ids from all log data.
-This will of course include messages that are routed to a log destination by the logging framework as
- well as all audit messages. A sample follows below:
+For security purposes, CAS by default will attempt to remove ticket-granting ticket and proxy-granting ticket ids from all log data.
+This will of course include messages that are routed to a log destination by the logging framework as well as all audit messages.
+
+A sample follows below:
 
 ```bash
 WHO: audit:unknown
@@ -127,7 +129,6 @@ CLIENT IP ADDRESS: ...
 SERVER IP ADDRESS: ...
 ```
 
-Certain number of characters are left at the trailing end of the ticket id to assist with
-troubleshooting and diagnostics.
+Certain number of characters are left at the trailing end of the ticket id to assist with troubleshooting and diagnostics.
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#logging).
