@@ -39,6 +39,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.util.CookieGenerator;
@@ -85,6 +87,13 @@ public class CasCoreWebflowConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
+
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
     private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationServiceSelectionPlan;
@@ -104,7 +113,9 @@ public class CasCoreWebflowConfiguration {
             warnCookieGenerator.getIfAvailable(),
             authenticationServiceSelectionPlan.getIfAvailable(),
             registeredServiceAccessStrategyEnforcer.getIfAvailable(),
-            casProperties);
+            casProperties,
+            applicationEventPublisher,
+            applicationContext);
     }
 
     @Bean

@@ -12,6 +12,8 @@ import org.apereo.cas.web.flow.resolver.impl.AbstractCasMultifactorAuthenticatio
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -30,10 +32,12 @@ public abstract class BaseMultifactorAuthenticationProviderEventResolver extends
                                                               final TicketRegistrySupport ticketRegistrySupport,
                                                               final CookieGenerator warnCookieGenerator,
                                                               final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
-                                                              final MultifactorAuthenticationProviderSelector selector) {
+                                                              final MultifactorAuthenticationProviderSelector selector,
+                                                              final ApplicationEventPublisher eventPublisher,
+                                                              final ConfigurableApplicationContext applicationContext) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager,
             ticketRegistrySupport, warnCookieGenerator,
-            authenticationSelectionStrategies, selector);
+            authenticationSelectionStrategies, selector, eventPublisher, applicationContext);
     }
 
 

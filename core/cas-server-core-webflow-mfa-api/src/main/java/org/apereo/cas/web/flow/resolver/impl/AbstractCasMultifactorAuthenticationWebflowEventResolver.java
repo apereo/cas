@@ -8,6 +8,8 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.util.CookieGenerator;
 
 /**
@@ -31,9 +33,12 @@ public abstract class AbstractCasMultifactorAuthenticationWebflowEventResolver e
                                                                     final TicketRegistrySupport ticketRegistrySupport,
                                                                     final CookieGenerator warnCookieGenerator,
                                                                     final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
-                                                                    final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector) {
+                                                                    final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector,
+                                                                    final ApplicationEventPublisher eventPublisher,
+                                                                    final ConfigurableApplicationContext applicationContext) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport,
-            warnCookieGenerator, authenticationRequestServiceSelectionStrategies);
+            warnCookieGenerator, authenticationRequestServiceSelectionStrategies,
+            eventPublisher, applicationContext);
         this.multifactorAuthenticationProviderSelector = multifactorAuthenticationProviderSelector;
     }
 }

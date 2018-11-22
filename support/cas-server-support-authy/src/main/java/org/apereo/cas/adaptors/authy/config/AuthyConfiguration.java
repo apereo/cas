@@ -27,7 +27,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -53,9 +54,6 @@ public class AuthyConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    private ApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("loginFlowRegistry")
@@ -84,6 +82,11 @@ public class AuthyConfiguration implements CasWebflowExecutionPlanConfigurer {
     @Qualifier("warnCookieGenerator")
     private ObjectProvider<CookieGenerator> warnCookieGenerator;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
@@ -106,7 +109,9 @@ public class AuthyConfiguration implements CasWebflowExecutionPlanConfigurer {
             ticketRegistrySupport.getIfAvailable(),
             warnCookieGenerator.getIfAvailable(),
             authenticationRequestServiceSelectionStrategies.getIfAvailable(),
-            multifactorAuthenticationProviderSelector.getIfAvailable(RankedMultifactorAuthenticationProviderSelector::new));
+            multifactorAuthenticationProviderSelector.getIfAvailable(RankedMultifactorAuthenticationProviderSelector::new),
+            applicationEventPublisher,
+            applicationContext);
     }
 
     @ConditionalOnMissingBean(name = "authyMultifactorWebflowConfigurer")

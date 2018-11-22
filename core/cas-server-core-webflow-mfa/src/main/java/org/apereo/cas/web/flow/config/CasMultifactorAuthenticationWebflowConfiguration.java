@@ -46,6 +46,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
@@ -95,6 +97,12 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
+
+    @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
     private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationServiceSelectionPlan;
 
@@ -119,7 +127,9 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
             warnCookieGenerator.getIfAvailable(),
             authenticationServiceSelectionPlan.getIfAvailable(),
             multifactorAuthenticationProviderSelector(),
-            adaptiveMultifactorAuthenticationTrigger());
+            adaptiveMultifactorAuthenticationTrigger(),
+            applicationEventPublisher,
+            applicationContext);
     }
 
     @ConditionalOnMissingBean(name = "adaptiveMultifactorAuthenticationTrigger")
@@ -148,7 +158,9 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
             warnCookieGenerator.getIfAvailable(),
             authenticationServiceSelectionPlan.getIfAvailable(),
             multifactorAuthenticationProviderSelector(),
-            timedMultifactorAuthenticationTrigger());
+            timedMultifactorAuthenticationTrigger(),
+            applicationEventPublisher,
+            applicationContext);
     }
 
     @ConditionalOnMissingBean(name = "principalAttributeMultifactorAuthenticationTrigger")
@@ -170,7 +182,9 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
             warnCookieGenerator.getIfAvailable(),
             authenticationServiceSelectionPlan.getIfAvailable(),
             multifactorAuthenticationProviderSelector(),
-            principalAttributeMultifactorAuthenticationTrigger());
+            principalAttributeMultifactorAuthenticationTrigger(),
+            applicationEventPublisher,
+            applicationContext);
     }
 
     @Bean
@@ -192,7 +206,9 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
             warnCookieGenerator.getIfAvailable(),
             authenticationServiceSelectionPlan.getIfAvailable(),
             multifactorAuthenticationProviderSelector(),
-            predicatedPrincipalAttributeMultifactorAuthenticationTrigger());
+            predicatedPrincipalAttributeMultifactorAuthenticationTrigger(),
+            applicationEventPublisher,
+            applicationContext);
     }
 
     @ConditionalOnMissingBean(name = "rankedAuthenticationProviderWebflowEventResolver")
@@ -208,7 +224,9 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
             authenticationServiceSelectionPlan.getIfAvailable(),
             multifactorAuthenticationProviderSelector(),
             authenticationContextValidator.getIfAvailable(),
-            initialAuthenticationAttemptWebflowEventResolver());
+            initialAuthenticationAttemptWebflowEventResolver(),
+            applicationEventPublisher,
+            applicationContext);
     }
 
     @ConditionalOnMissingBean(name = "authenticationAttributeMultifactorAuthenticationTrigger")
@@ -230,7 +248,9 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
             warnCookieGenerator.getIfAvailable(),
             authenticationServiceSelectionPlan.getIfAvailable(),
             multifactorAuthenticationProviderSelector(),
-            authenticationAttributeMultifactorAuthenticationTrigger());
+            authenticationAttributeMultifactorAuthenticationTrigger(),
+            applicationEventPublisher,
+            applicationContext);
     }
 
     @ConditionalOnMissingBean(name = "multifactorAuthenticationProviderSelector")
@@ -256,7 +276,9 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
             ticketRegistrySupport.getIfAvailable(),
             warnCookieGenerator.getIfAvailable(),
             authenticationServiceSelectionPlan.getIfAvailable(),
-            registeredServiceAccessStrategyEnforcer.getIfAvailable());
+            registeredServiceAccessStrategyEnforcer.getIfAvailable(),
+            applicationEventPublisher,
+            applicationContext);
 
         r.addDelegate(adaptiveAuthenticationPolicyWebflowEventResolver());
         r.addDelegate(timedAuthenticationPolicyWebflowEventResolver());
@@ -302,7 +324,9 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
             warnCookieGenerator.getIfAvailable(),
             authenticationServiceSelectionPlan.getIfAvailable(),
             multifactorAuthenticationProviderSelector(),
-            restEndpointMultifactorAuthenticationTrigger());
+            restEndpointMultifactorAuthenticationTrigger(),
+            applicationEventPublisher,
+            applicationContext);
     }
 
     @ConditionalOnMissingBean(name = "globalAuthenticationPolicyWebflowEventResolver")
@@ -324,7 +348,9 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
             warnCookieGenerator.getIfAvailable(),
             authenticationServiceSelectionPlan.getIfAvailable(),
             multifactorAuthenticationProviderSelector(),
-            globalMultifactorAuthenticationTrigger());
+            globalMultifactorAuthenticationTrigger(),
+            applicationEventPublisher,
+            applicationContext);
     }
 
     @ConditionalOnMissingBean(name = "groovyScriptMultifactorAuthenticationTrigger")
@@ -346,7 +372,9 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
             warnCookieGenerator.getIfAvailable(),
             authenticationServiceSelectionPlan.getIfAvailable(),
             multifactorAuthenticationProviderSelector(),
-            groovyScriptMultifactorAuthenticationTrigger());
+            groovyScriptMultifactorAuthenticationTrigger(),
+            applicationEventPublisher,
+            applicationContext);
     }
 
     @ConditionalOnMissingBean(name = "selectiveAuthenticationProviderWebflowEventResolver")
@@ -360,7 +388,9 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
             ticketRegistrySupport.getIfAvailable(),
             warnCookieGenerator.getIfAvailable(),
             authenticationServiceSelectionPlan.getIfAvailable(),
-            multifactorAuthenticationProviderSelector());
+            multifactorAuthenticationProviderSelector(),
+            applicationEventPublisher,
+            applicationContext);
     }
 
     @ConditionalOnMissingBean(name = "httpRequestMultifactorAuthenticationTrigger")
@@ -381,7 +411,9 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
             warnCookieGenerator.getIfAvailable(),
             authenticationServiceSelectionPlan.getIfAvailable(),
             multifactorAuthenticationProviderSelector(),
-            httpRequestMultifactorAuthenticationTrigger());
+            httpRequestMultifactorAuthenticationTrigger(),
+            applicationEventPublisher,
+            applicationContext);
     }
 
     @Bean
@@ -403,7 +435,9 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
             warnCookieGenerator.getIfAvailable(),
             authenticationServiceSelectionPlan.getIfAvailable(),
             multifactorAuthenticationProviderSelector(),
-            registeredServicePrincipalAttributeMultifactorAuthenticationTrigger());
+            registeredServicePrincipalAttributeMultifactorAuthenticationTrigger(),
+            applicationEventPublisher,
+            applicationContext);
     }
 
     @Bean
@@ -426,7 +460,9 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
             warnCookieGenerator.getIfAvailable(),
             authenticationServiceSelectionPlan.getIfAvailable(),
             multifactorAuthenticationProviderSelector(),
-            registeredServiceMultifactorAuthenticationTrigger());
+            registeredServiceMultifactorAuthenticationTrigger(),
+            applicationEventPublisher,
+            applicationContext);
     }
 
     @Bean

@@ -27,7 +27,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -52,7 +53,10 @@ public class RadiusMultifactorConfiguration implements CasWebflowExecutionPlanCo
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    private ApplicationContext applicationContext;
+    private ConfigurableApplicationContext applicationContext;
+
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
     @Qualifier("loginFlowRegistry")
@@ -115,7 +119,8 @@ public class RadiusMultifactorConfiguration implements CasWebflowExecutionPlanCo
             warnCookieGenerator.getIfAvailable(),
             authenticationRequestServiceSelectionStrategies.getIfAvailable(),
             multifactorAuthenticationProviderSelector.getIfAvailable(RankedMultifactorAuthenticationProviderSelector::new),
-            casProperties.getAuthn().getMfa().getRadius().getAllowedAuthenticationAttempts());
+            casProperties.getAuthn().getMfa().getRadius().getAllowedAuthenticationAttempts(),
+            applicationEventPublisher, applicationContext);
     }
 
     @ConditionalOnMissingBean(name = "radiusMultifactorWebflowConfigurer")

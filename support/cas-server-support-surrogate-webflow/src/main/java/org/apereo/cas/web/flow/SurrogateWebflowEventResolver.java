@@ -12,6 +12,8 @@ import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -38,9 +40,11 @@ public class SurrogateWebflowEventResolver extends AbstractCasWebflowEventResolv
                                          final TicketRegistrySupport ticketRegistrySupport,
                                          final CookieGenerator warnCookieGenerator,
                                          final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
-                                         final SurrogateAuthenticationService surrogateService) {
+                                         final SurrogateAuthenticationService surrogateService,
+                                         final ApplicationEventPublisher eventPublisher,
+                                         final ConfigurableApplicationContext applicationContext) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport,
-            warnCookieGenerator, authenticationSelectionStrategies);
+            warnCookieGenerator, authenticationSelectionStrategies, eventPublisher, applicationContext);
         this.surrogateService = surrogateService;
     }
 

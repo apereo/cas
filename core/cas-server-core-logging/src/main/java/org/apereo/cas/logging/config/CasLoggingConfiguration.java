@@ -61,6 +61,9 @@ public class CasLoggingConfiguration {
         return bean;
     }
 
+    /**
+     * Log4j configuration.
+     */
     @ConditionalOnClass(LoggerContext.class)
     @Configuration("casLog4jConfiguration")
     public static class CasLog4jConfiguration {

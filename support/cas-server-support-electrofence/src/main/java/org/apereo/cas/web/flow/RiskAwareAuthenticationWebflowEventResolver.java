@@ -20,6 +20,8 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -48,9 +50,11 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
                                                        final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
                                                        final AuthenticationRiskEvaluator authenticationRiskEvaluator,
                                                        final AuthenticationRiskMitigator authenticationRiskMitigator,
-                                                       final CasConfigurationProperties casProperties) {
+                                                       final CasConfigurationProperties casProperties,
+                                                       final ApplicationEventPublisher eventPublisher,
+                                                       final ConfigurableApplicationContext applicationContext) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport, warnCookieGenerator,
-            authenticationSelectionStrategies);
+            authenticationSelectionStrategies, eventPublisher, applicationContext);
         this.authenticationRiskEvaluator = authenticationRiskEvaluator;
         this.authenticationRiskMitigator = authenticationRiskMitigator;
         threshold = casProperties.getAuthn().getAdaptive().getRisk().getThreshold();
