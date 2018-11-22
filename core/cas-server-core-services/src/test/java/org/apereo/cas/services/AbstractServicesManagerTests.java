@@ -45,7 +45,7 @@ public abstract class AbstractServicesManagerTests {
     }
 
     protected ServiceRegistry getServiceRegistryInstance() {
-        return new InMemoryServiceRegistry(listOfDefaultServices);
+        return new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class), listOfDefaultServices);
     }
 
     @Test

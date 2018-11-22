@@ -10,11 +10,11 @@ import com.couchbase.client.java.query.N1qlQueryResult;
 import com.couchbase.client.java.query.N1qlQueryRow;
 import com.couchbase.client.java.query.Select;
 import com.couchbase.client.java.query.dsl.Expression;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -40,11 +40,16 @@ import java.util.stream.StreamSupport;
  * @since 4.2.0
  */
 @Slf4j
-@RequiredArgsConstructor
 public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements DisposableBean {
     private final CouchbaseClientFactory couchbase;
-
     private final StringSerializer<RegisteredService> registeredServiceJsonSerializer;
+
+    public CouchbaseServiceRegistry(final ApplicationEventPublisher eventPublisher, final CouchbaseClientFactory couchbase,
+                                    final StringSerializer<RegisteredService> registeredServiceJsonSerializer) {
+        super(eventPublisher);
+        this.couchbase = couchbase;
+        this.registeredServiceJsonSerializer = registeredServiceJsonSerializer;
+    }
 
     @Override
     @SneakyThrows

@@ -15,6 +15,7 @@ import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
 import org.ldaptive.Response;
 import org.ldaptive.SearchResult;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,8 +42,12 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
 
     private final String loadFilter;
 
-    public LdapServiceRegistry(final ConnectionFactory connectionFactory, final String baseDn,
-                               final LdapRegisteredServiceMapper ldapServiceMapper, final LdapServiceRegistryProperties ldapProperties) {
+    public LdapServiceRegistry(final ConnectionFactory connectionFactory,
+                               final String baseDn,
+                               final LdapRegisteredServiceMapper ldapServiceMapper,
+                               final LdapServiceRegistryProperties ldapProperties,
+                               final ApplicationEventPublisher eventPublisher) {
+        super(eventPublisher);
         this.connectionFactory = connectionFactory;
         this.baseDn = baseDn;
         if (ldapServiceMapper == null) {

@@ -1,8 +1,7 @@
 package org.apereo.cas.services;
 
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 
@@ -14,11 +13,10 @@ import org.springframework.context.ApplicationEventPublisher;
  * @since 5.1.0
  */
 @Slf4j
-@Setter
+@RequiredArgsConstructor
 public abstract class AbstractServiceRegistry implements ServiceRegistry {
 
-    @Autowired
-    private transient ApplicationEventPublisher eventPublisher;
+    private final transient ApplicationEventPublisher eventPublisher;
 
     /**
      * Publish event.

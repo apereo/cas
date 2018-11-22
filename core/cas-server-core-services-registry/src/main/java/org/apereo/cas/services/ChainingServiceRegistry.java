@@ -2,9 +2,9 @@ package org.apereo.cas.services;
 
 import com.google.common.base.Predicates;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,9 +19,18 @@ import java.util.stream.Collectors;
  * @since 5.3.0
  */
 @Getter
-@RequiredArgsConstructor
 public class ChainingServiceRegistry extends AbstractServiceRegistry {
-    private final List<ServiceRegistry> serviceRegistries = new ArrayList<>();
+    private final List<ServiceRegistry> serviceRegistries;
+
+    public ChainingServiceRegistry(final ApplicationEventPublisher eventPublisher) {
+        this(eventPublisher, new ArrayList<>());
+    }
+
+    public ChainingServiceRegistry(final ApplicationEventPublisher eventPublisher,
+                                   final List<ServiceRegistry> serviceRegistries) {
+        super(eventPublisher);
+        this.serviceRegistries = serviceRegistries;
+    }
 
     /**
      * Add service registry.

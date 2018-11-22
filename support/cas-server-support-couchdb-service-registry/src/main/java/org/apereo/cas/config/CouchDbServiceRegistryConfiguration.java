@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -33,6 +34,9 @@ public class CouchDbServiceRegistryConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     @Autowired
     @Qualifier("serviceRegistryCouchDbFactory")
@@ -64,7 +68,7 @@ public class CouchDbServiceRegistryConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "couchDbServiceRegistry")
     public ServiceRegistry couchDbServiceRegistry() {
-        return new CouchDbServiceRegistry(serviceRegistryCouchDbRepository());
+        return new CouchDbServiceRegistry(eventPublisher, serviceRegistryCouchDbRepository());
     }
 
     @Bean

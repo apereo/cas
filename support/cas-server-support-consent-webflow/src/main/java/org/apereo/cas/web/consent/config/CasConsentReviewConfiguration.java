@@ -16,6 +16,7 @@ import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -30,6 +31,9 @@ import org.springframework.context.annotation.Configuration;
 public class CasConsentReviewConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")
@@ -59,7 +63,7 @@ public class CasConsentReviewConfiguration {
                 service.setAttributeReleasePolicy(policy);
 
                 LOGGER.debug("Saving consent service [{}] into the registry", service);
-                plan.registerServiceRegistry(new ConsentServiceRegistry(service));
+                plan.registerServiceRegistry(new ConsentServiceRegistry(eventPublisher, service));
             }
         };
     }

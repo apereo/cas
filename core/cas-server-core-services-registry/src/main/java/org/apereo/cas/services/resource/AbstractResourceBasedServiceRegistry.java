@@ -92,16 +92,6 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             new DefaultRegisteredServiceResourceNamingStrategy());
     }
 
-    /**
-     * Instantiates a new service registry dao.
-     *
-     * @param configDirectory                      the config directory
-     * @param serializer                           the registered service json serializer
-     * @param enableWatcher                        enable watcher thread
-     * @param eventPublisher                       the event publisher
-     * @param registeredServiceReplicationStrategy the registered service replication strategy
-     * @param resourceNamingStrategy               the registered service naming strategy
-     */
     public AbstractResourceBasedServiceRegistry(final Path configDirectory, final StringSerializer<RegisteredService> serializer,
                                                 final boolean enableWatcher, final ApplicationEventPublisher eventPublisher,
                                                 final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
@@ -110,42 +100,23 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             registeredServiceReplicationStrategy, resourceNamingStrategy);
     }
 
-    /**
-     * Instantiates a new Abstract resource based service registry dao.
-     *
-     * @param configDirectory                      the config directory
-     * @param serializers                          the serializers
-     * @param enableWatcher                        the enable watcher
-     * @param eventPublisher                       the event publisher
-     * @param registeredServiceReplicationStrategy the registered service replication strategy
-     * @param resourceNamingStrategy               the registered service naming strategy
-     */
     public AbstractResourceBasedServiceRegistry(final Path configDirectory,
                                                 final Collection<StringSerializer<RegisteredService>> serializers,
                                                 final boolean enableWatcher,
                                                 final ApplicationEventPublisher eventPublisher,
                                                 final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
                                                 final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) {
-        initializeRegistry(configDirectory, serializers, enableWatcher,
-            eventPublisher, registeredServiceReplicationStrategy, resourceNamingStrategy);
+        super(eventPublisher);
+        initializeRegistry(configDirectory, serializers, enableWatcher, registeredServiceReplicationStrategy, resourceNamingStrategy);
     }
 
-    /**
-     * Instantiates a new Abstract resource based service registry dao.
-     *
-     * @param configDirectory                      the config directory
-     * @param serializers                          the serializers
-     * @param enableWatcher                        the enable watcher
-     * @param eventPublisher                       the event publisher
-     * @param registeredServiceReplicationStrategy the registered service replication strategy
-     * @param resourceNamingStrategy               the registered service naming strategy
-     * @throws Exception the exception
-     */
     public AbstractResourceBasedServiceRegistry(final Resource configDirectory,
-                                                final Collection<StringSerializer<RegisteredService>> serializers, final boolean enableWatcher,
+                                                final Collection<StringSerializer<RegisteredService>> serializers,
+                                                final boolean enableWatcher,
                                                 final ApplicationEventPublisher eventPublisher,
                                                 final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
                                                 final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) throws Exception {
+        super(eventPublisher);
         LOGGER.trace("Provided service registry directory is specified at [{}]", configDirectory);
         val pattern = String.join("|", getExtensions());
         val servicesDirectory = ResourceUtils.prepareClasspathResourceIfNeeded(configDirectory, true, pattern);
@@ -155,15 +126,14 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         val file = servicesDirectory.getFile();
         LOGGER.trace("Prepared service registry directory is specified at [{}]", file);
 
-        initializeRegistry(Paths.get(file.getCanonicalPath()), serializers, enableWatcher, eventPublisher,
+        initializeRegistry(Paths.get(file.getCanonicalPath()), serializers, enableWatcher,
             registeredServiceReplicationStrategy, resourceNamingStrategy);
     }
 
     private void initializeRegistry(final Path configDirectory, final Collection<StringSerializer<RegisteredService>> serializers,
-                                    final boolean enableWatcher, final ApplicationEventPublisher eventPublisher,
+                                    final boolean enableWatcher,
                                     final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
                                     final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) {
-        setEventPublisher(eventPublisher);
         this.registeredServiceReplicationStrategy = ObjectUtils.defaultIfNull(registeredServiceReplicationStrategy,
             new NoOpRegisteredServiceReplicationStrategy());
         this.resourceNamingStrategy = ObjectUtils.defaultIfNull(resourceNamingStrategy, new DefaultRegisteredServiceResourceNamingStrategy());

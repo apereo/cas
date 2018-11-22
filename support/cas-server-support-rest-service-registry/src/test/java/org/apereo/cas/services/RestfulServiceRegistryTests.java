@@ -17,6 +17,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +29,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
 import java.util.Collections;
+
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link RestfulServiceRegistryTests}.
@@ -71,7 +74,7 @@ public class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
     @RestController("servicesController")
     @RequestMapping("/")
     public static class ServicesController {
-        private final InMemoryServiceRegistry serviceRegistry = new InMemoryServiceRegistry();
+        private final InMemoryServiceRegistry serviceRegistry = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class));
 
         @DeleteMapping
         public Integer findByServiceId(@RequestBody final RegisteredService service) {

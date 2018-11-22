@@ -4,6 +4,7 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 
 import lombok.ToString;
 import lombok.val;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,8 +25,13 @@ import java.util.Collection;
 public class JpaServiceRegistry extends AbstractServiceRegistry {
     private static final String ENTITY_NAME = AbstractRegisteredService.class.getSimpleName();
 
+
     @PersistenceContext(unitName = "serviceEntityManagerFactory")
     private transient EntityManager entityManager;
+
+    public JpaServiceRegistry(final ApplicationEventPublisher eventPublisher) {
+        super(eventPublisher);
+    }
 
     @Override
     public boolean delete(final RegisteredService registeredService) {

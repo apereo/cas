@@ -116,14 +116,13 @@ public class RegisteredServiceResponseHeadersEnforcementFilterTests {
     }
 
     private static RegisteredServiceResponseHeadersEnforcementFilter getFilterForProperty(final Pair<RegisteredServiceProperties, String>... properties) {
-        val servicesManager = new DefaultServicesManager(new InMemoryServiceRegistry(),
+        val servicesManager = new DefaultServicesManager(new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class)),
             mock(ApplicationEventPublisher.class), new LinkedHashSet<>());
         val argumentExtractor = new DefaultArgumentExtractor(new WebApplicationServiceFactory());
 
         val service = RegisteredServiceTestUtils.getRegisteredService("service-0");
         val props1 = new LinkedHashMap<String, RegisteredServiceProperty>();
-        for (var i = 0; i < properties.length; i++) {
-            val p = properties[i];
+        for (val p : properties) {
             val prop1 = new DefaultRegisteredServiceProperty();
             prop1.addValue(p.getValue());
             props1.put(p.getKey().getPropertyName(), prop1);

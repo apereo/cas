@@ -84,9 +84,7 @@ public class SamlRegisteredServiceTests {
         service.setName(SAML_SERVICE);
         service.setServiceId("^http://.+");
         service.setMetadataLocation(METADATA_LOCATION);
-
-        val dao = new InMemoryServiceRegistry();
-        dao.setRegisteredServices(Collections.singletonList(service));
+        val dao = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class), Collections.singletonList(service));
         val impl = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class), new HashSet<>());
         impl.load();
 

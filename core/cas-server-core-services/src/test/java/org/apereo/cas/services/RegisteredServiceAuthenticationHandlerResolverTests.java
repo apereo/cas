@@ -34,7 +34,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
 
     @Before
     public void initialize() {
-        val dao = new InMemoryServiceRegistry();
+
         val list = new ArrayList<RegisteredService>();
 
         var svc = RegisteredServiceTestUtils.getRegisteredService("serviceid1");
@@ -45,7 +45,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
         svc.setRequiredHandlers(new HashSet<>(0));
         list.add(svc);
 
-        dao.setRegisteredServices(list);
+        val dao = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class), list);
 
         this.defaultServicesManager = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class), new HashSet<>());
         this.defaultServicesManager.load();
@@ -59,8 +59,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
 
     @Test
     public void checkAuthenticationHandlerResolutionDefault() {
-        val resolver =
-            new RegisteredServiceAuthenticationHandlerResolver(this.defaultServicesManager);
+        val resolver = new RegisteredServiceAuthenticationHandlerResolver(this.defaultServicesManager);
         val transaction = DefaultAuthenticationTransaction.of(RegisteredServiceTestUtils.getService("serviceid1"),
             RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
 
@@ -70,8 +69,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
 
     @Test
     public void checkAuthenticationHandlerResolution() {
-        val resolver =
-            new DefaultAuthenticationHandlerResolver();
+        val resolver = new DefaultAuthenticationHandlerResolver();
         val transaction = DefaultAuthenticationTransaction.of(RegisteredServiceTestUtils.getService("serviceid2"),
             RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
         val handlers = resolver.resolve(this.authenticationHandlers, transaction);

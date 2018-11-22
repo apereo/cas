@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
@@ -27,6 +28,9 @@ import org.springframework.util.StringUtils;
 @Configuration("couchbaseServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CouchbaseServiceRegistryConfiguration {
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -44,7 +48,7 @@ public class CouchbaseServiceRegistryConfiguration {
     @Bean
     @RefreshScope
     public ServiceRegistry couchbaseServiceRegistry() {
-        return new CouchbaseServiceRegistry(serviceRegistryCouchbaseClientFactory(), new DefaultRegisteredServiceJsonSerializer());
+        return new CouchbaseServiceRegistry(eventPublisher, serviceRegistryCouchbaseClientFactory(), new DefaultRegisteredServiceJsonSerializer());
     }
 
     @Bean

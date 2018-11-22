@@ -17,6 +17,7 @@ import com.microsoft.azure.spring.data.documentdb.DocumentDbFactory;
 import com.microsoft.azure.spring.data.documentdb.core.DocumentDbTemplate;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,7 +39,10 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
     private final StringSerializer<RegisteredService> serializer;
 
     public CosmosDbServiceRegistry(final DocumentDbTemplate db, final DocumentDbFactory dbFactory,
-                                   final String collectionName, final String databaseName) {
+                                   final String collectionName, final String databaseName,
+                                   final ApplicationEventPublisher eventPublisher) {
+        super(eventPublisher);
+
         this.documentDbTemplate = db;
         this.collectionName = collectionName;
         this.documentDbFactory = dbFactory;
