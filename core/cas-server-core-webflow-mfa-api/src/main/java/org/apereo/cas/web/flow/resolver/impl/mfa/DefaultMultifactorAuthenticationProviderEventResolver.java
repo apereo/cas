@@ -15,6 +15,8 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -39,10 +41,13 @@ public class DefaultMultifactorAuthenticationProviderEventResolver extends BaseM
                                                                  final CookieGenerator warnCookieGenerator,
                                                                  final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
                                                                  final MultifactorAuthenticationProviderSelector selector,
-                                                                 final MultifactorAuthenticationTrigger multifactorAuthenticationTrigger) {
+                                                                 final MultifactorAuthenticationTrigger multifactorAuthenticationTrigger,
+                                                                 final ApplicationEventPublisher eventPublisher,
+                                                                 final ConfigurableApplicationContext applicationContext) {
         super(authenticationSystemSupport, centralAuthenticationService,
             servicesManager, ticketRegistrySupport, warnCookieGenerator,
-            authenticationSelectionStrategies, selector);
+            authenticationSelectionStrategies, selector,
+            eventPublisher, applicationContext);
         this.multifactorAuthenticationTrigger = multifactorAuthenticationTrigger;
     }
 

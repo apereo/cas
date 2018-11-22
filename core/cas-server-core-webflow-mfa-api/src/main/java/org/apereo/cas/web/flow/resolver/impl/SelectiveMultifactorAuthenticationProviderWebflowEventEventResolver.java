@@ -16,6 +16,8 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -42,9 +44,11 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventEventResolver
                                                                                final TicketRegistrySupport ticketRegistrySupport,
                                                                                final CookieGenerator warnCookieGenerator,
                                                                                final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
-                                                                               final MultifactorAuthenticationProviderSelector selector) {
+                                                                               final MultifactorAuthenticationProviderSelector selector,
+                                                                               final ApplicationEventPublisher eventPublisher,
+                                                                               final ConfigurableApplicationContext applicationContext) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport, warnCookieGenerator,
-            authenticationSelectionStrategies, selector);
+            authenticationSelectionStrategies, selector, eventPublisher, applicationContext);
     }
 
     @Override
