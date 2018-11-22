@@ -1,8 +1,8 @@
 package org.apereo.cas.services;
 
-import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.MultiValueMap;
@@ -19,11 +19,19 @@ import java.util.stream.Stream;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiredArgsConstructor
 public class RestfulServiceRegistry extends AbstractServiceRegistry {
     private final transient RestTemplate restTemplate;
     private final String url;
     private final MultiValueMap<String, String> headers;
+
+    public RestfulServiceRegistry(final ApplicationEventPublisher eventPublisher,
+                                  final RestTemplate restTemplate, final String url,
+                                  final MultiValueMap<String, String> headers) {
+        super(eventPublisher);
+        this.restTemplate = restTemplate;
+        this.url = url;
+        this.headers = headers;
+    }
 
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
