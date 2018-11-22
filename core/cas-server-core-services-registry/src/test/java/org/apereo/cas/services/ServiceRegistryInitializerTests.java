@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import lombok.val;
 import org.junit.Test;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -23,7 +24,7 @@ public class ServiceRegistryInitializerTests {
         val jsonServiceRegistry = mock(ServiceRegistry.class);
         when(jsonServiceRegistry.load()).thenReturn((Collection) Collections.singletonList(initialService));
 
-        val serviceRegistry = new InMemoryServiceRegistry();
+        val serviceRegistry = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class));
         val serviceRegistryInitializer = new ServiceRegistryInitializer(jsonServiceRegistry, serviceRegistry, servicesManager);
         serviceRegistryInitializer.initServiceRegistryIfNecessary();
         assertThat(serviceRegistry.size()).isEqualTo(1);
