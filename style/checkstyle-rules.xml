@@ -522,7 +522,7 @@
         <module name="RegexpSinglelineJava">
             <property name="id" value="usingAutowiredInApiClasses"/>
             <metadata name="net.sf.eclipsecs.core.comment" value="Using Autowired outside configuration components"/>
-            <property name="severity" value="warning"/>
+            <property name="severity" value="error"/>
             <property name="format" value="@Autowired"/>
             <property name="message" value="Consider injecting the reference from a @Configuration class instead."/>
         </module>

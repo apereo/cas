@@ -2,11 +2,9 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 import lombok.val;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,12 +18,19 @@ import java.util.List;
  * @since 3.1
  */
 @ToString
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class InMemoryServiceRegistry extends AbstractServiceRegistry {
 
-    private List<RegisteredService> registeredServices = new ArrayList<>();
+    private final List<RegisteredService> registeredServices;
+
+    public InMemoryServiceRegistry(final ApplicationEventPublisher eventPublisher) {
+        this(eventPublisher, new ArrayList<>());
+    }
+
+    public InMemoryServiceRegistry(final ApplicationEventPublisher eventPublisher,
+                                   final List<RegisteredService> registeredServices) {
+        super(eventPublisher);
+        this.registeredServices = registeredServices;
+    }
 
     @Override
     public boolean delete(final RegisteredService registeredService) {

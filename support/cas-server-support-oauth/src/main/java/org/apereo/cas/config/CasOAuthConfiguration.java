@@ -114,7 +114,8 @@ import org.springframework.boot.actuate.autoconfigure.endpoint.condition.Conditi
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -136,11 +137,14 @@ import java.util.Set;
 public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConfigurer {
 
     @Autowired
+    private ApplicationEventPublisher eventPublisher;
+
+    @Autowired
     @Qualifier("registeredServiceAccessStrategyEnforcer")
     private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
 
     @Autowired
-    private ApplicationContext applicationContext;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("centralAuthenticationService")
@@ -549,7 +553,6 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @Bean
     @ConditionalOnMissingBean(name = "oauthPasswordGrantTypeTokenRequestValidator")
     public OAuth20TokenRequestValidator oauthPasswordGrantTypeTokenRequestValidator() {
-        val registry = ticketRegistry.getIfAvailable();
         val svcManager = servicesManager.getIfAvailable();
         return new OAuth20PasswordGrantTypeTokenRequestValidator(registeredServiceAccessStrategyEnforcer.getIfAvailable(),
             svcManager, webApplicationServiceFactory.getIfAvailable());
@@ -747,7 +750,7 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
                 service.setDescription("OAuth Authentication Callback Request URL");
                 service.setServiceId(oauthCallbackService().getId());
                 service.setAttributeReleasePolicy(new DenyAllAttributeReleasePolicy());
-                plan.registerServiceRegistry(new OAuth20ServiceRegistry(service));
+                plan.registerServiceRegistry(new OAuth20ServiceRegistry(eventPublisher, service));
             }
         };
     }

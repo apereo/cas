@@ -2,9 +2,12 @@ package org.apereo.cas.services;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.Collection;
 import java.util.Collections;
+
+import static org.mockito.Mockito.*;
 
 /**
  * This is test cases for {@link InMemoryServiceRegistry}.
@@ -26,6 +29,6 @@ public class InMemoryServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Override
     public ServiceRegistry getNewServiceRegistry() {
-        return new InMemoryServiceRegistry();
+        return new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class));
     }
 }
