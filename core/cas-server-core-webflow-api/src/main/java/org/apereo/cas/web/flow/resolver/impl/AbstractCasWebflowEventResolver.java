@@ -16,7 +16,6 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -71,14 +70,11 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     /**
      * CAS event publisher.
      */
-    @Autowired
-    protected ApplicationEventPublisher eventPublisher;
+    protected final ApplicationEventPublisher eventPublisher;
     /**
      * The Application context.
      */
-    @Autowired
-    protected ConfigurableApplicationContext applicationContext;
-
+    protected final ConfigurableApplicationContext applicationContext;
 
     /**
      * New event based on the id, which contains an error attribute referring to the exception occurred.
