@@ -50,7 +50,6 @@ public class AdditionalMetadataVerificationTests {
         mapper.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
         val values = new TypeReference<Map<String, Set<ConfigurationMetadataProperty>>>() {
         };
-        @SuppressWarnings("unchecked")
         final Map<String, Set<ConfigurationMetadataProperty>> jsonMap = mapper.readValue(jsonFile.getURL(), values);
         val props = jsonMap.get("properties");
         for (val prop: props) {
