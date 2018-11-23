@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.val;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -19,10 +20,12 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
-import lombok.val;
-
 import static org.junit.Assert.*;
 
+/**
+ * Test additional metadata validity.
+ * @since 6.0
+ */
 public class AdditionalMetadataVerificationTests {
 
     @ClassRule
@@ -47,8 +50,9 @@ public class AdditionalMetadataVerificationTests {
         mapper.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
         val values = new TypeReference<Map<String, Set<ConfigurationMetadataProperty>>>() {
         };
+        @SuppressWarnings("unchecked")
         final Map<String, Set<ConfigurationMetadataProperty>> jsonMap = mapper.readValue(jsonFile.getURL(), values);
-        final Set<ConfigurationMetadataProperty> props = jsonMap.get("properties");
+        val props = jsonMap.get("properties");
         for (val prop: props) {
             try {
                 ConfigurationPropertyName.of(prop.getName());
