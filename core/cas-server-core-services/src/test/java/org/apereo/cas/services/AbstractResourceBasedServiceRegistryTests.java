@@ -7,13 +7,11 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.experimental.categories.Category;
-import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.core.io.ClassPathResource;
 
-import java.util.Collection;
-import java.util.Collections;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,19 +22,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.0.0
  */
 @Category(FileSystemCategory.class)
-@RunWith(Parameterized.class)
 public abstract class AbstractResourceBasedServiceRegistryTests extends AbstractServiceRegistryTests {
     public static final ClassPathResource RESOURCE = new ClassPathResource("services");
 
     protected ServiceRegistry dao;
 
-    public AbstractResourceBasedServiceRegistryTests(final Class<? extends RegisteredService> registeredServiceClass) {
-        super(registeredServiceClass);
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() {
-        return Collections.singletonList(RegexRegisteredService.class);
+    public static Stream<Class<? extends RegisteredService>> getParameters() {
+        return AbstractServiceRegistryTests.getParameters();
     }
 
     @Override
@@ -46,9 +38,10 @@ public abstract class AbstractResourceBasedServiceRegistryTests extends Abstract
         super.tearDownServiceRegistry();
     }
 
-    @Test
-    public void verifyServiceWithInvalidFileName() {
-        val r = buildRegisteredServiceInstance(RandomUtils.nextInt());
+    @ParameterizedTest
+    @MethodSource("getParameters")
+    public void verifyServiceWithInvalidFileName(final Class<? extends RegisteredService> registeredServiceClass) {
+        val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
         r.setName("hell/o@world:*");
         assertThrows(IllegalArgumentException.class, () -> this.dao.save(r));
     }

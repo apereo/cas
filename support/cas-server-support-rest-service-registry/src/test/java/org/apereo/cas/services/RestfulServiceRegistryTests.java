@@ -8,8 +8,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.http.HttpStatus;
 import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.metrics.MetricsAutoConfiguration;
@@ -28,9 +26,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collection;
-import java.util.Collections;
-
 import static org.mockito.Mockito.*;
 
 /**
@@ -39,7 +34,6 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(Parameterized.class)
 @SpringBootTest(classes = {
     RestfulServiceRegistryTests.RestServicesTestConfiguration.class,
     RestServiceRegistryConfiguration.class,
@@ -58,15 +52,6 @@ public class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
     @Autowired
     @Qualifier("restfulServiceRegistry")
     private ServiceRegistry dao;
-
-    public RestfulServiceRegistryTests(final Class<? extends RegisteredService> registeredServiceClass) {
-        super(registeredServiceClass);
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() {
-        return Collections.singletonList(RegexRegisteredService.class);
-    }
 
     @Override
     public ServiceRegistry getNewServiceRegistry() {

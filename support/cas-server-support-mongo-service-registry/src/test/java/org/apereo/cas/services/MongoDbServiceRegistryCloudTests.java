@@ -6,16 +6,11 @@ import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.test.junit.EnabledIfPortOpen;
 
 import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
-
-import java.util.Collection;
-import java.util.Collections;
 
 /**
  * This is {@link MongoDbServiceRegistryCloudTests}.
@@ -27,7 +22,6 @@ import java.util.Collections;
     MongoDbServiceRegistryConfiguration.class,
     RefreshAutoConfiguration.class
 })
-@RunWith(Parameterized.class)
 @Category(MongoDbCategory.class)
 @EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 27017)
@@ -45,15 +39,6 @@ public class MongoDbServiceRegistryCloudTests extends AbstractServiceRegistryTes
     @Autowired
     @Qualifier("mongoDbServiceRegistry")
     private ServiceRegistry serviceRegistry;
-
-    public MongoDbServiceRegistryCloudTests(final Class<? extends RegisteredService> registeredServiceClass) {
-        super(registeredServiceClass);
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() {
-        return Collections.singletonList(RegexRegisteredService.class);
-    }
 
     @Override
     public ServiceRegistry getNewServiceRegistry() {

@@ -11,8 +11,6 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
 import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,8 +18,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.Collections;
 
 /**
  * This is {@link GitServiceRegistryTests}.
@@ -29,7 +25,6 @@ import java.util.Collections;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@RunWith(Parameterized.class)
 @SpringBootTest(classes = {
     GitServiceRegistryConfiguration.class,
     CasCoreServicesConfiguration.class,
@@ -59,15 +54,6 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-    }
-
-    public GitServiceRegistryTests(final Class<? extends RegisteredService> registeredServiceClass) {
-        super(registeredServiceClass);
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() {
-        return Collections.singletonList(RegexRegisteredService.class);
     }
 
     @Override

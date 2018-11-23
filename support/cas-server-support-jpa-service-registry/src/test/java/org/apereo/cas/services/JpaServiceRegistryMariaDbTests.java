@@ -18,7 +18,4 @@ import org.springframework.test.context.TestPropertySource;
 @EnabledIfPortOpen(port = 3306)
 @Category(MariaDbCategory.class)
 public class JpaServiceRegistryMariaDbTests extends JpaServiceRegistryTests {
-    public JpaServiceRegistryMariaDbTests(final Class<? extends RegisteredService> registeredServiceClass) {
-        super(registeredServiceClass);
-    }
 }

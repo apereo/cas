@@ -6,17 +6,12 @@ import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
 
 import lombok.SneakyThrows;
 import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
-
-import java.util.Collection;
-import java.util.Collections;
 
 /**
  * This is {@link CouchbaseServiceRegistryTests}.
@@ -35,21 +30,11 @@ import java.util.Collections;
     })
 @Category(CouchbaseCategory.class)
 @EnabledIfContinuousIntegration
-@RunWith(Parameterized.class)
 public class CouchbaseServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired
     @Qualifier("couchbaseServiceRegistry")
     private ServiceRegistry serviceRegistry;
-
-    public CouchbaseServiceRegistryTests(final Class<? extends RegisteredService> registeredServiceClass) {
-        super(registeredServiceClass);
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() {
-        return Collections.singletonList(RegexRegisteredService.class);
-    }
 
     @Override
     public ServiceRegistry getNewServiceRegistry() {

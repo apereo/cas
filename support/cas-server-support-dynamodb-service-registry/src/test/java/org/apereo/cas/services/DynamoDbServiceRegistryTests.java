@@ -8,16 +8,11 @@ import org.apereo.cas.config.DynamoDbServiceRegistryConfiguration;
 import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
 
 import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
-
-import java.util.Collection;
-import java.util.Collections;
 
 /**
  * This is {@link DynamoDbServiceRegistryTests}.
@@ -25,7 +20,6 @@ import java.util.Collections;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@RunWith(Parameterized.class)
 @SpringBootTest(classes = {
     DynamoDbServiceRegistryConfiguration.class,
     CasCoreServicesConfiguration.class,
@@ -50,15 +44,6 @@ public class DynamoDbServiceRegistryTests extends AbstractServiceRegistryTests {
     @Autowired
     @Qualifier("serviceRegistry")
     private ServiceRegistry serviceRegistry;
-
-    public DynamoDbServiceRegistryTests(final Class<? extends RegisteredService> registeredServiceClass) {
-        super(registeredServiceClass);
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() {
-        return Collections.singletonList(RegexRegisteredService.class);
-    }
 
     @Override
     public ServiceRegistry getNewServiceRegistry() {

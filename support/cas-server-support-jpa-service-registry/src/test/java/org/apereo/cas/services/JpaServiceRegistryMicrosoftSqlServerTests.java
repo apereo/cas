@@ -18,7 +18,4 @@ import org.springframework.test.context.TestPropertySource;
 @EnabledIfPortOpen(port = 1433)
 @Category(MsSqlServerCategory.class)
 public class JpaServiceRegistryMicrosoftSqlServerTests extends JpaServiceRegistryTests {
-    public JpaServiceRegistryMicrosoftSqlServerTests(final Class<? extends RegisteredService> registeredServiceClass) {
-        super(registeredServiceClass);
-    }
 }

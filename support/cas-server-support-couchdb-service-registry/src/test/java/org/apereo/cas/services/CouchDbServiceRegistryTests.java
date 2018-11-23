@@ -41,10 +41,6 @@ public class CouchDbServiceRegistryTests extends AbstractServiceRegistryTests {
     @Qualifier("serviceRegistryCouchDbRepository")
     private RegisteredServiceCouchDbRepository registeredServiceRepository;
 
-    public CouchDbServiceRegistryTests() {
-        super(RegexRegisteredService.class);
-    }
-
     @Override
     public ServiceRegistry getNewServiceRegistry() {
         return this.serviceRegistry;

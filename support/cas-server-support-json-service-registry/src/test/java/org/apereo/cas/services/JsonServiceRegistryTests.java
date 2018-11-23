@@ -7,14 +7,10 @@ import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -25,17 +21,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@RunWith(Parameterized.class)
 public class JsonServiceRegistryTests extends AbstractResourceBasedServiceRegistryTests {
-    public JsonServiceRegistryTests(final Class<? extends RegisteredService> registeredServiceClass) {
-        super(registeredServiceClass);
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() {
-        return Collections.singletonList(RegexRegisteredService.class);
-    }
-
     @SneakyThrows
     @Override
     public ServiceRegistry getNewServiceRegistry() {

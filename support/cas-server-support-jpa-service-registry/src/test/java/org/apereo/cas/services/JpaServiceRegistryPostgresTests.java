@@ -18,7 +18,4 @@ import org.springframework.test.context.TestPropertySource;
 @EnabledIfPortOpen(port = 5432)
 @Category(PostgresCategory.class)
 public class JpaServiceRegistryPostgresTests extends JpaServiceRegistryTests {
-    public JpaServiceRegistryPostgresTests(final Class<? extends RegisteredService> registeredServiceClass) {
-        super(registeredServiceClass);
-    }
 }
