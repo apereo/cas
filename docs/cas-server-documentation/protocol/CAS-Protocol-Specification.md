@@ -70,7 +70,7 @@ interpreted as described in RFC 2119[1](<#1>).
 
 -   "SLO" refers to Single Logout.
 
--   "<LF>" is a bare line feed (ASCII value 0x0a).
+-   "&lt;LF&gt;" is a bare line feed (ASCII value 0x0a).
 
 <a name="head1.2"/>
 
@@ -491,11 +491,11 @@ case sensitive and MUST all be handled by `/validate`.
 
 On ticket validation success:
 
-yes<LF>
+yes&lt;LF&gt;
 
 On ticket validation failure:
 
-no<LF>
+no&lt;LF&gt;
 
 
 

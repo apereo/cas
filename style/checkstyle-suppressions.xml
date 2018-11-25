@@ -29,6 +29,6 @@
     <suppress id="useLombokVar" files="(.*ConfigurationMetadataGenerator|.*ConfigurationMetadataHint|.*RelaxedPropertyNames)\.java" />
     <suppress id="usingAutowiredInApiClasses" files="(.*Command|.*Configuration|.*WebApplication|.*Controller|.*Tests*|Mock.*|Test.*)\.java" />
     <suppress id="useLombokVar" files="RestConsentRepositoryTests.java" lines="56,81"/>
-    <suppress id="useLombokVaLForFinalVar" files="(.*ConfigurationMetadataGenerator|.*ConfigurationMetadataHint|.*RelaxedPropertyNames)\.java" />
-    <suppress id="useLombokVarForGenerics" files="(.*ConfigurationMetadataGenerator|.*ConfigurationMetadataHint|.*RelaxedPropertyNames)\.java" />
+    <suppress id="useLombokVaLForFinalVar" files="(.*ConfigurationMetadataGenerator|.*ConfigurationMetadataHint|.*RelaxedPropertyNames|.*AdditionalMetadataVerificationTests)\.java" />
+    <suppress id="useLombokVarForGenerics" files="(.*ConfigurationMetadataGenerator|.*ConfigurationMetadataHint|.*RelaxedPropertyNames|.*AdditionalMetadataVerificationTests)\.java" />
 </suppressions>
