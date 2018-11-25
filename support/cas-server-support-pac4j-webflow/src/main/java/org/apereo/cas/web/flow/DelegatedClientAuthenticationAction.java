@@ -13,6 +13,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.support.pac4j.logout.RequestSloException;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.CollectionUtils;
@@ -41,6 +42,7 @@ import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.saml.metadata.SAML2ServiceProviderMetadataResolver;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -48,6 +50,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -192,11 +195,17 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             val service = restoreAuthenticationRequestInContext(context, webContext, clientName);
             val client = findDelegatedClientByName(request, clientName, service);
 
-            val credentials = getCredentialsFromDelegatedClient(webContext, client);
-            val clientCredential = new ClientCredential(credentials, client.getName());
-            WebUtils.putCredential(context, clientCredential);
-            WebUtils.putService(context, service);
-            WebUtils.putRegisteredService(context, servicesManager.findServiceBy(service));
+            try {
+                val credentials = getCredentialsFromDelegatedClient(webContext, client);
+                val clientCredential = new ClientCredential(credentials, client.getName());
+                WebUtils.putCredential(context, clientCredential);
+                WebUtils.putService(context, service);
+                WebUtils.putRegisteredService(context, servicesManager.findServiceBy(service));
+
+            } catch (final Exception e) {
+                return handleException(webContext, client, e);
+            }
+
             return super.doExecute(context);
         }
 
@@ -206,6 +215,28 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             return stopWebflow();
         }
         return error();
+    }
+
+    /**
+     * Handle the thrown exception.
+     *
+     * @param webContext the web context
+     * @param client the authentication client
+     * @param e the thrown exception
+     * @return the event to trigger
+     */
+    protected Event handleException(final J2EContext webContext, final BaseClient<Credentials, CommonProfile> client, final Exception e) {
+        if (e instanceof RequestSloException) {
+            try {
+                webContext.getResponse().sendRedirect("logout");
+            } catch (final IOException ioe) {
+                throw new IllegalArgumentException("Unable to call logout", ioe);
+            }
+            return stopWebflow();
+        } else {
+            LOGGER.info(e.getMessage(), e);
+            throw new IllegalArgumentException("Delegated authentication has failed with client " + client.getName());
+        }
     }
 
     private boolean singleSignOnSessionExists(final RequestContext requestContext) {
@@ -235,17 +266,12 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
      * @return the credentials from delegated client
      */
     protected Credentials getCredentialsFromDelegatedClient(final J2EContext webContext, final BaseClient<Credentials, CommonProfile> client) {
-        try {
-            val credentials = client.getCredentials(webContext);
-            LOGGER.debug("Retrieved credentials from client as [{}]", credentials);
-            if (credentials == null) {
-                throw new IllegalArgumentException("Unable to determine credentials from the context with client " + client.getName());
-            }
-            return credentials;
-        } catch (final Exception e) {
-            LOGGER.info(e.getMessage(), e);
-            throw new IllegalArgumentException("Delegated authentication has failed with client " + client.getName());
+        val credentials = client.getCredentials(webContext);
+        LOGGER.debug("Retrieved credentials from client as [{}]", credentials);
+        if (credentials == null) {
+            throw new IllegalArgumentException("Unable to determine credentials from the context with client " + client.getName());
         }
+        return credentials;
     }
 
     /**
@@ -410,7 +436,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     }
 
     /**
-     * Restore authentication request in context service.
+     * Restore authentication request in context service (return null for a logout call).
      *
      * @param requestContext the request context
      * @param webContext     the web context
@@ -418,15 +444,20 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
      * @return the service
      */
     protected Service restoreAuthenticationRequestInContext(final RequestContext requestContext, final J2EContext webContext, final String clientName) {
-        try {
-            delegatedSessionCookieManager.restore(webContext);
-            val client = (BaseClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
-            val service = delegatedClientWebflowManager.retrieve(requestContext, webContext, client);
-            return service;
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+        val logoutEndpoint = webContext.getRequestParameter(SAML2ServiceProviderMetadataResolver.LOGOUT_ENDPOINT_PARAMETER);
+        if (logoutEndpoint != null) {
+            return null;
+        } else {
+            try {
+                delegatedSessionCookieManager.restore(webContext);
+                val client = (BaseClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
+                val service = delegatedClientWebflowManager.retrieve(requestContext, webContext, client);
+                return service;
+            } catch (final Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Service unauthorized");
         }
-        throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Service unauthorized");
     }
 
     /**

@@ -1,7 +1,7 @@
 {
   "properties": [
     {
-      "name": "cas.authn.releaseProtocolAttributes",
+      "name": "cas.authn.release-protocol-attributes",
       "type": "java.lang.Boolean",
       "description": "Whether to release authentication attributes.",
       "defaultValue": true,
@@ -12,7 +12,7 @@
       }
     },
     {
-      "name": "cas.authn.x509.principalSNRadix",
+      "name": "cas.authn.x509.principal-sn-radix",
       "type": "java.lang.Integer",
       "description": "X509 principal extraction config.",
       "defaultValue": 10,
@@ -23,7 +23,7 @@
       }
     },
     {
-      "name": "cas.authn.x509.principalHexSNZeroPadding",
+      "name": "cas.authn.x509.principal-hex-sn-zero-padding",
       "type": "java.lang.Boolean",
       "description": "X509 principal extraction config.",
       "defaultValue": true,
@@ -34,7 +34,7 @@
       }
     },
     {
-      "name": "cas.authn.x509.valueDelimiter",
+      "name": "cas.authn.x509.value-delimiter",
       "type": "java.lang.String",
       "description": "X509 principal extraction config.",
       "defaultValue": ",",
@@ -45,7 +45,7 @@
       }
     },
     {
-      "name": "cas.authn.x509.serialNumberPrefix",
+      "name": "cas.authn.x509.serial-number-prefix",
       "type": "java.lang.String",
       "description": "X509 principal extraction config.",
       "defaultValue": "SERIALNUMBER=",
@@ -56,7 +56,7 @@
       }
     },
     {
-      "name": "cas.server.basicAuthn.enabled",
+      "name": "cas.server.basic-authn.enabled",
       "type": "java.lang.Boolean",
       "description": "Enable basic auth on tomcat.",
       "defaultValue": false,
@@ -78,7 +78,7 @@
       }
     },
     {
-      "name": "cas.adminPagesSecurity.actuatorEndpointsEnabled",
+      "name": "cas.admin-pages-security.actuator-endpoints-enabled",
       "type": "java.lang.Boolean",
       "description": "Enable actuator endpoints.",
       "defaultValue": false,
@@ -89,7 +89,7 @@
       }
     },
     {
-      "name": "cas.adminPagesSecurity.ip",
+      "name": "cas.admin-pages-security.ip",
       "type": "java.lang.String",
       "description": "Enable actuator endpoints.",
       "defaultValue": "127.0.0.1",
