@@ -12,7 +12,6 @@ import com.github.scribejava.core.model.Verb;
 import com.nimbusds.jose.JWSAlgorithm;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -65,7 +64,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 @Getter
-@Setter
 public class DelegatedClientFactory {
     /**
      * The Pac 4 j properties.
@@ -75,7 +73,11 @@ public class DelegatedClientFactory {
     /**
      * The pac4j specific logout handler for the CAS server.
      */
-    private LogoutHandler casServerSpecificLogoutHandler = new CasServerSpecificLogoutHandler();
+    private final LogoutHandler casServerSpecificLogoutHandler;
+
+    public DelegatedClientFactory(final Pac4jDelegatedAuthenticationProperties pac4jProperties) {
+        this(pac4jProperties, new CasServerSpecificLogoutHandler());
+    }
 
     /**
      * Configure github client.
@@ -573,7 +575,7 @@ public class DelegatedClientFactory {
         configureBitBucketClient(clients);
         configureOrcidClient(clients);
         configureHiOrgServerClient(clients);
-        
+
         return clients;
     }
 }
