@@ -3179,6 +3179,13 @@ ext.libraries = [
                     force = true
                 }
         ],
+        bucket4j               : [
+                dependencies.create("com.github.vladimir-bukhtoyarov:bucket4j-core:$bucket4jVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.json", module: "json")
+                    force = true
+                }
+        ],
         webjars                 : [
                 dependencies.create("org.webjars:headjs:$headjsVersion") {
                     force = true
