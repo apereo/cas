@@ -534,7 +534,7 @@
             <property name="message" value="Use lombok.val when declaring collections with generics"/>
         </module>
         <module name="RegexpSinglelineJava">
-            <property name="id" value="useLombokVaLForFinalVar"/>
+            <property name="id" value="useLombokValForFinalVar"/>
             <metadata name="net.sf.eclipsecs.core.comment" value="Using val for variable definitions"/>
             <property name="severity" value="error"/>
             <property name="format" value="final\s+var\s+"/>

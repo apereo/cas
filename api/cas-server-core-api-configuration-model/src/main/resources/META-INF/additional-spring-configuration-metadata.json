@@ -12,6 +12,17 @@
       }
     },
     {
+      "name": "cas.authn.throttle.appcode",
+      "type": "java.lang.String",
+      "description": "Throttling application code to record.",
+      "defaultValue": "CAS",
+      "deprecation": {
+        "replacement": "cas.authn.throttle.app-code",
+        "reason": "Property is renamed to account for new property naming rules",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.authn.x509.principal-sn-radix",
       "type": "java.lang.Integer",
       "description": "X509 principal extraction config.",

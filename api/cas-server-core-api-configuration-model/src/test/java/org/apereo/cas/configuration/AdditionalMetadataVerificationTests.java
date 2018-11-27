@@ -24,6 +24,7 @@ import static org.junit.Assert.*;
 
 /**
  * Test additional metadata validity.
+ *
  * @since 6.0
  */
 public class AdditionalMetadataVerificationTests {
@@ -39,20 +40,22 @@ public class AdditionalMetadataVerificationTests {
 
     /**
      * Make sure the property names are canonical (not camel case) otherwise app won't start.
-     * Spring boot PropertiesMigrationListener will prevent startup if property names aren't valid.
+     * Spring boot {@link org.springframework.boot.context.properties.migrator.PropertiesMigrationListener}
+     * will prevent startup if property names aren't valid.
+     *
      * @throws IOException if additional property file is missing
      */
     @Test
     public void verifyMetaData() throws IOException {
         val mapper = new ObjectMapper().findAndRegisterModules();
-        val jsonFile = resourceLoader.getResource("file:src/main/resources/META-INF/additional-spring-configuration-metadata.json");
+        val jsonFile = resourceLoader.getResource("META-INF/additional-spring-configuration-metadata.json");
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
         mapper.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
         val values = new TypeReference<Map<String, Set<ConfigurationMetadataProperty>>>() {
         };
-        final Map<String, Set<ConfigurationMetadataProperty>> jsonMap = mapper.readValue(jsonFile.getURL(), values);
-        val props = jsonMap.get("properties");
-        for (val prop: props) {
+        val jsonMap = (Map) mapper.readValue(jsonFile.getURL(), values);
+        val props = (Set<ConfigurationMetadataProperty>) jsonMap.get("properties");
+        for (val prop : props) {
             try {
                 ConfigurationPropertyName.of(prop.getName());
             } catch (final InvalidConfigurationPropertyNameException e) {

@@ -1224,7 +1224,7 @@ To learn more about this topic, [please review this guide](../installation/Confi
 # cas.authn.throttle.usernameParameter=username
 # cas.authn.throttle.schedule.startDelay=PT10S
 # cas.authn.throttle.schedule.repeatInterval=PT20S
-# cas.authn.throttle.appcode=CAS
+# cas.authn.throttle.appCode=CAS
 
 # cas.authn.throttle.failure.threshold=100
 # cas.authn.throttle.failure.code=AUTHENTICATION_FAILED
