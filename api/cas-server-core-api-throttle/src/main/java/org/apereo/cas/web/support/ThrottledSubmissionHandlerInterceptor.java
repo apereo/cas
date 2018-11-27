@@ -72,4 +72,14 @@ public interface ThrottledSubmissionHandlerInterceptor extends AsyncHandlerInter
                                  final Object o,
                                  final Exception e) throws Exception {
     }
+
+    /**
+     * No op throttled submission handler interceptor.
+     *
+     * @return the throttled submission handler interceptor
+     */
+    static ThrottledSubmissionHandlerInterceptor noOp() {
+        return new ThrottledSubmissionHandlerInterceptor() {
+        };
+    }
 }
