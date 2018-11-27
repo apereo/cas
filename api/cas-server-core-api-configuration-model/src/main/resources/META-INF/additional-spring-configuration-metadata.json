@@ -100,7 +100,7 @@
       }
     },
     {
-      "name": "cas.server.http-proxy.enabled",
+      "name": "cas.server.http-roxy.enabled",
       "type": "java.lang.Boolean",
       "description": "Enable tomcat http proxy.",
       "defaultValue": false,

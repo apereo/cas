@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -58,6 +59,10 @@ public class AdditionalMetadataVerificationTests {
         for (val prop : props) {
             try {
                 ConfigurationPropertyName.of(prop.getName());
+                val deprecation = prop.getDeprecation();
+                if (deprecation != null && StringUtils.isNotBlank(deprecation.getReplacement())) {
+                    ConfigurationPropertyName.of(deprecation.getReplacement());
+                }
             } catch (final InvalidConfigurationPropertyNameException e) {
                 fail(e.getMessage());
             }
