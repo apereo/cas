@@ -50,6 +50,12 @@ public class ThrottleProperties implements Serializable {
     private Bucket4jThrottleProperties bucket4j = new Bucket4jThrottleProperties();
 
     /**
+     * Settings related to throttling requests using hazelcast.
+     */
+    @NestedConfigurationProperty
+    private HazelcastThrottleProperties hazelcast = new HazelcastThrottleProperties();
+
+    /**
      * Username parameter to use in order to extract the username from the request.
      */
     private String usernameParameter;
