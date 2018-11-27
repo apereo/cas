@@ -6,7 +6,6 @@ import org.apereo.cas.category.LdapCategory;
 import org.apereo.cas.config.CasConsentLdapConfiguration;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,7 +18,6 @@ import com.unboundid.ldap.sdk.SearchScope;
 import lombok.Getter;
 import lombok.val;
 import org.junit.After;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,9 +54,6 @@ public abstract class BaseLdapConsentRepositoryTests extends BaseConsentReposito
     private static final Service SVC2 = RegisteredServiceTestUtils.getService2();
     private static final AbstractRegisteredService REG_SVC2 = RegisteredServiceTestUtils.getRegisteredService(SVC2.getId());
     private static final String DEF_FILTER = "(objectClass=*)";
-
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
 
     @Autowired
     @Qualifier("consentRepository")
