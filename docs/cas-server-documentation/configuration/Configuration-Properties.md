@@ -1219,7 +1219,6 @@ to examine account status and policy.
 CAS provides a facility for limiting failed login attempts to support password guessing and related abuse scenarios.
 To learn more about this topic, [please review this guide](../installation/Configuring-Authentication-Throttling.html).
 
-
 ```properties
 # cas.authn.throttle.usernameParameter=username
 # cas.authn.throttle.schedule.startDelay=PT10S
@@ -1231,10 +1230,32 @@ To learn more about this topic, [please review this guide](../installation/Confi
 # cas.authn.throttle.failure.rangeSeconds=60
 ```
 
+### Bucket4j
+
+Handle capacity planning and system overload protection using rate-limiting and token buckets.
+
+```properties
+# cas.authn.throttle.bucket4j.rangeInSeconds=60
+# cas.authn.throttle.bucket4j.capacity=120
+# cas.authn.throttle.bucket4j.blocking=true
+# cas.authn.throttle.bucket4j.overdraft=0
+```
+
+### MongoDb
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.audit`. This feature uses the same data source used by the CAS MongoDb audit facility. 
+
+### Hazelcast
+
+Use a distributed Hazelcast map to record throttled authentication attempts. Hazelcast settings for this feature are available [here](Configuration-Properties-Common.html#hazelcast-configuration) under the configuration key `cas.authn.throttle.hazelcast`.
+
 ### Database
 
 Queries the data source used by the CAS audit facility to prevent successive failed login attempts for a particular username from the
-same IP address. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.throttle.jdbc`.
+same IP address. 
+
+Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) 
+under the configuration key `cas.authn.throttle.jdbc`.
 
 ```properties
 # cas.authn.throttle.jdbc.auditQuery=SELECT AUD_DATE FROM COM_AUDIT_TRAIL WHERE AUD_CLIENT_IP = ? AND AUD_USER = ? \
@@ -1245,7 +1266,7 @@ same IP address. Database settings for this feature are available [here](Configu
 
 Queries the data source used by the CAS audit facility to prevent successive failed login attempts for a particular username from the
 same IP address. CouchDb settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-settings) under the configuration key
-`cas.authn.throttle`. When using this feature the audit facility should be in syncronous mode.
+`cas.authn.throttle`. When using this feature the audit facility should be in synchronous mode.
 
 ## Adaptive Authentication
 
