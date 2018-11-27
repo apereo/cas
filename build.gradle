@@ -296,6 +296,7 @@ subprojects {
             it.options.errorprone.errorproneArgs += ['-Xep:ParameterName:OFF', '-Xep:MissingOverride:OFF']
 
             casCompilerArgs.add("-XDcompilePolicy=byfile")
+            casCompilerArgs.add("-Werror")
         }
         it.options.compilerArgs += casCompilerArgs
     }
