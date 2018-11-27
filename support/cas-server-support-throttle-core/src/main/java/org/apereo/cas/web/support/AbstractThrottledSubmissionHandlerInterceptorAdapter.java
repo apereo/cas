@@ -2,6 +2,7 @@ package org.apereo.cas.web.support;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
+import org.apereo.cas.throttle.ThrottledRequestExecutor;
 import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
 import org.apereo.cas.util.DateTimeUtils;
 
@@ -63,31 +64,47 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
 
     private final ThrottledRequestResponseHandler throttledRequestResponseHandler;
 
-    /**
-     * Configure the threshold rate.
-     */
+    private final ThrottledRequestExecutor throttledRequestExecutor;
+
     @Override
     public void afterPropertiesSet() {
         this.thresholdRate = (double) this.failureThreshold / this.failureRangeInSeconds;
-        LOGGER.debug("Calculated threshold rate as [{}]", this.thresholdRate);
+        LOGGER.trace("Calculated threshold rate as [{}]", this.thresholdRate);
     }
 
     @Override
-    public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object o) throws Exception {
+    public final boolean preHandle(final HttpServletRequest request, final HttpServletResponse response,
+                                   final Object o) throws Exception {
         if (!HttpMethod.POST.name().equals(request.getMethod())) {
             LOGGER.trace("Letting the request through given http method is [{}]", request.getMethod());
             return true;
         }
 
-        if (exceedsThreshold(request)) {
+        val throttled = throttleRequest(request, response) || exceedsThreshold(request);
+        if (throttled) {
+            LOGGER.warn("Throttling submission from [{}]. More than [{}] failed login attempts within [{}] seconds. "
+                    + "Authentication attempt exceeds the failure threshold [{}]", request.getRemoteAddr(),
+                this.failureThreshold, this.failureRangeInSeconds, this.failureThreshold);
+
             recordThrottle(request);
             return throttledRequestResponseHandler.handle(request, response);
         }
         return true;
     }
 
+    /**
+     * Is request throttled.
+     *
+     * @param request  the request
+     * @param response the response
+     * @return true if the request is throttled. False otherwise, letting it proceed.
+     */
+    protected boolean throttleRequest(final HttpServletRequest request, final HttpServletResponse response) {
+        return throttledRequestExecutor != null && throttledRequestExecutor.throttle(request, response);
+    }
+
     @Override
-    public void postHandle(final HttpServletRequest request, final HttpServletResponse response, final Object o, final ModelAndView modelAndView) {
+    public final void postHandle(final HttpServletRequest request, final HttpServletResponse response, final Object o, final ModelAndView modelAndView) {
         if (!HttpMethod.POST.name().equals(request.getMethod())) {
             LOGGER.trace("Skipping authentication throttling for requests other than POST");
             return;
@@ -119,9 +136,6 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
      * @param request the request
      */
     protected void recordThrottle(final HttpServletRequest request) {
-        LOGGER.warn("Throttling submission from [{}]. More than [{}] failed login attempts within [{}] seconds. "
-                + "Authentication attempt exceeds the failure threshold [{}]", request.getRemoteAddr(),
-            this.failureThreshold, this.failureRangeInSeconds, this.failureThreshold);
     }
 
     @Override

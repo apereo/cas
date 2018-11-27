@@ -30,6 +30,7 @@ dependencies {
     implementation libraries.metrics
     implementation libraries.pac4j
     implementation libraries.nimbus
+    implementation libraries.snakeyaml
     implementation libraries.jasypt
     implementation libraries.bouncycastle
     implementation libraries.opensaml

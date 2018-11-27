@@ -1311,10 +1311,23 @@ ext.libraries = [
                     force = true
                 }
         ],
+        snakeyaml : [
+                dependencies.create("org.yaml:snakeyaml:$snakeYamlVersion") {
+                    exclude(group: "junit", module: "junit")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-context-support")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "commons-io", module: "commons-io")
+                    force = true
+                }
+        ],
         azurekeyvault           : [
                 dependencies.create("com.microsoft.azure:azure-keyvault-secrets-spring-boot-starter:$azureKeyVaultSecretsVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.nimbusds", module: "nimbus-jose-jwt")
+                    force = true
                 }
         ],
         cosmosdb                : [
@@ -1370,6 +1383,9 @@ ext.libraries = [
                 },
                 dependencies.create("org.objenesis:objenesis:$objenesisVersion") {
                     exclude(group: "org.mockito", module: "mockito-all")
+                    force = true
+                },
+                dependencies.create("junit:junit:4.12") {
                     force = true
                 },
                 dependencies.create("org.junit.jupiter:junit-jupiter-api:$junitVersion") {

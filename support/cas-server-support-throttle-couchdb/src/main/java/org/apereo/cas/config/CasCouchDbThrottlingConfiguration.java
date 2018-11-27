@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchdb.audit.AuditActionContextCouchDbRepository;
+import org.apereo.cas.throttle.ThrottledRequestExecutor;
 import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
 import org.apereo.cas.web.support.CouchDbThrottledSubmissionHandlerInterceptorAdapter;
 
@@ -40,6 +41,10 @@ public class CasCouchDbThrottlingConfiguration {
     private ObjectProvider<AuditActionContextCouchDbRepository> couchDbRepository;
 
     @Autowired
+    @Qualifier("throttledRequestExecutor")
+    private ObjectProvider<ThrottledRequestExecutor> throttledRequestExecutor;
+
+    @Autowired
     @Qualifier("throttledRequestResponseHandler")
     private ObjectProvider<ThrottledRequestResponseHandler> throttledRequestResponseHandler;
 
@@ -54,8 +59,9 @@ public class CasCouchDbThrottlingConfiguration {
             throttle.getUsernameParameter(),
             failure.getCode(),
             auditTrailManager.getIfAvailable(),
-            throttle.getAppcode(),
+            throttle.getAppCode(),
             couchDbRepository.getIfAvailable(),
-            throttledRequestResponseHandler.getIfAvailable());
+            throttledRequestResponseHandler.getIfAvailable(),
+            throttledRequestExecutor.getIfAvailable());
     }
 }

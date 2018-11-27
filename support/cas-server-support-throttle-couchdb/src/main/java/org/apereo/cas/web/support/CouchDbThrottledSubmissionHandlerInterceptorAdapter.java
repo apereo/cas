@@ -2,6 +2,7 @@ package org.apereo.cas.web.support;
 
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.couchdb.audit.AuditActionContextCouchDbRepository;
+import org.apereo.cas.throttle.ThrottledRequestExecutor;
 import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
 
 import lombok.val;
@@ -32,8 +33,11 @@ public class CouchDbThrottledSubmissionHandlerInterceptorAdapter extends Abstrac
                                                                final AuditTrailExecutionPlan auditTrailManager,
                                                                final String applicationCode,
                                                                final AuditActionContextCouchDbRepository repository,
-                                                               final ThrottledRequestResponseHandler throttledRequestResponseHandler) {
-        super(failureThreshold, failureRangeInSeconds, usernameParameter, authenticationFailureCode, auditTrailManager, applicationCode, throttledRequestResponseHandler);
+                                                               final ThrottledRequestResponseHandler throttledRequestResponseHandler,
+                                                               final ThrottledRequestExecutor throttledRequestExecutor) {
+        super(failureThreshold, failureRangeInSeconds, usernameParameter,
+            authenticationFailureCode, auditTrailManager, applicationCode,
+            throttledRequestResponseHandler, throttledRequestExecutor);
         this.repository = repository;
     }
 

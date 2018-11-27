@@ -1,6 +1,7 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
+import org.apereo.cas.throttle.ThrottledRequestExecutor;
 import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
 
 import lombok.val;
@@ -26,7 +27,6 @@ import java.util.stream.Collectors;
  * @since 3.3.5
  */
 public class JdbcThrottledSubmissionHandlerInterceptorAdapter extends AbstractInspektrAuditHandlerInterceptorAdapter {
-    private final DataSource dataSource;
     private final String sqlQueryAudit;
     private final JdbcTemplate jdbcTemplate;
 
@@ -34,15 +34,17 @@ public class JdbcThrottledSubmissionHandlerInterceptorAdapter extends AbstractIn
                                                             final int failureRangeInSeconds,
                                                             final String usernameParameter,
                                                             final AuditTrailExecutionPlan auditTrailManager,
-                                                            final DataSource dataSource, final String applicationCode,
-                                                            final String sqlQueryAudit, final String authenticationFailureCode,
-                                                            final ThrottledRequestResponseHandler throttledRequestResponseHandler) {
+                                                            final DataSource dataSource,
+                                                            final String applicationCode,
+                                                            final String sqlQueryAudit,
+                                                            final String authenticationFailureCode,
+                                                            final ThrottledRequestResponseHandler throttledRequestResponseHandler,
+                                                            final ThrottledRequestExecutor throttledRequestExecutor) {
         super(failureThreshold, failureRangeInSeconds, usernameParameter,
             authenticationFailureCode, auditTrailManager, applicationCode,
-            throttledRequestResponseHandler);
-        this.dataSource = dataSource;
+            throttledRequestResponseHandler, throttledRequestExecutor);
         this.sqlQueryAudit = sqlQueryAudit;
-        this.jdbcTemplate = new JdbcTemplate(this.dataSource);
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
+import org.apereo.cas.throttle.ThrottledRequestExecutor;
 import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
 
 import lombok.extern.slf4j.Slf4j;
@@ -33,9 +34,11 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
                                                                         final AuditTrailExecutionPlan auditTrailExecutionPlan,
                                                                         final String applicationCode,
                                                                         final ThrottledRequestResponseHandler throttledRequestResponseHandler,
-                                                                        final ConcurrentMap map) {
+                                                                        final ConcurrentMap map,
+                                                                        final ThrottledRequestExecutor throttledRequestExecutor) {
         super(failureThreshold, failureRangeInSeconds, usernameParameter,
-            authenticationFailureCode, auditTrailExecutionPlan, applicationCode, throttledRequestResponseHandler);
+            authenticationFailureCode, auditTrailExecutionPlan, applicationCode,
+            throttledRequestResponseHandler, throttledRequestExecutor);
         this.ipMap = map;
     }
 

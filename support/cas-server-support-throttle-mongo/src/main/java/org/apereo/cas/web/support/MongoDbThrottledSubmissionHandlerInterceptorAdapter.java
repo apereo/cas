@@ -1,6 +1,7 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
+import org.apereo.cas.throttle.ThrottledRequestExecutor;
 import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
 
 import lombok.extern.slf4j.Slf4j;
@@ -32,11 +33,13 @@ public class MongoDbThrottledSubmissionHandlerInterceptorAdapter extends Abstrac
                                                                final AuditTrailExecutionPlan auditTrailExecutionPlan,
                                                                final MongoTemplate mongoTemplate,
                                                                final String authenticationFailureCode,
-                                                               final String applicationCode, final String collectionName,
-                                                               final ThrottledRequestResponseHandler throttledRequestResponseHandler) {
+                                                               final String applicationCode,
+                                                               final String collectionName,
+                                                               final ThrottledRequestResponseHandler throttledRequestResponseHandler,
+                                                               final ThrottledRequestExecutor throttledRequestExecutor) {
         super(failureThreshold, failureRangeInSeconds, usernameParameter,
             authenticationFailureCode, auditTrailExecutionPlan, applicationCode,
-            throttledRequestResponseHandler);
+            throttledRequestResponseHandler, throttledRequestExecutor);
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;
     }

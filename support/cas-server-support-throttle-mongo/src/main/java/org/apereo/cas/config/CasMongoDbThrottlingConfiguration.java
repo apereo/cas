@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
+import org.apereo.cas.throttle.ThrottledRequestExecutor;
 import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
 import org.apereo.cas.web.support.MongoDbThrottledSubmissionHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
@@ -34,9 +35,14 @@ public class CasMongoDbThrottlingConfiguration {
     private ObjectProvider<ThrottledRequestResponseHandler> throttledRequestResponseHandler;
 
     @Autowired
+    @Qualifier("throttledRequestExecutor")
+    private ObjectProvider<ThrottledRequestExecutor> throttledRequestExecutor;
+
+    @Autowired
     @Bean
     @RefreshScope
-    public ThrottledSubmissionHandlerInterceptor authenticationThrottle(@Qualifier("auditTrailExecutionPlan") final AuditTrailExecutionPlan auditTrailExecutionPlan) {
+    public ThrottledSubmissionHandlerInterceptor authenticationThrottle(
+        @Qualifier("auditTrailExecutionPlan") final AuditTrailExecutionPlan auditTrailExecutionPlan) {
         val throttle = casProperties.getAuthn().getThrottle();
         val failure = throttle.getFailure();
 
@@ -51,8 +57,9 @@ public class CasMongoDbThrottlingConfiguration {
             auditTrailExecutionPlan,
             mongoTemplate,
             failure.getCode(),
-            throttle.getAppcode(),
+            throttle.getAppCode(),
             mongo.getCollection(),
-            throttledRequestResponseHandler.getIfAvailable());
+            throttledRequestResponseHandler.getIfAvailable(),
+            throttledRequestExecutor.getIfAvailable());
     }
 }

@@ -1,6 +1,7 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
+import org.apereo.cas.throttle.ThrottledRequestExecutor;
 import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
 
 import lombok.val;
@@ -27,9 +28,11 @@ public class InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
                                                                                       final AuditTrailExecutionPlan auditTrailExecutionPlan,
                                                                                       final String applicationCode,
                                                                                       final ThrottledRequestResponseHandler throttledRequestResponseHandler,
-                                                                                      final ConcurrentMap map) {
+                                                                                      final ConcurrentMap map,
+                                                                                      final ThrottledRequestExecutor throttledRequestExecutor) {
         super(failureThreshold, failureRangeInSeconds, usernameParameter,
-            authenticationFailureCode, auditTrailExecutionPlan, applicationCode, throttledRequestResponseHandler, map);
+            authenticationFailureCode, auditTrailExecutionPlan, applicationCode,
+            throttledRequestResponseHandler, map, throttledRequestExecutor);
     }
 
     @Override
