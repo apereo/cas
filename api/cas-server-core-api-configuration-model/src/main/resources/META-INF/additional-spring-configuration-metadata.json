@@ -6,7 +6,7 @@
       "description": "Whether to release authentication attributes.",
       "defaultValue": true,
       "deprecation": {
-        "replacement": "cas.authn.authenticationAttributeRelease.enabled",
+        "replacement": "cas.authn.authentication-attribute-release.enabled",
         "reason": "Property renamed due to new cas.authn.authenticationAttributeRelease.* settings.",
         "level": "error"
       }
@@ -28,7 +28,7 @@
       "description": "X509 principal extraction config.",
       "defaultValue": 10,
       "deprecation": {
-        "replacement": "cas.authn.x509.serialNo.principalSNRadix",
+        "replacement": "cas.authn.x509.serial-no.principal-s-n-radix",
         "reason": "Property renamed due to x509 settings reorganization.",
         "level": "error"
       }
@@ -39,7 +39,7 @@
       "description": "X509 principal extraction config.",
       "defaultValue": true,
       "deprecation": {
-        "replacement": "cas.authn.x509.serialNo.principalHexSNZeroPadding",
+        "replacement": "cas.authn.x509.serial-no.principal-hex-s-n-zero-padding",
         "reason": "Property renamed due to x509 settings reorganization.",
         "level": "error"
       }
@@ -50,7 +50,7 @@
       "description": "X509 principal extraction config.",
       "defaultValue": ",",
       "deprecation": {
-        "replacement": "cas.authn.x509.serialNoDn.valueDelimiter",
+        "replacement": "cas.authn.x509.serial-no-dn.value-delimiter",
         "reason": "Property renamed due to x509 settings reorganization.",
         "level": "error"
       }
@@ -61,7 +61,7 @@
       "description": "X509 principal extraction config.",
       "defaultValue": "SERIALNUMBER=",
       "deprecation": {
-        "replacement": "cas.authn.x509.serialNoDn.serialNumberPrefix",
+        "replacement": "cas.authn.x509.serial-no-dn.serial-number-prefix",
         "reason": "Property renamed due to x509 settings reorganization.",
         "level": "error"
       }
@@ -72,7 +72,7 @@
       "description": "Enable basic auth on tomcat.",
       "defaultValue": false,
       "deprecation": {
-        "replacement": "cas.server.tomcat.basicAuthn.enabled",
+        "replacement": "cas.server.tomcat.basic-authn.enabled",
         "reason": "cas.server.* moved to cas.server.tomcat.*.",
         "level": "error"
       }
@@ -84,6 +84,28 @@
       "defaultValue": false,
       "deprecation": {
         "replacement": "cas.server.tomcat.clustering.enabled",
+        "reason": "cas.server.* moved to cas.server.tomcat.*.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.server.http.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enable tomcat HTTP.",
+      "defaultValue": false,
+      "deprecation": {
+        "replacement": "cas.server.tomcat.http.enabled",
+        "reason": "cas.server.* moved to cas.server.tomcat.*.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.server.http-proxy.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enable tomcat http proxy.",
+      "defaultValue": false,
+      "deprecation": {
+        "replacement": "cas.server.tomcat.http-proxy.enabled",
         "reason": "cas.server.* moved to cas.server.tomcat.*.",
         "level": "error"
       }
