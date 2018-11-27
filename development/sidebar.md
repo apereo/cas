@@ -170,6 +170,7 @@ layout: null
         *   [Sentry](/$version/logging/Logging-Sentry.html)
         *   [SysLog](/$version/logging/Logging-SysLog.html)
         *   [Splunk](/$version/logging/Logging-Splunk.html)
+        *   [Logback](/$version/logging/Logging-Logback.html)
     *   [Audits](/$version/installation/Audits.html)
     
 * [Monitoring & Statistics](#monitoroverview)
