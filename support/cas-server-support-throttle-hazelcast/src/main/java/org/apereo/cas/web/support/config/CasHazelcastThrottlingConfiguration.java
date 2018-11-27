@@ -38,7 +38,7 @@ public class CasHazelcastThrottlingConfiguration {
 
     @Bean
     public IMap throttleSubmissionMap() {
-        val hz = casProperties.getTicket().getRegistry().getHazelcast();
+        val hz = casProperties.getAuthn().getThrottle().getHazelcast();
         val timeout = Beans.newDuration(casProperties.getAuthn().getThrottle().getSchedule().getRepeatInterval()).getSeconds();
         val factory = new HazelcastConfigurationFactory();
         LOGGER.debug("Creating [{}] to record failed logins for throttling with timeout set to [{}]", MAP_KEY, timeout);
