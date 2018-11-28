@@ -81,7 +81,7 @@ Supported parameters are the following:
 
 ### Spring Webflow Endpoint
 
-The endpoint can accept a `flowId` parameter as part of a `GET` operation to only present the flow body of the requestd flow id.
+The endpoint can accept a `flowId` parameter as part of a `GET` operation to only present the flow body of the requested flow id.
 
 ### Single SignOn Sessions Endpoint
 
@@ -122,7 +122,7 @@ A `DELETE` operation produces with a parameter selector of `/{username}` will re
 
 A `GET` operation produces a list of all access/refresh tokens.
 A `DELETE` operation will delete the provided access/refresh token provided in form of a parameter selector. (i.e. `/{token}`)
-A `GET` operation produces with a parameter selector of `/{token}` will list the details of the fetched acces/refresh token.
+A `GET` operation produces with a parameter selector of `/{token}` will list the details of the fetched access/refresh token.
 
 ### Metrics
 
