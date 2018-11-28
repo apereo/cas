@@ -1,0 +1,23 @@
+description = "Apereo CAS Multifactor Authentication OTP Support"
+dependencies {
+    api libraries.googleauth
+
+    api project(":api:cas-server-core-api-webflow")
+    api project(":api:cas-server-core-api")
+
+    implementation libraries.caffein
+    implementation libraries.zxingbarcode
+
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-webflow-api")
+    implementation project(":core:cas-server-core-webflow-mfa-api")
+
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+
+    compileOnly project(":support:cas-server-support-trusted-mfa")
+}
