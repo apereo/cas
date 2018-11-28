@@ -40,7 +40,7 @@
 <main role="main" class="container mt-3 mb-3">
     <div layout:fragment="content">
 
-        <form method="post" id="fm1">
+        <form method="post" id="fm1" th:action="@{/login}">
             <div class="alert alert-info">
                 <h2 th:text="#{screen.consent.title}">Attribute Consent</h2>
 

@@ -16,10 +16,11 @@ import org.apereo.cas.util.spring.ApplicationContextProvider;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.client.util.URIBuilder;
+import org.apache.http.client.utils.URIBuilder;
 import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,6 +43,7 @@ public class OidcMultifactorAuthenticationTrigger implements MultifactorAuthenti
     private int order = Ordered.LOWEST_PRECEDENCE;
 
     @Override
+    @SneakyThrows
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
                                                                    final RegisteredService registeredService, final HttpServletRequest request, final Service service) {
         if (registeredService == null || authentication == null) {

@@ -101,7 +101,7 @@ public class WsFederationResponseValidator {
             WebUtils.putAuthenticationResult(authenticationResult, context);
             WebUtils.putAuthentication(authenticationResult.getAuthentication(), context);
             WebUtils.putCredential(context, credential);
-            WebUtils.putService(context, service);
+            WebUtils.putServiceIntoFlowScope(context, service);
 
             LOGGER.info("Token validated and new [{}] created: [{}]", credential.getClass().getName(), credential);
         } catch (final Exception e) {
