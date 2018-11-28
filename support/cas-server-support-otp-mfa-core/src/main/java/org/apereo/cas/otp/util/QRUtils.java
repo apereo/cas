@@ -1,4 +1,4 @@
-package org.apereo.cas.util;
+package org.apereo.cas.otp.util;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -31,11 +31,6 @@ public class QRUtils {
      * Large width size.
      */
     public static final int WIDTH_LARGE = 250;
-
-    /**
-     * Medium width size.
-     */
-    public static final int WIDTH_MEDIUM = 125;
 
     /**
      * Generate qr code.
