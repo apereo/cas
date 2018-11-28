@@ -16,8 +16,8 @@ public interface RegisteredServiceResourceNamingStrategy {
      * Method will be called to provide a name for a resource to store a service.
      *
      * @param service    - The Service to be saved.
-     * @param extenstion - The extension to be used.
+     * @param extension - The extension to be used.
      * @return - String representing a resource name.
      */
-    String build(RegisteredService service, String extenstion);
+    String build(RegisteredService service, String extension);
 }
