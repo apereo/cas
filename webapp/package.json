@@ -15,9 +15,6 @@
     "CAS",
     "Central Authentication Service"
   ],
-  "bugs": {
-    "url": "https://github.com/apereo/cas/issues"
-  },
   "scripts": {
     "gulp": "gulp",
     "lint": "eslint resources/static/**/*.js --quiet --color"

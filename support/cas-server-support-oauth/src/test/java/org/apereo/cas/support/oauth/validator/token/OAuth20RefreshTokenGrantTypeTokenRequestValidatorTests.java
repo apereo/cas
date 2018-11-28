@@ -61,7 +61,7 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests {
                 RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID,
                 RequestValidatorTestUtils.SHARED_SECRET,
                 CollectionUtils.wrapSet(OAuth20GrantTypes.PASSWORD));
-        val promiscuousService = RequestValidatorTestUtils.getPromiscousService(
+        val promiscuousService = RequestValidatorTestUtils.getPromiscuousService(
                 RegisteredServiceTestUtils.CONST_TEST_URL3,
                 RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID,
                 RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID,
