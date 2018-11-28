@@ -5,7 +5,6 @@ dependencies {
     api project(":api:cas-server-core-api-ticket")
     api project(":api:cas-server-core-api-protocol")
     
-
     implementation project(":support:cas-server-support-throttle")
     implementation project(":support:cas-server-support-oauth-webflow")
     implementation project(":support:cas-server-support-oidc-core")
@@ -28,7 +27,8 @@ dependencies {
     implementation project(":core:cas-server-core-webflow-mfa-api")
     implementation project(":core:cas-server-core-cookie-api")
 
-    implementation libraries.pac4j
+    implementation libraries.pac4jcore
+    implementation libraries.pac4jcas
     implementation libraries.jose4j
     implementation libraries.nimbus
     implementation libraries.caffein

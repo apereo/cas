@@ -5,8 +5,7 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-api")
 
     implementation libraries.ldaptive
-    implementation libraries.pac4j
-    implementation libraries.nimbus
+    implementation libraries.pac4jcore
     
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")

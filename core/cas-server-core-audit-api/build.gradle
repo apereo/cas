@@ -4,7 +4,6 @@ dependencies {
     api project(":api:cas-server-core-api-events")
     api project(":api:cas-server-core-api-audit")
     
-    implementation libraries.pac4j
     implementation libraries.caffein
     implementation libraries.nimbus
     

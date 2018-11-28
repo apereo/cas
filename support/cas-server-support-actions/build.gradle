@@ -1,6 +1,8 @@
 description = "Apereo CAS Web Application Spring Webflow Actions"
 dependencies {
     api project(":api:cas-server-core-api-webflow")
+
+    implementation libraries.pac4jcore
     
     implementation project(":core:cas-server-core-cookie-api")
     implementation project(":core:cas-server-core-web-api")
@@ -14,9 +16,6 @@ dependencies {
     implementation project(":core:cas-server-core-logout-api")
     implementation project(":core:cas-server-core-util-api")
     
-    implementation libraries.pac4j
-    implementation libraries.nimbus
-
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-services-authentication")

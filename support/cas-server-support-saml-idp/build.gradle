@@ -33,10 +33,10 @@ dependencies {
     
     implementation libraries.casclient
     implementation libraries.shibidp
-    implementation libraries.pac4j
-    implementation libraries.nimbus
+    implementation libraries.pac4jcore
     implementation libraries.caffein
 
+    testImplementation libraries.pac4j
     
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")

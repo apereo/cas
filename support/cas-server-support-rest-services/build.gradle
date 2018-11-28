@@ -3,6 +3,8 @@ dependencies {
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-authentication")
 
+    implementation libraries.pac4jcore
+    
     implementation project(":core:cas-server-core-rest")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")
@@ -11,9 +13,6 @@ dependencies {
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-authentication-api")
-
-    implementation libraries.pac4j
-    implementation libraries.nimbus
 
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-configuration")

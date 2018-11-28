@@ -19,8 +19,8 @@ dependencies {
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-cookie-api")
     implementation project(":support:cas-server-support-jpa-util")
-    
-    implementation libraries.pac4j
+
+    implementation libraries.pac4jcore
     implementation libraries.nimbus
     implementation libraries.jose4j
     

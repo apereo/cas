@@ -5,6 +5,6 @@ dependencies {
     compileOnly project(":core:cas-server-core-tickets")
 
     implementation libraries.nimbus
-    implementation libraries.pac4j
+    implementation libraries.pac4jcore
     implementation libraries.jose4j
 }

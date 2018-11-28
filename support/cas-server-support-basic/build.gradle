@@ -11,6 +11,5 @@ dependencies {
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-web-api")
 
-    implementation libraries.nimbus
-    implementation libraries.pac4j
+    implementation libraries.pac4jcore
 }

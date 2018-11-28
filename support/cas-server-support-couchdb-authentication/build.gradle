@@ -8,7 +8,7 @@ dependencies {
     implementation project(":core:cas-server-core-configuration-api")
 
     implementation libraries.nimbus
-    implementation libraries.pac4j
+    implementation libraries.pac4jcore
     implementation libraries.ektorp
     implementation libraries.pac4jcouchdb
 

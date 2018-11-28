@@ -12,7 +12,8 @@ dependencies {
     implementation project(":support:cas-server-support-token-core")
     implementation project(":support:cas-server-support-pac4j-authentication")
 
-    implementation libraries.pac4j
+    implementation libraries.pac4jcore
+    implementation libraries.pac4jjwt
     implementation libraries.jose4j
     implementation libraries.nimbus
     

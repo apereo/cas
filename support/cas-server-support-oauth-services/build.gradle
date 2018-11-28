@@ -3,9 +3,6 @@ dependencies {
     implementation project(":core:cas-server-core-services-api")
     implementation project(":support:cas-server-support-oauth-api")
     implementation project(":core:cas-server-core-services-registry")
-
-    implementation libraries.pac4j
-    implementation libraries.nimbus
     
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
