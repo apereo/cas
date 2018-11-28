@@ -101,7 +101,7 @@ public class GrouperMultifactorAuthenticationPolicyEventResolverTests {
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
-        WebUtils.putService(context, CoreAuthenticationTestUtils.getWebApplicationService());
+        WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
 

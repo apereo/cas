@@ -35,7 +35,7 @@ public class ConfirmConsentActionTests extends BaseConsentActionTests {
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
-        WebUtils.putService(context, CoreAuthenticationTestUtils.getWebApplicationService("consentService"));
+        WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService("consentService"));
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, confirmConsentAction.execute(context).getId());
     }
 }

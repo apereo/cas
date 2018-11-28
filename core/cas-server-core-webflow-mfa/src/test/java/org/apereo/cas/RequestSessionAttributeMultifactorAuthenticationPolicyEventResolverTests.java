@@ -41,7 +41,7 @@ public class RequestSessionAttributeMultifactorAuthenticationPolicyEventResolver
 
         WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService());
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
-        WebUtils.putService(context, RegisteredServiceTestUtils.getService());
+        WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
 
         var results = requestSessionAttributeAuthenticationPolicyWebflowEventResolver.resolve(context);
         assertNull(results);

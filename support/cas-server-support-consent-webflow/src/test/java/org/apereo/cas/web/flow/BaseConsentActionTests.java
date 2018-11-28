@@ -12,7 +12,6 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.web.consent.config.CasConsentReviewConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
@@ -35,7 +34,6 @@ import org.springframework.webflow.execution.Action;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CasConsentCoreConfiguration.class,
-    CasConsentReviewConfiguration.class,
     CasConsentWebflowConfiguration.class,
     CasCoreAuditConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,

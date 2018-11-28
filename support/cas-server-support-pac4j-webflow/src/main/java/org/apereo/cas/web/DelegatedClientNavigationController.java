@@ -7,10 +7,11 @@ import org.apereo.cas.web.pac4j.DelegatedSessionCookieManager;
 import org.apereo.cas.web.view.DynamicHtmlView;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.client.util.URIBuilder;
+import org.apache.http.client.utils.URIBuilder;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.J2EContext;
@@ -113,6 +114,7 @@ public class DelegatedClientNavigationController {
      * @param request    the request
      * @return the view
      */
+    @SneakyThrows
     protected View buildRedirectViewBackToFlow(final String clientName, final HttpServletRequest request) {
         val builder = new StringBuilder();
         builder.append(request.getRequestURL());
@@ -139,6 +141,7 @@ public class DelegatedClientNavigationController {
      * @param ticket     the ticket
      * @return the resulting view
      */
+    @SneakyThrows
     protected View getResultingView(final IndirectClient<Credentials, CommonProfile> client, final J2EContext webContext, final Ticket ticket) {
         val action = client.getRedirectAction(webContext);
         if (RedirectAction.RedirectType.SUCCESS.equals(action.getType())) {

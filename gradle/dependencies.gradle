@@ -1791,6 +1791,8 @@ ext.libraries = [
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "org.jasig.cas.client", module: "cas-client-support-saml")
+                    exclude(group: "org.jasig.cas.client", module: "cas-client-core")
                     force = true
                 },
                 dependencies.create("org.pac4j:pac4j-config:$pac4jVersion") {
