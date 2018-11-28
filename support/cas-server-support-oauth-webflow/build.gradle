@@ -1,6 +1,6 @@
 description = "Apereo CAS OAuth Webflow Support"
 dependencies {
-    implementation libraries.pac4j
+    implementation libraries.pac4jcore
     implementation libraries.nimbus
     implementation libraries.jose4j
     implementation libraries.caffein

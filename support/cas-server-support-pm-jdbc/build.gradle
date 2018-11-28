@@ -12,10 +12,8 @@ dependencies {
 
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
     
-    implementation libraries.pac4j
     implementation libraries.jose4j
-    implementation libraries.nimbus
-
+    
     testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core-audit-api")
     testImplementation project(":support:cas-server-support-person-directory")
