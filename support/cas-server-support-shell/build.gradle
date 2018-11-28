@@ -28,7 +28,8 @@ dependencies {
     
     implementation libraries.springbootconfigmetadata
     implementation libraries.springshell
-    implementation libraries.pac4j
+    implementation libraries.pac4jcore
+    implementation libraries.pac4jjwt
     implementation libraries.nimbus
     implementation libraries.snakeyaml
     implementation libraries.jasypt
