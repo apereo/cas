@@ -47,24 +47,15 @@ dependencies {
     implementation project(":support:cas-server-support-person-directory")
     implementation project(":support:cas-server-support-pm-webflow")
     implementation project(":support:cas-server-support-themes")
-    implementation project(":support:cas-server-support-metrics")
     implementation project(":support:cas-server-support-reports")
     implementation project(":support:cas-server-support-throttle")
     implementation project(":support:cas-server-support-validation")
     
     implementation project(":webapp:cas-server-webapp-config")
     implementation project(":webapp:cas-server-webapp-init")
-
-    implementation libraries.pac4j
-    implementation libraries.nimbus
-    implementation libraries.thymeleaf
-
-    implementation libraries.cassecurityfilter
-    implementation libraries.metrics
-    implementation libraries.bouncycastle
+    
     implementation libraries.springcloudconfigclient
-
-
+    
     developmentOnly libraries.springbootdevtools
     runtimeOnly libraries.webjars
 }

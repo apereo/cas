@@ -21,6 +21,16 @@ JVM metrics, report utilization of:
 - Tomcat metrics
 - Spring Integration metrics
 
+Support is enabled by including the following module in the Overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-support-metrics</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
 Auto-configuration enables the instrumentation of all available DataSource objects 
 with a metric named `jdbc`. Data source instrumentation results in gauges representing the 
 currently active, maximum allowed, and minimum allowed connections in the pool. 
@@ -87,15 +97,5 @@ CAS metrics may be routed to varying types of databases for storage and analytic
 - New Relic
 - CloudWatch
 - ...
-                
-Support is enabled by including the following module in the Overlay:
-
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-metrics</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#metrics-storage).
