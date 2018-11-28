@@ -1,6 +1,6 @@
 package org.apereo.cas.otp.web.flow.rest;
 
-import org.apereo.cas.util.QRUtils;
+import org.apereo.cas.otp.util.QRUtils;
 
 import lombok.val;
 import org.springframework.web.bind.annotation.GetMapping;

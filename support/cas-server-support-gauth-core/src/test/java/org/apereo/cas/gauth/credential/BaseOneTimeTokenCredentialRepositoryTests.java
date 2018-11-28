@@ -69,7 +69,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     }
 
     @Test
-    public void verifySaveAndUpdate() {
+    public void verifySaveAndUpdate() throws Exception {
         val acct = getAccount("verifySaveAndUpdate", CASUSER);
         val repo = getRegistry("verifySaveAndUpdate");
         repo.save(acct.getUsername(), acct.getSecretKey(), acct.getValidationCode(), acct.getScratchCodes());
@@ -87,7 +87,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     }
 
     @Test
-    public void verifyGet() {
+    public void verifyGet() throws Exception {
         val repo = getRegistry("verifyGet");
         val acct = repo.get(CASUSER);
         assertNull(acct);
@@ -102,7 +102,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     }
 
     @Test
-    public void verifyGetWithDecodedSecret() {
+    public void verifyGetWithDecodedSecret() throws Exception {
         // given
         when(cipherExecutor.encode(PLAIN_SECRET)).thenReturn("abc321");
         when(cipherExecutor.decode("abc321")).thenReturn(PLAIN_SECRET);

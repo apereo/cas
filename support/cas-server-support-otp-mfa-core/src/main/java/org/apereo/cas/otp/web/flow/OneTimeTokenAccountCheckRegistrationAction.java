@@ -25,7 +25,6 @@ public class OneTimeTokenAccountCheckRegistrationAction extends AbstractAction {
     private final String label;
     private final String issuer;
 
-
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val uid = WebUtils.getAuthentication(requestContext).getPrincipal().getId();
