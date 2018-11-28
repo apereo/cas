@@ -1365,7 +1365,6 @@ ext.libraries = [
                 dependencies.create("org.mockito:mockito-core:$mockitoVersion") {
                     exclude(group: "org.hamcrest", module: "hamcrest-core")
                     exclude(group: "org.objenesis", module: "objenesis")
-                    exclude(group: "net.bytebuddy", module: "byte-buddy")
                     exclude(group: "junit", module: "junit")
                     force = true
                 },
@@ -3074,22 +3073,6 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "junit", module: "junit")
                     exclude(group: "org.mockito", module: "mockito-core")
-                    force = true
-                },
-                dependencies.create("org.springframework.security:spring-security-openid:$springSecurityVersion") {
-                    exclude(group: "org.jasig.cas.client", module: "cas-client-core")
-                    exclude(group: "org.springframework", module: "spring-aop")
-                    exclude(group: "org.springframework", module: "spring-beans")
-                    exclude(group: "org.springframework", module: "spring-context")
-                    exclude(group: "org.springframework", module: "spring-core")
-                    exclude(group: "org.springframework", module: "spring-expression")
-                    exclude(group: "org.springframework", module: "spring-jdbc")
-                    exclude(group: "org.springframework", module: "spring-test")
-                    exclude(group: "org.springframework", module: "spring-tx")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "junit", module: "junit")
-                    exclude(group: "org.mockito", module: "mockito-core")
-                    exclude(group: "xerces", module: "xercesImpl")
                     force = true
                 }
         ],
