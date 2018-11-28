@@ -63,7 +63,7 @@ public class LoadSurrogatesListActionTests extends BaseSurrogateInitialAuthentic
     @Test
     public void verifyAuthenticate() throws Exception {
         val context = new MockRequestContext();
-        WebUtils.putService(context, CoreAuthenticationTestUtils.getWebApplicationService());
+        WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
 
         val attributes = new LinkedHashMap<String, Object>();
         attributes.put(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, true);
@@ -92,7 +92,7 @@ public class LoadSurrogatesListActionTests extends BaseSurrogateInitialAuthentic
     @Test
     public void verifySkipAuthenticate() throws Exception {
         val context = new MockRequestContext();
-        WebUtils.putService(context, CoreAuthenticationTestUtils.getWebApplicationService());
+        WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
         WebUtils.putRequestSurrogateAuthentication(context, Boolean.TRUE);
 
         val attributes = new LinkedHashMap<String, Object>();

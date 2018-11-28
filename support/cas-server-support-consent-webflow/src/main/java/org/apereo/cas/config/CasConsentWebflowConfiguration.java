@@ -72,7 +72,8 @@ public class CasConsentWebflowConfiguration implements CasWebflowExecutionPlanCo
     @Bean
     public Action confirmConsentAction() {
         return new ConfirmConsentAction(servicesManager.getIfAvailable(),
-            authenticationRequestServiceSelectionStrategies.getIfAvailable(), consentEngine.getIfAvailable(), casProperties);
+            authenticationRequestServiceSelectionStrategies.getIfAvailable(),
+            consentEngine.getIfAvailable(), casProperties);
     }
 
     @ConditionalOnMissingBean(name = "consentWebflowConfigurer")

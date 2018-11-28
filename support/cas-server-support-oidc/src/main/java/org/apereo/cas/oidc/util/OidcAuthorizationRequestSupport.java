@@ -9,11 +9,12 @@ import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.jasig.cas.client.util.URIBuilder;
+import org.apache.http.client.utils.URIBuilder;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.UserProfile;
@@ -42,6 +43,7 @@ public class OidcAuthorizationRequestSupport {
      * @param url the url
      * @return the oidc prompt from authorization request
      */
+    @SneakyThrows
     public static Set<String> getOidcPromptFromAuthorizationRequest(final @NonNull String url) {
         return new URIBuilder(url).getQueryParams().stream()
             .filter(p -> OidcConstants.PROMPT.equals(p.getName()))
@@ -66,6 +68,7 @@ public class OidcAuthorizationRequestSupport {
      * @param context the context
      * @return the oidc max age from authorization request
      */
+    @SneakyThrows
     public static Optional<Long> getOidcMaxAgeFromAuthorizationRequest(final WebContext context) {
         val builderContext = new URIBuilder(context.getFullRequestURL());
         val parameter = builderContext.getQueryParams()
@@ -118,7 +121,7 @@ public class OidcAuthorizationRequestSupport {
      * @param authenticationDate the authentication date
      * @return true/false
      */
-    public boolean isCasAuthenticationOldForMaxAgeAuthorizationRequest(final WebContext context,
+    public static boolean isCasAuthenticationOldForMaxAgeAuthorizationRequest(final WebContext context,
                                                                        final ZonedDateTime authenticationDate) {
         val maxAge = getOidcMaxAgeFromAuthorizationRequest(context);
         if (maxAge.isPresent() && maxAge.get() > 0) {
@@ -141,7 +144,7 @@ public class OidcAuthorizationRequestSupport {
      * @param authentication the authentication
      * @return true/false
      */
-    public boolean isCasAuthenticationOldForMaxAgeAuthorizationRequest(final WebContext context,
+    public static boolean isCasAuthenticationOldForMaxAgeAuthorizationRequest(final WebContext context,
                                                                        final Authentication authentication) {
         return isCasAuthenticationOldForMaxAgeAuthorizationRequest(context, authentication.getAuthenticationDate());
     }
@@ -165,7 +168,7 @@ public class OidcAuthorizationRequestSupport {
      * @param profile the profile
      * @return true/false
      */
-    public boolean isCasAuthenticationOldForMaxAgeAuthorizationRequest(final WebContext context,
+    public static boolean isCasAuthenticationOldForMaxAgeAuthorizationRequest(final WebContext context,
                                                                        final UserProfile profile) {
 
         val authTime = profile.getAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE);

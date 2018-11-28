@@ -276,8 +276,7 @@ public class SamlIdPObjectSigner {
         });
 
         config.setSigningCredentials(creds);
-        LOGGER.debug("Signature signing credentials configured with [{}] credentials", creds.size());
-
+        LOGGER.trace("Signature signing credentials configured with [{}] credentials", creds.size());
         return config;
     }
 
@@ -288,7 +287,7 @@ public class SamlIdPObjectSigner {
         try {
             val credType = SamlIdPResponseProperties.SignatureCredentialTypes.valueOf(
                 StringUtils.defaultIfBlank(service.getSigningCredentialType(), samlIdp.getResponse().getCredentialType().name()).toUpperCase());
-            LOGGER.debug("Requested credential type [{}] is found for service [{}]", credType, service.getName());
+            LOGGER.trace("Requested credential type [{}] is found for service [{}]", credType, service.getName());
 
             switch (credType) {
                 case BASIC:

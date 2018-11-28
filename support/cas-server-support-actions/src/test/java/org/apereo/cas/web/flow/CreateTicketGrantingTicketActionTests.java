@@ -63,7 +63,7 @@ public class CreateTicketGrantingTicketActionTests extends AbstractWebflowAction
         when(builder.build(any(PrincipalElectionStrategy.class), any(Service.class))).thenReturn(result);
 
         WebUtils.putAuthenticationResultBuilder(builder, context);
-        WebUtils.putService(context, CoreAuthenticationTestUtils.getWebApplicationService());
+        WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
 
         val tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn("TGT-123456");

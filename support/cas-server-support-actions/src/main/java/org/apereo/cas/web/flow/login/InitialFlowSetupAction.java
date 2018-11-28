@@ -83,7 +83,7 @@ public class InitialFlowSetupAction extends AbstractAction {
             throw new NoSuchFlowExecutionException(context.getFlowExecutionContext().getKey(),
                 new UnauthorizedServiceException("screen.service.required.message", "Service is required"));
         }
-        WebUtils.putService(context, service);
+        WebUtils.putServiceIntoFlowScope(context, service);
     }
 
     private void configureWebflowContext(final RequestContext context) {
