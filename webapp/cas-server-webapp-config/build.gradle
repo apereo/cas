@@ -1,8 +1,8 @@
 description = "Apereo CAS Web Application Configuration"
 dependencies {
     api project(":api:cas-server-core-api-webflow")
-    
-    implementation libraries.pac4j
+
+    implementation libraries.pac4jcore
     implementation libraries.cassecurityfilter
     implementation libraries.springsecurity
     implementation libraries.springsecurityweb

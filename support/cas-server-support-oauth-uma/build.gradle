@@ -3,7 +3,7 @@ dependencies {
     api project(":api:cas-server-core-api-throttle")
     api project(":api:cas-server-core-api")
 
-    implementation libraries.pac4j
+    implementation libraries.pac4jcore
     implementation libraries.jose4j
     implementation libraries.nimbus
     

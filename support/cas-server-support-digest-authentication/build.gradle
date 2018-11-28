@@ -28,5 +28,5 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
 
     implementation libraries.nimbus
-    implementation libraries.pac4j
+    implementation libraries.pac4jcore
 }

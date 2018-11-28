@@ -10,7 +10,8 @@ dependencies {
     implementation project(":core:cas-server-core-logout-api")
     implementation project(":core:cas-server-core-services-authentication")
 
-    implementation libraries.pac4j
+    implementation libraries.pac4jcore
+    implementation libraries.pac4jcas
     implementation libraries.nimbus
 
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

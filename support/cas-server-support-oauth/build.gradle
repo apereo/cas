@@ -1,8 +1,9 @@
 description = "Apereo CAS Server OAuth Provider Support"
 dependencies {
-    implementation libraries.pac4j
+    implementation libraries.pac4jcore
     implementation libraries.nimbus
     implementation libraries.jose4j
+    implementation libraries.pac4jcas
     
     api project(":api:cas-server-core-api-throttle")
     api project(":api:cas-server-core-api")
