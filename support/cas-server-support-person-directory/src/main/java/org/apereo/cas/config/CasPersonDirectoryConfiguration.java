@@ -92,7 +92,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
         list.addAll(plan.getAttributeRepositories());
 
         OrderComparator.sort(list);
-        LOGGER.debug("Final list of attribute repositories is [{}]", list);
+        LOGGER.trace("Final list of attribute repositories is [{}]", list);
         return list;
     }
 

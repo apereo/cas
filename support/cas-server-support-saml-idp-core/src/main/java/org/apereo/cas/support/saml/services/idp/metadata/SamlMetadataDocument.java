@@ -9,8 +9,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,7 +25,6 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "SamlMetadataDocument")
-@Document
 @Getter
 @Setter
 @AllArgsConstructor
@@ -41,7 +38,6 @@ public class SamlMetadataDocument {
     private long id = -1;
 
     @JsonProperty("name")
-    @Indexed
     @Column(nullable = false)
     private String name;
 

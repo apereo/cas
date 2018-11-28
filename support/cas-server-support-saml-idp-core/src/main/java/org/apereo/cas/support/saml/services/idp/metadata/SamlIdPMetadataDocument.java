@@ -11,7 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,7 +27,6 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "SamlIdPMetadataDocument")
-@Document
 @Getter
 @Setter
 @AllArgsConstructor

@@ -13,7 +13,6 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -71,7 +70,6 @@ public class RestResourceUtils {
         }
     }
 
-    @NotNull
     private static String mapExceptionToMessage(final AuthenticationException authnhandlerErrors,
                                                 final HttpServletRequest request,
                                                 final ApplicationContext applicationContext,

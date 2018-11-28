@@ -23,7 +23,6 @@ dependencies {
     implementation libraries.nimbus
     implementation libraries.cassecurityfilter
     implementation libraries.thymeleaf
-    implementation libraries.springintegration
 }
 
 // Filter properties from gradle.properties into this sub-project's property file resources  

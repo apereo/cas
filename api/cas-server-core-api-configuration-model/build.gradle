@@ -3,7 +3,6 @@ def skipConfigurationMetadata = Boolean.getBoolean("skipNestedConfigMetadataGen"
 
 dependencies {
     implementation libraries.jasypt
-
     implementation libraries.bouncycastle
 
     compile libraries.springbootconfigmetadata
@@ -11,12 +10,14 @@ dependencies {
     api project(":api:cas-server-core-api-util")
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-webflow")
+    
     testImplementation libraries.springbootconfigmetadata
+    
+    compileOnly libraries.javaparser
     
     if (!skipConfigurationMetadata) {
         annotationProcessor libraries.springbootconfigmetadata
     }
-    
 }
 
 if (!skipConfigurationMetadata) {
