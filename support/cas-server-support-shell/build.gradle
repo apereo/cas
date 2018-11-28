@@ -28,7 +28,6 @@ dependencies {
     
     implementation libraries.springbootconfigmetadata
     implementation libraries.springshell
-    implementation libraries.metrics
     implementation libraries.pac4j
     implementation libraries.nimbus
     implementation libraries.snakeyaml

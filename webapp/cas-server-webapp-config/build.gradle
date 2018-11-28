@@ -3,7 +3,6 @@ dependencies {
     implementation libraries.nimbus
     implementation libraries.pac4j
     implementation libraries.jose4j
-    implementation libraries.metrics
     implementation libraries.ldaptive
     implementation libraries.cassecurityfilter
 
