@@ -10,7 +10,7 @@ dependencies {
     implementation libraries.nimbus
     implementation libraries.pac4j
     implementation libraries.ektorp
-    implementation libraries.pac4jCouchDb
+    implementation libraries.pac4jcouchdb
 
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-services")
