@@ -130,7 +130,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                                                                     final AuthenticationResultBuilder authenticationResultBuilder,
                                                                     final Service service) {
         WebUtils.putAuthenticationResultBuilder(authenticationResultBuilder, context);
-        WebUtils.putService(context, service);
+        WebUtils.putServiceIntoFlowScope(context, service);
         return newEvent(CasWebflowConstants.TRANSITION_ID_SUCCESS);
     }
 

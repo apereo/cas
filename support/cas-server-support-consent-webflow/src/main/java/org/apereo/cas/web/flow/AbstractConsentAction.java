@@ -59,20 +59,25 @@ public abstract class AbstractConsentAction extends AbstractAction {
 
     /**
      * Prepare consent for request context.
+     * The original service is kept, and the resolved service is
+     * added to the flash-scope only to ensure consent works
+     * for all other callback services that deal with different protocols.
      *
      * @param requestContext the request context
      */
     protected void prepareConsentForRequestContext(final RequestContext requestContext) {
         val consentProperties = casProperties.getConsent();
 
-        val service = this.authenticationRequestServiceSelectionStrategies.resolveService(WebUtils.getService(requestContext));
+        val originalService = WebUtils.getService(requestContext);
+        val service = this.authenticationRequestServiceSelectionStrategies.resolveService(originalService);
         val registeredService = getRegisteredServiceForConsent(requestContext, service);
         val authentication = WebUtils.getAuthentication(requestContext);
         val attributes = consentEngine.resolveConsentableAttributesFrom(authentication, service, registeredService);
         val flowScope = requestContext.getFlowScope();
         flowScope.put("attributes", attributes);
-        flowScope.put("principal", authentication.getPrincipal());
-        flowScope.put("service", service);
+
+        WebUtils.putPrincipal(requestContext, authentication.getPrincipal());
+        WebUtils.putServiceIntoFlashScope(requestContext, service);
 
         val decision = consentEngine.findConsentDecision(service, registeredService, authentication);
         flowScope.put("option", decision == null ? ConsentReminderOptions.ATTRIBUTE_NAME.getValue() : decision.getOptions().getValue());

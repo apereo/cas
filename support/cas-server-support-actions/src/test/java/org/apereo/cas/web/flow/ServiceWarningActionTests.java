@@ -45,7 +45,7 @@ public class ServiceWarningActionTests extends AbstractWebflowActionsTests {
         request.addParameter(ServiceWarningAction.PARAMETER_NAME_IGNORE_WARNING, "true");
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
-        WebUtils.putService(context, RegisteredServiceTestUtils.getService("https://google.com"));
+        WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService("https://google.com"));
         WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
 
         val tgt = new MockTicketGrantingTicket("casuser");

@@ -296,8 +296,18 @@ public class WebUtils {
      * @param context the context
      * @param service the service
      */
-    public static void putService(final RequestContext context, final Service service) {
+    public static void putServiceIntoFlowScope(final RequestContext context, final Service service) {
         context.getFlowScope().put(PARAMETER_SERVICE, service);
+    }
+
+    /**
+     * Put service into flashscope.
+     *
+     * @param context the context
+     * @param service the service
+     */
+    public static void putServiceIntoFlashScope(final RequestContext context, final Service service) {
+        context.getFlashScope().put(PARAMETER_SERVICE, service);
     }
 
     /**
@@ -673,16 +683,6 @@ public class WebUtils {
      */
     public static void putRememberMeAuthenticationEnabled(final RequestContext context, final Boolean enabled) {
         context.getFlowScope().put("rememberMeAuthenticationEnabled", enabled);
-    }
-
-    /**
-     * Put attribute consent enabled.
-     *
-     * @param context the context
-     * @param enabled the enabled
-     */
-    public static void putAttributeConsentEnabled(final RequestContext context, final Boolean enabled) {
-        context.getFlowScope().put("attributeConsentEnabled", enabled);
     }
 
     /**

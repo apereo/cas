@@ -103,7 +103,7 @@ public class OAuth20RegisteredServiceUIActionTests {
     @Test
     public void verifyOAuthActionWithoutMDUI() throws Exception {
         val ctx = new MockRequestContext();
-        WebUtils.putService(ctx, RegisteredServiceTestUtils.getService());
+        WebUtils.putServiceIntoFlowScope(ctx, RegisteredServiceTestUtils.getService());
         val event = oauth20RegisteredServiceUIAction.execute(ctx);
         assertEquals("success", event.getId());
         val mdui = WebUtils.getServiceUserInterfaceMetadata(ctx, Serializable.class);
@@ -124,7 +124,7 @@ public class OAuth20RegisteredServiceUIActionTests {
         servicesManager.save(svc);
 
         val ctx = new MockRequestContext();
-        WebUtils.putService(ctx, RegisteredServiceTestUtils.getService(
+        WebUtils.putServiceIntoFlowScope(ctx, RegisteredServiceTestUtils.getService(
             "https://www.example.org?client_id=id&client_secret=secret&redirect_uri=https://oauth.example.org"));
         val event = oauth20RegisteredServiceUIAction.execute(ctx);
         assertEquals("success", event.getId());

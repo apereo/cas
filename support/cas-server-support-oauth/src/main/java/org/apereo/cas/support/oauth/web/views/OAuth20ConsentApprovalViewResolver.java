@@ -5,10 +5,11 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.client.util.URIBuilder;
+import org.apache.http.client.utils.URIBuilder;
 import org.pac4j.core.context.J2EContext;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -62,6 +63,7 @@ public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewRe
      * @param svc the svc
      * @return the model and view
      */
+    @SneakyThrows
     protected ModelAndView redirectToApproveView(final J2EContext ctx, final OAuthRegisteredService svc) {
         val callbackUrl = ctx.getFullRequestURL();
         LOGGER.trace("callbackUrl: [{}]", callbackUrl);

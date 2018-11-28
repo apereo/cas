@@ -137,7 +137,7 @@ public class DelegatedClientWebflowManager {
         val service = ticket.getService();
         LOGGER.debug("Restoring requested service [{}] back in the authentication flow", service);
 
-        WebUtils.putService(requestContext, service);
+        WebUtils.putServiceIntoFlowScope(requestContext, service);
         webContext.setRequestAttribute(CasProtocolConstants.PARAMETER_SERVICE, service);
         webContext.setRequestAttribute(this.themeParamName, ticket.getProperties().get(this.themeParamName));
         webContext.setRequestAttribute(this.localParamName, ticket.getProperties().get(this.localParamName));
