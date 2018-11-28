@@ -32,7 +32,7 @@ public enum CasLabels {
     LABEL_BASIC_AUTHENTICATION("Basic Authentication"),
     LABEL_CAS_PROTOCOL("CAS Protocol"),
     LABEL_CLEARPASS("ClearPass"),
-    LABEL_COMMAND_LINE_SHELL("Command-line Shell", "cli|shell"),
+    LABEL_COMMAND_LINE_SHELL("Command-line Shell", "\bcli\b|shell"),
     LABEL_CONFIGURATION("Configuration"),
     LABEL_CONFIGURATION_DISCOVERY("Configuration Discovery"),
     LABEL_CONFIGURATION_METADATA("Configuration Metadata"),
