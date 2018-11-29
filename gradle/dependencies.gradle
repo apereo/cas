@@ -1616,7 +1616,6 @@ ext.libraries = [
                     exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "org.cryptacular", module: "cryptacular")
-                    exclude(group: "io.dropwizard.metrics", module: "metrics-core")
                     force = true
                 },
                 dependencies.create("org.opensaml:opensaml-xmlsec-impl:$opensamlVersion") {
@@ -1915,6 +1914,7 @@ ext.libraries = [
                     exclude(group: "net.shibboleth.utilities", module: "java-support")
                     exclude(group: "org.opensaml", module: "opensaml-saml-impl")
                     exclude(group: "org.opensaml", module: "opensaml-xmlsec-api")
+                    exclude(group: "org.opensaml", module: "opensaml-xmlsec-impl")
                     exclude(group: "org.opensaml", module: "opensaml-security-impl")
                     exclude(group: "org.opensaml", module: "opensaml-profile-api")
                     exclude(group: "org.opensaml", module: "opensaml-profile-impl")
@@ -1927,9 +1927,14 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-expression")
                     exclude(group: "net.shibboleth.ext", module: "spring-extensions")
                     exclude(group: "org.opensaml", module: "opensaml-saml-api")
+                    exclude(group: "org.opensaml", module: "opensaml-saml-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-messaging-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-security-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-soap-api")
+                    exclude(group: "org.opensaml", module: "opensaml-soap-impl")
+                    exclude(group: "org.opensaml", module: "xmltooling")
                     exclude(group: "xml-apis", module: "xml-apis")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
-                    exclude(group: "org.opensaml", module: "xmltooling")
                     exclude(group: "org.cryptacular", module: "cryptacular")
                     exclude(group: "xalan", module: "xalan")
                     exclude(group: "xalan", module: "serializer")
