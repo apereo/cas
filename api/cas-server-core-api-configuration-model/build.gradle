@@ -29,10 +29,12 @@ if (!skipConfigurationMetadata) {
                     "at [$buildDir] for the CAS configuration module at [$projectDir.canonicalPath].\n"
         }
         main = "org.apereo.cas.configuration.metadata.ConfigurationMetadataGenerator"
-        classpath = sourceSets.main.runtimeClasspath
+        classpath = sourceSets.main.compileClasspath + sourceSets.main.runtimeClasspath
         args buildDir, projectDir.canonicalPath
     }
 
     compileJava.dependsOn(processResources)
     jar.dependsOn(generateConfigurationMetadata)
+
+
 }
