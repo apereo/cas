@@ -1,6 +1,8 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
 import org.apereo.cas.support.saml.BaseMongoDbSamlMetadataTests;
+import org.apereo.cas.util.junit.ConditionalIgnore;
+import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
 import org.junit.Test;
 import org.springframework.test.context.TestPropertySource;
@@ -23,6 +25,7 @@ import static org.junit.Assert.*;
     "cas.authn.samlIdp.metadata.mongo.dropCollection=true",
     "cas.authn.samlIdp.metadata.mongo.idpMetadataCollection=saml-idp-metadata"
     })
+@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 27017)
 public class MongoDbSamlIdPMetadataGeneratorTests extends BaseMongoDbSamlMetadataTests {
     @Test
     public void verifyOperation() {

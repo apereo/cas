@@ -3,7 +3,7 @@
 # while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
 
 echo "Running Couchbase docker image..."
-docker run -d --name couchbase -p 8091-8094:8091-8094 -p 11210:11210 couchbase/server:5.1.0
+docker run -d --name couchbase -p 8091-8094:8091-8094 -p 11210:11210 couchbase/server:5.1.3
 
 docker ps | grep "couchbase"
 retVal=$?
