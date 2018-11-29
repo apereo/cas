@@ -78,7 +78,7 @@ public abstract class AbstractConsentAction extends AbstractAction {
         final MutableAttributeMap<Object> flowScope = requestContext.getFlowScope();
         flowScope.put("attributes", attributes);
         flowScope.put("principal", authentication.getPrincipal());
-        flowScope.put("service", service);
+        requestContext.getFlashScope().put("service", service);
 
         final ConsentDecision decision = consentEngine.findConsentDecision(service, registeredService, authentication);
         flowScope.put("option", decision == null ? ConsentReminderOptions.ATTRIBUTE_NAME.getValue() : decision.getOptions().getValue());
