@@ -12,6 +12,7 @@ import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -72,6 +73,7 @@ public class CasOAuthUmaJpaConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "dataSourceUma")
     public DataSource dataSourceUma() {
         return JpaBeans.newDataSource(casProperties.getAuthn().getUma().getResourceSet().getJpa());
     }
