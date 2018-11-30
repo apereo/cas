@@ -9,11 +9,13 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.CheckConsentRequiredAction;
 import org.apereo.cas.web.flow.ConfirmConsentAction;
+import org.apereo.cas.web.flow.ConsentReviewEndpoint;
 import org.apereo.cas.web.flow.ConsentWebflowConfigurer;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -82,6 +84,12 @@ public class CasConsentWebflowConfiguration implements CasWebflowExecutionPlanCo
     public CasWebflowConfigurer consentWebflowConfigurer() {
         return new ConsentWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getIfAvailable(),
             applicationContext, casProperties);
+    }
+
+    @Bean
+    @ConditionalOnEnabledEndpoint
+    public ConsentReviewEndpoint consentReviewEndpoint() {
+        return new ConsentReviewEndpoint(casProperties, consentEngine.getIfAvailable());
     }
 
     @Override

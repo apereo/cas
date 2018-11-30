@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.util.ScriptingUtils;
+import org.apereo.cas.util.scripting.ScriptingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
