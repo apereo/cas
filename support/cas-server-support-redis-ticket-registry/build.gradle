@@ -5,7 +5,7 @@ dependencies {
 
     api project(":api:cas-server-core-api-util")
 
-    implementation libraries.caffein
+    
     
     implementation project(":core:cas-server-core-logging")
     implementation project(":core:cas-server-core-tickets-api")

@@ -17,7 +17,7 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     
     implementation libraries.shibidp
-    implementation libraries.caffein
+    implementation libraries.shibidpjavasupport
     
     runtimeOnly libraries.groovy
 

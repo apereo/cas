@@ -13,7 +13,7 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-configuration-api")
 
-    implementation libraries.caffein
+    
 
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-tickets")
