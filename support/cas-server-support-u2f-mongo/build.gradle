@@ -2,7 +2,7 @@ description = "Apereo CAS U2F FIDO MongoDb Support"
 dependencies {
     implementation libraries.yubicoapi
     implementation libraries.u2flibserver
-    implementation libraries.caffein
+    
     implementation libraries.mongo
     
     implementation project(":core:cas-server-core-configuration-api")

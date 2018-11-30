@@ -7,7 +7,7 @@ dependencies {
     implementation project(":support:cas-server-support-trusted")
     implementation project(":core:cas-server-core-authentication-mfa-api")
 
-    implementation libraries.caffein
+    
 
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api-web")

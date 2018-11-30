@@ -13,7 +13,8 @@ dependencies {
 
     implementation libraries.casclient
     implementation libraries.shibidp
-
+    implementation libraries.shibidpjavasupport
+    
     runtimeOnly libraries.groovy
 
     testImplementation project(path: ":support:cas-server-support-saml-idp", configuration: "tests")

@@ -10,7 +10,6 @@ dependencies {
     
     implementation libraries.pac4jcore
     implementation libraries.nimbus
-    implementation libraries.springsecurity
     implementation libraries.bouncycastle
 
     implementation libraries.semver

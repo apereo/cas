@@ -8,7 +8,7 @@ dependencies {
     implementation project(":support:cas-server-support-ldap-core")
 
     implementation libraries.ldaptive
-    implementation libraries.caffein
+    
 
     testImplementation project(":support:cas-server-support-jdbc-drivers")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")

@@ -22,7 +22,8 @@ dependencies {
     implementation libraries.pac4jcore
     implementation libraries.pac4jcas
     implementation libraries.nimbus
-    implementation libraries.caffein
+    implementation libraries.opensaml
+    implementation libraries.shibidpjavasupport
     
     testImplementation project(":core:cas-server-core-authentication-api")
     testImplementation project(":core:cas-server-core-tickets")

@@ -3,7 +3,7 @@ dependencies {
     implementation libraries.pac4jcore
     implementation libraries.nimbus
     implementation libraries.jose4j
-    implementation libraries.caffein
+    
 
     api project(":api:cas-server-core-api-webflow")
     

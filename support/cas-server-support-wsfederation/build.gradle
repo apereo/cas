@@ -1,7 +1,8 @@
 description = "Apereo CAS WS-Federation Support"
 dependencies {
-    api libraries.opensaml
-
+    implementation libraries.opensaml
+    implementation libraries.shibidpjavasupport
+    
     implementation project(":core:cas-server-core-web-api")
     implementation project(":support:cas-server-support-saml-core")
     implementation project(":support:cas-server-support-saml-core-api")

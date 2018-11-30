@@ -3,7 +3,6 @@ description = "Apereo CAS Core Configuration API"
 dependencies {
     implementation libraries.bouncycastle
     implementation libraries.jasypt
-    implementation libraries.springsecurity
 
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-configuration")

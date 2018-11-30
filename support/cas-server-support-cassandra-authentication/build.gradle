@@ -33,5 +33,4 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     
     implementation libraries.cassandra
-    
 }

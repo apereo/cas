@@ -7,4 +7,5 @@ dependencies {
 
     implementation libraries.nimbus
     implementation libraries.pac4jcore
+
 }

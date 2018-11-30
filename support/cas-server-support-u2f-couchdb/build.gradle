@@ -2,7 +2,7 @@ description = "Apereo CAS U2F FIDO CouchDb Support"
 dependencies {
     implementation libraries.yubicoapi
     implementation libraries.u2flibserver
-    implementation libraries.caffein
+    
     implementation libraries.ektorp
 
     implementation project(":core:cas-server-core-configuration-api")

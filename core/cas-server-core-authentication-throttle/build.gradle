@@ -10,5 +10,5 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-authentication-mfa-api")
     
-    implementation libraries.caffein
+
 }

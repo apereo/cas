@@ -2,8 +2,9 @@
 description = "Apereo CAS WS-Federation Webflow Support"
 dependencies {
     api project(":api:cas-server-core-api-webflow")
-
-    implementation libraries.caffein
+    
+    implementation libraries.opensaml
+    implementation libraries.shibidpjavasupport
     
     implementation project(":support:cas-server-support-saml-core")
     implementation project(":support:cas-server-support-saml-core-api")
@@ -20,9 +21,7 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
-
-    testImplementation project(":support:cas-server-support-person-directory")
-    testImplementation project(":support:cas-server-support-validation")
+    
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-logout")
@@ -43,7 +42,10 @@ dependencies {
     testImplementation project(":core:cas-server-core-web-api")
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-services-registry")
+    
     testImplementation project(":support:cas-server-support-saml-core")
     testImplementation project(":support:cas-server-support-saml-core-api")
     testImplementation project(":support:cas-server-support-saml")
+    testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":support:cas-server-support-validation")
 }

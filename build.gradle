@@ -226,9 +226,9 @@ subprojects {
 
     configurations.all {
         resolutionStrategy {
-            if (!Boolean.getBoolean("skipVersionConflict")) {
+            //if (!Boolean.getBoolean("skipVersionConflict")) {
                 failOnVersionConflict()
-            }
+            ///}
             preferProjectModules()
             cacheDynamicVersionsFor 1, "days"
             cacheChangingModulesFor 5, "days"
@@ -381,8 +381,10 @@ subprojects {
         api libraries.quartz
         api libraries.hibernate
         api libraries.groovy
+        api libraries.caffein
         api libraries.springcloud
         api libraries.springboot
+        api libraries.springsecurity
 
         api libraries.javax
 

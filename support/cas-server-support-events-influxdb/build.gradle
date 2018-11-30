@@ -12,7 +12,7 @@ dependencies {
 
     implementation project(":support:cas-server-support-influxdb-core")
     
-    implementation libraries.caffein
+    
     implementation libraries.influxdb
     implementation libraries.okhttp
 

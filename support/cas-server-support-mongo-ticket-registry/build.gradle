@@ -8,7 +8,7 @@ dependencies {
     
     api project(":api:cas-server-core-api-logout")
     
-    implementation libraries.caffein
+    
     implementation libraries.mongo
     
     testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")

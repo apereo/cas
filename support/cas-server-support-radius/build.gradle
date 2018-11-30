@@ -4,7 +4,7 @@ dependencies {
     api project(":api:cas-server-core-api-audit")
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-mfa")
-
+    
     implementation project(":support:cas-server-support-radius-core")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-authentication-mfa")

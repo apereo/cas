@@ -2,7 +2,7 @@ description = "Apereo CAS Core Google Authenticator Support"
 dependencies {
     implementation libraries.googleauth
     implementation libraries.zxingbarcode
-    implementation libraries.caffein
+    
     
     api project(":api:cas-server-core-api-webflow")
     

@@ -1,7 +1,6 @@
 description = "Apereo CAS Central Configuration"
 
 dependencies {
-    implementation libraries.springsecurity
     implementation libraries.jasypt
     implementation libraries.bouncycastle
     

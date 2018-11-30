@@ -1,7 +1,7 @@
 description = "Apereo CAS Infinispan Integration"
 dependencies {
     implementation libraries.infinispan
-    implementation libraries.caffein
+    
     
     api project(":api:cas-server-core-api-util")
     api project(":api:cas-server-core-api")

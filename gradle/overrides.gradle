@@ -13,8 +13,8 @@ ext["infinispanVersion"] = "9.4.1.Final"
 
 ext["springVersion"] = "5.1.3.RELEASE"
 ext["springBootTomcatVersion"] = "9.0.13"
-ext["springSessionVersion"] = "2.1.1.RELEASE"
-ext["springSessionMongoVersion"] = "2.1.0.RELEASE"
+ext["springSessionVersion"] = "2.1.2.RELEASE"
+ext["springSessionMongoVersion"] = "2.1.1.RELEASE"
 
 ext["jacksonDatabindVersion"] = "2.9.7"
 ext["thymeleafVersion"] = "3.0.11.RELEASE"

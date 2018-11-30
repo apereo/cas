@@ -18,7 +18,7 @@ dependencies {
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 
     implementation libraries.shibidp
-    implementation libraries.caffein
+    implementation libraries.shibidpjavasupport
     runtimeOnly libraries.groovy
 
     testImplementation project(":support:cas-server-support-person-directory")
