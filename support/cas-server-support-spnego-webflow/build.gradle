@@ -13,7 +13,7 @@ dependencies {
     implementation project(":support:cas-server-support-ldap-core")
 
     implementation libraries.jcifs
-    implementation libraries.caffein
+    
     implementation libraries.ldaptive
     
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")

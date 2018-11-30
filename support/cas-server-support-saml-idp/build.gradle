@@ -34,7 +34,7 @@ dependencies {
     implementation libraries.casclient
     implementation libraries.shibidp
     implementation libraries.pac4jcore
-    implementation libraries.caffein
+    implementation libraries.shibidpjavasupport
 
     testImplementation libraries.pac4j
     

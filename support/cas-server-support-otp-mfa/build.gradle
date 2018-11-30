@@ -5,7 +5,7 @@ dependencies {
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api")
 
-    implementation libraries.caffein
+    
     implementation libraries.zxingbarcode
 
     implementation project(":core:cas-server-core-authentication-api")
