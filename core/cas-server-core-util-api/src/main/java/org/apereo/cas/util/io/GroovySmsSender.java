@@ -1,6 +1,6 @@
 package org.apereo.cas.util.io;
 
-import org.apereo.cas.util.ScriptingUtils;
+import org.apereo.cas.util.scripting.ScriptingUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

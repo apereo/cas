@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication.adaptive.intel;
 
 import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
-import org.apereo.cas.util.ScriptingUtils;
+import org.apereo.cas.util.scripting.ScriptingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;

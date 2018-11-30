@@ -2,7 +2,7 @@ package org.apereo.cas.services.support;
 
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.ScriptingUtils;
+import org.apereo.cas.util.scripting.ScriptingUtils;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
