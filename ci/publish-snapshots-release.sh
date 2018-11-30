@@ -4,7 +4,7 @@ source ./ci/functions.sh
 runBuild=false
 echo "Reviewing changes that might affect the Gradle build..."
 
-casVersion=$(./gradlew casVersion -q)
+casVersion=$(./gradlew casVersion --no-daemon -q)
 echo "Current CAS version is $casVersion"
 
 prepCommand="echo 'Running command...'; "
@@ -82,7 +82,7 @@ if [ -z "$gradleBuild" ]; then
 else
 
     echo -e "Installing NPM...\n"
-    ./gradlew npmInstall --stacktrace -q
+    ./gradlew npmInstall --stacktrace -q --no-daemon
 
     tasks="$gradle $gradleBuildOptions $gradleBuild"
     echo -e "***************************************************************************************"

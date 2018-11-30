@@ -41,6 +41,6 @@ chmod -R 777 ./gradlew
 echo "Home directory: $HOME"
 
 echo "Gradle Home directory:"
-./gradlew gradleHome
+./gradlew gradleHome --no-daemon
 
 echo -e "Configured build environment\n"

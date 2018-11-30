@@ -21,7 +21,7 @@ fi
 prepCommand="echo 'Running command...'; "
 gradle="./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon "
+gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon -DtestCategoryType=COUCHBASE"
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
@@ -29,7 +29,7 @@ echo -e "***********************************************"
 
 ./ci/tests/couchbase/run-couchbase-server.sh
 
-gradleBuild="$gradleBuild testCouchbase jacocoRootReport -DtestCategoryType=COUCHBASE -x test -x javadoc -x check \
+gradleBuild="$gradleBuild testCouchbase jacocoRootReport -x test -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 
