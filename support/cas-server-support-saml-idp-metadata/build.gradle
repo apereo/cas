@@ -25,7 +25,7 @@ dependencies {
     
     implementation libraries.casclient
     implementation libraries.shibidp
-    implementation libraries.caffein
+    implementation libraries.shibidpjavasupport
     
     runtimeOnly libraries.groovy
 

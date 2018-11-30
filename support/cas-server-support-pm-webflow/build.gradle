@@ -12,7 +12,7 @@ dependencies {
     
     implementation libraries.pac4jcore
     implementation libraries.nimbus
-    implementation libraries.caffein
+    
     
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-tickets")
