@@ -58,6 +58,7 @@ env:
   - secure: "KplfTU6f4kYxX3vP1aE5IbLDroK0AznP+jhzM95vqab+tGRodq/6oXjV8dGH3CuolC4E0+zaG2HktUpFIUD85vhUSijK49k4tEJVx5DetDc1JYUb4OniwOaNX+BKOUwbnic1za12MWJF0ZmSZqsRdNulsSevcnGiV/TxhOmnYOk="
   - secure: "A0B1HJoHzvYGT4pPWPW1bQDS3Ne755vZ/VZ20OtVRgJHTTQfK13eKgH0VbYpEyZKJAFIexmaDVQ0XUdNukzrAoI6rKSm5vwam6qjELrvrKH2ovMgd1xvS2a5a1no5OT3QP3TXKKlmOTdS+Q5ZspjslBxpay3q7aKA9GMNvzChko="
 before_install:
+- mkdir -p ~/.gradle && echo "org.gradle.daemon=false" >> ~/.gradle/gradle.properties
 - unset _JAVA_OPTIONS
 - chmod -R 777 ./ci/*.sh
 - ./ci/init-travis-build.sh
