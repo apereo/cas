@@ -1,5 +1,7 @@
 package org.apereo.cas.util;
 
+import org.apereo.cas.util.scripting.ScriptingUtils;
+
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
