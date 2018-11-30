@@ -15,6 +15,7 @@ dependencies {
     implementation libraries.pac4jcas
     implementation libraries.nimbus
     implementation libraries.opensaml
+    implementation libraries.shibidpjavasupport
     
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(":core:cas-server-core-services")
