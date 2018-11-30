@@ -2,7 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.util.ScriptingUtils;
+import org.apereo.cas.util.scripting.ScriptingUtils;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

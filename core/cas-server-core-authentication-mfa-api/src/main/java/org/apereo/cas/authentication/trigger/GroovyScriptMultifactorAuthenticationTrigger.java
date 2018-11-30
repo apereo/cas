@@ -9,11 +9,10 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.util.ScriptingUtils;
+import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -31,12 +30,18 @@ import java.util.Optional;
  */
 @Getter
 @Setter
-@RequiredArgsConstructor
 @Slf4j
 public class GroovyScriptMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger {
     private final CasConfigurationProperties casProperties;
+    private final WatchableGroovyScriptResource watchableScript;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
+
+    public GroovyScriptMultifactorAuthenticationTrigger(final CasConfigurationProperties casProperties) {
+        this.casProperties = casProperties;
+        val groovyScript = casProperties.getAuthn().getMfa().getGroovyScript();
+        this.watchableScript = new WatchableGroovyScriptResource(groovyScript);
+    }
 
     @Override
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
@@ -70,7 +75,7 @@ public class GroovyScriptMultifactorAuthenticationTrigger implements Multifactor
 
         try {
             final Object[] args = {registeredService, registeredService, authentication, httpServletRequest, LOGGER};
-            val provider = ScriptingUtils.executeGroovyScript(groovyScript, args, String.class, true);
+            val provider = this.watchableScript.execute(args, String.class);
             LOGGER.debug("Groovy script run for [{}] returned the provider id [{}]", registeredService, provider);
             if (StringUtils.isBlank(provider)) {
                 return Optional.empty();

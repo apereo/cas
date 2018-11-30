@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.ScriptingUtils;
+import org.apereo.cas.util.scripting.ScriptingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

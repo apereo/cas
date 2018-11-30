@@ -41,8 +41,8 @@ exposed over the endpoint `/actuator`. The following endpoints are secured and a
 | `events`                 | Provides a JSON representation of all CAS recorded events.
 | `auditLog`               | Provides a JSON representation of all the audit log.
 | `discoveryProfile`       | Provides a JSON representation of the [CAS configuration and capabilities](../configuration/Configuration-Discovery.html).
-| `registeredServices`     | Provides a JSON representation of the [CAS service registry](Service-Management.html).
-| `exportRegisteredServices`    | Provides a ZIP-file representation of the [CAS service registry](Service-Management.html).
+| `registeredServices`     | Provides a JSON representation of the [CAS service registry](../services/Service-Management.html).
+| `exportRegisteredServices`    | Provides a ZIP-file representation of the [CAS service registry](../services/Service-Management.html).
 | `configurationMetadata`       | Exposes [CAS configuration metadata](../configuration/Configuration-Metadata-Repository.html) that can be used to query settings.
 | `statistics`                  | Exposes statistics data on tickets, memory, server availability and uptime, etc.
 | `ssoSessions`                 | Review the current single sign-on sessions establishes with CAS and manage each session remotely.
@@ -53,7 +53,8 @@ exposed over the endpoint `/actuator`. The following endpoints are secured and a
 | `attributeConsent`            | Manage and control [attribute consent decisions](../integration/Attribute-Release-Consent.html).
 | `gauthCredentialRepository`   | Manage and control [Google Authenticator account records](../mfa/GoogleAuthenticator-Authentication.html).
 | `yubikeyAccountRepository`    | Manage and control [Google Authenticator account records](../mfa/YubiKey-Authentication.html).
-| `oauthTokens`                 | Manage and control [OAuth2 access tokens](OAuth-OpenId-Authentication.html).
+| `oauthTokens`                 | Manage and control [OAuth2 access tokens](../installation/OAuth-OpenId-Authentication.html).
+| `consentReview`               | Manage and control [Consent decisions](../integration/Attribute-Release-Consent.html).
 
 <div class="alert alert-info"><strong>Exposed Endpoints</strong><p>
 Note that by default the only endpoints exposed over the web are <code>info</code>, <code>status</code>, <code>health</code> and <code>configurationMetadata</code>.

@@ -1,4 +1,7 @@
-package org.apereo.cas.util;
+package org.apereo.cas.util.scripting;
+
+import org.apereo.cas.util.RegexUtils;
+import org.apereo.cas.util.ResourceUtils;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyClassLoader;
@@ -112,13 +115,7 @@ public class ScriptingUtils {
             LOGGER.debug("Executing groovy script [{}] with variables [{}]", script, binding.getVariables());
 
             val result = shell.evaluate(script);
-            if (result != null && !clazz.isAssignableFrom(result.getClass())) {
-                throw new ClassCastException("Result [" + result
-                    + " is of type " + result.getClass()
-                    + " when we were expecting " + clazz);
-            }
-            return (T) result;
-
+            return getGroovyScriptExecutionResultOrThrow(clazz, result);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -139,6 +136,22 @@ public class ScriptingUtils {
                                             final Object[] args, final Class<T> clazz,
                                             final boolean failOnError) {
         return executeGroovyScript(groovyScript, "run", args, clazz, failOnError);
+    }
+
+    /**
+     * Execute groovy script.
+     *
+     * @param <T>          the type parameter
+     * @param groovyObject the groovy object
+     * @param args         the args
+     * @param clazz        the clazz
+     * @param failOnError  the fail on error
+     * @return the result
+     */
+    public static <T> T executeGroovyScript(final GroovyObject groovyObject,
+                                            final Object[] args, final Class<T> clazz,
+                                            final boolean failOnError) {
+        return executeGroovyScript(groovyObject, "run", args, clazz, failOnError);
     }
 
     /**
@@ -195,9 +208,8 @@ public class ScriptingUtils {
             return null;
         }
 
-        val parent = ScriptingUtils.class.getClassLoader();
         try {
-            return AccessController.doPrivileged((PrivilegedAction<T>) () -> getGroovyResult(groovyScript, methodName, args, clazz, parent, failOnError));
+            return AccessController.doPrivileged((PrivilegedAction<T>) () -> getGroovyResult(groovyScript, methodName, args, clazz, failOnError));
         } catch (final Exception e) {
             var cause = (Throwable) null;
             if (e instanceof PrivilegedActionException) {
@@ -215,29 +227,19 @@ public class ScriptingUtils {
     }
 
     @SneakyThrows
-    private static <T> T getGroovyResult(final Resource groovyScript, final String methodName,
-                                         final Object[] args, final Class<T> clazz, final ClassLoader parent,
-                                         final boolean failOnError) {
-        try (val loader = new GroovyClassLoader(parent)) {
-            val groovyFile = groovyScript.getFile();
-            if (groovyFile.exists()) {
-                val groovyClass = loader.parseClass(groovyFile);
-                LOGGER.trace("Creating groovy object instance from class [{}]", groovyFile.getCanonicalPath());
+    private static <T> T executeGroovyScript(final GroovyObject groovyObject,
+                                             final String methodName,
+                                             final Object[] args,
+                                             final Class<T> clazz,
+                                             final boolean failOnError) {
+        try {
+            LOGGER.trace("Executing groovy script's [{}] method, with parameters [{}]", methodName, args);
+            val result = groovyObject.invokeMethod(methodName, args);
+            LOGGER.trace("Results returned by the groovy script are [{}]", result);
 
-                val groovyObject = (GroovyObject) groovyClass.getDeclaredConstructor().newInstance();
-                LOGGER.trace("Executing groovy script's [{}] method, with parameters [{}]", methodName, args);
-                val result = groovyObject.invokeMethod(methodName, args);
-                LOGGER.trace("Results returned by the groovy script are [{}]", result);
-
-                if (!clazz.equals(Void.class)) {
-                    if (result != null && !clazz.isAssignableFrom(result.getClass())) {
-                        throw new ClassCastException("Result [" + result + " is of type " + result.getClass() + " when we were expecting " + clazz);
-                    }
-                    return (T) result;
-                }
-                return null;
+            if (!clazz.equals(Void.class)) {
+                return getGroovyScriptExecutionResultOrThrow(clazz, result);
             }
-            LOGGER.trace("Groovy script at [{}] does not exist", groovyScript);
         } catch (final Exception e) {
             var cause = (Throwable) null;
             if (e instanceof InvokerInvocationException) {
@@ -251,6 +253,64 @@ public class ScriptingUtils {
             LOGGER.error(cause.getMessage(), cause);
         }
         return null;
+    }
+
+    /**
+     * Parse groovy script groovy object.
+     *
+     * @param groovyScript the groovy script
+     * @param failOnError  the fail on error
+     * @return the groovy object
+     */
+    @SneakyThrows
+    public static GroovyObject parseGroovyScript(final Resource groovyScript,
+                                                 final boolean failOnError) {
+        val parent = ScriptingUtils.class.getClassLoader();
+        try (val loader = new GroovyClassLoader(parent)) {
+            val groovyFile = groovyScript.getFile();
+            if (groovyFile.exists()) {
+                val groovyClass = loader.parseClass(groovyFile);
+                LOGGER.trace("Creating groovy object instance from class [{}]", groovyFile.getCanonicalPath());
+                return (GroovyObject) groovyClass.getDeclaredConstructor().newInstance();
+            }
+            LOGGER.trace("Groovy script at [{}] does not exist", groovyScript);
+        } catch (final Exception e) {
+            if (failOnError) {
+                throw e;
+            }
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
+
+    @SneakyThrows
+    private static <T> T getGroovyResult(final Resource groovyScript,
+                                         final String methodName,
+                                         final Object[] args,
+                                         final Class<T> clazz,
+                                         final boolean failOnError) {
+        try {
+            val groovyObject = parseGroovyScript(groovyScript, failOnError);
+            if (groovyObject == null) {
+                LOGGER.error("Could not parse the Groovy script at [{}]", groovyScript);
+                return null;
+            }
+            return executeGroovyScript(groovyObject, args, clazz, failOnError);
+        } catch (final Exception e) {
+            if (failOnError) {
+                throw e;
+            }
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    private static <T> T getGroovyScriptExecutionResultOrThrow(final Class<T> clazz, final Object result) {
+        if (result != null && !clazz.isAssignableFrom(result.getClass())) {
+            throw new ClassCastException("Result [" + result + " is of type " + result.getClass() + " when we were expecting " + clazz);
+        }
+        return (T) result;
     }
 
     /**
@@ -283,10 +343,7 @@ public class ScriptingUtils {
                 LOGGER.debug("Executing script's run method, with parameters [{}]", args);
                 val result = invocable.invokeFunction("run", args);
                 LOGGER.debug("Groovy script result is [{}]", result);
-                if (result != null && !clazz.isAssignableFrom(result.getClass())) {
-                    throw new ClassCastException("Result [" + result + " is of type " + result.getClass() + " when we were expecting " + clazz);
-                }
-                return (T) result;
+                return getGroovyScriptExecutionResultOrThrow(clazz, result);
             }
             LOGGER.warn("[{}] script [{}] does not exist, or cannot be loaded", StringUtils.capitalize(engineName), scriptFile);
         } catch (final Exception e) {
@@ -321,10 +378,7 @@ public class ScriptingUtils {
                 binding.put("logger", LOGGER);
             }
             val result = engine.eval(script, binding);
-            if (result != null && !clazz.isAssignableFrom(result.getClass())) {
-                throw new ClassCastException("Result [" + result + " is of type " + result.getClass() + " when we were expecting " + clazz);
-            }
-            return (T) result;
+            return getGroovyScriptExecutionResultOrThrow(clazz, result);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -376,7 +430,7 @@ public class ScriptingUtils {
             val ctor = clazz.getDeclaredConstructor(constructorArgs);
             val result = ctor.newInstance(args);
 
-            if (result != null && !expectedType.isAssignableFrom(result.getClass())) {
+            if (!expectedType.isAssignableFrom(result.getClass())) {
                 throw new ClassCastException("Result [" + result
                     + " is of type " + result.getClass()
                     + " when we were expecting " + expectedType);

@@ -1,6 +1,6 @@
 package org.apereo.cas.jpa;
 
-import org.apereo.cas.util.ScriptingUtils;
+import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.extern.slf4j.Slf4j;

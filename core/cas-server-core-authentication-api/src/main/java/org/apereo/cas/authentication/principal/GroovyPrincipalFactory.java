@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
-import org.apereo.cas.util.ScriptingUtils;
+import org.apereo.cas.util.scripting.ScriptingUtils;
 
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;

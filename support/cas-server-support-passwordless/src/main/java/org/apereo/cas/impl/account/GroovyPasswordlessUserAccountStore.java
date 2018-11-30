@@ -2,7 +2,7 @@ package org.apereo.cas.impl.account;
 
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
-import org.apereo.cas.util.ScriptingUtils;
+import org.apereo.cas.util.scripting.ScriptingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
