@@ -194,7 +194,6 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                    exclude(group: "io.dropwizard.metrics", module: "metrics-core")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-annotation")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-jvm")
                     exclude(group: "com.google.guava", module: "guava")
