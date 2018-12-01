@@ -296,7 +296,7 @@ public class ScriptingUtils {
                 LOGGER.error("Could not parse the Groovy script at [{}]", groovyScript);
                 return null;
             }
-            return executeGroovyScript(groovyObject, args, clazz, failOnError);
+            return executeGroovyScript(groovyObject, methodName, args, clazz, failOnError);
         } catch (final Exception e) {
             if (failOnError) {
                 throw e;
