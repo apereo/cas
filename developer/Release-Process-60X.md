@@ -110,8 +110,7 @@ Update the following overlay projects to point to the newly released CAS version
 over to a maintenance branch for each of the below overlay projects, specially if/when dealing with major/minor releases
 and if the release process here had you create a new branch. 
 
-- [CAS Webapp Maven Overlay](https://github.com/apereo/cas-overlay-template)
-- [CAS Webapp Gradle Overlay](https://github.com/apereo/cas-gradle-overlay-template)
+- [CAS WAR Overlay](https://github.com/apereo/cas-overlay-template)
 
 ## Update Documentation
 
