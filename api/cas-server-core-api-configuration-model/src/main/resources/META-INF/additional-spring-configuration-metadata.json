@@ -111,7 +111,7 @@
       }
     },
     {
-      "name": "cas.admin-pages-security.actuator-endpoints-enabled",
+      "name": "cas.admin-pages-security.actuator-endpoints.enabled",
       "type": "java.lang.Boolean",
       "description": "Enable actuator endpoints.",
       "defaultValue": false,
