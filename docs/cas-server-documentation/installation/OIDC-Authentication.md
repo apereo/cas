@@ -114,6 +114,10 @@ Remember that OpenID Connect features of CAS require session affinity (and optio
 as the authorization responses throughout the login flow are stored via server-backed session storage mechanisms. 
 You will need to configure your deployment environment and load-balancers accordingly.
 
+## Sample Client Applications
+
+- [MITREid Sample Java Webapp](https://github.com/cas-projects/oidc-sample-java-webapp)
+
 ## Claims
 
 OpenID connect claims are simply treated as normal CAS attributes that need to
