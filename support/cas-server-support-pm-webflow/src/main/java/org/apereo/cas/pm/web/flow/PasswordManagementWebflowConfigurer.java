@@ -42,8 +42,8 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
 
     private static final String PASSWORD_CHANGE_ACTION = "passwordChangeAction";
 
-    private static final String ACTION_ID_SEND_PASSWORD_RESET_INSTRUCTIONS = "sendInstructions";
-    private static final String ACTION_ID_FORGOT_USERNAME_INSTRUCTIONS = "sendInstructions";
+    private static final String ACTION_ID_SEND_PASSWORD_RESET_INSTRUCTIONS = "sendPasswordResetInstructions";
+    private static final String ACTION_ID_FORGOT_USERNAME_INSTRUCTIONS = "sendForgotUsernameInstructions";
 
     private final Action initPasswordChangeAction;
 
