@@ -62,6 +62,9 @@ public class AdditionalMetadataVerificationTests {
                 val deprecation = prop.getDeprecation();
                 if (deprecation != null && StringUtils.isNotBlank(deprecation.getReplacement())) {
                     ConfigurationPropertyName.of(deprecation.getReplacement());
+                    if (deprecation.getReplacement().contains("[0]")) {
+                        fail("No array references allowed in replacement value.");
+                    }
                 }
             } catch (final InvalidConfigurationPropertyNameException e) {
                 fail(e.getMessage());
