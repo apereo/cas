@@ -69,5 +69,4 @@ public class HazelcastTicketRegistryConfiguration {
     public TicketRegistryCleaner ticketRegistryCleaner() {
         return NoOpTicketRegistryCleaner.getInstance();
     }
-
 }
