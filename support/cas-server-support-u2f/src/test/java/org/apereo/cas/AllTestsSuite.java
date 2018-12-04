@@ -1,6 +1,7 @@
 
 package org.apereo.cas;
 
+import org.apereo.cas.adaptors.u2f.U2FAuthenticationHandlerTests;
 import org.apereo.cas.adaptors.u2f.storage.U2FGroovyResourceDeviceRepositoryTests;
 import org.apereo.cas.adaptors.u2f.storage.U2FInMemoryDeviceRepositoryTests;
 import org.apereo.cas.adaptors.u2f.storage.U2FJsonResourceDeviceRepositoryTests;
@@ -20,7 +21,8 @@ import org.junit.runners.Suite;
     U2FRestResourceDeviceRepositoryTests.class,
     U2FGroovyResourceDeviceRepositoryTests.class,
     U2FJsonResourceDeviceRepositoryTests.class,
-    U2FInMemoryDeviceRepositoryTests.class
+    U2FInMemoryDeviceRepositoryTests.class,
+    U2FAuthenticationHandlerTests.class
 })
 public class AllTestsSuite {
 }
