@@ -16,7 +16,6 @@ import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
-import com.yubico.u2f.data.DeviceRegistration;
 import lombok.val;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -88,7 +87,7 @@ public class U2FAuthenticationHandlerTests {
             + "\"challenge\":\"NEnAEZPOoSTvD33crTed8YENizvWZ5muFZYffYp3AeU\",\"appId\":\"https://mmoayyed.unicon.net:8443\","
             + "\"keyHandle\":\"2_QYgDSPYcOgYBGBe8c9PVCunjigbD-3o5HcliXhu-Up_GKckYMxxVF6AgSPWubqfWy8WmJNDYQEJ1QKZe343Q\"}]}";
         u2fDeviceRepository.requestDeviceAuthentication("NEnAEZPOoSTvD33crTed8YENizvWZ5muFZYffYp3AeU", "casuser", authnData);
-        
+
         val credential = new U2FTokenCredential(token);
         assertTrue(u2fAuthenticationHandler.supports(credential));
 
