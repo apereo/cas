@@ -32,7 +32,7 @@ Support is enabled by including the following to the overlay:
 
 ```bash
 POST /cas/v1/tickets HTTP/1.0
-
+'Content-type': 'Application/x-www-form-urlencoded'
 username=battags&password=password&additionalParam1=paramvalue
 ```
 
