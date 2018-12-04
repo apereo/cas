@@ -50,6 +50,10 @@ Register clients in the CAS service registry:
 }
 ```
 
+## Sample Client Applications
+
+- [OpenID Client Webapp](https://github.com/cas-projects/openid-sample-java-webapp)
+
 # OpenID Provider Delegation
 
 Using the OpenID protocol, the CAS server can also be configured to [delegate the authentication](../integration/Delegate-Authentication.html) to an OpenID provider.
