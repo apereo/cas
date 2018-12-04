@@ -15,7 +15,6 @@ import org.apereo.cas.web.report.CasInfoEndpointContributor;
 import org.apereo.cas.web.report.CasReleaseAttributesReportEndpoint;
 import org.apereo.cas.web.report.CasResolveAttributesReportEndpoint;
 import org.apereo.cas.web.report.ExportRegisteredServicesEndpoint;
-import org.apereo.cas.web.report.LoggingConfigurationEndpoint;
 import org.apereo.cas.web.report.RegisteredServicesEndpoint;
 import org.apereo.cas.web.report.SingleSignOnSessionStatusEndpoint;
 import org.apereo.cas.web.report.SingleSignOnSessionsEndpoint;
@@ -36,8 +35,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.core.env.Environment;
-import org.springframework.core.io.ResourceLoader;
 
 /**
  * This this {@link CasReportsConfiguration}.
@@ -50,11 +47,6 @@ import org.springframework.core.io.ResourceLoader;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasReportsConfiguration {
 
-    @Autowired
-    private ResourceLoader resourceLoader;
-
-    @Autowired
-    private Environment environment;
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
@@ -108,12 +100,6 @@ public class CasReportsConfiguration {
     @ConditionalOnEnabledEndpoint
     public AuditLogEndpoint auditLogEndpoint() {
         return new AuditLogEndpoint(auditTrailExecutionPlan.getIfAvailable(), casProperties);
-    }
-
-    @Bean
-    @ConditionalOnEnabledEndpoint
-    public LoggingConfigurationEndpoint loggingConfigurationEndpoint() {
-        return new LoggingConfigurationEndpoint(casProperties, resourceLoader, environment);
     }
 
     @Bean

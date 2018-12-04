@@ -226,9 +226,9 @@ subprojects {
 
     configurations.all {
         resolutionStrategy {
-            if (!Boolean.getBoolean("skipVersionConflict")) {
+            //if (!Boolean.getBoolean("skipVersionConflict")) {
                 failOnVersionConflict()
-            }
+            ///}
             preferProjectModules()
             cacheDynamicVersionsFor 1, "days"
             cacheChangingModulesFor 5, "days"
@@ -242,11 +242,10 @@ subprojects {
                 }
             }
         }
-        exclude(group: "ch.qos.logback", module: "logback-core")
-        exclude(group: "ch.qos.logback", module: "logback-classic")
         exclude(group: "cglib", module: "cglib")
         exclude(group: "cglib", module: "cglib-full")
         exclude(group: "org.slf4j", module: "slf4j-log4j12")
+        exclude(group: "org.slf4j", module: "slf4j-simple")
         exclude(group: "org.apache.logging.log4j", module: "log4j-to-slf4j")
     }
 
@@ -297,6 +296,7 @@ subprojects {
             it.options.errorprone.errorproneArgs += ['-Xep:ParameterName:OFF', '-Xep:MissingOverride:OFF']
 
             casCompilerArgs.add("-XDcompilePolicy=byfile")
+            casCompilerArgs.add("-Werror")
         }
         it.options.compilerArgs += casCompilerArgs
     }
@@ -369,7 +369,7 @@ subprojects {
         implementation libraries.validationapi
 
         api libraries.jaxb
-        api libraries.log4j
+        api libraries.slf4j
         api libraries.guava
         api libraries.commons
         api libraries.jodatime
@@ -381,8 +381,10 @@ subprojects {
         api libraries.quartz
         api libraries.hibernate
         api libraries.groovy
+        api libraries.caffein
         api libraries.springcloud
         api libraries.springboot
+        api libraries.springsecurity
 
         api libraries.javax
 

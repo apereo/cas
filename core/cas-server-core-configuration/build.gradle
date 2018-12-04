@@ -1,8 +1,6 @@
-description = "Apereo CAS central configuration module"
+description = "Apereo CAS Central Configuration"
 
 dependencies {
-    implementation libraries.springsecurity
-    implementation libraries.mongo
     implementation libraries.jasypt
     implementation libraries.bouncycastle
     

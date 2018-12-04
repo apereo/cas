@@ -19,9 +19,7 @@ dependencies {
     
     implementation libraries.mongo
     implementation libraries.shibidp
-    implementation libraries.pac4j
-    implementation libraries.nimbus
-    implementation libraries.caffein
+    implementation libraries.shibidpjavasupport
     
     runtimeOnly libraries.groovy
 

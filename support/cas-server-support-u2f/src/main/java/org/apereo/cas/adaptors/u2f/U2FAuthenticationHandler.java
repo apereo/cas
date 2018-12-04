@@ -14,8 +14,10 @@ import com.yubico.u2f.data.DeviceRegistration;
 import com.yubico.u2f.data.messages.SignRequestData;
 import com.yubico.u2f.data.messages.SignResponse;
 import com.yubico.u2f.exceptions.DeviceCompromisedException;
-import lombok.SneakyThrows;
+import com.yubico.u2f.exceptions.U2fAuthenticationException;
+import com.yubico.u2f.exceptions.U2fBadInputException;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * This is {@link U2FAuthenticationHandler}.
@@ -37,29 +39,40 @@ public class U2FAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
     }
 
     @Override
-    @SneakyThrows
-    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws PreventedException {
         val tokenCredential = (U2FTokenCredential) credential;
 
         val authentication = WebUtils.getInProgressAuthentication();
         if (authentication == null) {
             throw new IllegalArgumentException("CAS has no reference to an authentication event to locate a principal");
         }
-        val p = authentication.getPrincipal();
-        
-        val authenticateResponse = SignResponse.fromJson(tokenCredential.getToken());
-        val authJson = u2FDeviceRepository.getDeviceAuthenticationRequest(authenticateResponse.getRequestId(), p.getId());
-        val authenticateRequest = SignRequestData.fromJson(authJson);
-
+        val principal = this.principalFactory.createPrincipal(authentication.getPrincipal().getId());
         var registration = (DeviceRegistration) null;
+
         try {
-            registration = u2f.finishSignature(authenticateRequest, authenticateResponse, u2FDeviceRepository.getRegisteredDevices(p.getId()));
-            return createHandlerResult(tokenCredential, p);
+            val authenticateResponse = SignResponse.fromJson(tokenCredential.getToken());
+            val authJson = u2FDeviceRepository.getDeviceAuthenticationRequest(authenticateResponse.getRequestId(), principal.getId());
+            if (StringUtils.isBlank(authJson)) {
+                throw new PreventedException("Could not get device authentication request from repository for request id " + authenticateResponse.getRequestId());
+            }
+            val authenticateRequest = SignRequestData.fromJson(authJson);
+            val registeredDevices = u2FDeviceRepository.getRegisteredDevices(principal.getId());
+            if (registeredDevices.isEmpty()) {
+                throw new PreventedException("No registered devices could be found for " + principal.getId());
+            }
+            registration = u2f.finishSignature(authenticateRequest, authenticateResponse, registeredDevices);
+            return createHandlerResult(tokenCredential, principal);
+        } catch (final U2fBadInputException e) {
+            throw new PreventedException("Could not accept/parse u2f request: " + e.getMessage(), e);
         } catch (final DeviceCompromisedException e) {
             registration = e.getDeviceRegistration();
             throw new PreventedException("Device possibly compromised and therefore blocked: " + e.getMessage(), e);
+        } catch (final U2fAuthenticationException e) {
+            throw new PreventedException("Could not authenticate device: " + e.getMessage(), e);
         } finally {
-            u2FDeviceRepository.authenticateDevice(p.getId(), registration);
+            if (registration != null) {
+                u2FDeviceRepository.authenticateDevice(principal.getId(), registration);
+            }
         }
     }
 

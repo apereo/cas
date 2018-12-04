@@ -1,13 +1,12 @@
 description = "Apereo CAS Web Application Configuration"
 dependencies {
-    implementation libraries.nimbus
-    implementation libraries.pac4j
-    implementation libraries.jose4j
-    implementation libraries.metrics
-    implementation libraries.ldaptive
-    implementation libraries.cassecurityfilter
-
     api project(":api:cas-server-core-api-webflow")
+
+    implementation libraries.pac4jcore
+    implementation libraries.cassecurityfilter
+    implementation libraries.springsecurityweb
+    implementation libraries.springsecurityconfig
+    implementation libraries.ldaptive
     
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-webflow-mfa")
@@ -15,15 +14,14 @@ dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-authentication-api")
+    
     implementation project(":support:cas-server-support-actions")
-    implementation project(":support:cas-server-support-ldap-core")
     implementation project(":support:cas-server-support-pac4j-core")
-
-    testImplementation libraries.thymeleaf
-    testImplementation libraries.thymeleafdialect
+    implementation project(":support:cas-server-support-ldap-core")
     
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-themes")
+    
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core-audit-api")
@@ -50,9 +48,4 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-ldap", configuration: "tests")
     
-    compileOnly libraries.bouncycastle
-
-    implementation libraries.springsecurity
-    implementation libraries.springsecurityweb
-    implementation libraries.springsecurityconfig
 }

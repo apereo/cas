@@ -14,8 +14,11 @@ dependencies {
     implementation project(":support:cas-server-support-pac4j-authentication")
     
     implementation libraries.pac4j
+    implementation libraries.pac4jcore
+    implementation libraries.pac4jcas
     implementation libraries.nimbus
     implementation libraries.jose4j
+    implementation libraries.shibidpjavasupport
     implementation libraries.opensaml
     
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

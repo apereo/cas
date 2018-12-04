@@ -293,6 +293,11 @@ For Java-based applications, the following frameworks may be used to integrate y
 - [Spring Security SAML](http://projects.spring.io/spring-security-saml/)
 - [Pac4j](http://www.pac4j.org/docs/clients/saml.html)
 
+## Sample Client Applications
+
+- [Spring Security SAML Sample Webapp](https://github.com/cas-projects/saml2-sample-java-webapp)
+- [Okta](https://developer.okta.com/standards/SAML/setting_up_a_saml_application_in_okta)
+
 ## Troubleshooting
 
 To enable additional logging, modify the logging configuration file to add the following:

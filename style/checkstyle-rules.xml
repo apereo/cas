@@ -520,6 +520,13 @@
                       value="Consider not checking for logging levels. Let the logging framework handle that."/>
         </module>
         <module name="RegexpSinglelineJava">
+            <property name="id" value="usingAutowiredInApiClasses"/>
+            <metadata name="net.sf.eclipsecs.core.comment" value="Using Autowired outside configuration components"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="@Autowired"/>
+            <property name="message" value="Consider injecting the reference from a @Configuration class instead."/>
+        </module>
+        <module name="RegexpSinglelineJava">
             <property name="id" value="useLombokVarForGenerics"/>
             <metadata name="net.sf.eclipsecs.core.comment" value="Using val for variable definitions"/>
             <property name="severity" value="error"/>
@@ -527,7 +534,7 @@
             <property name="message" value="Use lombok.val when declaring collections with generics"/>
         </module>
         <module name="RegexpSinglelineJava">
-            <property name="id" value="useLombokVaLForFinalVar"/>
+            <property name="id" value="useLombokValForFinalVar"/>
             <metadata name="net.sf.eclipsecs.core.comment" value="Using val for variable definitions"/>
             <property name="severity" value="error"/>
             <property name="format" value="final\s+var\s+"/>

@@ -19,9 +19,7 @@ dependencies {
 
     implementation libraries.awss3
     implementation libraries.shibidp
-    implementation libraries.pac4j
-    implementation libraries.caffein
-    implementation libraries.nimbus
+    implementation libraries.shibidpjavasupport
     
     runtimeOnly libraries.groovy
 

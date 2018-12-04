@@ -54,13 +54,6 @@ A sample definition follows:
 }
 ```
 
-## Consent Review
-
-A page for users to review their consent decisions will be exposed at the `/consentReview` endpoint. 
-A link is included automatically on the login page. Users may view and delete the consent decisions they have made in the past. 
-The CAS service for the consent endpoint will be auto-registered during startup. 
-Regular [service access strategies](../services/Configuring-Service-Access-Strategy.html) may be used to control access to the endpoint.
-
 ## Storage
 
 User consent decisions may be stored and remembered using one of the following options.

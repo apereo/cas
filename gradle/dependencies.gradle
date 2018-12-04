@@ -61,6 +61,7 @@ ext.libraries = [
                 dependencies.create("com.github.oshi:oshi-core:$oshiVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "net.java.dev.jna", module: "jna-platform")
+                    exclude(group: "net.java.dev.jna", module: "jna")
                     force = true
                 }
         ],
@@ -193,7 +194,6 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                    exclude(group: "io.dropwizard.metrics", module: "metrics-core")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-annotation")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-jvm")
                     exclude(group: "com.google.guava", module: "guava")
@@ -357,17 +357,6 @@ ext.libraries = [
                 dependencies.create("commons-logging:commons-logging:$commonsLoggingVersion") {
                     force = true
                 },
-                dependencies.create("org.apache.commons:commons-configuration2:$commonsConfigVersion") {
-                    exclude(group: "commons-beanutils", module: "commons-beanutils")
-                    exclude(group: "commons-logging", module: "commons-logging")
-                    exclude(group: "commons-lang", module: "commons-lang")
-                    exclude(group: "commons-codec", module: "commons-codec")
-                    exclude(group: "log4j", module: "log4j")
-                    exclude(group: "org.springframework", module: "spring-beans")
-                    exclude(group: "org.springframework", module: "spring-core")
-                    exclude(group: "org.apache.commons", module: "commons-lang3")
-                    force = true
-                },
                 dependencies.create("commons-validator:commons-validator:$commonsValidatorVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "commons-lang", module: "commons-lang")
@@ -432,10 +421,6 @@ ext.libraries = [
                     exclude(group: "commons-cli", module: "commons-cli")
                     force = true
                 },
-                dependencies.create("org.codehaus.groovy:groovy-console:$groovyVersion") {
-                    exclude(group: "commons-cli", module: "commons-cli")
-                    force = true
-                },
                 dependencies.create("org.codehaus.groovy:groovy-json:$groovyVersion") {
                     exclude(group: "commons-cli", module: "commons-cli")
                     force = true
@@ -449,6 +434,8 @@ ext.libraries = [
                     force = true
                 },
                 dependencies.create("org.codehaus.groovy:groovy-groovysh:$groovyVersion") {
+                    exclude(group: "org.codehaus.groovy", module: "groovy-swing")
+                    exclude(group: "org.codehaus.groovy", module: "groovy-console")
                     force = true
                 }
         ],
@@ -625,13 +612,14 @@ ext.libraries = [
         hibernate               : [
                 dependencies.create("org.hibernate:hibernate-core:$hibernateVersion") {
                     exclude(group: "org.hibernate", module: "hibernate-entitymanager")
+                    exclude(group: "org.hibernate", module: "hibernate-core")
                     exclude(group: "org.jboss.logging", module: "jboss-logging-annotations")
                     exclude(group: "org.javassist", module: "javassist")
                     exclude(group: "xml-apis", module: "xml-apis")
                     exclude(group: "dom4j", module: "dom4j")
-                    exclude(group: "org.jboss.logging", module: "jboss-logging")
                     exclude(group: "com.fasterxml", module: "classmate")
                     exclude(group: "org.hibernate", module: "hibernate-validator")
+                    exclude(group: "org.jboss.logging", module: "jboss-logging")
                     force = true
                 },
                 dependencies.create("dom4j:dom4j:$dom4jVersion") {
@@ -643,10 +631,12 @@ ext.libraries = [
                     exclude(group: "dom4j", module: "dom4j")
                     exclude(group: "xml-apis", module: "xml-apis")
                     exclude(group: "org.hibernate", module: "hibernate-validator")
+                    exclude(group: "org.hibernate", module: "hibernate-core")
                     exclude(group: "org.hibernate", module: "hibernate-entitymanager")
                     exclude(group: "com.zaxxer", module: "HikariCP")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.jboss.logging", module: "jboss-logging")
+                    exclude(group: "net.bytebuddy", module: "byte-buddy")
                     force = true
                 },
                 dependencies.create("org.hibernate:hibernate-entitymanager:$hibernateVersion") {
@@ -654,12 +644,15 @@ ext.libraries = [
                     exclude(group: "dom4j", module: "dom4j")
                     exclude(group: "xml-apis", module: "xml-apis")
                     exclude(group: "org.hibernate", module: "hibernate-validator")
+                    exclude(group: "org.jboss.logging", module: "jboss-logging")
+                    exclude(group: "org.hibernate", module: "hibernate-core")
+                    exclude(group: "net.bytebuddy", module: "byte-buddy")
                     force = true
                 },
                 dependencies.create("org.hibernate:hibernate-validator:$hibernateValidatorVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.jboss.logging", module: "jboss-logging")
-                    exclude(group: "com.fasterxml", module: "classmate")
+                    exclude(group: "org.hibernate", module: "hibernate-core")
+                    exclude(group: "org.hibernate", module: "hibernate-entitymanager")
                     force = true
                 },
                 dependencies.create("com.zaxxer:HikariCP:$hikariVersion") {
@@ -683,10 +676,6 @@ ext.libraries = [
                     force = true
                 },
                 dependencies.create("org.apache.httpcomponents:httpcore:$httpCoreVersion") {
-                    force = true
-                },
-                dependencies.create("com.github.axet:wget:$axetWgetVersion") {
-                    exclude(group: "com.thoughtworks.xstream", module: "xstream")
                     force = true
                 }
         ],
@@ -734,7 +723,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        awscognito                   : [
+        awscognito              : [
                 dependencies.create("com.amazonaws:aws-java-sdk-cognitoidp:$amazonSdkVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
@@ -794,6 +783,10 @@ ext.libraries = [
         ],
         apachevelocity          : [
                 dependencies.create("org.apache.velocity:velocity-engine-core:$apacheVelocityVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "jcl-over-slf4j")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "org.apache.commons", module: "commons-lang3")
                     force = true
                 }
         ],
@@ -813,7 +806,36 @@ ext.libraries = [
                     force = true
                 }
         ],
-
+        shibidpjavasupport : [
+                dependencies.create("net.shibboleth.utilities:java-support:$shibbolethUtilJavaSupportVersion") {
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "joda-time", module: "joda-time")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "com.google.code.findbugs", module: "jsr305")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-context-support")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "org.springframework.webflow", module: "spring-webflow")
+                    exclude(group: "org.springframework", module: "spring-expression")
+                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
+                    exclude(group: "org.ldaptive", module: "ldaptive")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                    exclude(group: "org.cryptacular", module: "cryptacular")
+                    exclude(group: "commons-collections", module: "commons-collections")
+                    exclude(group: "io.dropwizard.metrics", module: "metrics-core")
+                    exclude(group: "io.dropwizard.metrics", module: "metrics-json")
+                    exclude(group: "net.shibboleth.idp", module: "idp-authn-api")
+                    force = true
+                }
+        ],
         shibidp                 : [
                 dependencies.create("net.shibboleth.idp:idp-attribute-filter-api:$idpVersion") {
                     exclude(group: "com.google.guava", module: "guava")
@@ -837,18 +859,37 @@ ext.libraries = [
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                     exclude(group: "org.cryptacular", module: "cryptacular")
                     exclude(group: "commons-collections", module: "commons-collections")
+                    exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-core")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-json")
+                    exclude(group: "net.shibboleth.liberty", module: "idwsfconsumer")
+                    exclude(group: "net.shibboleth.utilities", module: "java-support")
+                    exclude(group: "net.shibboleth.idp", module: "idp-authn-api")
+                    exclude(group: "net.shibboleth.idp", module: "idp-attribute-api")
+                    exclude(group: "net.shibboleth.idp", module: "idp-core")
+                    exclude(group: "org.opensaml", module: "opensaml-profile-api")
+                    exclude(group: "org.opensaml", module: "opensaml-core")
                     force = true
                 },
                 dependencies.create("net.shibboleth.liberty:idwsfconsumer:$idpLibertyIdwsConsumerVersion") {
                     exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "net.shibboleth.utilities", module: "java-support")
+                    exclude(group: "net.shibboleth.idp", module: "idp-saml-impl")
+                    exclude(group: "net.shibboleth.idp", module: "idp-profile-spring")
+                    exclude(group: "net.shibboleth.idp", module: "idp-profile-impl")
+                    exclude(group: "net.shibboleth.idp", module: "idp-authn-api")
+                    exclude(group: "net.shibboleth.idp", module: "idp-session-api")
+                    exclude(group: "net.shibboleth.idp", module: "idp-attribute-resolver-api")
                     exclude(group: "joda-time", module: "joda-time")
+                    exclude(group: "org.opensaml", module: "opensaml-session-api")
                     exclude(group: "org.opensaml", module: "opensaml-saml-api")
                     exclude(group: "org.opensaml", module: "opensaml-saml-impl")
                     exclude(group: "org.opensaml", module: "opensaml-xmlsec-api")
                     exclude(group: "org.opensaml", module: "opensaml-xmlsec-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-xacml-saml-impl")
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "commons-lang", module: "commons-lang")
                     exclude(group: "com.google.code.findbugs", module: "jsr305")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
@@ -861,6 +902,8 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "log4j-over-slf4j")
                     exclude(group: "org.cryptacular", module: "cryptacular")
                     exclude(group: "commons-collections", module: "commons-collections")
+                    exclude(group: "org.apache.velocity", module: "velocity")
+                    exclude(group: "net.shibboleth.liberty", module: "idwsfconsumer")
                     force = true
                 },
                 dependencies.create("net.shibboleth.idp:idp-attribute-api:$idpVersion") {
@@ -871,6 +914,7 @@ ext.libraries = [
                     exclude(group: "joda-time", module: "joda-time")
                     exclude(group: "com.google.code.findbugs", module: "jsr305")
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-web")
@@ -888,12 +932,22 @@ ext.libraries = [
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-core")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-json")
+                    exclude(group: "net.shibboleth.liberty", module: "idwsfconsumer")
+                    exclude(group: "net.shibboleth.idp", module: "idp-authn-api")
+                    exclude(group: "net.shibboleth.idp", module: "idp-core")
+                    exclude(group: "net.shibboleth.utilities", module: "java-support")
+                    exclude(group: "org.opensaml", module: "opensaml-core")
+                    exclude(group: "org.opensaml", module: "opensaml-profile-api")
+                    exclude(group: "org.opensaml", module: "opensaml-messaging-api")
+                    exclude(group: "org.opensaml", module: "opensaml-security-api")
                     force = true
                 },
                 dependencies.create("net.shibboleth.idp:idp-attribute-resolver-api:$idpVersion") {
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "joda-time", module: "joda-time")
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "com.google.code.findbugs", module: "jsr305")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
@@ -915,6 +969,15 @@ ext.libraries = [
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-core")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-json")
+                    exclude(group: "net.shibboleth.utilities", module: "java-support")
+                    exclude(group: "net.shibboleth.liberty", module: "idwsfconsumer")
+                    exclude(group: "net.shibboleth.idp", module: "idp-authn-api")
+                    exclude(group: "net.shibboleth.idp", module: "idp-attribute-api")
+                    exclude(group: "net.shibboleth.idp", module: "idp-core")
+                    exclude(group: "org.opensaml", module: "opensaml-messaging-api")
+                    exclude(group: "org.opensaml", module: "opensaml-security-api")
+                    exclude(group: "org.opensaml", module: "opensaml-saml-api")
+                    exclude(group: "org.opensaml", module: "opensaml-core")
                     force = true
                 },
                 dependencies.create("net.shibboleth.idp:idp-core:$idpVersion") {
@@ -940,8 +1003,18 @@ ext.libraries = [
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                     exclude(group: "org.cryptacular", module: "cryptacular")
                     exclude(group: "commons-collections", module: "commons-collections")
+                    exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-core")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-json")
+                    exclude(group: "net.shibboleth.utilities", module: "java-support")
+                    exclude(group: "net.shibboleth.liberty", module: "idwsfconsumer")
+                    exclude(group: "net.shibboleth.idp", module: "idp-authn-api")
+                    exclude(group: "net.shibboleth.idp", module: "idp-attribute-api")
+                    exclude(group: "org.opensaml", module: "opensaml-core")
+                    exclude(group: "org.opensaml", module: "opensaml-profile-api")
+                    exclude(group: "org.opensaml", module: "opensaml-security-api")
+                    exclude(group: "org.opensaml", module: "opensaml-messaging-api")
+                    exclude(group: "org.opensaml", module: "opensaml-saml-api")
                     force = true
                 },
                 dependencies.create("net.shibboleth.idp:idp-profile-impl:$idpVersion") {
@@ -966,15 +1039,28 @@ ext.libraries = [
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                     exclude(group: "org.cryptacular", module: "cryptacular")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-core")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-json")
+                    exclude(group: "net.shibboleth.utilities", module: "java-support")
+                    exclude(group: "net.shibboleth.idp", module: "idp-core")
+                    exclude(group: "net.shibboleth.liberty", module: "idwsfconsumer")
+                    exclude(group: "org.opensaml", module: "opensaml-core")
+                    exclude(group: "org.opensaml", module: "opensaml-profile-api")
+                    exclude(group: "org.opensaml", module: "opensaml-security-api")
+                    exclude(group: "org.opensaml", module: "opensaml-messaging-api")
+                    exclude(group: "net.shibboleth.idp", module: "idp-authn-api")
+                    exclude(group: "net.shibboleth.idp", module: "idp-attribute-api")
+                    exclude(group: "net.shibboleth.idp", module: "idp-profile-spring")
                     force = true
                 },
                 dependencies.create("net.shibboleth.idp:idp-profile-spring:$idpVersion") {
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
                     exclude(group: "joda-time", module: "joda-time")
+                    exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "com.google.code.findbugs", module: "jsr305")
                     exclude(group: "org.opensaml", module: "opensaml-xmlsec-impl")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
@@ -991,7 +1077,11 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-expression")
                     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
                     exclude(group: "org.opensaml", module: "opensaml-saml-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-security-api")
                     exclude(group: "org.opensaml", module: "opensaml-saml-api")
+                    exclude(group: "org.opensaml", module: "opensaml-core")
+                    exclude(group: "org.opensaml", module: "opensaml-profile-api")
+                    exclude(group: "org.opensaml", module: "opensaml-messaging-api")
                     exclude(group: "org.ldaptive", module: "ldaptive")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "ch.qos.logback", module: "logback-core")
@@ -1000,6 +1090,13 @@ ext.libraries = [
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-core")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-json")
+                    exclude(group: "net.shibboleth.utilities", module: "java-support")
+                    exclude(group: "net.shibboleth.idp", module: "idp-saml-impl")
+                    exclude(group: "org.apache.velocity", module: "velocity")
+                    exclude(group: "net.shibboleth.liberty", module: "idwsfconsumer")
+                    exclude(group: "net.shibboleth.idp", module: "idp-authn-api")
+                    exclude(group: "net.shibboleth.idp", module: "idp-attribute-api")
+                    exclude(group: "net.shibboleth.idp", module: "idp-core")
                     force = true
                 },
                 dependencies.create("net.shibboleth.idp:idp-saml-api:$idpVersion") {
@@ -1028,6 +1125,16 @@ ext.libraries = [
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-core")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-json")
+                    exclude(group: "net.shibboleth.utilities", module: "java-support")
+                    exclude(group: "net.shibboleth.liberty", module: "idwsfconsumer")
+                    exclude(group: "org.opensaml", module: "opensaml-core")
+                    exclude(group: "org.opensaml", module: "opensaml-security-api")
+                    exclude(group: "org.opensaml", module: "opensaml-security-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-profile-api")
+                    exclude(group: "org.opensaml", module: "opensaml-messaging-api")
+                    exclude(group: "net.shibboleth.idp", module: "idp-authn-api")
+                    exclude(group: "net.shibboleth.idp", module: "idp-attribute-api")
+                    exclude(group: "net.shibboleth.idp", module: "idp-core")
                     force = true
                 },
                 dependencies.create("net.shibboleth.idp:idp-saml-impl:$idpVersion") {
@@ -1035,7 +1142,15 @@ ext.libraries = [
                     exclude(group: "com.google.code.findbugs", module: "jsr305")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
                     exclude(group: "joda-time", module: "joda-time")
+                    exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "org.opensaml", module: "opensaml-xmlsec-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-xacml-saml-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-saml-api")
+                    exclude(group: "org.opensaml", module: "opensaml-core")
+                    exclude(group: "org.opensaml", module: "opensaml-security-api")
+                    exclude(group: "org.opensaml", module: "opensaml-security-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-profile-api")
+                    exclude(group: "org.opensaml", module: "opensaml-messaging-api")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "org.springframework", module: "spring-beans")
@@ -1046,7 +1161,6 @@ ext.libraries = [
                     exclude(group: "org.springframework.webflow", module: "spring-webflow")
                     exclude(group: "org.springframework", module: "spring-expression")
                     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
-                    exclude(group: "org.opensaml", module: "opensaml-saml-api")
                     exclude(group: "org.ldaptive", module: "ldaptive")
                     exclude(group: "org.slf4j", module: "log4j-over-slf4j")
                     exclude(group: "ch.qos.logback", module: "logback-core")
@@ -1058,31 +1172,13 @@ ext.libraries = [
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-core")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-json")
-                    force = true
-                },
-                dependencies.create("net.shibboleth.utilities:java-support:$shibbolethUtilJavaSupportVersion") {
-                    exclude(group: "com.google.guava", module: "guava")
-                    exclude(group: "joda-time", module: "joda-time")
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "com.google.code.findbugs", module: "jsr305")
-                    exclude(group: "org.springframework", module: "spring-beans")
-                    exclude(group: "org.springframework", module: "spring-core")
-                    exclude(group: "org.springframework", module: "spring-web")
-                    exclude(group: "org.springframework", module: "spring-context")
-                    exclude(group: "org.springframework", module: "spring-context-support")
-                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
-                    exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
-                    exclude(group: "commons-codec", module: "commons-codec")
-                    exclude(group: "org.springframework.webflow", module: "spring-webflow")
-                    exclude(group: "org.springframework", module: "spring-expression")
-                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
-                    exclude(group: "org.ldaptive", module: "ldaptive")
-                    exclude(group: "ch.qos.logback", module: "logback-core")
-                    exclude(group: "ch.qos.logback", module: "logback-classic")
-                    exclude(group: "org.cryptacular", module: "cryptacular")
-                    exclude(group: "commons-collections", module: "commons-collections")
-                    exclude(group: "io.dropwizard.metrics", module: "metrics-core")
-                    exclude(group: "io.dropwizard.metrics", module: "metrics-json")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "net.shibboleth.utilities", module: "java-support")
+                    exclude(group: "net.shibboleth.liberty", module: "idwsfconsumer")
+                    exclude(group: "net.shibboleth.idp", module: "idp-core")
+                    exclude(group: "org.apache.velocity", module: "velocity")
+                    exclude(group: "net.shibboleth.idp", module: "idp-authn-api")
+                    exclude(group: "net.shibboleth.idp", module: "idp-attribute-api")
                     force = true
                 }
         ],
@@ -1149,6 +1245,8 @@ ext.libraries = [
                     exclude(group: "javax.validation", module: "validation-api")
                     exclude(group: "org.aspectj", module: "aspectjrt")
                     exclude(group: "org.hjson", module: "hjson")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     force = true
                 },
                 dependencies.create("org.apereo.inspektr:inspektr-support-spring:$inspektrVersion") {
@@ -1160,8 +1258,13 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-tx")
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework", module: "spring-jdbc")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-aop")
                     exclude(group: "org.aspectj", module: "aspectjrt")
                     exclude(group: "javax.validation", module: "validation-api")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     force = true
                 }
         ],
@@ -1188,6 +1291,9 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.apache.activemq", module: "activemq-client")
                     exclude(group: "org.fusesource.hawtbuf", module: "hawtbuf")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-aop")
                     force = true
                 },
                 dependencies.create("org.apache.activemq:activemq-pool:$activemqPoolVersion") {
@@ -1202,18 +1308,31 @@ ext.libraries = [
         thymeleaf               : [
                 dependencies.create("org.thymeleaf:thymeleaf-spring5:$thymeleafVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.thymeleaf", module: "thymeleaf-spring5")
                     exclude(group: "org.javassist", module: "javassist")
                     exclude(group: "org.sourceforge.nekohtml", module: "nekohtml")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-aop")
                     force = true
                 },
                 dependencies.create("org.springframework.boot:spring-boot-starter-thymeleaf:$springBootVersion") {
                     exclude(group: "com.fasterxml", module: "classmate")
+                    exclude(group: "org.thymeleaf", module: "thymeleaf")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                     exclude(group: "nz.net.ultraq.thymeleaf", module: "thymeleaf-layout-dialect")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     exclude(group: "org.sourceforge.nekohtml", module: "nekohtml")
+                    exclude(group: "org.javassist", module: "javassist")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-aop")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
                     force = true
                 }
         ],
@@ -1269,24 +1388,24 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     force = true
                 },
-                dependencies.create("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonDatabindVersion") {
+                dependencies.create("com.fasterxml.jackson.datatype:jackson-datatype-guava:$jacksonDatabindVersion") {
+                    exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     force = true
                 },
-                dependencies.create("com.fasterxml.jackson.datatype:jackson-datatype-guava:$jacksonDatabindVersion") {
-                    exclude(group: "com.google.guava", module: "guava")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                    force = true
-                },
                 dependencies.create("com.fasterxml.jackson.core:jackson-annotations:$jacksonDatabindVersion") {
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     force = true
                 },
                 dependencies.create("com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:$jacksonDatabindVersion") {
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     force = true
                 },
                 dependencies.create("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonDatabindVersion") {
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     force = true
                 },
                 dependencies.create("org.hjson:hjson:$hjsonVersion") {
@@ -1295,6 +1414,7 @@ ext.libraries = [
                 dependencies.create("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonDatabindVersion") {
                     exclude(group: "org.yaml", module: "snakeyaml")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     force = true
                 }
         ],
@@ -1310,10 +1430,23 @@ ext.libraries = [
                     force = true
                 }
         ],
+        snakeyaml               : [
+                dependencies.create("org.yaml:snakeyaml:$snakeYamlVersion") {
+                    exclude(group: "junit", module: "junit")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-context-support")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "commons-io", module: "commons-io")
+                    force = true
+                }
+        ],
         azurekeyvault           : [
                 dependencies.create("com.microsoft.azure:azure-keyvault-secrets-spring-boot-starter:$azureKeyVaultSecretsVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.nimbusds", module: "nimbus-jose-jwt")
+                    force = true
                 }
         ],
         cosmosdb                : [
@@ -1360,15 +1493,22 @@ ext.libraries = [
                     exclude(module: "commons-io")
                     force = true
                 },
+                dependencies.create("com.unboundid:unboundid-ldapsdk:$unboundidVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-cli", module: "commons-cli")
+                    force = true
+                },
                 dependencies.create("org.mockito:mockito-core:$mockitoVersion") {
                     exclude(group: "org.hamcrest", module: "hamcrest-core")
                     exclude(group: "org.objenesis", module: "objenesis")
-                    exclude(group: "net.bytebuddy", module: "byte-buddy")
                     exclude(group: "junit", module: "junit")
                     force = true
                 },
                 dependencies.create("org.objenesis:objenesis:$objenesisVersion") {
                     exclude(group: "org.mockito", module: "mockito-all")
+                    force = true
+                },
+                dependencies.create("junit:junit:4.12") {
                     force = true
                 },
                 dependencies.create("org.junit.jupiter:junit-jupiter-api:$junitVersion") {
@@ -1469,22 +1609,22 @@ ext.libraries = [
                     exclude(group: "commons-cli", module: "commons-cli")
                     exclude(group: "com.unboundid", module: "unboundid-ldapsdk")
                     force = true
-                },
-                dependencies.create("com.unboundid:unboundid-ldapsdk:$unboundidVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "commons-cli", module: "commons-cli")
-                    force = true
-                },
-                dependencies.create("org.ldaptive:ldaptive-apache:$ldaptiveVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "commons-lang", module: "commons-lang")
-                    exclude(group: "commons-pool", module: "commons-pool")
-                    exclude(group: "xml-apis", module: "xml-apis")
-                    exclude(group: "commons-cli", module: "commons-cli")
-                    force = true
                 }
         ],
         log4j                   : [
+                dependencies.create("org.springframework.boot:spring-boot-starter-log4j2:$springBootVersion") {
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "jul-to-slf4j")
+                    exclude(group: "org.apache.logging.log4j", module: "log4j-slf4j-impl")
+                    exclude(group: "org.apache.logging.log4j", module: "log4j-core")
+                    exclude(group: "org.apache.logging.log4j", module: "log4j-api")
+                    exclude(group: "org.apache.logging.log4j", module: "log4j-jcl")
+                    force = true
+                },
                 dependencies.create("org.apache.logging.log4j:log4j-api:$log4jVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
@@ -1505,64 +1645,100 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 },
+                dependencies.create("com.lmax:disruptor:$disruptorVersion")
+        ],
+        slf4j                   : [
                 dependencies.create("org.slf4j:slf4j-api:$slf4jVersion"),
                 dependencies.create("org.slf4j:jul-to-slf4j:$slf4jVersion"),
                 dependencies.create("org.slf4j:jcl-over-slf4j:$slf4jVersion"),
-                dependencies.create("com.lmax:disruptor:$disruptorVersion")
         ],
         metrics                 : [
                 dependencies.create("com.timgroup:java-statsd-client:$statsdVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 },
                 dependencies.create("io.micrometer:micrometer-core:$micrometerVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 },
                 dependencies.create("io.micrometer:micrometer-registry-prometheus:$micrometerVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 },
                 dependencies.create("io.micrometer:micrometer-registry-graphite:$micrometerVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 },
                 dependencies.create("io.micrometer:micrometer-registry-ganglia:$micrometerVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 },
                 dependencies.create("io.micrometer:micrometer-registry-jmx:$micrometerVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 },
                 dependencies.create("io.micrometer:micrometer-registry-influx:$micrometerVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 },
                 dependencies.create("io.micrometer:micrometer-registry-statsd:$micrometerVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 },
                 dependencies.create("io.micrometer:micrometer-registry-atlas:$micrometerVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 },
                 dependencies.create("io.micrometer:micrometer-registry-signalfx:$micrometerVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 },
                 dependencies.create("io.micrometer:micrometer-registry-wavefront:$micrometerVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 },
                 dependencies.create("io.micrometer:micrometer-registry-new-relic:$micrometerVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 },
                 dependencies.create("io.micrometer:micrometer-registry-cloudwatch:$micrometerVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 }
         ],
-        mongo                   : dependencies.create("org.mongodb:mongo-java-driver:$mongoDriverVersion") {
-            exclude(group: "commons-cli", module: "commons-cli")
-            force = true
-        },
+        mongo                   : [
+                dependencies.create("org.mongodb:mongo-java-driver:$mongoDriverVersion") {
+                    exclude(group: "commons-cli", module: "commons-cli")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                },
+                dependencies.create("org.springframework.data:spring-data-mongodb:$springDataMongoDbVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.slf4j", module: "jcl-over-slf4j")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.springframework.data", module: "spring-data-commons")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-expression")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-tx")
+                    exclude(group: "org.mongodb", module: "mongo-java-driver")
+                    force = true
+                }
+        ],
         openid4java             : dependencies.create("org.openid4java:openid4java:$openidVersion") {
             exclude(group: "xerces", module: "xercesImpl")
             exclude(group: "org.apache.httpcomponents", module: "httpclient")
             exclude(group: "commons-logging", module: "commons-logging")
+            exclude(group: "org.slf4j", module: "slf4j-api")
             force = true
         },
         opensaml                : [
                 dependencies.create("xerces:xercesImpl:$xercesVersion") {
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 },
                 dependencies.create("org.opensaml:opensaml-core:$opensamlVersion") {
@@ -1578,7 +1754,14 @@ ext.libraries = [
                     exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "org.cryptacular", module: "cryptacular")
-                    exclude(group: "io.dropwizard.metrics", module: "metrics-core")
+                    exclude(group: "org.opensaml", module: "opensaml-profile-api")
+                    exclude(group: "org.opensaml", module: "opensaml-profile-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-messaging-api")
+                    exclude(group: "org.opensaml", module: "opensaml-soap-api")
+                    exclude(group: "org.opensaml", module: "opensaml-session-api")
+                    exclude(group: "org.opensaml", module: "opensaml-security-api")
+                    exclude(group: "org.opensaml", module: "opensaml-saml-api")
+                    exclude(group: "org.opensaml", module: "opensaml-saml-impl")
                     force = true
                 },
                 dependencies.create("org.opensaml:opensaml-xmlsec-impl:$opensamlVersion") {
@@ -1586,11 +1769,14 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "joda-time", module: "joda-time")
+                    exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "com.google.code.findbugs", module: "jsr305")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.cryptacular", module: "cryptacular")
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-core")
+                    exclude(group: "net.shibboleth.utilities", module: "java-support")
+                    exclude(group: "org.opensaml", module: "opensaml-core")
                     force = true
                 },
                 dependencies.create("org.opensaml:opensaml-saml-api:$opensamlVersion") {
@@ -1605,35 +1791,72 @@ ext.libraries = [
                     exclude(group: "org.cryptacular", module: "cryptacular")
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-core")
+                    exclude(group: "net.shibboleth.utilities", module: "java-support")
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "org.apache.velocity", module: "velocity")
+                    exclude(group: "org.opensaml", module: "opensaml-core")
+                    exclude(group: "org.opensaml", module: "opensaml-profile-api")
+                    force = true
+                },
+                dependencies.create("org.opensaml:opensaml-profile-api:$opensamlVersion") {
+                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
+                    exclude(group: "joda-time", module: "joda-time")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "com.google.code.findbugs", module: "jsr305")
+                    exclude(group: "org.opensaml", module: "opensaml-saml-api")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "org.cryptacular", module: "cryptacular")
+                    exclude(group: "commons-collections", module: "commons-collections")
+                    exclude(group: "io.dropwizard.metrics", module: "metrics-core")
+                    exclude(group: "net.shibboleth.utilities", module: "java-support")
+                    exclude(group: "org.apache.velocity", module: "velocity")
+                    exclude(group: "org.opensaml", module: "opensaml-core")
                     force = true
                 },
                 dependencies.create("org.opensaml:opensaml-saml-impl:$opensamlVersion") {
                     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
                     exclude(group: "joda-time", module: "joda-time")
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "com.google.code.findbugs", module: "jsr305")
                     exclude(group: "org.opensaml", module: "opensaml-saml-api")
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "org.cryptacular", module: "cryptacular")
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-core")
+                    exclude(group: "net.shibboleth.utilities", module: "java-support")
+                    exclude(group: "org.apache.velocity", module: "velocity")
+                    exclude(group: "org.opensaml", module: "opensaml-core")
                     force = true
                 },
                 dependencies.create("org.opensaml:opensaml-security-api:$opensamlVersion") {
                     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
                     exclude(group: "joda-time", module: "joda-time")
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "com.google.code.findbugs", module: "jsr305")
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "org.cryptacular", module: "cryptacular")
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-core")
+                    exclude(group: "net.shibboleth.utilities", module: "java-support")
+                    exclude(group: "org.opensaml", module: "opensaml-core")
                     force = true
                 },
                 dependencies.create("org.opensaml:opensaml-xacml-saml-impl:$opensamlVersion") {
@@ -1641,11 +1864,17 @@ ext.libraries = [
                     exclude(group: "joda-time", module: "joda-time")
                     exclude(group: "com.google.code.findbugs", module: "jsr305")
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "org.cryptacular", module: "cryptacular")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-core")
                     exclude(group: "commons-collections", module: "commons-collections")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "net.shibboleth.utilities", module: "java-support")
+                    exclude(group: "org.opensaml", module: "opensaml-saml-api")
+                    exclude(group: "org.opensaml", module: "opensaml-saml-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-core")
                     force = true
                 },
                 dependencies.create("org.opensaml:opensaml-xacml-saml-api:$opensamlVersion") {
@@ -1657,6 +1886,13 @@ ext.libraries = [
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "org.cryptacular", module: "cryptacular")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-core")
+                    exclude(group: "net.shibboleth.utilities", module: "java-support")
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "commons-collections", module: "commons-collections")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "org.opensaml", module: "opensaml-saml-api")
+                    exclude(group: "org.opensaml", module: "opensaml-saml-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-core")
                     force = true
                 },
                 dependencies.create("org.opensaml:opensaml-security-impl:$opensamlVersion") {
@@ -1671,6 +1907,13 @@ ext.libraries = [
                     exclude(group: "org.cryptacular", module: "cryptacular")
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-core")
+                    exclude(group: "net.shibboleth.utilities", module: "java-support")
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "org.opensaml", module: "opensaml-saml-api")
+                    exclude(group: "org.opensaml", module: "opensaml-saml-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-core")
+                    exclude(group: "org.opensaml", module: "opensaml-security-api")
                     force = true
                 },
                 dependencies.create("org.opensaml:opensaml-soap-api:$opensamlVersion") {
@@ -1685,6 +1928,12 @@ ext.libraries = [
                     exclude(group: "org.cryptacular", module: "cryptacular")
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-core")
+                    exclude(group: "net.shibboleth.utilities", module: "java-support")
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "org.opensaml", module: "opensaml-saml-api")
+                    exclude(group: "org.opensaml", module: "opensaml-saml-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-core")
                     force = true
                 },
                 dependencies.create("org.opensaml:opensaml-messaging-impl:$opensamlVersion") {
@@ -1699,6 +1948,12 @@ ext.libraries = [
                     exclude(group: "org.cryptacular", module: "cryptacular")
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-core")
+                    exclude(group: "net.shibboleth.utilities", module: "java-support")
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "org.opensaml", module: "opensaml-saml-api")
+                    exclude(group: "org.opensaml", module: "opensaml-saml-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-core")
                     force = true
                 },
                 dependencies.create("org.opensaml:opensaml-profile-impl:$opensamlVersion") {
@@ -1713,11 +1968,22 @@ ext.libraries = [
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-core")
                     exclude(group: "com.google.code.findbugs", module: "jsr305")
+                    exclude(group: "net.shibboleth.utilities", module: "java-support")
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "org.apache.velocity", module: "velocity")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "org.opensaml", module: "opensaml-saml-api")
+                    exclude(group: "org.opensaml", module: "opensaml-profile-api")
+                    exclude(group: "org.opensaml", module: "opensaml-saml-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-core")
+                    exclude(group: "org.opensaml", module: "opensaml-messaging-api")
+                    exclude(group: "org.opensaml", module: "opensaml-security-api")
                     force = true
                 },
                 dependencies.create("org.opensaml:opensaml-storage-impl:$opensamlVersion") {
                     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
                     exclude(group: "commons-collections", module: "commons-collections")
+                    exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "joda-time", module: "joda-time")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.google.code.findbugs", module: "jsr305")
@@ -1732,20 +1998,16 @@ ext.libraries = [
                     exclude(group: "org.ldaptive", module: "ldaptive")
                     exclude(group: "org.cryptacular", module: "cryptacular")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-core")
+                    exclude(group: "net.shibboleth.utilities", module: "java-support")
+                    exclude(group: "org.apache.velocity", module: "velocity")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "org.opensaml", module: "opensaml-saml-api")
+                    exclude(group: "org.opensaml", module: "opensaml-saml-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-core")
                     force = true
                 }
         ],
-        pac4j                   : [
-                dependencies.create("org.pac4j:pac4j-cas:$pac4jVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "joda-time", module: "joda-time")
-                    exclude(group: "org.slf4j", module: "jcl-over-slf4j")
-                    exclude(group: "commons-collections", module: "commons-collections")
-                    exclude(group: "com.google.guava", module: "guava")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                    force = true
-                },
+        pac4jcore : [
                 dependencies.create("org.pac4j:pac4j-config:$pac4jVersion") {
                     exclude(group: "com.nimbusds", module: "oauth2-oidc-sdk")
                     exclude(group: "org.apache.commons", module: "commons-lang3")
@@ -1806,6 +2068,24 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     force = true
                 },
+                dependencies.create("org.pac4j:spring-webmvc-pac4j:$pac4jSpringWebmvcVersion") {
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-aop")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.aspectj", module: "aspectjweaver")
+                    exclude(group: "org.pac4j", module: "pac4j-core")
+                    exclude(group: "joda-time", module: "joda-time")
+                    exclude(group: "org.slf4j", module: "jcl-over-slf4j")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "commons-collections", module: "commons-collections")
+                    force = true
+                }
+        ],
+        pac4jjwt : [
                 dependencies.create("org.pac4j:pac4j-jwt:$pac4jVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "jcl-over-slf4j")
@@ -1815,8 +2095,28 @@ ext.libraries = [
                     exclude(group: "net.minidev", module: "json-smart")
                     exclude(group: "com.nimbusds", module: "nimbus-jose-jwt")
                     exclude(group: "org.cryptacular", module: "cryptacular")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     force = true
-                },
+                }   
+        ],
+        pac4jcas : [
+                dependencies.create("org.pac4j:pac4j-cas:$pac4jVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "joda-time", module: "joda-time")
+                    exclude(group: "org.slf4j", module: "jcl-over-slf4j")
+                    exclude(group: "commons-collections", module: "commons-collections")
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "org.jasig.cas.client", module: "cas-client-support-saml")
+                    exclude(group: "org.jasig.cas.client", module: "cas-client-core")
+                    force = true
+                }
+        ],
+        pac4j                   : [
                 dependencies.create("org.pac4j:pac4j-oidc:$pac4jVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "jcl-over-slf4j")
@@ -1824,15 +2124,9 @@ ext.libraries = [
                     exclude(group: "net.minidev", module: "json-smart")
                     exclude(group: "com.nimbusds", module: "oauth2-oidc-sdk")
                     exclude(group: "commons-collections", module: "commons-collections")
-                    force = true
-                },
-                dependencies.create("org.pac4j:pac4j-mongo:$pac4jVersion") {
-                    exclude(group: "org.apache.commons", module: "commons-lang3")
-                    exclude(group: "org.slf4j", module: "jcl-over-slf4j")
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "joda-time", module: "joda-time")
-                    exclude(group: "org.mongodb", module: "mongo-java-driver")
-                    exclude(group: "commons-collections", module: "commons-collections")
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     force = true
                 },
                 dependencies.create("org.pac4j:pac4j-oauth:$pac4jVersion") {
@@ -1844,9 +2138,13 @@ ext.libraries = [
                     exclude(group: "joda-time", module: "joda-time")
                     exclude(group: "com.nimbusds", module: "oauth2-oidc-sdk")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     force = true
                 },
                 dependencies.create("org.pac4j:pac4j-saml:$pac4jVersion") {
+                    exclude(group: "org.apache.santuario", module: "xmlsec")
+                    exclude(group: "org.apache.httpcomponents", module: "httpcore")
+                    exclude(group: "com.google.code.findbugs", module: "jsr305")
                     exclude(group: "org.apache.commons", module: "commons-lang3")
                     exclude(group: "org.slf4j", module: "jcl-over-slf4j")
                     exclude(group: "commons-collections", module: "commons-collections")
@@ -1856,6 +2154,7 @@ ext.libraries = [
                     exclude(group: "org.apache.velocity", module: "velocity")
                     exclude(group: "commons-lang", module: "commons-lang")
                     exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "javax.annotation", module: "javax.annotation-api")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.cryptacular", module: "cryptacular")
                     exclude(group: "commons-codec", module: "commons-codec")
@@ -1865,37 +2164,50 @@ ext.libraries = [
                     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
                     exclude(group: "org.opensaml", module: "opensaml-core")
                     exclude(group: "net.shibboleth.utilities", module: "java-support")
+                    exclude(group: "net.shibboleth.idp", module: "idp-core")
+                    exclude(group: "net.shibboleth.idp", module: "profile-impl")
+                    exclude(group: "net.shibboleth.idp", module: "profile-spring")
+                    exclude(group: "net.shibboleth.idp", module: "idp-attribute-api")
+                    exclude(group: "net.shibboleth.idp", module: "idp-profile-api")
+                    exclude(group: "net.shibboleth.idp", module: "idp-saml-api")
+                    exclude(group: "net.shibboleth.idp", module: "idp-saml-impl")
+                    exclude(group: "net.shibboleth.idp", module: "idp-profile-api")
+                    exclude(group: "net.shibboleth.liberty", module: "idwsfconsumer")
                     exclude(group: "org.opensaml", module: "opensaml-saml-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-saml-api")
                     exclude(group: "org.opensaml", module: "opensaml-xmlsec-api")
+                    exclude(group: "org.opensaml", module: "opensaml-xmlsec-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-security-api")
                     exclude(group: "org.opensaml", module: "opensaml-security-impl")
                     exclude(group: "org.opensaml", module: "opensaml-profile-api")
                     exclude(group: "org.opensaml", module: "opensaml-profile-impl")
                     exclude(group: "org.opensaml", module: "opensaml-soap-api")
-                    exclude(group: "org.opensaml", module: "opensaml-security-api")
+                    exclude(group: "org.opensaml", module: "opensaml-soap-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-storage-api")
+                    exclude(group: "org.opensaml", module: "opensaml-storage-impl")
                     exclude(group: "org.opensaml", module: "opensaml-messaging-api")
                     exclude(group: "org.opensaml", module: "opensaml-messaging-impl")
-                    exclude(group: "org.opensaml", module: "opensaml-xmlsec-impl")
-                    exclude(group: "org.opensaml", module: "opensaml-xmlsec-saml-impl")
-                    exclude(group: "org.springframework", module: "spring-expression")
-                    exclude(group: "net.shibboleth.ext", module: "spring-extensions")
-                    exclude(group: "org.opensaml", module: "opensaml-saml-api")
-                    exclude(group: "xml-apis", module: "xml-apis")
+                    exclude(group: "org.opensaml", module: "opensaml-xacml-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-xacml-api")
+                    exclude(group: "org.opensaml", module: "opensaml-soap-api")
+                    exclude(group: "org.opensaml", module: "opensaml-soap-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-saml-impl")
                     exclude(group: "org.opensaml", module: "xmltooling")
+                    exclude(group: "org.opensaml", module: "opensaml-xmlsec-saml-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-xacml-saml-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-xacml-saml-api")
+                    exclude(group: "xml-apis", module: "xml-apis")
+                    exclude(group: "net.shibboleth.ext", module: "spring-extensions")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
                     exclude(group: "org.cryptacular", module: "cryptacular")
-                    force = true
-                },
-                dependencies.create("org.pac4j:spring-webmvc-pac4j:$pac4jSpringWebmvcVersion") {
-                    exclude(group: "org.springframework", module: "spring-webmvc")
-                    exclude(group: "org.springframework", module: "spring-core")
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.pac4j", module: "pac4j-core")
-                    exclude(group: "joda-time", module: "joda-time")
-                    exclude(group: "org.slf4j", module: "jcl-over-slf4j")
-                    exclude(group: "commons-collections", module: "commons-collections")
+                    exclude(group: "xalan", module: "xalan")
+                    exclude(group: "xalan", module: "serializer")
+                    exclude(group: "org.springframework", module: "spring-expression")
+                    exclude(group: "org.apache.velocity", module: "velocity")
                     force = true
                 }
         ],
-        nimbus : [
+        nimbus                  : [
                 dependencies.create("com.nimbusds:nimbus-jose-jwt:$nimbusJoseVersion") {
                     exclude(group: "net.minidev", module: "json-smart")
                     exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
@@ -1907,17 +2219,35 @@ ext.libraries = [
                     exclude(group: "com.nimbusds", module: "nimbus-jose-jwt")
                     exclude(group: "org.apache.commons", module: "commons-lang3")
                     exclude(group: "commons-collections", module: "commons-collections")
+                    exclude(group: "com.sun.mail", module: "javax.mail")
                     force = true
                 },
                 dependencies.create("net.minidev:json-smart:$jsonSmartVersion") {
                     force = true
                 }
         ],
-        pac4jCouchDb            : dependencies.create("org.pac4j:pac4j-couch:$pac4jVersion") {
-            exclude(group: "org.pac4j", module: "pac4j-core")
-            exclude(group: "org.ektorp", module: "org.ektorp")
-            exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-        },
+        pac4jcouchdb            : [
+                dependencies.create("org.pac4j:pac4j-couch:$pac4jVersion") {
+                    exclude(group: "org.pac4j", module: "pac4j-core")
+                    exclude(group: "org.ektorp", module: "org.ektorp")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    force = true
+                }
+        ],
+        pac4jmongodb            : [
+                dependencies.create("org.pac4j:pac4j-mongo:$pac4jVersion") {
+                    exclude(group: "org.apache.commons", module: "commons-lang3")
+                    exclude(group: "org.slf4j", module: "jcl-over-slf4j")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "joda-time", module: "joda-time")
+                    exclude(group: "org.mongodb", module: "mongo-java-driver")
+                    exclude(group: "commons-collections", module: "commons-collections")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    force = true
+                }
+        ],
         persondirectory         : dependencies.create("org.apereo.service.persondir:person-directory-impl:$personDirectoryVersion") {
             exclude(group: "commons-logging", module: "commons-logging")
             exclude(group: "org.slf4j", module: "slf4j-api")
@@ -2013,14 +2343,15 @@ ext.libraries = [
                     exclude(group: "commons-cli", module: "commons-cli")
                     exclude(group: "com.vaadin.external.google", module: "android-json")
                     force = true
-                },
+                }
+        ],
+        javaparser : [
                 dependencies.create("com.github.javaparser:javaparser-core:$javaParserVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "jul-to-slf4j")
                     exclude(group: "com.google.guava", module: "guava")
                     force = true
-                }
-
+                }      
         ],
         springbootadminserver   : [
                 dependencies.create("de.codecentric:spring-boot-admin-starter-server:$springBootAdminVersion") {
@@ -2064,8 +2395,8 @@ ext.libraries = [
                     force = true
                 }
         ],
-        springboot              : [
-                dependencies.create("org.springframework.boot:spring-boot-starter-websocket:$springBootVersion") {
+        springbootlogging       : [
+                dependencies.create("org.springframework.boot:spring-boot-starter-logging:$springBootVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "log4j-over-slf4j")
                     exclude(group: "org.slf4j", module: "jul-to-slf4j")
@@ -2077,16 +2408,32 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-webmvc")
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.springframework", module: "spring-messaging")
-                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
-                    exclude(group: "com.fasterxml", module: "classmate")
                     exclude(group: "org.hibernate", module: "hibernate-validator")
-                    exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-core")
-                    exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-el")
-                    exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-websocket")
-                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-tomcat")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
                     force = true
                 },
+                dependencies.create("ch.qos.logback:logback-core:$logbackVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "log4j-over-slf4j")
+                    exclude(group: "org.slf4j", module: "jul-to-slf4j")
+                    force = true
+                },
+                dependencies.create("ch.qos.logback:logback-access:$logbackVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "log4j-over-slf4j")
+                    exclude(group: "org.slf4j", module: "jul-to-slf4j")
+                    force = true
+                },
+                dependencies.create("ch.qos.logback:logback-classic:$logbackVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "log4j-over-slf4j")
+                    exclude(group: "org.slf4j", module: "jul-to-slf4j")
+                    force = true
+                }
+        ],
+        springboot              : [
                 dependencies.create("org.springframework.boot:spring-boot-starter-mail:$springBootVersion") {
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -2094,6 +2441,7 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "jul-to-slf4j")
                     exclude(group: "org.springframework", module: "spring-web")
                     exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-aop")
                     exclude(group: "org.springframework", module: "spring-webmvc")
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.springframework", module: "spring-context-support")
@@ -2113,6 +2461,8 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-webmvc")
                     exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-aop")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
@@ -2131,11 +2481,16 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-webmvc")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-aop")
+                    exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.hibernate", module: "hibernate-validator")
                     exclude(group: "org.hibernate", module: "hibernate-core")
                     exclude(group: "org.hibernate", module: "hibernate-entitymanager")
                     exclude(group: "org.slf4j", module: "jcl-over-slf4j")
                     exclude(group: "org.slf4j", module: "jul-to-slf4j")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     force = true
                 },
                 dependencies.create("org.springframework.boot:spring-boot:$springBootVersion") {
@@ -2146,6 +2501,7 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-webmvc")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-aop")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "jul-to-slf4j")
                     force = true
@@ -2158,23 +2514,11 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-webmvc")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-aop")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "jul-to-slf4j")
                     exclude(group: "com.vaadin.external.google", module: "android-json")
                     exclude(group: "com.vaadin.external.google", module: "android-json")
-                    force = true
-                },
-                dependencies.create("org.springframework.boot:spring-boot-starter-log4j2:$springBootVersion") {
-                    exclude(group: "org.springframework", module: "spring-web")
-                    exclude(group: "org.springframework", module: "spring-webmvc")
-                    exclude(group: "org.springframework", module: "spring-core")
-                    exclude(group: "org.springframework", module: "spring-context")
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.slf4j", module: "jul-to-slf4j")
-                    exclude(group: "org.apache.logging.log4j", module: "log4j-slf4j-impl")
-                    exclude(group: "org.apache.logging.log4j", module: "log4j-core")
-                    exclude(group: "org.apache.logging.log4j", module: "log4j-api")
-                    exclude(group: "org.apache.logging.log4j", module: "log4j-jcl")
                     force = true
                 },
                 dependencies.create("org.springframework.boot:spring-boot-starter-actuator:$springBootVersion") {
@@ -2189,6 +2533,7 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-webmvc")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-aop")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "jul-to-slf4j")
                     force = true
@@ -2199,19 +2544,36 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-web")
                     exclude(group: "org.springframework", module: "spring-webmvc")
                     exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-aop")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 }
         ],
         springboottomcat        : [
                 dependencies.create("org.springframework.boot:spring-boot-starter-tomcat:$springBootVersion") {
-                    force = true
-                },
-                dependencies.create("org.apache.tomcat.embed:tomcat-embed-jasper:$springBootTomcatVersion") {
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-aop")
+                    exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-websocket")
+                    exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-core")
+                    exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-el")
+                    exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-websocket")
                     force = true
                 },
                 dependencies.create("org.apache.tomcat:tomcat-catalina-ha:$springBootTomcatVersion") {
+                    exclude(group: "org.apache.tomcat", module: "tomcat-annotations-api")
+                    force = true
+                },
+                dependencies.create("org.apache.tomcat.embed:tomcat-embed-core:$springBootTomcatVersion") {
+                    exclude(group: "org.apache.tomcat", module: "tomcat-annotations-api")
+                    force = true
+                },
+                dependencies.create("org.apache.tomcat.embed:tomcat-embed-el:$springBootTomcatVersion") {
+                    exclude(group: "org.apache.tomcat", module: "tomcat-annotations-api")
                     force = true
                 }
         ],
@@ -2747,6 +3109,7 @@ ext.libraries = [
                 dependencies.create("org.springframework.cloud:spring-cloud-commons:$springCloudCommonsVersion") {
                     exclude(group: "org.springframework.cloud", module: "spring-cloud-context")
                     exclude(group: "org.objenesis", module: "objenesis")
+                    exclude(group: "org.springframework.security", module: "spring-security-crypto")
                     exclude(group: "org.springframework", module: "spring-messaging")
                     exclude(group: "org.springframework", module: "spring-tx")
                     exclude(group: "org.springframework", module: "spring-aop")
@@ -2786,6 +3149,7 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     exclude(group: "org.springframework.cloud", module: "spring-cloud-context")
                     exclude(group: "org.hibernate", module: "hibernate-core")
+                    exclude(group: "org.springframework.security", module: "spring-security-crypto")
                     exclude(group: "org.hibernate", module: "hibernate-entitymanager")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
                     force = true
@@ -2879,21 +3243,6 @@ ext.libraries = [
                 },
                 dependencies.create("org.springframework:spring-core:$springVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
-                    force = true
-                },
-                dependencies.create("org.springframework.data:spring-data-mongodb:$springDataMongoDbVersion") {
-                    exclude(group: "commons-logging", module: "commons-logging")
-                    exclude(group: "org.slf4j", module: "jcl-over-slf4j")
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.springframework.data", module: "spring-data-commons")
-                    exclude(group: "org.springframework", module: "spring-context")
-                    exclude(group: "org.springframework", module: "spring-web")
-                    exclude(group: "org.springframework", module: "spring-beans")
-                    exclude(group: "org.springframework", module: "spring-core")
-                    exclude(group: "org.springframework", module: "spring-expression")
-                    exclude(group: "org.springframework", module: "spring-webmvc")
-                    exclude(group: "org.springframework", module: "spring-tx")
-                    exclude(group: "org.mongodb", module: "mongo-java-driver")
                     force = true
                 },
                 dependencies.create("org.springframework.data:spring-data-commons:$springDataCommonsVersion") {
@@ -3016,6 +3365,24 @@ ext.libraries = [
                     force = true
                 },
                 dependencies.create("org.springframework.security:spring-security-rsa:$springSecurityRsaVersion") {
+                    exclude(group: "org.springframework", module: "spring-aop")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-expression")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-tx")
+                    exclude(group: "org.springframework.security", module: "spring-security-crypto")
+                    force = true
+                },
+                dependencies.create("org.springframework.security:spring-security-crypto:$springSecurityVersion") {
+                    exclude(group: "org.springframework", module: "spring-aop")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-expression")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-tx")
                     force = true
                 },
                 dependencies.create("org.springframework.security:spring-security-cas:$springSecurityVersion") {
@@ -3033,25 +3400,9 @@ ext.libraries = [
                     exclude(group: "junit", module: "junit")
                     exclude(group: "org.mockito", module: "mockito-core")
                     force = true
-                },
-                dependencies.create("org.springframework.security:spring-security-openid:$springSecurityVersion") {
-                    exclude(group: "org.jasig.cas.client", module: "cas-client-core")
-                    exclude(group: "org.springframework", module: "spring-aop")
-                    exclude(group: "org.springframework", module: "spring-beans")
-                    exclude(group: "org.springframework", module: "spring-context")
-                    exclude(group: "org.springframework", module: "spring-core")
-                    exclude(group: "org.springframework", module: "spring-expression")
-                    exclude(group: "org.springframework", module: "spring-jdbc")
-                    exclude(group: "org.springframework", module: "spring-test")
-                    exclude(group: "org.springframework", module: "spring-tx")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "junit", module: "junit")
-                    exclude(group: "org.mockito", module: "mockito-core")
-                    exclude(group: "xerces", module: "xercesImpl")
-                    force = true
                 }
         ],
-        springws : [
+        springws                : [
                 dependencies.create("org.springframework.boot:spring-boot-starter-web-services:$springBootVersion") {
                     exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-dom")
                     exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-common")
@@ -3117,7 +3468,14 @@ ext.libraries = [
         ],
         authyjava               : [
                 dependencies.create("com.authy:authy-java:$authyVersion") {
-                    exclude(module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.json", module: "json")
+                    force = true
+                }
+        ],
+        bucket4j                : [
+                dependencies.create("com.github.vladimir-bukhtoyarov:bucket4j-core:$bucket4jVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.json", module: "json")
                     force = true
                 }
@@ -3139,12 +3497,10 @@ ext.libraries = [
                     force = true
                 },
                 dependencies.create("org.webjars:bootstrap:$bootstrapVersion") {
+                    exclude(group: "org.webjars", module: "popper.js")
                     force = true
                 },
                 dependencies.create("org.webjars:jquery-cookie:$jqueryCookieVersion") {
-                    force = true
-                },
-                dependencies.create("org.webjars:lato:$latoVersion") {
                     force = true
                 },
                 dependencies.create("org.webjars:datatables:$datatablesVersion") {

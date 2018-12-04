@@ -24,6 +24,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.util.CookieGenerator;
@@ -56,8 +58,14 @@ public class GrouperMultifactorAuthenticationConfiguration {
     private ObjectProvider<CookieGenerator> warnCookieGenerator;
 
     @Autowired
-    private CasConfigurationProperties casProperties;
+    private ConfigurableApplicationContext applicationContext;
 
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
+
+    @Autowired
+    private CasConfigurationProperties casProperties;
+    
     @Autowired
     @Qualifier("multifactorAuthenticationProviderResolver")
     private ObjectProvider<MultifactorAuthenticationProviderResolver> multifactorAuthenticationProviderResolver;
@@ -102,7 +110,9 @@ public class GrouperMultifactorAuthenticationConfiguration {
             warnCookieGenerator.getIfAvailable(),
             authenticationRequestServiceSelectionStrategies.getIfAvailable(),
             multifactorAuthenticationProviderSelector.getIfAvailable(),
-            grouperMultifactorAuthenticationTrigger());
+            grouperMultifactorAuthenticationTrigger(),
+            applicationEventPublisher,
+            applicationContext);
         LOGGER.debug("Activating MFA event resolver based on Grouper groups...");
         this.initialAuthenticationAttemptWebflowEventResolver.getIfAvailable().addDelegate(r);
         return r;

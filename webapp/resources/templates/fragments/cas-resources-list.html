@@ -14,11 +14,6 @@
         <div class="card-body">
             <h3 class="card-title" th:text="#{cas.login.resources.header}">Links to CAS Resources</h3>
             <ul class="list-group">
-                <li class="list-group-item" th:if="${attributeConsentEnabled}">
-                    <a th:href="@{/consentReview}" th:inline="text">
-                        <i class="fa fa-cogs"></i>[[#{screen.consent.title}]]
-                    </a>
-                </li>
                 <li class="list-group-item">
                     <a th:href="@{/actuator}" th:inline="text">
                         <i class="fa fa-cogs"></i>[[#{cas.login.resources.endpoints}]]

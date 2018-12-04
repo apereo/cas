@@ -1,10 +1,14 @@
 description = "Apereo CAS Core Logging"
 dependencies {
-    implementation project(":core:cas-server-core-logging-config")
+    implementation project(":core:cas-server-core-logging-api")
+    
     implementation project(":core:cas-server-core-cookie-api")
     implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-configuration-api")
 
+    implementation libraries.log4j
+    
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
 }

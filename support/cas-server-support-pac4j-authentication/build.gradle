@@ -6,5 +6,6 @@ dependencies {
     implementation project(":support:cas-server-support-pac4j-core")
 
     implementation libraries.nimbus
-    implementation libraries.pac4j
+    implementation libraries.pac4jcore
+
 }

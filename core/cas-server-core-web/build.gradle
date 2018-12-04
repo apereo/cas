@@ -19,11 +19,10 @@ dependencies {
     testImplementation project(":core:cas-server-core-services-api")
     testImplementation project(":core:cas-server-core-services-authentication")
     
-    implementation libraries.pac4j
+    implementation libraries.pac4jcore
     implementation libraries.nimbus
     implementation libraries.cassecurityfilter
     implementation libraries.thymeleaf
-    implementation libraries.springintegration
 }
 
 // Filter properties from gradle.properties into this sub-project's property file resources  

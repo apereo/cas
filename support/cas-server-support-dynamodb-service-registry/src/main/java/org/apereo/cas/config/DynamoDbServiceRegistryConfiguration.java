@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -30,6 +31,9 @@ public class DynamoDbServiceRegistryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
+
     @RefreshScope
     @Bean
     public DynamoDbServiceRegistryFacilitator dynamoDbServiceRegistryFacilitator() {
@@ -40,7 +44,7 @@ public class DynamoDbServiceRegistryConfiguration {
     @Bean
     @RefreshScope
     public ServiceRegistry dynamoDbServiceRegistry() {
-        return new DynamoDbServiceRegistry(dynamoDbServiceRegistryFacilitator());
+        return new DynamoDbServiceRegistry(eventPublisher, dynamoDbServiceRegistryFacilitator());
     }
 
     @Bean

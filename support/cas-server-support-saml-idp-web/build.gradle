@@ -24,9 +24,8 @@ dependencies {
     
     implementation libraries.casclient
     implementation libraries.shibidp
-    implementation libraries.pac4j
-    implementation libraries.caffein
-    implementation libraries.nimbus
+    implementation libraries.shibidpjavasupport
+    implementation libraries.pac4jcore
     
     runtimeOnly libraries.groovy
 

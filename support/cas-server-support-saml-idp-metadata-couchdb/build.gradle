@@ -19,9 +19,11 @@ dependencies {
 
     implementation libraries.ektorp
     implementation libraries.shibidp
-    implementation libraries.pac4j
+    implementation libraries.shibidpjavasupport
+    implementation libraries.pac4jcore
+    implementation libraries.pac4jjwt
     implementation libraries.nimbus
-    implementation libraries.caffein
+    
 
     runtimeOnly libraries.groovy
 

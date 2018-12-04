@@ -4,7 +4,7 @@ apply plugin: "com.ewerk.gradle.plugins.jaxb2"
 
 dependencies {
     api project(":api:cas-server-core-api")
-
+    
     implementation libraries.springws
 
     implementation project(":core:cas-server-core-authentication-api")

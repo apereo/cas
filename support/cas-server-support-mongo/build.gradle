@@ -8,7 +8,8 @@ dependencies {
     implementation project(":support:cas-server-support-mongo-core")
 
     implementation libraries.nimbus
-    implementation libraries.pac4j
+    implementation libraries.pac4jcore
+    implementation libraries.pac4jmongodb
     implementation libraries.mongo
 
     testImplementation project(":support:cas-server-support-person-directory")

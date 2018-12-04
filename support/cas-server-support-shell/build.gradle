@@ -13,7 +13,7 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-audit-api")
     implementation project(":core:cas-server-core-services-api")
-    implementation project(":core:cas-server-core-logging-config")
+    implementation project(":core:cas-server-core-logging-api")
     implementation project(":core:cas-server-core-configuration-metadata-repository")
 
     implementation project(":support:cas-server-support-jpa-util")
@@ -23,13 +23,15 @@ dependencies {
     implementation project(":support:cas-server-support-ws-idp-api")
     implementation project(":support:cas-server-support-saml-idp-core")
     implementation project(":support:cas-server-support-gauth-core-mfa")
+    implementation project(":support:cas-server-support-otp-mfa-core")
     implementation project(":support:cas-server-support-consent-api")
     
     implementation libraries.springbootconfigmetadata
     implementation libraries.springshell
-    implementation libraries.metrics
-    implementation libraries.pac4j
+    implementation libraries.pac4jcore
+    implementation libraries.pac4jjwt
     implementation libraries.nimbus
+    implementation libraries.snakeyaml
     implementation libraries.jasypt
     implementation libraries.bouncycastle
     implementation libraries.opensaml

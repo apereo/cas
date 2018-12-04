@@ -1,12 +1,10 @@
 package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
-import org.apereo.cas.util.serialization.ObjectMapperHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
@@ -28,8 +26,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.*;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withNoContent;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 /**
  * This is {@link RestGoogleAuthenticatorTokenCredentialRepositoryTests}.
@@ -41,7 +41,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreUtilConfiguration.class
-    }, properties = {
+}, properties = {
     "cas.authn.mfa.gauth.rest.endpointUrl=http://example.com"
 })
 @Category(RestfulApiCategory.class)
@@ -50,8 +50,6 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 public class RestGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
-
-    private static final ObjectMapperHandler<OneTimeTokenAccount> HANDLER = new ObjectMapperHandler<>(MAPPER);
 
     private final Map<String, OneTimeTokenCredentialRepository> repositoryMap = new HashMap<>();
 
@@ -64,14 +62,15 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseO
 
     @Override
     public OneTimeTokenCredentialRepository getRegistry(final String testName) {
-        return repositoryMap.computeIfAbsent(testName, name -> new RestGoogleAuthenticatorTokenCredentialRepository(getGoogle(), new RestTemplate(),
-            casProperties.getAuthn().getMfa().getGauth(),
-            CipherExecutor.noOpOfStringToString()));
+        return repositoryMap.computeIfAbsent(testName,
+            name -> new RestGoogleAuthenticatorTokenCredentialRepository(getGoogle(), new RestTemplate(),
+                casProperties.getAuthn().getMfa().getGauth(),
+                CipherExecutor.noOpOfStringToString()));
     }
 
     @Test
     @Override
-    public void verifyGet() {
+    public void verifyGet() throws Exception {
         val repository = (RestGoogleAuthenticatorTokenCredentialRepository) getRegistry("verifyGet");
         assertNotNull("Repository is null", repository);
 
@@ -82,7 +81,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseO
             .andExpect(method(HttpMethod.POST)).andRespond(withSuccess("", MediaType.APPLICATION_JSON));
         mockServer.expect(requestTo("http://example.com"))
             .andExpect(method(HttpMethod.GET))
-            .andRespond(withSuccess(HANDLER.writeValueAsString(getAccount("verifyGet", CASUSER)), MediaType.APPLICATION_JSON));
+            .andRespond(withSuccess(MAPPER.writeValueAsString(getAccount("verifyGet", CASUSER)), MediaType.APPLICATION_JSON));
 
         super.verifyGet();
         mockServer.verify();
@@ -90,7 +89,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseO
 
     @Test
     @Override
-    public void verifyGetWithDecodedSecret() {
+    public void verifyGetWithDecodedSecret() throws Exception {
         val repository = (RestGoogleAuthenticatorTokenCredentialRepository) getRegistry("verifyGetWithDecodedSecret");
         assertNotNull("Repository is null", repository);
 
@@ -101,7 +100,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseO
             .andExpect(method(HttpMethod.POST)).andRespond(withSuccess("", MediaType.APPLICATION_JSON));
         mockServer.expect(requestTo("http://example.com"))
             .andExpect(method(HttpMethod.GET))
-            .andRespond(withSuccess(HANDLER.writeValueAsString(acct), MediaType.APPLICATION_JSON));
+            .andRespond(withSuccess(MAPPER.writeValueAsString(acct), MediaType.APPLICATION_JSON));
 
         super.verifyGetWithDecodedSecret();
         mockServer.verify();
@@ -109,7 +108,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseO
 
     @Test
     @Override
-    public void verifySaveAndUpdate() {
+    public void verifySaveAndUpdate() throws Exception {
         val repository = (RestGoogleAuthenticatorTokenCredentialRepository) getRegistry("verifySaveAndUpdate");
         assertNotNull("Repository is null", repository);
         val acct = getAccount("verifySaveAndUpdate", CASUSER).clone();
@@ -119,7 +118,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseO
             .andExpect(method(HttpMethod.POST)).andRespond(withSuccess("", MediaType.APPLICATION_JSON));
         mockServer.expect(requestTo("http://example.com"))
             .andExpect(method(HttpMethod.GET))
-            .andRespond(withSuccess(HANDLER.writeValueAsString(acct), MediaType.APPLICATION_JSON));
+            .andRespond(withSuccess(MAPPER.writeValueAsString(acct), MediaType.APPLICATION_JSON));
 
         acct.setSecretKey("newSecret");
         acct.setValidationCode(999666);
@@ -128,7 +127,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseO
             .andExpect(method(HttpMethod.POST)).andRespond(withSuccess("", MediaType.APPLICATION_JSON));
         mockServer.expect(requestTo("http://example.com"))
             .andExpect(method(HttpMethod.GET))
-            .andRespond(withSuccess(HANDLER.writeValueAsString(acct), MediaType.APPLICATION_JSON));
+            .andRespond(withSuccess(MAPPER.writeValueAsString(acct), MediaType.APPLICATION_JSON));
 
         super.verifySaveAndUpdate();
         mockServer.verify();

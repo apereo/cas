@@ -70,7 +70,7 @@ public class GenerateServiceTicketAction extends AbstractAction {
             val registeredService = servicesManager.findServiceBy(selectedService);
             LOGGER.debug("Registered service asking for service ticket is [{}]", registeredService);
             WebUtils.putRegisteredService(context, registeredService);
-            WebUtils.putService(context, service);
+            WebUtils.putServiceIntoFlowScope(context, service);
 
             if (registeredService != null) {
                 val url = registeredService.getAccessStrategy().getUnauthorizedRedirectUrl();

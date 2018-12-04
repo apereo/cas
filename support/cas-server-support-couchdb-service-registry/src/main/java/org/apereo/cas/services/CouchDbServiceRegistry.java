@@ -4,10 +4,10 @@ import org.apereo.cas.couchdb.services.RegisteredServiceCouchDbRepository;
 import org.apereo.cas.couchdb.services.RegisteredServiceDocument;
 import org.apereo.cas.util.RandomUtils;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ektorp.DbAccessException;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -19,10 +19,14 @@ import java.util.stream.Collectors;
  * @since 5.3.0
  */
 @Slf4j
-@RequiredArgsConstructor
 public class CouchDbServiceRegistry extends AbstractServiceRegistry {
 
     private final RegisteredServiceCouchDbRepository dbClient;
+
+    public CouchDbServiceRegistry(final ApplicationEventPublisher eventPublisher, final RegisteredServiceCouchDbRepository dbClient) {
+        super(eventPublisher);
+        this.dbClient = dbClient;
+    }
 
     @Override
     public RegisteredService save(final RegisteredService registeredService) {

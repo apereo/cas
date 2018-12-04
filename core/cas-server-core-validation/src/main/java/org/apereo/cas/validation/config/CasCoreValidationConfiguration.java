@@ -91,8 +91,8 @@ public class CasCoreValidationConfiguration implements ServiceTicketValidationAu
     public RequestedContextValidator requestedContextValidator() {
         return (assertion, request) -> {
             LOGGER.debug("Locating the primary authentication associated with this service request [{}]", assertion.getService());
-            val srvc = servicesManager.getIfAvailable().findServiceBy(assertion.getService());
-            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(assertion.getService(), srvc);
+            val service = servicesManager.getIfAvailable().findServiceBy(assertion.getService());
+            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(assertion.getService(), service);
             return Pair.of(Boolean.TRUE, Optional.empty());
         };
     }

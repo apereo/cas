@@ -3,7 +3,6 @@ def skipConfigurationMetadata = Boolean.getBoolean("skipNestedConfigMetadataGen"
 
 dependencies {
     implementation libraries.jasypt
-
     implementation libraries.bouncycastle
 
     compile libraries.springbootconfigmetadata
@@ -11,11 +10,14 @@ dependencies {
     api project(":api:cas-server-core-api-util")
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-webflow")
-
+    
+    testImplementation libraries.springbootconfigmetadata
+    
+    compileOnly libraries.javaparser
+    
     if (!skipConfigurationMetadata) {
         annotationProcessor libraries.springbootconfigmetadata
     }
-    
 }
 
 if (!skipConfigurationMetadata) {
@@ -27,10 +29,12 @@ if (!skipConfigurationMetadata) {
                     "at [$buildDir] for the CAS configuration module at [$projectDir.canonicalPath].\n"
         }
         main = "org.apereo.cas.configuration.metadata.ConfigurationMetadataGenerator"
-        classpath = sourceSets.main.runtimeClasspath
+        classpath = sourceSets.main.compileClasspath + sourceSets.main.runtimeClasspath
         args buildDir, projectDir.canonicalPath
     }
 
     compileJava.dependsOn(processResources)
     jar.dependsOn(generateConfigurationMetadata)
+
+
 }

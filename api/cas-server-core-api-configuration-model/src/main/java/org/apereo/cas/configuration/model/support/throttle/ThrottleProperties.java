@@ -44,6 +44,18 @@ public class ThrottleProperties implements Serializable {
     private Jdbc jdbc = new Jdbc();
 
     /**
+     * Settings related to throttling requests using bucket4j.
+     */
+    @NestedConfigurationProperty
+    private Bucket4jThrottleProperties bucket4j = new Bucket4jThrottleProperties();
+
+    /**
+     * Settings related to throttling requests using hazelcast.
+     */
+    @NestedConfigurationProperty
+    private HazelcastThrottleProperties hazelcast = new HazelcastThrottleProperties();
+
+    /**
      * Username parameter to use in order to extract the username from the request.
      */
     private String usernameParameter;
@@ -51,7 +63,7 @@ public class ThrottleProperties implements Serializable {
     /**
      * Application code used to identify this application in the audit logs.
      */
-    private String appcode = DEFAULT_APPLICATION_CODE;
+    private String appCode = DEFAULT_APPLICATION_CODE;
 
     /**
      * Scheduler settings to clean up throttled attempts.

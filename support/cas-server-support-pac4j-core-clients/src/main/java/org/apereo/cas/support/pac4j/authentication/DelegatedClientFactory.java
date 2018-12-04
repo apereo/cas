@@ -6,9 +6,11 @@ import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthentica
 import org.apereo.cas.configuration.model.support.pac4j.oidc.BasePac4jOidcClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.oidc.Pac4jOidcClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.saml.Pac4jSamlClientProperties;
+import org.apereo.cas.support.pac4j.logout.CasServerSpecificLogoutHandler;
 
 import com.github.scribejava.core.model.Verb;
 import com.nimbusds.jose.JWSAlgorithm;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +22,7 @@ import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.cas.config.CasProtocol;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.http.callback.PathParameterCallbackUrlResolver;
+import org.pac4j.core.logout.handler.LogoutHandler;
 import org.pac4j.oauth.client.BitbucketClient;
 import org.pac4j.oauth.client.DropBoxClient;
 import org.pac4j.oauth.client.FacebookClient;
@@ -60,11 +63,21 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 @Slf4j
+@Getter
 public class DelegatedClientFactory {
     /**
      * The Pac 4 j properties.
      */
     private final Pac4jDelegatedAuthenticationProperties pac4jProperties;
+
+    /**
+     * The pac4j specific logout handler for the CAS server.
+     */
+    private final LogoutHandler casServerSpecificLogoutHandler;
+
+    public DelegatedClientFactory(final Pac4jDelegatedAuthenticationProperties pac4jProperties) {
+        this(pac4jProperties, new CasServerSpecificLogoutHandler());
+    }
 
     /**
      * Configure github client.
@@ -344,6 +357,7 @@ public class DelegatedClientFactory {
             .filter(cas -> StringUtils.isNotBlank(cas.getLoginUrl()))
             .forEach(cas -> {
                 val cfg = new CasConfiguration(cas.getLoginUrl(), CasProtocol.valueOf(cas.getProtocol()));
+                cfg.setLogoutHandler(casServerSpecificLogoutHandler);
                 val client = new CasClient(cfg);
 
                 val count = index.intValue();
@@ -388,6 +402,7 @@ public class DelegatedClientFactory {
                     cfg.setAttributeAsId(saml.getPrincipalIdAttribute());
                 }
                 cfg.setWantsAssertionsSigned(saml.isWantsAssertionsSigned());
+                cfg.setLogoutHandler(casServerSpecificLogoutHandler);
                 cfg.setUseNameQualifier(saml.isUseNameQualifier());
                 cfg.setAttributeConsumingServiceIndex(saml.getAttributeConsumingServiceIndex());
                 if (saml.getAssertionConsumerServiceIndex() >= 0) {
@@ -560,7 +575,7 @@ public class DelegatedClientFactory {
         configureBitBucketClient(clients);
         configureOrcidClient(clients);
         configureHiOrgServerClient(clients);
-        
+
         return clients;
     }
 }

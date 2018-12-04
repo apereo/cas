@@ -59,6 +59,7 @@ public class U2FConfiguration {
 
     @ConditionalOnMissingBean(name = "u2fDeviceRepository")
     @Bean
+    @RefreshScope
     public U2FDeviceRepository u2fDeviceRepository() {
         val u2f = casProperties.getAuthn().getMfa().getU2f();
 
