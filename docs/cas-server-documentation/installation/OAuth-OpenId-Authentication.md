@@ -243,6 +243,10 @@ Remember that OAuth features of CAS require session affinity (and optionally ses
 as the authorization responses throughout the login flow are stored via server-backed session storage mechanisms. You will need to configure your deployment 
 environment and load balancers accordingly.
 
+## Sample Client Applications
+
+- [OAuth2 Sample Webapp](https://github.com/cas-projects/oauth2-sample-java-webapp)
+
 # OpenID Authentication
 
 To configure CAS to act as an OpenID provider, please [see this page](../protocol/OpenID-Protocol.html).
