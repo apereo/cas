@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
+import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.util.DateTimeUtils;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -8,7 +9,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
-import javax.mail.AuthenticationFailedException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,19 +40,6 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
         super(requestStorage);
         this.expirationTime = expirationTime;
         this.expirationTimeUnit = expirationTimeUnit;
-    }
-
-    private static List<U2FDeviceRegistration> getU2fDeviceRegistrations(final String username, final Collection<DeviceRegistration> devices) {
-        return devices
-            .stream()
-            .map(d -> {
-                val current = new U2FDeviceRegistration();
-                current.setUsername(username);
-                current.setRecord(d.toJson());
-                current.setCreatedDate(LocalDate.now());
-                return current;
-            })
-            .collect(Collectors.toList());
     }
 
     @Override
@@ -94,7 +81,7 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
         val devices = getRegisteredDevices(username);
         val matched = devices.stream().anyMatch(d -> d.equals(registration));
         if (!matched) {
-            throw new AuthenticationFailedException("Failed to authenticate U2F device because "
+            throw new AuthenticationException("Failed to authenticate U2F device because "
                 + "no matching record was found. Is device registered?");
         }
     }

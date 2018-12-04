@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
+import org.apereo.cas.util.ResourceUtils;
+
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,7 +36,7 @@ public class U2FJsonResourceDeviceRepository extends BaseResourceU2FDeviceReposi
                                            final long expirationTime, final TimeUnit expirationTimeUnit) {
         super(requestStorage, expirationTime, expirationTimeUnit);
         this.jsonResource = jsonResource;
-        if (!this.jsonResource.exists()) {
+        if (!ResourceUtils.doesResourceExist(this.jsonResource)) {
             if (this.jsonResource.getFile().createNewFile()) {
                 LOGGER.debug("Created JSON resource [{}] for U2F device registrations", jsonResource);
             }
@@ -43,7 +45,7 @@ public class U2FJsonResourceDeviceRepository extends BaseResourceU2FDeviceReposi
 
     @Override
     public Map<String, List<U2FDeviceRegistration>> readDevicesFromResource() throws Exception {
-        if (!this.jsonResource.getFile().exists() || this.jsonResource.getFile().length() <= 0) {
+        if (!ResourceUtils.doesResourceExist(this.jsonResource)) {
             LOGGER.debug("JSON resource [{}] does not exist or is empty", jsonResource);
             return new HashMap<>(0);
         }
