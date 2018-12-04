@@ -46,7 +46,7 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
 
     private final SecretKeySpec encryptionKey;
 
-    private String cipherAlgorithm = "AES";
+    private final String cipherAlgorithm = "AES";
 
     /**
      * Instantiates a new cryptic ticket cipher executor.
