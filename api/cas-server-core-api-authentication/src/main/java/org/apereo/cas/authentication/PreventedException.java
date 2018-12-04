@@ -30,4 +30,13 @@ public class PreventedException extends Exception {
     public PreventedException(final String message, final Throwable cause) {
         super(message, cause);
     }
+
+    /**
+     * Instantiates a new Prevented exception.
+     *
+     * @param message the message
+     */
+    public PreventedException(final String message) {
+        super(message);
+    }
 }
