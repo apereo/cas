@@ -18,7 +18,6 @@ dependencies {
     implementation libraries.yubicoapi
     implementation libraries.u2flibserver
     
-
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-authentication")

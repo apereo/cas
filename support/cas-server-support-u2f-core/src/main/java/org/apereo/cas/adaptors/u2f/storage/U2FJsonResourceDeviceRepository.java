@@ -23,8 +23,8 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class U2FJsonResourceDeviceRepository extends BaseResourceU2FDeviceRepository {
 
-
-    private final ObjectMapper mapper;
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules()
+        .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
 
     private final Resource jsonResource;
 
@@ -34,10 +34,6 @@ public class U2FJsonResourceDeviceRepository extends BaseResourceU2FDeviceReposi
                                            final long expirationTime, final TimeUnit expirationTimeUnit) {
         super(requestStorage, expirationTime, expirationTimeUnit);
         this.jsonResource = jsonResource;
-
-        mapper = new ObjectMapper()
-            .findAndRegisterModules()
-            .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
         if (!this.jsonResource.exists()) {
             if (this.jsonResource.getFile().createNewFile()) {
                 LOGGER.debug("Created JSON resource [{}] for U2F device registrations", jsonResource);
@@ -51,7 +47,7 @@ public class U2FJsonResourceDeviceRepository extends BaseResourceU2FDeviceReposi
             LOGGER.debug("JSON resource [{}] does not exist or is empty", jsonResource);
             return new HashMap<>(0);
         }
-        return mapper.readValue(jsonResource.getInputStream(),
+        return MAPPER.readValue(jsonResource.getInputStream(),
             new TypeReference<Map<String, List<U2FDeviceRegistration>>>() {
             });
     }
@@ -60,7 +56,7 @@ public class U2FJsonResourceDeviceRepository extends BaseResourceU2FDeviceReposi
     public void writeDevicesBackToResource(final List<U2FDeviceRegistration> list) throws Exception {
         val newDevices = new HashMap<String, List<U2FDeviceRegistration>>();
         newDevices.put(MAP_KEY_DEVICES, list);
-        mapper.writerWithDefaultPrettyPrinter().writeValue(jsonResource.getFile(), newDevices);
+        MAPPER.writerWithDefaultPrettyPrinter().writeValue(jsonResource.getFile(), newDevices);
         LOGGER.debug("Saved [{}] device(s) into repository [{}]", list.size(), jsonResource);
     }
 }
