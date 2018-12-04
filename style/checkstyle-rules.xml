@@ -568,6 +568,7 @@
             <property name="separateLineBetweenGroups" value="false"/>
         </module>
         <module name="ImportControl">
+            <property name="severity" value="error"/>
             <property name="file" value="${checkstyle.importcontrol.file}"/>
         </module>
     </module>
