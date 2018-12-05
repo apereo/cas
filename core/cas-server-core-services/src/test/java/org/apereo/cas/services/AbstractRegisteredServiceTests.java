@@ -166,8 +166,8 @@ public class AbstractRegisteredServiceTests {
 
     @Test
     public void verifyServiceEquality() {
-        val svc1 = RegisteredServiceTestUtils.getRegisteredService(SERVICEID);
-        val svc2 = RegisteredServiceTestUtils.getRegisteredService(SERVICEID);
+        val svc1 = RegisteredServiceTestUtils.getRegisteredService(SERVICEID, false);
+        val svc2 = RegisteredServiceTestUtils.getRegisteredService(SERVICEID, false);
         assertEquals(svc1, svc2);
     }
 

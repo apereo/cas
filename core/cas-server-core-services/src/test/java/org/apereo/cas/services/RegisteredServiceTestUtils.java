@@ -115,11 +115,15 @@ public class RegisteredServiceTestUtils {
     }
 
     @SneakyThrows
-    public static AbstractRegisteredService getRegisteredService(final String id, final Class<? extends RegisteredService> clazz) {
+    public static AbstractRegisteredService getRegisteredService(final String id, final Class<? extends RegisteredService> clazz, final boolean uniq) {
         val s = (AbstractRegisteredService) clazz.getDeclaredConstructor().newInstance();
         s.setServiceId(id);
         s.setEvaluationOrder(1);
-        s.setName("TestService" + UUID.randomUUID().toString());
+        if (uniq) {
+            s.setName("TestService" + UUID.randomUUID().toString());
+        } else {
+            s.setName(id);
+        }
         s.setDescription("Registered service description");
         s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.+"));
         s.setId(RandomUtils.nextLong());
@@ -152,8 +156,18 @@ public class RegisteredServiceTestUtils {
     }
 
     @SneakyThrows
+    public static AbstractRegisteredService getRegisteredService(final String id, final Class<? extends RegisteredService> clazz) {
+        return getRegisteredService(id, clazz, true);
+    }
+
+    @SneakyThrows
     public static AbstractRegisteredService getRegisteredService(final String id) {
-        return getRegisteredService(id, RegexRegisteredService.class);
+        return getRegisteredService(id, RegexRegisteredService.class, true);
+    }
+
+    @SneakyThrows
+    public static AbstractRegisteredService getRegisteredService(final String id, final boolean uniq) {
+        return getRegisteredService(id, RegexRegisteredService.class, uniq);
     }
 
     public static Principal getPrincipal() {
