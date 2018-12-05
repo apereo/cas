@@ -31,20 +31,20 @@ import java.nio.charset.StandardCharsets;
 @Getter
 @Setter
 public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]> {
+    private static final String CIPHER_ALGORITHM = "AES";
 
     /**
      * Name of the cipher/component whose keys are generated here.
      */
     protected final String cipherName;
+    
     private final SecretKeySpec encryptionKey;
-    private final Cipher aesCipher;
     /**
      * Secret key IV algorithm. Default is {@code AES}.
      */
     private String secretKeyAlgorithm = "AES";
     private byte[] encryptionSecretKey;
-    
-    private final String cipherAlgorithm = "AES";
+
 
     /**
      * Instantiates a new cryptic ticket cipher executor.
@@ -74,7 +74,7 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
     @Override
     @SneakyThrows
     public byte[] encode(final byte[] value, final Object[] parameters) {
-        val aesCipher = Cipher.getInstance(cipherAlgorithm); 
+        val aesCipher = Cipher.getInstance(CIPHER_ALGORITHM);
         aesCipher.init(Cipher.ENCRYPT_MODE, this.encryptionKey);
         val result = aesCipher.doFinal(value);
         return sign(result);
@@ -84,10 +84,9 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
     @SneakyThrows
     public byte[] decode(final byte[] value, final Object[] parameters) {
         val verifiedValue = verifySignature(value);
-        val aesCipher = Cipher.getInstance(cipherAlgorithm); 
+        val aesCipher = Cipher.getInstance(CIPHER_ALGORITHM);
         aesCipher.init(Cipher.DECRYPT_MODE, this.encryptionKey);
-        val bytePlainText = aesCipher.doFinal(verifiedValue);
-        return bytePlainText;
+        return aesCipher.doFinal(verifiedValue);
     }
 
     /**
