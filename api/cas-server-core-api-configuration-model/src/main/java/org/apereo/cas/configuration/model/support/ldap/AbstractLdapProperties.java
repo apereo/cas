@@ -5,6 +5,9 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is {@link AbstractLdapProperties}.
@@ -187,6 +190,7 @@ public abstract class AbstractLdapProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private LdapValidatorProperties validator = new LdapValidatorProperties();
+
     /**
      * Name of the authentication handler.
      */
@@ -201,6 +205,12 @@ public abstract class AbstractLdapProperties implements Serializable {
      * Set if search referrals should be followed.
      */
     private boolean followReferrals = true;
+
+    /**
+     * Indicate the collection of attributes that are to be tagged and processed as binary
+     * attributes by the underlying search resolver.
+     */
+    private List<String> binaryAttributes = Stream.of("objectGUID", "objectSid").collect(Collectors.toList());
 
     /**
      * The ldap type used to handle specific ops.
