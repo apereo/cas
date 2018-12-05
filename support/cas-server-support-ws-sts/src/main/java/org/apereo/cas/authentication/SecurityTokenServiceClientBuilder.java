@@ -53,8 +53,7 @@ public class SecurityTokenServiceClientBuilder {
             return service.getWsdlLocation();
         }
         val wsdl = String.format(WSFederationConstants.ENDPOINT_STS_REALM_WSDL, wsFederationProperties.getIdp().getRealmName());
-        val location = this.prefix.concat(wsdl);
-        return location;
+        return this.prefix.concat(wsdl);
     }
 
     /**

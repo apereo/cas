@@ -60,13 +60,12 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
         if (result.isPresent()) {
             val item = result.get();
             val value = item.getValue();
-            val cachedService = value;
             LOGGER.debug("Located cache entry [{}] in service registry cache [{}]", item, this.distributedCacheManager.getName());
             if (isRegisteredServiceMarkedAsDeletedInCache(item)) {
                 LOGGER.debug("Service found in the cache [{}] is marked as a deleted service. CAS will update the service registry "
-                    + "of this CAS node to remove the local service, if found", cachedService);
-                serviceRegistry.delete(cachedService);
-                this.distributedCacheManager.remove(cachedService, item);
+                    + "of this CAS node to remove the local service, if found", value);
+                serviceRegistry.delete(value);
+                this.distributedCacheManager.remove(value, item);
                 return service;
             }
 
