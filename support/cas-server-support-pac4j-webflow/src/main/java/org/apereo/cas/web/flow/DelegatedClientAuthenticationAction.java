@@ -14,6 +14,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.support.pac4j.logout.RequestSloException;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.DelegatedClientNavigationController;
@@ -39,6 +40,7 @@ import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.saml.metadata.SAML2ServiceProviderMetadataResolver;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -47,6 +49,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -148,9 +151,15 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             throw new IllegalArgumentException("Delegated authentication has failed with client " + clientName);
         }
 
+        final String logoutEndpoint = request.getParameter(SAML2ServiceProviderMetadataResolver.LOGOUT_ENDPOINT_PARAMETER);
         final J2EContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
         if (StringUtils.isNotBlank(clientName)) {
-            final Service service = restoreAuthenticationRequestInContext(context, webContext, clientName);
+            final Service service;
+            if (logoutEndpoint == null) {
+                service = restoreAuthenticationRequestInContext(context, webContext, clientName);
+            } else {
+                service = null;
+            }
             final BaseClient<Credentials, CommonProfile> client = findDelegatedClientByName(request, clientName, service);
 
             final Credentials credentials;
@@ -161,8 +170,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                     throw new IllegalArgumentException("Unable to determine credentials from the context with client " + client.getName());
                 }
             } catch (final Exception e) {
-                LOGGER.info(e.getMessage(), e);
-                throw new IllegalArgumentException("Delegated authentication has failed with client " + client.getName());
+                return handleException(webContext, client, e);
             }
 
             final ClientCredential clientCredential = new ClientCredential(credentials, client.getName());
@@ -178,6 +186,28 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             return stopWebflow();
         }
         return error();
+    }
+
+    /**
+     * Handle the thrown exception.
+     *
+     * @param webContext the web context
+     * @param client the authentication client
+     * @param e the thrown exception
+     * @return the event to trigger
+     */
+    protected Event handleException(final J2EContext webContext, final BaseClient<Credentials, CommonProfile> client, final Exception e) {
+        if (e instanceof RequestSloException) {
+            try {
+                webContext.getResponse().sendRedirect("logout");
+            } catch (final IOException ioe) {
+                throw new IllegalArgumentException("Unable to call logout", ioe);
+            }
+            return stopWebflow();
+        } else {
+            LOGGER.info(e.getMessage(), e);
+            throw new IllegalArgumentException("Delegated authentication has failed with client " + client.getName());
+        }
     }
 
     /**
