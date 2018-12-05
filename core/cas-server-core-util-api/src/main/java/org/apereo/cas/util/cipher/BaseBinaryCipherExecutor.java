@@ -46,7 +46,7 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
 
     private final SecretKeySpec encryptionKey;
 
-    private final Cipher aesCipher;
+    private final String cipherAlgorithm = "AES";
 
     /**
      * Instantiates a new cryptic ticket cipher executor.
@@ -64,22 +64,23 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
         ensureSigningKeyExists(signingSecretKey, signingKeySize);
         ensureEncryptionKeyExists(encryptionSecretKey, encryptionKeySize);
         this.encryptionKey = new SecretKeySpec(this.encryptionSecretKey, this.secretKeyAlgorithm);
-        this.aesCipher = Cipher.getInstance("AES");
     }
 
     @Override
     @SneakyThrows
     public byte[] encode(final byte[] value, final Object[] parameters) {
-        this.aesCipher.init(Cipher.ENCRYPT_MODE, this.encryptionKey);
-        final byte[] result = this.aesCipher.doFinal(value);
+        final Cipher aesCipher = Cipher.getInstance(cipherAlgorithm);
+        aesCipher.init(Cipher.ENCRYPT_MODE, this.encryptionKey);
+        final byte[] result = aesCipher.doFinal(value);
         return sign(result);
     }
 
     @Override
     @SneakyThrows
     public byte[] decode(final byte[] value, final Object[] parameters) {
+        final Cipher aesCipher = Cipher.getInstance(cipherAlgorithm);
         final byte[] verifiedValue = verifySignature(value);
-        this.aesCipher.init(Cipher.DECRYPT_MODE, this.encryptionKey);
+        aesCipher.init(Cipher.DECRYPT_MODE, this.encryptionKey);
         final byte[] bytePlainText = aesCipher.doFinal(verifiedValue);
         return bytePlainText;
     }
