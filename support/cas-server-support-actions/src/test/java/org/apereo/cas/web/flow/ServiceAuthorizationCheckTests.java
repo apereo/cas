@@ -8,6 +8,7 @@ import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.junit.Before;
@@ -67,7 +68,7 @@ public class ServiceAuthorizationCheckTests {
     @Test
     public void authorizedServiceProvided() {
         val mockRequestContext = new MockRequestContext();
-        mockRequestContext.getFlowScope().put("service", this.authorizedService);
+        WebUtils.putServiceIntoFlowScope(mockRequestContext, authorizedService);
         val event = this.serviceAuthorizationCheck.doExecute(mockRequestContext);
         assertEquals("success", event.getId());
     }
@@ -75,7 +76,7 @@ public class ServiceAuthorizationCheckTests {
     @Test
     public void unauthorizedServiceProvided() {
         val mockRequestContext = new MockRequestContext();
-        mockRequestContext.getFlowScope().put("service", this.unauthorizedService);
+        WebUtils.putServiceIntoFlowScope(mockRequestContext, unauthorizedService);
 
         this.thrown.expect(UnauthorizedServiceException.class);
 
@@ -87,7 +88,7 @@ public class ServiceAuthorizationCheckTests {
     @Test
     public void serviceThatIsNotRegisteredProvided() {
         val mockRequestContext = new MockRequestContext();
-        mockRequestContext.getFlowScope().put("service", this.undefinedService);
+        WebUtils.putServiceIntoFlowScope(mockRequestContext, undefinedService);
 
         this.thrown.expect(UnauthorizedServiceException.class);
 

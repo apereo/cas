@@ -782,11 +782,20 @@ ext.libraries = [
                 }
         ],
         apachevelocity          : [
-                dependencies.create("org.apache.velocity:velocity-engine-core:$apacheVelocityVersion") {
+                dependencies.create("org.apache.velocity:velocity-engine-core:$apacheVelocityEngineVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "jcl-over-slf4j")
                     exclude(group: "commons-lang", module: "commons-lang")
                     exclude(group: "org.apache.commons", module: "commons-lang3")
+                    force = true
+                },
+                dependencies.create("org.apache.velocity:velocity:$apacheVelocityVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "jcl-over-slf4j")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "org.apache.commons", module: "commons-lang3")
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "commons-collections", module: "commons-collections")
                     force = true
                 }
         ],

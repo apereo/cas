@@ -67,8 +67,10 @@ public class DelegatedClientWebflowManager {
     public Ticket store(final J2EContext webContext, final BaseClient client) {
         val properties = new HashMap<String, Serializable>();
 
-        val service = determineService(webContext);
-        properties.put(CasProtocolConstants.PARAMETER_SERVICE, service);
+        val originalService = argumentExtractor.extractService(webContext.getRequest());
+        val service = authenticationRequestServiceSelectionStrategies.resolveService(originalService);
+        properties.put(CasProtocolConstants.PARAMETER_SERVICE, originalService);
+        properties.put(CasProtocolConstants.PARAMETER_TARGET_SERVICE, service);
 
         properties.put(this.themeParamName, StringUtils.defaultString(webContext.getRequestParameter(this.themeParamName)));
         properties.put(this.localParamName, StringUtils.defaultString(webContext.getRequestParameter(this.localParamName)));
@@ -76,7 +78,7 @@ public class DelegatedClientWebflowManager {
             StringUtils.defaultString(webContext.getRequestParameter(CasProtocolConstants.PARAMETER_METHOD)));
 
         val transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
-        val ticket = transientFactory.create(service, properties);
+        val ticket = transientFactory.create(originalService, properties);
         val ticketId = ticket.getId();
         LOGGER.debug("Storing delegated authentication request ticket [{}] for service [{}] with properties [{}]",
             ticketId, ticket.getService(), ticket.getProperties());
@@ -107,11 +109,6 @@ public class DelegatedClientWebflowManager {
             webContext.getSessionStore().set(webContext, OAUTH10_CLIENT_ID_SESSION_KEY, ticket.getId());
         }
         return ticket;
-    }
-
-    private Service determineService(final J2EContext ctx) {
-        val service = argumentExtractor.extractService(ctx.getRequest());
-        return this.authenticationRequestServiceSelectionStrategies.resolveService(service);
     }
 
     /**
