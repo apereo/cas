@@ -67,16 +67,14 @@ public class U2FJpaConfiguration {
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean u2fEntityManagerFactory() {
-        val bean =
-            JpaBeans.newHibernateEntityManagerFactoryBean(
-                new JpaConfigDataHolder(
-                    jpaU2fVendorAdapter(),
-                    "jpaU2fRegistryContext",
-                    jpaU2fPackagesToScan(),
-                    dataSourceU2f()),
-                casProperties.getAuthn().getMfa().getU2f().getJpa());
 
-        return bean;
+        return JpaBeans.newHibernateEntityManagerFactoryBean(
+            new JpaConfigDataHolder(
+                jpaU2fVendorAdapter(),
+                "jpaU2fRegistryContext",
+                jpaU2fPackagesToScan(),
+                dataSourceU2f()),
+            casProperties.getAuthn().getMfa().getU2f().getJpa());
     }
 
     @Autowired

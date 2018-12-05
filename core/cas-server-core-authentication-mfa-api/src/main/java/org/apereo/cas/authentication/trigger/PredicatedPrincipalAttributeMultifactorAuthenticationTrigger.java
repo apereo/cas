@@ -67,11 +67,9 @@ public class PredicatedPrincipalAttributeMultifactorAuthenticationTrigger implem
         LOGGER.debug("Created predicate instance [{}] from [{}] to filter multifactor authentication providers [{}]",
             predicate.getClass().getSimpleName(), predicateResource, providers);
 
-        val provider = providers
+        return providers
             .stream()
             .filter(predicate)
             .min(Comparator.comparingInt(MultifactorAuthenticationProvider::getOrder));
-
-        return provider;
     }
 }

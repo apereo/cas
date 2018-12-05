@@ -44,8 +44,7 @@ public class MultifactorAuthenticationTrustUtils {
      */
     public static String generateGeography() {
         val clientInfo = ClientInfoHolder.getClientInfo();
-        val geography = clientInfo.getClientIpAddress().concat("@").concat(WebUtils.getHttpServletRequestUserAgentFromRequestContext());
-        return geography;
+        return clientInfo.getClientIpAddress().concat("@").concat(WebUtils.getHttpServletRequestUserAgentFromRequestContext());
     }
 
     /**

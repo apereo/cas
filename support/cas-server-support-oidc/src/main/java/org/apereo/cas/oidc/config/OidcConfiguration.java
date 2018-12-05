@@ -562,21 +562,17 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
     @Bean
     public LoadingCache<OidcRegisteredService, Optional<RsaJsonWebKey>> oidcServiceJsonWebKeystoreCache() {
         val oidc = casProperties.getAuthn().getOidc();
-        val cache =
-            Caffeine.newBuilder().maximumSize(1)
-                .expireAfterWrite(oidc.getJwksCacheInMinutes(), TimeUnit.MINUTES)
-                .build(oidcServiceJsonWebKeystoreCacheLoader());
-        return cache;
+        return Caffeine.newBuilder().maximumSize(1)
+            .expireAfterWrite(oidc.getJwksCacheInMinutes(), TimeUnit.MINUTES)
+            .build(oidcServiceJsonWebKeystoreCacheLoader());
     }
 
     @Bean
     public LoadingCache<String, Optional<RsaJsonWebKey>> oidcDefaultJsonWebKeystoreCache() {
         val oidc = casProperties.getAuthn().getOidc();
-        val cache =
-            Caffeine.newBuilder().maximumSize(1)
-                .expireAfterWrite(oidc.getJwksCacheInMinutes(), TimeUnit.MINUTES)
-                .build(oidcDefaultJsonWebKeystoreCacheLoader());
-        return cache;
+        return Caffeine.newBuilder().maximumSize(1)
+            .expireAfterWrite(oidc.getJwksCacheInMinutes(), TimeUnit.MINUTES)
+            .build(oidcDefaultJsonWebKeystoreCacheLoader());
     }
 
     @Bean

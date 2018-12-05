@@ -74,9 +74,8 @@ public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilde
             val audiences = org.springframework.util.StringUtils.commaDelimitedListToSet(service.getAssertionAudiences());
             audienceUrls.addAll(audiences);
         }
-        val conditions = newConditions(currentDateTime,
+        return newConditions(currentDateTime,
             currentDateTime.plusSeconds(skewAllowance),
             audienceUrls.toArray(ArrayUtils.EMPTY_STRING_ARRAY));
-        return conditions;
     }
 }

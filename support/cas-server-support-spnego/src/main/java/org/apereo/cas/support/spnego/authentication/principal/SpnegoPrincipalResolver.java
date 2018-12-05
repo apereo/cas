@@ -35,8 +35,7 @@ public class SpnegoPrincipalResolver extends PersonDirectoryPrincipalResolver {
     @Override
     protected String extractPrincipalId(final Credential credential, final Optional<Principal> currentPrincipal) {
         val c = (SpnegoCredential) credential;
-        val id = c.getPrincipal().getId();
-        return id;
+        return c.getPrincipal().getId();
     }
 
     @Override

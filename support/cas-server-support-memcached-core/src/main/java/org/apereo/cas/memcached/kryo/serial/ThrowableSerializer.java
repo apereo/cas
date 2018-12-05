@@ -29,8 +29,7 @@ public class ThrowableSerializer extends Serializer<Throwable> {
         try {
             val clazz = kryo.readObject(input, Class.class);
             val msg = kryo.readObject(input, String.class);
-            val throwable = (Throwable) clazz.getDeclaredConstructor(String.class).newInstance(msg);
-            return throwable;
+            return (Throwable) clazz.getDeclaredConstructor(String.class).newInstance(msg);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

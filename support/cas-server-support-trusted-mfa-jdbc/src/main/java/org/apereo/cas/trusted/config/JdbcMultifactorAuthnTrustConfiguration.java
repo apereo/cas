@@ -63,16 +63,14 @@ public class JdbcMultifactorAuthnTrustConfiguration {
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean mfaTrustedAuthnEntityManagerFactory() {
-        val bean =
-            JpaBeans.newHibernateEntityManagerFactoryBean(
-                new JpaConfigDataHolder(
-                    jpaMfaTrustedAuthnVendorAdapter(),
-                    "jpaMfaTrustedAuthnContext",
-                    jpaMfaTrustedAuthnPackagesToScan(),
-                    dataSourceMfaTrustedAuthn()),
-                casProperties.getAuthn().getMfa().getTrusted().getJpa());
 
-        return bean;
+        return JpaBeans.newHibernateEntityManagerFactoryBean(
+            new JpaConfigDataHolder(
+                jpaMfaTrustedAuthnVendorAdapter(),
+                "jpaMfaTrustedAuthnContext",
+                jpaMfaTrustedAuthnPackagesToScan(),
+                dataSourceMfaTrustedAuthn()),
+            casProperties.getAuthn().getMfa().getTrusted().getJpa());
     }
 
     @Autowired

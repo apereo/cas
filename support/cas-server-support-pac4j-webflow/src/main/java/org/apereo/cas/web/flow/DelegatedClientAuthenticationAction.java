@@ -455,8 +455,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             try {
                 delegatedSessionCookieManager.restore(webContext);
                 val client = (BaseClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
-                val service = delegatedClientWebflowManager.retrieve(requestContext, webContext, client);
-                return service;
+                return delegatedClientWebflowManager.retrieve(requestContext, webContext, client);
             } catch (final Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }
