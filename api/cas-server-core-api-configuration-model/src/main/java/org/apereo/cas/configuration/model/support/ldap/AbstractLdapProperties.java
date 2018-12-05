@@ -5,6 +5,9 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is {@link AbstractLdapProperties}.
@@ -234,7 +237,18 @@ public abstract class AbstractLdapProperties implements Serializable {
      * Set if multiple Entries are allowed.
      */
     private boolean allowMultipleEntries;
-    
+
+    /**
+     * Indicate the collection of attributes that are to be tagged and processed as binary
+     * attributes by the underlying search resolver.
+     */
+    private List<String> binaryAttributes = Stream.of("objectGUID", "objectSid").collect(Collectors.toList());
+
+    /**
+     * Set if search referrals should be followed.
+     */
+    private boolean followReferrals = true;
+
     /**
      * The bind DN to use when connecting to LDAP.
      * LDAP connection configuration injected into the LDAP connection pool can be initialized with the following parameters:
