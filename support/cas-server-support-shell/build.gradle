@@ -1,9 +1,8 @@
-apply plugin: "application"
+
 apply plugin: "org.springframework.boot"
 
 def MAIN_CLASS = "org.apereo.cas.CasCommandLineShellApplication"
 
-mainClassName = MAIN_CLASS
 description = "Apereo CAS Shell Support via Spring Shell"
 
 dependencies {
@@ -31,6 +30,7 @@ dependencies {
     compile libraries.jasypt
     compile libraries.bouncycastle
     compile libraries.opensaml
+    implementation libraries.snakeyaml
 }
 
 springBoot {
@@ -49,18 +49,6 @@ bootRun {
         list.add("-Xrunjdwp:transport=dt_socket,address=5007,server=y,suspend=n")
     }
     jvmArgs = list
-}
-
-run {
-    def execArgs = System.getProperty('args')
-    if (execArgs != null) {
-        args execArgs.split()
-    }
-}
-
-[distZip, distTar].each { task -> configurations.archives.artifacts.removeAll
-        { it.class.simpleName == "ArchivePublishArtifact" && it.archiveTask == task }
-    task.enabled = false
 }
 
 task listUndocumentedProperties(type: JavaExec) {

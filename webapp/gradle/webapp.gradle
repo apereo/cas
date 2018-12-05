@@ -2,13 +2,11 @@ import org.apache.tools.ant.taskdefs.condition.Os
 
 apply plugin: "war"
 apply plugin: "org.springframework.boot"
-apply plugin: "application"
 apply plugin: "com.moowork.node"
 
 def MAIN_CLASS = "org.apereo.cas.web.CasWebApplication"
 
 description = "Apereo CAS Web Application"
-mainClassName = MAIN_CLASS
 
 node {
     version = "${nodeVersion}"
@@ -63,12 +61,6 @@ sourceSets {
 
 javadoc {
     enabled false
-}
-
-[distZip, distTar].each { task ->
-    configurations.archives.artifacts.removeAll
-            { it.class.simpleName == "ArchivePublishArtifact" && it.archiveTask == task }
-    task.enabled = false
 }
 
 springBoot {
@@ -146,6 +138,9 @@ dependencies {
     implementation project(":support:cas-server-support-themes")
     implementation project(":support:cas-server-support-validation")
     implementation project(":support:cas-server-support-pm-webflow")
+    
+    implementation project(":support:cas-server-support-pac4j-webflow")
+    implementation project(":support:cas-server-support-interrupt-webflow")
 
     implementation project(":webapp:cas-server-webapp-config")
     implementation project(":webapp:cas-server-webapp-init")
