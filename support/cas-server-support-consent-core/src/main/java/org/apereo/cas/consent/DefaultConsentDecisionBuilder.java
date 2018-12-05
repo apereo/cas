@@ -86,8 +86,7 @@ public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
                 return new HashMap<>(0);
             }
             val names = EncodingUtils.decodeBase64ToString(result);
-            val attributes = MAPPER.readValue(names, Map.class);
-            return attributes;
+            return MAPPER.readValue(names, Map.class);
         } catch (final Exception e) {
             throw new IllegalArgumentException("Could not serialize attributes for consent decision");
         }
@@ -103,8 +102,7 @@ public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
             .map(CollectionUtils::toCollection)
             .map(c -> c.stream().map(Object::toString).collect(Collectors.joining()))
             .collect(Collectors.joining("|"));
-        val attributeValues = DigestUtils.sha512(allValues);
-        return attributeValues;
+        return DigestUtils.sha512(allValues);
     }
 
     /**

@@ -36,8 +36,7 @@ public class GoogleAuthenticatorMongoDbTokenRepository extends BaseOneTimeTokenR
         try {
             val query = new Query();
             query.addCriteria(Criteria.where("userId").is(uid).and("token").is(otp));
-            val r = this.mongoTemplate.findOne(query, GoogleAuthenticatorToken.class, this.collectionName);
-            return r;
+            return this.mongoTemplate.findOne(query, GoogleAuthenticatorToken.class, this.collectionName);
         } catch (final NoResultException e) {
             LOGGER.debug("No record could be found for google authenticator id [{}]", uid);
         }
