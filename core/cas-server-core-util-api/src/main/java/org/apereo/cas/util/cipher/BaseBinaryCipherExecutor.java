@@ -43,6 +43,8 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
      */
     private String secretKeyAlgorithm = "AES";
     private byte[] encryptionSecretKey;
+    
+    private final String cipherAlgorithm = "AES";
 
     /**
      * Instantiates a new cryptic ticket cipher executor.
@@ -60,7 +62,6 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
         ensureSigningKeyExists(signingSecretKey, signingKeySize);
         ensureEncryptionKeyExists(encryptionSecretKey, encryptionKeySize);
         this.encryptionKey = new SecretKeySpec(this.encryptionSecretKey, this.secretKeyAlgorithm);
-        this.aesCipher = Cipher.getInstance("AES");
     }
 
     @SneakyThrows
@@ -73,8 +74,9 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
     @Override
     @SneakyThrows
     public byte[] encode(final byte[] value, final Object[] parameters) {
-        this.aesCipher.init(Cipher.ENCRYPT_MODE, this.encryptionKey);
-        val result = this.aesCipher.doFinal(value);
+        val aesCipher = Cipher.getInstance(cipherAlgorithm); 
+        aesCipher.init(Cipher.ENCRYPT_MODE, this.encryptionKey);
+        val result = aesCipher.doFinal(value);
         return sign(result);
     }
 
@@ -82,7 +84,8 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
     @SneakyThrows
     public byte[] decode(final byte[] value, final Object[] parameters) {
         val verifiedValue = verifySignature(value);
-        this.aesCipher.init(Cipher.DECRYPT_MODE, this.encryptionKey);
+        val aesCipher = Cipher.getInstance(cipherAlgorithm); 
+        aesCipher.init(Cipher.DECRYPT_MODE, this.encryptionKey);
         val bytePlainText = aesCipher.doFinal(verifiedValue);
         return bytePlainText;
     }
