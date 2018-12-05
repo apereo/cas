@@ -1,5 +1,7 @@
 package org.apereo.cas.support.pac4j.authentication;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationProperties;
@@ -12,11 +14,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.support.pac4j.logout.CasServerSpecificLogoutHandler;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.cas.config.CasProtocol;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.http.callback.PathParameterCallbackUrlResolver;
+import org.pac4j.core.logout.handler.LogoutHandler;
 import org.pac4j.oauth.client.BitbucketClient;
 import org.pac4j.oauth.client.DropBoxClient;
 import org.pac4j.oauth.client.FacebookClient;
@@ -60,12 +64,19 @@ import org.pac4j.oauth.client.HiOrgServerClient;
  */
 @RequiredArgsConstructor
 @Slf4j
+@Getter
+@Setter
 public class DelegatedClientFactory {
 
     /**
      * The Pac 4 j properties.
      */
     private final Pac4jDelegatedAuthenticationProperties pac4jProperties;
+
+    /**
+     * The pac4j specific logout handler for the CAS server.
+     */
+    private LogoutHandler casServerSpecificLogoutHandler = new CasServerSpecificLogoutHandler();
 
     /**
      * Configure github client.
@@ -320,6 +331,7 @@ public class DelegatedClientFactory {
             .filter(cas -> StringUtils.isNotBlank(cas.getLoginUrl()))
             .forEach(cas -> {
                 final CasConfiguration cfg = new CasConfiguration(cas.getLoginUrl(), CasProtocol.valueOf(cas.getProtocol().toUpperCase()));
+                cfg.setLogoutHandler(casServerSpecificLogoutHandler);
                 final CasClient client = new CasClient(cfg);
 
                 final int count = index.intValue();
@@ -361,6 +373,7 @@ public class DelegatedClientFactory {
                 cfg.setForceAuth(saml.isForceAuth());
                 cfg.setPassive(saml.isPassive());
                 cfg.setWantsAssertionsSigned(saml.isWantsAssertionsSigned());
+                cfg.setLogoutHandler(casServerSpecificLogoutHandler);
 
                 cfg.setSignMetadata(saml.isSignServiceProviderMetadata());
                 cfg.setAttributeConsumingServiceIndex(saml.getAttributeConsumingServiceIndex());
