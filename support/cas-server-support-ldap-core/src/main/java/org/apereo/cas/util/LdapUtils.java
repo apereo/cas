@@ -57,7 +57,6 @@ import org.ldaptive.auth.FormatDnResolver;
 import org.ldaptive.auth.PooledBindAuthenticationHandler;
 import org.ldaptive.auth.PooledCompareAuthenticationHandler;
 import org.ldaptive.auth.PooledSearchDnResolver;
-import org.ldaptive.auth.PooledSearchEntryResolver;
 import org.ldaptive.control.PasswordPolicyControl;
 import org.ldaptive.extended.PasswordModifyOperation;
 import org.ldaptive.extended.PasswordModifyRequest;
@@ -979,12 +978,14 @@ public class LdapUtils {
             throw new IllegalArgumentException("To create a search entry resolver, user filter cannot be empty/blank");
         }
 
-        val entryResolver = new PooledSearchEntryResolver();
+        val entryResolver = new BinaryAttributeAwarePooledSearchEntryResolver();
         entryResolver.setBaseDn(l.getBaseDn());
         entryResolver.setUserFilter(l.getSearchFilter());
         entryResolver.setSubtreeSearch(l.isSubtreeSearch());
         entryResolver.setConnectionFactory(factory);
         entryResolver.setAllowMultipleEntries(l.isAllowMultipleEntries());
+        entryResolver.setBinaryAttributes(l.getBinaryAttributes());
+
         if (StringUtils.isNotBlank(l.getDerefAliases())) {
             entryResolver.setDerefAliases(DerefAliases.valueOf(l.getDerefAliases()));
         }
