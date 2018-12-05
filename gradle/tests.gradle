@@ -1,115 +1,127 @@
-if (hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "Cassandra")){
+if (hasTestsOfCategory(project, "Cassandra")){
     task testCassandra(type: Test) {
-        enabled = shouldTest(project.sourceSets.test.java.srcDirs, "Cassandra")
+        enabled = shouldTest(project, "Cassandra")
         useJUnitPlatform {
+            includeEngines 'junit-vintage'
             includeTags "org.apereo.cas.category.CassandraCategory"
         }
     }
 }
 
-if (hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "CosmosDb")) {
+if (hasTestsOfCategory(project, "CosmosDb")) {
     task testCosmosDb(type: Test) {
-        enabled = shouldTest(project.sourceSets.test.java.srcDirs, "CosmosDb")
+        enabled = shouldTest(project, "CosmosDb")
         useJUnitPlatform {
+            includeEngines 'junit-vintage'
             includeTags "org.apereo.cas.category.CosmosDbCategory"
         }
     }
 }
 
-if (hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "AmazonWebServicesS3")) {
+if (hasTestsOfCategory(project, "AmazonWebServicesS3")) {
     task testAWSS3(type: Test) {
-        enabled = shouldTest(project.sourceSets.test.java.srcDirs, "AmazonWebServicesS3")
+        enabled = shouldTest(project, "AmazonWebServicesS3")
         useJUnitPlatform {
+            includeEngines 'junit-vintage'
             includeTags "org.apereo.cas.category.AmazonWebServicesS3Category"
         }
     }
 }
 
-if (hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "Radius")) {
+if (hasTestsOfCategory(project, "Radius")) {
     task testRadius(type: Test) {
-        enabled = shouldTest(project.sourceSets.test.java.srcDirs, "Radius")
+        enabled = shouldTest(project, "Radius")
         useJUnitPlatform {
+            includeEngines 'junit-vintage'
             includeTags "org.apereo.cas.category.RadiusCategory"
         }
     }
 }
 
-if (hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "Couchbase")) {
+if (hasTestsOfCategory(project, "Couchbase")) {
     task testCouchbase(type: Test) {
-        enabled = shouldTest(project.sourceSets.test.java.srcDirs, "Couchbase")
+        enabled = shouldTest(project, "Couchbase")
         useJUnitPlatform {
+            includeEngines 'junit-vintage'
             includeTags "org.apereo.cas.category.CouchbaseCategory"
         }
     }
 }
 
-if (hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "CouchDb")) {
+if (hasTestsOfCategory(project, "couchdb")) {
     task testCouchDb(type: Test) {
-        enabled = shouldTest(project.sourceSets.test.java.srcDirs, "CouchDb")
+        enabled = shouldTest(project, "couchdb")
         useJUnitPlatform {
             includeTags "couchdb"
         }
     }
 }
 
-if (hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "MySQL")) {
+if (hasTestsOfCategory(project, "MySQL")) {
     task testMySQL(type: Test) {
-        enabled = shouldTest(project.sourceSets.test.java.srcDirs, "MySQL")
+        enabled = shouldTest(project, "MySQL")
         useJUnitPlatform {
+            includeEngines 'junit-vintage'
             includeTags "org.apereo.cas.category.MySQLCategory"
         }
     }
 }
 
-if (hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "Postgres")) {
+if (hasTestsOfCategory(project, "Postgres")) {
     task testPostgres(type: Test) {
-        enabled = shouldTest(project.sourceSets.test.java.srcDirs, "Postgres")
+        enabled = shouldTest(project, "Postgres")
         useJUnitPlatform {
+            includeEngines 'junit-vintage'
             includeTags "org.apereo.cas.category.PostgresCategory"
         }
     }
 }
 
-if (hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "MsSqlServer")) {
+if (hasTestsOfCategory(project, "MsSqlServer")) {
     task testMsSqlServer(type: Test) {
-        enabled = shouldTest(project.sourceSets.test.java.srcDirs, "MsSqlServer")
+        enabled = shouldTest(project, "MsSqlServer")
         useJUnitPlatform {
+            includeEngines 'junit-vintage'
             includeTags "org.apereo.cas.category.MsSqlServerCategory"
         }
     }
 }
 
-if (hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "MariaDb")) {
+if (hasTestsOfCategory(project, "MariaDb")) {
     task testMariaDb(type: Test) {
-        enabled = shouldTest(project.sourceSets.test.java.srcDirs, "MariaDb")
+        enabled = shouldTest(project, "MariaDb")
         useJUnitPlatform {
+            includeEngines 'junit-vintage'
             includeTags "org.apereo.cas.category.MariaDbCategory"
         }
     }
 }
 
-if (hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "DynamoDb")) {
+if (hasTestsOfCategory(project, "DynamoDb")) {
     task testDynamoDb(type: Test) {
-        enabled = shouldTest(project.sourceSets.test.java.srcDirs, "DynamoDb")
+        enabled = shouldTest(project, "DynamoDb")
         useJUnitPlatform {
+            includeEngines 'junit-vintage'
             includeTags "org.apereo.cas.category.DynamoDbCategory"
         }
     }
 }
 
-if (hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "FileSystem")) {
+if (hasTestsOfCategory(project, "FileSystem")) {
     task testFileSystem(type: Test) {
-        enabled = shouldTest(project.sourceSets.test.java.srcDirs, "FileSystem")
+        enabled = shouldTest(project, "FileSystem")
         useJUnitPlatform {
+            includeEngines 'junit-vintage'
             includeTags "org.apereo.cas.category.FileSystemCategory"
         }
     }
 }
 
-if (hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "Ignite")) {
+if (hasTestsOfCategory(project, "Ignite")) {
     task testIgnite(type: Test) {
-        enabled = shouldTest(project.sourceSets.test.java.srcDirs, "Ignite")
+        enabled = shouldTest(project, "Ignite")
         useJUnitPlatform {
+            includeEngines 'junit-vintage'
             includeTags "org.apereo.cas.category.IgniteCategory"
         }
         def list = []
@@ -121,64 +133,71 @@ if (hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "Ignite")) {
     }
 }
 
-if (hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "InfluxDb")) {
+if (hasTestsOfCategory(project, "InfluxDb")) {
     task testInfluxDb(type: Test) {
-        enabled = shouldTest(project.sourceSets.test.java.srcDirs, "InfluxDb")
+        enabled = shouldTest(project, "InfluxDb")
         useJUnitPlatform {
+            includeEngines 'junit-vintage'
             includeTags "org.apereo.cas.category.InfluxDbCategory"
         }
     }
 }
 
-if (hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "Ldap")) {
+if (hasTestsOfCategory(project, "Ldap")) {
     task testLdap(type: Test) {
-        enabled = shouldTest(project.sourceSets.test.java.srcDirs, "Ldap")
+        enabled = shouldTest(project, "Ldap")
         useJUnitPlatform {
+            includeEngines 'junit-vintage'
             includeTags "org.apereo.cas.category.LdapCategory"
         }
     }
 }
 
-if (hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "Mail")) {
+if (hasTestsOfCategory(project, "Mail")) {
     task testMail(type: Test) {
-        enabled = shouldTest(project.sourceSets.test.java.srcDirs, "Mail")
+        enabled = shouldTest(project, "Mail")
         useJUnitPlatform {
+            includeEngines 'junit-vintage'
             includeTags "org.apereo.cas.category.MailCategory"
         }
     }
 }
 
-if (hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "RestfulApi")) {
+if (hasTestsOfCategory(project, "RestfulApi")) {
     task testRestful(type: Test) {
-        enabled = shouldTest(project.sourceSets.test.java.srcDirs, "RestfulApi")
+        enabled = shouldTest(project, "RestfulApi")
         useJUnitPlatform {
+            includeEngines 'junit-vintage'
             includeTags "org.apereo.cas.category.RestfulApiCategory"
         }
     }
 }
 
-if (hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "Memcached")) {
+if (hasTestsOfCategory(project, "Memcached")) {
     task testMemcached(type: Test) {
-        enabled = shouldTest(project.sourceSets.test.java.srcDirs, "Memcached")
+        enabled = shouldTest(project, "Memcached")
         useJUnitPlatform {
+            includeEngines 'junit-vintage'
             includeTags "org.apereo.cas.category.MemcachedCategory"
         }
     }
 }
 
-if (hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "MongoDb")) {
+if (hasTestsOfCategory(project, "MongoDb")) {
     task testMongoDb(type: Test) {
-        enabled = shouldTest(project.sourceSets.test.java.srcDirs, "MongoDb")
+        enabled = shouldTest(project, "MongoDb")
         useJUnitPlatform {
+            includeEngines 'junit-vintage'
             includeTags "org.apereo.cas.category.MongoDbCategory"
         }
     }
 }
 
-if (hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "Redis")) {
+if (hasTestsOfCategory(project, "Redis")) {
     task testRedis(type: Test) {
-        enabled = shouldTest(project.sourceSets.test.java.srcDirs, "Redis")
+        enabled = shouldTest(project, "Redis")
         useJUnitPlatform {
+            includeEngines 'junit-vintage'
             includeTags "org.apereo.cas.category.RedisCategory"
         }
     }
@@ -186,6 +205,7 @@ if (hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "Redis")) {
 
 test {
     useJUnitPlatform {
+        includeEngines 'junit-vintage'
         excludeTags "org.apereo.cas.category.CassandraCategory",
                 "org.apereo.cas.category.CosmosDbCategory",
                 "org.apereo.cas.category.CouchbaseCategory",
@@ -213,10 +233,13 @@ test {
 tasks.withType(Test) {
     scanForTestClasses = false
     ignoreFailures = Boolean.getBoolean("ignoreTestFailures")
+    include "**/*Tests.*"
 
     doFirst {
         maxParallelForks = project.ext.properties.get("maxParallelForksForTests", 2)
-        println "Maximum number of parallel forks is set to ${maxParallelForks}"
+        if(maxParallelForks != 2) {
+            println "Maximum number of parallel forks is set to ${maxParallelForks}"
+        }
     }
 
     failFast = true
@@ -229,16 +252,15 @@ tasks.withType(Test) {
         showExceptions = true
         showCauses = true
     }
-    useJUnitPlatform {
-        includeEngines 'junit-jupiter', 'junit-vintage'
-    }
 }
 
-def shouldTest(Set testSrc, String category) {
-    !Boolean.getBoolean("skipTests") && category.equalsIgnoreCase(rootProject.testCategoryType) && hasTestsOfCategory(testSrc, category)
+def shouldTest(Project project, String category) {
+    !Boolean.getBoolean("skipTests") && category.equalsIgnoreCase(rootProject.testCategoryType) && hasTestsOfCategory(project, category)
 }
 
-def hasTestsOfCategory(Set testSrc, String category) {
+def hasTestsOfCategory(Project project, String category) {
+    
+    def testSrc = project.sourceSets.test.java.srcDirs
     def res = srcTagMap.computeIfAbsent(testSrc) {
         def tags = new HashSet()
         testSrc.each { src ->
