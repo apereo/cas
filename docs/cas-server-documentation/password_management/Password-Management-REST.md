@@ -30,4 +30,4 @@ To see the relevant list of CAS properties, please [review this guide](../config
 ## Authentication
 
 If the endpoints are secured, CAS supports Basic authentication when calling them.
-Just set the corresponding password for the username and password.
+Just set the corresponding property for the username and password.

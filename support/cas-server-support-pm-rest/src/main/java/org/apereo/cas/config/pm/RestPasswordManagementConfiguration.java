@@ -38,14 +38,15 @@ public class RestPasswordManagementConfiguration {
         String username = pm.getRest().getEndpointUsername();
         String password = pm.getRest().getEndpointPassword();
 
+        RestTemplateBuilder templateBuilder = restTemplateBuilder;
+
         if (StringUtils.hasText(username) && StringUtils.hasText(password)) {
-            restTemplateBuilder = restTemplateBuilder
-                    .basicAuthentication(username, password);
+            templateBuilder = restTemplateBuilder.basicAuthentication(username, password);
         }
 
         return new RestPasswordManagementService(passwordManagementCipherExecutor.getIfAvailable(),
                 casProperties.getServer().getPrefix(),
-                restTemplateBuilder.build(),
+                templateBuilder.build(),
                 pm);
     }
 }
