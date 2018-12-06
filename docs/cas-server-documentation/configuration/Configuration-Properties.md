@@ -4567,4 +4567,6 @@ feature are available [here](Configuration-Properties-Common.html#password-encod
 # cas.authn.pm.rest.endpointUrlUser=
 # cas.authn.pm.rest.endpointUrlSecurityQuestions=
 # cas.authn.pm.rest.endpointUrlChange=
+# cas.authn.pm.rest.endpointUsername=
+# cas.authn.pm.rest.endpointPassword=
 ```

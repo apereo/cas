@@ -26,3 +26,8 @@ To see the relevant list of CAS properties, please [review this guide](../config
 | Get Email Address         | `GET`     | `username`          | `200`. Email address in the body.
 | Get Security Questions    | `GET`     | `username`          | `200`. Security questions map in the body.
 | Update Password           | `POST`    | `username`, `password`, `oldPassword` | `200`. `true/false` in the body.
+
+## Authentication
+
+If the endpoints are secured, CAS supports Basic authentication when calling them.
+Just set the corresponding password for the username and password.
