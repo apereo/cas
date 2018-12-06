@@ -1,14 +1,19 @@
-package org.apereo.cas.util;
+package org.apereo.cas.util.scripting;
+
+import org.apereo.cas.util.RegexUtils;
+import org.apereo.cas.util.ResourceUtils;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyObject;
 import groovy.lang.GroovyShell;
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.groovy.control.CompilerConfiguration;
+import org.codehaus.groovy.runtime.InvokerInvocationException;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.Resource;
 
@@ -194,6 +199,54 @@ public class ScriptingUtils {
         return AccessController.doPrivileged((PrivilegedAction<T>) () -> getGroovyResult(groovyScript, methodName, args, clazz, parent));
     }
 
+    /**
+     * Execute groovy script.
+     *
+     * @param <T>          the type parameter
+     * @param groovyObject the groovy object
+     * @param args         the args
+     * @param clazz        the clazz
+     * @param failOnError  the fail on error
+     * @return the result
+     */
+    public static <T> T executeGroovyScript(final GroovyObject groovyObject,
+                                            final Object[] args, final Class<T> clazz,
+                                            final boolean failOnError) {
+        return executeGroovyScript(groovyObject, "run", args, clazz, failOnError);
+    }
+
+    @SneakyThrows
+    private static <T> T executeGroovyScript(final GroovyObject groovyObject,
+                                             final String methodName,
+                                             final Object[] args,
+                                             final Class<T> clazz,
+                                             final boolean failOnError) {
+        try {
+            LOGGER.trace("Executing groovy script's [{}] method, with parameters [{}]", methodName, args);
+            final Object result = groovyObject.invokeMethod(methodName, args);
+            LOGGER.trace("Results returned by the groovy script are [{}]", result);
+
+            if (!clazz.equals(Void.class)) {
+                if (result != null && !clazz.isAssignableFrom(result.getClass())) {
+                    throw new ClassCastException("Result [" + result + " is of type " + result.getClass() + " when we were expecting " + clazz);
+                }
+                return (T) result;
+            }
+        } catch (final Exception e) {
+            final Throwable cause;
+            if (e instanceof InvokerInvocationException) {
+                cause = e.getCause();
+            } else {
+                cause = e;
+            }
+            if (failOnError) {
+                throw cause;
+            }
+            LOGGER.error(cause.getMessage(), cause);
+        }
+        return null;
+    }
+
     private static <T> T getGroovyResult(final Resource groovyScript, final String methodName,
                                          final Object[] args, final Class<T> clazz, final ClassLoader parent) {
         try (GroovyClassLoader loader = new GroovyClassLoader(parent)) {
@@ -330,7 +383,7 @@ public class ScriptingUtils {
             }
 
             final String script = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
-            
+
             final Class<T> clazz = AccessController.doPrivileged((PrivilegedAction<Class<T>>) () -> {
                 final GroovyClassLoader classLoader = new GroovyClassLoader(ScriptingUtils.class.getClassLoader(),
                     new CompilerConfiguration(), true);
@@ -351,6 +404,35 @@ public class ScriptingUtils {
             LOGGER.error(e.getMessage(), e);
         }
         return null;
+    }
+
+    /**
+     * Parse groovy script groovy object.
+     *
+     * @param groovyScript the groovy script
+     * @param failOnError  the fail on error
+     * @return the groovy object
+     */
+    public static GroovyObject parseGroovyScript(final Resource groovyScript,
+                                                 final boolean failOnError) {
+        return AccessController.doPrivileged((PrivilegedAction<GroovyObject>) () -> {
+            final ClassLoader parent = ScriptingUtils.class.getClassLoader();
+            try (GroovyClassLoader loader = new GroovyClassLoader(parent)) {
+                final File groovyFile = groovyScript.getFile();
+                if (groovyFile.exists()) {
+                    final Class groovyClass = loader.parseClass(groovyFile);
+                    LOGGER.trace("Creating groovy object instance from class [{}]", groovyFile.getCanonicalPath());
+                    return (GroovyObject) groovyClass.getDeclaredConstructor().newInstance();
+                }
+                LOGGER.trace("Groovy script at [{}] does not exist", groovyScript);
+            } catch (final Exception e) {
+                if (failOnError) {
+                    throw new RuntimeException(e);
+                }
+                LOGGER.error(e.getMessage(), e);
+            }
+            return null;
+        });
     }
 
     private static String getScriptEngineName(final String scriptFile) {
