@@ -1,16 +1,19 @@
 package org.apereo.cas.adaptors.rest;
 
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.DefaultMessageDescriptor;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.support.password.PasswordExpiringWarningMessageDescriptor;
 import org.apereo.cas.services.ServicesManager;
-
-import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 
 import javax.security.auth.login.AccountExpiredException;
@@ -18,7 +21,11 @@ import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is {@link RestAuthenticationHandler} that authenticates uid/password against a remote
@@ -51,7 +58,7 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                     throw new FailedLoginException("Could not determine authentication response from rest endpoint for " + c.getUsername());
                 }
                 val principal = this.principalFactory.createPrincipal(principalFromRest.getId(), principalFromRest.getAttributes());
-                return createHandlerResult(c, principal, new ArrayList<>());
+                return createHandlerResult(c, principal, getWarnings(authenticationResponse));
             }
         } catch (final HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.FORBIDDEN) {
@@ -76,6 +83,25 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 + e.getStatusCode() + " for " + c.getUsername());
         }
         throw new FailedLoginException("Rest endpoint returned an unknown response for " + c.getUsername());
+    }
+
+    protected List<MessageDescriptor> getWarnings(ResponseEntity<?> authenticationResponse) {
+        ArrayList<MessageDescriptor> messageDescriptors = new ArrayList<>();
+
+        ZonedDateTime passwordExpirationDate = authenticationResponse.getHeaders().getFirstZonedDateTime("X-Cas-PasswordExpirationDate");
+        if (passwordExpirationDate != null) {
+            long days = Duration.between(Instant.now(), passwordExpirationDate).toDays();
+            messageDescriptors.add(new PasswordExpiringWarningMessageDescriptor(null, days));
+        }
+
+        List<String> warnings = authenticationResponse.getHeaders().get("X-Cas-Warning");
+        if (warnings != null) {
+            warnings.stream()
+                    .map(warning -> new DefaultMessageDescriptor(warning, warning, null))
+                    .forEach(messageDescriptors::add);
+        }
+
+        return messageDescriptors;
     }
 }
 
