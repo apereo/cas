@@ -1,7 +1,5 @@
 package org.apereo.cas.adaptors.rest;
 
-import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.DefaultMessageDescriptor;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.MessageDescriptor;
@@ -12,6 +10,9 @@ import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAut
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.support.password.PasswordExpiringWarningMessageDescriptor;
 import org.apereo.cas.services.ServicesManager;
+
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
@@ -20,10 +21,10 @@ import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
+
 import java.security.GeneralSecurityException;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,12 +86,18 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         throw new FailedLoginException("Rest endpoint returned an unknown response for " + c.getUsername());
     }
 
-    protected List<MessageDescriptor> getWarnings(ResponseEntity<?> authenticationResponse) {
-        ArrayList<MessageDescriptor> messageDescriptors = new ArrayList<>();
+    /**
+     * Resolve {@link MessageDescriptor warnings} from the {@link ResponseEntity authenticationResponse}.
+     *
+     * @param authenticationResponse The response sent by the REST authentication endpoint
+     * @return The warnings for the created {@link AuthenticationHandlerExecutionResult}
+     */
+    protected List<MessageDescriptor> getWarnings(final ResponseEntity<?> authenticationResponse) {
+        List<MessageDescriptor> messageDescriptors = new ArrayList<>();
 
-        ZonedDateTime passwordExpirationDate = authenticationResponse.getHeaders().getFirstZonedDateTime("X-Cas-PasswordExpirationDate");
+        var passwordExpirationDate = authenticationResponse.getHeaders().getFirstZonedDateTime("X-Cas-PasswordExpirationDate");
         if (passwordExpirationDate != null) {
-            long days = Duration.between(Instant.now(), passwordExpirationDate).toDays();
+            var days = Duration.between(Instant.now(), passwordExpirationDate).toDays();
             messageDescriptors.add(new PasswordExpiringWarningMessageDescriptor(null, days));
         }
 
