@@ -1,7 +1,7 @@
 package org.apereo.cas.consent;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.util.ScriptingUtils;
+import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.springframework.core.io.Resource;
 
 import java.util.Set;

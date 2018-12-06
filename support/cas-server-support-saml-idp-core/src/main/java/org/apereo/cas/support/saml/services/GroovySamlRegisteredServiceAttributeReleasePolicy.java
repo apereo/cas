@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.util.ScriptingUtils;
+import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;

@@ -2,7 +2,7 @@ package org.apereo.cas.authentication.support.password;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.util.ScriptingUtils;
+import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.springframework.core.io.Resource;
 import org.springframework.security.crypto.password.AbstractPasswordEncoder;

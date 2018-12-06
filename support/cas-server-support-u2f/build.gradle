@@ -16,6 +16,7 @@ dependencies {
     implementation libraries.yubicoapi
     implementation libraries.u2flibserver
     implementation libraries.caffein
+    implementation libraries.groovy
 
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(":core:cas-server-core-util")

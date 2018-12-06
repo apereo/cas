@@ -7,6 +7,8 @@ dependencies {
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-configuration-api")
+
+    implementation libraries.groovy
     implementation libraries.pac4j
 
     testImplementation project(":core:cas-server-core-audit")

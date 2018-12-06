@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.ScriptingUtils;
+import org.apereo.cas.util.scripting.ScriptingUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
