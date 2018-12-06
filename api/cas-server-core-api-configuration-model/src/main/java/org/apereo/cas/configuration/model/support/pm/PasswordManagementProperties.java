@@ -144,6 +144,16 @@ public class PasswordManagementProperties implements Serializable {
          * Endpoint URL to use when updating passwords..
          */
         private String endpointUrlChange;
+
+        /**
+         * Username for Basic-Auth at the password management endpoints.
+         */
+        private String endpointUsername;
+
+        /**
+         * Password for Basic-Auth at the password management endpoints.
+         */
+        private String endpointPassword;
     }
 
     @RequiresModule(name = "cas-server-support-pm-ldap")
