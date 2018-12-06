@@ -3,7 +3,6 @@ dependencies {
     implementation project(":support:cas-server-support-saml-googleapps-core")
     implementation project(":support:cas-server-support-saml-core")
     implementation project(":core:cas-server-core-tickets-api")
-    implementation project(":support:cas-server-support-saml")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-web-api")
