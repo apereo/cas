@@ -144,12 +144,11 @@ if (hasTestsOfCategory(project, "ldap")) {
     }
 }
 
-if (hasTestsOfCategory(project, "Mail")) {
+if (hasTestsOfCategory(project, "mail")) {
     task testMail(type: Test) {
-        enabled = shouldTest(project, "Mail")
+        enabled = shouldTest(project, "mail")
         useJUnitPlatform {
-            includeEngines 'junit-vintage'
-            includeTags "org.apereo.cas.category.MailCategory"
+            includeTags "mail"
         }
     }
 }
@@ -205,7 +204,7 @@ test {
                 "influxdb",
                 "couchdb",
                 "ldap",
-                "org.apereo.cas.category.MailCategory",
+                "mail",
                 "org.apereo.cas.category.MariaDbCategory",
                 "org.apereo.cas.category.MemcachedCategory",
                 "org.apereo.cas.category.MongoDbCategory",

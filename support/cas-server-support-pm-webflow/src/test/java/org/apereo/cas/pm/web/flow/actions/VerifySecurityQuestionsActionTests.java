@@ -1,11 +1,10 @@
 package org.apereo.cas.pm.web.flow.actions;
 
-import org.apereo.cas.category.MailCategory;
 import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.test.junit.EnabledIfPortOpen;
 
 import lombok.val;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -23,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 25000)
-@Category(MailCategory.class)
+@Tag("mail")
 public class VerifySecurityQuestionsActionTests extends BasePasswordManagementActionTests {
 
     @Test

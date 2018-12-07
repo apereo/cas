@@ -1,14 +1,13 @@
 package org.apereo.cas.util.io;
 
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.category.MailCategory;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.test.junit.EnabledIfPortOpen;
 
 import lombok.val;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -33,7 +32,7 @@ import static org.mockito.Mockito.*;
     MailSenderAutoConfiguration.class,
     MailSenderValidatorAutoConfiguration.class
 })
-@Category(MailCategory.class)
+@Tag("mail")
 @EnabledIfPortOpen(port = 25000)
 @EnabledIfContinuousIntegration
 @TestPropertySource(properties = {"spring.mail.host=localhost", "spring.mail.port=25000", "spring.mail.testConnection=true"})
