@@ -1,9 +1,8 @@
-if (hasTestsOfCategory(project, "Cassandra")){
+if (hasTestsOfCategory(project, "cassandra")){
     task testCassandra(type: Test) {
-        enabled = shouldTest(project, "Cassandra")
+        enabled = shouldTest(project, "cassandra")
         useJUnitPlatform {
-            includeEngines 'junit-vintage'
-            includeTags "org.apereo.cas.category.CassandraCategory"
+            includeTags "cassandra"
         }
     }
 }
@@ -206,7 +205,7 @@ if (hasTestsOfCategory(project, "Redis")) {
 test {
     useJUnitPlatform {
         includeEngines 'junit-vintage'
-        excludeTags "org.apereo.cas.category.CassandraCategory",
+        excludeTags "cassandra",
                 "org.apereo.cas.category.CosmosDbCategory",
                 "org.apereo.cas.category.CouchbaseCategory",
                 "org.apereo.cas.category.DynamoDbCategory",

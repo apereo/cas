@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.category.CassandraCategory;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
@@ -11,7 +10,7 @@ import org.apereo.cas.config.CassandraCoreConfiguration;
 import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
 
 import lombok.val;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -50,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.cassandra.passwordAttribute=pwd_attr",
     "cas.authn.cassandra.keyspace=cas"
 })
-@Category(CassandraCategory.class)
+@Tag("cassandra")
 @EnabledIfContinuousIntegration
 public class DefaultCassandraRepositoryTests {
 
