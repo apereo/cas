@@ -1,10 +1,9 @@
 package org.apereo.cas.support.saml.services;
 
-import org.apereo.cas.category.PostgresCategory;
 import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.test.junit.EnabledIfPortOpen;
 
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -16,6 +15,6 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(locations = "classpath:samlpostgres.properties")
 @EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 5432)
-@Category(PostgresCategory.class)
+@Tag("postgres")
 public class SamlRegisteredServiceJpaPostgresTests extends SamlRegisteredServiceJpaTests {
 }

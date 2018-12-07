@@ -62,12 +62,11 @@ if (hasTestsOfCategory(project, "mysql")) {
     }
 }
 
-if (hasTestsOfCategory(project, "Postgres")) {
+if (hasTestsOfCategory(project, "postgres")) {
     task testPostgres(type: Test) {
-        enabled = shouldTest(project, "Postgres")
+        enabled = shouldTest(project, "postgres")
         useJUnitPlatform {
-            includeEngines 'junit-vintage'
-            includeTags "org.apereo.cas.category.PostgresCategory"
+            includeTags "postgres"
         }
     }
 }
@@ -205,7 +204,7 @@ test {
                 "mongodb",
                 "mssqlserver",
                 "mysql",
-                "org.apereo.cas.category.PostgresCategory",
+                "postgres",
                 "org.apereo.cas.category.RedisCategory",
                 "org.apereo.cas.category.RadiusCategory",
                 "awss3",

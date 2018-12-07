@@ -1,12 +1,11 @@
 package org.apereo.cas;
 
-import org.apereo.cas.category.PostgresCategory;
 import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.test.junit.EnabledIfPortOpen;
 
 import lombok.SneakyThrows;
 import lombok.val;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
@@ -35,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 5432)
-@Category(PostgresCategory.class)
+@Tag("postgres")
 public class JdbcSingleRowAttributeRepositoryPostgresTests extends JdbcSingleRowAttributeRepositoryTests {
 
     @Test
