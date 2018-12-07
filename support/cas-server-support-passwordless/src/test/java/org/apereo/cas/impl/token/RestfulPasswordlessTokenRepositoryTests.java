@@ -2,7 +2,6 @@ package org.apereo.cas.impl.token;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.api.PasswordlessTokenRepository;
-import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -31,7 +30,7 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -79,7 +78,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
 })
 @TestPropertySource(properties = "cas.authn.passwordless.tokens.rest.url=http://localhost:9293")
-@Category(RestfulApiCategory.class)
+@Tag("restful")
 public class RestfulPasswordlessTokenRepositoryTests {
     @Autowired
     @Qualifier("passwordlessTokenRepository")

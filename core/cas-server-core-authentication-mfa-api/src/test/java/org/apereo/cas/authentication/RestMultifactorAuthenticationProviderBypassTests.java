@@ -3,12 +3,11 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.bypass.RestMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.authentication.mfa.MultifactorAuthenticationTestUtils;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
-import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
 import org.apereo.cas.util.test.MockWebServer;
 
 import lombok.val;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
@@ -24,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Category(RestfulApiCategory.class)
+@Tag("restful")
 public class RestMultifactorAuthenticationProviderBypassTests {
     @Test
     public void verifyOperationShouldProceed() {

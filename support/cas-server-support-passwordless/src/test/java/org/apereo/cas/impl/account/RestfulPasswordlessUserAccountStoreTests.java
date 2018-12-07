@@ -2,7 +2,6 @@ package org.apereo.cas.impl.account;
 
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
-import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -30,7 +29,7 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -78,7 +77,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
 })
 @TestPropertySource(properties = "cas.authn.passwordless.accounts.rest.url=http://localhost:9291")
-@Category(RestfulApiCategory.class)
+@Tag("restful")
 public class RestfulPasswordlessUserAccountStoreTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 

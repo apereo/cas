@@ -2,7 +2,6 @@ package org.apereo.cas.pm.rest;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.pm.RestPasswordManagementConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -12,7 +11,7 @@ import org.apereo.cas.pm.config.PasswordManagementConfiguration;
 import org.apereo.cas.util.test.MockWebServer;
 
 import lombok.val;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -42,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class
 })
 @TestPropertySource(locations = {"classpath:/rest-pm.properties"})
-@Category(RestfulApiCategory.class)
+@Tag("restful")
 public class RestPasswordManagementServiceTests {
     @Autowired
     @Qualifier("passwordChangeService")

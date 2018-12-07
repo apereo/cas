@@ -1,13 +1,12 @@
 package org.apereo.cas.consent;
 
-import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.config.CasConsentRestConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpMethod;
@@ -30,7 +29,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Category(RestfulApiCategory.class)
+@Tag("restful")
 @SpringBootTest(classes = {CasConsentRestConfiguration.class})
 public class RestConsentRepositoryTests extends BaseConsentRepositoryTests {
     private static final String CONSENT = "/consent";

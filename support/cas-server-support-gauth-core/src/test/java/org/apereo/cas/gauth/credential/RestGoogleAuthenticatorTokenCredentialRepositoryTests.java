@@ -1,7 +1,6 @@
 package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
@@ -9,7 +8,7 @@ import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepositor
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.val;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -42,7 +41,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 }, properties = {
     "cas.authn.mfa.gauth.rest.endpointUrl=http://example.com"
 })
-@Category(RestfulApiCategory.class)
+@Tag("restful")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Getter
 public class RestGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {

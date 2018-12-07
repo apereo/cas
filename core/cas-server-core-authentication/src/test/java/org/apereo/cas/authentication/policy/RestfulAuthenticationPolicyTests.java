@@ -3,7 +3,6 @@ package org.apereo.cas.authentication.policy;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
-import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -14,8 +13,8 @@ import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 
 import lombok.val;
-import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -57,7 +56,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
     CasCoreTicketCatalogConfiguration.class
 })
 @DirtiesContext
-@Category(RestfulApiCategory.class)
+@Tag("restful")
 public class RestfulAuthenticationPolicyTests {
     private static final String URI = "http://rest.endpoint.com";
 

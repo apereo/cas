@@ -1,7 +1,6 @@
 package org.apereo.cas.audit;
 
 import org.apereo.cas.audit.spi.BaseAuditConfigurationTests;
-import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
 import org.apereo.cas.config.CasSupportRestAuditConfiguration;
 import org.apereo.cas.util.CollectionUtils;
@@ -14,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -40,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasSupportRestAuditConfiguration.class,
     CasCoreUtilSerializationConfiguration.class
 })
-@Category(RestfulApiCategory.class)
+@Tag("restful")
 @Slf4j
 @TestPropertySource(properties = {
     "cas.audit.rest.url=http://localhost:9296",

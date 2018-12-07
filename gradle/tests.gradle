@@ -161,12 +161,11 @@ if (hasTestsOfCategory(project, "Mail")) {
     }
 }
 
-if (hasTestsOfCategory(project, "RestfulApi")) {
+if (hasTestsOfCategory(project, "restful")) {
     task testRestful(type: Test) {
-        enabled = shouldTest(project, "RestfulApi")
+        enabled = shouldTest(project, "restful")
         useJUnitPlatform {
-            includeEngines 'junit-vintage'
-            includeTags "org.apereo.cas.category.RestfulApiCategory"
+            includeTags "restful"
         }
     }
 }
@@ -223,7 +222,7 @@ test {
                 "org.apereo.cas.category.RedisCategory",
                 "org.apereo.cas.category.RadiusCategory",
                 "org.apereo.cas.category.AmazonWebServicesS3Category",
-                "org.apereo.cas.category.RestfulApiCategory"
+                "restful"
     }
     enabled = "SIMPLE".equalsIgnoreCase(rootProject.testCategoryType) && !Boolean.getBoolean("skipTests")
 }

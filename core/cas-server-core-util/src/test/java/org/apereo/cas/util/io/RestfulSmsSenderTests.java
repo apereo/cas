@@ -1,13 +1,12 @@
 package org.apereo.cas.util.io;
 
-import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.util.test.MockWebServer;
 
 import org.apache.commons.lang3.StringUtils;
-import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -35,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
     MailSenderAutoConfiguration.class,
     MailSenderValidatorAutoConfiguration.class
 })
-@Category(RestfulApiCategory.class)
+@Tag("restful")
 @TestPropertySource(properties = {"cas.smsProvider.rest.url=http://localhost:8132"})
 public class RestfulSmsSenderTests {
     @Autowired

@@ -1,7 +1,6 @@
 package org.apereo.cas.interrupt;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.configuration.model.support.interrupt.InterruptProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.test.MockWebServer;
@@ -11,8 +10,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.val;
-import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
@@ -32,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Category(RestfulApiCategory.class)
+@Tag("restful")
 public class RestEndpointInterruptInquirerTests {
     private MockWebServer webServer;
 

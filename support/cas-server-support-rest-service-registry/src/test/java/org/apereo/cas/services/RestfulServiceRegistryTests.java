@@ -1,13 +1,12 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.RestServiceRegistryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.http.HttpStatus;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.metrics.MetricsAutoConfiguration;
@@ -46,7 +45,7 @@ import static org.mockito.Mockito.*;
     MetricsAutoConfiguration.class
 })
 @TestPropertySource(properties = {"server.port=9303", "cas.serviceRegistry.rest.url=http://localhost:9303", "cas.serviceRegistry.initFromJson=false"})
-@Category(RestfulApiCategory.class)
+@Tag("restful")
 public class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired

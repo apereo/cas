@@ -2,7 +2,6 @@ package org.apereo.cas.trusted.authentication.storage;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
-import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
@@ -16,8 +15,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.val;
-import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -39,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Category(RestfulApiCategory.class)
+@Tag("restful")
 @SpringBootTest(classes = {
     RestMultifactorAuthenticationTrustConfiguration.class,
     MultifactorAuthnTrustedDeviceFingerprintConfiguration.class,
