@@ -1,7 +1,6 @@
 package org.apereo.cas.web.security.authentication;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
-import org.apereo.cas.category.LdapCategory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
@@ -9,9 +8,9 @@ import lombok.SneakyThrows;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,7 +28,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Category(LdapCategory.class)
+@Tag("ldap")
 @TestPropertySource(properties = {
     "cas.monitor.endpoints.ldap.ldapUrl=ldap://localhost:10389",
     "cas.monitor.endpoints.ldap.useSsl=false",

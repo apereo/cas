@@ -2,7 +2,6 @@ package org.apereo.cas.consent;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.category.LdapCategory;
 import org.apereo.cas.config.CasConsentLdapConfiguration;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -17,8 +16,8 @@ import com.unboundid.ldap.sdk.ResultCode;
 import com.unboundid.ldap.sdk.SearchScope;
 import lombok.Getter;
 import lombok.val;
-import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -40,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasConsentLdapConfiguration.class,
     RefreshAutoConfiguration.class
 })
-@Category(LdapCategory.class)
+@Tag("ldap")
 @Getter
 public abstract class BaseLdapConsentRepositoryTests extends BaseConsentRepositoryTests {
 

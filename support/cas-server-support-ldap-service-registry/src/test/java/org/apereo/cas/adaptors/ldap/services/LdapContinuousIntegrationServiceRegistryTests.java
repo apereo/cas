@@ -1,9 +1,7 @@
 package org.apereo.cas.adaptors.ldap.services;
 
-import org.apereo.cas.category.LdapCategory;
 import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
 
-import org.junit.experimental.categories.Category;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -21,7 +19,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.serviceRegistry.ldap.bindCredential=password",
     "cas.serviceRegistry.ldap.objectClass=account"
 })
-@Category(LdapCategory.class)
 @EnabledIfContinuousIntegration
 public class LdapContinuousIntegrationServiceRegistryTests extends BaseLdapServiceRegistryTests {
 }

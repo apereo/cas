@@ -1,12 +1,11 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
-import org.apereo.cas.category.LdapCategory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
 
 import lombok.val;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.ldaptive.LdapAttribute;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
-@Category(LdapCategory.class)
+@Tag("ldap")
 @TestPropertySource(properties = {
     "cas.authn.passwordSync.ldap[0].ldapUrl=ldap://localhost:10389",
     "cas.authn.passwordSync.ldap[0].useSsl=false",

@@ -1,11 +1,10 @@
 package org.apereo.cas.monitor;
 
-import org.apereo.cas.category.LdapCategory;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.monitor.config.LdapMonitorConfiguration;
 import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
 
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.monitor.ldap.ldapUrl=ldap://localhost:10389",
     "cas.monitor.ldap.useSsl=false"
 })
-@Category(LdapCategory.class)
+@Tag("ldap")
 @EnabledIfContinuousIntegration
 public class PooledConnectionFactoryHealthIndicatorTests {
     @Autowired

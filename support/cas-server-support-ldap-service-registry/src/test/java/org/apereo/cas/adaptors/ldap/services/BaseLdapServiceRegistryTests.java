@@ -1,13 +1,12 @@
 package org.apereo.cas.adaptors.ldap.services;
 
 import org.apereo.cas.adaptors.ldap.services.config.LdapServiceRegistryConfiguration;
-import org.apereo.cas.category.LdapCategory;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
 
 import lombok.val;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnableScheduling
 @DirtiesContext
-@Category(LdapCategory.class)
+@Tag("ldap")
 @SpringBootTest(classes = {LdapServiceRegistryConfiguration.class, RefreshAutoConfiguration.class})
 public abstract class BaseLdapServiceRegistryTests extends AbstractServiceRegistryTests {
 

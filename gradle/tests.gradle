@@ -135,12 +135,11 @@ if (hasTestsOfCategory(project, "influxdb")) {
     }
 }
 
-if (hasTestsOfCategory(project, "Ldap")) {
+if (hasTestsOfCategory(project, "ldap")) {
     task testLdap(type: Test) {
-        enabled = shouldTest(project, "Ldap")
+        enabled = shouldTest(project, "ldap")
         useJUnitPlatform {
-            includeEngines 'junit-vintage'
-            includeTags "org.apereo.cas.category.LdapCategory"
+            includeTags "ldap"
         }
     }
 }
@@ -205,7 +204,7 @@ test {
                 "ignite",
                 "influxdb",
                 "couchdb",
-                "org.apereo.cas.category.LdapCategory",
+                "ldap",
                 "org.apereo.cas.category.MailCategory",
                 "org.apereo.cas.category.MariaDbCategory",
                 "org.apereo.cas.category.MemcachedCategory",

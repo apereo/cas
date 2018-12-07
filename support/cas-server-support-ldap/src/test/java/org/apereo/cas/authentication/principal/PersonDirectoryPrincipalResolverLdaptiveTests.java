@@ -6,13 +6,12 @@ import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordA
 import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
-import org.apereo.cas.category.LdapCategory;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
 
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -48,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attributeRepository.ldap[0].bindCredential=password"
     })
 @DirtiesContext
-@Category(LdapCategory.class)
+@Tag("ldap")
 @EnabledIfContinuousIntegration
 public class PersonDirectoryPrincipalResolverLdaptiveTests {
     @Autowired
