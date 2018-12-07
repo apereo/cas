@@ -103,7 +103,7 @@ public enum CasLabels {
     LABEL_SERVICES_REGISTRIES("Services & Registries", "service registry|service files"),
     LABEL_SESSION_MANAGEMENT("Session Management"),
     LABEL_SHIBBOLETH("Shibboleth"),
-    LABEL_SIGNING_ENCRYPTION("Signing & Encryption", "cipher|aes|encryption"),
+    LABEL_SIGNING_ENCRYPTION("Signing & Encryption", "cipher|aes|encryption|crypto"),
     LABEL_SPRING_BOOT("Spring Boot"),
     LABEL_SPRING_BOOT_ADMIN_SERVER("Spring Boot Admin Server"),
     LABEL_SPRING_CLOUD("Spring Cloud"),
