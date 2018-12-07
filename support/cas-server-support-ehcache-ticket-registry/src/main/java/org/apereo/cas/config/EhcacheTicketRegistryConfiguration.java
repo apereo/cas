@@ -54,11 +54,11 @@ public class EhcacheTicketRegistryConfiguration {
     public CacheReplicator ticketRMISynchronousCacheReplicator() {
         final EhcacheProperties cache = casProperties.getTicket().getRegistry().getEhcache();
         return new RMISynchronousCacheReplicator(
-            cache.isReplicatePuts(),
-            cache.isReplicatePutsViaCopy(),
-            cache.isReplicateUpdates(),
-            cache.isReplicateUpdatesViaCopy(),
-            cache.isReplicateRemovals());
+                cache.isReplicatePuts(),
+                cache.isReplicatePutsViaCopy(),
+                cache.isReplicateUpdates(),
+                cache.isReplicateUpdatesViaCopy(),
+                cache.isReplicateRemovals());
     }
 
     @RefreshScope
@@ -67,13 +67,13 @@ public class EhcacheTicketRegistryConfiguration {
     public CacheReplicator ticketRMIAsynchronousCacheReplicator() {
         final EhcacheProperties cache = casProperties.getTicket().getRegistry().getEhcache();
         return new RMIAsynchronousCacheReplicator(
-            cache.isReplicatePuts(),
-            cache.isReplicatePutsViaCopy(),
-            cache.isReplicateUpdates(),
-            cache.isReplicateUpdatesViaCopy(),
-            cache.isReplicateRemovals(),
-            (int) Beans.newDuration(cache.getReplicationInterval()).toMillis(),
-            cache.getMaximumBatchSize());
+                cache.isReplicatePuts(),
+                cache.isReplicatePutsViaCopy(),
+                cache.isReplicateUpdates(),
+                cache.isReplicateUpdatesViaCopy(),
+                cache.isReplicateRemovals(),
+                (int) Beans.newDuration(cache.getReplicationInterval()).toMillis(),
+                cache.getMaximumBatchSize());
     }
 
     @RefreshScope
@@ -88,6 +88,8 @@ public class EhcacheTicketRegistryConfiguration {
     public EhCacheManagerFactoryBean ehcacheTicketCacheManager() {
         final EhcacheProperties cache = casProperties.getTicket().getRegistry().getEhcache();
         final EhCacheManagerFactoryBean bean = new EhCacheManagerFactoryBean();
+
+        cache.getSystemProps().forEach((key, value) -> System.setProperty(key, value));
 
         final boolean configExists = ResourceUtils.doesResourceExist(cache.getConfigLocation());
         if (configExists) {
@@ -116,10 +118,10 @@ public class EhcacheTicketRegistryConfiguration {
             bean.setBootstrapCacheLoader(ticketCacheBootstrapCacheLoader());
         } else {
             LOGGER.warn("In registering ticket definition [{}], Ehcache configuration file [{}] cannot be found "
-                + "so no cache event listeners will be configured to bootstrap. "
-                + "The ticket registry will operate in standalone mode", ticketDefinition.getPrefix(), cache.getConfigLocation());
+                    + "so no cache event listeners will be configured to bootstrap. "
+                    + "The ticket registry will operate in standalone mode", ticketDefinition.getPrefix(), cache.getConfigLocation());
         }
-                              
+
         bean.setTimeToIdle((int) ticketDefinition.getProperties().getStorageTimeout());
         bean.setTimeToLive((int) ticketDefinition.getProperties().getStorageTimeout());
         bean.setDiskExpiryThreadIntervalSeconds(ehcacheProperties.getDiskExpiryThreadIntervalSeconds());
