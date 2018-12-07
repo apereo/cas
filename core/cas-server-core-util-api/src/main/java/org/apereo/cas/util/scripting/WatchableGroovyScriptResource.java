@@ -4,6 +4,7 @@ import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 
 import groovy.lang.GroovyObject;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
@@ -15,13 +16,17 @@ import org.springframework.core.io.Resource;
  * @since 5.3.7
  */
 @Slf4j
+@Getter
 public class WatchableGroovyScriptResource {
-    private final FileWatcherService watcherService;
+    private final transient FileWatcherService watcherService;
 
-    private GroovyObject groovyScript;
+    private final transient Resource resource;
+    private transient GroovyObject groovyScript;
 
     @SneakyThrows
     public WatchableGroovyScriptResource(final Resource script) {
+        this.resource = script;
+
         if (ResourceUtils.doesResourceExist(script)) {
             this.watcherService = new FileWatcherService(script.getFile(), file -> {
                 try {
