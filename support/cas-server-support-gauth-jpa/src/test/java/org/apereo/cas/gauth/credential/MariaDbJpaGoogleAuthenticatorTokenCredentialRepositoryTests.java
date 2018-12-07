@@ -1,10 +1,9 @@
 package org.apereo.cas.gauth.credential;
 
-import org.apereo.cas.category.MariaDbCategory;
 import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.test.junit.EnabledIfPortOpen;
 
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -22,6 +21,6 @@ import org.springframework.test.context.TestPropertySource;
 })
 @EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 3306)
-@Category(MariaDbCategory.class)
+@Tag("mariadb")
 public class MariaDbJpaGoogleAuthenticatorTokenCredentialRepositoryTests extends JpaGoogleAuthenticatorTokenCredentialRepositoryTests {
 }

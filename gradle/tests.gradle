@@ -83,12 +83,11 @@ if (hasTestsOfCategory(project, "MsSqlServer")) {
     }
 }
 
-if (hasTestsOfCategory(project, "MariaDb")) {
+if (hasTestsOfCategory(project, "mariadb")) {
     task testMariaDb(type: Test) {
-        enabled = shouldTest(project, "MariaDb")
+        enabled = shouldTest(project, "mariadb")
         useJUnitPlatform {
-            includeEngines 'junit-vintage'
-            includeTags "org.apereo.cas.category.MariaDbCategory"
+            includeTags "mariadb"
         }
     }
 }
@@ -205,7 +204,7 @@ test {
                 "couchdb",
                 "ldap",
                 "mail",
-                "org.apereo.cas.category.MariaDbCategory",
+                "mariadb",
                 "org.apereo.cas.category.MemcachedCategory",
                 "org.apereo.cas.category.MongoDbCategory",
                 "org.apereo.cas.category.MsSqlServerCategory",
