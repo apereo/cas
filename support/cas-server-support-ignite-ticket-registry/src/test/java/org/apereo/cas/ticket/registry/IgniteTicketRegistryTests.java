@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.category.IgniteCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -22,7 +21,7 @@ import org.apereo.cas.config.IgniteTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,7 +35,7 @@ import org.springframework.test.context.TestPropertySource;
  * @author Timur Duehr timur.duehr@nccgroup.trust
  * @since 3.0.0
  */
-@Category(IgniteCategory.class)
+@Tag("ignite")
 @SpringBootTest(classes = {
     IgniteTicketRegistryConfiguration.class,
     CasCoreTicketsConfiguration.class,

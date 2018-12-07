@@ -111,12 +111,11 @@ if (hasTestsOfCategory(project, "filesystem")) {
     }
 }
 
-if (hasTestsOfCategory(project, "Ignite")) {
+if (hasTestsOfCategory(project, "ignite")) {
     task testIgnite(type: Test) {
-        enabled = shouldTest(project, "Ignite")
+        enabled = shouldTest(project, "ignite")
         useJUnitPlatform {
-            includeEngines 'junit-vintage'
-            includeTags "org.apereo.cas.category.IgniteCategory"
+            includeTags "ignite"
         }
         def list = []
         list.add("--add-exports")
@@ -204,7 +203,7 @@ test {
                 "couchbase",
                 "dynamodb",
                 "filesystem",
-                "org.apereo.cas.category.IgniteCategory",
+                "ignite",
                 "org.apereo.cas.category.InfluxDbCategory",
                 "couchdb",
                 "org.apereo.cas.category.LdapCategory",
