@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.config.CasMongoAuthenticationConfiguration;
-import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -23,8 +22,8 @@ import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
 
 import lombok.val;
 import org.bson.Document;
-import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -76,7 +75,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pac4j.typedIdUsed=false"
 })
 @EnabledIfContinuousIntegration
-@Category(MongoDbCategory.class)
+@Tag("mongodb")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MongoDbAuthenticationHandlerTests {
 

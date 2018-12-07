@@ -170,12 +170,11 @@ if (hasTestsOfCategory(project, "memcached")) {
     }
 }
 
-if (hasTestsOfCategory(project, "MongoDb")) {
+if (hasTestsOfCategory(project, "mongodb")) {
     task testMongoDb(type: Test) {
-        enabled = shouldTest(project, "MongoDb")
+        enabled = shouldTest(project, "mongodb")
         useJUnitPlatform {
-            includeEngines 'junit-vintage'
-            includeTags "org.apereo.cas.category.MongoDbCategory"
+            includeTags "mongodb"
         }
     }
 }
@@ -205,7 +204,7 @@ test {
                 "mail",
                 "mariadb",
                 "memcached",
-                "org.apereo.cas.category.MongoDbCategory",
+                "mongodb",
                 "org.apereo.cas.category.MsSqlServerCategory",
                 "org.apereo.cas.category.MySQLCategory",
                 "org.apereo.cas.category.PostgresCategory",

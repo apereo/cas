@@ -1,6 +1,5 @@
 package org.apereo.cas.gauth.token;
 
-import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -27,8 +26,8 @@ import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
 
 import lombok.Getter;
-import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -48,7 +47,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Category(MongoDbCategory.class)
+@Tag("mongodb")
 @SpringBootTest(
     classes = {
         MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests.MongoTestConfiguration.class,

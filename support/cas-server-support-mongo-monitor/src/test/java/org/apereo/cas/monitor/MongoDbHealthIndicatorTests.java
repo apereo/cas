@@ -1,6 +1,5 @@
 package org.apereo.cas.monitor;
 
-import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -24,8 +23,8 @@ import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
 
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
-import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -47,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Category(MongoDbCategory.class)
+@Tag("mongodb")
 @SpringBootTest(classes = {
     MongoDbMonitoringConfiguration.class,
     CasCoreTicketsConfiguration.class,

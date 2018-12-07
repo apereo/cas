@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml;
 
-import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -36,7 +35,7 @@ import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -51,7 +50,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Category(MongoDbCategory.class)
+@Tag("mongodb")
 @SpringBootTest(classes = {
     SamlIdPMongoDbRegisteredServiceMetadataConfiguration.class,
     SamlIdPMongoDbIdPMetadataConfiguration.class,

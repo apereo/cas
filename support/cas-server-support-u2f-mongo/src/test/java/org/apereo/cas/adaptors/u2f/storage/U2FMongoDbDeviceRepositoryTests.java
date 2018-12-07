@@ -1,10 +1,9 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
-import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.U2FConfiguration;
 import org.apereo.cas.config.U2FMongoDbConfiguration;
 
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -18,7 +17,7 @@ import org.springframework.test.context.TestPropertySource;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Category(MongoDbCategory.class)
+@Tag("mongodb")
 @SpringBootTest(classes = {
     U2FMongoDbConfiguration.class,
     U2FConfiguration.class,

@@ -1,14 +1,13 @@
 package org.apereo.cas;
 
-import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.MongoDbCloudConfigBootstrapConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
 
 import lombok.val;
-import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -26,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Category(MongoDbCategory.class)
+@Tag("mongodb")
 @EnabledIfContinuousIntegration
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @SpringBootTest(classes = {

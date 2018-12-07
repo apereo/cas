@@ -1,13 +1,12 @@
 package org.apereo.cas.consent;
 
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
-import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.CasConsentCoreConfiguration;
 import org.apereo.cas.config.CasConsentMongoDbConfiguration;
 import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
 
 import lombok.Getter;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,7 +25,7 @@ import org.springframework.test.context.TestPropertySource;
     CasCoreAuditConfiguration.class,
     RefreshAutoConfiguration.class
 })
-@Category(MongoDbCategory.class)
+@Tag("mongodb")
 @TestPropertySource(properties = {
     "cas.consent.mongo.host=localhost",
     "cas.consent.mongo.port=27017",

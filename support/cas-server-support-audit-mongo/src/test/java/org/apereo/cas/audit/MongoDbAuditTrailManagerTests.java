@@ -2,7 +2,6 @@ package org.apereo.cas.audit;
 
 import org.apereo.cas.audit.spi.BaseAuditConfigurationTests;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
-import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasSupportMongoDbAuditConfiguration;
@@ -12,7 +11,7 @@ import org.apereo.cas.util.test.junit.EnabledIfPortOpen;
 
 import lombok.Getter;
 import org.apereo.inspektr.audit.AuditTrailManager;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -43,7 +42,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.audit.mongo.databaseName=audit",
     "cas.audit.mongo.authenticationDatabaseName=admin"
 })
-@Category(MongoDbCategory.class)
+@Tag("mongodb")
 @Getter
 @EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 27017)

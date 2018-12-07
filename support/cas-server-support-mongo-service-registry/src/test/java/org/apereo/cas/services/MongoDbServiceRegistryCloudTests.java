@@ -1,11 +1,10 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.MongoDbServiceRegistryConfiguration;
 import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.test.junit.EnabledIfPortOpen;
 
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,7 +21,7 @@ import org.springframework.test.context.TestPropertySource;
     MongoDbServiceRegistryConfiguration.class,
     RefreshAutoConfiguration.class
 })
-@Category(MongoDbCategory.class)
+@Tag("mongodb")
 @EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 27017)
 @TestPropertySource(properties = {

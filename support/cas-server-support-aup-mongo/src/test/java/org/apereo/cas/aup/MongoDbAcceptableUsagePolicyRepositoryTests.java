@@ -1,11 +1,10 @@
 package org.apereo.cas.aup;
 
-import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.CasAcceptableUsagePolicyMongoDbConfiguration;
 import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
 
 import lombok.Getter;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
@@ -17,7 +16,7 @@ import org.springframework.test.context.TestPropertySource;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Category(MongoDbCategory.class)
+@Tag("mongodb")
 @Import(CasAcceptableUsagePolicyMongoDbConfiguration.class)
 @EnabledIfContinuousIntegration
 @TestPropertySource(properties = {

@@ -1,6 +1,5 @@
 package org.apereo.cas.gauth.credential;
 
-import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -28,8 +27,8 @@ import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
 
 import lombok.val;
-import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,7 +90,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnableScheduling
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
-@Category(MongoDbCategory.class)
+@Tag("mongodb")
 @EnabledIfContinuousIntegration
 public class MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests {
     @Autowired
