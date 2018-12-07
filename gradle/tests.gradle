@@ -17,12 +17,11 @@ if (hasTestsOfCategory(project, "CosmosDb")) {
     }
 }
 
-if (hasTestsOfCategory(project, "AmazonWebServicesS3")) {
+if (hasTestsOfCategory(project, "awss3")) {
     task testAWSS3(type: Test) {
-        enabled = shouldTest(project, "AmazonWebServicesS3")
+        enabled = shouldTest(project, "awss3")
         useJUnitPlatform {
-            includeEngines 'junit-vintage'
-            includeTags "org.apereo.cas.category.AmazonWebServicesS3Category"
+            includeTags "awss3"
         }
     }
 }
@@ -221,7 +220,7 @@ test {
                 "org.apereo.cas.category.PostgresCategory",
                 "org.apereo.cas.category.RedisCategory",
                 "org.apereo.cas.category.RadiusCategory",
-                "org.apereo.cas.category.AmazonWebServicesS3Category",
+                "awss3",
                 "restful"
     }
     enabled = "SIMPLE".equalsIgnoreCase(rootProject.testCategoryType) && !Boolean.getBoolean("skipTests")

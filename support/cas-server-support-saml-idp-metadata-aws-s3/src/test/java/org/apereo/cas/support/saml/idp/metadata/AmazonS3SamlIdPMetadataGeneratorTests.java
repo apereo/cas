@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
-import org.apereo.cas.category.AmazonWebServicesS3Category;
 import org.apereo.cas.config.AmazonS3SamlIdPMetadataConfiguration;
 import org.apereo.cas.config.AmazonS3SamlMetadataConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -24,7 +23,7 @@ import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -72,7 +71,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 4572)
-@Category(AmazonWebServicesS3Category.class)
+@Tag("awss3")
 public class AmazonS3SamlIdPMetadataGeneratorTests {
 
     @Autowired
