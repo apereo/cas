@@ -1,6 +1,5 @@
 package org.apereo.cas.influxdb;
 
-import org.apereo.cas.category.InfluxDbCategory;
 import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
 
 import lombok.val;
@@ -8,9 +7,9 @@ import org.influxdb.annotation.Column;
 import org.influxdb.annotation.Measurement;
 import org.influxdb.dto.Point;
 import org.influxdb.impl.InfluxDBResultMapper;
-import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -27,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
-@Category(InfluxDbCategory.class)
+@Tag("influxdb")
 @EnabledIfContinuousIntegration
 public class InfluxDbConnectionFactoryTests {
 

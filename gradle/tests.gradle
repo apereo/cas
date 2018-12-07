@@ -126,12 +126,11 @@ if (hasTestsOfCategory(project, "ignite")) {
     }
 }
 
-if (hasTestsOfCategory(project, "InfluxDb")) {
+if (hasTestsOfCategory(project, "influxdb")) {
     task testInfluxDb(type: Test) {
-        enabled = shouldTest(project, "InfluxDb")
+        enabled = shouldTest(project, "influxdb")
         useJUnitPlatform {
-            includeEngines 'junit-vintage'
-            includeTags "org.apereo.cas.category.InfluxDbCategory"
+            includeTags "influxdb"
         }
     }
 }
@@ -204,7 +203,7 @@ test {
                 "dynamodb",
                 "filesystem",
                 "ignite",
-                "org.apereo.cas.category.InfluxDbCategory",
+                "influxdb",
                 "couchdb",
                 "org.apereo.cas.category.LdapCategory",
                 "org.apereo.cas.category.MailCategory",
