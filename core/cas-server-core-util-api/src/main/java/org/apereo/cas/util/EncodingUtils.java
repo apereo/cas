@@ -1,5 +1,8 @@
 package org.apereo.cas.util;
 
+import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.util.crypto.DecryptionException;
+
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -7,7 +10,6 @@ import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.CipherExecutor;
 import org.jose4j.jwe.JsonWebEncryption;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.JsonWebKey;
@@ -15,6 +17,7 @@ import org.jose4j.jwk.OctJwkGenerator;
 import org.jose4j.jwk.OctetSequenceJsonWebKey;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
+import org.jose4j.lang.JoseException;
 
 import javax.crypto.Cipher;
 import java.io.Serializable;
@@ -22,6 +25,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -272,7 +276,16 @@ public class EncodingUtils {
         jws.setCompactSerialization(asString);
         jws.setKey(signingKey);
 
-        final boolean verified = jws.verifySignature();
+        final boolean verified;
+        try {
+            verified = jws.verifySignature();
+        } catch (final JoseException e) {
+            if (LOGGER.isTraceEnabled()) {
+                throw new DecryptionException(e);
+            }
+            //noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
+            throw new DecryptionException(); //NOPMD
+        }
         if (verified) {
             final String payload = jws.getEncodedPayload();
             LOGGER.trace("Successfully decoded value. Result in Base64-encoding is [{}]", payload);
@@ -396,7 +409,7 @@ public class EncodingUtils {
             jwe.setKey(secretKeyEncryptionKey);
             LOGGER.debug("Encrypting via [{}]", contentEncryptionAlgorithmIdentifier);
             return jwe.getCompactSerialization();
-        } catch (final Exception e) {
+        } catch (final JoseException e) {
             throw new IllegalArgumentException("Is JCE Unlimited Strength Jurisdiction Policy installed? " + e.getMessage(), e);
         }
     }
@@ -408,13 +421,20 @@ public class EncodingUtils {
      * @param value                  the value
      * @return the decrypted value
      */
-    @SneakyThrows
     public static String decryptJwtValue(final Key secretKeyEncryptionKey, final String value) {
-        final JsonWebEncryption jwe = new JsonWebEncryption();
-        jwe.setKey(secretKeyEncryptionKey);
-        jwe.setCompactSerialization(value);
-        LOGGER.trace("Decrypting value...");
-        return jwe.getPayload();
+        try {
+            final JsonWebEncryption jwe = new JsonWebEncryption();
+            jwe.setKey(secretKeyEncryptionKey);
+            jwe.setCompactSerialization(value);
+            LOGGER.trace("Decrypting value...");
+            return jwe.getPayload();
+        } catch (final JoseException e) {
+            if (LOGGER.isTraceEnabled()) {
+                throw new DecryptionException(e);
+            }
+            //noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
+            throw new DecryptionException(); //NOPMD
+        }
     }
 
     /**
@@ -426,7 +446,7 @@ public class EncodingUtils {
         try {
             final int maxKeyLen = Cipher.getMaxAllowedKeyLength("AES");
             return maxKeyLen == Integer.MAX_VALUE;
-        } catch (final Exception e) {
+        } catch (final NoSuchAlgorithmException e) {
             return false;
         }
     }

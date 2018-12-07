@@ -1,21 +1,24 @@
 package org.apereo.cas.util.cipher;
 
+import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.crypto.DecryptionException;
+import org.apereo.cas.util.gen.Base64RandomStringGenerator;
+
+import lombok.Getter;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.util.gen.Base64RandomStringGenerator;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.OctJwkGenerator;
 import org.jose4j.jwk.OctetSequenceJsonWebKey;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link BaseBinaryCipherExecutor}.
@@ -57,7 +60,6 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
      * @param encryptionKeySize   the encryption key size
      * @param cipherName          the cipher name
      */
-    @SneakyThrows
     public BaseBinaryCipherExecutor(final String encryptionSecretKey, final String signingSecretKey,
                                     final int signingKeySize, final int encryptionKeySize, final String cipherName) {
         this.cipherName = cipherName;
@@ -81,11 +83,19 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
         final Cipher aesCipher = Cipher.getInstance(cipherAlgorithm);
         final byte[] verifiedValue = verifySignature(value);
         aesCipher.init(Cipher.DECRYPT_MODE, this.encryptionKey);
-        final byte[] bytePlainText = aesCipher.doFinal(verifiedValue);
+        final byte[] bytePlainText;
+        try {
+            bytePlainText = aesCipher.doFinal(verifiedValue);
+        } catch (final IllegalBlockSizeException | BadPaddingException e) {
+            if (LOGGER.isTraceEnabled()) {
+                throw new DecryptionException(e);
+            }
+            //noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
+            throw new DecryptionException(); //NOPMD
+        }
         return bytePlainText;
     }
 
-    @SneakyThrows
     private static String generateOctetJsonWebKeyOfSize(final int size) {
         final OctetSequenceJsonWebKey octetKey = OctJwkGenerator.generateJwk(size);
         final Map<String, Object> params = octetKey.toParams(JsonWebKey.OutputControlLevel.INCLUDE_SYMMETRIC);
