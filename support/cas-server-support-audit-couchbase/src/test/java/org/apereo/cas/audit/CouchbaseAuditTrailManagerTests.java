@@ -2,7 +2,6 @@ package org.apereo.cas.audit;
 
 import org.apereo.cas.audit.spi.BaseAuditConfigurationTests;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
-import org.apereo.cas.category.CouchbaseCategory;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasSupportCouchbaseAuditConfiguration;
@@ -10,7 +9,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 
 import lombok.Getter;
 import org.apereo.inspektr.audit.AuditTrailManager;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,7 +33,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     "cas.audit.couchbase.bucket=testbucket",
     "cas.audit.couchbase.asynchronous=false"
 })
-@Category(CouchbaseCategory.class)
+@Tag("couchbase")
 @Getter
 public class CouchbaseAuditTrailManagerTests extends BaseAuditConfigurationTests {
 

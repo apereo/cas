@@ -1,11 +1,10 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.category.CouchbaseCategory;
 import org.apereo.cas.config.CouchbaseServiceRegistryConfiguration;
 import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
 
 import lombok.SneakyThrows;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,7 +27,7 @@ import org.springframework.context.event.EventListener;
         "cas.serviceRegistry.couchbase.password=password",
         "cas.serviceRegistry.couchbase.bucket=testbucket"
     })
-@Category(CouchbaseCategory.class)
+@Tag("couchbase")
 @EnabledIfContinuousIntegration
 public class CouchbaseServiceRegistryTests extends AbstractServiceRegistryTests {
 

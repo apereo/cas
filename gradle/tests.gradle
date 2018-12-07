@@ -35,12 +35,11 @@ if (hasTestsOfCategory(project, "Radius")) {
     }
 }
 
-if (hasTestsOfCategory(project, "Couchbase")) {
+if (hasTestsOfCategory(project, "couchbase")) {
     task testCouchbase(type: Test) {
-        enabled = shouldTest(project, "Couchbase")
+        enabled = shouldTest(project, "couchbase")
         useJUnitPlatform {
-            includeEngines 'junit-vintage'
-            includeTags "org.apereo.cas.category.CouchbaseCategory"
+            includeTags "couchbase"
         }
     }
 }
@@ -203,7 +202,7 @@ test {
         includeEngines 'junit-vintage'
         excludeTags "cassandra",
                 "cosmosdb",
-                "org.apereo.cas.category.CouchbaseCategory",
+                "couchbase",
                 "org.apereo.cas.category.DynamoDbCategory",
                 "filesystem",
                 "org.apereo.cas.category.IgniteCategory",

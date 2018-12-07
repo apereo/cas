@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.category.CouchbaseCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -22,7 +21,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
 
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,7 +33,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Category(CouchbaseCategory.class)
+@Tag("couchbase")
 @EnabledIfContinuousIntegration
 @SpringBootTest(classes = {
     CouchbaseTicketRegistryConfiguration.class,
