@@ -186,7 +186,6 @@ if (hasTestsOfCategory(project, "redis")) {
 
 test {
     useJUnitPlatform {
-        includeEngines 'junit-vintage'
         excludeTags "cassandra",
                 "cosmosdb",
                 "couchbase",
@@ -250,10 +249,6 @@ def hasTestsOfCategory(Project project, String category) {
                     if (file ==~ /.*Tests\.\w+/) {
                         file.readLines().parallelStream().forEach() { line ->
                             def m = line =~ /^\s*@Tag\("(\w+)"\)\s*$/
-                            if (m) {
-                                tags.addAll(m.collect { it[1] })
-                            }
-                            m = line =~ /^\s*@Category\((\w+)Category\.class\)\s*$/
                             if (m) {
                                 tags.addAll(m.collect { it[1] })
                             }
