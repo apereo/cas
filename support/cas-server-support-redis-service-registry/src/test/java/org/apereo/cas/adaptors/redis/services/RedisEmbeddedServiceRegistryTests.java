@@ -1,14 +1,13 @@
 package org.apereo.cas.adaptors.redis.services;
 
-import org.apereo.cas.category.RedisCategory;
 import org.apereo.cas.config.RedisServiceRegistryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.ServiceRegistry;
 
-import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -28,7 +27,7 @@ import redis.embedded.RedisServer;
 @EnableScheduling
 @TestPropertySource(properties = {"cas.serviceRegistry.redis.host=localhost", "cas.serviceRegistry.redis.port=6380"})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Category(RedisCategory.class)
+@Tag("redis")
 public class RedisEmbeddedServiceRegistryTests extends AbstractServiceRegistryTests {
     private static RedisServer REDIS_SERVER;
 

@@ -1,15 +1,14 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.category.RedisCategory;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.RedisTicketRegistryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 
-import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -26,7 +25,7 @@ import redis.embedded.RedisServer;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Category(RedisCategory.class)
+@Tag("redis")
 @SpringBootTest(classes = {
     RedisTicketRegistryConfiguration.class,
     RefreshAutoConfiguration.class,

@@ -175,12 +175,11 @@ if (hasTestsOfCategory(project, "mongodb")) {
     }
 }
 
-if (hasTestsOfCategory(project, "Redis")) {
+if (hasTestsOfCategory(project, "redis")) {
     task testRedis(type: Test) {
-        enabled = shouldTest(project, "Redis")
+        enabled = shouldTest(project, "redis")
         useJUnitPlatform {
-            includeEngines 'junit-vintage'
-            includeTags "org.apereo.cas.category.RedisCategory"
+            includeTags "redis"
         }
     }
 }
@@ -204,7 +203,7 @@ test {
                 "mssqlserver",
                 "mysql",
                 "postgres",
-                "org.apereo.cas.category.RedisCategory",
+                "redis",
                 "radius",
                 "awss3",
                 "restful"
