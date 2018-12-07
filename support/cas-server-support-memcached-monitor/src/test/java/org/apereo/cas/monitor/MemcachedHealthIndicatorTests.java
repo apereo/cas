@@ -1,11 +1,10 @@
 package org.apereo.cas.monitor;
 
-import org.apereo.cas.category.MemcachedCategory;
 import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
 import org.apereo.cas.monitor.config.MemcachedMonitorConfiguration;
 
 import lombok.val;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -36,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.monitor.memcached.hashAlgorithm=FNV1A_64_HASH"
 })
 @DirtiesContext
-@Category(MemcachedCategory.class)
+@Tag("memcached")
 public class MemcachedHealthIndicatorTests {
 
     @Autowired

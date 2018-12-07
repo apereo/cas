@@ -161,12 +161,11 @@ if (hasTestsOfCategory(project, "restful")) {
     }
 }
 
-if (hasTestsOfCategory(project, "Memcached")) {
+if (hasTestsOfCategory(project, "memcached")) {
     task testMemcached(type: Test) {
-        enabled = shouldTest(project, "Memcached")
+        enabled = shouldTest(project, "memcached")
         useJUnitPlatform {
-            includeEngines 'junit-vintage'
-            includeTags "org.apereo.cas.category.MemcachedCategory"
+            includeTags "memcached"
         }
     }
 }
@@ -205,7 +204,7 @@ test {
                 "ldap",
                 "mail",
                 "mariadb",
-                "org.apereo.cas.category.MemcachedCategory",
+                "memcached",
                 "org.apereo.cas.category.MongoDbCategory",
                 "org.apereo.cas.category.MsSqlServerCategory",
                 "org.apereo.cas.category.MySQLCategory",
