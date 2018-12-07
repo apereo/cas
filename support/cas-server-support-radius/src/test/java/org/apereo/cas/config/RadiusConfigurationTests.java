@@ -2,7 +2,6 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
-import org.apereo.cas.category.RadiusCategory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusClientProperties;
 import org.apereo.cas.util.CollectionUtils;
@@ -13,7 +12,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import net.jradius.dictionary.Attr_ReplyMessage;
 import net.jradius.dictionary.Attr_State;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -51,7 +50,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.radius.client.inetAddress=localhost,localguest",
     "cas.authn.mfa.radius.id=" + TestMultifactorAuthenticationProvider.ID
 })
-@Category(RadiusCategory.class)
+@Tag("radius")
 public class RadiusConfigurationTests {
     @Autowired
     private CasConfigurationProperties casProperties;

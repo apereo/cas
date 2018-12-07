@@ -25,12 +25,11 @@ if (hasTestsOfCategory(project, "awss3")) {
     }
 }
 
-if (hasTestsOfCategory(project, "Radius")) {
+if (hasTestsOfCategory(project, "radius")) {
     task testRadius(type: Test) {
-        enabled = shouldTest(project, "Radius")
+        enabled = shouldTest(project, "radius")
         useJUnitPlatform {
-            includeEngines 'junit-vintage'
-            includeTags "org.apereo.cas.category.RadiusCategory"
+            includeTags "radius"
         }
     }
 }
@@ -206,7 +205,7 @@ test {
                 "mysql",
                 "postgres",
                 "org.apereo.cas.category.RedisCategory",
-                "org.apereo.cas.category.RadiusCategory",
+                "radius",
                 "awss3",
                 "restful"
     }
