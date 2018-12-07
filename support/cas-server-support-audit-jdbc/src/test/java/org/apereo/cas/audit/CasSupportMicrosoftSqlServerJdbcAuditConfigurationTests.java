@@ -1,10 +1,9 @@
 package org.apereo.cas.audit;
 
-import org.apereo.cas.category.MsSqlServerCategory;
 import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.test.junit.EnabledIfPortOpen;
 
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -22,6 +21,6 @@ import org.springframework.test.context.TestPropertySource;
     })
 @EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 1433)
-@Category(MsSqlServerCategory.class)
+@Tag("mssqlserver")
 public class CasSupportMicrosoftSqlServerJdbcAuditConfigurationTests extends CasSupportJdbcAuditConfigurationTests {
 }

@@ -73,12 +73,11 @@ if (hasTestsOfCategory(project, "Postgres")) {
     }
 }
 
-if (hasTestsOfCategory(project, "MsSqlServer")) {
+if (hasTestsOfCategory(project, "mssqlserver")) {
     task testMsSqlServer(type: Test) {
-        enabled = shouldTest(project, "MsSqlServer")
+        enabled = shouldTest(project, "mssqlserver")
         useJUnitPlatform {
-            includeEngines 'junit-vintage'
-            includeTags "org.apereo.cas.category.MsSqlServerCategory"
+            includeTags "mssqlserver"
         }
     }
 }
@@ -205,7 +204,7 @@ test {
                 "mariadb",
                 "memcached",
                 "mongodb",
-                "org.apereo.cas.category.MsSqlServerCategory",
+                "mssqlserver",
                 "org.apereo.cas.category.MySQLCategory",
                 "org.apereo.cas.category.PostgresCategory",
                 "org.apereo.cas.category.RedisCategory",

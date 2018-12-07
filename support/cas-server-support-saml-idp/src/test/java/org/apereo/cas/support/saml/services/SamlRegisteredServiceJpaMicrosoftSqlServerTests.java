@@ -1,10 +1,9 @@
 package org.apereo.cas.support.saml.services;
 
-import org.apereo.cas.category.MsSqlServerCategory;
 import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.test.junit.EnabledIfPortOpen;
 
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -16,7 +15,7 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(locations = "classpath:samlsqlserver.properties")
 @EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 1433)
-@Category(MsSqlServerCategory.class)
+@Tag("mssqlserver")
 public class SamlRegisteredServiceJpaMicrosoftSqlServerTests extends SamlRegisteredServiceJpaTests {
 
 }
