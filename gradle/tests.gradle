@@ -93,12 +93,11 @@ if (hasTestsOfCategory(project, "MariaDb")) {
     }
 }
 
-if (hasTestsOfCategory(project, "DynamoDb")) {
+if (hasTestsOfCategory(project, "dynamodb")) {
     task testDynamoDb(type: Test) {
-        enabled = shouldTest(project, "DynamoDb")
+        enabled = shouldTest(project, "dynamodb")
         useJUnitPlatform {
-            includeEngines 'junit-vintage'
-            includeTags "org.apereo.cas.category.DynamoDbCategory"
+            includeTags "dynamodb"
         }
     }
 }
@@ -203,7 +202,7 @@ test {
         excludeTags "cassandra",
                 "cosmosdb",
                 "couchbase",
-                "org.apereo.cas.category.DynamoDbCategory",
+                "dynamodb",
                 "filesystem",
                 "org.apereo.cas.category.IgniteCategory",
                 "org.apereo.cas.category.InfluxDbCategory",
