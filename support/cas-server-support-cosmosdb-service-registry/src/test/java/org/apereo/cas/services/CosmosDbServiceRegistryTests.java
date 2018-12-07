@@ -1,10 +1,9 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.category.CosmosDbCategory;
 import org.apereo.cas.config.CosmosDbServiceRegistryConfiguration;
 
 import lombok.val;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Category(CosmosDbCategory.class)
+@Tag("cosmosdb")
 @SpringBootTest(
     classes = {RefreshAutoConfiguration.class, CosmosDbServiceRegistryConfiguration.class})
 @EnabledIfSystemProperty(named = "cosmosDbEnabled", matches = "true")

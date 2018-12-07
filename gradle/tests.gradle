@@ -7,12 +7,11 @@ if (hasTestsOfCategory(project, "cassandra")){
     }
 }
 
-if (hasTestsOfCategory(project, "CosmosDb")) {
+if (hasTestsOfCategory(project, "cosmosdb")) {
     task testCosmosDb(type: Test) {
-        enabled = shouldTest(project, "CosmosDb")
+        enabled = shouldTest(project, "cosmosdb")
         useJUnitPlatform {
-            includeEngines 'junit-vintage'
-            includeTags "org.apereo.cas.category.CosmosDbCategory"
+            includeTags "cosmosdb"
         }
     }
 }
@@ -203,7 +202,7 @@ test {
     useJUnitPlatform {
         includeEngines 'junit-vintage'
         excludeTags "cassandra",
-                "org.apereo.cas.category.CosmosDbCategory",
+                "cosmosdb",
                 "org.apereo.cas.category.CouchbaseCategory",
                 "org.apereo.cas.category.DynamoDbCategory",
                 "filesystem",
