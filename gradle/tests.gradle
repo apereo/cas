@@ -106,12 +106,11 @@ if (hasTestsOfCategory(project, "DynamoDb")) {
     }
 }
 
-if (hasTestsOfCategory(project, "FileSystem")) {
+if (hasTestsOfCategory(project, "filesystem")) {
     task testFileSystem(type: Test) {
-        enabled = shouldTest(project, "FileSystem")
+        enabled = shouldTest(project, "filesystem")
         useJUnitPlatform {
-            includeEngines 'junit-vintage'
-            includeTags "org.apereo.cas.category.FileSystemCategory"
+            includeTags "filesystem"
         }
     }
 }
@@ -209,7 +208,7 @@ test {
                 "org.apereo.cas.category.CosmosDbCategory",
                 "org.apereo.cas.category.CouchbaseCategory",
                 "org.apereo.cas.category.DynamoDbCategory",
-                "org.apereo.cas.category.FileSystemCategory",
+                "filesystem",
                 "org.apereo.cas.category.IgniteCategory",
                 "org.apereo.cas.category.InfluxDbCategory",
                 "couchdb",

@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
-import org.apereo.cas.category.FileSystemCategory;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.services.BaseSamlIdPServicesTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -8,7 +7,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.io.FileUtils;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.springframework.core.io.ClassPathResource;
@@ -25,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Category(FileSystemCategory.class)
+@Tag("filesystem")
 @TestPropertySource(properties = {"cas.authn.samlIdp.metadata.location=file:/tmp"})
 public class JsonResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
 

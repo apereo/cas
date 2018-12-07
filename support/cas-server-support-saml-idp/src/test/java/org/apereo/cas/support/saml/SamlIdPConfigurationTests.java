@@ -1,8 +1,6 @@
 package org.apereo.cas.support.saml;
 
-import org.apereo.cas.category.FileSystemCategory;
-
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -11,7 +9,7 @@ import org.junit.jupiter.api.Test;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Category(FileSystemCategory.class)
+@Tag("filesystem")
 public class SamlIdPConfigurationTests extends BaseSamlIdPConfigurationTests {
 
     @Test

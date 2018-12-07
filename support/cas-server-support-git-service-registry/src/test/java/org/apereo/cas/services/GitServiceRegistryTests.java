@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.category.FileSystemCategory;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
@@ -10,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,7 +34,7 @@ import java.io.File;
 @TestPropertySource(properties = {
     "cas.serviceRegistry.git.repositoryUrl=file:/tmp/cas-sample-data.git"
 })
-@Category(FileSystemCategory.class)
+@Tag("filesystem")
 public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired

@@ -1,6 +1,5 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import org.apereo.cas.category.FileSystemCategory;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 
@@ -8,9 +7,9 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.TestPropertySource;
@@ -26,7 +25,7 @@ import java.io.IOException;
  * @since 5.3.0
  */
 @TestPropertySource(properties = "cas.authn.mfa.trusted.json.location=file:/tmp/trusted-device.json")
-@Category(FileSystemCategory.class)
+@Tag("filesystem")
 @Getter
 public class JsonMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {
 

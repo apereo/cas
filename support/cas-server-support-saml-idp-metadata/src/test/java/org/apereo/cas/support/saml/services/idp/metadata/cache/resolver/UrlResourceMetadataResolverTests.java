@@ -1,13 +1,12 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
-import org.apereo.cas.category.FileSystemCategory;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.services.BaseSamlIdPServicesTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.test.context.TestPropertySource;
@@ -21,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 
-@Category(FileSystemCategory.class)
+@Tag("filesystem")
 @TestPropertySource(properties = {"cas.authn.samlIdp.metadata.location=file:/tmp"})
 public class UrlResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
     public static final String METADATA_URL = "https://raw.githubusercontent.com/apereo/cas/master/support/cas-server-support-saml-idp/src/test/resources/metadata/testshib-providers.xml";
