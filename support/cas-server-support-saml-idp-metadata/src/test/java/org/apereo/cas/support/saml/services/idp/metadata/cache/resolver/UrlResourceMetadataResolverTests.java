@@ -71,7 +71,7 @@ public class UrlResourceMetadataResolverTests {
         final SamlRegisteredService service = new SamlRegisteredService();
         service.setName("TestShib");
         service.setId(1000);
-        service.setMetadataLocation("http://www.testshib.org/metadata/testshib-providers.xml");
+        service.setMetadataLocation("https://raw.githubusercontent.com/apereo/cas/5.3.x/support/cas-server-support-saml-idp/src/test/resources/metadata/testshib-providers.xml");
         final Collection results = resolver.resolve(service);
         assertFalse(results.isEmpty());
     }
