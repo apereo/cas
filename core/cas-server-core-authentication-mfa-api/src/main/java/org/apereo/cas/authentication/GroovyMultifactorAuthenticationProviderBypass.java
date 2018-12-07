@@ -2,11 +2,10 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.util.scripting.ScriptingUtils;
+import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.core.io.Resource;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -20,10 +19,11 @@ import javax.servlet.http.HttpServletRequest;
 public class GroovyMultifactorAuthenticationProviderBypass implements MultifactorAuthenticationProviderBypass {
     private static final long serialVersionUID = -4909072898415688377L;
 
-    private final transient Resource groovyScript;
+    private final WatchableGroovyScriptResource watchableScript;
 
     public GroovyMultifactorAuthenticationProviderBypass(final MultifactorAuthenticationProviderBypassProperties bypass) {
-        this.groovyScript = bypass.getGroovy().getLocation();
+        val groovyScript = bypass.getGroovy().getLocation();
+        this.watchableScript = new WatchableGroovyScriptResource(groovyScript);
     }
 
     @Override
@@ -35,9 +35,9 @@ public class GroovyMultifactorAuthenticationProviderBypass implements Multifacto
             val principal = authentication.getPrincipal();
             LOGGER.debug("Evaluating multifactor authentication bypass properties for principal [{}], "
                     + "service [{}] and provider [{}] via Groovy script [{}]",
-                principal.getId(), registeredService, provider, this.groovyScript);
-            return ScriptingUtils.executeGroovyScript(this.groovyScript,
-                new Object[]{authentication, principal, registeredService, provider, LOGGER, request}, Boolean.class, true);
+                principal.getId(), registeredService, provider, watchableScript.getResource());
+            val args = new Object[]{authentication, principal, registeredService, provider, LOGGER, request};
+            return watchableScript.execute(args, Boolean.class);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             return true;
