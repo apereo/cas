@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 public class GroovyMultifactorAuthenticationProviderBypass implements MultifactorAuthenticationProviderBypass {
     private static final long serialVersionUID = -4909072898415688377L;
-    private final WatchableGroovyScriptResource watchableScript;
+    private final transient WatchableGroovyScriptResource watchableScript;
 
     public GroovyMultifactorAuthenticationProviderBypass(final MultifactorAuthenticationProviderBypassProperties bypass) {
         final Resource groovyScript = bypass.getGroovy().getLocation();
