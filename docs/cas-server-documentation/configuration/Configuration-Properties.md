@@ -2829,7 +2829,6 @@ Configuration settings for all SAML2 service providers are [available here](Conf
 | Gitlab                | `cas.samlSp.gitlab` | `last_name`,`first_name`,`name`
 | Hipchat               | `cas.samlSp.hipchat` | `last_name`,`first_name`,`title`
 | Dropbox               | `cas.samlSp.dropbox` | `mail`
-| TestShib              | `cas.samlSp.testShib` | `eduPersonPrincipalName`
 | OpenAthens            | `cas.samlSp.openAthens` | `email`, `eduPersonPrincipalName`
 | Egnyte                | `cas.samlSp.egnyte` | N/A
 | EverBridge            | `cas.samlSp.everBridge` | N/A

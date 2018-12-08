@@ -1,6 +1,5 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.CasSamlSPWorkdayConfiguration,\
 org.apereo.cas.config.CasSamlSPSecuringTheHumanConfiguration,\
-org.apereo.cas.config.CasSamlSPTestShibConfiguration,\
 org.apereo.cas.config.CasSamlSPInfiniteCampusConfiguration,\
 org.apereo.cas.config.CasSamlSPEasyIepConfiguration,\
 org.apereo.cas.config.CasSamlSPWebexConfiguration,\

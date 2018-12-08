@@ -24,6 +24,7 @@ import static org.junit.Assert.*;
 @Category(FileSystemCategory.class)
 @TestPropertySource(properties = {"cas.authn.samlIdp.metadata.location=file:/tmp"})
 public class UrlResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
+    public static final String METADATA_URL = "https://raw.githubusercontent.com/apereo/cas/master/support/cas-server-support-saml-idp/src/test/resources/metadata/testshib-providers.xml";
 
     @Test
     public void verifyResolverSupports() {
@@ -31,7 +32,7 @@ public class UrlResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
         props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()));
         val resolver = new UrlResourceMetadataResolver(props, openSamlConfigBean);
         val service = new SamlRegisteredService();
-        service.setMetadataLocation("http://www.testshib.org/metadata/testshib-providers.xml");
+        service.setMetadataLocation(METADATA_URL);
         assertTrue(resolver.supports(service));
         service.setMetadataLocation("classpath:sample-sp.xml");
         assertFalse(resolver.supports(service));
@@ -45,7 +46,7 @@ public class UrlResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
         val resolver = new UrlResourceMetadataResolver(props, openSamlConfigBean);
         service.setName("TestShib");
         service.setId(1000);
-        service.setMetadataLocation("http://www.testshib.org/metadata/testshib-providers.xml");
+        service.setMetadataLocation(METADATA_URL);
         val results = resolver.resolve(service);
         assertFalse(results.isEmpty());
     }
