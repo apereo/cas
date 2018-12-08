@@ -60,7 +60,9 @@ task cleanLogs(description: "Clean build log files") {
 }
 
 task findbugs(type: FindBugs, description: "Set up classpath for Findbugs") {
-    pluginClasspath = project.configurations.findbugsPlugins
+    if (!Boolean.getBoolean("skipFindbugs")) {
+        pluginClasspath = project.configurations.findbugsPlugins
+    }
 }
 
 task showConfiguration {
