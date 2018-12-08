@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -21,6 +22,7 @@ import java.util.Set;
 @Embeddable
 @Table(name = "RegexRegisteredServiceProperty")
 @EqualsAndHashCode
+@ToString
 public class DefaultRegisteredServiceProperty implements RegisteredServiceProperty {
     private static final long serialVersionUID = 1349556364689133211L;
 
