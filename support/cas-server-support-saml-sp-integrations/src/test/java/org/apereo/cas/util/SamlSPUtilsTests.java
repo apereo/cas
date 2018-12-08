@@ -58,16 +58,6 @@ public class SamlSPUtilsTests extends BaseSamlIdPConfigurationTests {
         assertEquals(entity.getEntityID(), service.getServiceId());
     }
 
-    @Test
-    public void verifySaveOperation() {
-        final SamlServiceProviderProperties.TestShib sp = new SamlServiceProviderProperties.TestShib();
-        sp.setMetadata("http://www.testshib.org/metadata/testshib-providers.xml");
-        final SamlRegisteredService service = SamlSPUtils.newSamlServiceProviderService(sp, defaultSamlRegisteredServiceCachingMetadataResolver);
-        SamlSPUtils.saveService(service, servicesManager);
-        SamlSPUtils.saveService(service, servicesManager);
-        assertEquals(2, servicesManager.count());
-    }
-
     @AfterClass
     public static void shutdown() {
         final Collection<File> cols = FileUtils.listFiles(METADATA_DIRECTORY.getFile(), new String[]{"crt", "key", "xml"}, false);
