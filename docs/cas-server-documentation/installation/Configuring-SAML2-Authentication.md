@@ -126,7 +126,7 @@ SAML relying parties and services must be registered within the CAS service regi
   "name" : "SAMLService",
   "id" : 10000003,
   "evaluationOrder" : 10,
-  "metadataLocation" : "http://www.testshib.org/metadata/testshib-providers.xml"
+  "metadataLocation" : "https://url/to/metadata.xml"
 }
 ```
 
