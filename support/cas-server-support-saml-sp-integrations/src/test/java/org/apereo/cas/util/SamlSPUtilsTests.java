@@ -59,14 +59,6 @@ public class SamlSPUtilsTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    public void verifyNewSamlServiceProviderViaMetadata() {
-        final SamlServiceProviderProperties.TestShib sp = new SamlServiceProviderProperties.TestShib();
-        sp.setMetadata("http://www.testshib.org/metadata/testshib-providers.xml");
-        final SamlRegisteredService service = SamlSPUtils.newSamlServiceProviderService(sp, defaultSamlRegisteredServiceCachingMetadataResolver);
-        assertNotNull(service);
-    }
-
-    @Test
     public void verifySaveOperation() {
         final SamlServiceProviderProperties.TestShib sp = new SamlServiceProviderProperties.TestShib();
         sp.setMetadata("http://www.testshib.org/metadata/testshib-providers.xml");
