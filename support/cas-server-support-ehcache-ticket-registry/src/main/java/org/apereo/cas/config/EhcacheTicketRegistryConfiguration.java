@@ -89,6 +89,8 @@ public class EhcacheTicketRegistryConfiguration {
         final EhcacheProperties cache = casProperties.getTicket().getRegistry().getEhcache();
         final EhCacheManagerFactoryBean bean = new EhCacheManagerFactoryBean();
 
+        cache.getSystemProps().forEach((key, value) -> System.setProperty(key, value));
+
         final boolean configExists = ResourceUtils.doesResourceExist(cache.getConfigLocation());
         if (configExists) {
             bean.setConfigLocation(cache.getConfigLocation());
@@ -119,7 +121,7 @@ public class EhcacheTicketRegistryConfiguration {
                 + "so no cache event listeners will be configured to bootstrap. "
                 + "The ticket registry will operate in standalone mode", ticketDefinition.getPrefix(), cache.getConfigLocation());
         }
-                              
+
         bean.setTimeToIdle((int) ticketDefinition.getProperties().getStorageTimeout());
         bean.setTimeToLive((int) ticketDefinition.getProperties().getStorageTimeout());
         bean.setDiskExpiryThreadIntervalSeconds(ehcacheProperties.getDiskExpiryThreadIntervalSeconds());

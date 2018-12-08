@@ -1,14 +1,17 @@
 package org.apereo.cas.configuration.model.support.ehcache;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+
 import java.io.Serializable;
-import lombok.Getter;
-import lombok.Setter;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This is {@link EhcacheProperties}.
@@ -17,7 +20,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-ehcache-ticket-registry")
-
 @Getter
 @Setter
 public class EhcacheProperties implements Serializable {
@@ -155,6 +157,12 @@ public class EhcacheProperties implements Serializable {
      * </ul>
      */
     private String persistence = "NONE";
+
+    /**
+     * Allows system properties to be set prior to ehcache.xml parsing.
+     * EhCache will interpolate system properties in the ehcache xml config file e.g. ${ehCacheMulticastAddress}.
+     */
+    private final Map<String, String> systemProps = new HashMap<>();
 
     /**
      * Crypto settings for the registry.
