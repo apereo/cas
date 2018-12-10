@@ -46,7 +46,7 @@ import org.pac4j.oidc.config.AzureAdOidcConfiguration;
 import org.pac4j.oidc.config.KeycloakOidcConfiguration;
 import org.pac4j.oidc.config.OidcConfiguration;
 import org.pac4j.saml.client.SAML2Client;
-import org.pac4j.saml.client.SAML2ClientConfiguration;
+import org.pac4j.saml.config.SAML2Configuration;
 import org.pac4j.saml.metadata.SAML2ServiceProvicerRequestedAttribute;
 
 import java.util.Collection;
@@ -387,7 +387,7 @@ public class DelegatedClientFactory {
                 && StringUtils.isNotBlank(saml.getServiceProviderEntityId())
                 && StringUtils.isNotBlank(saml.getServiceProviderMetadataPath()))
             .forEach(saml -> {
-                val cfg = new SAML2ClientConfiguration(saml.getKeystorePath(),
+                val cfg = new SAML2Configuration(saml.getKeystorePath(),
                     saml.getKeystorePassword(),
                     saml.getPrivateKeyPassword(), saml.getIdentityProviderMetadataPath());
                 cfg.setMaximumAuthenticationLifetime(saml.getMaximumAuthenticationLifetime());
