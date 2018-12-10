@@ -6,6 +6,7 @@ import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 import org.apereo.cas.rest.plan.RestHttpRequestCredentialFactoryConfigurer;
 import org.apereo.cas.support.x509.rest.X509RestHttpRequestHeaderCredentialFactory;
 import org.apereo.cas.support.x509.rest.X509RestMultipartBodyCredentialFactory;
+import org.apereo.cas.support.x509.rest.X509RestTlsClientCertCredentialFactory;
 import org.apereo.cas.web.extractcert.X509CertificateExtractor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -28,10 +29,10 @@ import org.springframework.context.annotation.Lazy;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class X509RestConfiguration implements RestHttpRequestCredentialFactoryConfigurer {
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Autowired
     @Qualifier("x509CertificateExtractor")
     @Lazy
@@ -46,20 +47,29 @@ public class X509RestConfiguration implements RestHttpRequestCredentialFactoryCo
     public RestHttpRequestCredentialFactory x509RestRequestHeader() {
         return new X509RestHttpRequestHeaderCredentialFactory(x509CertificateExtractor.getIfAvailable());
     }
-    
+
+    @Bean
+    public RestHttpRequestCredentialFactory x509RestTlsClientCert() {
+        return new X509RestTlsClientCertCredentialFactory();
+    }
+
     @Override
     public void configureCredentialFactory(final ChainingRestHttpRequestCredentialFactory factory) {
         val restProperties = casProperties.getRest();
         val extractor = x509CertificateExtractor.getIfAvailable();
         val headerAuth = restProperties.isHeaderAuth();
         val bodyAuth = restProperties.isBodyAuth();
-        LOGGER.debug("is certificate extractor available? = {}, headerAuth = {}, bodyAuth = {}",
-            extractor, headerAuth, bodyAuth);
+        val tlsClientAuth = restProperties.isTlsClientAuth();
+        LOGGER.debug("is certificate extractor available? = {}, headerAuth = {}, bodyAuth = {}, tlsClientAuth = {}",
+                     extractor, headerAuth, bodyAuth, tlsClientAuth);
         if (extractor != null && headerAuth) {
             factory.registerCredentialFactory(x509RestRequestHeader());
         }
         if (bodyAuth) {
             factory.registerCredentialFactory(x509RestMultipartBody());
+        }
+        if (tlsClientAuth) {
+            factory.registerCredentialFactory(x509RestTlsClientCert());
         }
     }
 }

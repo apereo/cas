@@ -3,6 +3,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.support.x509.rest.X509RestHttpRequestHeaderCredentialFactoryTests;
 import org.apereo.cas.support.x509.rest.X509RestMultipartBodyCredentialFactoryTests;
+import org.apereo.cas.support.x509.rest.X509RestTlsClientCertCredentialFactoryTests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -16,7 +17,9 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
     X509RestHttpRequestHeaderCredentialFactoryTests.class,
-    X509RestMultipartBodyCredentialFactoryTests.class
+    X509RestMultipartBodyCredentialFactoryTests.class,
+    X509RestTlsClientCertCredentialFactoryTests.class
+
 })
 public class AllTestsSuite {
 }
