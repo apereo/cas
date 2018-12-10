@@ -124,7 +124,7 @@ public class JpaTicketRegistryCleanerTests {
         ticketRegistry.updateTicket(st);
         ticketRegistry.updateTicket(tgt);
 
-        ticketRegistryCleaner.clean();
+        assertEquals(2, ticketRegistryCleaner.clean());
 
         assertEquals(0, ticketRegistry.sessionCount());
         assertEquals(0, ticketRegistry.serviceTicketCount());
