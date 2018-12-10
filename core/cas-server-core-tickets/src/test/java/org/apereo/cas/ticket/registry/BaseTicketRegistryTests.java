@@ -15,6 +15,8 @@ import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.CoreTicketUtils;
+
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
@@ -236,7 +238,7 @@ public abstract class BaseTicketRegistryTests {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX,
                 CoreAuthenticationTestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy()));
-            assertFalse("Ticket was deleted.", this.ticketRegistry.deleteTicket(null) == 1);
+            assertFalse("Ticket was deleted.", this.ticketRegistry.deleteTicket(StringUtils.EMPTY) == 1);
         } catch (final Exception e) {
             throw new AssertionError(EXCEPTION_CAUGHT_NONE_EXPECTED + e.getMessage(), e);
         }

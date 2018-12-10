@@ -1,10 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import com.google.common.io.ByteSource;
-import lombok.NonNull;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -14,6 +9,14 @@ import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.serialization.SerializationUtils;
 
+import com.google.common.io.ByteSource;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -21,9 +24,6 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import lombok.Setter;
-import lombok.NoArgsConstructor;
 
 /**
  * @author Scott Battaglia
@@ -86,14 +86,27 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     @Override
     public int deleteTicket(final String ticketId) {
-        final AtomicInteger count = new AtomicInteger(0);
         if (StringUtils.isBlank(ticketId)) {
-            return count.intValue();
+            LOGGER.trace("No ticket id is provided for deletion");
+            return 0;
         }
         final Ticket ticket = getTicket(ticketId);
         if (ticket == null) {
-            return count.intValue();
+            LOGGER.trace("Could not fetch ticket id [{}] form the registry", ticketId);
+            return 0;
         }
+        return deleteTicket(ticket);
+    }
+
+    /**
+     * Delete ticket.
+     *
+     * @param ticket the ticket
+     * @return the count
+     */
+    @Override
+    public int deleteTicket(final Ticket ticket) {
+        final AtomicInteger count = new AtomicInteger(0);
         if (ticket instanceof TicketGrantingTicket) {
             LOGGER.debug("Removing children of ticket [{}] from the registry.", ticket.getId());
             final TicketGrantingTicket tgt = (TicketGrantingTicket) ticket;
@@ -105,7 +118,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             }
         }
         LOGGER.debug("Removing ticket [{}] from the registry.", ticket);
-        if (deleteSingleTicket(ticketId)) {
+        if (deleteSingleTicket(ticket.getId())) {
             count.incrementAndGet();
         }
         return count.intValue();

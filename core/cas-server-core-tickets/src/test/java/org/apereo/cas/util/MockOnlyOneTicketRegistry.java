@@ -3,6 +3,8 @@ package org.apereo.cas.util;
 import java.util.Collection;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.Ticket;
 
@@ -48,8 +50,14 @@ public class MockOnlyOneTicketRegistry implements TicketRegistry {
     }
 
     @Override
+    public int deleteTicket(final Ticket ticketId) {
+        this.ticket = null;
+        return 1;
+    }
+
+    @Override
     public long deleteAll() {
-        return deleteTicket(null);
+        return deleteTicket(StringUtils.EMPTY);
     }
 
     @Override
