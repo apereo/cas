@@ -1,14 +1,16 @@
 package org.apereo.cas.ticket.registry;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.support.LockingStrategy;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * This is {@link DefaultTicketRegistryCleaner}.
@@ -55,6 +57,7 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner, Seri
      */
     protected void cleanInternal() {
         final int ticketsDeleted = ticketRegistry.getTicketsStream()
+            .filter(Objects::nonNull)
             .filter(Ticket::isExpired)
             .mapToInt(this::cleanTicket)
             .sum();
@@ -67,8 +70,8 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner, Seri
             LOGGER.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
             logoutManager.performLogout((TicketGrantingTicket) ticket);
         }
-        LOGGER.debug("Cleaning up expired service ticket [{}]", ticket.getId());
-        return ticketRegistry.deleteTicket(ticket.getId());
+        LOGGER.debug("Deleting expired ticket [{}]", ticket.getId());
+        return ticketRegistry.deleteTicket(ticket);
     }
 
     /**

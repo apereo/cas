@@ -37,8 +37,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Slf4j
 public class CasCoreTicketsSchedulingConfiguration {
 
-
-
     @Autowired
     private CasConfigurationProperties casProperties;
 
