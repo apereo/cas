@@ -63,6 +63,15 @@ public interface TicketRegistry {
     int deleteTicket(String ticketId);
 
     /**
+     * Remove a specific ticket from the registry.
+     * If ticket to delete is TGT then related service tickets, etc are removed as well.
+     *
+     * @param ticketId The id of the ticket to delete.
+     * @return the number of tickets deleted including children.
+     */
+    int deleteTicket(Ticket ticketId);
+
+    /**
      * Delete all tickets from the registry.
      *
      * @return the number of tickets deleted.
