@@ -8,6 +8,8 @@ import lombok.val;
 import org.junit.Test;
 import org.springframework.test.context.TestPropertySource;
 
+import java.text.ParseException;
+
 import static org.junit.Assert.*;
 
 /**
@@ -20,7 +22,7 @@ import static org.junit.Assert.*;
 public class JWTTokenTicketBuilderWithoutEncryptionTests extends BaseJWTTokenTicketBuilderTests {
 
     @Test
-    public void verifyJwtForServiceTicket() throws Exception {
+    public void verifyJwtForServiceTicket() throws ParseException {
         val jwt = tokenTicketBuilder.build("ST-123456", CoreAuthenticationTestUtils.getService());
         assertNotNull(jwt);
         val result = tokenCipherExecutor.decode(jwt);
@@ -29,7 +31,7 @@ public class JWTTokenTicketBuilderWithoutEncryptionTests extends BaseJWTTokenTic
     }
 
     @Test
-    public void verifyJwtForServiceTicketEncoding() throws Exception {
+    public void verifyJwtForServiceTicketEncoding() {
         val jwt = tokenTicketBuilder.build("ST-123456", CoreAuthenticationTestUtils.getService());
         assertNotNull(jwt);
         val jwtDec = EncodingUtils.decodeBase64ToString(jwt);
