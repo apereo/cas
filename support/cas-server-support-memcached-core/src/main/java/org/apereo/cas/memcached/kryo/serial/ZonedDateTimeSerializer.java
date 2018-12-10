@@ -8,7 +8,7 @@ import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.RegExUtils;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -36,7 +36,7 @@ public class ZonedDateTimeSerializer extends Serializer<ZonedDateTime> {
     @Override
     public ZonedDateTime read(final Kryo kryo, final Input input, final Class<ZonedDateTime> type) {
         val time = kryo.readObject(input, Long.class);
-        val zoneId = StringUtils.removeAll(input.readString().trim(), "\\p{C}");
+        val zoneId = RegExUtils.removeAll(input.readString().trim(), "\\p{C}");
         try {
             LOGGER.trace("Reading zoned date time instance with time [{}] and zone id [{}]", time, zoneId);
             val zone = ZoneId.of(zoneId);

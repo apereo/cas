@@ -251,7 +251,7 @@ public abstract class BaseTicketRegistryTests {
             ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
                 CoreAuthenticationTestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy()));
-            assertFalse("Ticket was deleted.", ticketRegistry.deleteTicket(null) == 1);
+            assertFalse("Ticket was deleted.", ticketRegistry.deleteTicket(StringUtils.EMPTY) == 1);
         } catch (final Exception e) {
             throw new AssertionError(EXCEPTION_CAUGHT_NONE_EXPECTED + e.getMessage(), e);
         }
