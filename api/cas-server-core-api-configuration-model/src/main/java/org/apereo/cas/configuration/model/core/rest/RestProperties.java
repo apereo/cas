@@ -42,4 +42,9 @@ public class RestProperties implements Serializable {
      * Flag that enables X509Certificate extraction from the request body for authentication.
      */
     private boolean bodyAuth;
+
+    /**
+     * Flag that enables TLS client X509Certificate extraction from the servlet container for authentication.
+     */
+    private boolean tlsClientAuth;
 }
