@@ -1,5 +1,13 @@
 package org.apereo.cas.ws.idp.services;
 
+import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.authentication.SecurityTokenServiceClient;
+import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.ws.idp.WSFederationClaims;
+import org.apereo.cas.ws.idp.WSFederationConstants;
+import org.apereo.cas.ws.idp.web.WSFederationRequest;
+
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -10,13 +18,6 @@ import org.apache.cxf.rt.security.SecurityConstants;
 import org.apache.cxf.staxutils.W3CDOMStreamWriter;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apache.cxf.ws.security.trust.STSUtils;
-import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.authentication.SecurityTokenServiceClient;
-import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.ws.idp.WSFederationClaims;
-import org.apereo.cas.ws.idp.WSFederationConstants;
-import org.apereo.cas.ws.idp.web.WSFederationRequest;
 import org.jasig.cas.client.validation.Assertion;
 import org.w3c.dom.Element;
 
@@ -28,6 +29,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.StringWriter;
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * This is {@link DefaultRelyingPartyTokenProducer}.
@@ -45,6 +47,7 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
     public String produce(final SecurityToken securityToken, final WSFederationRegisteredService service,
                           final WSFederationRequest fedRequest, final HttpServletRequest request,
                           final Assertion assertion) {
+        LOGGER.debug("Building security token service client for service [{}]", service);
         final SecurityTokenServiceClient sts = clientBuilder.buildClientForRelyingPartyTokenResponses(securityToken, service);
         mapAttributesToRequestedClaims(service, sts, assertion);
         final Element rpToken = requestSecurityTokenResponse(service, sts, assertion);
@@ -69,7 +72,10 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
             writer.writeNamespace("ic", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
             writer.writeAttribute("Dialect", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
 
-            assertion.getPrincipal().getAttributes().forEach((k, v) -> {
+            final Map<String, Object> attributes = assertion.getPrincipal().getAttributes();
+            LOGGER.debug("Mapping principal attributes [{}] to claims for service [{}]", attributes, service);
+
+            attributes.forEach((k, v) -> {
                 try {
                     if (WSFederationClaims.contains(k)) {
                         final String uri = WSFederationClaims.valueOf(k).getUri();
@@ -86,8 +92,9 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
                                 writer.writeEndElement();
                             }
                         }
-
                         writer.writeEndElement();
+                    } else {
+                        LOGGER.warn("Request claim [{}] is not defined/supported by CAS", k);
                     }
                 } catch (final Exception e) {
                     LOGGER.error(e.getMessage(), e);
@@ -108,10 +115,11 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
                                                  final SecurityTokenServiceClient sts,
                                                  final Assertion assertion) {
         try {
-            sts.getProperties().put(SecurityConstants.USERNAME, assertion.getPrincipal().getName());
-            final String uid = credentialCipherExecutor.encode(assertion.getPrincipal().getName());
+            final String principal = assertion.getPrincipal().getName();
+            sts.getProperties().put(SecurityConstants.USERNAME, principal);
+            final String uid = credentialCipherExecutor.encode(principal);
             sts.getProperties().put(SecurityConstants.PASSWORD, uid);
-
+            LOGGER.debug("Requesting security token response for service [{}] as [{}]", service, principal);
             return sts.requestSecurityTokenResponse(service.getAppliesTo());
         } catch (final SoapFault ex) {
             if (ex.getFaultCode() != null && "RequestFailed".equals(ex.getFaultCode().getLocalPart())) {
