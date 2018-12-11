@@ -7,10 +7,12 @@ import org.apereo.cas.config.authentication.support.SamlAuthenticationEventExecu
 import org.apereo.cas.config.authentication.support.SamlServiceFactoryConfiguration;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.nio.charset.StandardCharsets;
@@ -37,8 +39,8 @@ public class SamlServiceFactoryTests extends AbstractOpenSamlTests {
     @Test
     public void verifyObtainService() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setMethod(HttpMethod.POST.name());
         request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "test");
-
         final Service service = samlServiceFactory.createService(request);
         assertEquals("test", service.getId());
     }
@@ -46,6 +48,7 @@ public class SamlServiceFactoryTests extends AbstractOpenSamlTests {
     @Test
     public void verifyServiceDoesNotExist() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setMethod(HttpMethod.POST.name());
         assertNull(samlServiceFactory.createService(request));
     }
 
@@ -61,8 +64,23 @@ public class SamlServiceFactoryTests extends AbstractOpenSamlTests {
             + "<soap:Body>        <Request MajorVersion=\"1\" MinorVersion=\"1\" RequestID=\"_e444ee1af9a7f6d656d76e8810299544\" IssueInstant=\"2018-05-10T16:39:46Z\">"
             + "<AssertionArtifact>ST-AAHJJ4pD5ZyoQkY9i08GsvYRVOyKeWws4SA4xwv+5HX9UgL7fCRBp2Ad</AssertionArtifact>        </Request>    </soap:Body></soap:Envelope>";
         final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setMethod(HttpMethod.POST.name());
         request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "test");
         request.setContent(body.getBytes(StandardCharsets.UTF_8));
         assertNotNull(samlServiceFactory.createService(request));
+    }
+
+    @Test
+    public void verifyXmlPayloadWorksWithBadDocument() {
+        final String body = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Header><wsse:Security xmlns:wsse=\"http://docs.oasis-open"
+            + ".org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd\" xmlns:wsu=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd\" "
+            + "soap:mustUnderstand=\"1\"><wsu:Timestamp wsu:Id=\"TS-251abb2a-d5ba-4fe9-858a-a90e873c0a57\"><wsu:Created>2018-12-05T19:55:10"
+            + ".301Z</wsu:Created><wsu:Expires>2018-12-05T20:00:10.301Z</wsu:Expires></wsu:Timestamp></soap:Body></soap:Envelope>";
+
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "test");
+        request.setContent(body.getBytes(StandardCharsets.UTF_8));
+        request.setMethod(HttpMethod.POST.name());
+        assertNull(samlServiceFactory.createService(request));
     }
 }
