@@ -7,16 +7,15 @@ category: Integration
 # Overview
 
 CAS can be integrated with the [Shibboleth federated SSO platform](http://shibboleth.net/) by a couple
-different strategies.
-It is possible to designate CAS to serve as the authentication provider for the Shibboleth IdP.
-With such a setup, when user
-is routed to the IdP, the following may take place:
+different strategies. It is possible to designate CAS to serve as the authentication provider for the Shibboleth IdP.
+With such a setup, when user is routed to the IdP, the following may take place:
 
 - If the user has already authenticated to CAS and has a valid CAS SSO session, the IdP will transparently
 perform the requested action, e.g. attribute release.
-
 - If the user does not have a valid CAS SSO session, the user will be redirected to CAS and must
 authenticate before the IdP proceeds with the requested action.
+
+<div class="alert alert-info"><strong>Note</strong><p>Remember that this page is specifically dedicated to integration options with the Shibboleth Identity Provider. If you need CAS to act as a SAML2 identity provider on its own, you should <a href="../installation/Configuring-SAML2-Authentication.html">start here instead</a>.</p></div>
 
 ## SSO for Shibboleth IdP (External)
 
