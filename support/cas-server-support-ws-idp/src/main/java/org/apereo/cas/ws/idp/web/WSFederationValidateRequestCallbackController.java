@@ -1,10 +1,5 @@
 package org.apereo.cas.ws.idp.web;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.SerializationUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
@@ -13,6 +8,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.ticket.SecurityTokenTicket;
 import org.apereo.cas.ticket.SecurityTokenTicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -25,6 +21,12 @@ import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 import org.apereo.cas.ws.idp.services.WSFederationRelyingPartyTokenProducer;
+
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.jasig.cas.client.util.CommonUtils;
 import org.jasig.cas.client.validation.Assertion;
@@ -63,10 +65,10 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
                                                          final TicketValidator ticketValidator,
                                                          final Service callbackService) {
         super(servicesManager,
-                webApplicationServiceFactory, casProperties,
-                serviceSelectionStrategy, httpClient, securityTokenTicketFactory,
-                ticketRegistry, ticketGrantingTicketCookieGenerator,
-                ticketRegistrySupport, callbackService);
+            webApplicationServiceFactory, casProperties,
+            serviceSelectionStrategy, httpClient, securityTokenTicketFactory,
+            ticketRegistry, ticketGrantingTicketCookieGenerator,
+            ticketRegistrySupport, callbackService);
         this.relyingPartyTokenProducer = relyingPartyTokenProducer;
         this.ticketValidator = ticketValidator;
     }
@@ -104,9 +106,12 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
     }
 
     private void addSecurityTokenTicketToRegistry(final HttpServletRequest request, final SecurityToken securityToken) {
-        LOGGER.debug("Adding security token as a ticket to CAS ticket registry...");
+        LOGGER.debug("Created security token as a ticket to CAS ticket registry...");
         final TicketGrantingTicket tgt = CookieUtils.getTicketGrantingTicketFromRequest(ticketGrantingTicketCookieGenerator, ticketRegistry, request);
-        this.ticketRegistry.addTicket(securityTokenTicketFactory.create(tgt, securityToken));
+        final SecurityTokenTicket ticket = securityTokenTicketFactory.create(tgt, securityToken);
+        LOGGER.debug("Created security token ticket [{}]", ticket);
+        this.ticketRegistry.addTicket(ticket);
+        LOGGER.debug("Added security token as a ticket to CAS ticket registry...");
         this.ticketRegistry.updateTicket(tgt);
     }
 
@@ -135,19 +140,23 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
                                             final WSFederationRequest fedRequest, final SecurityToken securityToken,
                                             final Assertion assertion) {
         final WSFederationRegisteredService service = findAndValidateFederationRequestForRegisteredService(response, request, fedRequest);
+        LOGGER.debug("Located registered service [{}] to create relying-party tokens...", service);
         return relyingPartyTokenProducer.produce(securityToken, service, fedRequest, request, assertion);
     }
 
 
     private static SecurityToken validateSecurityTokenInAssertion(final Assertion assertion, final HttpServletRequest request,
                                                                   final HttpServletResponse response) {
-        LOGGER.debug("Validating security token in CAS assertion...");
-
         final AttributePrincipal principal = assertion.getPrincipal();
-        if (!principal.getAttributes().containsKey(WSFederationConstants.SECURITY_TOKEN_ATTRIBUTE)) {
+        final Map<String, Object> attributes = principal.getAttributes();
+        LOGGER.debug("Validating security token in CAS assertion with attributes [{}] and principal attributes [{}]",
+            assertion.getAttributes(), attributes);
+        if (!attributes.containsKey(WSFederationConstants.SECURITY_TOKEN_ATTRIBUTE)) {
+            LOGGER.warn("No security token attribute is found in principal attributes [{}]", attributes);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
         }
-        final String token = (String) principal.getAttributes().get(WSFederationConstants.SECURITY_TOKEN_ATTRIBUTE);
+        final String token = (String) attributes.get(WSFederationConstants.SECURITY_TOKEN_ATTRIBUTE);
+        LOGGER.debug("Located security token attribute [{}]", token);
         final byte[] securityTokenBin = EncodingUtils.decodeBase64(token);
         return SerializationUtils.deserialize(securityTokenBin);
     }
