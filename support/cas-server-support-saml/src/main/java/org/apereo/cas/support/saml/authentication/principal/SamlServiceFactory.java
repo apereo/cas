@@ -36,7 +36,7 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
 
     @Override
     public SamlService createService(final HttpServletRequest request) {
-        /**
+        /*
           * As per http://docs.oasis-open.org/security/saml/Post2.0/saml-ecp/v2.0/saml-ecp-v2.0.html we cannot create service from SAML ECP Request.
           * This will result in NullPointerException, when trying to get samlp:Request from S:Body.
           */
@@ -66,6 +66,10 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
             request.setAttribute(SamlProtocolConstants.PARAMETER_SAML_REQUEST, requestBody);
 
             final Document document = saml10ObjectBuilder.constructDocumentFromXml(requestBody);
+            if (document == null) {
+                LOGGER.trace("Could not construct SAML document from request body [{}]", requestBody);
+                return null;
+            }
             final Element root = document.getRootElement();
 
             @NonNull final Element body = root.getChild("Body", NAMESPACE_ENVELOPE);
