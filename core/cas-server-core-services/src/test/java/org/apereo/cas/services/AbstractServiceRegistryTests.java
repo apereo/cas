@@ -89,6 +89,7 @@ public abstract class AbstractServiceRegistryTests {
 
     @Test
     public void verifyEmptyRegistry() {
+        fail();
         assertEquals("Loaded too many", 0, serviceRegistry.load().size());
         assertEquals("Counted too many", 0, serviceRegistry.size());
     }
@@ -101,6 +102,7 @@ public abstract class AbstractServiceRegistryTests {
 
     @Test
     public void verifySaveAndLoad() {
+        fail();
         for (int i = 0; i < getLoadSize(); i++) {
             val svc = buildRegisteredServiceInstance(i);
             this.serviceRegistry.save(svc);
@@ -114,6 +116,7 @@ public abstract class AbstractServiceRegistryTests {
     @Test
     public void verifyNonExistingService() {
         assertNull(this.serviceRegistry.findServiceById(9999991));
+        fail();
     }
 
     @Test
@@ -152,6 +155,8 @@ public abstract class AbstractServiceRegistryTests {
         assertEquals(rs3.getProxyPolicy(), rs.getProxyPolicy());
         assertEquals(rs3.getUsernameAttributeProvider(), rs.getUsernameAttributeProvider());
         assertEquals(rs3.getServiceId(), rs.getServiceId());
+
+        fail();
     }
 
     @Test
