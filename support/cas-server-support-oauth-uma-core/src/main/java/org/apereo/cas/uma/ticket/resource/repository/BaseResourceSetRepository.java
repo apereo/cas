@@ -2,8 +2,6 @@ package org.apereo.cas.uma.ticket.resource.repository;
 
 import org.apereo.cas.uma.ticket.resource.ResourceSet;
 
-import lombok.val;
-
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -59,8 +57,7 @@ public abstract class BaseResourceSetRepository implements ResourceSetRepository
         currentResource.setType(newResource.getType());
         currentResource.setUri(newResource.getUri());
 
-        val saved = saveInternal(currentResource);
-        return saved;
+        return saveInternal(currentResource);
     }
 
     /**

@@ -91,17 +91,23 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     @Override
     public int deleteTicket(final String ticketId) {
-        val count = new AtomicInteger(0);
         if (StringUtils.isBlank(ticketId)) {
-            return count.intValue();
+            LOGGER.trace("No ticket id is provided for deletion");
+            return 0;
         }
         val ticket = getTicket(ticketId);
         if (ticket == null) {
             LOGGER.debug("Ticket [{}] could not be fetched from the registry; it may have been expired and deleted.", ticketId);
-            return count.intValue();
+            return 0;
         }
+        return deleteTicket(ticket);
+    }
+
+    @Override
+    public int deleteTicket(final Ticket ticket) {
+        val count = new AtomicInteger(0);
         if (ticket instanceof TicketGrantingTicket) {
-            LOGGER.trace("Removing children of ticket [{}] from the registry.", ticket.getId());
+            LOGGER.debug("Removing children of ticket [{}] from the registry.", ticket.getId());
             val tgt = (TicketGrantingTicket) ticket;
             count.addAndGet(deleteChildren(tgt));
             if (ticket instanceof ProxyGrantingTicket) {
@@ -111,7 +117,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             }
         }
         LOGGER.debug("Removing ticket [{}] from the registry.", ticket);
-        if (deleteSingleTicket(ticketId)) {
+        if (deleteSingleTicket(ticket.getId())) {
             count.incrementAndGet();
         }
         return count.intValue();
@@ -149,9 +155,8 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     }
 
     private void deleteProxyGrantingTicketFromParent(final ProxyGrantingTicket ticket) {
-        val thePgt = ticket;
-        thePgt.getTicketGrantingTicket().getProxyGrantingTickets().remove(thePgt.getId());
-        updateTicket(thePgt.getTicketGrantingTicket());
+        ticket.getTicketGrantingTicket().getProxyGrantingTickets().remove(ticket.getId());
+        updateTicket(ticket.getTicketGrantingTicket());
     }
 
     /**

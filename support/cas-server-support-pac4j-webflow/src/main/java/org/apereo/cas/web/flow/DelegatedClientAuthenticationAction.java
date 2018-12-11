@@ -196,16 +196,20 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             val client = findDelegatedClientByName(request, clientName, service);
 
             try {
+                LOGGER.debug("Fetching credentials from delegated client [{}]", client);
                 val credentials = getCredentialsFromDelegatedClient(webContext, client);
                 val clientCredential = new ClientCredential(credentials, client.getName());
+                LOGGER.info("Credentials are successfully authenticated using the delegated client [{}]", client.getName());
                 WebUtils.putCredential(context, clientCredential);
                 WebUtils.putServiceIntoFlowScope(context, service);
-                WebUtils.putRegisteredService(context, servicesManager.findServiceBy(service));
-
+                LOGGER.debug("Authentication is resolved by service request from [{}]", service);
+                val resolvedService = authenticationRequestServiceSelectionStrategies.resolveService(service);
+                val registeredService = servicesManager.findServiceBy(resolvedService);
+                LOGGER.debug("Located registered service [{}] mapped to resolved service [{}]", registeredService, resolvedService);
+                WebUtils.putRegisteredService(context, registeredService);
             } catch (final Exception e) {
                 return handleException(webContext, client, e);
             }
-
             return super.doExecute(context);
         }
 
@@ -316,7 +320,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             .map(IndirectClient.class::cast)
             .forEach(client -> {
                 try {
-                    val provider = buildProviderConfiguration(client, webContext, service);
+                    val provider = buildProviderConfiguration(client, webContext, currentService);
                     provider.ifPresent(p -> {
                         urls.add(p);
                         if (p.isAutoRedirect()) {
@@ -451,8 +455,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             try {
                 delegatedSessionCookieManager.restore(webContext);
                 val client = (BaseClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
-                val service = delegatedClientWebflowManager.retrieve(requestContext, webContext, client);
-                return service;
+                return delegatedClientWebflowManager.retrieve(requestContext, webContext, client);
             } catch (final Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }

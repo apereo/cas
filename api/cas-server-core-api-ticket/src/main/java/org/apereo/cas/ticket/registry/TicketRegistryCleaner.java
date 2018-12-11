@@ -13,8 +13,11 @@ public interface TicketRegistryCleaner {
     /**
      * Clean the ticket registry by collecting
      * tickets in the storage unit that may be expired.
+     *
+     * @return the int
      */
-    default void clean() {
+    default int clean() {
+        return 0;
     }
 
     /**
