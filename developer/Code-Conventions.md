@@ -70,7 +70,6 @@ or equivalent array definition. Returning or passing an argument as a native jav
 internal implementations to the caller/client and would allow in theory for malicious
 modifications to the program state. 
 
-
 ## Static Members
 
 Static member variables will always be in uppercase wherein each word is separated by an underscore:
@@ -78,7 +77,6 @@ Static member variables will always be in uppercase wherein each word is separat
 ```java
 private static final String SOME_OBJECT = "TheObject"; 
 ```
-
 
 ## Logging
 
@@ -98,15 +96,13 @@ This is the preferred method over checking for a particular logging level and co
 
 Try to qualify all instance variables with `this` with the exception of the Logging instances. 
 
-## Use of the final keyword
+## Use of the `var` keyword
 
-We use the keyword `final` keyword on local variables and parameters.
-
+Local variables are commended to use Project Lombok's `val`. In situations where mutability is needed, `var` is recommended.
 
 ## Naming testcases
 
 If we were writing a JUnit testcase for code defined in `Foo.java`, we would name it `FooTests.java`. We do not allow any code which is not a testcase to have a name ending in "Tests". All testcase must use annotations `(@Test)` instead of extending `junit.framework.TestCase`. Furthermore, the usage of `junit.framework` classes is generally discouraged. 
-
 
 ## Injection
 
@@ -115,11 +111,3 @@ For required dependencies, the constructor injection must be used whereas setter
 ## toString(), equals(), hashCode() methods
 
 Take a look at Project Lombok's `@ToString` and `@EqualsAndHashCode` annotations.
-
-## Creating Pull Requests
-
-When creating a pull request, make sure that the pull references the Github issue number:
-
-![](https://camo.githubusercontent.com/0d91dc7e679d86bd4814faae37f0316279074571/68747470733a2f2f662e636c6f75642e6769746875622e636f6d2f6173736574732f3539372f3439383937372f64383262643761382d626332362d313165322d383663652d3835613435336334643638332e706e67)
-
-This allows the pull request to be linked to the issue. When the pull is merged, the issue will automatically be closed as well.
