@@ -86,6 +86,8 @@ import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.QualityOfProtection;
 import org.ldaptive.sasl.SaslConfig;
 import org.ldaptive.sasl.SecurityStrength;
+import org.ldaptive.ssl.AllowAnyHostnameVerifier;
+import org.ldaptive.ssl.DefaultHostnameVerifier;
 import org.ldaptive.ssl.KeyStoreCredentialConfig;
 import org.ldaptive.ssl.SslConfig;
 import org.ldaptive.ssl.X509CredentialConfig;
@@ -790,6 +792,20 @@ public class LdapUtils {
             LOGGER.debug("Creating LDAP SSL configuration via the native JVM truststore");
             cc.setSslConfig(new SslConfig());
         }
+
+        val sslConfig = cc.getSslConfig();
+        if (sslConfig != null) {
+            switch (l.getHostnameVerifier()) {
+                case ANY:
+                    sslConfig.setHostnameVerifier(new AllowAnyHostnameVerifier());
+                    break;
+                case DEFAULT:
+                default:
+                    sslConfig.setHostnameVerifier(new DefaultHostnameVerifier());
+                    break;
+            }
+        }
+
         if (StringUtils.isNotBlank(l.getSaslMechanism())) {
             LOGGER.debug("Creating LDAP SASL mechanism via [{}]", l.getSaslMechanism());
 
