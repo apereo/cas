@@ -334,7 +334,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
     @ConditionalOnMissingBean(name = "aggregatingAttributeRepository")
     public IPersonAttributeDao aggregatingAttributeRepository() {
         final MergingPersonAttributeDaoImpl mergingDao = new MergingPersonAttributeDaoImpl();
-        final String merger = StringUtils.defaultIfBlank(casProperties.getAuthn().getAttributeRepository().getMerger(), "replace".trim());
+        final String merger = StringUtils.defaultIfBlank(casProperties.getAuthn().getAttributeRepository().getMerger(), "replace").trim();
         LOGGER.debug("Configured merging strategy for attribute sources is [{}]", merger);
         mergingDao.setMerger(getAttributeMerger(merger));
 
