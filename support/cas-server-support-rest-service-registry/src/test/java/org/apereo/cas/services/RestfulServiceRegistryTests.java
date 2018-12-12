@@ -16,6 +16,7 @@ import org.springframework.boot.actuate.autoconfigure.metrics.MetricsAutoConfigu
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.test.context.TestPropertySource;
@@ -40,6 +41,7 @@ import static org.mockito.Mockito.*;
  */
 @RunWith(Parameterized.class)
 @SpringBootTest(classes = {
+    RestfulServiceRegistryTests.RestServicesTestConfiguration.class,
     RestServiceRegistryConfiguration.class,
     RefreshAutoConfiguration.class
 },
@@ -49,7 +51,7 @@ import static org.mockito.Mockito.*;
     CasCoreServicesConfiguration.class,
     MetricsAutoConfiguration.class
 })
-@TestPropertySource(locations = "classpath:restful-svc.properties")
+@TestPropertySource(properties = {"server.port=9303", "cas.serviceRegistry.rest.url=http://localhost:9303", "cas.serviceRegistry.initFromJson=false"})
 @Category(RestfulApiCategory.class)
 public class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
 
@@ -71,34 +73,39 @@ public class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
         return this.dao;
     }
 
-    @RestController("servicesController")
-    @RequestMapping("/")
-    public static class ServicesController {
-        private final InMemoryServiceRegistry serviceRegistry = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class));
+    @TestConfiguration
+    public static class RestServicesTestConfiguration {
 
-        @DeleteMapping
-        public Integer findByServiceId(@RequestBody final RegisteredService service) {
-            serviceRegistry.delete(service);
-            return HttpStatus.SC_OK;
-        }
+        @RestController("servicesController")
+        @RequestMapping("/")
+        public static class ServicesController {
+            private final InMemoryServiceRegistry serviceRegistry = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class));
 
-        @PostMapping
-        public RegisteredService save(@RequestBody final RegisteredService service) {
-            serviceRegistry.save(service);
-            return service;
-        }
-
-        @GetMapping("/{id}")
-        public RegisteredService findServiceById(@PathVariable(name = "id") final String id) {
-            if (NumberUtils.isParsable(id)) {
-                return serviceRegistry.findServiceById(Long.valueOf(id));
+            @DeleteMapping
+            public Integer findByServiceId(@RequestBody final RegisteredService service) {
+                serviceRegistry.delete(service);
+                return HttpStatus.SC_OK;
             }
-            return serviceRegistry.findServiceByExactServiceId(id);
-        }
 
-        @GetMapping
-        public RegisteredService[] load() {
-            return serviceRegistry.load().toArray(new RegisteredService[]{});
+            @PostMapping
+            public RegisteredService save(@RequestBody final RegisteredService service) {
+                serviceRegistry.save(service);
+                return service;
+            }
+
+            @GetMapping("/{id}")
+            public RegisteredService findServiceById(@PathVariable(name = "id") final String id) {
+                if (NumberUtils.isParsable(id)) {
+                    return serviceRegistry.findServiceById(Long.valueOf(id));
+                }
+                return serviceRegistry.findServiceByExactServiceId(id);
+            }
+
+            @GetMapping
+            public RegisteredService[] load() {
+                return serviceRegistry.load().toArray(new RegisteredService[]{});
+            }
         }
     }
+
 }
