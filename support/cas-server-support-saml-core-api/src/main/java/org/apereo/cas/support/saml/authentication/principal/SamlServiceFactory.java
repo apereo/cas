@@ -115,7 +115,7 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
             LOGGER.trace("XML element has no attribute for RequestID");
             return null;
         }
-        return requestIdAttribute.getValue();
+        return requestIdAttribute.getValue().trim();
     }
 
     private static String getArtifactIdFromRequest(final Element requestChild) {
@@ -124,6 +124,10 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
             return null;
         }
         val artifactElement = requestChild.getChild("AssertionArtifact", NAMESPACE_SAML1);
-        return artifactElement.getValue();
+        if (artifactElement == null) {
+            LOGGER.trace("Element [{}] does not contain a child element for AssertionArtifact", requestChild.getName());
+            return null;
+        }
+        return artifactElement.getValue().trim();
     }
 }
