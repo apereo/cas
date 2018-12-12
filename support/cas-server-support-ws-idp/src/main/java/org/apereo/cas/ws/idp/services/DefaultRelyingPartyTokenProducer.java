@@ -62,7 +62,9 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
             writer.writeNamespace("ic", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
             writer.writeAttribute("Dialect", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
 
-            assertion.getPrincipal().getAttributes().forEach((k, v) -> {
+            val attributes = assertion.getPrincipal().getAttributes();
+            LOGGER.debug("Mapping principal attributes [{}] to claims for service [{}]", attributes, service);
+            attributes.forEach((k, v) -> {
                 try {
                     if (WSFederationClaims.contains(k)) {
                         val uri = WSFederationClaims.valueOf(k).getUri();

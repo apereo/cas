@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -24,15 +25,12 @@ import java.util.Optional;
 @Slf4j
 @Getter
 @Setter
+@RequiredArgsConstructor
 public class WSFederationAuthenticationServiceSelectionStrategy implements AuthenticationServiceSelectionStrategy {
     private static final long serialVersionUID = 8035218407906419228L;
 
     private int order = Ordered.HIGHEST_PRECEDENCE;
     private final transient ServiceFactory webApplicationServiceFactory;
-
-    public WSFederationAuthenticationServiceSelectionStrategy(final ServiceFactory webApplicationServiceFactory) {
-        this.webApplicationServiceFactory = webApplicationServiceFactory;
-    }
 
     private static Optional<NameValuePair> getRealmAsParameter(final Service service) {
         try {
@@ -72,16 +70,27 @@ public class WSFederationAuthenticationServiceSelectionStrategy implements Authe
             LOGGER.debug("Located service id [{}] from service authentication request at [{}]", serviceReply, service.getId());
             return this.webApplicationServiceFactory.createService(serviceReply);
         }
+        LOGGER.trace("Resolved final service as [{}]", service);
         return service;
     }
 
     @Override
     public boolean supports(final Service service) {
-        return service != null && getRealmAsParameter(service).isPresent() && getReplyAsParameter(service).isPresent();
-    }
-
-    @Override
-    public int getOrder() {
-        return this.order;
+        if (service == null) {
+            LOGGER.trace("Provided service is undefined");
+            return false;
+        }
+        LOGGER.debug("Evaluating service requested identified as [{}]", service.getId());
+        val realmAsParameter = getRealmAsParameter(service);
+        if (realmAsParameter.isEmpty()) {
+            LOGGER.trace("Parameter [{}] is undefined in the request", WSFederationConstants.WTREALM);
+            return false;
+        }
+        val replyAsParameter = getReplyAsParameter(service);
+        if (replyAsParameter.isEmpty()) {
+            LOGGER.trace("Parameter [{}] is undefined in the request", WSFederationConstants.WREPLY);
+            return false;
+        }
+        return true;
     }
 }

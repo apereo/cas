@@ -84,20 +84,24 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
             parameters.put(WSFederationConstants.WCTX, fedRequest.getWctx());
         }
 
-        LOGGER.debug("Posting relying party token to [{}]", postUrl);
+        LOGGER.trace("Posting relying party token to [{}]", postUrl);
         return new ModelAndView(CasWebflowConstants.VIEW_ID_POST_RESPONSE,
             CollectionUtils.wrap("originalUrl", postUrl, "parameters", parameters));
     }
 
     private static SecurityToken validateSecurityTokenInAssertion(final Assertion assertion, final HttpServletRequest request,
                                                                   final HttpServletResponse response) {
-        LOGGER.debug("Validating security token in CAS assertion...");
-
         val principal = assertion.getPrincipal();
-        if (!principal.getAttributes().containsKey(WSFederationConstants.SECURITY_TOKEN_ATTRIBUTE)) {
+        val attributes = principal.getAttributes();
+        LOGGER.debug("Validating security token in CAS assertion with attributes [{}] and principal attributes [{}]",
+            assertion.getAttributes(), attributes);
+
+        if (!attributes.containsKey(WSFederationConstants.SECURITY_TOKEN_ATTRIBUTE)) {
+            LOGGER.warn("No security token attribute is found in principal attributes [{}]", attributes);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
         }
-        val token = (String) principal.getAttributes().get(WSFederationConstants.SECURITY_TOKEN_ATTRIBUTE);
+        val token = (String) attributes.get(WSFederationConstants.SECURITY_TOKEN_ATTRIBUTE);
+        LOGGER.trace("Located security token attribute [{}]", token);
         val securityTokenBin = EncodingUtils.decodeBase64(token);
         return SerializationUtils.deserialize(securityTokenBin);
     }
@@ -138,9 +142,12 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
     }
 
     private void addSecurityTokenTicketToRegistry(final HttpServletRequest request, final SecurityToken securityToken) {
-        LOGGER.debug("Adding security token as a ticket to CAS ticket registry...");
+        LOGGER.trace("Creating security token as a ticket to CAS ticket registry...");
         val tgt = CookieUtils.getTicketGrantingTicketFromRequest(ticketGrantingTicketCookieGenerator, ticketRegistry, request);
-        this.ticketRegistry.addTicket(securityTokenTicketFactory.create(tgt, securityToken));
+        val ticket = securityTokenTicketFactory.create(tgt, securityToken);
+        LOGGER.trace("Created security token ticket [{}]", ticket);
+        this.ticketRegistry.addTicket(ticket);
+        LOGGER.trace("Added security token as a ticket to CAS ticket registry...");
         this.ticketRegistry.updateTicket(tgt);
     }
 
@@ -148,6 +155,7 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
                                             final WSFederationRequest fedRequest, final SecurityToken securityToken,
                                             final Assertion assertion) {
         val service = findAndValidateFederationRequestForRegisteredService(response, request, fedRequest);
+        LOGGER.debug("Located registered service [{}] to create relying-party tokens...", service);
         return relyingPartyTokenProducer.produce(securityToken, service, fedRequest, request, assertion);
     }
 
