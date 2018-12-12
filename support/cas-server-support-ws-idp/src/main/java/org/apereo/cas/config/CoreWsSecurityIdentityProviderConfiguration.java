@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
@@ -27,6 +26,8 @@ import org.apereo.cas.ws.idp.services.WSFederationRelyingPartyTokenProducer;
 import org.apereo.cas.ws.idp.services.WSFederationServiceRegistry;
 import org.apereo.cas.ws.idp.web.WSFederationValidateRequestCallbackController;
 import org.apereo.cas.ws.idp.web.WSFederationValidateRequestController;
+
+import lombok.extern.slf4j.Slf4j;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
-import org.springframework.context.annotation.Lazy;
 
 /**
  * This is {@link CoreWsSecurityIdentityProviderConfiguration}.
@@ -86,7 +86,6 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
 
-    @Lazy
     @Bean
     public WSFederationValidateRequestController federationValidateRequestController() {
         return new WSFederationValidateRequestController(servicesManager,
@@ -96,7 +95,6 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
             ticketRegistrySupport, wsFederationCallbackService());
     }
 
-    @Lazy
     @Autowired
     @Bean
     public WSFederationValidateRequestCallbackController federationValidateRequestCallbackController(
@@ -115,14 +113,12 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
         return this.webApplicationServiceFactory.createService(WSFederationConstants.ENDPOINT_FEDERATION_REQUEST_CALLBACK);
     }
 
-    @Lazy
     @Bean
     @RefreshScope
     public WSFederationMetadataController wsFederationMetadataController() {
         return new WSFederationMetadataController(casProperties);
     }
 
-    @Lazy
     @Autowired
     @Bean
     public WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer(

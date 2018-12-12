@@ -114,8 +114,8 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         return new EventMapper(new MapEventLogger());
     }
 
-    @RefreshScope
     @Bean
+    @RefreshScope
     public List<TokenDelegationHandler> delegationHandlers() {
         final List<TokenDelegationHandler> handlers = new ArrayList<>();
         handlers.add(new SAMLDelegationHandler());
@@ -123,7 +123,6 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         return handlers;
     }
 
-    @RefreshScope
     @Bean
     @SneakyThrows
     public Provider transportSTSProviderBean() {
@@ -133,7 +132,6 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         return provider;
     }
 
-    @RefreshScope
     @Bean
     public IssueOperation transportIssueDelegate() {
         final WsFederationProperties.SecurityTokenService wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
@@ -156,7 +154,6 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         return op;
     }
 
-    @RefreshScope
     @Bean
     public ValidateOperation transportValidateDelegate() {
         final TokenValidateOperation op = new TokenValidateOperation();
@@ -166,8 +163,8 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         return op;
     }
 
-    @RefreshScope
     @Bean
+    @RefreshScope
     public List transportTokenValidators() {
         final List list = new ArrayList<>();
         list.add(transportSamlTokenValidator());
@@ -175,15 +172,14 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         return list;
     }
 
-    @RefreshScope
     @Bean
+    @RefreshScope
     public List transportTokenProviders() {
         final List list = new ArrayList<>();
         list.add(transportSamlTokenProvider());
         return list;
     }
 
-    @RefreshScope
     @Bean
     public RealmProperties casRealm() {
         final WsFederationProperties.SecurityTokenService wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
@@ -202,9 +198,8 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         return realm;
     }
 
-
-    @RefreshScope
     @Bean
+    @RefreshScope
     public Map<String, RealmProperties> realms() {
         final WsFederationProperties.IdentityProvider idp = casProperties.getAuthn().getWsfedIdp().getIdp();
         final Map<String, RealmProperties> realms = new HashMap<>();
@@ -212,7 +207,6 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         return realms;
     }
 
-    @RefreshScope
     @Bean
     public SAMLTokenProvider transportSamlTokenProvider() {
         final WsFederationProperties.SecurityTokenService wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
@@ -245,19 +239,16 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         return provider;
     }
 
-    @RefreshScope
     @Bean
     public TokenValidator transportSamlTokenValidator() {
         return new SAMLTokenValidator();
     }
 
-    @RefreshScope
     @Bean
     public Validator transportUsernameTokenValidator() {
         return new CipheredCredentialsValidator(securityTokenServiceCredentialCipherExecutor());
     }
 
-    @RefreshScope
     @Bean
     public StaticService transportService() {
         final StaticService s = new StaticService();
@@ -265,7 +256,6 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         return s;
     }
 
-    @RefreshScope
     @ConditionalOnMissingBean(name = "transportSTSProperties")
     @Bean
     public STSPropertiesMBean transportSTSProperties() {
@@ -288,7 +278,6 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     }
 
     @Bean
-    @RefreshScope
     public SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder() {
         return new SecurityTokenServiceClientBuilder(casProperties.getAuthn().getWsfedIdp(),
             casProperties.getServer().getPrefix());
@@ -296,15 +285,14 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
 
     @ConditionalOnMissingBean(name = "securityTokenServiceAuthenticationMetaDataPopulator")
     @Bean
-    @RefreshScope
     public AuthenticationMetaDataPopulator securityTokenServiceAuthenticationMetaDataPopulator() {
         return new SecurityTokenServiceAuthenticationMetaDataPopulator(servicesManager,
             wsFederationAuthenticationServiceSelectionStrategy, securityTokenServiceCredentialCipherExecutor(),
             securityTokenServiceClientBuilder());
     }
 
-    @RefreshScope
     @Bean
+    @RefreshScope
     public CipherExecutor securityTokenServiceCredentialCipherExecutor() {
         final WsFederationProperties.SecurityTokenService wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
         return new SecurityTokenServiceCredentialCipherExecutor(wsfed.getCrypto().getEncryption().getKey(),

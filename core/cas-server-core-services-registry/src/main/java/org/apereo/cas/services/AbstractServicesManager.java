@@ -108,7 +108,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
             return null;
         }
         final RegisteredService service = findServiceBy(serviceId);
-        if (service != null && service.getClass().isAssignableFrom(clazz)) {
+        if (service != null && service.getClass().equals(clazz)) {
             return (T) service;
         }
         return null;
