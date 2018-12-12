@@ -40,7 +40,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
-import org.springframework.context.annotation.Lazy;
 
 /**
  * This is {@link CoreWsSecurityIdentityProviderConfiguration}.
@@ -92,7 +91,6 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
     @Qualifier("ticketRegistry")
     private ObjectProvider<TicketRegistry> ticketRegistry;
 
-    @Lazy
     @Bean
     public WSFederationValidateRequestController federationValidateRequestController() {
         return new WSFederationValidateRequestController(servicesManager.getIfAvailable(),
@@ -107,7 +105,6 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
             wsFederationCallbackService());
     }
 
-    @Lazy
     @Autowired
     @Bean
     public WSFederationValidateRequestCallbackController federationValidateRequestCallbackController(
@@ -131,16 +128,15 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
         return webApplicationServiceFactory.getIfAvailable().createService(WSFederationConstants.ENDPOINT_FEDERATION_REQUEST_CALLBACK);
     }
 
-    @Lazy
     @Bean
     @RefreshScope
     public WSFederationMetadataController wsFederationMetadataController() {
         return new WSFederationMetadataController(casProperties);
     }
 
-    @Lazy
     @Autowired
     @Bean
+    @RefreshScope
     public WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer(
         @Qualifier("securityTokenServiceCredentialCipherExecutor") final CipherExecutor securityTokenServiceCredentialCipherExecutor,
         @Qualifier("securityTokenServiceClientBuilder") final SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder) {
@@ -177,6 +173,4 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
             }
         };
     }
-
-
 }
