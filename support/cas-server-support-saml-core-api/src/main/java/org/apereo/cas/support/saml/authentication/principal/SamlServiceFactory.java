@@ -58,7 +58,8 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
     @Override
     public SamlService createService(final HttpServletRequest request) {
         val service = request.getParameter(SamlProtocolConstants.CONST_PARAM_TARGET);
-        val requestBody = request.getMethod().equalsIgnoreCase(HttpMethod.POST.name()) ? getRequestBody(request) : null;
+        val requestBody = request.getRequestURI().contains(SamlProtocolConstants.ENDPOINT_SAML_VALIDATE)
+            && request.getMethod().equalsIgnoreCase(HttpMethod.POST.name()) ? getRequestBody(request) : null;
 
         LOGGER.trace("Request Body: [{}]", requestBody);
         if (!StringUtils.hasText(service) && !StringUtils.hasText(requestBody)) {
