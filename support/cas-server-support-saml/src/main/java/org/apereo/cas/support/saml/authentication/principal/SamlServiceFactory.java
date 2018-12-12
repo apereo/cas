@@ -85,7 +85,7 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
             }
 
             @NonNull final Element artifactElement = requestChild.getChild("AssertionArtifact", NAMESPACE_SAML1);
-            artifactId = artifactElement.getValue();
+            artifactId = artifactElement.getValue().trim();
 
             final Attribute requestIdAttribute = requestChild.getAttribute("RequestID");
             if (requestIdAttribute == null) {
@@ -94,7 +94,7 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
                     + "While CAS does allow the RequestID attribute to be optional for the time being to preserve backward compatibility, this behavior MUST be fixed by the client "
                     + "and future CAS versions begin to enforce the presence of RequestID more forcefully to remain compliant with schema and protocol.");
             } else {
-                requestId = requestIdAttribute.getValue();
+                requestId = requestIdAttribute.getValue().trim();
             }
         }
 
