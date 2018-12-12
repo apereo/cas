@@ -49,7 +49,8 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
         }
 
         final String service = request.getParameter(SamlProtocolConstants.CONST_PARAM_TARGET);
-        final String requestBody = request.getMethod().equalsIgnoreCase(HttpMethod.POST.name()) ? getRequestBody(request) : null;
+        final String requestBody = requestURI.contains(SamlProtocolConstants.ENDPOINT_SAML_VALIDATE)
+            && request.getMethod().equalsIgnoreCase(HttpMethod.POST.name()) ? getRequestBody(request) : null;
 
         String artifactId = null;
         String requestId = null;
