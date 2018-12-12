@@ -198,8 +198,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             try {
                 LOGGER.debug("Fetching credentials from delegated client [{}]", client);
                 val credentials = getCredentialsFromDelegatedClient(webContext, client);
-                val clientCredential = new ClientCredential(credentials, client.getName());
-                LOGGER.info("Credentials are successfully authenticated using the delegated client [{}]", client.getName());
+                val clientCredential = new ClientCredential(credentials, clientName);
+                LOGGER.info("Credentials are successfully authenticated using the delegated client [{}]", clientName);
                 WebUtils.putCredential(context, clientCredential);
                 WebUtils.putServiceIntoFlowScope(context, service);
                 LOGGER.debug("Authentication is resolved by service request from [{}]", service);
