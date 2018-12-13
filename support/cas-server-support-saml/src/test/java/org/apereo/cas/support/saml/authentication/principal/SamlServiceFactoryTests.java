@@ -81,6 +81,7 @@ public class SamlServiceFactoryTests extends AbstractOpenSamlTests {
         request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "test");
         request.setContent(body.getBytes(StandardCharsets.UTF_8));
         request.setMethod(HttpMethod.POST.name());
+        request.setRequestURI(SamlProtocolConstants.ENDPOINT_SAML_VALIDATE);
         assertNull(samlServiceFactory.createService(request));
     }
 }
