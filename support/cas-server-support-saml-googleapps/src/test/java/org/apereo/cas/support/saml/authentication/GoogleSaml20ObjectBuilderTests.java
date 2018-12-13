@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.*;
@@ -21,6 +22,7 @@ import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 @Import(SamlGoogleAppsConfiguration.class)
 @Slf4j
+@TestPropertySource(locations = "classpath:/gapps.properties")
 public class GoogleSaml20ObjectBuilderTests extends AbstractOpenSamlTests {
 
     private static final String BASE64_SAML_AUTHN_REQUEST = "fVJNT+MwEL2vtP/B8j1JEy6V1QR1QWgrwW5EA4e9uc4kMbU9weO0u/9+3RQEHOD6/OZ9jGd1+dcadgBPGl3J83TBGTiFrXZ9yR"
