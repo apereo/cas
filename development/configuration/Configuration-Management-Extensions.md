@@ -61,6 +61,14 @@ What if you needed to override the definition of a CAS-provided bean and replace
 
 This is where `@Conditional` components come to aid. Most component/bean definitions in CAS are registered with some form of `@Conditional` tag that indicates to the bootstrapping process to ignore their creation, if *a bean definition with the same id* is already defined. This means you can create your own configuration class, register it and the design a `@Bean` definition only to have the context utilize yours rather than what ships with CAS by default.
 
+### Exclusions
+
+You can control the list of auto-configuration classes to exclude them in the `cas.properties` file:
+
+```properties
+spring.autoconfigure.exclude=org.apereo.cas.custom.config.SomethingConfiguration
+```
+
 ## CAS Properties
 
 The [collection of CAS-provided settings](Configuration-Properties.html) are all encapsulated inside a `CasConfigurationProperties` component. This is a parent class that brings all elements of the entire CAS platform together and binds values to the relevant fields inside in a very type-safe manner. The [configuration binding](Configuration-Server-Management.html) is typically done via `@EnableConfigurationProperties(CasConfigurationProperties.class)` on the actual configuration class. 
