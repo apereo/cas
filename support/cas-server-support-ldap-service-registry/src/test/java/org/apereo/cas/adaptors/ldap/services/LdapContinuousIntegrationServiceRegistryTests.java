@@ -12,9 +12,7 @@ import org.springframework.test.context.TestPropertySource;
  * @since 4.0.0
  */
 @TestPropertySource(properties = {
-    "cas.serviceRegistry.ldap.ldapUrl=ldap://localhost:10389",
-    "cas.serviceRegistry.ldap.useSsl=false",
-    "cas.serviceRegistry.ldap.baseDn=dc=example,dc=org",
+    "cas.serviceRegistry.ldap.poolPassivator=NONE",
     "cas.serviceRegistry.ldap.bindDn=cn=Directory Manager",
     "cas.serviceRegistry.ldap.bindCredential=password",
     "cas.serviceRegistry.ldap.objectClass=account"
