@@ -1,4 +1,8 @@
-package org.apereo.cas.support.saml.util;
+package org.apereo.cas.support.saml.authentication;
+
+import org.apereo.cas.support.saml.AbstractOpenSamlTests;
+import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
+import org.apereo.cas.support.saml.util.NonInflatingSaml20ObjectBuilder;
 
 import lombok.val;
 import org.junit.Test;
@@ -11,7 +15,7 @@ import static org.junit.Assert.*;
  * @author Jerome Leleu
  * @since 5.2.9
  */
-public class Saml20ObjectBuilderTests {
+public class Saml20ObjectBuilderTests extends AbstractOpenSamlTests {
 
     private static final String BASE64_SAML_AUTHN_REQUEST = "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c2FtbDJwOkF1dG"
             + "huUmVxdWVzdCB4bWxuczpzYW1sMnA9InVybjpvYXNpczpuYW1lczp0YzpTQU1MOjIuMDpwcm90b2NvbCIgQXNzZXJ0aW9uQ29uc3VtZXJTZXJ2aWN"
@@ -28,20 +32,10 @@ public class Saml20ObjectBuilderTests {
             + "xmlns:saml2=\"urn:oasis:names:tc:SAML:2.0:assertion\">http://localhost:8081/callback</saml2:Issuer><saml2p:NameIDPolicy "
             + "AllowCreate=\"true\"/></saml2p:AuthnRequest>";
 
-    private final AbstractSaml20ObjectBuilder builder = new TestableSaml20ObjectBuilder();
-
     @Test
     public void decodeNonInflatedSamlAuthnRequest() {
+        val builder = new NonInflatingSaml20ObjectBuilder(this.configBean);
         val decoded = builder.decodeSamlAuthnRequest(BASE64_SAML_AUTHN_REQUEST);
         assertEquals(SAML_AUTHN_REQUEST, decoded);
-    }
-
-    private static class TestableSaml20ObjectBuilder extends AbstractSaml20ObjectBuilder {
-
-        private static final long serialVersionUID = 42320924814250494L;
-
-        TestableSaml20ObjectBuilder() {
-            super(null);
-        }
     }
 }

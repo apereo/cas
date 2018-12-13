@@ -38,7 +38,6 @@ import org.opensaml.saml.saml2.core.SubjectConfirmation;
 import org.opensaml.saml.saml2.core.SubjectConfirmationData;
 import org.opensaml.soap.soap11.ActorBearing;
 
-import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -481,11 +480,20 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
             return null;
         }
 
+        return inflateAuthnRequest(decodedBytes);
+    }
+
+    /**
+     * Inflate authn request string.
+     *
+     * @param decodedBytes the decoded bytes
+     * @return the string
+     */
+    protected String inflateAuthnRequest(final byte[] decodedBytes) {
         val inflated = CompressionUtils.inflate(decodedBytes);
         if (!StringUtils.isEmpty(inflated)) {
             return inflated;
         }
-
-        return new String(decodedBytes, StandardCharsets.UTF_8);
+        return CompressionUtils.decodeByteArrayToString(decodedBytes);
     }
 }
