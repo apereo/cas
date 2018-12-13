@@ -23,6 +23,20 @@ public abstract class AbstractLdapProperties implements Serializable {
     private static final long serialVersionUID = 2682743362616979324L;
 
     /**
+     * Describe hostname verification strategies.
+     */
+    public enum LdapHostnameVerifierOptions {
+        /**
+         * Default option, forcing verification.
+         */
+        DEFAULT,
+        /**
+         * Skip hostname verification and allow all.
+         */
+        ANY
+    }
+
+    /**
      * The ldap type used to handle specific ops.
      */
     public enum LdapType {
@@ -53,10 +67,12 @@ public abstract class AbstractLdapProperties implements Serializable {
         /**
          * No passivator.
          */
-        NONE, /**
+        NONE,
+        /**
          * Close passivator.
          */
-        CLOSE, /**
+        CLOSE,
+        /**
          * Bind passivator.
          */
         BIND
@@ -70,16 +86,20 @@ public abstract class AbstractLdapProperties implements Serializable {
         /**
          * Default JNDI.
          */
-        DEFAULT, /**
+        DEFAULT,
+        /**
          * First ldap used until it fails.
          */
-        ACTIVE_PASSIVE, /**
+        ACTIVE_PASSIVE,
+        /**
          * Navigate the ldap url list for new connections and circle back.
          */
-        ROUND_ROBIN, /**
+        ROUND_ROBIN,
+        /**
          * Randomly pick a url.
          */
-        RANDOM, /**
+        RANDOM,
+        /**
          * ldap urls based on DNS SRV records.
          */
         DNS_SRV
@@ -233,7 +253,7 @@ public abstract class AbstractLdapProperties implements Serializable {
      */
     private boolean allowMultipleDns;
 
-    /** 
+    /**
      * Set if multiple Entries are allowed.
      */
     private boolean allowMultipleEntries;
@@ -301,6 +321,12 @@ public abstract class AbstractLdapProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private LdapValidatorProperties validator = new LdapValidatorProperties();
+
+    /**
+     * Hostname verification options.
+     * Accepted values are {@link LdapHostnameVerifierOptions#DEFAULT} and {@link LdapHostnameVerifierOptions#ANY}.
+     */
+    private LdapHostnameVerifierOptions hostnameVerifier = LdapHostnameVerifierOptions.DEFAULT;
 
     /**
      * Name of the authentication handler.

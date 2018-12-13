@@ -93,6 +93,7 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
             + "<samlp:AssertionArtifact>artifact</samlp:AssertionArtifact></samlp:Request></SOAP-ENV:Body></SOAP-ENV:Envelope>";
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setMethod("POST");
+        request.setRequestURI(SamlProtocolConstants.ENDPOINT_SAML_VALIDATE);
         request.setContent(body.getBytes(StandardCharsets.UTF_8));
 
         final SamlService impl = samlServiceFactory.createService(request);

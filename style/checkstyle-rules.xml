@@ -51,7 +51,7 @@
             <property name="severity" value="error"/>
         </module>
         <module name="CyclomaticComplexity">
-            <property name="max" value="25"/>
+            <property name="max" value="30"/>
             <property name="severity" value="error"/>
         </module>
         <module name="DefaultComesLast">

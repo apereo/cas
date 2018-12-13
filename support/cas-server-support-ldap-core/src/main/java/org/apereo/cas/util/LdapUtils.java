@@ -84,6 +84,8 @@ import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.QualityOfProtection;
 import org.ldaptive.sasl.SaslConfig;
 import org.ldaptive.sasl.SecurityStrength;
+import org.ldaptive.ssl.AllowAnyHostnameVerifier;
+import org.ldaptive.ssl.DefaultHostnameVerifier;
 import org.ldaptive.ssl.KeyStoreCredentialConfig;
 import org.ldaptive.ssl.SslConfig;
 import org.ldaptive.ssl.X509CredentialConfig;
@@ -748,7 +750,7 @@ public class LdapUtils {
 
         final String urls = l.getLdapUrl().contains(" ")
             ? l.getLdapUrl()
-            : Arrays.stream(l.getLdapUrl().split(",")).collect(Collectors.joining(" "));
+            : String.join(" ", l.getLdapUrl().split(","));
         LOGGER.debug("Transformed LDAP urls from [{}] to [{}]", l.getLdapUrl(), urls);
         cc.setLdapUrl(urls);
 
@@ -785,7 +787,6 @@ public class LdapUtils {
             final X509CredentialConfig cfg = new X509CredentialConfig();
             cfg.setTrustCertificates(l.getTrustCertificates());
             cc.setSslConfig(new SslConfig(cfg));
-
         } else if (l.getKeystore() != null) {
             LOGGER.debug("Creating LDAP SSL configuration via keystore [{}]", l.getKeystore());
             final KeyStoreCredentialConfig cfg = new KeyStoreCredentialConfig();
@@ -796,6 +797,18 @@ public class LdapUtils {
         } else {
             LOGGER.debug("Creating LDAP SSL configuration via the native JVM truststore");
             cc.setSslConfig(new SslConfig());
+        }
+        final SslConfig sslConfig = cc.getSslConfig();
+        if (sslConfig != null) {
+            switch (l.getHostnameVerifier()) {
+                case ANY:
+                    sslConfig.setHostnameVerifier(new AllowAnyHostnameVerifier());
+                    break;
+                case DEFAULT:
+                default:
+                    sslConfig.setHostnameVerifier(new DefaultHostnameVerifier());
+                    break;
+            }
         }
         if (StringUtils.isNotBlank(l.getSaslMechanism())) {
             LOGGER.debug("Creating LDAP SASL mechanism via [{}]", l.getSaslMechanism());
