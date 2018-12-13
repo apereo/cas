@@ -7,8 +7,11 @@ category: SSO & SLO
 # Logout and Single Logout (SLO)
 
 There are potentially many active application sessions during a CAS single sign-on session, and the distinction between
-logout and single logout is based on the number of sessions that are ended upon a _logout_ operation. The scope of logout
-is determined by where the action takes place:
+logout and single logout is based on the number of sessions that are ended upon a _logout_ operation. 
+
+<div class="alert alert-info"><strong>Protocol Support</strong><p>Note that SLO described here specifically deals with the semantics of the CAS protocol. All other available protocols in CAS may offer and behave differently when it comes to handling, receiving and publishing logout requests whether CAS is acting as an identity provider or service provider. SLO support for each protocol implementation may vary and you should always verify the extent of available functionality for each protocol implementation.</p></div>
+
+The scope of logout is determined by where the action takes place:
 
 1. Application logout - ends a single application session
 2. CAS logout - ends the CAS SSO session
