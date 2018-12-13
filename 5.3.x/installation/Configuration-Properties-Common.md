@@ -1039,6 +1039,21 @@ The following LDAP validators can be used to test connection health status:
 #${configurationKey}.validator.dn=
 ```
 
+### LDAP SSL Hostname Verification
+
+The following LDAP validators can be used to test connection health status:
+
+| Type                    | Description
+|-------------------------|------------------------------------
+| `DEFAULT`               | Default option to enable and force hostname verification of the LDAP SSL configuration.
+| `ANY`                   | Skip and ignore the hostname verification of the LDAP SSL configuration.
+
+```properties
+#${configurationKey}.hostnameVerifier=DEFAULT|ANY
+```
+      
+### LDAP Types
+
 A number of components/features in CAS allow you to explicitly indicate a `type` for the LDAP server, specially in cases where CAS needs to update an attribute, etc in LDAP (i.e. consent, password management, etc). The relevant setting would be:
 
 ```properties
