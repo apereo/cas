@@ -93,6 +93,7 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
             + "MinorVersion=\"1\" RequestID=\"_192.168.16.51.1024506224022\" IssueInstant=\"2002-06-19T17:03:44.022Z\">"
             + "<samlp:AssertionArtifact> \n\n   artifact    \n\n   </samlp:AssertionArtifact></samlp:Request></SOAP-ENV:Body></SOAP-ENV:Envelope>";
         val request = new MockHttpServletRequest();
+        request.setRequestURI(SamlProtocolConstants.ENDPOINT_SAML_VALIDATE);
         request.setMethod("POST");
         request.setContent(body.getBytes(StandardCharsets.UTF_8));
 
