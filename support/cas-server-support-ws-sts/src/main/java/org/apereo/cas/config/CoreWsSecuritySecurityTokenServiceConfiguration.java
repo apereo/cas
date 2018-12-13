@@ -120,7 +120,6 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         return handlers;
     }
 
-    @RefreshScope
     @Bean
     @SneakyThrows
     public SecurityTokenServiceProvider transportSTSProviderBean() {
@@ -130,7 +129,6 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         return provider;
     }
 
-    @RefreshScope
     @Bean
     public IssueOperation transportIssueDelegate() {
         val wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
@@ -153,7 +151,6 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         return op;
     }
 
-    @RefreshScope
     @Bean
     public ValidateOperation transportValidateDelegate() {
         val op = new TokenValidateOperation();
@@ -180,7 +177,6 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         return list;
     }
 
-    @RefreshScope
     @Bean
     public RealmProperties casRealm() {
         val wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
@@ -209,7 +205,6 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         return realms;
     }
 
-    @RefreshScope
     @Bean
     public SAMLTokenProvider transportSamlTokenProvider() {
         val wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
@@ -242,20 +237,16 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         return provider;
     }
 
-    @RefreshScope
-
     @Bean
     public TokenValidator transportSamlTokenValidator() {
         return new SAMLTokenValidator();
     }
 
-    @RefreshScope
     @Bean
     public Validator transportUsernameTokenValidator() {
         return new CipheredCredentialsValidator(securityTokenServiceCredentialCipherExecutor());
     }
 
-    @RefreshScope
     @Bean
     public StaticService transportService() {
         val s = new StaticService();
@@ -263,7 +254,6 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         return s;
     }
 
-    @RefreshScope
     @ConditionalOnMissingBean(name = "transportSTSProperties")
     @Bean
     public STSPropertiesMBean transportSTSProperties() {
@@ -286,7 +276,6 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     }
 
     @Bean
-    @RefreshScope
     public SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder() {
         return new SecurityTokenServiceClientBuilder(casProperties.getAuthn().getWsfedIdp(),
             casProperties.getServer().getPrefix());

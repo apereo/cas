@@ -22,6 +22,7 @@ dependencies {
     implementation libraries.pac4jcore
     implementation libraries.pac4jcas
     implementation libraries.nimbus
+    implementation libraries.apachevelocity
     implementation libraries.opensaml
     implementation libraries.shibidpjavasupport
     

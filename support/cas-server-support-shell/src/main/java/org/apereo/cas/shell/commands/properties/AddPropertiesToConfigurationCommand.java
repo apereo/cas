@@ -134,8 +134,7 @@ public class AddPropertiesToConfigurationCommand {
 
     private static Map<String, ConfigurationMetadataProperty> findProperties(final String group) {
         val find = new FindPropertiesCommand();
-        val results = find.findByProperty(group);
-        return results;
+        return find.findByProperty(group);
     }
 
     private static void createConfigurationFileIfNeeded(final File filePath) throws IOException {

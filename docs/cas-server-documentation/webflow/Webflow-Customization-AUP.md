@@ -28,8 +28,8 @@ if you wish to dynamically alter the page to present different text, etc.
 
 <div class="alert alert-info"><strong>Webflow Sequence</strong><p>Remember that acceptable usage policy executes
 after a successful authentication event where CAS has already established the authentication principal, since the 
-policy record is strongly tied to the identified user record. Implement this feature before the authentication event
-would require heavy modifications to the CAS webflow as well as alternative means of storing and remembering decisions
+policy record is strongly tied to the identified user record. Implementing this feature before the authentication event
+would require rather heavy modifications to the CAS webflow as well as alternative means of storing and remembering decisions
 such as cookies or browser storage, etc.</p></div>
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#acceptable-usage-policy).
@@ -40,8 +40,7 @@ Usage policy user decisions are stored and remembered via the following ways.
 
 In almost all storage strategies, CAS allows the deployer
 to detect the current user's policy choice via a CAS single-valued `boolean` attribute.
-The attribute must be resolved using
-the [CAS attribute resolution strategy](../integration/Attribute-Resolution.html).
+The attribute must be resolved using the [CAS attribute resolution strategy](../integration/Attribute-Resolution.html).
 If the attribute contains a value of `false`, CAS will attempt to
 ask for policy acceptance. Upon accepting the policy, the result will be stored back into storage.
 

@@ -64,15 +64,13 @@ public class CasConsentJdbcConfiguration {
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean consentEntityManagerFactory() {
-        val bean =
-            JpaBeans.newHibernateEntityManagerFactoryBean(
-                new JpaConfigDataHolder(
-                    jpaConsentVendorAdapter(),
-                    "jpaConsentContext",
-                    jpaConsentPackagesToScan(),
-                    dataSourceConsent()),
-                casProperties.getConsent().getJpa());
-        return bean;
+        return JpaBeans.newHibernateEntityManagerFactoryBean(
+            new JpaConfigDataHolder(
+                jpaConsentVendorAdapter(),
+                "jpaConsentContext",
+                jpaConsentPackagesToScan(),
+                dataSourceConsent()),
+            casProperties.getConsent().getJpa());
     }
 
     @Autowired

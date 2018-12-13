@@ -38,20 +38,18 @@ public class SamlRequestAuditResourceResolver extends ReturnValueAsStringResourc
     }
 
     private String[] getAuditResourceFromSamlLogoutRequest(final LogoutRequest returnValue) {
-        val request = returnValue;
         val result =
             new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
-                .append("issuer", request.getIssuer().getValue())
+                .append("issuer", returnValue.getIssuer().getValue())
                 .toString();
         return new String[]{result};
     }
 
     private String[] getAuditResourceFromSamlAuthnRequest(final AuthnRequest returnValue) {
-        val request = returnValue;
         val result =
             new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
-                .append("issuer", request.getIssuer().getValue())
-                .append("binding", request.getProtocolBinding())
+                .append("issuer", returnValue.getIssuer().getValue())
+                .append("binding", returnValue.getProtocolBinding())
                 .toString();
         return new String[]{result};
     }

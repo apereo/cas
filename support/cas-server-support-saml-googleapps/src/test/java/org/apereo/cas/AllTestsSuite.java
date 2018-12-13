@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.support.saml.authentication.GoogleAppsSamlAuthenticationRequestTests;
+import org.apereo.cas.support.saml.authentication.GoogleSaml20ObjectBuilderTests;
 import org.apereo.cas.support.saml.authentication.principal.GoogleAccountsServiceFactoryTests;
 import org.apereo.cas.support.saml.authentication.principal.GoogleAccountsServiceTests;
 
@@ -17,7 +18,8 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
     GoogleAppsSamlAuthenticationRequestTests.class,
     GoogleAccountsServiceTests.class,
-    GoogleAccountsServiceFactoryTests.class
+    GoogleAccountsServiceFactoryTests.class,
+    GoogleSaml20ObjectBuilderTests.class
 })
 public class AllTestsSuite {
 }

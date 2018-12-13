@@ -100,7 +100,7 @@ public abstract class BaseJWTTokenTicketBuilderTests {
 
         @Bean
         public AbstractUrlBasedTicketValidator casClientTicketValidator() {
-            val validator = new AbstractUrlBasedTicketValidator("https://cas.example.org") {
+            return new AbstractUrlBasedTicketValidator("https://cas.example.org") {
                 @Override
                 protected String getUrlSuffix() {
                     return "/cas";
@@ -116,7 +116,6 @@ public abstract class BaseJWTTokenTicketBuilderTests {
                     return "theresponse";
                 }
             };
-            return validator;
         }
     }
 }

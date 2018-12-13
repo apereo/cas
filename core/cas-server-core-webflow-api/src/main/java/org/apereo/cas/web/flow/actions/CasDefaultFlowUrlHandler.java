@@ -59,10 +59,10 @@ public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
 
 
         val executionKey = encodeSingleParameter(this.flowExecutionKeyParameter, flowExecutionKey, encoding);
-        val flowUrl = request.getParameterMap().entrySet().stream()
+        return request.getParameterMap().entrySet()
+            .stream()
             .flatMap(entry -> encodeMultiParameter(entry.getKey(), entry.getValue(), encoding))
             .collect(Collectors.joining(DELIMITER, request.getRequestURI() + '?', DELIMITER + executionKey));
-        return flowUrl;
     }
 
     @Override

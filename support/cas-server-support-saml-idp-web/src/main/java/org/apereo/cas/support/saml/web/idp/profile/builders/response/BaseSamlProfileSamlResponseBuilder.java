@@ -219,8 +219,7 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
 
         if (service.isEncryptAssertions()) {
             LOGGER.debug("SAML service [{}] requires assertions to be encrypted", adaptor.getEntityId());
-            val encryptedAssertion = this.samlObjectEncrypter.encode(assertion, service, adaptor);
-            return encryptedAssertion;
+            return this.samlObjectEncrypter.encode(assertion, service, adaptor);
         }
         LOGGER.debug("SAML registered service [{}] does not require assertions to be encrypted", adaptor.getEntityId());
         return assertion;

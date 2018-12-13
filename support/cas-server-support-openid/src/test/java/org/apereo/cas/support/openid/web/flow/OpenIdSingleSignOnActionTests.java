@@ -68,7 +68,7 @@ public class OpenIdSingleSignOnActionTests extends AbstractOpenIdTests {
 
         val factory = new OpenIdServiceFactory("");
         val service = factory.createService(request);
-        context.getFlowScope().put("service", service);
+        WebUtils.putServiceIntoFlowScope(context, service);
         context.getFlowScope().put(WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, "tgtId");
 
         context.setExternalContext(new ServletExternalContext(
@@ -90,7 +90,7 @@ public class OpenIdSingleSignOnActionTests extends AbstractOpenIdTests {
         request.setParameter(OpenIdProtocolConstants.OPENID_RETURNTO, "https://google.com");
 
         val service = new OpenIdServiceFactory().createService(request);
-        context.getFlowScope().put("service", service);
+        WebUtils.putServiceIntoFlowScope(context, service);
         context.getFlowScope().put(WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, t.getId());
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         assertEquals("success", this.action.execute(context).getId());
