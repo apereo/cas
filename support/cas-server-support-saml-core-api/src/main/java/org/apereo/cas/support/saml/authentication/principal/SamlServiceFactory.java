@@ -58,7 +58,8 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
     @Override
     public SamlService createService(final HttpServletRequest request) {
         val service = request.getParameter(SamlProtocolConstants.CONST_PARAM_TARGET);
-        val requestBody = request.getMethod().equalsIgnoreCase(HttpMethod.POST.name()) ? getRequestBody(request) : null;
+        val requestBody = request.getRequestURI().contains(SamlProtocolConstants.ENDPOINT_SAML_VALIDATE)
+            && request.getMethod().equalsIgnoreCase(HttpMethod.POST.name()) ? getRequestBody(request) : null;
 
         LOGGER.trace("Request Body: [{}]", requestBody);
         if (!StringUtils.hasText(service) && !StringUtils.hasText(requestBody)) {
@@ -115,7 +116,7 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
             LOGGER.trace("XML element has no attribute for RequestID");
             return null;
         }
-        return requestIdAttribute.getValue();
+        return requestIdAttribute.getValue().trim();
     }
 
     private static String getArtifactIdFromRequest(final Element requestChild) {
@@ -124,6 +125,10 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
             return null;
         }
         val artifactElement = requestChild.getChild("AssertionArtifact", NAMESPACE_SAML1);
-        return artifactElement.getValue();
+        if (artifactElement == null) {
+            LOGGER.trace("Element [{}] does not contain a child element for AssertionArtifact", requestChild.getName());
+            return null;
+        }
+        return artifactElement.getValue().trim();
     }
 }
