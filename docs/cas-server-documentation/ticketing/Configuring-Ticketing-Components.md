@@ -24,7 +24,7 @@ There are is a wide range of ticket registries on the menu. The selection criter
 - Choose a technology that you are most familiar with and have the skills and patience to troubleshoot, tune and scale for the win. 
 - Choose a technology that does not force your CAS configuration to be tied to any individual servers/nodes in the cluster, as this will present auto-scaling issues and manual effort.
 - Choose a technology that works well with your network and firewall configuration and is performant and reliable enough based on your network topology.
-- Choose a technology that shows promising results under *your expected load*, having run performance and stress tests.
+- Choose a technology that shows promising results under *your expected load*, having run [performance and stress tests](../high_availability/High-Availability-Performance-Testing.html).
 - Choose a technology that does not depend on outside processes and systems as much as possible, is self-reliant and self contained.
 
 The above simply outlines suggestions and guidelines you may wish to consider. Any option and decision presents various pros and cons and in the end, you must decide which drawbacks or advantages provide you with the best experience.
