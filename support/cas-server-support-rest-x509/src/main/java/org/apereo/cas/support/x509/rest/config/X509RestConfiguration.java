@@ -62,6 +62,13 @@ public class X509RestConfiguration implements RestHttpRequestCredentialFactoryCo
         val tlsClientAuth = restProperties.isTlsClientAuth();
         LOGGER.debug("is certificate extractor available? = {}, headerAuth = {}, bodyAuth = {}, tlsClientAuth = {}",
                      extractor, headerAuth, bodyAuth, tlsClientAuth);
+
+        if (tlsClientAuth && (headerAuth || bodyAuth)) {
+            LOGGER.warn("X509 REST configuration seems inconsistant as activating headerAuth or bodyAuth supposes "
+                        + "that the CAS server is not directly reachable by clients (see security warning in the "
+                        +"documentation) and activating tlsClientAuth suppose the opposite.");
+        }
+
         if (extractor != null && headerAuth) {
             factory.registerCredentialFactory(x509RestRequestHeader());
         }
