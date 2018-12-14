@@ -85,6 +85,8 @@ public class EhcacheTicketRegistryConfiguration {
         val cache = casProperties.getTicket().getRegistry().getEhcache();
         val bean = new EhCacheManagerFactoryBean();
 
+        cache.getSystemProps().forEach((key, value) -> System.setProperty(key, value));
+
         val configExists = ResourceUtils.doesResourceExist(cache.getConfigLocation());
         if (configExists) {
             bean.setConfigLocation(cache.getConfigLocation());
