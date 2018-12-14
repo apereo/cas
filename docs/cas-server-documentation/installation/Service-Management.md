@@ -31,12 +31,12 @@ Registered services present the following metadata:
 | Field                             | Description
 |-----------------------------------|---------------------------------------------------------------------------------
 | `id`                              | Required unique identifier. This **MUST** be a valid numeric value.
-| `name`                            | Required name (`255` characters or less).
+| `name`                            | Required name (`255` characters or less). This is for information purposes, e.g is shown in logging.
 | `description`                     | Optional free-text description of the service. (`255` characters or less)
 | `informationUrl`                  | Optional free-text link to the service information guide.
 | `privacyUrl`                      | Optional free-text link to the service privacy policy.
 | `logo`                            | Optional path to an image file that is the logo for this service. The image will be displayed on the login page along with the service description and name. The value may be a relative path to the `images` directory of the CAS web application or it may be a full URL.
-| `serviceId`                       | Required [regular expression](http://docs.oracle.com/javase/tutorial/essential/regex/) describing a logical service. A logical service defines one or more URLs where a service or services are located. The definition of the url pattern must be **done carefully** because it can open security breaches.
+| `serviceId`                       | Required [regular expression](http://docs.oracle.com/javase/tutorial/essential/regex/) describing a logical service. A logical service defines one or more URLs where a service or services are located. The definition of the url pattern must be **done carefully** because it can open security breaches. This will be compared against the value passed in from e.g the 'service' param in a Spring Web client.
 | `theme`                           | Optional theme name that may be used to customize the CAS UI when the service requests a ticket. See [this guide](User-Interface-Customization.html) for more details.
 | `proxyPolicy`                     | Determines whether the service is able to proxy authentication. See [this guide](Configuring-Service-Proxy-Policy.html) for more info.
 | `evaluationOrder`                 | Determines relative order of evaluation of registered services. This flag is particularly important in cases where two service URL expressions cover the same services; evaluation order determines which registration is evaluated first and acts as an internal sorting factor.
