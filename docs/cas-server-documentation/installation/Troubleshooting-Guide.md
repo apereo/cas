@@ -88,7 +88,7 @@ authentication request is submitted to the CAS `login` endpoint, the destination
 will be checked against the CAS service registry to determine if the application is allowed to use CAS. If the url is not found, this 
 message will be displayed back. Since service definitions in the registry have the ability to be defined by a url pattern, 
 it is entirely possible that the pattern in the registry for the service definition is misconfigured and does not produce a successful match 
-for the requested application url.
+for the requested application url. You can check the log messages to identify the details of the service that could not be found, and the list of registered services, and use a regex checking tool to verify that they should match (like http://regex101.com).
 
 Please [review this guide](Service-Management.html) to better understand the CAS service registry.
 
