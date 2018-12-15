@@ -1,10 +1,5 @@
 package org.apereo.cas.ws.idp.web;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.cxf.ws.security.tokenstore.SecurityToken;
-import org.apache.http.client.utils.URIBuilder;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
@@ -26,6 +21,13 @@ import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
+
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.cxf.ws.security.tokenstore.SecurityToken;
+import org.apache.http.client.utils.URIBuilder;
+import org.jasig.cas.client.util.CommonUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
@@ -98,16 +100,16 @@ public abstract class BaseWSFederationRequestController {
     protected final TicketRegistrySupport ticketRegistrySupport;
 
     public BaseWSFederationRequestController(
-            final ServicesManager servicesManager,
-            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            final CasConfigurationProperties casProperties,
-            final AuthenticationServiceSelectionStrategy serviceSelectionStrategy,
-            final HttpClient httpClient,
-            final SecurityTokenTicketFactory securityTokenTicketFactory,
-            final TicketRegistry ticketRegistry,
-            final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
-            final TicketRegistrySupport ticketRegistrySupport,
-            final Service callbackService) {
+        final ServicesManager servicesManager,
+        final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+        final CasConfigurationProperties casProperties,
+        final AuthenticationServiceSelectionStrategy serviceSelectionStrategy,
+        final HttpClient httpClient,
+        final SecurityTokenTicketFactory securityTokenTicketFactory,
+        final TicketRegistry ticketRegistry,
+        final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
+        final TicketRegistrySupport ticketRegistrySupport,
+        final Service callbackService) {
         this.servicesManager = servicesManager;
         this.webApplicationServiceFactory = webApplicationServiceFactory;
         this.casProperties = casProperties;
@@ -119,7 +121,7 @@ public abstract class BaseWSFederationRequestController {
         this.ticketRegistrySupport = ticketRegistrySupport;
         this.callbackService = callbackService;
     }
-    
+
     /**
      * Construct service url string.
      *
@@ -153,10 +155,10 @@ public abstract class BaseWSFederationRequestController {
             final URI url = builder.build();
 
             LOGGER.trace("Built service callback url [{}]", url);
-            return org.jasig.cas.client.util.CommonUtils.constructServiceUrl(request, response,
-                    url.toString(), casProperties.getServer().getName(),
-                    CasProtocolConstants.PARAMETER_SERVICE,
-                    CasProtocolConstants.PARAMETER_TICKET, false);
+            return CommonUtils.constructServiceUrl(request, response,
+                url.toString(), casProperties.getServer().getName(),
+                CasProtocolConstants.PARAMETER_SERVICE,
+                CasProtocolConstants.PARAMETER_TICKET, false);
         } catch (final Exception e) {
             throw new SamlException(e.getMessage(), e);
         }
@@ -174,9 +176,9 @@ public abstract class BaseWSFederationRequestController {
             final TicketGrantingTicket tgt = this.ticketRegistry.getTicket(cookieValue, TicketGrantingTicket.class);
             if (tgt != null) {
                 final String sts = tgt.getDescendantTickets().stream()
-                        .filter(t -> t.startsWith(SecurityTokenTicket.PREFIX))
-                        .findFirst()
-                        .orElse(null);
+                    .filter(t -> t.startsWith(SecurityTokenTicket.PREFIX))
+                    .findFirst()
+                    .orElse(null);
                 if (StringUtils.isNotBlank(sts)) {
                     final SecurityTokenTicket stt = ticketRegistry.getTicket(sts, SecurityTokenTicket.class);
                     if (stt == null || stt.isExpired()) {
@@ -234,16 +236,13 @@ public abstract class BaseWSFederationRequestController {
     /**
      * Gets ws federation registered service.
      *
-     * @param response   the response
-     * @param request    the request
-     * @param fedRequest the fed request
+     * @param targetService the target service
+     * @param fedRequest    the fed request
      * @return the ws federation registered service
      */
-    protected WSFederationRegisteredService findAndValidateFederationRequestForRegisteredService(final HttpServletResponse response,
-                                                                                                 final HttpServletRequest request,
+    protected WSFederationRegisteredService findAndValidateFederationRequestForRegisteredService(final Service targetService,
                                                                                                  final WSFederationRequest fedRequest) {
-        final String serviceUrl = constructServiceUrl(request, response, fedRequest);
-        final Service targetService = this.serviceSelectionStrategy.resolveServiceFrom(this.webApplicationServiceFactory.createService(serviceUrl));
+
         final WSFederationRegisteredService svc = getWsFederationRegisteredService(targetService);
 
         final WsFederationProperties.IdentityProvider idp = casProperties.getAuthn().getWsfedIdp().getIdp();

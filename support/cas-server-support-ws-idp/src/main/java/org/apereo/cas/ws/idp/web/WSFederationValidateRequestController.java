@@ -1,8 +1,5 @@
 package org.apereo.cas.ws.idp.web;
 
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
@@ -18,6 +15,10 @@ import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
+
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.client.authentication.AuthenticationRedirectStrategy;
 import org.jasig.cas.client.authentication.DefaultAuthenticationRedirectStrategy;
 import org.jasig.cas.client.util.CommonUtils;
@@ -47,9 +48,11 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
         final TicketRegistrySupport ticketRegistrySupport,
         final Service callbackService) {
         super(servicesManager,
-            webApplicationServiceFactory, casProperties, serviceSelectionStrategy, httpClient,
+            webApplicationServiceFactory, casProperties,
+            serviceSelectionStrategy, httpClient,
             securityTokenTicketFactory, ticketRegistry,
-            ticketGrantingTicketCookieGenerator, ticketRegistrySupport, callbackService);
+            ticketGrantingTicketCookieGenerator,
+            ticketRegistrySupport, callbackService);
     }
 
     /**
@@ -68,7 +71,8 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
                 handleLogoutRequest(fedRequest, request, response);
                 break;
             case WSFederationConstants.WSIGNIN10:
-                handleInitialAuthenticationRequest(fedRequest, response, request);
+                final Service targetService = webApplicationServiceFactory.createService(fedRequest.getWreply());
+                handleInitialAuthenticationRequest(fedRequest, targetService, response, request);
                 break;
             default:
                 throw new UnauthorizedAuthenticationException("The authentication request is not recognized",
@@ -92,8 +96,10 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
     }
 
     private void handleInitialAuthenticationRequest(final WSFederationRequest fedRequest,
-                                                    final HttpServletResponse response, final HttpServletRequest request) {
-        final WSFederationRegisteredService service = findAndValidateFederationRequestForRegisteredService(response, request, fedRequest);
+                                                    final Service targetService,
+                                                    final HttpServletResponse response,
+                                                    final HttpServletRequest request) {
+        final WSFederationRegisteredService service = findAndValidateFederationRequestForRegisteredService(targetService, fedRequest);
         LOGGER.debug("Redirecting to identity provider for initial authentication [{}]", fedRequest);
         redirectToIdentityProvider(fedRequest, response, request, service);
     }
