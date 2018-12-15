@@ -38,10 +38,12 @@ import org.apache.cxf.sts.token.delegation.TokenDelegationHandler;
 import org.apache.cxf.sts.token.provider.DefaultConditionsProvider;
 import org.apache.cxf.sts.token.provider.DefaultSubjectProvider;
 import org.apache.cxf.sts.token.provider.SAMLTokenProvider;
+import org.apache.cxf.sts.token.provider.SCTProvider;
 import org.apache.cxf.sts.token.provider.jwt.JWTTokenProvider;
 import org.apache.cxf.sts.token.realm.RealmProperties;
 import org.apache.cxf.sts.token.realm.Relationship;
 import org.apache.cxf.sts.token.validator.SAMLTokenValidator;
+import org.apache.cxf.sts.token.validator.SCTValidator;
 import org.apache.cxf.sts.token.validator.TokenValidator;
 import org.apache.cxf.sts.token.validator.X509TokenValidator;
 import org.apache.cxf.sts.token.validator.jwt.JWTTokenValidator;
@@ -49,6 +51,8 @@ import org.apache.cxf.transport.servlet.CXFServlet;
 import org.apache.cxf.ws.security.sts.provider.SecurityTokenServiceProvider;
 import org.apache.cxf.ws.security.sts.provider.operation.IssueOperation;
 import org.apache.cxf.ws.security.sts.provider.operation.ValidateOperation;
+import org.apache.cxf.ws.security.tokenstore.MemoryTokenStore;
+import org.apache.cxf.ws.security.tokenstore.TokenStore;
 import org.apache.wss4j.dom.validate.Validator;
 import org.opensaml.saml.saml2.core.NameID;
 import org.springframework.beans.factory.BeanCreationException;
@@ -148,7 +152,14 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         op.setEventListener(loggerListener());
         op.setDelegationHandlers(delegationHandlers());
         op.setEncryptIssuedToken(wsfed.isEncryptTokens());
+        op.setTokenStore(securityTokenServiceTokenStore());
         return op;
+    }
+
+    @ConditionalOnMissingBean(name = "securityTokenServiceTokenStore")
+    @Bean
+    public TokenStore securityTokenServiceTokenStore() {
+        return new MemoryTokenStore();
     }
 
     @Bean
@@ -166,7 +177,8 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         val list = new ArrayList<Object>();
         list.add(transportSamlTokenValidator());
         list.add(transportJwtTokenValidator());
-        list.add(new X509TokenValidator());
+        list.add(transportSecureContextTokenValidator());
+        list.add(transportX509TokenValidator());
         return list;
     }
 
@@ -176,6 +188,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         val list = new ArrayList<Object>();
         list.add(transportSamlTokenProvider());
         list.add(transportJwtTokenProvider());
+        list.add(transportSecureContextTokenProvider());
         return list;
     }
 
@@ -205,6 +218,11 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         val realms = new HashMap<String, RealmProperties>();
         realms.put(idp.getRealmName(), casRealm());
         return realms;
+    }
+
+    @Bean
+    public SCTProvider transportSecureContextTokenProvider() {
+        return new SCTProvider();
     }
 
     @Bean
@@ -255,6 +273,16 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @Bean
     public TokenValidator transportJwtTokenValidator() {
         return new JWTTokenValidator();
+    }
+
+    @Bean
+    public TokenValidator transportSecureContextTokenValidator() {
+        return new SCTValidator();
+    }
+
+    @Bean
+    public TokenValidator transportX509TokenValidator() {
+        return new X509TokenValidator();
     }
 
     @Bean
