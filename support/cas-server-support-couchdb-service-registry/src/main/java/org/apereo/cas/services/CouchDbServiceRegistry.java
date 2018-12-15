@@ -7,6 +7,7 @@ import org.apereo.cas.util.RandomUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ektorp.DbAccessException;
+import org.ektorp.DocumentNotFoundException;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.Collection;
@@ -73,20 +74,28 @@ public class CouchDbServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public RegisteredService findServiceById(final long id) {
-        val doc = dbClient.get(id);
-        if (doc == null) {
-            return null;
+        try {
+            val doc = dbClient.get(id);
+            if (doc != null) {
+                return doc.getService();
+            }
+        } catch (final DocumentNotFoundException e) {
+            LOGGER.info(e.getMessage());
         }
-        return doc.getService();
+        return null;
     }
 
     @Override
     public RegisteredService findServiceById(final String id) {
-        val doc = dbClient.get(id);
-        if (doc == null) {
-            return null;
+        try {
+            val doc = dbClient.get(id);
+            if (doc != null) {
+                return doc.getService();
+            }
+        } catch (final DocumentNotFoundException e) {
+            LOGGER.info(e.getMessage());
         }
-        return doc.getService();
+        return null;
     }
 
     @Override
