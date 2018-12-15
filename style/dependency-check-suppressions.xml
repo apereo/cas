@@ -19,6 +19,9 @@
         <cve>CVE-2017-8316</cve>
     </suppress>
     <suppress>
+        <cve> CVE-2018-8088</cve>
+    </suppress>
+    <suppress>
         <cve>CVE-2014-4167</cve>
     </suppress>
     <suppress>
