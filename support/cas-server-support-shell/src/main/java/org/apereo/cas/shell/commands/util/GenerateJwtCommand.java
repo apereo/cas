@@ -90,7 +90,7 @@ public class GenerateJwtCommand {
         val profile = new CommonProfile();
         profile.setId(subject);
 
-        val repeat = StringUtils.repeat('=', SEP_LENGTH);
+        val repeat = "=".repeat(SEP_LENGTH);
         LOGGER.debug(repeat);
         LOGGER.info("\nGenerating JWT for subject [{}] with signing key size [{}], signing algorithm [{}], "
                 + "encryption key size [{}], encryption method [{}] and encryption algorithm [{}]\n",

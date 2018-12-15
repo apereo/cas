@@ -861,6 +861,6 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         val index = position < 0 || position == Integer.MAX_VALUE ? currentActions.size() : position;
         currentActions.forEach(actionList::remove);
         Arrays.stream(actions).forEach(a -> currentActions.add(index, a));
-        actionList.addAll(currentActions.toArray(new Action[]{}));
+        actionList.addAll(currentActions.toArray(Action[]::new));
     }
 }

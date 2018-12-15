@@ -6,6 +6,7 @@ dependencies {
     api project(":api:cas-server-core-api")
     
     implementation libraries.springws
+    implementation libraries.wss4j
 
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-webflow-api")

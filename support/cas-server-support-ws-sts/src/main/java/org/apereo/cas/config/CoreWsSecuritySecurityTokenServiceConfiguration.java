@@ -1,11 +1,9 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
-import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
-import org.apereo.cas.authentication.SecurityTokenServiceAuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
+import org.apereo.cas.authentication.SecurityTokenServiceTokenFetcher;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.claims.WrappingSecurityTokenServiceClaimsHandler;
@@ -40,11 +38,13 @@ import org.apache.cxf.sts.token.delegation.TokenDelegationHandler;
 import org.apache.cxf.sts.token.provider.DefaultConditionsProvider;
 import org.apache.cxf.sts.token.provider.DefaultSubjectProvider;
 import org.apache.cxf.sts.token.provider.SAMLTokenProvider;
+import org.apache.cxf.sts.token.provider.jwt.JWTTokenProvider;
 import org.apache.cxf.sts.token.realm.RealmProperties;
 import org.apache.cxf.sts.token.realm.Relationship;
 import org.apache.cxf.sts.token.validator.SAMLTokenValidator;
 import org.apache.cxf.sts.token.validator.TokenValidator;
 import org.apache.cxf.sts.token.validator.X509TokenValidator;
+import org.apache.cxf.sts.token.validator.jwt.JWTTokenValidator;
 import org.apache.cxf.transport.servlet.CXFServlet;
 import org.apache.cxf.ws.security.sts.provider.SecurityTokenServiceProvider;
 import org.apache.cxf.ws.security.sts.provider.operation.IssueOperation;
@@ -165,6 +165,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     public List transportTokenValidators() {
         val list = new ArrayList<Object>();
         list.add(transportSamlTokenValidator());
+        list.add(transportJwtTokenValidator());
         list.add(new X509TokenValidator());
         return list;
     }
@@ -174,6 +175,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     public List transportTokenProviders() {
         val list = new ArrayList<Object>();
         list.add(transportSamlTokenProvider());
+        list.add(transportJwtTokenProvider());
         return list;
     }
 
@@ -203,6 +205,14 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         val realms = new HashMap<String, RealmProperties>();
         realms.put(idp.getRealmName(), casRealm());
         return realms;
+    }
+
+    @Bean
+    public JWTTokenProvider transportJwtTokenProvider() {
+        val provider = new JWTTokenProvider();
+        provider.setRealmMap(realms());
+        provider.setSignToken(true);
+        return provider;
     }
 
     @Bean
@@ -240,6 +250,11 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @Bean
     public TokenValidator transportSamlTokenValidator() {
         return new SAMLTokenValidator();
+    }
+
+    @Bean
+    public TokenValidator transportJwtTokenValidator() {
+        return new JWTTokenValidator();
     }
 
     @Bean
@@ -281,11 +296,11 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
             casProperties.getServer().getPrefix());
     }
 
-    @ConditionalOnMissingBean(name = "securityTokenServiceAuthenticationMetaDataPopulator")
+    @ConditionalOnMissingBean(name = "securityTokenServiceTokenFetcher")
     @Bean
     @RefreshScope
-    public AuthenticationMetaDataPopulator securityTokenServiceAuthenticationMetaDataPopulator() {
-        return new SecurityTokenServiceAuthenticationMetaDataPopulator(servicesManager.getIfAvailable(),
+    public SecurityTokenServiceTokenFetcher securityTokenServiceTokenFetcher() {
+        return new SecurityTokenServiceTokenFetcher(servicesManager.getIfAvailable(),
             wsFederationAuthenticationServiceSelectionStrategy.getIfAvailable(),
             securityTokenServiceCredentialCipherExecutor(),
             securityTokenServiceClientBuilder());
@@ -295,11 +310,12 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @Bean
     public CipherExecutor securityTokenServiceCredentialCipherExecutor() {
         val wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
-        return new SecurityTokenServiceCredentialCipherExecutor(wsfed.getCrypto().getEncryption().getKey(),
-            wsfed.getCrypto().getSigning().getKey(),
-            wsfed.getCrypto().getAlg(),
-            wsfed.getCrypto().getSigning().getKeySize(),
-            wsfed.getCrypto().getEncryption().getKeySize());
+        val crypto = wsfed.getCrypto();
+        return new SecurityTokenServiceCredentialCipherExecutor(crypto.getEncryption().getKey(),
+            crypto.getSigning().getKey(),
+            crypto.getAlg(),
+            crypto.getSigning().getKeySize(),
+            crypto.getEncryption().getKeySize());
     }
 
     @Bean
@@ -313,12 +329,6 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     public UniqueTicketIdGenerator securityTokenTicketIdGenerator() {
         return new DefaultUniqueTicketIdGenerator();
-    }
-
-    @ConditionalOnMissingBean(name = "coreWsSecuritySecurityTokenServiceAuthenticationEventExecutionPlanConfigurer")
-    @Bean
-    public AuthenticationEventExecutionPlanConfigurer coreWsSecuritySecurityTokenServiceAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationMetadataPopulator(securityTokenServiceAuthenticationMetaDataPopulator());
     }
 
 }

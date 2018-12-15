@@ -286,10 +286,6 @@ ext.libraries = [
                     exclude(group: "org.ow2.asm", module: "asm")
                     force = true
                 },
-                dependencies.create("org.ow2.asm:asm:$ow2AsmVersion") {
-                    transitive = false
-                    force = true
-                },
                 dependencies.create("org.apache.cxf:cxf-rt-rs-service-description:$apacheCxfVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.ow2.asm", module: "asm")
@@ -2598,10 +2594,6 @@ ext.libraries = [
                     exclude(group: "org.ow2.asm", module: "asm")
                     exclude(group: "javax.annotation", module: "javax.annotation-api")
                     force = true
-                },
-                dependencies.create("org.ow2.asm:asm:$ow2AsmVersion") {
-                    transitive = false
-                    force = true
                 }
         ],
         springbootundertow      : [
@@ -3430,7 +3422,9 @@ ext.libraries = [
                     exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-common")
                     exclude(group: "org.jvnet.mimepull", module: "mimepull")
                     force = true
-                },
+                }
+        ],
+        wss4j: [
                 dependencies.create("org.apache.wss4j:wss4j-ws-security-dom:$wss4jVersion") {
                     exclude(group: "org.jvnet.mimepull", module: "mimepull")
                     force = true

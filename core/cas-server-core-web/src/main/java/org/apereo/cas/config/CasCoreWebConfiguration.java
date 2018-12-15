@@ -63,7 +63,7 @@ public class CasCoreWebConfiguration {
             .map(resourceLoader::getResource)
             .collect(Collectors.toList());
         resourceList.add(resourceLoader.getResource("classpath:/cas_common_messages.properties"));
-        properties.setLocations(resourceList.toArray(new Resource[]{}));
+        properties.setLocations(resourceList.toArray(Resource[]::new));
         properties.setSingleton(true);
         properties.setIgnoreResourceNotFound(true);
         return properties;

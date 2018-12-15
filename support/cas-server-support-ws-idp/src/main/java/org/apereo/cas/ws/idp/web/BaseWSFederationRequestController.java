@@ -232,16 +232,12 @@ public abstract class BaseWSFederationRequestController {
     /**
      * Gets ws federation registered service.
      *
-     * @param response   the response
-     * @param request    the request
-     * @param fedRequest the fed request
+     * @param targetService the target service
+     * @param fedRequest    the fed request
      * @return the ws federation registered service
      */
-    protected WSFederationRegisteredService findAndValidateFederationRequestForRegisteredService(final HttpServletResponse response,
-                                                                                                 final HttpServletRequest request,
+    protected WSFederationRegisteredService findAndValidateFederationRequestForRegisteredService(final Service targetService,
                                                                                                  final WSFederationRequest fedRequest) {
-        val serviceUrl = constructServiceUrl(request, response, fedRequest);
-        val targetService = this.serviceSelectionStrategy.resolveServiceFrom(this.webApplicationServiceFactory.createService(serviceUrl));
         val svc = getWsFederationRegisteredService(targetService);
 
         val idp = casProperties.getAuthn().getWsfedIdp().getIdp();

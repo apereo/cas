@@ -61,7 +61,7 @@ public class ValidateEndpointCommand {
                     x509TrustManagers.add(x509TrustManager);
                 }
             }
-            return x509TrustManagers.toArray(new X509TrustManager[]{});
+            return x509TrustManagers.toArray(X509TrustManager[]::new);
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);
         }

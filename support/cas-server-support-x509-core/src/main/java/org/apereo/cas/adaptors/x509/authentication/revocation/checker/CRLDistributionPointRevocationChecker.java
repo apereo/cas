@@ -130,7 +130,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
                     });
                 });
             }
-            return urls.toArray(new URI[0]);
+            return urls.toArray(URI[]::new);
         } catch (final Exception e) {
             LOGGER.error("Error reading CRLDistributionPoints extension field on [{}]", CertUtils.toString(cert), e);
             return new URI[0];

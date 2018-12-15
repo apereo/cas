@@ -101,6 +101,6 @@ public interface AuthenticationSystemSupport {
      */
     default AuthenticationResult handleAndFinalizeSingleAuthenticationTransaction(final Service service,
                                                                                   final Collection<Credential> credentials) throws AuthenticationException {
-        return handleAndFinalizeSingleAuthenticationTransaction(service, credentials.toArray(new Credential[]{}));
+        return handleAndFinalizeSingleAuthenticationTransaction(service, credentials.toArray(Credential[]::new));
     }
 }

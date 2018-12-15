@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategyConfigurer;
 import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
+import org.apereo.cas.authentication.SecurityTokenServiceTokenFetcher;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -91,6 +92,10 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
     @Qualifier("ticketRegistry")
     private ObjectProvider<TicketRegistry> ticketRegistry;
 
+    @Autowired
+    @Qualifier("securityTokenServiceTokenFetcher")
+    private ObjectProvider<SecurityTokenServiceTokenFetcher> securityTokenServiceTokenFetcher;
+
     @Bean
     public WSFederationValidateRequestController federationValidateRequestController() {
         return new WSFederationValidateRequestController(servicesManager.getIfAvailable(),
@@ -120,7 +125,8 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
             ticketGrantingTicketCookieGenerator.getIfAvailable(),
             ticketRegistrySupport.getIfAvailable(),
             casClientTicketValidator.getIfAvailable(),
-            wsFederationCallbackService());
+            wsFederationCallbackService(),
+            securityTokenServiceTokenFetcher.getIfAvailable());
     }
 
     @Bean

@@ -89,7 +89,7 @@ public class DefaultMultifactorAuthenticationContextValidator implements Multifa
         }
         val satisfiedProviders = getSatisfiedAuthenticationProviders(authentication, providerMap.values());
         if (satisfiedProviders != null && !satisfiedProviders.isEmpty()) {
-            val providers = satisfiedProviders.toArray(new MultifactorAuthenticationProvider[]{});
+            val providers = satisfiedProviders.toArray(MultifactorAuthenticationProvider[]::new);
             OrderComparator.sortIfNecessary(providers);
             val result = Arrays.stream(providers)
                 .filter(provider -> {

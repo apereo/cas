@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.idp.profile.spring.factory.BasicResourceCredentialFactoryBean;
 import net.shibboleth.idp.profile.spring.factory.BasicX509CredentialFactoryBean;
-import org.apache.commons.lang3.StringUtils;
 import org.cryptacular.util.CertUtil;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.metadata.resolver.filter.impl.SignatureValidationFilter;
@@ -86,14 +85,11 @@ public class SamlUtils {
         try (InputStream in = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8))) {
             val document = configBean.getParserPool().parse(in);
             val root = document.getDocumentElement();
-
             val marshaller = configBean.getUnmarshallerFactory().getUnmarshaller(root);
             if (marshaller != null) {
                 val result = marshaller.unmarshall(root);
                 if (!clazz.isAssignableFrom(result.getClass())) {
-                    throw new ClassCastException("Result [" + result
-                        + " is of type " + result.getClass()
-                        + " when we were expecting " + clazz);
+                    throw new ClassCastException("Result [" + result + " is of type " + result.getClass() + " when we were expecting " + clazz);
                 }
                 return (T) result;
             }
@@ -228,7 +224,6 @@ public class SamlUtils {
         }
     }
 
-
     /**
      * Log saml object.
      *
@@ -238,7 +233,7 @@ public class SamlUtils {
      * @throws SamlException the saml exception
      */
     public static String logSamlObject(final OpenSamlConfigBean configBean, final XMLObject samlObject) throws SamlException {
-        val repeat = StringUtils.repeat('*', SAML_OBJECT_LOG_ASTERIXLINE_LENGTH);
+        val repeat = "*".repeat(SAML_OBJECT_LOG_ASTERIXLINE_LENGTH);
         LOGGER.debug(repeat);
         try (val writer = transformSamlObject(configBean, samlObject, true)) {
             LOGGER.debug("Logging [{}]\n\n{}\n\n", samlObject.getClass().getName(), writer);
@@ -247,6 +242,5 @@ public class SamlUtils {
         } catch (final Exception e) {
             throw new SamlException(e.getMessage(), e);
         }
-
     }
 }

@@ -47,7 +47,7 @@ public class AuthenticationCredentialsThreadLocalBinder {
      * @param credentials the credentials
      */
     public static void bindCurrent(final Collection<Credential> credentials) {
-        bindCurrent(credentials.toArray(new Credential[0]));
+        bindCurrent(credentials.toArray(Credential[]::new));
     }
 
     /**
