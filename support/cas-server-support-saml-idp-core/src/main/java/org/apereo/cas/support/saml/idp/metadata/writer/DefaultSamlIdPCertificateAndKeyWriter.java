@@ -103,6 +103,6 @@ public class DefaultSamlIdPCertificateAndKeyWriter implements SamlIdPCertificate
         if (uriSubjectAltNames != null) {
             uriSubjectAltNames.forEach(subjectAltName -> subjectAltNames.add(new GeneralName(GeneralName.uniformResourceIdentifier, subjectAltName)));
         }
-        return subjectAltNames.toArray(new ASN1Encodable[0]);
+        return subjectAltNames.toArray(ASN1Encodable[]::new);
     }
 }

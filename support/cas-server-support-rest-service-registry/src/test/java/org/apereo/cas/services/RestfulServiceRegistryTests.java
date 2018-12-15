@@ -103,7 +103,7 @@ public class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
 
             @GetMapping
             public RegisteredService[] load() {
-                return serviceRegistry.load().toArray(new RegisteredService[]{});
+                return serviceRegistry.load().toArray(RegisteredService[]::new);
             }
         }
     }

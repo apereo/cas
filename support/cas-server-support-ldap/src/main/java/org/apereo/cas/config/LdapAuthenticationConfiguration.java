@@ -223,7 +223,7 @@ public class LdapAuthenticationConfiguration {
                 handlers.add(new PasswordExpirationAuthenticationResponseHandler());
                 break;
         }
-        authenticator.setAuthenticationResponseHandlers((AuthenticationResponseHandler[]) handlers.toArray(new AuthenticationResponseHandler[0]));
+        authenticator.setAuthenticationResponseHandlers((AuthenticationResponseHandler[]) handlers.toArray(AuthenticationResponseHandler[]::new));
 
         LOGGER.debug("LDAP authentication response handlers configured are: [{}]", handlers);
 
