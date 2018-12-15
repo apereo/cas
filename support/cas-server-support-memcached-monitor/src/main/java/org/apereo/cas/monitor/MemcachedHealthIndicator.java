@@ -79,7 +79,7 @@ public class MemcachedHealthIndicator extends AbstractCacheHealthIndicator {
             LOGGER.error(e.getMessage(), e);
         }
 
-        return statsList.toArray(new CacheStatistics[0]);
+        return statsList.toArray(CacheStatistics[]::new);
     }
 
     private MemcachedClientIF getClientFromPool() throws Exception {

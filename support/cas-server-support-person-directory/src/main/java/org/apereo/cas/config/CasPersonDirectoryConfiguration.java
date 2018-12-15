@@ -14,6 +14,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -233,7 +234,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
                 if (ldap.getAttributes() != null && !ldap.getAttributes().isEmpty()) {
                     LOGGER.debug("Configured result attribute mapping for [{}] to be [{}]", ldap.getLdapUrl(), ldap.getAttributes());
                     ldapDao.setResultAttributeMapping(ldap.getAttributes());
-                    val attributes = ldap.getAttributes().keySet().toArray(new String[ldap.getAttributes().keySet().size()]);
+                    val attributes = ldap.getAttributes().keySet().toArray(ArrayUtils.EMPTY_STRING_ARRAY);
                     constraints.setReturningAttributes(attributes);
                 } else {
                     LOGGER.debug("Retrieving all attributes as no explicit attribute mappings are defined for [{}]", ldap.getLdapUrl());
