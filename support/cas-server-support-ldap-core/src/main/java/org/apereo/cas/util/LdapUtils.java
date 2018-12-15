@@ -1058,7 +1058,7 @@ public class LdapUtils {
 
         if (!handlers.isEmpty()) {
             LOGGER.debug("Search entry handlers defined for the entry resolver of [{}] are [{}]", l.getLdapUrl(), handlers);
-            entryResolver.setSearchEntryHandlers(handlers.toArray(new SearchEntryHandler[]{}));
+            entryResolver.setSearchEntryHandlers(handlers.toArray(SearchEntryHandler[]::new));
         }
         if (l.isFollowReferrals()) {
             entryResolver.setReferralHandler(new SearchReferralHandler());

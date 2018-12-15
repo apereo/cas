@@ -72,7 +72,7 @@ public class ValidateRegisteredServiceCommand {
         } catch (final Exception e) {
             LOGGER.error("Could not understand and validate [{}]: [{}]", filePath.getPath(), e.getMessage());
         } finally {
-            LOGGER.info(StringUtils.repeat('-', SEP_LINE_LENGTH));
+            LOGGER.info("-".repeat(SEP_LINE_LENGTH));
         }
 
     }

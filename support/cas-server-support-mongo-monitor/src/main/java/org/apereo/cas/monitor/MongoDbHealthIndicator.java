@@ -32,6 +32,6 @@ public class MongoDbHealthIndicator extends AbstractCacheHealthIndicator {
             })
             .collect(Collectors.toList());
 
-        return list.toArray(new CacheStatistics[]{});
+        return list.toArray(CacheStatistics[]::new);
     }
 }
