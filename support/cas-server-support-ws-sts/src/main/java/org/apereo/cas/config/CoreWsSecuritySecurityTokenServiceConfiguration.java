@@ -1,11 +1,9 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
-import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
-import org.apereo.cas.authentication.SecurityTokenServiceAuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
+import org.apereo.cas.authentication.SecurityTokenServiceTokenFetcher;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -283,11 +281,12 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
             casProperties.getServer().getPrefix());
     }
 
-    @ConditionalOnMissingBean(name = "securityTokenServiceAuthenticationMetaDataPopulator")
+    @ConditionalOnMissingBean(name = "securityTokenServiceTokenFetcher")
     @Bean
-    public AuthenticationMetaDataPopulator securityTokenServiceAuthenticationMetaDataPopulator() {
-        return new SecurityTokenServiceAuthenticationMetaDataPopulator(servicesManager,
-            wsFederationAuthenticationServiceSelectionStrategy, securityTokenServiceCredentialCipherExecutor(),
+    public SecurityTokenServiceTokenFetcher securityTokenServiceTokenFetcher() {
+        return new SecurityTokenServiceTokenFetcher(servicesManager,
+            wsFederationAuthenticationServiceSelectionStrategy,
+            securityTokenServiceCredentialCipherExecutor(),
             securityTokenServiceClientBuilder());
     }
 
@@ -311,11 +310,5 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     public UniqueTicketIdGenerator securityTokenTicketIdGenerator() {
         return new DefaultUniqueTicketIdGenerator();
-    }
-
-    @ConditionalOnMissingBean(name = "coreWsSecuritySecurityTokenServiceAuthenticationEventExecutionPlanConfigurer")
-    @Bean
-    public AuthenticationEventExecutionPlanConfigurer coreWsSecuritySecurityTokenServiceAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerMetadataPopulator(securityTokenServiceAuthenticationMetaDataPopulator());
     }
 }
