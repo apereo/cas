@@ -51,8 +51,6 @@ dependencies {
     implementation project(":support:cas-server-support-throttle")
     implementation project(":support:cas-server-support-validation")
 
-    implementation project(":support:cas-server-support-ws-idp")
-    
     implementation project(":webapp:cas-server-webapp-config")
     implementation project(":webapp:cas-server-webapp-init")
     
