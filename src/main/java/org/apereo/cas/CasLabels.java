@@ -117,7 +117,7 @@ public enum CasLabels {
     LABEL_TICKET_EXPIRATION_POLICY("Ticket Expiration Policy"),
     LABEL_TICKET_VALIDATION("Ticket Validation"),
     LABEL_TICKETS_REGISTRIES("Tickets & Registries"),
-    LABEL_UNIT_INTEGRATION_TESTS("Unit/Integration Tests", "junit|tests|mockito|suite|\bunit test\b"),
+    LABEL_UNIT_INTEGRATION_TESTS("Unit/Integration Tests", "\btest\bjunit|tests|mockito|suite|\bunit test\b"),
     LABEL_USER_INTERFACE_THEMES("User Interface & Themes", "ux|thymeleaf|html|views|screen|page"),
     LABEL_WS_FED_PROTOCOL("WS-FED Protocol"),
     LABEL_X509("X.509", "x509|certificates|tls|\bclient authentication\b"),
