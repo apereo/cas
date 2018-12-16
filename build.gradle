@@ -96,7 +96,6 @@ dependencyCheck {
                           'bootArchives', 'bootRunAnnotationProcessor' ]
     cveValidForHours = 24
     suppressionFile = file("$rootProject.projectDir/style/dependency-check-suppressions.xml")
-    format = ['HTML', 'CSV', 'VULN' ]
     analyzers {
         assemblyEnabled = false
         swiftEnabled = false
