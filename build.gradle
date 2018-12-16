@@ -81,18 +81,18 @@ if (rootProject.continuousIntegrationBuild) {
 
 apply plugin: "org.owasp.dependencycheck"
 dependencyCheck {
-    // logging.captureStandardOutput LogLevel.DEBUG
+    //logging.captureStandardOutput LogLevel.DEBUG
     /*
      * Specifies if the build should be failed if a CVSS score equal
      * to or above a specified level is identified.
      */
     failBuildOnCVSS = 7
     skipTestGroups = true
-    skipConfigurations = ['jacocoAgent', 'jacocoAnt', 'optional', 'provided', 'providedCompile', 'providedRuntime', 
-                          'signatures', 'spotbugs','spotbugsPlugins', 'checkstyle', 'errorprone', 'errorproneJavac', 
+    skipConfigurations = ['jacocoAgent', 'jacocoAnt', 'optional', 'provided', 'providedCompile', 'providedRuntime',
+                          'signatures', 'spotbugs','spotbugsPlugins', 'checkstyle', 'errorprone', 'errorproneJavac',
                           'annotationProcessor', 'archives', 'developmentOnly', 'compileOnly',
-                          'tests', 'testRuntimeOnly', 'testRuntimeClasspath', 'testRuntime', 'testImplementation', 
-                          'testCompileOnly', 'testCompileClasspath', 'testCompile', 'testAnnotationProcessor' , 
+                          'tests', 'testRuntimeOnly', 'testRuntimeClasspath', 'testRuntime', 'testImplementation',
+                          'testCompileOnly', 'testCompileClasspath', 'testCompile', 'testAnnotationProcessor' ,
                           'bootArchives', 'bootRunAnnotationProcessor' ]
     cveValidForHours = 24
     suppressionFile = file("$rootProject.projectDir/style/dependency-check-suppressions.xml")
@@ -125,7 +125,7 @@ allprojects {
     apply plugin: "signing"
     apply plugin: "jacoco"
     apply plugin: "java"
-    
+
     project.ext["forceBootifulArtifact"] = null
 
     if (!rootProject.publishSnapshots && !Boolean.getBoolean("skipGradleLint")) {
@@ -183,7 +183,11 @@ allprojects {
 }
 
 subprojects {
-    task dependencyCheckAnalyze(type: org.owasp.dependencycheck.gradle.tasks.Analyze)
+    task dependencyCheckAnalyze(type: org.owasp.dependencycheck.gradle.tasks.Analyze) {
+        // disable analyze in cas-server-core-api and cas-server-core because
+        // support and webapp subprojects will include their dependencies transitively
+        enabled = !"${project.name}".contains("cas-server-core")
+    }
 
     task allDependenciesInsight(type: DependencyInsightReportTask,
             description: "Produce insight information for all dependencies") {
@@ -222,8 +226,8 @@ subprojects {
         maven { url "https://repo.spring.io/snapshot/" }
         maven { url "https://repo.spring.io/libs-milestone" }
         maven { url "https://dl.bintray.com/uniconiam/maven" }
-        maven { url "https://oss.jfrog.org/artifactory/oss-snapshot-local" }
         maven { url "https://jitpack.io" }
+        maven { url "https://oss.jfrog.org/artifactory/oss-snapshot-local" }
         jcenter()
     }
 
