@@ -81,18 +81,28 @@ if (rootProject.continuousIntegrationBuild) {
 
 apply plugin: "org.owasp.dependencycheck"
 dependencyCheck {
+    // logging.captureStandardOutput LogLevel.DEBUG
     /*
      * Specifies if the build should be failed if a CVSS score equal
      * to or above a specified level is identified.
      */
     failBuildOnCVSS = 7
     skipTestGroups = true
+    skipConfigurations = ['jacocoAgent', 'jacocoAnt', 'optional', 'provided', 'providedCompile', 'providedRuntime', 
+                          'signatures', 'spotbugs','spotbugsPlugins', 'checkstyle', 'errorprone', 'errorproneJavac', 
+                          'annotationProcessor', 'archives', 'developmentOnly', 'compileOnly',
+                          'tests', 'testRuntimeOnly', 'testRuntimeClasspath', 'testRuntime', 'testImplementation', 
+                          'testCompileOnly', 'testCompileClasspath', 'testCompile', 'testAnnotationProcessor' , 
+                          'bootArchives', 'bootRunAnnotationProcessor' ]
+    cveValidForHours = 24
     suppressionFile = file("$rootProject.projectDir/style/dependency-check-suppressions.xml")
+    format = ['HTML', 'CSV', 'VULN' ]
     analyzers {
         assemblyEnabled = false
         swiftEnabled = false
         cocoapodsEnabled = false
-        nspEnabled = false
+        nodeEnabled = false
+        nodeAuditEnabled = false
         autoconfEnabled = false
         cmakeEnabled = false
         pathToMono = false
@@ -102,6 +112,10 @@ dependencyCheck {
         pyDistributionEnabled = false
         nexusEnabled = false
         centralEnabled = false
+        bundleAuditEnabled = false
+        composerEnabled = false
+        opensslEnabled = false
+        archiveEnabled = false
     }
 }
 
