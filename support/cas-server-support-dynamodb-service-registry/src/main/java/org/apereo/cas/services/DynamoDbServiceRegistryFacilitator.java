@@ -24,6 +24,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -108,6 +109,9 @@ public class DynamoDbServiceRegistryFacilitator {
      * @return the registered service
      */
     public RegisteredService get(final String id) {
+        if (NumberUtils.isCreatable(id)) {
+            return get(Long.valueOf(id));
+        }
         val keys = new HashMap<String, AttributeValue>();
         keys.put(ColumnNames.SERVICE_ID.getColumnName(), new AttributeValue(id));
         return getRegisteredServiceByKeys(keys);
@@ -138,13 +142,17 @@ public class DynamoDbServiceRegistryFacilitator {
     }
 
     private RegisteredService getRegisteredServiceByKeys(final Map<String, AttributeValue> keys) {
-        val request = new GetItemRequest().withKey(keys).withTableName(dynamoDbProperties.getTableName());
-        LOGGER.debug("Submitting request [{}] to get service with keys [{}]", request, keys);
-        val returnItem = amazonDynamoDBClient.getItem(request).getItem();
-        if (returnItem != null) {
-            val service = deserializeServiceFromBinaryBlob(returnItem);
-            LOGGER.debug("Located service [{}]", service);
-            return service;
+        try {
+            val request = new GetItemRequest().withKey(keys).withTableName(dynamoDbProperties.getTableName());
+            LOGGER.debug("Submitting request [{}] to get service with keys [{}]", request, keys);
+            val returnItem = amazonDynamoDBClient.getItem(request).getItem();
+            if (returnItem != null) {
+                val service = deserializeServiceFromBinaryBlob(returnItem);
+                LOGGER.debug("Located service [{}]", service);
+                return service;
+            }
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
         }
         return null;
     }
