@@ -9,10 +9,10 @@ import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.cxf.rt.security.SecurityConstants;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -35,9 +35,9 @@ public class SecurityTokenServiceTokenFetcher {
                                                              final String principalId) {
 
         try {
-            final Map<String, Object> properties = sts.getProperties();
+            val properties = sts.getProperties();
             properties.put(SecurityConstants.USERNAME, principalId);
-            final String uid = credentialCipherExecutor.encode(principalId);
+            val uid = credentialCipherExecutor.encode(principalId);
             properties.put(SecurityConstants.PASSWORD, uid);
             LOGGER.debug("Requesting security token for principal [{}] and registered service [{}]", uid, rp);
             return sts.requestSecurityToken(rp.getAppliesTo());
@@ -52,18 +52,19 @@ public class SecurityTokenServiceTokenFetcher {
      *
      * @param service     the service
      * @param principalId the principal id
+     * @return the security token
      */
     public Optional<SecurityToken> fetch(final Service service, final String principalId) {
-        final Service resolvedService = this.selectionStrategy.resolveServiceFrom(service);
+        val resolvedService = this.selectionStrategy.resolveServiceFrom(service);
         LOGGER.debug("Resolved resolvedService as [{}]", resolvedService);
         if (resolvedService != null) {
-            final WSFederationRegisteredService rp = this.servicesManager.findServiceBy(resolvedService, WSFederationRegisteredService.class);
+            val rp = this.servicesManager.findServiceBy(resolvedService, WSFederationRegisteredService.class);
             if (rp == null || !rp.getAccessStrategy().isServiceAccessAllowed()) {
                 LOGGER.warn("Service [{}] is not allowed to use SSO.", rp);
                 throw new UnauthorizedSsoServiceException();
             }
             LOGGER.debug("Building security token resolvedService client for registered resolvedService [{}]", rp);
-            final SecurityTokenServiceClient sts = clientBuilder.buildClientForSecurityTokenRequests(rp);
+            val sts = clientBuilder.buildClientForSecurityTokenRequests(rp);
             return Optional.ofNullable(invokeSecurityTokenServiceForToken(rp, sts, principalId));
         }
         return Optional.empty();
