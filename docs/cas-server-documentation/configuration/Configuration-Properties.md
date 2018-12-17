@@ -3821,6 +3821,11 @@ To learn more about this topic, [please review this guide](../ticketing/Ehcache-
 # cas.ticket.registry.ehcache.cacheTimeToIdle=0
 # cas.ticket.registry.ehcache.persistence=LOCALTEMPSWAP|NONE|LOCALRESTARTABLE|DISTRIBUTED
 # cas.ticket.registry.ehcache.synchronousWrites=
+
+# The systemprops allows a map of properties to be set as system properties before configLocation config is processed.
+# These properties may be referenced in the ehcache XML config via ${key}
+# cas.ticket.registry.ehcache.systemprops.key1=value1
+# cas.ticket.registry.ehcache.systemprops.key2=value2
 ```
 
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.ehcache`.

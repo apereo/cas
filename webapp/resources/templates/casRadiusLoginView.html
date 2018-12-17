@@ -14,7 +14,7 @@
     <div layout:fragment="content" id="login">
         <form method="post" id="fm1" class="fm-v clearfix" th:object="${credential}" th:action="@{/login}">
             <div class="alert alert-danger" th:if="${#fields.hasErrors('*')}">
-                <span th:each="err : ${#fields.errors('*')}" th:utext="${err}">error message</span>
+                <span th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">error message</span>
             </div>
 
             <div class="form-group">

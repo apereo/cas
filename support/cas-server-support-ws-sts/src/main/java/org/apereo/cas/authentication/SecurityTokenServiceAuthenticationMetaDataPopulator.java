@@ -42,24 +42,29 @@ public class SecurityTokenServiceAuthenticationMetaDataPopulator extends BaseAut
         if (up != null) {
             try {
                 val properties = sts.getProperties();
-                properties.put(SecurityConstants.USERNAME, up.getUsername());
-
-                val uid = credentialCipherExecutor.encode(up.getUsername());
-                properties.put(SecurityConstants.PASSWORD, uid);
+                val username = up.getUsername();
+                properties.put(SecurityConstants.USERNAME, username);
+                LOGGER.debug("Requesting security token for principal [{}] and registered service [{}]", username, rp);
+                val psw = credentialCipherExecutor.encode(username);
+                properties.put(SecurityConstants.PASSWORD, psw);
                 val token = sts.requestSecurityToken(rp.getAppliesTo());
                 val tokenStr = EncodingUtils.encodeBase64(SerializationUtils.serialize(token));
+                LOGGER.trace("Encoded security token attribute as [{}]", tokenStr);
                 builder.addAttribute(WSFederationConstants.SECURITY_TOKEN_ATTRIBUTE, tokenStr);
             } catch (final Exception e) {
                 LOGGER.error(e.getMessage(), e);
                 throw new AuthenticationException(e.getMessage());
             }
+        } else {
+            LOGGER.trace("Ignoring security token service for token without a valid credential");
         }
     }
 
     @SuppressFBWarnings("PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS")
     private static UsernamePasswordCredential getCredential(final AuthenticationTransaction transaction) {
         return transaction.getCredentials()
-            .stream().filter(UsernamePasswordCredential.class::isInstance)
+            .stream()
+            .filter(UsernamePasswordCredential.class::isInstance)
             .map(UsernamePasswordCredential.class::cast)
             .findFirst()
             .orElse(null);
@@ -72,16 +77,19 @@ public class SecurityTokenServiceAuthenticationMetaDataPopulator extends BaseAut
 
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
-        if (!this.selectionStrategy.supports(transaction.getService())) {
+        val svc = transaction.getService();
+        if (!this.selectionStrategy.supports(svc)) {
+            LOGGER.trace("Service selection strategy does not support service [{}]", svc);
             return;
         }
-        val service = this.selectionStrategy.resolveServiceFrom(transaction.getService());
+        val service = this.selectionStrategy.resolveServiceFrom(svc);
         if (service != null) {
             val rp = this.servicesManager.findServiceBy(service, WSFederationRegisteredService.class);
             if (rp == null || !rp.getAccessStrategy().isServiceAccessAllowed()) {
                 LOGGER.warn("Service [{}] is not allowed to use SSO.", rp);
                 throw new UnauthorizedSsoServiceException();
             }
+            LOGGER.debug("Building security token service client for registered service [{}]", rp);
             val sts = clientBuilder.buildClientForSecurityTokenRequests(rp);
             invokeSecurityTokenServiceForToken(transaction, builder, rp, sts);
         }
