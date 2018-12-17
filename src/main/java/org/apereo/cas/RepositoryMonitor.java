@@ -48,7 +48,7 @@ class RepositoryMonitor {
 
     @Scheduled(fixedRate = 5 * 60 * 1000)
     void monitor() {
-        log.info("Monitoring {}/{}", this.repository.getOrganization(),this.repository.getName());
+        log.info("Monitoring {}/{}", this.repository.getOrganization(), this.repository.getName());
         try {
             Page<PullRequest> page = this.gitHub.getPullRequests(this.repository.getOrganization(), this.repository.getName());
             while (page != null) {
@@ -69,6 +69,25 @@ class RepositoryMonitor {
             log.warn("A failure occurred during monitoring", ex);
         }
         log.info("Monitoring of {}/{} completed", this.repository.getOrganization(), this.repository.getName());
+    }
+
+    @Scheduled(fixedRate = 30 * 60 * 1000)
+    void monitorHourly() {
+        log.info("Hourly task of monitoring {}/{}", this.repository.getOrganization(), this.repository.getName());
+        try {
+            Page<PullRequest> page = this.gitHub.getPullRequests(this.repository.getOrganization(), this.repository.getName());
+            while (page != null) {
+                for (final PullRequest pr : page.getContent()) {
+                    if (!pr.getTitle().contains("WIP")) {
+                        repository.mergePullRequestWithMaster(pr);
+                    }
+                }
+                page = page.next();
+            }
+        } catch (final Exception ex) {
+            log.warn("A failure occurred during monitoring", ex);
+        }
+        log.info("Hourly monitoring of {}/{} completed", this.repository.getOrganization(), this.repository.getName());
     }
 
 }

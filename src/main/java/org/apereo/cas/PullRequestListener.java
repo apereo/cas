@@ -14,6 +14,5 @@ public interface PullRequestListener {
     }
 
     default void onPullRequestClosure(final PullRequest pr) {
-
     }
 }

@@ -43,4 +43,6 @@ public interface GitHubOperations {
     Page<Label> getLabels(String organization, String name);
 
     void setMilestone(PullRequest pr, Milestone milestone);
+
+    PullRequest mergeWithHead(final String organization, final String repository, PullRequest pr);
 }

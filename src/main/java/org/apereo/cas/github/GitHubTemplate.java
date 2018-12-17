@@ -16,17 +16,6 @@
 
 package org.apereo.cas.github;
 
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.charset.Charset;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpInputMessage;
@@ -48,6 +37,17 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
+
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Central class for interacting with GitHub's REST API.
@@ -90,8 +90,7 @@ public class GitHubTemplate implements GitHubOperations {
                     throw new IllegalStateException(
                         "Rate limit exceeded. Limit will reset at "
                             + new Date(Long
-                            .valueOf(response.getHeaders()
-                                .getFirst("X-RateLimit-Reset"))
+                            .valueOf(response.getHeaders().getFirst("X-RateLimit-Reset"))
                             * 1000));
                 }
             }
@@ -127,6 +126,27 @@ public class GitHubTemplate implements GitHubOperations {
     @Override
     public Page<Event> getEvents(final Issue issue) {
         return getPage(issue.getEventsUrl(), Event[].class);
+    }
+
+    @Override
+    public PullRequest mergeWithHead(final String organization, final String repository, final PullRequest pr) {
+        final String url = "https://api.github.com/repos/" + organization + "/" + repository + "/merges";
+        final URI uri = URI.create(url);
+        final Map<String, String> body = new HashMap<>();
+        final String branch = pr.getHead().getRef();
+        body.put("base", branch);
+        body.put("head", "master");
+        body.put("commit_message", "Merged branch master into " + branch);
+
+        final ResponseEntity response = this.rest.exchange(new RequestEntity(body, HttpMethod.POST, uri), Map.class);
+        if (response.getStatusCode() == HttpStatus.NO_CONTENT) {
+            log.debug("Pull request [{}] already contains the head/master; nothing to merge", pr.getUrl());
+        } else if (response.getStatusCode() == HttpStatus.CONFLICT) {
+            log.warn("Pull request [{}] has a merge conflict and cannot be merged with master", pr.getUrl());
+        } else if (response.getStatusCode() == HttpStatus.CREATED) {
+            log.info("Pull request [{}] is successfully merged with head/master", pr.getUrl());
+        }
+        return pr;
     }
 
     @Override

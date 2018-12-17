@@ -47,6 +47,7 @@ public class PullRequest {
     private final String title;
 
     private final Base base;
+
     private final Base head;
 
     @JsonCreator
@@ -76,7 +77,6 @@ public class PullRequest {
         return "open".equalsIgnoreCase(this.state);
     }
 
-
     public String getLabelsUrl() {
         return this.url.replace("pulls", "issues") + "/labels";
     }
@@ -85,7 +85,7 @@ public class PullRequest {
         return this.url.replace("pulls", "issues");
     }
 
-    public boolean isTargettedAtMasterBranch() {
+    public boolean isTargetedAtMasterBranch() {
         return this.base.getRef().equalsIgnoreCase("master");
     }
 

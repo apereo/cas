@@ -31,7 +31,7 @@ public class CasPullRequestListener implements PullRequestListener {
     }
 
     private boolean processLabelSeeMaintenancePolicy(final PullRequest pr) {
-        if (!pr.isTargettedAtMasterBranch() && !pr.isLabeledAs(CasLabels.LABEL_SEE_MAINTENANCE_POLICY)) {
+        if (!pr.isTargetedAtMasterBranch() && !pr.isLabeledAs(CasLabels.LABEL_SEE_MAINTENANCE_POLICY)) {
             final Optional<Milestone> milestone = repository.getMilestoneForBranch(pr.getBase().getRef());
             if (milestone.isEmpty()) {
                 log.info("{} is targeted at a branch {} that is no longer maintained. See maintenance policy", pr, pr.getBase());
@@ -52,7 +52,7 @@ public class CasPullRequestListener implements PullRequestListener {
 
     private void processMilestoneAssignment(final PullRequest pr) {
         if (pr.getMilestone() == null) {
-            if (pr.isTargettedAtMasterBranch()) {
+            if (pr.isTargetedAtMasterBranch()) {
                 repository.getMilestoneForMaster().ifPresent(milestone -> {
                     log.info("{} will be assigned the master milestone {}", pr, milestone);
                     repository.getGitHub().setMilestone(pr, milestone);

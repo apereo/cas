@@ -104,6 +104,10 @@ public class MonitoredRepository implements InitializingBean {
             .findFirst();
     }
 
+    public PullRequest mergePullRequestWithMaster(final PullRequest pr) {
+        return this.gitHub.mergeWithHead(getOrganization(), getName(), pr);
+    }
+
     private static Predicate<Label> getLabelPredicateByName(final CasLabels name) {
         return l -> l.getName().contains(name.getTitle());
     }
