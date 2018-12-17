@@ -782,11 +782,20 @@ ext.libraries = [
                 }
         ],
         apachevelocity          : [
-                dependencies.create("org.apache.velocity:velocity-engine-core:$apacheVelocityVersion") {
+                dependencies.create("org.apache.velocity:velocity-engine-core:$apacheVelocityEngineVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "jcl-over-slf4j")
                     exclude(group: "commons-lang", module: "commons-lang")
                     exclude(group: "org.apache.commons", module: "commons-lang3")
+                    force = true
+                },
+                dependencies.create("org.apache.velocity:velocity:$apacheVelocityVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "jcl-over-slf4j")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "org.apache.commons", module: "commons-lang3")
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "commons-collections", module: "commons-collections")
                     force = true
                 }
         ],
@@ -1446,6 +1455,7 @@ ext.libraries = [
                 dependencies.create("com.microsoft.azure:azure-keyvault-secrets-spring-boot-starter:$azureKeyVaultSecretsVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.nimbusds", module: "nimbus-jose-jwt")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     force = true
                 }
         ],
@@ -1551,6 +1561,7 @@ ext.libraries = [
                     exclude(group: "junit", module: "junit")
                     exclude(group: "org.mockito", module: "mockito-all")
                     exclude(group: "org.mockito", module: "mockito-core")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     force = true
                 },
                 dependencies.create("org.hsqldb:hsqldb:$hsqlVersion"),
@@ -2477,6 +2488,7 @@ ext.libraries = [
                 },
                 dependencies.create("org.springframework.boot:spring-boot-autoconfigure:$springBootVersion") {
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     exclude(group: "org.springframework", module: "spring-web")
                     exclude(group: "org.springframework", module: "spring-webmvc")
                     exclude(group: "org.springframework", module: "spring-core")
@@ -2504,6 +2516,7 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-aop")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "jul-to-slf4j")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     force = true
                 },
                 dependencies.create("org.springframework.boot:spring-boot-properties-migrator:$springBootVersion") {
@@ -2519,6 +2532,7 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "jul-to-slf4j")
                     exclude(group: "com.vaadin.external.google", module: "android-json")
                     exclude(group: "com.vaadin.external.google", module: "android-json")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     force = true
                 },
                 dependencies.create("org.springframework.boot:spring-boot-starter-actuator:$springBootVersion") {
@@ -2548,6 +2562,7 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.springframework", module: "spring-aop")
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     force = true
                 }
         ],
@@ -2562,6 +2577,7 @@ ext.libraries = [
                     exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-core")
                     exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-el")
                     exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-websocket")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     force = true
                 },
                 dependencies.create("org.apache.tomcat:tomcat-catalina-ha:$springBootTomcatVersion") {

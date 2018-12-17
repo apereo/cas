@@ -2829,7 +2829,6 @@ Configuration settings for all SAML2 service providers are [available here](Conf
 | Gitlab                | `cas.samlSp.gitlab` | `last_name`,`first_name`,`name`
 | Hipchat               | `cas.samlSp.hipchat` | `last_name`,`first_name`,`title`
 | Dropbox               | `cas.samlSp.dropbox` | `mail`
-| TestShib              | `cas.samlSp.testShib` | `eduPersonPrincipalName`
 | OpenAthens            | `cas.samlSp.openAthens` | `email`, `eduPersonPrincipalName`
 | Egnyte                | `cas.samlSp.egnyte` | N/A
 | EverBridge            | `cas.samlSp.everBridge` | N/A
@@ -3822,6 +3821,11 @@ To learn more about this topic, [please review this guide](../ticketing/Ehcache-
 # cas.ticket.registry.ehcache.cacheTimeToIdle=0
 # cas.ticket.registry.ehcache.persistence=LOCALTEMPSWAP|NONE|LOCALRESTARTABLE|DISTRIBUTED
 # cas.ticket.registry.ehcache.synchronousWrites=
+
+# The systemprops allows a map of properties to be set as system properties before configLocation config is processed.
+# These properties may be referenced in the ehcache XML config via ${key}
+# cas.ticket.registry.ehcache.systemprops.key1=value1
+# cas.ticket.registry.ehcache.systemprops.key2=value2
 ```
 
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.ehcache`.

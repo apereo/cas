@@ -10,7 +10,6 @@ dependencies {
     implementation project(":core:cas-server-core-logout-api")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-authentication-attributes")
-    implementation project(":support:cas-server-support-saml")
     implementation project(":core:cas-server-core-services-registry")
     implementation project(":support:cas-server-support-saml-core")
     implementation project(":support:cas-server-support-saml-core-api")

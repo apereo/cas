@@ -54,7 +54,8 @@ class JasigRegisteredServiceDeserializationProblemHandler extends Deserializatio
     public boolean handleUnknownProperty(final DeserializationContext ctxt, final JsonParser p,
                                          final JsonDeserializer<?> deserializer,
                                          final Object beanOrClass, final String propertyName) {
-        val handled = FunctionUtils.doIf(Predicates.instanceOf(CachingPrincipalAttributesRepository.class),
+
+        return FunctionUtils.doIf(Predicates.instanceOf(CachingPrincipalAttributesRepository.class),
             () -> {
                 if (!"duration".equals(propertyName)) {
                     return Boolean.FALSE;
@@ -81,7 +82,5 @@ class JasigRegisteredServiceDeserializationProblemHandler extends Deserializatio
             },
             () -> Boolean.FALSE)
             .apply(beanOrClass);
-
-        return handled;
     }
 }
