@@ -184,8 +184,10 @@ allprojects {
 
 subprojects {
     task dependencyCheckAnalyze(type: org.owasp.dependencycheck.gradle.tasks.Analyze) {
-        // disable analyze in cas-server-core-api and cas-server-core because
-        // support and webapp subprojects will include their dependencies transitively
+        /* 
+         Disable analyze in cas-server-core-api and cas-server-core because
+         support and webapp subprojects will include their dependencies transitively. 
+        */
         enabled = !"${project.name}".contains("cas-server-core")
     }
 
