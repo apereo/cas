@@ -101,7 +101,7 @@ public class IgniteTicketRegistryConfiguration {
         spi.setIpFinder(finder);
         config.setDiscoverySpi(spi);
         val cacheConfigurations = buildIgniteTicketCaches(ignite, ticketCatalog);
-        config.setCacheConfiguration(cacheConfigurations.toArray(new CacheConfiguration[]{}));
+        config.setCacheConfiguration(cacheConfigurations.toArray(CacheConfiguration[]::new));
         config.setClientMode(ignite.isClientMode());
 
         val factory = buildSecureTransportForIgniteConfiguration();
