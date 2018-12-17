@@ -52,6 +52,7 @@ public class SecurityTokenServiceTokenFetcher {
      *
      * @param service     the service
      * @param principalId the principal id
+     * @return the security token
      */
     public Optional<SecurityToken> fetch(final Service service, final String principalId) {
         final Service resolvedService = this.selectionStrategy.resolveServiceFrom(service);
