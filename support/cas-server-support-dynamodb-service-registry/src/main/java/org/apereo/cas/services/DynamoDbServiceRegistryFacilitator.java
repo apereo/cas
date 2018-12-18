@@ -29,9 +29,11 @@ import org.apache.commons.lang3.math.NumberUtils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -98,7 +100,8 @@ public class DynamoDbServiceRegistryFacilitator {
         return result.getItems()
             .stream()
             .map(this::deserializeServiceFromBinaryBlob)
-            .sorted((o1, o2) -> Integer.valueOf(o1.getEvaluationOrder()).compareTo(o2.getEvaluationOrder()))
+            .filter(Objects::nonNull)
+            .sorted(Comparator.comparingInt(RegisteredService::getEvaluationOrder))
             .collect(Collectors.toList());
     }
 
@@ -110,7 +113,7 @@ public class DynamoDbServiceRegistryFacilitator {
      */
     public RegisteredService get(final String id) {
         if (NumberUtils.isCreatable(id)) {
-            return get(Long.valueOf(id));
+            return get(Long.parseLong(id));
         }
         val keys = new HashMap<String, AttributeValue>();
         keys.put(ColumnNames.SERVICE_ID.getColumnName(), new AttributeValue(id));
