@@ -49,7 +49,7 @@ public enum CasLabels {
     LABEL_EMAIL_SMS_NOTIFICATIONS("Email & SMS Notifications", "nexmo|mail|twilio"),
     LABEL_GUA("GUA"),
     LABEL_GEOLOCATION("GeoLocation"),
-    LABEL_GRADLE_BUILD_RELEASE("Gradle Build & Release", "jdk|gradle|sonatype|snapshot|dependency|module|pom|bom|travis-ci"),
+    LABEL_GRADLE_BUILD_RELEASE("Gradle Build & Release", "gulp|jdk|gradle|sonatype|snapshot|dependency|module|pom|bom|travis-ci"),
     LABEL_HAZELCAST("Hazelcast", "hz"),
     LABEL_INFINISPAN("Infinispan"),
     LABEL_INTERNATIONALIZATION("Internationalization", "localization|localized|message bundle|translation|language bundle"),
@@ -118,7 +118,7 @@ public enum CasLabels {
     LABEL_TICKET_VALIDATION("Ticket Validation"),
     LABEL_TICKETS_REGISTRIES("Tickets & Registries"),
     LABEL_UNIT_INTEGRATION_TESTS("Unit/Integration Tests", "\btest\b|junit|tests|mockito|suite|\bunit test\b"),
-    LABEL_USER_INTERFACE_THEMES("User Interface & Themes", "ux|thymeleaf|html|views|screen|page"),
+    LABEL_USER_INTERFACE_THEMES("User Interface & Themes", "ux|thymeleaf|html|views|screen|page|gulp|javascript|js|sass|css"),
     LABEL_WS_FED_PROTOCOL("WS-FED Protocol"),
     LABEL_X509("X.509", "x509|certificates|tls|\bclient authentication\b"),
     LABEL_RECAPTCHA("reCAPTCHA");
