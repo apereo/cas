@@ -39,10 +39,10 @@ import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 /**
- * This is {@link SecurityTokenServiceAuthenticationMetaDataPopulatorTests}.
+ * This is {@link SecurityTokenServiceTokenFetcherTests}.
  *
  * @author Misagh Moayyed
- * @since 5.3.0
+ * @since 6.0.0
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
@@ -68,7 +68,7 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
     CasCoreAuthenticationPrincipalConfiguration.class
 })
 @TestPropertySource(locations = "classpath:ws-idp.properties")
-public class SecurityTokenServiceAuthenticationMetaDataPopulatorTests {
+public class SecurityTokenServiceTokenFetcherTests {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
 
@@ -86,8 +86,8 @@ public class SecurityTokenServiceAuthenticationMetaDataPopulatorTests {
     private ServicesManager servicesManager;
 
     @Autowired
-    @Qualifier("securityTokenServiceAuthenticationMetaDataPopulator")
-    private AuthenticationMetaDataPopulator populator;
+    @Qualifier("securityTokenServiceTokenFetcher")
+    private SecurityTokenServiceTokenFetcher securityTokenServiceTokenFetcher;
 
     @Test
     public void verifySecurityPopulator() {
@@ -102,13 +102,11 @@ public class SecurityTokenServiceAuthenticationMetaDataPopulatorTests {
         registeredService.setWsdlLocation("classpath:wsdl/ws-trust-1.4-service.wsdl");
         servicesManager.save(registeredService);
 
-        val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
         val service = CoreAuthenticationTestUtils.getService("http://example.org?"
             + WSFederationConstants.WREPLY + '=' + registeredService.getServiceId() + '&'
             + WSFederationConstants.WTREALM + '=' + realm);
-        val transaction = DefaultAuthenticationTransaction.of(service, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
 
         thrown.expect(AuthenticationException.class);
-        populator.populateAttributes(builder, transaction);
+        securityTokenServiceTokenFetcher.fetch(service, "test");
     }
 }
