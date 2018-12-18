@@ -37,8 +37,6 @@ var autoprefixerOptions = {
 };
 
 
-gulp.task('default', ['sass']);
-
 gulp.task('sass', function () {
     process.stdout.write("running with these values:\n");
     process.stdout.write("\tsassPath: " + argv.sassPath + "\n");
@@ -55,3 +53,5 @@ gulp.task('sass', function () {
 gulp.task('sass:watch', function () {
     gulp.watch(argv.sassPath + '/**/*.scss', ['sass']);
 });
+
+gulp.task('default', gulp.series(['sass']));
