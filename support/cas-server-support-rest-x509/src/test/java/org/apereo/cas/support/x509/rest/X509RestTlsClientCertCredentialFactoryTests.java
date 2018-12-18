@@ -7,8 +7,6 @@ import lombok.val;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.util.LinkedMultiValueMap;
@@ -25,10 +23,9 @@ import static org.junit.Assert.*;
  * Unit tests for {@link X509RestTlsClientCertCredentialFactory}.
  *
  * @author Dmytro Fedonin
- * @author sadt
+ * @author Stéphane Adenot
  * @since 6.0.0
  */
-@RunWith(MockitoJUnitRunner.Silent.class)
 public class X509RestTlsClientCertCredentialFactoryTests {
 
     private static final String REQUEST_ATTRIBUTE_X509_CERTIFICATE = "javax.servlet.request.X509Certificate";
@@ -43,7 +40,7 @@ public class X509RestTlsClientCertCredentialFactoryTests {
         val request = new MockHttpServletRequest();
 
         try (val inStream = new FileInputStream(new ClassPathResource("ldap-crl.crt").getFile())) {
-            X509Certificate[] certs = {CertUtils.readCertificate(inStream)};
+            val certs = new X509Certificate[]{CertUtils.readCertificate(inStream)};
             request.setAttribute(REQUEST_ATTRIBUTE_X509_CERTIFICATE, certs);
 
             val cred = factory.fromRequest(request, null).iterator().next();

@@ -11,11 +11,11 @@ import org.apereo.cas.web.extractcert.X509CertificateExtractor;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -48,6 +48,7 @@ public class X509RestConfiguration implements RestHttpRequestCredentialFactoryCo
         return new X509RestHttpRequestHeaderCredentialFactory(x509CertificateExtractor.getIfAvailable());
     }
 
+    @ConditionalOnProperty(prefix = "cas.rest", name = "tlsClientAuth", havingValue = "true")
     @Bean
     public RestHttpRequestCredentialFactory x509RestTlsClientCert() {
         return new X509RestTlsClientCertCredentialFactory();
@@ -60,13 +61,16 @@ public class X509RestConfiguration implements RestHttpRequestCredentialFactoryCo
         val headerAuth = restProperties.isHeaderAuth();
         val bodyAuth = restProperties.isBodyAuth();
         val tlsClientAuth = restProperties.isTlsClientAuth();
-        LOGGER.debug("is certificate extractor available? = {}, headerAuth = {}, bodyAuth = {}, tlsClientAuth = {}",
+        LOGGER.trace("Is certificate extractor available? = {}, headerAuth = {}, bodyAuth = {}, tlsClientAuth = {}",
                      extractor, headerAuth, bodyAuth, tlsClientAuth);
 
         if (tlsClientAuth && (headerAuth || bodyAuth)) {
-            LOGGER.warn("X509 REST configuration seems inconsistant as activating headerAuth or bodyAuth supposes "
-                        + "that the CAS server is not directly reachable by clients (see security warning in the "
-                        +"documentation) and activating tlsClientAuth suppose the opposite.");
+            LOGGER.warn("The X.509 feature over REST using \"headerAuth\" or \"bodyAuth\" provides a tremendously "
+                        + "convenient target for claiming user identities or obtaining TGTs without proof of private "
+                        + "key ownership. To securely use this feature, network configuration MUST allow connections "
+                        + "to the CAS server only from trusted hosts which in turn have strict security limitations "
+                        + "and logging. Thus, \"tlsClientAuth\" shouldn't be activated together with \"headerAuth\" "
+                        + "or \"bodyAuth\"");
         }
 
         if (extractor != null && headerAuth) {
