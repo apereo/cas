@@ -78,7 +78,7 @@ public class CasBotApplication {
         @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
         public Map<String, String> home() {
              var map = new LinkedHashMap<String, String>();
-             map.put("name", repository.getOrganization() + "/" + repository.getName());
+             map.put("name", repository.getOrganization() + '/' + repository.getName());
              map.put("repository", repository.getGitHubProperties().getRepository().getUrl());
              map.put("version", repository.getCurrentVersionInMaster().toString());
              return map;

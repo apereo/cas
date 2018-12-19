@@ -46,6 +46,8 @@ public class PullRequest {
 
     private final String title;
 
+    private final String body;
+
     private final Base base;
 
     private final Base head;
@@ -60,7 +62,8 @@ public class PullRequest {
                        @JsonProperty("title") final String title,
                        @JsonProperty("number") final String number,
                        @JsonProperty("base") final Base base,
-                       @JsonProperty("head") final Base head) {
+                       @JsonProperty("head") final Base head,
+                       @JsonProperty("body") final String body) {
         this.url = url;
         this.commentsUrl = commentsUrl;
         this.user = user;
@@ -71,6 +74,7 @@ public class PullRequest {
         this.state = state;
         this.head = head;
         this.number = number;
+        this.body = body;
     }
 
     public boolean isOpen() {

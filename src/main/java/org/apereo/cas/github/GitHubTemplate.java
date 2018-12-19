@@ -114,8 +114,14 @@ public class GitHubTemplate implements GitHubOperations {
 
     @Override
     public Page<PullRequest> getPullRequests(final String organization, final String repository) {
-        final String url = "https://api.github.com/repos/" + organization + "/" + repository + "/pulls?state=open";
+        final String url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls?state=open";
         return getPage(url, PullRequest[].class);
+    }
+
+    @Override
+    public PullRequest getPullRequest(final String organization, final String repository, final String number) {
+        final String url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + number;
+        return getSinglePage(url, PullRequest.class);
     }
 
     @Override
@@ -129,35 +135,45 @@ public class GitHubTemplate implements GitHubOperations {
     }
 
     @Override
-    public PullRequest mergeWithHead(final String organization, final String repository, final PullRequest pr) {
-        final String url = "https://api.github.com/repos/" + organization + "/" + repository + "/merges";
+    public PullRequest mergeWithBase(final String organization, final String repository, final PullRequest pr) {
+        if (pr.getHead().getRepository().isFork()) {
+            log.info("Unable to merge pull request [{}] with base on a forked repository [{}]", pr.getUrl(), pr.getHead().getRepository());
+            return pr;
+        }
+
+        final String url = "https://api.github.com/repos/" + organization + '/' + repository + "/merges";
         final URI uri = URI.create(url);
         final Map<String, String> body = new HashMap<>();
-        final String branch = pr.getHead().getRef();
-        body.put("base", branch);
-        body.put("head", "master");
-        body.put("commit_message", "Merged branch master into " + branch);
+        final String prBranch = pr.getHead().getRef();
+        body.put("base", prBranch);
+
+        final String targetBranch = pr.getBase().getRef();
+        body.put("head", targetBranch);
+
+        body.put("commit_message", "Merged branch " + targetBranch + " into " + prBranch);
 
         final ResponseEntity response = this.rest.exchange(new RequestEntity(body, HttpMethod.POST, uri), Map.class);
         if (response.getStatusCode() == HttpStatus.NO_CONTENT) {
-            log.debug("Pull request [{}] already contains the head/master; nothing to merge", pr.getUrl());
+            log.debug("Pull request [{}] already contains the [{}]; nothing to mergeWithBase", targetBranch, pr.getUrl());
         } else if (response.getStatusCode() == HttpStatus.CONFLICT) {
-            log.warn("Pull request [{}] has a merge conflict and cannot be merged with master", pr.getUrl());
+            log.warn("Pull request [{}] has a mergeWithBase conflict and cannot be merged with [{}]", pr.getUrl(), targetBranch);
         } else if (response.getStatusCode() == HttpStatus.CREATED) {
-            log.info("Pull request [{}] is successfully merged with head/master", pr.getUrl());
+            log.info("Pull request [{}] is successfully merged with head [{}]", pr.getUrl(), targetBranch);
+        } else {
+            log.warn("Unable to handle merge with base; message [{}], status [{}]", response.getBody(), response.getStatusCode().getReasonPhrase());
         }
         return pr;
     }
 
     @Override
     public Page<Milestone> getMilestones(final String organization, final String name) {
-        final String url = "https://api.github.com/repos/" + organization + "/" + name + "/milestones?state=open";
+        final String url = "https://api.github.com/repos/" + organization + '/' + name + "/milestones?state=open";
         return getPage(url, Milestone[].class);
     }
 
     @Override
     public Page<Label> getLabels(final String organization, final String name) {
-        final String url = "https://api.github.com/repos/" + organization + "/" + name + "/labels";
+        final String url = "https://api.github.com/repos/" + organization + '/' + name + "/labels";
         return getPage(url, Label[].class);
     }
 
@@ -184,6 +200,14 @@ public class GitHubTemplate implements GitHubOperations {
             () -> getPage(getNextUrl(contents), type));
     }
 
+    private <T> T getSinglePage(final String url, final Class<T> type) {
+        if (!StringUtils.hasText(url)) {
+            return null;
+        }
+        final ResponseEntity<T> contents = this.rest.getForEntity(url, type);
+        return contents.getBody();
+    }
+
     private String getNextUrl(final ResponseEntity<?> response) {
         return this.linkParser.parse(response.getHeaders().getFirst("Link")).get("next");
     }
@@ -196,14 +220,9 @@ public class GitHubTemplate implements GitHubOperations {
             new RequestEntity<>(Arrays.asList(label), HttpMethod.POST, uri),
             Label[].class);
         if (response.getStatusCode() != HttpStatus.OK) {
-            log.warn("Failed to add label to pull request. Response status: "
-                + response.getStatusCode());
+            log.warn("Failed to add label to pull request. Response status: " + response.getStatusCode());
         }
-        return new PullRequest(pr.getUrl(), pr.getCommentsUrl(),
-            pr.getUser(), pr.getLabels(),
-            pr.getMilestone(), pr.getState(),
-            pr.getTitle(), pr.getNumber(),
-            pr.getBase(), pr.getHead());
+        return pr;
     }
 
     @Override
@@ -232,7 +251,7 @@ public class GitHubTemplate implements GitHubOperations {
         }
         final ResponseEntity<Label[]> response = this.rest.exchange(
             new RequestEntity<Void>(HttpMethod.DELETE, URI.create(
-                issue.getLabelsUrl().replace("{/name}", "/" + encodedName))),
+                issue.getLabelsUrl().replace("{/name}", '/' + encodedName))),
             Label[].class);
         if (response.getStatusCode() != HttpStatus.OK) {
             log.warn("Failed to remove label from issue. Response status: "

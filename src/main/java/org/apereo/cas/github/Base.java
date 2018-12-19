@@ -28,14 +28,17 @@ public class Base {
     private final String label;
     private final String ref;
     private final String sha;
+    private final Repository repository;
 
     @JsonCreator
     public Base(@JsonProperty("label") final String label,
                 @JsonProperty("ref") final String ref,
+                @JsonProperty("repo") final Repository repository,
                 @JsonProperty("sha") final String sha) {
         this.label = label;
         this.ref = ref;
         this.sha = sha;
+        this.repository = repository;
     }
 
     public boolean isRefMaster() {

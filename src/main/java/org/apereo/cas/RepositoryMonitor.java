@@ -79,7 +79,7 @@ class RepositoryMonitor {
             while (page != null) {
                 for (final PullRequest pr : page.getContent()) {
                     if (!pr.getTitle().contains("WIP")) {
-                        repository.mergePullRequestWithMaster(pr);
+                        repository.mergePullRequest(pr);
                     }
                 }
                 page = page.next();

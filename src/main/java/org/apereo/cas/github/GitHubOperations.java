@@ -22,6 +22,8 @@ public interface GitHubOperations {
 
     Page<PullRequest> getPullRequests(String organization, String repository);
 
+    PullRequest getPullRequest(String organization, String repository, String number);
+
     Page<Comment> getComments(Issue issue);
 
     Issue addLabel(Issue issue, String label);
@@ -44,5 +46,5 @@ public interface GitHubOperations {
 
     void setMilestone(PullRequest pr, Milestone milestone);
 
-    PullRequest mergeWithHead(final String organization, final String repository, PullRequest pr);
+    PullRequest mergeWithBase(final String organization, final String repository, PullRequest pr);
 }
