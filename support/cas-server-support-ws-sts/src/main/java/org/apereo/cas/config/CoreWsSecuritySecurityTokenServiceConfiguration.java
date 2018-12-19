@@ -205,6 +205,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         return realms;
     }
 
+    @ConditionalOnMissingBean(name = "transportSamlTokenProvider")
     @Bean
     public SAMLTokenProvider transportSamlTokenProvider() {
         final WsFederationProperties.SecurityTokenService wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
@@ -237,16 +238,19 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         return provider;
     }
 
+    @ConditionalOnMissingBean(name = "transportSamlTokenValidator")
     @Bean
     public TokenValidator transportSamlTokenValidator() {
         return new SAMLTokenValidator();
     }
 
+    @ConditionalOnMissingBean(name = "transportUsernameTokenValidator")
     @Bean
     public Validator transportUsernameTokenValidator() {
         return new CipheredCredentialsValidator(securityTokenServiceCredentialCipherExecutor());
     }
 
+    @ConditionalOnMissingBean(name = "transportService")
     @Bean
     public StaticService transportService() {
         final StaticService s = new StaticService();
