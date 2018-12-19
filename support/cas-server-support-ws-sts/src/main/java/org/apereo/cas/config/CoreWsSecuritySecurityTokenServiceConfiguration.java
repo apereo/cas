@@ -99,6 +99,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @ConditionalOnMissingBean(name = "cxfServlet")
     @Bean
     public ServletRegistrationBean cxfServlet() {
         val bean = new ServletRegistrationBean();
@@ -110,11 +111,13 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         return bean;
     }
 
+    @ConditionalOnMissingBean(name = "loggerListener")
     @Bean
     public EventMapper loggerListener() {
         return new EventMapper(new MapEventLogger());
     }
 
+    @ConditionalOnMissingBean(name = "delegationHandlers")
     @RefreshScope
     @Bean
     public List<TokenDelegationHandler> delegationHandlers() {
@@ -124,6 +127,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         return handlers;
     }
 
+    @ConditionalOnMissingBean(name = "transportSTSProviderBean")
     @Bean
     @SneakyThrows
     public SecurityTokenServiceProvider transportSTSProviderBean() {
@@ -133,6 +137,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         return provider;
     }
 
+    @ConditionalOnMissingBean(name = "transportIssueDelegate")
     @Bean
     public IssueOperation transportIssueDelegate() {
         val wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
@@ -162,6 +167,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         return new MemoryTokenStore();
     }
 
+    @ConditionalOnMissingBean(name = "transportValidateDelegate")
     @Bean
     public ValidateOperation transportValidateDelegate() {
         val op = new TokenValidateOperation();
@@ -171,6 +177,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         return op;
     }
 
+    @ConditionalOnMissingBean(name = "transportTokenValidators")
     @RefreshScope
     @Bean
     public List transportTokenValidators() {
@@ -182,6 +189,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         return list;
     }
 
+    @ConditionalOnMissingBean(name = "transportTokenProviders")
     @RefreshScope
     @Bean
     public List transportTokenProviders() {
@@ -192,21 +200,23 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         return list;
     }
 
+    @ConditionalOnMissingBean(name = "casRealm")
     @Bean
     public RealmProperties casRealm() {
         val wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
+        val realmConfig = wsfed.getRealm();
         val realm = new RealmProperties();
-        realm.setIssuer(wsfed.getRealm().getIssuer());
-        if (StringUtils.isBlank(wsfed.getRealm().getKeystoreFile())
-            || StringUtils.isBlank(wsfed.getRealm().getKeyPassword())
-            || StringUtils.isBlank(wsfed.getRealm().getKeystoreAlias())) {
+        realm.setIssuer(realmConfig.getIssuer());
+        if (StringUtils.isBlank(realmConfig.getKeystoreFile())
+            || StringUtils.isBlank(realmConfig.getKeyPassword())
+            || StringUtils.isBlank(realmConfig.getKeystoreAlias())) {
             throw new BeanCreationException("Keystore file, password or alias assigned to the realm must be defined");
         }
 
-        val p = CryptoUtils.getSecurityProperties(wsfed.getRealm().getKeystoreFile(),
-            wsfed.getRealm().getKeystorePassword(), wsfed.getRealm().getKeystoreAlias());
+        val p = CryptoUtils.getSecurityProperties(realmConfig.getKeystoreFile(),
+            realmConfig.getKeystorePassword(), realmConfig.getKeystoreAlias());
         realm.setSignatureCryptoProperties(p);
-        realm.setCallbackHandler(new RealmPasswordVerificationCallbackHandler(wsfed.getRealm().getKeyPassword()));
+        realm.setCallbackHandler(new RealmPasswordVerificationCallbackHandler(realmConfig.getKeyPassword()));
         return realm;
     }
 
@@ -220,11 +230,13 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         return realms;
     }
 
+    @ConditionalOnMissingBean(name = "transportSecureContextTokenProvider")
     @Bean
     public SCTProvider transportSecureContextTokenProvider() {
         return new SCTProvider();
     }
 
+    @ConditionalOnMissingBean(name = "transportJwtTokenProvider")
     @Bean
     public JWTTokenProvider transportJwtTokenProvider() {
         val provider = new JWTTokenProvider();
@@ -233,6 +245,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         return provider;
     }
 
+    @ConditionalOnMissingBean(name = "transportSamlTokenProvider")
     @Bean
     public SAMLTokenProvider transportSamlTokenProvider() {
         val wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
@@ -265,31 +278,37 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         return provider;
     }
 
+    @ConditionalOnMissingBean(name = "transportSamlTokenValidator")
     @Bean
     public TokenValidator transportSamlTokenValidator() {
         return new SAMLTokenValidator();
     }
 
+    @ConditionalOnMissingBean(name = "transportJwtTokenValidator")
     @Bean
     public TokenValidator transportJwtTokenValidator() {
         return new JWTTokenValidator();
     }
 
+    @ConditionalOnMissingBean(name = "transportSecureContextTokenValidator")
     @Bean
     public TokenValidator transportSecureContextTokenValidator() {
         return new SCTValidator();
     }
 
+    @ConditionalOnMissingBean(name = "transportX509TokenValidator")
     @Bean
     public TokenValidator transportX509TokenValidator() {
         return new X509TokenValidator();
     }
 
+    @ConditionalOnMissingBean(name = "transportUsernameTokenValidator")
     @Bean
     public Validator transportUsernameTokenValidator() {
         return new CipheredCredentialsValidator(securityTokenServiceCredentialCipherExecutor());
     }
 
+    @ConditionalOnMissingBean(name = "transportService")
     @Bean
     public StaticService transportService() {
         val s = new StaticService();
@@ -318,6 +337,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         return s;
     }
 
+    @ConditionalOnMissingBean(name = "securityTokenServiceClientBuilder")
     @Bean
     public SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder() {
         return new SecurityTokenServiceClientBuilder(casProperties.getAuthn().getWsfedIdp(),
@@ -334,6 +354,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
             securityTokenServiceClientBuilder());
     }
 
+    @ConditionalOnMissingBean(name = "securityTokenServiceCredentialCipherExecutor")
     @RefreshScope
     @Bean
     public CipherExecutor securityTokenServiceCredentialCipherExecutor() {
@@ -346,6 +367,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
             crypto.getEncryption().getKeySize());
     }
 
+    @ConditionalOnMissingBean(name = "securityTokenTicketFactory")
     @Bean
     @RefreshScope
     public SecurityTokenTicketFactory securityTokenTicketFactory() {
