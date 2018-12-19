@@ -55,8 +55,6 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
 
     private ChainingMetadataResolver metadataResolver;
 
-    private final Object lock = new Object();
-
     /**
      * Instantiates a new abstract metadata resolver adapter.
      */

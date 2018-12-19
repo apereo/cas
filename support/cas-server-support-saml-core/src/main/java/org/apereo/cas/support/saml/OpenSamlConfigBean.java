@@ -1,9 +1,11 @@
 package org.apereo.cas.support.saml;
 
 
+import com.codahale.metrics.MetricRegistry;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.opensaml.core.config.ConfigurationService;
@@ -12,6 +14,7 @@ import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistry;
 import org.opensaml.core.xml.io.MarshallerFactory;
 import org.opensaml.core.xml.io.UnmarshallerFactory;
+import org.opensaml.xmlsec.config.DecryptionParserPool;
 
 /**
  * Load the OpenSAML config context.
@@ -22,36 +25,41 @@ import org.opensaml.core.xml.io.UnmarshallerFactory;
 @Slf4j
 @Getter
 public class OpenSamlConfigBean {
-
-    @NonNull
+    
     private final ParserPool parserPool;
-
     private final XMLObjectBuilderFactory builderFactory;
     private final MarshallerFactory marshallerFactory;
     private final UnmarshallerFactory unmarshallerFactory;
+    private XMLObjectProviderRegistry xmlObjectProviderRegistry;
 
     @SneakyThrows
-    public OpenSamlConfigBean(final ParserPool parserPool) {
+    public OpenSamlConfigBean(@NonNull final ParserPool parserPool) {
         this.parserPool = parserPool;
 
         LOGGER.debug("Initializing OpenSaml configuration...");
         InitializationService.initialize();
 
-        XMLObjectProviderRegistry registry;
-        synchronized (ConfigurationService.class) {
-            registry = ConfigurationService.get(XMLObjectProviderRegistry.class);
-            if (registry == null) {
-                LOGGER.debug("XMLObjectProviderRegistry did not exist in ConfigurationService, will be created");
-                registry = new XMLObjectProviderRegistry();
-                ConfigurationService.register(XMLObjectProviderRegistry.class, registry);
-            }
-        }
+        initializeXmlProviderRegistry();
 
-        registry.setParserPool(this.parserPool);
+        ConfigurationService.register(DecryptionParserPool.class, new DecryptionParserPool(this.parserPool));
+        ConfigurationService.register(MetricRegistry.class, new MetricRegistry());
 
-        this.builderFactory = registry.getBuilderFactory();
-        this.marshallerFactory = registry.getMarshallerFactory();
-        this.unmarshallerFactory = registry.getUnmarshallerFactory();
+        xmlObjectProviderRegistry.setParserPool(this.parserPool);
+
+        this.builderFactory = xmlObjectProviderRegistry.getBuilderFactory();
+        this.marshallerFactory = xmlObjectProviderRegistry.getMarshallerFactory();
+        this.unmarshallerFactory = xmlObjectProviderRegistry.getUnmarshallerFactory();
+
         LOGGER.debug("Initialized OpenSaml successfully.");
+    }
+
+    @Synchronized
+    private void initializeXmlProviderRegistry() {
+        xmlObjectProviderRegistry = ConfigurationService.get(XMLObjectProviderRegistry.class);
+        if (xmlObjectProviderRegistry == null) {
+            LOGGER.debug("XMLObjectProviderRegistry did not exist in ConfigurationService, will be created");
+            xmlObjectProviderRegistry = new XMLObjectProviderRegistry();
+            ConfigurationService.register(XMLObjectProviderRegistry.class, xmlObjectProviderRegistry);
+        }
     }
 }
