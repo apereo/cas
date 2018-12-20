@@ -10,6 +10,7 @@ import org.apereo.cas.services.web.ChainingThemeResolver;
 import org.apereo.cas.services.web.RegisteredServiceThemeResolver;
 import org.apereo.cas.services.web.RequestHeaderThemeResolver;
 import org.apereo.cas.services.web.ThemeBasedViewResolver;
+import org.apereo.cas.services.web.ThemeTemplateResolver;
 import org.apereo.cas.services.web.ThemeViewResolver;
 import org.apereo.cas.services.web.ThemeViewResolverFactory;
 import org.apereo.cas.util.CollectionUtils;
@@ -37,8 +38,10 @@ import org.thymeleaf.dialect.IPostProcessorDialect;
 import org.thymeleaf.postprocessor.IPostProcessor;
 import org.thymeleaf.postprocessor.PostProcessor;
 import org.thymeleaf.spring5.SpringTemplateEngine;
+import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.AbstractTemplateResolver;
 
 import java.util.HashMap;
 import java.util.List;
@@ -77,6 +80,9 @@ public class CasThemesConfiguration {
     private ApplicationContext applicationContext;
 
     @Autowired
+    private SpringResourceTemplateResolver springResourceTemplateResolver;
+
+    @Autowired
     @Qualifier("thymeleafViewResolver")
     private ObjectProvider<ThymeleafViewResolver> thymeleafViewResolver;
 
@@ -113,6 +119,20 @@ public class CasThemesConfiguration {
         map.put(".*iPhone.*", "iphone");
         map.put(".*Nokia.*AppleWebKit.*", "nokiawebkit");
         return map;
+    }
+
+    @Bean
+    public AbstractTemplateResolver themeTemplateResolver(ThemeResolver themeResolver) {
+        ThemeTemplateResolver resolver = new ThemeTemplateResolver(themeResolver);
+        resolver.setOrder(0);
+		resolver.setApplicationContext(this.applicationContext);
+		resolver.setPrefix(springResourceTemplateResolver.getPrefix() + "%s/");
+		resolver.setSuffix(springResourceTemplateResolver.getSuffix());
+		resolver.setTemplateMode(springResourceTemplateResolver.getTemplateMode());
+		resolver.setCacheablePatterns(springResourceTemplateResolver.getCacheablePatterns());
+		resolver.setCacheable(true);
+		resolver.setCheckExistence(true);
+		return resolver;
     }
 
     @ConditionalOnMissingBean(name = "themeResolver")
