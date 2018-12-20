@@ -71,14 +71,14 @@ class RepositoryMonitor {
         log.info("Monitoring of {}/{} completed", this.repository.getOrganization(), this.repository.getName());
     }
 
-    @Scheduled(fixedRate = 30 * 60 * 1000)
+    @Scheduled(fixedRate = 60 * 60 * 1000)
     void monitorHourly() {
         log.info("Hourly task of monitoring {}/{}", this.repository.getOrganization(), this.repository.getName());
         try {
             Page<PullRequest> page = this.gitHub.getPullRequests(this.repository.getOrganization(), this.repository.getName());
             while (page != null) {
                 for (final PullRequest pr : page.getContent()) {
-                    if (!pr.getTitle().contains("WIP")) {
+                    if (!pr.getTitle().contains("WIP") && !pr.isLabeledAs(CasLabels.LABEL_PENDING)) {
                         repository.mergePullRequest(pr);
                     }
                 }

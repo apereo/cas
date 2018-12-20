@@ -21,6 +21,7 @@ import org.apereo.cas.github.Label;
 import org.apereo.cas.github.Milestone;
 import org.apereo.cas.github.Page;
 import org.apereo.cas.github.PullRequest;
+import org.apereo.cas.github.PullRequestFile;
 
 import com.github.zafarkhaja.semver.Version;
 import lombok.Getter;
@@ -32,6 +33,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.StringReader;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
@@ -116,5 +118,15 @@ public class MonitoredRepository implements InitializingBean {
         this.labels.stream().filter(getLabelPredicateByName(labelName)).findFirst().ifPresent(l -> {
             this.gitHub.addLabel(pr, l.getName());
         });
+    }
+
+    public Collection<PullRequestFile> getPullRequestFiles(final PullRequest pr) {
+        Collection<PullRequestFile> files = new ArrayList<>();
+        Page<PullRequestFile> pages = this.gitHub.getPullRequestFiles(getOrganization(), getName(), pr.getNumber());
+        while (pages != null) {
+            files.addAll(pages.getContent());
+            pages = pages.next();
+        }
+        return files;
     }
 }

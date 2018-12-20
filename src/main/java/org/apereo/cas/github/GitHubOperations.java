@@ -16,6 +16,8 @@
 
 package org.apereo.cas.github;
 
+import java.util.Collection;
+
 public interface GitHubOperations {
 
     Page<Issue> getIssues(String organization, String repository);
@@ -47,4 +49,6 @@ public interface GitHubOperations {
     void setMilestone(PullRequest pr, Milestone milestone);
 
     PullRequest mergeWithBase(final String organization, final String repository, PullRequest pr);
+
+    Page<PullRequestFile> getPullRequestFiles(String organization, final String repository, String number);
 }

@@ -39,6 +39,7 @@ public enum CasLabels {
     LABEL_COSMOSDB("CosmosDb"),
     LABEL_COUCHDB("CouchDb"),
     LABEL_COUCHBASE("Couchbase"),
+    LABEL_PENDING_DOCUMENT_PROPERTY("Pending: Document Property"),
     LABEL_DELEGATED_AUTHENTICATION_PAC4J("Delegated Authentication Pac4J", "pac4j"),
     LABEL_DELEGATED_AUTHENTICATION_WS_FED("Delegated Authentication WS-FED", "adfs"),
     LABEL_DEPENDENCIES_MODULES("Dependencies & Modules", "gradle|dependency|bom|maven"),

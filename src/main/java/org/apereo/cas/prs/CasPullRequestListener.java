@@ -5,11 +5,13 @@ import org.apereo.cas.MonitoredRepository;
 import org.apereo.cas.PullRequestListener;
 import org.apereo.cas.github.Milestone;
 import org.apereo.cas.github.PullRequest;
+import org.apereo.cas.github.PullRequestFile;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Optional;
 
 @Slf4j
@@ -26,8 +28,23 @@ public class CasPullRequestListener implements PullRequestListener {
         }
 
         processLabelPendingPortForward(pr);
+        processLabelPendingUpdateProperty(pr);
         processMilestoneAssignment(pr);
         processLabelsByFeatures(pr);
+    }
+
+    private void processLabelPendingUpdateProperty(final PullRequest pr) {
+        if (!pr.isLabeledAs(CasLabels.LABEL_PENDING_DOCUMENT_PROPERTY)) {
+            Collection<PullRequestFile> files = repository.getPullRequestFiles(pr);
+            boolean hasProperty = files.stream().anyMatch(f -> f.getFilename().endsWith("Properties.java"));
+            if (hasProperty) {
+                boolean hasNoDocs = files.stream().noneMatch(f -> f.getFilename().contains("Configuration-Properties.md"));
+                if (hasNoDocs) {
+                    log.info("{} changes CAS properties, yet documentation is not updated to reflect changes", pr);
+                    repository.labelPullRequestAs(pr, CasLabels.LABEL_PENDING_DOCUMENT_PROPERTY);
+                }
+            }
+        }
     }
 
     private boolean processLabelSeeMaintenancePolicy(final PullRequest pr) {
