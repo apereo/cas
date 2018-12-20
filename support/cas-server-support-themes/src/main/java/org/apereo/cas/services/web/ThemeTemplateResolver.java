@@ -1,8 +1,9 @@
 package org.apereo.cas.services.web;
 
-import java.util.Map;
-import java.util.Optional;
-
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.ThemeResolver;
@@ -10,9 +11,8 @@ import org.thymeleaf.IEngineConfiguration;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.templateresource.ITemplateResource;
 
-import lombok.Getter;
-import lombok.val;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * This is {@link ThemeTemplateResolver}.
@@ -28,13 +28,14 @@ public class ThemeTemplateResolver extends SpringResourceTemplateResolver {
      */
     protected final ThemeResolver themeResolver;
     
-    public ThemeTemplateResolver(ThemeResolver themeResolver) {
-    	this.themeResolver = themeResolver;
-    	this.setOrder(0);
-    	this.setCheckExistence(true);
+    public ThemeTemplateResolver(final ThemeResolver themeResolver) {
+        this.themeResolver = themeResolver;
+        this.setOrder(0);
+        this.setCheckExistence(true);
     }
 
     @Override
+    @SuppressFBWarnings("PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS")
     protected ITemplateResource computeTemplateResource(final IEngineConfiguration configuration, final String ownerTemplate,
                                                         final String template, final String resourceName, final String characterEncoding,
                                                         final Map<String, Object> templateResolutionAttributes) {
@@ -45,13 +46,9 @@ public class ThemeTemplateResolver extends SpringResourceTemplateResolver {
                 .map(themeResolver::resolveThemeName);
         
         if (theme.isPresent()) {
-        	val themeTemplate = String.format(resourceName, theme.get());
-            ITemplateResource resource = super.computeTemplateResource(configuration, ownerTemplate, template, themeTemplate, characterEncoding, templateResolutionAttributes);
-            if(resource.exists()) {
-                LOGGER.debug("Successfully resolved themed template {}", themeTemplate);
-            	return resource;
-            }
-            LOGGER.trace("No themed template available for {} using theme {}", resourceName, theme.get());
+            LOGGER.debug("Attempting to resolve resource {} using theme {}", resourceName, theme.get());
+            val themeTemplate = String.format(resourceName, theme.get());
+            return super.computeTemplateResource(configuration, ownerTemplate, template, themeTemplate, characterEncoding, templateResolutionAttributes);
         }
         return null;
     }

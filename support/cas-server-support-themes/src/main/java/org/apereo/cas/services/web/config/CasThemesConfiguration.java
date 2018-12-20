@@ -80,7 +80,8 @@ public class CasThemesConfiguration {
     private ApplicationContext applicationContext;
 
     @Autowired
-    private SpringResourceTemplateResolver springResourceTemplateResolver;
+    @Qualifier("defaultTemplateResolver")
+    private ObjectProvider<SpringResourceTemplateResolver> springResourceTemplateResolver;
 
     @Autowired
     @Qualifier("thymeleafViewResolver")
@@ -122,17 +123,18 @@ public class CasThemesConfiguration {
     }
 
     @Bean
-    public AbstractTemplateResolver themeTemplateResolver(ThemeResolver themeResolver) {
-        ThemeTemplateResolver resolver = new ThemeTemplateResolver(themeResolver);
+    public AbstractTemplateResolver themeTemplateResolver(final ThemeResolver themeResolver) {
+        val defaultResolver = springResourceTemplateResolver.getObject();
+        val resolver = new ThemeTemplateResolver(themeResolver);
         resolver.setOrder(0);
-		resolver.setApplicationContext(this.applicationContext);
-		resolver.setPrefix(springResourceTemplateResolver.getPrefix() + "%s/");
-		resolver.setSuffix(springResourceTemplateResolver.getSuffix());
-		resolver.setTemplateMode(springResourceTemplateResolver.getTemplateMode());
-		resolver.setCacheablePatterns(springResourceTemplateResolver.getCacheablePatterns());
-		resolver.setCacheable(true);
-		resolver.setCheckExistence(true);
-		return resolver;
+        resolver.setApplicationContext(this.applicationContext);
+        resolver.setPrefix(defaultResolver.getPrefix() + "%s/");
+        resolver.setSuffix(defaultResolver.getSuffix());
+        resolver.setTemplateMode(defaultResolver.getTemplateMode());
+        resolver.setCacheablePatterns(defaultResolver.getCacheablePatterns());
+        resolver.setCacheable(thymeleafProperties.isCache());
+        resolver.setCheckExistence(true);
+        return resolver;
     }
 
     @ConditionalOnMissingBean(name = "themeResolver")
