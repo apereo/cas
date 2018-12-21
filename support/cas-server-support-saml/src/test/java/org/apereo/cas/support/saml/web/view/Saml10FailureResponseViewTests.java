@@ -34,7 +34,7 @@ public class Saml10FailureResponseViewTests extends AbstractOpenSamlTests {
 
         val builder = new Saml10ObjectBuilder(this.configBean);
         view = new Saml10FailureResponseView(null, null,
-            builder, new DefaultArgumentExtractor(new SamlServiceFactory(new Saml10ObjectBuilder(configBean))),
+            builder, new DefaultArgumentExtractor(new SamlServiceFactory()),
             StandardCharsets.UTF_8.name(), 0, 30, null,
             new DefaultAuthenticationServiceSelectionPlan(), new NoOpProtocolAttributesRenderer());
     }

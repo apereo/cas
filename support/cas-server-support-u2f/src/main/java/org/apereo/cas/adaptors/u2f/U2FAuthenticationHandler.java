@@ -51,9 +51,10 @@ public class U2FAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
 
         try {
             val authenticateResponse = SignResponse.fromJson(tokenCredential.getToken());
-            val authJson = u2FDeviceRepository.getDeviceAuthenticationRequest(authenticateResponse.getRequestId(), principal.getId());
+            val requestId = authenticateResponse.getRequestId();
+            val authJson = u2FDeviceRepository.getDeviceAuthenticationRequest(requestId, principal.getId());
             if (StringUtils.isBlank(authJson)) {
-                throw new PreventedException("Could not get device authentication request from repository for request id " + authenticateResponse.getRequestId());
+                throw new PreventedException("Could not get device authentication request from repository for request id " + requestId);
             }
             val authenticateRequest = SignRequestData.fromJson(authJson);
             val registeredDevices = u2FDeviceRepository.getRegisteredDevices(principal.getId());

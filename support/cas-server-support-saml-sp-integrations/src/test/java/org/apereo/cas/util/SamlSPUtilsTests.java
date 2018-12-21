@@ -56,22 +56,4 @@ public class SamlSPUtilsTests extends BaseSamlIdPConfigurationTests {
         assertNotNull(service);
         assertEquals(entity.getEntityID(), service.getServiceId());
     }
-
-    @Test
-    public void verifyNewSamlServiceProviderViaMetadata() {
-        val sp = new SamlServiceProviderProperties.TestShib();
-        sp.setMetadata("http://www.testshib.org/metadata/testshib-providers.xml");
-        val service = SamlSPUtils.newSamlServiceProviderService(sp, defaultSamlRegisteredServiceCachingMetadataResolver);
-        assertNotNull(service);
-    }
-
-    @Test
-    public void verifySaveOperation() {
-        val sp = new SamlServiceProviderProperties.TestShib();
-        sp.setMetadata("http://www.testshib.org/metadata/testshib-providers.xml");
-        val service = SamlSPUtils.newSamlServiceProviderService(sp, defaultSamlRegisteredServiceCachingMetadataResolver);
-        SamlSPUtils.saveService(service, servicesManager);
-        SamlSPUtils.saveService(service, servicesManager);
-        assertEquals(2, servicesManager.count());
-    }
 }

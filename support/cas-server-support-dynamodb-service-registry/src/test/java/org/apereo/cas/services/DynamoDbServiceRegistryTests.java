@@ -33,7 +33,12 @@ import java.util.Collections;
     CasCoreUtilConfiguration.class,
     CasCoreAuthenticationMetadataConfiguration.class,
     RefreshAutoConfiguration.class})
-@TestPropertySource(locations = "classpath:/dynamodb-serviceregistry.properties")
+@TestPropertySource(properties = {
+    "cas.serviceRegistry.dynamoDb.endpoint=http://localhost:8000",
+    "cas.serviceRegistry.dynamoDb.dropTablesOnStartup=true",
+    "cas.serviceRegistry.dynamoDb.localInstance=true",
+    "cas.serviceRegistry.dynamoDb.region=us-east-1"
+})
 @Category(DynamoDbCategory.class)
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 public class DynamoDbServiceRegistryTests extends AbstractServiceRegistryTests {

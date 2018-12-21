@@ -9,7 +9,6 @@ dependencies {
     implementation project(":core:cas-server-core-services-authentication")
     implementation project(":core:cas-server-core-logout-api")
     implementation project(":core:cas-server-core-web-api")
-    implementation project(":support:cas-server-support-saml")
     implementation project(":support:cas-server-support-saml-core")
     implementation project(":support:cas-server-support-saml-core-api")
     implementation project(":support:cas-server-support-saml-mdui-core")

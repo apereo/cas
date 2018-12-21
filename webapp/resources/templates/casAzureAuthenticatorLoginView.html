@@ -24,7 +24,7 @@
     <div layout:fragment="content" id="login" class="box">
         <form method="post" id="fm1" class="fm-v clearfix" th:object="${credential}" th:action="@{/login}">
             <div id="msg" class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('*')}">
-                <span th:each="err : ${#fields.errors('*')}" th:utext="${err}">this error block and text is only shown if there are errors</span>
+                <span th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">this error block and text is only shown if there are errors</span>
             </div>
 
             <div class="form-group">

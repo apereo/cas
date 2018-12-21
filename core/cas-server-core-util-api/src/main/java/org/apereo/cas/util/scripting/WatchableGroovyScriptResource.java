@@ -18,11 +18,14 @@ import org.springframework.core.io.Resource;
 @Slf4j
 @Getter
 public class WatchableGroovyScriptResource {
-    private FileWatcherService watcherService;
-    private GroovyObject groovyScript;
+    private transient FileWatcherService watcherService;
+    private transient GroovyObject groovyScript;
+    private final transient Resource resource;
 
     @SneakyThrows
     public WatchableGroovyScriptResource(final Resource script) {
+        this.resource = script;
+
         if (ResourceUtils.doesResourceExist(script)) {
             this.watcherService = new FileWatcherService(script.getFile(), file -> {
                 try {
@@ -52,6 +55,22 @@ public class WatchableGroovyScriptResource {
     public <T> T execute(final Object[] args, final Class<T> clazz) {
         if (this.groovyScript != null) {
             return ScriptingUtils.executeGroovyScript(this.groovyScript, args, clazz, true);
+        }
+        return null;
+    }
+
+    /**
+     * Execute t.
+     *
+     * @param <T>        the type parameter
+     * @param methodName the method name
+     * @param clazz      the clazz
+     * @param args       the args
+     * @return the t
+     */
+    public <T> T execute(final String methodName, final Class<T> clazz, final Object... args) {
+        if (this.groovyScript != null) {
+            return ScriptingUtils.executeGroovyScript(this.groovyScript, methodName, args, clazz, true);
         }
         return null;
     }

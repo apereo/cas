@@ -35,7 +35,7 @@ public class WebUtilTests {
 
     @Test
     public void verifyFoundNoService() {
-        val casArgumentExtractor = new DefaultArgumentExtractor(new SamlServiceFactory(null));
+        val casArgumentExtractor = new DefaultArgumentExtractor(new SamlServiceFactory());
         val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "test");
         val service = HttpRequestUtils.getService(Collections.singletonList(casArgumentExtractor), request);

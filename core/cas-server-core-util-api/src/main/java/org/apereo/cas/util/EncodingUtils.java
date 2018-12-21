@@ -1,6 +1,7 @@
 package org.apereo.cas.util;
 
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.util.crypto.DecryptionException;
 
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -16,6 +17,7 @@ import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.OctJwkGenerator;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
+import org.jose4j.lang.JoseException;
 
 import javax.crypto.Cipher;
 import java.io.Serializable;
@@ -23,6 +25,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 
 /**
@@ -413,7 +416,7 @@ public class EncodingUtils {
             jwe.setHeader("typ", "JWT");
             LOGGER.trace("Encrypting via [{}]", contentEncryptionAlgorithmIdentifier);
             return jwe.getCompactSerialization();
-        } catch (final Exception e) {
+        } catch (final JoseException e) {
             throw new IllegalArgumentException("Is JCE Unlimited Strength Jurisdiction Policy installed? " + e.getMessage(), e);
         }
     }
@@ -431,7 +434,15 @@ public class EncodingUtils {
         jwe.setKey(secretKeyEncryptionKey);
         jwe.setCompactSerialization(value);
         LOGGER.trace("Decrypting value...");
-        return jwe.getPayload();
+        try {
+            return jwe.getPayload();
+        } catch (final JoseException e) {
+            if (LOGGER.isTraceEnabled()) {
+                throw new DecryptionException(e);
+            }
+            //noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
+            throw new DecryptionException(); //NOPMD
+        }
     }
 
     /**
@@ -443,7 +454,7 @@ public class EncodingUtils {
         try {
             val maxKeyLen = Cipher.getMaxAllowedKeyLength("AES");
             return maxKeyLen == Integer.MAX_VALUE;
-        } catch (final Exception e) {
+        } catch (final NoSuchAlgorithmException e) {
             return false;
         }
     }

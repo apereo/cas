@@ -75,7 +75,8 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
                 handleLogoutRequest(fedRequest, request, response);
                 break;
             case WSFederationConstants.WSIGNIN10:
-                handleInitialAuthenticationRequest(fedRequest, response, request);
+                val targetService = webApplicationServiceFactory.createService(fedRequest.getWreply());
+                handleInitialAuthenticationRequest(fedRequest, targetService, response, request);
                 break;
             default:
                 throw new UnauthorizedAuthenticationException("The authentication request is not recognized", new HashMap<>(0));
@@ -101,9 +102,9 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
         authenticationRedirectStrategy.redirect(request, response, logoutUrl);
     }
 
-    private void handleInitialAuthenticationRequest(final WSFederationRequest fedRequest,
+    private void handleInitialAuthenticationRequest(final WSFederationRequest fedRequest, final Service targetService,
                                                     final HttpServletResponse response, final HttpServletRequest request) {
-        val service = findAndValidateFederationRequestForRegisteredService(response, request, fedRequest);
+        val service = findAndValidateFederationRequestForRegisteredService(targetService, fedRequest);
         LOGGER.debug("Redirecting to identity provider for initial authentication [{}]", fedRequest);
         redirectToIdentityProvider(fedRequest, response, request, service);
     }

@@ -29,20 +29,20 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner, Seri
     private final transient TicketRegistry ticketRegistry;
 
     @Override
-    public void clean() {
+    public int clean() {
         try {
             if (!isCleanerSupported()) {
                 LOGGER.trace("Ticket registry cleaner is not supported by [{}]. No cleaner processes will run.", getClass().getSimpleName());
-                return;
+                return 0;
             }
 
             LOGGER.trace("Attempting to acquire ticket cleanup lock.");
             if (!this.lockingStrategy.acquire()) {
                 LOGGER.info("Could not obtain lock. Aborting cleanup. The ticket registry may not support self-service maintenance.");
-                return;
+                return 0;
             }
             LOGGER.trace("Acquired lock. Proceeding with cleanup.");
-            cleanInternal();
+            return cleanInternal();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         } finally {
@@ -50,17 +50,21 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner, Seri
             this.lockingStrategy.release();
             LOGGER.debug("Finished ticket cleanup.");
         }
+        return 0;
     }
 
     /**
      * Clean tickets.
+     *
+     * @return the int
      */
-    protected void cleanInternal() {
+    protected int cleanInternal() {
         val ticketsDeleted = ticketRegistry.getTicketsStream()
             .filter(Ticket::isExpired)
             .mapToInt(this::cleanTicket)
             .sum();
         LOGGER.info("[{}] expired tickets removed.", ticketsDeleted);
+        return ticketsDeleted;
     }
 
     @Override
@@ -70,7 +74,7 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner, Seri
             logoutManager.performLogout((TicketGrantingTicket) ticket);
         }
         LOGGER.debug("Cleaning up expired service ticket [{}]", ticket.getId());
-        return ticketRegistry.deleteTicket(ticket.getId());
+        return ticketRegistry.deleteTicket(ticket);
     }
 
     /**

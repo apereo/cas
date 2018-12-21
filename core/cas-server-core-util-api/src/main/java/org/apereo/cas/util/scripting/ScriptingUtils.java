@@ -226,12 +226,23 @@ public class ScriptingUtils {
         return null;
     }
 
+    /**
+     * Execute groovy script t.
+     *
+     * @param <T>          the type parameter
+     * @param groovyObject the groovy object
+     * @param methodName   the method name
+     * @param args         the args
+     * @param clazz        the clazz
+     * @param failOnError  the fail on error
+     * @return the t
+     */
     @SneakyThrows
-    private static <T> T executeGroovyScript(final GroovyObject groovyObject,
-                                             final String methodName,
-                                             final Object[] args,
-                                             final Class<T> clazz,
-                                             final boolean failOnError) {
+    public static <T> T executeGroovyScript(final GroovyObject groovyObject,
+                                            final String methodName,
+                                            final Object[] args,
+                                            final Class<T> clazz,
+                                            final boolean failOnError) {
         try {
             LOGGER.trace("Executing groovy script's [{}] method, with parameters [{}]", methodName, args);
             val result = groovyObject.invokeMethod(methodName, args);

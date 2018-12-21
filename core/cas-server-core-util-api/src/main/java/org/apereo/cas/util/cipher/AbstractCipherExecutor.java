@@ -101,8 +101,6 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
             if (ResourceUtils.doesResourceExist(signingSecretKey)) {
                 configureSigningKeyFromPrivateKeyResource(signingSecretKey);
             }
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
         } finally {
             if (this.signingKey == null) {
                 setSigningKey(new AesKey(signingSecretKey.getBytes(StandardCharsets.UTF_8)));

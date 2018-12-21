@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategyConfigurer;
 import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
+import org.apereo.cas.authentication.SecurityTokenServiceTokenFetcher;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -40,7 +41,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
-import org.springframework.context.annotation.Lazy;
 
 /**
  * This is {@link CoreWsSecurityIdentityProviderConfiguration}.
@@ -92,7 +92,10 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
     @Qualifier("ticketRegistry")
     private ObjectProvider<TicketRegistry> ticketRegistry;
 
-    @Lazy
+    @Autowired
+    @Qualifier("securityTokenServiceTokenFetcher")
+    private ObjectProvider<SecurityTokenServiceTokenFetcher> securityTokenServiceTokenFetcher;
+
     @Bean
     public WSFederationValidateRequestController federationValidateRequestController() {
         return new WSFederationValidateRequestController(servicesManager.getIfAvailable(),
@@ -107,7 +110,6 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
             wsFederationCallbackService());
     }
 
-    @Lazy
     @Autowired
     @Bean
     public WSFederationValidateRequestCallbackController federationValidateRequestCallbackController(
@@ -123,7 +125,8 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
             ticketGrantingTicketCookieGenerator.getIfAvailable(),
             ticketRegistrySupport.getIfAvailable(),
             casClientTicketValidator.getIfAvailable(),
-            wsFederationCallbackService());
+            wsFederationCallbackService(),
+            securityTokenServiceTokenFetcher.getIfAvailable());
     }
 
     @Bean
@@ -131,16 +134,15 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
         return webApplicationServiceFactory.getIfAvailable().createService(WSFederationConstants.ENDPOINT_FEDERATION_REQUEST_CALLBACK);
     }
 
-    @Lazy
     @Bean
     @RefreshScope
     public WSFederationMetadataController wsFederationMetadataController() {
         return new WSFederationMetadataController(casProperties);
     }
 
-    @Lazy
     @Autowired
     @Bean
+    @RefreshScope
     public WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer(
         @Qualifier("securityTokenServiceCredentialCipherExecutor") final CipherExecutor securityTokenServiceCredentialCipherExecutor,
         @Qualifier("securityTokenServiceClientBuilder") final SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder) {
@@ -177,6 +179,4 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
             }
         };
     }
-
-
 }

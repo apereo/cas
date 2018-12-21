@@ -674,6 +674,15 @@
         <cve>CVE-2018-7489</cve>
     </suppress>
     <suppress>
+        <notes><![CDATA[ file name: old Tomcat CVEs false positives on latest Tomcat 9.0.14 ]]></notes>
+        <cve>CVE-2014-0230</cve>
+        <cve>CVE-2011-3190</cve>
+        <cve>CVE-2016-8735</cve>
+        <cve>CVE-2016-1240</cve>
+        <cve>CVE-2016-9774</cve>
+        <cve>CVE-2016-9775</cve>
+    </suppress>
+    <suppress>
         <notes><![CDATA[
    file name: openstack-neutron-2.1.0.jar
    ]]></notes>

@@ -74,7 +74,7 @@ public class FindPropertiesCommand {
                 LOGGER.info("Description: {}", StringUtils.normalizeSpace(v.getDescription()));
                 LOGGER.info("Deprecated: {}", BooleanUtils.toStringYesNo(v.isDeprecated()));
             }
-            LOGGER.info(StringUtils.repeat('-', SEP_LINE_LENGTH));
+            LOGGER.info("-".repeat(SEP_LINE_LENGTH));
         });
     }
 

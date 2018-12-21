@@ -62,6 +62,8 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 ## Ehcache
 
+Monitor the status and state of a cache backed by Ehcache.
+
 ```xml
 <dependency>
     <groupId>org.apereo.cas</groupId>
@@ -74,6 +76,8 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 ## MongoDb
 
+Monitor the status and availability of a MongoDb database.
+
 ```xml
 <dependency>
     <groupId>org.apereo.cas</groupId>
@@ -84,9 +88,9 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#mongodb-monitors).
 
-
-
 ## Hazelcast
+
+Monitor the status and state of a cache backed by Hazelcast.
 
 ```xml
 <dependency>
@@ -100,6 +104,8 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 ## JDBC
 
+Monitor the status and availability of a relational SQL database.
+
 ```xml
 <dependency>
     <groupId>org.apereo.cas</groupId>
@@ -111,6 +117,8 @@ To see the relevant list of CAS properties, please [review this guide](../config
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#database-monitoring).
 
 ## LDAP
+
+Monitor the status and availability of an LDAP server.
 
 ```xml
 <dependency>

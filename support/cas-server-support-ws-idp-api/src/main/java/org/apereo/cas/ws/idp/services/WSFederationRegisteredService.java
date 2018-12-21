@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -26,6 +27,7 @@ import javax.persistence.Entity;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class WSFederationRegisteredService extends RegexRegisteredService {
 
     private static final long serialVersionUID = -3700571300568534062L;

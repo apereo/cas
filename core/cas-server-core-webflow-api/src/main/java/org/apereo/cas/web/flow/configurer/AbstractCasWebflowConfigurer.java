@@ -343,8 +343,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     public Transition createTransition(final Expression criteriaOutcomeExpression, final String targetState) {
         val criteria = getTransitionCriteriaForExpression(criteriaOutcomeExpression);
         val resolver = new DefaultTargetStateResolver(targetState);
-        val t = new Transition(criteria, resolver);
-        return t;
+        return new Transition(criteria, resolver);
     }
 
     private static TransitionCriteria getTransitionCriteriaForExpression(final Expression criteriaOutcomeExpression) {
@@ -862,6 +861,6 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         val index = position < 0 || position == Integer.MAX_VALUE ? currentActions.size() : position;
         currentActions.forEach(actionList::remove);
         Arrays.stream(actions).forEach(a -> currentActions.add(index, a));
-        actionList.addAll(currentActions.toArray(new Action[]{}));
+        actionList.addAll(currentActions.toArray(Action[]::new));
     }
 }

@@ -55,7 +55,7 @@ public class TicketIdSanitizationUtils {
                 if (replaceLength <= 0) {
                     replaceLength = length;
                 }
-                val newId = match.replace(group.substring(0, replaceLength), StringUtils.repeat("*", OBFUSCATION_LENGTH));
+                val newId = match.replace(group.substring(0, replaceLength), "*".repeat(OBFUSCATION_LENGTH));
                 modifiedMessage = modifiedMessage.replaceAll(match, newId);
             }
         }

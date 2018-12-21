@@ -193,9 +193,8 @@ public abstract class AbstractSamlProfileHandlerController {
             throw new IllegalArgumentException("SAML request could not be determined from the authentication request");
         }
         val encodedRequest = EncodingUtils.decodeBase64(requestValue.getBytes(StandardCharsets.UTF_8));
-        val authnRequest = (AuthnRequest)
+        return (AuthnRequest)
             XMLObjectSupport.unmarshallFromInputStream(this.configBean.getParserPool(), new ByteArrayInputStream(encodedRequest));
-        return authnRequest;
     }
 
     /**

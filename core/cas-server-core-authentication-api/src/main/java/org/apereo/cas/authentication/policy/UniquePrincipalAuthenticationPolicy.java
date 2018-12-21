@@ -33,16 +33,14 @@ public class UniquePrincipalAuthenticationPolicy implements AuthenticationPolicy
     public boolean isSatisfiedBy(final Authentication authentication, final Set<AuthenticationHandler> authenticationHandlers) throws Exception {
         try {
             val authPrincipal = authentication.getPrincipal();
-            val count = this.ticketRegistry.getTickets(t -> {
-                var pass = FunctionUtils.doIf(TicketGrantingTicket.class.isInstance(t) && !t.isExpired(),
+            val count = this.ticketRegistry.getTickets(t ->
+                FunctionUtils.doIf(TicketGrantingTicket.class.isInstance(t) && !t.isExpired(),
                     () -> {
                         val principal = TicketGrantingTicket.class.cast(t).getAuthentication().getPrincipal();
                         return principal.getId().equalsIgnoreCase(authPrincipal.getId());
                     },
                     () -> Boolean.TRUE)
-                    .get();
-                return pass;
-            }).count();
+                    .get()).count();
             if (count == 0) {
                 LOGGER.debug("Authentication policy is satisfied with [{}]", authPrincipal.getId());
                 return true;

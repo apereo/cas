@@ -61,8 +61,7 @@ public class StringableCipherExecutorCommand {
 
         var toEncode = value;
         if (file != null && file.exists()) {
-            val fileContent = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
-            toEncode = fileContent;
+            toEncode = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
         }
 
         if (StringUtils.isNotBlank(toEncode)) {

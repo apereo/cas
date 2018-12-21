@@ -69,16 +69,14 @@ public class GoogleAuthenticatorJpaConfiguration {
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean googleAuthenticatorEntityManagerFactory() {
-        val bean =
-            JpaBeans.newHibernateEntityManagerFactoryBean(
-                new JpaConfigDataHolder(
-                    jpaGoogleAuthenticatorVendorAdapter(),
-                    "jpaGoogleAuthenticatorContext",
-                    jpaPackagesToScanGoogleAuthenticator(),
-                    dataSourceGoogleAuthenticator()),
-                casProperties.getAuthn().getMfa().getGauth().getJpa());
 
-        return bean;
+        return JpaBeans.newHibernateEntityManagerFactoryBean(
+            new JpaConfigDataHolder(
+                jpaGoogleAuthenticatorVendorAdapter(),
+                "jpaGoogleAuthenticatorContext",
+                jpaPackagesToScanGoogleAuthenticator(),
+                dataSourceGoogleAuthenticator()),
+            casProperties.getAuthn().getMfa().getGauth().getJpa());
     }
 
     @Autowired

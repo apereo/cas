@@ -49,13 +49,11 @@ public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepos
     @Override
     public GoogleAuthenticatorToken get(final String uid, final Integer otp) {
         try {
-            val r =
-                this.entityManager.createQuery("SELECT r FROM " + GoogleAuthenticatorToken.class.getSimpleName()
-                    + " r WHERE r.userId = :userId and r.token = :token", GoogleAuthenticatorToken.class)
-                    .setParameter("userId", uid)
-                    .setParameter("token", otp)
-                    .getSingleResult();
-            return r;
+            return this.entityManager.createQuery("SELECT r FROM " + GoogleAuthenticatorToken.class.getSimpleName()
+                + " r WHERE r.userId = :userId and r.token = :token", GoogleAuthenticatorToken.class)
+                .setParameter("userId", uid)
+                .setParameter("token", otp)
+                .getSingleResult();
         } catch (final NoResultException e) {
             LOGGER.debug("No record could be found for google authenticator id [{}]", uid);
         }

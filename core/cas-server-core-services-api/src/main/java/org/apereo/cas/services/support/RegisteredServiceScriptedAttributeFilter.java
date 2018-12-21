@@ -46,16 +46,14 @@ public class RegisteredServiceScriptedAttributeFilter implements RegisteredServi
 
     private static Map<String, Object> filterInlinedGroovyAttributeValues(final Map<String, Object> resolvedAttributes, final String script) {
         LOGGER.debug("Found inline groovy script to execute [{}]", script);
-        val attributesToRelease = getGroovyAttributeValue(script, resolvedAttributes);
-        return attributesToRelease;
+        return getGroovyAttributeValue(script, resolvedAttributes);
     }
 
     private static Map<String, Object> filterFileBasedGroovyAttributeValues(final Map<String, Object> resolvedAttributes, final String scriptFile) {
         try {
             LOGGER.debug("Found groovy script file to execute [{}]", scriptFile);
             val script = FileUtils.readFileToString(new File(scriptFile), StandardCharsets.UTF_8);
-            val attributesToRelease = getGroovyAttributeValue(script, resolvedAttributes);
-            return attributesToRelease;
+            return getGroovyAttributeValue(script, resolvedAttributes);
         } catch (final IOException e) {
             LOGGER.error(e.getMessage(), e);
         }

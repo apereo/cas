@@ -57,7 +57,6 @@ import org.ldaptive.auth.FormatDnResolver;
 import org.ldaptive.auth.PooledBindAuthenticationHandler;
 import org.ldaptive.auth.PooledCompareAuthenticationHandler;
 import org.ldaptive.auth.PooledSearchDnResolver;
-import org.ldaptive.auth.PooledSearchEntryResolver;
 import org.ldaptive.control.PasswordPolicyControl;
 import org.ldaptive.extended.PasswordModifyOperation;
 import org.ldaptive.extended.PasswordModifyRequest;
@@ -87,6 +86,8 @@ import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.QualityOfProtection;
 import org.ldaptive.sasl.SaslConfig;
 import org.ldaptive.sasl.SecurityStrength;
+import org.ldaptive.ssl.AllowAnyHostnameVerifier;
+import org.ldaptive.ssl.DefaultHostnameVerifier;
 import org.ldaptive.ssl.KeyStoreCredentialConfig;
 import org.ldaptive.ssl.SslConfig;
 import org.ldaptive.ssl.X509CredentialConfig;
@@ -791,6 +792,20 @@ public class LdapUtils {
             LOGGER.debug("Creating LDAP SSL configuration via the native JVM truststore");
             cc.setSslConfig(new SslConfig());
         }
+
+        val sslConfig = cc.getSslConfig();
+        if (sslConfig != null) {
+            switch (l.getHostnameVerifier()) {
+                case ANY:
+                    sslConfig.setHostnameVerifier(new AllowAnyHostnameVerifier());
+                    break;
+                case DEFAULT:
+                default:
+                    sslConfig.setHostnameVerifier(new DefaultHostnameVerifier());
+                    break;
+            }
+        }
+
         if (StringUtils.isNotBlank(l.getSaslMechanism())) {
             LOGGER.debug("Creating LDAP SASL mechanism via [{}]", l.getSaslMechanism());
 
@@ -979,12 +994,14 @@ public class LdapUtils {
             throw new IllegalArgumentException("To create a search entry resolver, user filter cannot be empty/blank");
         }
 
-        val entryResolver = new PooledSearchEntryResolver();
+        val entryResolver = new BinaryAttributeAwarePooledSearchEntryResolver();
         entryResolver.setBaseDn(l.getBaseDn());
         entryResolver.setUserFilter(l.getSearchFilter());
         entryResolver.setSubtreeSearch(l.isSubtreeSearch());
         entryResolver.setConnectionFactory(factory);
         entryResolver.setAllowMultipleEntries(l.isAllowMultipleEntries());
+        entryResolver.setBinaryAttributes(l.getBinaryAttributes());
+
         if (StringUtils.isNotBlank(l.getDerefAliases())) {
             entryResolver.setDerefAliases(DerefAliases.valueOf(l.getDerefAliases()));
         }
@@ -1041,7 +1058,7 @@ public class LdapUtils {
 
         if (!handlers.isEmpty()) {
             LOGGER.debug("Search entry handlers defined for the entry resolver of [{}] are [{}]", l.getLdapUrl(), handlers);
-            entryResolver.setSearchEntryHandlers(handlers.toArray(new SearchEntryHandler[]{}));
+            entryResolver.setSearchEntryHandlers(handlers.toArray(SearchEntryHandler[]::new));
         }
         if (l.isFollowReferrals()) {
             entryResolver.setReferralHandler(new SearchReferralHandler());

@@ -61,7 +61,7 @@ public class ValidateEndpointCommand {
                     x509TrustManagers.add(x509TrustManager);
                 }
             }
-            return x509TrustManagers.toArray(new X509TrustManager[]{});
+            return x509TrustManagers.toArray(X509TrustManager[]::new);
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);
         }
@@ -113,7 +113,7 @@ public class ValidateEndpointCommand {
 
     private static URLConnection createConnection(final String url, final String proxy) throws Exception {
         val constructedUrl = new URL(url);
-        val conn = FunctionUtils.doIf(StringUtils.isNotBlank(proxy),
+        return FunctionUtils.doIf(StringUtils.isNotBlank(proxy),
             Unchecked.supplier(() -> {
                 val proxyUrl = new URL(proxy);
                 LOGGER.info("Using proxy address [{}]", proxy);
@@ -122,7 +122,6 @@ public class ValidateEndpointCommand {
             }),
             Unchecked.supplier(constructedUrl::openConnection))
             .get();
-        return conn;
     }
 
     private static String consolidateExceptionMessages(final Throwable throwable) {

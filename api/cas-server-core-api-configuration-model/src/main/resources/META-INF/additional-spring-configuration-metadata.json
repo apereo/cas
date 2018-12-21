@@ -116,8 +116,7 @@
       "description": "Enable actuator endpoints.",
       "defaultValue": false,
       "deprecation": {
-        "replacement": "management.endpoints.enabled-by-default",
-        "reason": "cas.adminPagesSecurity.* moved to management.endpoints.*.",
+        "reason": "cas.adminPagesSecurity.* moved to management.endpoints.*., e.g. management.endpoints.enabled-by-default.",
         "level": "error"
       }
     },
@@ -127,8 +126,7 @@
       "description": "Enable actuator endpoints.",
       "defaultValue": "127.0.0.1",
       "deprecation": {
-        "replacement": "cas.monitor.endpoints.endpoint.defaults.access",
-        "reason": "management endpoints security under cas.monitor.endpoints.endpoint.*.",
+        "reason": "management endpoints security under cas.monitor.endpoints.endpoint.*. e.g. cas.monitor.endpoints.endpoint.defaults.access[0].",
         "level": "error"
       }
     }

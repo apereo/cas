@@ -123,8 +123,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
      */
     protected RegisteredService getRegisteredServiceFromRequest(final RequestContext requestContext) {
         val currentService = WebUtils.getService(requestContext);
-        val registeredService = this.servicesManager.findServiceBy(currentService);
-        return registeredService;
+        return this.servicesManager.findServiceBy(currentService);
     }
 
     /**

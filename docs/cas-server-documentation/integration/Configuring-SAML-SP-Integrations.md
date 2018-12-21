@@ -52,10 +52,7 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <img src="https://cloud.githubusercontent.com/assets/1205228/22052583/4805e2c2-dd60-11e6-8150-80aaa4bbab0e.png" height="20" width="100"></a> 
 
 <a href="http://www.workday.com/">
-<img src="https://cloud.githubusercontent.com/assets/1205228/22052587/4816e04a-dd60-11e6-9ceb-6ccec1290e19.png" height="48" width="100"></a> 
-
-<a href="http://www.testshib.org">
-<img src="https://cloud.githubusercontent.com/assets/1205228/22052582/4805064a-dd60-11e6-87aa-746deacca597.jpg" height="48" width="100"></a> 
+<img src="https://cloud.githubusercontent.com/assets/1205228/22052587/4816e04a-dd60-11e6-9ceb-6ccec1290e19.png" height="48" width="100"></a>
 
 <a href="https://help.webex.com/docs/DOC-1067">
 <img src="https://cloud.githubusercontent.com/assets/1205228/22052574/47af8206-dd60-11e6-95d0-5827e0d88d73.jpg" height="48" width="100"></a>

@@ -49,10 +49,9 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
             response = HttpUtils.executeGet(restProperties.getUrl(),
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword());
             if (response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
-                final Map<String, List<U2FDeviceRegistration>> result = mapper.readValue(response.getEntity().getContent(),
+                return mapper.readValue(response.getEntity().getContent(),
                     new TypeReference<Map<String, List<U2FDeviceRegistration>>>() {
                     });
-                return result;
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

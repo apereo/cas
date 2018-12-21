@@ -31,7 +31,6 @@ import org.apereo.cas.rest.factory.TicketGrantingTicketResourceEntityResponseFac
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 
-import lombok.val;
 import org.jasig.cas.client.authentication.AttributePrincipalImpl;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.jasig.cas.client.validation.Assertion;
@@ -132,7 +131,7 @@ public abstract class BaseTicketResourceEntityResponseFactoryTests {
 
         @Bean
         public AbstractUrlBasedTicketValidator casClientTicketValidator() {
-            val validator = new AbstractUrlBasedTicketValidator("https://cas.example.org") {
+            return new AbstractUrlBasedTicketValidator("https://cas.example.org") {
                 @Override
                 protected String getUrlSuffix() {
                     return "/cas";
@@ -148,7 +147,6 @@ public abstract class BaseTicketResourceEntityResponseFactoryTests {
                     return "theresponse";
                 }
             };
-            return validator;
         }
     }
 }
