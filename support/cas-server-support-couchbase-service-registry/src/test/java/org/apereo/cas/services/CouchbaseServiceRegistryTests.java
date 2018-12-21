@@ -5,6 +5,9 @@ import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
 
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,6 +32,8 @@ import org.springframework.context.event.EventListener;
     })
 @Tag("couchbase")
 @EnabledIfContinuousIntegration
+@ResourceLock("couchbase")
+@Execution(ExecutionMode.SAME_THREAD)
 public class CouchbaseServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired
