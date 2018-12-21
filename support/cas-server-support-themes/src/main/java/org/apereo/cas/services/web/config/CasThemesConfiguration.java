@@ -9,10 +9,7 @@ import org.apereo.cas.services.web.CasThymeleafViewResolverConfigurer;
 import org.apereo.cas.services.web.ChainingThemeResolver;
 import org.apereo.cas.services.web.RegisteredServiceThemeResolver;
 import org.apereo.cas.services.web.RequestHeaderThemeResolver;
-import org.apereo.cas.services.web.ThemeBasedViewResolver;
 import org.apereo.cas.services.web.ThemeTemplateResolver;
-import org.apereo.cas.services.web.ThemeViewResolver;
-import org.apereo.cas.services.web.ThemeViewResolverFactory;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -98,17 +95,9 @@ public class CasThemesConfiguration {
 
     @Bean
     public ViewResolver registeredServiceViewResolver() {
-        val resolver = new ThemeBasedViewResolver(themeResolver(), themeViewResolverFactory());
+        val resolver = nonCachingThymeleafViewResolver();
         resolver.setOrder(thymeleafViewResolver.getIfAvailable().getOrder() - 1);
         return resolver;
-    }
-
-    @ConditionalOnMissingBean(name = "themeViewResolverFactory")
-    @Bean
-    public ThemeViewResolverFactory themeViewResolverFactory() {
-        val factory = new ThemeViewResolver.Factory(nonCachingThymeleafViewResolver(), thymeleafProperties, casProperties);
-        factory.setApplicationContext(applicationContext);
-        return factory;
     }
 
     @Bean
@@ -126,13 +115,12 @@ public class CasThemesConfiguration {
     public AbstractTemplateResolver themeTemplateResolver(final ThemeResolver themeResolver) {
         val defaultResolver = springResourceTemplateResolver.getObject();
         val resolver = new ThemeTemplateResolver(themeResolver);
-        resolver.setOrder(0);
+        resolver.setOrder(defaultResolver.getOrder() - 1);
         resolver.setApplicationContext(this.applicationContext);
         resolver.setPrefix(defaultResolver.getPrefix() + "%s/");
         resolver.setSuffix(defaultResolver.getSuffix());
         resolver.setTemplateMode(defaultResolver.getTemplateMode());
-        resolver.setCacheablePatterns(defaultResolver.getCacheablePatterns());
-        resolver.setCacheable(thymeleafProperties.isCache());
+        resolver.setCacheable(false);
         resolver.setCheckExistence(true);
         return resolver;
     }
