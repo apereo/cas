@@ -32,14 +32,14 @@ public class MultifactorAuthenticationFailureAction extends AbstractMultifactorA
         var failureMode = FailureModes.valueOf(casProperties.getAuthn().getMfa().getGlobalFailureMode());
         LOGGER.debug("Setting failure mode to [{}] based on Global Policy", failureMode);
 
-        if (provider.failureMode() != FailureModes.UNDEFINED) {
+        if (provider.failureMode() != FailureModes.NOT_SET) {
             LOGGER.debug("Provider failure mode [{}] overriding Global mode [{}]", provider.failureMode(), failureMode);
             failureMode = provider.failureMode();
         }
 
         if (service != null) {
             val policy = service.getMultifactorPolicy();
-            if (policy != null && policy.getFailureMode() != FailureModes.UNDEFINED) {
+            if (policy != null && policy.getFailureMode() != FailureModes.NOT_SET) {
                 LOGGER.debug("Service failure mode [{}] overriding current failure mode [{}]", policy.getFailureMode(), failureMode);
                 failureMode = policy.getFailureMode();
             }

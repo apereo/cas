@@ -26,8 +26,8 @@ class RegisteredServiceMultifactorPolicyDeserializationProblemHandler extends De
             if (StringUtils.equals("NOT_SET", valueToConvert)) {
                 LOGGER.warn("Found legacy attribute value [{}] which will be converted to [{}] as part of a service multifactor authentication policy."
                         + "The definition SHOULD manually be upgraded to the new supported syntax",
-                    valueToConvert, RegisteredServiceMultifactorPolicy.FailureModes.UNDEFINED);
-                return RegisteredServiceMultifactorPolicy.FailureModes.UNDEFINED;
+                    valueToConvert, RegisteredServiceMultifactorPolicy.FailureModes.NOT_SET);
+                return RegisteredServiceMultifactorPolicy.FailureModes.NOT_SET;
             }
         }
         return super.handleWeirdStringValue(ctxt, targetType, valueToConvert, failureMsg);
