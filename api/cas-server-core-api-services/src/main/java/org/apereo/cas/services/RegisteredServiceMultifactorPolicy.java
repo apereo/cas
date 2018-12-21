@@ -75,7 +75,7 @@ public interface RegisteredServiceMultifactorPolicy extends Serializable {
         /**
          * The default one indicating that no failure mode is set at all.
          */
-        UNDEFINED
+        NOT_SET
     }
 
 }
