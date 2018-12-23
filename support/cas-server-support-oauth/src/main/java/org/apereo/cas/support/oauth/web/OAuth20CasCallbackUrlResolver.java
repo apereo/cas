@@ -3,9 +3,11 @@ package org.apereo.cas.support.oauth.web;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jasig.cas.client.util.URIBuilder;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URIBuilder;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.http.url.UrlResolver;
 
@@ -22,17 +24,20 @@ import java.util.Optional;
 public class OAuth20CasCallbackUrlResolver implements UrlResolver {
     private final String callbackUrl;
 
-    private static Optional<URIBuilder.BasicNameValuePair> getQueryParameter(final WebContext context, final String name) {
+    @SneakyThrows
+    private static Optional<NameValuePair> getQueryParameter(final WebContext context, final String name) {
         val builderContext = new URIBuilder(context.getFullRequestURL());
         return builderContext.getQueryParams()
-            .stream().filter(p -> p.getName().equalsIgnoreCase(name))
+            .stream()
+            .filter(p -> p.getName().equalsIgnoreCase(name))
             .findFirst();
     }
 
     @Override
+    @SneakyThrows
     public String compute(final String url, final WebContext context) {
         if (url.startsWith(callbackUrl)) {
-            val builder = new URIBuilder(url, true);
+            val builder = new URIBuilder(url);
 
             var parameter = getQueryParameter(context, OAuth20Constants.CLIENT_ID);
             parameter.ifPresent(basicNameValuePair -> builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));

@@ -35,7 +35,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @Slf4j
 @ToString
 @Getter
-@Endpoint(id = "sso-sessions", enableByDefault = false)
+@Endpoint(id = "ssoSessions", enableByDefault = false)
 public class SingleSignOnSessionsEndpoint extends BaseCasMvcEndpoint {
 
     private static final String STATUS = "status";
@@ -110,7 +110,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasMvcEndpoint {
         val totalTicketGrantingTickets = new AtomicLong();
         val totalProxyGrantingTickets = new AtomicLong();
         val totalUsageCount = new AtomicLong();
-        val uniquePrincipals = new HashSet<>();
+        val uniquePrincipals = new HashSet<Object>();
         for (val activeSsoSession : activeSsoSessions) {
             if (activeSsoSession.containsKey(SsoSessionAttributeKeys.IS_PROXIED.toString())) {
                 val isProxied = Boolean.valueOf(activeSsoSession.get(SsoSessionAttributeKeys.IS_PROXIED.toString()).toString());

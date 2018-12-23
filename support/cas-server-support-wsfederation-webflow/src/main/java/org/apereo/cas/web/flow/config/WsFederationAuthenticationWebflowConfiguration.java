@@ -16,6 +16,7 @@ import org.apereo.cas.web.flow.WsFederationWebflowConfigurer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -49,22 +50,22 @@ public class WsFederationAuthenticationWebflowConfiguration implements CasWebflo
 
     @Autowired
     @Qualifier("loginFlowRegistry")
-    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
     private FlowBuilderServices flowBuilderServices;
 
     @Autowired
     @Qualifier("wsFederationCookieManager")
-    private WsFederationCookieManager wsFederationCookieManager;
+    private ObjectProvider<WsFederationCookieManager> wsFederationCookieManager;
 
     @Autowired
     @Qualifier("adaptiveAuthenticationPolicy")
-    private AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
+    private ObjectProvider<AdaptiveAuthenticationPolicy> adaptiveAuthenticationPolicy;
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport;
+    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
     @Autowired
     @Qualifier("wsFederationConfigurations")
@@ -72,30 +73,30 @@ public class WsFederationAuthenticationWebflowConfiguration implements CasWebflo
 
     @Autowired
     @Qualifier("wsFederationHelper")
-    private WsFederationHelper wsFederationHelper;
+    private ObjectProvider<WsFederationHelper> wsFederationHelper;
 
     @Autowired
     @Qualifier("serviceTicketRequestWebflowEventResolver")
-    private CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;
+    private ObjectProvider<CasWebflowEventResolver> serviceTicketRequestWebflowEventResolver;
 
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-    private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
+    private ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver;
 
     @ConditionalOnMissingBean(name = "wsFederationWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer wsFederationWebflowConfigurer() {
         return new WsFederationWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry, applicationContext, casProperties);
+            loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
     }
 
     @Bean
     @RefreshScope
     public Action wsFederationAction() {
-        return new WsFederationAction(initialAuthenticationAttemptWebflowEventResolver,
-            serviceTicketRequestWebflowEventResolver,
-            adaptiveAuthenticationPolicy,
+        return new WsFederationAction(initialAuthenticationAttemptWebflowEventResolver.getIfAvailable(),
+            serviceTicketRequestWebflowEventResolver.getIfAvailable(),
+            adaptiveAuthenticationPolicy.getIfAvailable(),
             wsFederationRequestBuilder(),
             wsFederationResponseValidator());
     }
@@ -104,15 +105,17 @@ public class WsFederationAuthenticationWebflowConfiguration implements CasWebflo
     @RefreshScope
     @ConditionalOnMissingBean(name = "wsFederationRequestBuilder")
     public WsFederationRequestBuilder wsFederationRequestBuilder() {
-        return new WsFederationRequestBuilder(wsFederationConfigurations, wsFederationHelper);
+        return new WsFederationRequestBuilder(wsFederationConfigurations, wsFederationHelper.getIfAvailable());
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "wsFederationResponseValidator")
     public WsFederationResponseValidator wsFederationResponseValidator() {
-        return new WsFederationResponseValidator(wsFederationHelper, wsFederationConfigurations,
-            authenticationSystemSupport, wsFederationCookieManager);
+        return new WsFederationResponseValidator(wsFederationHelper.getIfAvailable(),
+            wsFederationConfigurations,
+            authenticationSystemSupport.getIfAvailable(),
+            wsFederationCookieManager.getIfAvailable());
     }
 
     @Override

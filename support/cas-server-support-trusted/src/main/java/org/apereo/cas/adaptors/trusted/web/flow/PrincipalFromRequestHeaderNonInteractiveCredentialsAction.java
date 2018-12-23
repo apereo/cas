@@ -57,14 +57,14 @@ public class PrincipalFromRequestHeaderNonInteractiveCredentialsAction extends B
             if (headers.containsKey(this.remotePrincipalHeader)) {
                 val header = headers.get(this.remotePrincipalHeader).get(0);
                 LOGGER.debug("Remote user [{}] found in [{}] header", header, this.remotePrincipalHeader);
-                return remoteUser;
+                return header;
             }
         }
         LOGGER.debug("No remote user [{}] could be found", remoteUser);
         return null;
     }
 
-    private Map<String, List<String>> getAllRequestHeaderValues(final HttpServletRequest request) {
+    private static Map<String, List<String>> getAllRequestHeaderValues(final HttpServletRequest request) {
         val headers = new HashMap<String, List<String>>(DEFAULT_SIZE);
         val names = request.getHeaderNames();
         while (names.hasMoreElements()) {

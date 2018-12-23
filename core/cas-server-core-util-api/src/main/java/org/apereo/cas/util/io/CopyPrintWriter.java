@@ -11,7 +11,7 @@ import java.io.StringWriter;
  */
 public class CopyPrintWriter extends PrintWriter {
 
-    private StringBuilder copy = new StringBuilder();
+    private final StringBuilder copy = new StringBuilder();
 
     public CopyPrintWriter() {
         super(new StringWriter());

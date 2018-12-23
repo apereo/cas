@@ -97,9 +97,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
     private static Map<String, List<Object>> convertPrincipalAttributesToPersonAttributes(final Principal p) {
         val convertedAttributes = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
         val principalAttributes = p.getAttributes();
-        principalAttributes.entrySet().forEach(entry -> {
-            val values = entry.getValue();
-            val key = entry.getKey();
+        principalAttributes.forEach((key, values) -> {
             if (values instanceof List) {
                 convertedAttributes.put(key, (List) values);
             } else {

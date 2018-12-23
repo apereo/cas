@@ -72,7 +72,7 @@ public class JsonServiceRegistry extends AbstractResourceBasedServiceRegistry {
     }
 
     @Override
-    protected String getExtension() {
-        return FILE_EXTENSION;
+    protected String[] getExtensions() {
+        return new String[]{FILE_EXTENSION};
     }
 }

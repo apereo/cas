@@ -1,6 +1,6 @@
 package org.apereo.cas.web.flow.decorator;
 
-import org.apereo.cas.util.ScriptingUtils;
+import org.apereo.cas.util.scripting.ScriptingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +21,6 @@ public class GroovyLoginWebflowDecorator implements WebflowDecorator {
 
     @Override
     public void decorate(final RequestContext requestContext, final ApplicationContext applicationContext) {
-        ScriptingUtils.executeGroovyScript(groovyScript, new Object[]{requestContext, applicationContext, LOGGER}, Void.class);
+        ScriptingUtils.executeGroovyScript(groovyScript, new Object[]{requestContext, applicationContext, LOGGER}, Void.class, true);
     }
 }

@@ -9,8 +9,8 @@ dependencies {
     implementation project(":core:cas-server-core-services-authentication")
     implementation project(":core:cas-server-core-logout-api")
     implementation project(":core:cas-server-core-web-api")
-    implementation project(":support:cas-server-support-saml")
     implementation project(":support:cas-server-support-saml-core")
+    implementation project(":support:cas-server-support-saml-core-api")
     implementation project(":support:cas-server-support-saml-mdui-core")
     implementation project(":support:cas-server-support-saml-idp-core")
     implementation project(":support:cas-server-support-saml-idp-ticket")
@@ -23,14 +23,15 @@ dependencies {
     
     implementation libraries.casclient
     implementation libraries.shibidp
-    implementation libraries.pac4j
-    implementation libraries.caffein
+    implementation libraries.shibidpjavasupport
+    implementation libraries.pac4jcore
     
     runtimeOnly libraries.groovy
 
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-web-api")
+
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")

@@ -13,6 +13,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.apereo.cas.util.EncodingUtils;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -69,7 +70,7 @@ public class RegisteredServiceResourceTests {
         runTest(null, null, "test:test", status().isForbidden());
     }
 
-    private MockMvc configureMockMvcFor(final RegisteredServiceResource registeredServiceResource) {
+    private static MockMvc configureMockMvcFor(final RegisteredServiceResource registeredServiceResource) {
         val sz = new DefaultRegisteredServiceJsonSerializer();
         val converter = new MappingJackson2HttpMessageConverter(sz.getObjectMapper());
         return MockMvcBuilders.standaloneSetup(registeredServiceResource)
@@ -108,12 +109,9 @@ public class RegisteredServiceResourceTests {
         }
     }
 
+    @RequiredArgsConstructor
     private static class AuthenticationCredentialMatcher implements ArgumentMatcher<AuthenticationTransaction> {
-        private String id;
-
-        AuthenticationCredentialMatcher(final String id) {
-            this.id = id;
-        }
+        private final String id;
 
         @Override
         public boolean matches(final AuthenticationTransaction t) {

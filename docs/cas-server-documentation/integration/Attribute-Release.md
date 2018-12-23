@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Attribute Release
+category: Attributes
 ---
 
 # Attribute Release
@@ -11,7 +12,7 @@ Attributes are returned to scoped services and pass through a two-step process:
 * Attribute Release: Adopters must explicitly configure attribute release for services in order for the resolved attributes to be released to a service in the validation response.
 
 <div class="alert alert-info"><strong>Service Management</strong><p>Attribute release may also be configured via the
-<a href="../installation/Service-Management.html">Service Management tool</a>.</p></div>
+<a href="../services/Service-Management.html">Service Management tool</a>.</p></div>
 
 ## Principal-Id Attribute
 
@@ -38,4 +39,4 @@ See [this guide](Attribute-Release-Caching.html) for more info.
 CAS by default supports the ability to encrypt certain attributes, such as the proxy-granting 
 ticket and the credential conditionally. The default implementation of the attribute encoder 
 will use a per-service key-pair to encrypt sensitive attributes. 
-See [this guide](../installation/Service-Management.html) to learn more.
+See [this guide](../services/Service-Management.html) to learn more.

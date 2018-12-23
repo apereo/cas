@@ -11,7 +11,9 @@ import org.apereo.cas.support.openid.authentication.principal.OpenIdPrincipalRes
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -31,31 +33,37 @@ import org.springframework.context.annotation.Configuration;
 public class OpenIdAuthenticationEventExecutionPlanConfiguration {
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("attributeRepository")
-    private IPersonAttributeDao attributeRepository;
+    private ObjectProvider<IPersonAttributeDao> attributeRepository;
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("ticketRegistry")
-    private TicketRegistry ticketRegistry;
+    private ObjectProvider<TicketRegistry> ticketRegistry;
 
     @Bean
     public AuthenticationHandler openIdCredentialsAuthenticationHandler() {
         val openid = casProperties.getAuthn().getOpenid();
-        return new OpenIdCredentialsAuthenticationHandler(openid.getName(), servicesManager, openidPrincipalFactory(), ticketRegistry);
+        return new OpenIdCredentialsAuthenticationHandler(openid.getName(), servicesManager.getIfAvailable(),
+            openidPrincipalFactory(), ticketRegistry.getIfAvailable(),
+            openid.getOrder());
     }
 
     @Bean
     public OpenIdPrincipalResolver openIdPrincipalResolver() {
-        val r = new OpenIdPrincipalResolver(attributeRepository, openidPrincipalFactory(),
-            casProperties.getAuthn().getOpenid().getPrincipal().isReturnNull(),
-            casProperties.getAuthn().getOpenid().getPrincipal().getPrincipalAttribute());
-        return r;
+        val personDirectory = casProperties.getPersonDirectory();
+        val principal = casProperties.getAuthn().getOpenid().getPrincipal();
+        val principalAttribute = StringUtils.defaultIfBlank(principal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
+        return new OpenIdPrincipalResolver(attributeRepository.getIfAvailable(),
+            openidPrincipalFactory(),
+            principal.isReturnNull() || personDirectory.isReturnNull(),
+            principalAttribute,
+            principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId());
     }
 
     @ConditionalOnMissingBean(name = "openidPrincipalFactory")

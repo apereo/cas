@@ -26,7 +26,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
 
     /**
      * Attribute returned in the final CAS validation payload
-     * that indicates the authentication context class satisified
+     * that indicates the authentication context class satisfied
      * in the event of a multifactor authentication attempt.
      */
     private String authenticationContextAttribute = "authnContextClass";

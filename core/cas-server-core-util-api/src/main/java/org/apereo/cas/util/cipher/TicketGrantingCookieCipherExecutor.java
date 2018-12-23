@@ -12,17 +12,21 @@ public class TicketGrantingCookieCipherExecutor extends BaseStringCipherExecutor
 
     public TicketGrantingCookieCipherExecutor(final String secretKeyEncryption,
                                               final String secretKeySigning,
-                                              final String alg) {
-        super(secretKeyEncryption, secretKeySigning, alg);
+                                              final String alg,
+                                              final int signingKeySize,
+                                              final int encryptionKeySize) {
+        super(secretKeyEncryption, secretKeySigning, alg, signingKeySize, encryptionKeySize);
     }
 
     public TicketGrantingCookieCipherExecutor(final String secretKeyEncryption,
-                                              final String secretKeySigning) {
-        super(secretKeyEncryption, secretKeySigning);
+                                              final String secretKeySigning,
+                                              final int signingKeySize,
+                                              final int encryptionKeySize) {
+        super(secretKeyEncryption, secretKeySigning, signingKeySize, encryptionKeySize);
     }
 
     public TicketGrantingCookieCipherExecutor() {
-        super(null, null);
+        super(null, null, 0, 0);
     }
 
     @Override

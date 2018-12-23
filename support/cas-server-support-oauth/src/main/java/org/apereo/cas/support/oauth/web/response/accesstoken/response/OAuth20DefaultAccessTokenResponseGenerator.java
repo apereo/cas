@@ -38,12 +38,12 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
         return generateResponseForAccessToken(request, response, result);
     }
 
-    private boolean shouldGenerateDeviceFlowResponse(final OAuth20AccessTokenResponseResult result) {
+    private static boolean shouldGenerateDeviceFlowResponse(final OAuth20AccessTokenResponseResult result) {
         val generatedToken = result.getGeneratedToken();
         return OAuth20ResponseTypes.DEVICE_CODE == result.getResponseType()
             && generatedToken.getDeviceCode().isPresent()
             && generatedToken.getUserCode().isPresent()
-            && !generatedToken.getAccessToken().isPresent();
+            && generatedToken.getAccessToken().isEmpty();
     }
 
     /**
@@ -69,7 +69,7 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
      * @return the device token response model
      */
     protected Map getDeviceTokenResponseModel(final OAuth20AccessTokenResponseResult result) {
-        val model = new LinkedHashMap<>();
+        val model = new LinkedHashMap<String, Object>();
         val uri = result.getCasProperties().getServer().getPrefix()
             .concat(OAuth20Constants.BASE_OAUTH20_URL)
             .concat("/")
@@ -107,9 +107,13 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
     protected Map getAccessTokenResponseModel(final HttpServletRequest request,
                                               final HttpServletResponse response,
                                               final OAuth20AccessTokenResponseResult result) {
-        val model = new LinkedHashMap<>();
-        result.getGeneratedToken().getAccessToken().ifPresent(t -> model.put(OAuth20Constants.ACCESS_TOKEN, t.getId()));
-        result.getGeneratedToken().getRefreshToken().ifPresent(t -> model.put(OAuth20Constants.REFRESH_TOKEN, t.getId()));
+        val model = new LinkedHashMap<String, Object>();
+        val generatedToken = result.getGeneratedToken();
+        generatedToken.getAccessToken().ifPresent(t -> {
+            model.put(OAuth20Constants.ACCESS_TOKEN, t.getId());
+            model.put(OAuth20Constants.SCOPE, t.getScopes());
+        });
+        generatedToken.getRefreshToken().ifPresent(t -> model.put(OAuth20Constants.REFRESH_TOKEN, t.getId()));
         model.put(OAuth20Constants.TOKEN_TYPE, OAuth20Constants.TOKEN_TYPE_BEARER);
         model.put(OAuth20Constants.EXPIRES_IN, result.getAccessTokenTimeout());
         return model;

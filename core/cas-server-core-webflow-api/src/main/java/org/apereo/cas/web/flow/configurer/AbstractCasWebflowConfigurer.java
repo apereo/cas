@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.configurer;
 
-import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -29,6 +28,7 @@ import org.springframework.expression.spel.support.ReflectivePropertyAccessor;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.webflow.action.EvaluateAction;
 import org.springframework.webflow.action.ExternalRedirectAction;
+import org.springframework.webflow.action.SetAction;
 import org.springframework.webflow.action.ViewFactoryActionAdapter;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.StateDefinition;
@@ -101,6 +101,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * The logout flow definition registry.
      */
     protected FlowDefinitionRegistry logoutFlowDefinitionRegistry;
+
     private int order;
 
     private String name = getClass().getSimpleName();
@@ -108,7 +109,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     @Override
     public void initialize() {
         try {
-            LOGGER.debug("Initializing CAS webflow configuration...");
+            LOGGER.trace("Initializing CAS webflow configuration...");
             if (casProperties.getWebflow().isAutoconfigure()) {
                 doInitialize();
             } else {
@@ -139,7 +140,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             LOGGER.error("Login flow registry is not configured and/or initialized correctly.");
             return null;
         }
-        val found = Arrays.stream(this.loginFlowDefinitionRegistry.getFlowDefinitionIds()).anyMatch(f -> f.equals(FLOW_ID_LOGIN));
+        val found = Arrays.asList(this.loginFlowDefinitionRegistry.getFlowDefinitionIds()).contains(FLOW_ID_LOGIN);
         if (found) {
             return (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(FLOW_ID_LOGIN);
         }
@@ -153,7 +154,11 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             LOGGER.warn("Logout flow registry is not configured correctly.");
             return null;
         }
-        return (Flow) this.logoutFlowDefinitionRegistry.getFlowDefinition(FLOW_ID_LOGOUT);
+        if (logoutFlowDefinitionRegistry.containsFlowDefinition(FLOW_ID_LOGOUT)) {
+            return (Flow) this.logoutFlowDefinitionRegistry.getFlowDefinition(FLOW_ID_LOGOUT);
+        }
+        LOGGER.warn("Logout flow registry does not contain a logout flow definition.");
+        return null;
     }
 
     @Override
@@ -199,20 +204,20 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     @Override
     public ActionState createActionState(final Flow flow, final String name, final Action... actions) {
         if (containsFlowState(flow, name)) {
-            LOGGER.debug("Flow [{}] already contains a definition for state id [{}]", flow.getId(), name);
+            LOGGER.trace("Flow [{}] already contains a definition for state id [{}]", flow.getId(), name);
             return getTransitionableState(flow, name, ActionState.class);
         }
         val actionState = new ActionState(flow, name);
-        LOGGER.debug("Created action state [{}]", actionState.getId());
+        LOGGER.trace("Created action state [{}]", actionState.getId());
         actionState.getActionList().addAll(actions);
-        LOGGER.debug("Added action to the action state [{}] list of actions: [{}]", actionState.getId(), actionState.getActionList());
+        LOGGER.trace("Added action to the action state [{}] list of actions: [{}]", actionState.getId(), actionState.getActionList());
         return actionState;
     }
 
     @Override
     public DecisionState createDecisionState(final Flow flow, final String id, final String testExpression, final String thenStateId, final String elseStateId) {
         if (containsFlowState(flow, id)) {
-            LOGGER.debug("Flow [{}] already contains a definition for state id [{}]", flow.getId(), id);
+            LOGGER.trace("Flow [{}] already contains a definition for state id [{}]", flow.getId(), id);
             return getTransitionableState(flow, id, DecisionState.class);
         }
         val decisionState = new DecisionState(flow, id);
@@ -228,12 +233,17 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     public void setStartState(final Flow flow, final String state) {
         flow.setStartState(state);
         val startState = getStartState(flow);
-        LOGGER.debug("Start state is now set to [{}]", startState.getId());
+        LOGGER.trace("Start state is now set to [{}]", startState.getId());
     }
 
     @Override
     public void setStartState(final Flow flow, final TransitionableState state) {
         setStartState(flow, state.getId());
+    }
+
+    @Override
+    public SetAction createSetAction(final String name, final String value) {
+        return new SetAction(createExpression(name), createExpression(value));
     }
 
     @Override
@@ -245,7 +255,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         val ctx = new FluentParserContext();
         val action = this.flowBuilderServices.getExpressionParser().parseExpression(expression, ctx);
         val newAction = new EvaluateAction(action, null);
-        LOGGER.debug("Created evaluate action for expression [{}]", action.getExpressionString());
+        LOGGER.trace("Created evaluate action for expression [{}]", action.getExpressionString());
         return newAction;
     }
 
@@ -257,7 +267,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      */
     public void createStateDefaultTransition(final TransitionableState state, final String targetState) {
         if (state == null) {
-            LOGGER.debug("Cannot add default transition of [{}] to the given state is null and cannot be found in the flow.", targetState);
+            LOGGER.trace("Cannot add default transition of [{}] to the given state is null and cannot be found in the flow.", targetState);
             return;
         }
         val transition = createTransition(targetState);
@@ -305,7 +315,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             }
             val transition = createTransition(criteriaOutcome, targetState);
             state.getTransitionSet().add(transition);
-            LOGGER.debug("Added transition [{}] to the state [{}]", transition.getId(), state.getId());
+            LOGGER.trace("Added transition [{}] to the state [{}]", transition.getId(), state.getId());
             return transition;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -333,11 +343,10 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     public Transition createTransition(final Expression criteriaOutcomeExpression, final String targetState) {
         val criteria = getTransitionCriteriaForExpression(criteriaOutcomeExpression);
         val resolver = new DefaultTargetStateResolver(targetState);
-        val t = new Transition(criteria, resolver);
-        return t;
+        return new Transition(criteria, resolver);
     }
 
-    private TransitionCriteria getTransitionCriteriaForExpression(final Expression criteriaOutcomeExpression) {
+    private static TransitionCriteria getTransitionCriteriaForExpression(final Expression criteriaOutcomeExpression) {
         if (criteriaOutcomeExpression.toString().equals(WildcardTransitionCriteria.WILDCARD_EVENT_ID)) {
             return WildcardTransitionCriteria.INSTANCE;
         }
@@ -421,16 +430,16 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     @Override
     public EndState createEndState(final Flow flow, final String id, final ViewFactory viewFactory) {
         if (containsFlowState(flow, id)) {
-            LOGGER.debug("Flow [{}] already contains a definition for state id [{}]", flow.getId(), id);
+            LOGGER.trace("Flow [{}] already contains a definition for state id [{}]", flow.getId(), id);
             return (EndState) flow.getStateInstance(id);
         }
         val endState = new EndState(flow, id);
         if (viewFactory != null) {
             val finalResponseAction = new ViewFactoryActionAdapter(viewFactory);
             endState.setFinalResponseAction(finalResponseAction);
-            LOGGER.debug("Created end state state [{}] on flow id [{}], backed by view factory [{}]", id, flow.getId(), viewFactory);
+            LOGGER.trace("Created end state state [{}] on flow id [{}], backed by view factory [{}]", id, flow.getId(), viewFactory);
         } else {
-            LOGGER.debug("Created end state state [{}] on flow id [{}]", id, flow.getId());
+            LOGGER.trace("Created end state state [{}] on flow id [{}]", id, flow.getId());
         }
         return endState;
     }
@@ -440,7 +449,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
                                      final BinderConfiguration binder) {
         try {
             if (containsFlowState(flow, id)) {
-                LOGGER.debug("Flow [{}] already contains a definition for state id [{}]", flow.getId(), id);
+                LOGGER.trace("Flow [{}] already contains a definition for state id [{}]", flow.getId(), id);
                 return getTransitionableState(flow, id, ViewState.class);
             }
             val viewFactory = this.flowBuilderServices.getViewFactoryCreator()
@@ -448,7 +457,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
                     this.flowBuilderServices.getConversionService(), binder, this.flowBuilderServices.getValidator(),
                     this.flowBuilderServices.getValidationHintResolver());
             val viewState = new ViewState(flow, id, viewFactory);
-            LOGGER.debug("Added view state [{}]", viewState.getId());
+            LOGGER.trace("Added view state [{}]", viewState.getId());
             return viewState;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -469,7 +478,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     @Override
     public SubflowState createSubflowState(final Flow flow, final String id, final String subflow, final Action entryAction) {
         if (containsFlowState(flow, id)) {
-            LOGGER.debug("Flow [{}] already contains a definition for state id [{}]", flow.getId(), id);
+            LOGGER.trace("Flow [{}] already contains a definition for state id [{}]", flow.getId(), id);
             return getTransitionableState(flow, id, SubflowState.class);
         }
         val state = new SubflowState(flow, id, new BasicSubflowExpression(subflow, this.loginFlowDefinitionRegistry));
@@ -675,16 +684,6 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     }
 
     /**
-     * Register multifactor providers state transitions into webflow.
-     *
-     * @param state the state
-     */
-    public void registerMultifactorProvidersStateTransitionsIntoWebflow(final TransitionableState state) {
-        val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
-        providerMap.forEach((k, v) -> createTransitionForState(state, v.getId(), v.getId()));
-    }
-
-    /**
      * Create evaluate action for action state action.
      *
      * @param flow             the flow
@@ -862,6 +861,6 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         val index = position < 0 || position == Integer.MAX_VALUE ? currentActions.size() : position;
         currentActions.forEach(actionList::remove);
         Arrays.stream(actions).forEach(a -> currentActions.add(index, a));
-        actionList.addAll(currentActions.toArray(new Action[]{}));
+        actionList.addAll(currentActions.toArray(Action[]::new));
     }
 }

@@ -23,12 +23,12 @@ public class InMemoryCasEventRepository extends AbstractCasEventRepository {
     }
 
     @Override
-    public Collection<CasEvent> load() {
+    public Collection<? extends CasEvent> load() {
         return cache.asMap().values();
     }
 
     @Override
-    public Collection<CasEvent> getEventsForPrincipal(final String id) {
+    public Collection<? extends CasEvent> getEventsForPrincipal(final String id) {
         return cache
             .asMap()
             .values()

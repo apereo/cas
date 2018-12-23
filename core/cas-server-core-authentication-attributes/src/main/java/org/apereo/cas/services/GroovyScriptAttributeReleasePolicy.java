@@ -2,7 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.util.ScriptingUtils;
+import org.apereo.cas.util.scripting.ScriptingUtils;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,7 +37,7 @@ public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
         try {
             final Object[] args = {attributes, LOGGER, principal, service};
             val resource = ResourceUtils.getResourceFrom(this.groovyScript);
-            return ScriptingUtils.executeGroovyScript(resource, args, Map.class);
+            return ScriptingUtils.executeGroovyScript(resource, args, Map.class, true);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

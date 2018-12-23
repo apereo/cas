@@ -14,9 +14,11 @@ import com.microsoft.azure.documentdb.RequestOptions;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -29,7 +31,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("cosmosDbServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class CosmosDbServiceRegistryConfiguration implements ServiceRegistryExecutionPlanConfigurer {
+public class CosmosDbServiceRegistryConfiguration {
     /**
      * Partition key field name.
      */
@@ -40,6 +42,9 @@ public class CosmosDbServiceRegistryConfiguration implements ServiceRegistryExec
 
     @Autowired
     private ApplicationContext applicationContext;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     @Bean
     @RefreshScope
@@ -65,11 +70,19 @@ public class CosmosDbServiceRegistryConfiguration implements ServiceRegistryExec
         indexingPolicy.setIndexingMode(IndexingMode.valueOf(cosmosDb.getIndexingMode()));
         db.createCollectionIfNotExists(cosmosDb.getCollection(), PARTITION_KEY_FIELD_NAME,
             cosmosDb.getThroughput(), indexingPolicy);
-        return new CosmosDbServiceRegistry(db, dbFactory, cosmosDb.getCollection(), cosmosDb.getDatabase());
+        return new CosmosDbServiceRegistry(db, dbFactory, cosmosDb.getCollection(),
+            cosmosDb.getDatabase(), eventPublisher);
     }
 
-    @Override
-    public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-        plan.registerServiceRegistry(cosmosDbServiceRegistry());
+    @Bean
+    @ConditionalOnMissingBean(name = "cosmosDbServiceRegistryExecutionPlanConfigurer")
+    public ServiceRegistryExecutionPlanConfigurer cosmosDbServiceRegistryExecutionPlanConfigurer() {
+        return new ServiceRegistryExecutionPlanConfigurer() {
+            @Override
+            public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
+                plan.registerServiceRegistry(cosmosDbServiceRegistry());
+            }
+        };
     }
+
 }

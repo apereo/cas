@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.principal;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolver;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.junit.Test;
@@ -61,7 +62,7 @@ public class ChainingPrincipalResolverTests {
             Optional.of(principalOut),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
         assertEquals("output", principal.getId());
-        assertEquals("final@example.com", principal.getAttributes().get("mail"));
+        assertEquals("final@example.com", CollectionUtils.firstElement(principal.getAttributes().get("mail")).get());
     }
 
 }

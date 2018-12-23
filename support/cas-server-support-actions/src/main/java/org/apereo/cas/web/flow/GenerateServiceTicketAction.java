@@ -54,7 +54,7 @@ public class GenerateServiceTicketAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext context) {
         val service = WebUtils.getService(context);
-        LOGGER.debug("Service asking for service ticket is [{}]", service);
+        LOGGER.trace("Service asking for service ticket is [{}]", service);
 
         val ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
         LOGGER.debug("Ticket-granting ticket found in the context is [{}]", ticketGrantingTicket);
@@ -70,7 +70,7 @@ public class GenerateServiceTicketAction extends AbstractAction {
             val registeredService = servicesManager.findServiceBy(selectedService);
             LOGGER.debug("Registered service asking for service ticket is [{}]", registeredService);
             WebUtils.putRegisteredService(context, registeredService);
-            WebUtils.putService(context, service);
+            WebUtils.putServiceIntoFlowScope(context, service);
 
             if (registeredService != null) {
                 val url = registeredService.getAccessStrategy().getUnauthorizedRedirectUrl();
@@ -88,7 +88,7 @@ public class GenerateServiceTicketAction extends AbstractAction {
             val builder = this.authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication, credential);
             val authenticationResult = builder.build(principalElectionStrategy, service);
 
-            LOGGER.debug("Built the final authentication result [{}] to grant service ticket to [{}]", authenticationResult, service);
+            LOGGER.trace("Built the final authentication result [{}] to grant service ticket to [{}]", authenticationResult, service);
             val serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
             WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
             LOGGER.debug("Granted service ticket [{}] and added it to the request scope", serviceTicketId);

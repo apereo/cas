@@ -44,12 +44,16 @@ public class RelaxedPropertyNames implements Iterable<String> {
         return new RelaxedPropertyNames(result.toString());
     }
 
+    public Set<String> getValues() {
+        return values;
+    }
+
     @Override
     public Iterator<String> iterator() {
         return this.values.iterator();
     }
 
-    private void initialize(final String name, final Set<String> values) {
+    private static void initialize(final String name, final Set<String> values) {
         if (values.contains(name)) {
             return;
         }

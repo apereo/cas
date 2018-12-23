@@ -73,7 +73,7 @@ public class WsFederationCookieManager {
         val serviceKey = CasProtocolConstants.PARAMETER_SERVICE + '-' + wCtx;
         val service = (Service) session.get(serviceKey);
         LOGGER.debug("Located service [{}] from session cookie", service);
-        WebUtils.putService(context, service);
+        WebUtils.putServiceIntoFlowScope(context, service);
         return service;
     }
 

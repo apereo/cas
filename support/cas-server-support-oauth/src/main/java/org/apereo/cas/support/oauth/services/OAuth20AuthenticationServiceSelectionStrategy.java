@@ -111,7 +111,7 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
     public boolean supports(final Service service) {
         val svc = this.servicesManager.findServiceBy(service);
         val res = svc != null && service.getId().startsWith(this.callbackUrl);
-        LOGGER.debug("Authentication request is{} identified as an OAuth request",
+        LOGGER.trace("Authentication request is{} identified as an OAuth request",
             BooleanUtils.toString(res, StringUtils.EMPTY, " not"));
         return res;
     }

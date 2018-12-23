@@ -46,12 +46,15 @@ import org.apereo.cas.ticket.support.ThrottledUseAndTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.ticket.support.TimeoutExpirationPolicy;
 import org.apereo.cas.util.CoreTicketUtils;
-import org.apereo.cas.util.HostNameBasedUniqueTicketIdGenerator;
+import org.apereo.cas.util.ProxyGrantingTicketIdGenerator;
+import org.apereo.cas.util.ProxyTicketIdGenerator;
+import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
 import org.apereo.cas.util.cipher.ProtocolTicketCipherExecutor;
 import org.apereo.cas.util.http.HttpClient;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.client.ssl.HttpURLConnectionFactory;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
@@ -111,7 +114,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
 
     @Autowired
     @Qualifier("ticketRegistry")
-    private TicketRegistry ticketRegistry;
+    private ObjectProvider<TicketRegistry> ticketRegistry;
 
     @Autowired
     @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
@@ -131,7 +134,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
         val prefix = StringUtils.defaultString(casProperties.getClient().getPrefix(), casProperties.getServer().getPrefix());
         val validator = buildCasClientTicketValidator(prefix);
 
-        final HttpURLConnectionFactory factory = new HttpURLConnectionFactory() {
+        val factory = new HttpURLConnectionFactory() {
             private static final long serialVersionUID = 3692658214483917813L;
 
             @Override
@@ -163,7 +166,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @Bean
     public ProxyGrantingTicketFactory defaultProxyGrantingTicketFactory() {
         return new DefaultProxyGrantingTicketFactory(
-            ticketGrantingTicketUniqueIdGenerator(),
+            proxyGrantingTicketUniqueIdGenerator(),
             grantingTicketExpirationPolicy(),
             protocolTicketCipherExecutor());
     }
@@ -180,11 +183,20 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
             onlyTrackMostRecentSession);
     }
 
+    @ConditionalOnMissingBean(name = "proxyGrantingTicketUniqueIdGenerator")
+    @Bean
+    @RefreshScope
+    public UniqueTicketIdGenerator proxyGrantingTicketUniqueIdGenerator() {
+        return new ProxyGrantingTicketIdGenerator(
+            casProperties.getTicket().getTgt().getMaxLength(),
+            casProperties.getHost().getName());
+    }
+
     @ConditionalOnMissingBean(name = "ticketGrantingTicketUniqueIdGenerator")
     @Bean
     @RefreshScope
     public UniqueTicketIdGenerator ticketGrantingTicketUniqueIdGenerator() {
-        return new HostNameBasedUniqueTicketIdGenerator.TicketGrantingTicketIdGenerator(
+        return new TicketGrantingTicketIdGenerator(
             casProperties.getTicket().getTgt().getMaxLength(),
             casProperties.getHost().getName());
     }
@@ -192,7 +204,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @ConditionalOnMissingBean(name = "proxy20TicketUniqueIdGenerator")
     @Bean
     public UniqueTicketIdGenerator proxy20TicketUniqueIdGenerator() {
-        return new HostNameBasedUniqueTicketIdGenerator.ProxyTicketIdGenerator(
+        return new ProxyTicketIdGenerator(
             casProperties.getTicket().getPgt().getMaxLength(),
             casProperties.getHost().getName());
     }
@@ -274,7 +286,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @ConditionalOnMissingBean(name = "defaultTicketRegistrySupport")
     @Bean
     public TicketRegistrySupport defaultTicketRegistrySupport() {
-        return new DefaultTicketRegistrySupport(ticketRegistry);
+        return new DefaultTicketRegistrySupport(ticketRegistry.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "grantingTicketExpirationPolicy")
@@ -301,17 +313,19 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @ConditionalOnMissingBean(name = "serviceTicketExpirationPolicy")
     @Bean
     public ExpirationPolicy serviceTicketExpirationPolicy() {
+        val st = casProperties.getTicket().getSt();
         return new MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy(
-            casProperties.getTicket().getSt().getNumberOfUses(),
-            casProperties.getTicket().getSt().getTimeToKillInSeconds());
+            st.getNumberOfUses(),
+            st.getTimeToKillInSeconds());
     }
 
     @ConditionalOnMissingBean(name = "proxyTicketExpirationPolicy")
     @Bean
     public ExpirationPolicy proxyTicketExpirationPolicy() {
+        val pt = casProperties.getTicket().getPt();
         return new MultiTimeUseOrTimeoutExpirationPolicy.ProxyTicketExpirationPolicy(
-            casProperties.getTicket().getPt().getNumberOfUses(),
-            casProperties.getTicket().getPt().getTimeToKillInSeconds());
+            pt.getNumberOfUses(),
+            pt.getTimeToKillInSeconds());
     }
 
     @ConditionalOnMissingBean(name = "lockingStrategy")
@@ -335,9 +349,11 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
             return new ProtocolTicketCipherExecutor(
                 crypto.getEncryption().getKey(),
                 crypto.getSigning().getKey(),
-                crypto.getAlg());
+                crypto.getAlg(),
+                crypto.getSigning().getKeySize(),
+                crypto.getEncryption().getKeySize());
         }
-        LOGGER.debug("Protocol tickets generated by CAS are not signed/encrypted.");
+        LOGGER.trace("Protocol tickets generated by CAS are not signed/encrypted.");
         return CipherExecutor.noOp();
     }
 
@@ -391,8 +407,8 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     public TicketCatalog ticketCatalog(final List<TicketCatalogConfigurer> configurers) {
         val plan = new DefaultTicketCatalog();
         configurers.forEach(c -> {
-            val name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
-            LOGGER.debug("Configuring ticket metadata registration plan [{}]", name);
+            val name = RegExUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
+            LOGGER.trace("Configuring ticket metadata registration plan [{}]", name);
             c.configureTicketCatalog(plan);
         });
         return plan;

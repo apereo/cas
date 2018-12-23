@@ -1,6 +1,7 @@
 package org.apereo.cas.audit.spi;
 
 import org.apereo.cas.audit.AuditableExecutionResult;
+import org.apereo.cas.audit.spi.resource.ServiceAccessEnforcementAuditResourceResolver;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 
 import lombok.val;

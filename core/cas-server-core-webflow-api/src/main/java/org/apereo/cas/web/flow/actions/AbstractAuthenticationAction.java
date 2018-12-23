@@ -43,7 +43,7 @@ public abstract class AbstractAuthenticationAction extends AbstractAction {
             val map = CollectionUtils.<String, Throwable>wrap(UnauthorizedAuthenticationException.class.getSimpleName(), new UnauthorizedAuthenticationException(msg));
             val error = new AuthenticationException(msg, map, new HashMap<>(0));
             return new Event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE,
-                new LocalAttributeMap(CasWebflowConstants.TRANSITION_ID_ERROR, error));
+                new LocalAttributeMap<>(CasWebflowConstants.TRANSITION_ID_ERROR, error));
         }
 
         val serviceTicketEvent = this.serviceTicketRequestWebflowEventResolver.resolveSingle(requestContext);

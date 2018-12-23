@@ -31,7 +31,6 @@ import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
 import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -39,7 +38,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Collection;
 
@@ -49,7 +47,6 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
     AbstractOpenSamlTests.SamlTestConfiguration.class,
     WsFederationAuthenticationConfiguration.class,
@@ -87,7 +84,6 @@ import java.util.Collection;
 @TestPropertySource(locations = {"classpath:/wsfed.properties"})
 @ContextConfiguration(locations = {"classpath:/applicationContext.xml"})
 public class AbstractWsFederationTests extends AbstractOpenSamlTests {
-
     @Autowired
     @Qualifier("wsFederationConfigurations")
     protected Collection<WsFederationConfiguration> wsFederationConfigurations;

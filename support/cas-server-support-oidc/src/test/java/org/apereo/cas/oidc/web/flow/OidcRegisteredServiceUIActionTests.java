@@ -24,7 +24,7 @@ public class OidcRegisteredServiceUIActionTests extends AbstractOidcTests {
     @Test
     public void verifyOidcActionWithoutMDUI() throws Exception {
         val ctx = new MockRequestContext();
-        WebUtils.putService(ctx, null);
+        WebUtils.putServiceIntoFlowScope(ctx, null);
         val event = oidcRegisteredServiceUIAction.execute(ctx);
         assertEquals("success", event.getId());
         assertNull(WebUtils.getServiceUserInterfaceMetadata(ctx, Serializable.class));
@@ -33,7 +33,7 @@ public class OidcRegisteredServiceUIActionTests extends AbstractOidcTests {
     @Test
     public void verifyOidcActionWithMDUI() throws Exception {
         val ctx = new MockRequestContext();
-        WebUtils.putService(ctx, RegisteredServiceTestUtils.getService(
+        WebUtils.putServiceIntoFlowScope(ctx, RegisteredServiceTestUtils.getService(
             "https://www.example.org?client_id=id&client_secret=secret&redirect_uri=https://oauth.example.org"));
         val event = oidcRegisteredServiceUIAction.execute(ctx);
         assertEquals("success", event.getId());

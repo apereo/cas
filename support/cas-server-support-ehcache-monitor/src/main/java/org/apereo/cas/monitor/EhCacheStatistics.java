@@ -28,21 +28,11 @@ public class EhCacheStatistics implements CacheStatistics {
     // Off heap size is always in units of bytes
     private long offHeapSize;
 
-    /**
-     * Creates a new instance that delegates statistics inquiries to the given {@link Cache} instance.
-     *
-     * @param cache Cache instance for which to gather statistics.
-     */
     public EhCacheStatistics(final Cache cache) {
         this.cache = cache;
         this.useBytes = cache.getCacheConfiguration().getMaxBytesLocalDisk() > 0;
     }
 
-    /**
-     * Gets the size of heap consumed by items stored in the cache.
-     *
-     * @return Memory size.
-     */
     @Override
     public long getSize() {
         val statistics = this.cache.getStatistics();
@@ -57,11 +47,6 @@ public class EhCacheStatistics implements CacheStatistics {
         return this.heapSize;
     }
 
-    /**
-     * Gets the heap memory capacity of the cache.
-     *
-     * @return Heap memory capacity.
-     */
     @Override
     public long getCapacity() {
         val config = this.cache.getCacheConfiguration();
@@ -96,7 +81,6 @@ public class EhCacheStatistics implements CacheStatistics {
         if (StringUtils.isNotBlank(name)) {
             builder.append(name).append(':');
         }
-        val free = getPercentFree();
         try (val formatter = new Formatter(builder)) {
             if (this.useBytes) {
                 formatter.format("%.2f MB heap, ", this.heapSize / TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE);

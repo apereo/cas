@@ -6,13 +6,13 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
 
 import com.google.common.io.ByteSource;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ldaptive.LdapException;
 import org.ldaptive.Response;
 import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchResult;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This is {@link LdapUserGraphicalAuthenticationRepository}.
@@ -21,12 +21,11 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @since 5.1.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class LdapUserGraphicalAuthenticationRepository implements UserGraphicalAuthenticationRepository {
     private static final long serialVersionUID = 421732017215881244L;
 
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
+    private final CasConfigurationProperties casProperties;
 
     @Override
     public ByteSource getGraphics(final String username) {

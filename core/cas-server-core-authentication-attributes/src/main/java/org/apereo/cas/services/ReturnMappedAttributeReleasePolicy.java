@@ -2,7 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.ScriptingUtils;
+import org.apereo.cas.util.scripting.ScriptingUtils;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -113,7 +113,7 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
 
     @Override
     public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attrs, final RegisteredService service) {
-        val resolvedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        val resolvedAttributes = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attrs);
         val attributesToRelease = new HashMap<String, Object>();
         /*
@@ -121,9 +121,8 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
          * by the original key, value and the original entry itself.
          * Then process the array to populate the map for allowed attributes
          */
-        this.allowedAttributes.entrySet().forEach(entry -> {
-            val attributeName = entry.getKey();
-            val mappedAttributes = CollectionUtils.wrap(entry.getValue());
+        this.allowedAttributes.forEach((attributeName, value) -> {
+            val mappedAttributes = CollectionUtils.wrap(value);
             LOGGER.debug("Attempting to map allowed attribute name [{}]", attributeName);
             val attributeValue = resolvedAttributes.get(attributeName);
             mappedAttributes.forEach(mapped -> {

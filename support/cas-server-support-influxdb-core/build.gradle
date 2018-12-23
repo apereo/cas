@@ -11,7 +11,7 @@ dependencies {
     
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
 
-    implementation libraries.caffein
+    
     implementation libraries.influxdb
     implementation libraries.okhttp
 }

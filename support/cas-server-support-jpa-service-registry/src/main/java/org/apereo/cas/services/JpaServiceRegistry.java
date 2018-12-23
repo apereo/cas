@@ -4,12 +4,13 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 
 import lombok.ToString;
 import lombok.val;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.List;
+import java.util.Collection;
 
 /**
  * Implementation of the ServiceRegistry based on JPA.
@@ -24,8 +25,13 @@ import java.util.List;
 public class JpaServiceRegistry extends AbstractServiceRegistry {
     private static final String ENTITY_NAME = AbstractRegisteredService.class.getSimpleName();
 
+
     @PersistenceContext(unitName = "serviceEntityManagerFactory")
     private transient EntityManager entityManager;
+
+    public JpaServiceRegistry(final ApplicationEventPublisher eventPublisher) {
+        super(eventPublisher);
+    }
 
     @Override
     public boolean delete(final RegisteredService registeredService) {
@@ -38,7 +44,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
-    public List<RegisteredService> load() {
+    public Collection<RegisteredService> load() {
         val query = String.format("select r from %s r", ENTITY_NAME);
         val list = this.entityManager.createQuery(query, RegisteredService.class).getResultList();
         list.forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));

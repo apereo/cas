@@ -30,8 +30,9 @@ public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuth
     private final AuthyClientInstance instance;
 
     public AuthyAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
-                                      final AuthyClientInstance instance, final boolean forceVerification) {
-        super(name, servicesManager, principalFactory, null);
+                                      final AuthyClientInstance instance, final boolean forceVerification,
+                                      final Integer order) {
+        super(name, servicesManager, principalFactory, order);
         this.instance = instance;
         this.forceVerification = forceVerification;
     }
@@ -71,5 +72,10 @@ public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuth
     @Override
     public boolean supports(final Credential credential) {
         return AuthyTokenCredential.class.isAssignableFrom(credential.getClass());
+    }
+
+    @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return AuthyTokenCredential.class.isAssignableFrom(clazz);
     }
 }

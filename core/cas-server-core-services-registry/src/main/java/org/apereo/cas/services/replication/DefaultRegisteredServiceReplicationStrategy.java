@@ -60,13 +60,12 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
         if (result.isPresent()) {
             val item = result.get();
             val value = item.getValue();
-            val cachedService = value;
             LOGGER.debug("Located cache entry [{}] in service registry cache [{}]", item, this.distributedCacheManager.getName());
             if (isRegisteredServiceMarkedAsDeletedInCache(item)) {
                 LOGGER.debug("Service found in the cache [{}] is marked as a deleted service. CAS will update the service registry "
-                    + "of this CAS node to remove the local service, if found", cachedService);
-                serviceRegistry.delete(cachedService);
-                this.distributedCacheManager.remove(cachedService, item);
+                    + "of this CAS node to remove the local service, if found", value);
+                serviceRegistry.delete(value);
+                this.distributedCacheManager.remove(value, item);
                 return service;
             }
 
@@ -95,7 +94,7 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
         LOGGER.debug("Requested service definition is not found in the replication cache");
         if (service != null) {
             LOGGER.debug("Attempting to update replication cache with service [{}}", service);
-            val item = new DistributedCacheObject<>(service);
+            val item = new DistributedCacheObject<RegisteredService>(service);
             this.distributedCacheManager.set(service, item);
         }
         return service;
@@ -158,7 +157,7 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
         services.add(cachedService);
     }
 
-    private boolean isRegisteredServiceMarkedAsDeletedInCache(final DistributedCacheObject<RegisteredService> item) {
+    private static boolean isRegisteredServiceMarkedAsDeletedInCache(final DistributedCacheObject<RegisteredService> item) {
         if (item.containsProperty("event")) {
             val event = item.getProperty("event", BaseCasRegisteredServiceEvent.class);
             return event instanceof CasRegisteredServiceDeletedEvent;

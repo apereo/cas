@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.token;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -42,7 +43,11 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
         val response = new MockHttpServletResponse();
 
         val tgt = mock(TicketGrantingTicket.class);
-        val service = new WebApplicationServiceFactory().createService(oidcIdTokenGenerator.getOAuthCallbackUrl());
+        val callback = casProperties.getServer().getPrefix()
+            + OAuth20Constants.BASE_OAUTH20_URL + '/'
+            + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
+
+        val service = new WebApplicationServiceFactory().createService(callback);
         when(tgt.getServices()).thenReturn(CollectionUtils.wrap("service", service));
         when(tgt.getAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
 

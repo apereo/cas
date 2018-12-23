@@ -34,7 +34,7 @@ public class SamlIdPMetadataController implements InitializingBean {
 
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         this.metadataAndCertificatesGenerationService.generate();
     }
 

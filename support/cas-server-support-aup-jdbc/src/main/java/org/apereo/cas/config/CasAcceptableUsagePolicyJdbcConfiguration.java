@@ -9,6 +9,7 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -30,7 +31,7 @@ public class CasAcceptableUsagePolicyJdbcConfiguration {
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
-    private TicketRegistrySupport ticketRegistrySupport;
+    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -50,7 +51,7 @@ public class CasAcceptableUsagePolicyJdbcConfiguration {
             throw new BeanCreationException("Database table for acceptable usage policy must be specified.");
         }
 
-        return new JdbcAcceptableUsagePolicyRepository(ticketRegistrySupport,
+        return new JdbcAcceptableUsagePolicyRepository(ticketRegistrySupport.getIfAvailable(),
             casProperties.getAcceptableUsagePolicy().getAupAttributeName(),
             acceptableUsagePolicyDataSource(),
             jdbc.getTableName());

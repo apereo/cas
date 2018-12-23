@@ -11,36 +11,44 @@ import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
  */
 public class TokenTicketCipherExecutor extends BaseStringCipherExecutor {
     public TokenTicketCipherExecutor() {
-        this(null, null, null, false, false);
+        this(null, null, null, false, false, 0, 0);
     }
 
     public TokenTicketCipherExecutor(final String secretKeyEncryption,
                                      final String secretKeySigning,
                                      final String alg,
                                      final boolean encryptionEnabled,
-                                     final boolean signingEnabled) {
-        super(secretKeyEncryption, secretKeySigning, alg, encryptionEnabled, signingEnabled);
+                                     final boolean signingEnabled,
+                                     final int signingKeySize,
+                                     final int encryptionKeySize) {
+        super(secretKeyEncryption, secretKeySigning, alg, encryptionEnabled, signingEnabled, signingKeySize, encryptionKeySize);
     }
 
 
     public TokenTicketCipherExecutor(final String secretKeyEncryption,
                                      final String secretKeySigning,
                                      final String alg,
-                                     final boolean encryptionEnabled) {
-        this(secretKeyEncryption, secretKeySigning, alg, encryptionEnabled, true);
-    }
-
-    public TokenTicketCipherExecutor(final String secretKeyEncryption,
-                                     final String secretKeySigning,
-                                     final boolean encryptionEnabled) {
-        super(secretKeyEncryption, secretKeySigning, encryptionEnabled);
+                                     final boolean encryptionEnabled,
+                                     final int signingKeySize,
+                                     final int encryptionKeySize) {
+        this(secretKeyEncryption, secretKeySigning, alg, encryptionEnabled, true, signingKeySize, encryptionKeySize);
     }
 
     public TokenTicketCipherExecutor(final String secretKeyEncryption,
                                      final String secretKeySigning,
                                      final boolean encryptionEnabled,
-                                     final boolean signingEnabled) {
-        super(secretKeyEncryption, secretKeySigning, encryptionEnabled, signingEnabled);
+                                     final int signingKeySize,
+                                     final int encryptionKeySize) {
+        super(secretKeyEncryption, secretKeySigning, encryptionEnabled, signingKeySize, encryptionKeySize);
+    }
+
+    public TokenTicketCipherExecutor(final String secretKeyEncryption,
+                                     final String secretKeySigning,
+                                     final boolean encryptionEnabled,
+                                     final boolean signingEnabled,
+                                     final int signingKeySize,
+                                     final int encryptionKeySize) {
+        super(secretKeyEncryption, secretKeySigning, encryptionEnabled, signingEnabled, signingKeySize, encryptionKeySize);
     }
 
     @Override

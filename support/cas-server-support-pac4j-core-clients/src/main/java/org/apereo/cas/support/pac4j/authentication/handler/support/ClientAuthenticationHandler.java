@@ -12,6 +12,7 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.exception.HttpAction;
 
@@ -24,7 +25,6 @@ import java.security.GeneralSecurityException;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-@SuppressWarnings("unchecked")
 @Slf4j
 public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHandler {
 
@@ -51,9 +51,12 @@ public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHand
             val credentials = clientCredentials.getCredentials();
             LOGGER.debug("Client name: [{}]", clientCredentials.getClientName());
 
-            // get client
-            val client = this.clients.findClient(clientCredentials.getClientName());
+            val client = (BaseClient) this.clients.findClient(clientCredentials.getClientName());
             LOGGER.debug("Delegated client is: [{}]", client);
+
+            if (client == null) {
+                throw new IllegalArgumentException("Unable to determine client based on client name " + clientCredentials.getClientName());
+            }
 
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext();
@@ -61,7 +64,7 @@ public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHand
 
             val userProfile = client.getUserProfile(credentials, webContext);
             LOGGER.debug("Final user profile is: [{}]", userProfile);
-            return createResult(clientCredentials, userProfile);
+            return createResult(clientCredentials, userProfile, client);
         } catch (final HttpAction e) {
             throw new PreventedException(e);
         }

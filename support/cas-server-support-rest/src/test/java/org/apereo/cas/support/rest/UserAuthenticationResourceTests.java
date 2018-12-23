@@ -18,6 +18,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
@@ -53,7 +54,9 @@ public class UserAuthenticationResourceTests {
     public void initialize() {
         this.userAuthenticationResource = new UserAuthenticationResource(authenticationSupport,
             new UsernamePasswordRestHttpRequestCredentialFactory(),
-            new WebApplicationServiceFactory(), new DefaultUserAuthenticationResourceEntityResponseFactory());
+            new WebApplicationServiceFactory(),
+            new DefaultUserAuthenticationResourceEntityResponseFactory(),
+            new GenericApplicationContext());
 
         this.mockMvc = MockMvcBuilders.standaloneSetup(this.userAuthenticationResource)
             .defaultRequest(get("/")

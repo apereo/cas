@@ -24,7 +24,7 @@
     <div layout:fragment="content" id="login" class="box">
         <form method="post" id="fm1" class="fm-v clearfix" th:object="${credential}" th:action="@{/login}">
             <div id="msg" class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('*')}">
-                <span th:each="err : ${#fields.errors('*')}" th:utext="${err}">this error block and text is only shown if there are errors</span>
+                <span th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">this error block and text is only shown if there are errors</span>
             </div>
 
             <div class="form-group">
@@ -35,13 +35,12 @@
             </div>
 
             <input class="btn btn-submit"
-                   name="_eventId_submit"
                    accesskey="l"
                    tabindex="1"
                    th:value="#{screen.welcome.button.login}"
                    id="submitBtn"
-                   type="submit"
-                   value="LOGIN"/>
+                   type="submit"/>
+            <input type="hidden" name="_eventId_submit" value="LOGIN"/>
 
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
             <input type="hidden" name="geolocation"/>

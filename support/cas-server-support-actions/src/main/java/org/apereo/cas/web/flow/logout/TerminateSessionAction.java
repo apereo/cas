@@ -37,13 +37,24 @@ public class TerminateSessionAction extends AbstractAction {
      */
     public static final String REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED = "LogoutRequestConfirmed";
 
-    private final EventFactorySupport eventFactorySupport = new EventFactorySupport();
-    private final CentralAuthenticationService centralAuthenticationService;
-    private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
-    private final CookieRetrievingCookieGenerator warnCookieGenerator;
-    private final LogoutProperties logoutProperties;
+    /** The event factory. */
+    protected final EventFactorySupport eventFactorySupport = new EventFactorySupport();
+    /** The authentication service. */
+    protected final CentralAuthenticationService centralAuthenticationService;
+    /** The TGT cookie generator. */
+    protected final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    /** The warn cookie generator. */
+    protected final CookieRetrievingCookieGenerator warnCookieGenerator;
+    /** The logout properties. */
+    protected final LogoutProperties logoutProperties;
 
-    private static boolean isLogoutRequestConfirmed(final RequestContext requestContext) {
+    /**
+     * Check if the logout must be confirmed.
+     *
+     * @param requestContext the request context
+     * @return if the logout must be confirmed
+     */
+    protected static boolean isLogoutRequestConfirmed(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         return request.getParameterMap().containsKey(REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED);
     }
@@ -74,11 +85,11 @@ public class TerminateSessionAction extends AbstractAction {
 
         val tgtId = getTicketGrantingTicket(context);
         if (StringUtils.isNotBlank(tgtId)) {
-            LOGGER.debug("Destroying SSO session linked to ticket-granting ticket [{}]", tgtId);
+            LOGGER.trace("Destroying SSO session linked to ticket-granting ticket [{}]", tgtId);
             val logoutRequests = this.centralAuthenticationService.destroyTicketGrantingTicket(tgtId);
             WebUtils.putLogoutRequests(context, logoutRequests);
         }
-        LOGGER.debug("Removing CAS cookies");
+        LOGGER.trace("Removing CAS cookies");
         this.ticketGrantingTicketCookieGenerator.removeCookie(response);
         this.warnCookieGenerator.removeCookie(response);
 
@@ -110,7 +121,7 @@ public class TerminateSessionAction extends AbstractAction {
      * @param response the response
      */
     protected void destroyApplicationSession(final HttpServletRequest request, final HttpServletResponse response) {
-        LOGGER.debug("Destroying application session");
+        LOGGER.trace("Destroying application session");
         val manager = Pac4jUtils.getPac4jProfileManager(request, response);
         manager.logout();
 

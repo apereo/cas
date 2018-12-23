@@ -9,6 +9,7 @@ import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.cfg.Environment;
 import org.springframework.jdbc.datasource.lookup.DataSourceLookupFailureException;
@@ -17,6 +18,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 import javax.sql.DataSource;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 /**
@@ -120,7 +122,7 @@ public class JpaBeans {
         if (StringUtils.isNotBlank(config.getPersistenceUnitName())) {
             bean.setPersistenceUnitName(config.getPersistenceUnitName());
         }
-        bean.setPackagesToScan(config.getPackagesToScan().toArray(new String[]{}));
+        bean.setPackagesToScan(config.getPackagesToScan().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
 
         if (config.getDataSource() != null) {
             bean.setDataSource(config.getDataSource());
@@ -138,9 +140,14 @@ public class JpaBeans {
         }
         properties.put(Environment.ENABLE_LAZY_LOAD_NO_TRANS, Boolean.TRUE);
         properties.put(Environment.FORMAT_SQL, Boolean.TRUE);
+        properties.put("hibernate.connection.useUnicode", Boolean.TRUE);
+        properties.put("hibernate.connection.characterEncoding", StandardCharsets.UTF_8.name());
+        properties.put("hibernate.connection.charSet", StandardCharsets.UTF_8.name());
+        if (StringUtils.isNotBlank(jpaProperties.getPhysicalNamingStrategyClassName())) {
+            properties.put(Environment.PHYSICAL_NAMING_STRATEGY, jpaProperties.getPhysicalNamingStrategyClassName());
+        }
         properties.putAll(jpaProperties.getProperties());
         bean.setJpaProperties(properties);
-
         return bean;
     }
 }

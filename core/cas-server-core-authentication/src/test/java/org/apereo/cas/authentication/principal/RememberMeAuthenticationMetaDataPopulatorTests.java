@@ -1,16 +1,16 @@
 package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.authentication.AuthenticationBuilder;
-import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.DefaultAuthenticationTransaction;
 import org.apereo.cas.authentication.RememberMeCredential;
-import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.credential.RememberMeUsernamePasswordCredential;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
+import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.metadata.RememberMeAuthenticationMetaDataPopulator;
 
 import lombok.val;

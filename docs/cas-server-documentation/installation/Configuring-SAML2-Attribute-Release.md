@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - SAML2 Attribute Release
+category: Attributes
 ---
 
 # SAML2 Attribute Release

@@ -1,9 +1,12 @@
 package org.apereo.cas.authentication;
 
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionException;
-import org.springframework.transaction.support.AbstractPlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionStatus;
+
+import java.io.Serializable;
 
 /**
  * This is {@link PseudoPlatformTransactionManager}.
@@ -11,23 +14,19 @@ import org.springframework.transaction.support.DefaultTransactionStatus;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class PseudoPlatformTransactionManager extends AbstractPlatformTransactionManager {
+public class PseudoPlatformTransactionManager implements PlatformTransactionManager, Serializable {
     private static final long serialVersionUID = -3501861804821200893L;
 
     @Override
-    protected Object doGetTransaction() throws TransactionException {
-        return new Object();
+    public TransactionStatus getTransaction(final TransactionDefinition transactionDefinition) throws TransactionException {
+        return new DefaultTransactionStatus(new Object(), true, true, false, false, new Object());
     }
 
     @Override
-    protected void doBegin(final Object o, final TransactionDefinition transactionDefinition) throws TransactionException {
+    public void commit(final TransactionStatus transactionStatus) throws TransactionException {
     }
 
     @Override
-    protected void doCommit(final DefaultTransactionStatus defaultTransactionStatus) throws TransactionException {
-    }
-
-    @Override
-    protected void doRollback(final DefaultTransactionStatus defaultTransactionStatus) throws TransactionException {
+    public void rollback(final TransactionStatus transactionStatus) throws TransactionException {
     }
 }

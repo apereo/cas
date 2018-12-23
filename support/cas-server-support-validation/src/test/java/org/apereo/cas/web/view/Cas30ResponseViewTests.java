@@ -7,11 +7,8 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationAttributeReleasePolicy;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
-import org.apereo.cas.authentication.DefaultMultifactorAuthenticationContextValidator;
-import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.view.AbstractCasView;
 import org.apereo.cas.util.CollectionUtils;
@@ -26,13 +23,13 @@ import org.apereo.cas.web.view.attributes.DefaultCas30ProtocolAttributesRenderer
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
@@ -50,8 +47,8 @@ import javax.crypto.Cipher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 
@@ -83,9 +80,6 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
     @Qualifier("cas3ServiceFailureView")
     private View cas3ServiceFailureView;
 
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
     @Override
     public AbstractServiceValidateController getServiceValidateControllerInstance() {
         return new ServiceValidateController(
@@ -95,8 +89,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
             getCentralAuthenticationService(),
             getProxyHandler(),
             getArgumentExtractor(),
-            new DefaultMultifactorTriggerSelectionStrategy(new MultifactorAuthenticationProperties()),
-            new DefaultMultifactorAuthenticationContextValidator("", "OPEN", "test", applicationContext),
+            (assertion, request) -> Pair.of(Boolean.TRUE, Optional.empty()),
             cas3ServiceJsonView,
             cas3SuccessView,
             cas3ServiceFailureView,
@@ -114,7 +107,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
         req.setAttribute(RequestContext.WEB_APPLICATION_CONTEXT_ATTRIBUTE, new GenericWebApplicationContext(req.getServletContext()));
 
         val encoder = new DefaultCasProtocolAttributeEncoder(this.servicesManager, CipherExecutor.noOpOfStringToString());
-        final View viewDelegated = new View() {
+        val viewDelegated = new View() {
             @Override
             public String getContentType() {
                 return MediaType.TEXT_HTML_VALUE;
@@ -139,8 +132,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
 
     protected AbstractCasView getCasViewToRender(final ProtocolAttributeEncoder encoder, final View viewDelegated) {
         return new Cas30ResponseView(true, encoder, servicesManager,
-            "attribute",
-            viewDelegated, true, new DefaultAuthenticationAttributeReleasePolicy(),
+            viewDelegated, new DefaultAuthenticationAttributeReleasePolicy("attribute"),
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
             new DefaultCas30ProtocolAttributesRenderer());
     }
@@ -176,7 +168,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
     }
 
     @SneakyThrows
-    private String decryptCredential(final String cred) {
+    private static String decryptCredential(final String cred) {
         val factory = new PrivateKeyFactoryBean();
         factory.setAlgorithm("RSA");
         factory.setLocation(new ClassPathResource("keys/RSA4096Private.p8"));
@@ -208,12 +200,12 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
     public static class AttributeRepositoryTestConfiguration {
         @Bean
         public IPersonAttributeDao attributeRepository() {
-            final Map<String, List<Object>> attrs =
+            val attrs =
                 CollectionUtils.wrap("uid", CollectionUtils.wrap("uid"),
                     "eduPersonAffiliation", CollectionUtils.wrap("developer"),
                     "groupMembership", CollectionUtils.wrap("adopters"),
                     "binaryAttribute", CollectionUtils.wrap("binaryAttributeValue".getBytes(StandardCharsets.UTF_8)));
-            return new StubPersonAttributeDao(attrs);
+            return new StubPersonAttributeDao((Map) attrs);
         }
     }
 }

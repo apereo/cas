@@ -11,10 +11,10 @@ import org.apereo.cas.services.publisher.CasRegisteredServiceStreamPublisher;
 import org.apereo.cas.services.replication.DefaultRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 
-import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -42,7 +42,11 @@ public class CasServicesStreamingHazelcastConfiguration {
 
     @Autowired
     @Qualifier("casRegisteredServiceStreamPublisherIdentifier")
-    private StringBean casRegisteredServiceStreamPublisherIdentifier;
+    private ObjectProvider<StringBean> casRegisteredServiceStreamPublisherIdentifier;
+
+    @Autowired
+    @Qualifier("casHazelcastInstance")
+    private ObjectProvider<HazelcastInstance> hazelcastInstance;
 
     @Bean
     public DistributedCacheManager registeredServiceDistributedCacheManager() {
@@ -58,7 +62,7 @@ public class CasServicesStreamingHazelcastConfiguration {
     @Bean
     public CasRegisteredServiceStreamPublisher casRegisteredServiceStreamPublisher() {
         return new CasRegisteredServiceHazelcastStreamPublisher(registeredServiceDistributedCacheManager(),
-            casRegisteredServiceStreamPublisherIdentifier);
+            casRegisteredServiceStreamPublisherIdentifier.getIfAvailable());
     }
 
     @Bean
@@ -67,13 +71,11 @@ public class CasServicesStreamingHazelcastConfiguration {
         LOGGER.debug("Creating Hazelcast instance [{}] to publish service definitions", name);
         val factory = new HazelcastConfigurationFactory();
         val stream = casProperties.getServiceRegistry().getStream().getHazelcast();
-        val hz = stream.getConfig();
+        val hzConfig = stream.getConfig();
         val duration = Beans.newDuration(stream.getDuration()).toMillis();
-        val mapConfig = factory.buildMapConfig(hz, name,
-            TimeUnit.MILLISECONDS.toSeconds(duration));
-        val cfg = factory.build(hz, mapConfig);
-        LOGGER.debug("Created hazelcast instance [{}] with publisher id [{}] to publish service definitions",
-            name, casRegisteredServiceStreamPublisherIdentifier);
-        return Hazelcast.newHazelcastInstance(cfg);
+        val mapConfig = factory.buildMapConfig(hzConfig, name, TimeUnit.MILLISECONDS.toSeconds(duration));
+        val hz = hazelcastInstance.getIfAvailable();
+        hz.getConfig().addMapConfig(mapConfig);
+        return hz;
     }
 }

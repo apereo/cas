@@ -12,14 +12,11 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredSer
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
 import org.apereo.cas.support.saml.web.idp.profile.sso.request.SSOSamlHttpRequestExtractor;
 
-import net.shibboleth.utilities.java.support.xml.ParserPool;
-import org.apache.commons.lang3.tuple.Pair;
-import org.opensaml.messaging.context.MessageContext;
+import lombok.val;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
-import org.opensaml.saml.common.SignableSAMLObject;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPRedirectDeflateDecoder;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -41,7 +38,6 @@ public class SSOSamlPostProfileHandlerController extends AbstractSamlProfileHand
     private final SSOSamlHttpRequestExtractor samlHttpRequestExtractor;
 
     public SSOSamlPostProfileHandlerController(final SamlIdPObjectSigner samlObjectSigner,
-                                               final ParserPool parserPool,
                                                final AuthenticationSystemSupport authenticationSystemSupport,
                                                final ServicesManager servicesManager,
                                                final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
@@ -53,7 +49,6 @@ public class SSOSamlPostProfileHandlerController extends AbstractSamlProfileHand
                                                final SSOSamlHttpRequestExtractor samlHttpRequestExtractor,
                                                final Service callbackService) {
         super(samlObjectSigner,
-            parserPool,
             authenticationSystemSupport,
             servicesManager,
             webApplicationServiceFactory,
@@ -104,8 +99,7 @@ public class SSOSamlPostProfileHandlerController extends AbstractSamlProfileHand
     public void handleSsoPostProfileRequest(final HttpServletResponse response,
                                             final HttpServletRequest request,
                                             final BaseHttpServletRequestXMLMessageDecoder decoder) throws Exception {
-        final Pair<? extends SignableSAMLObject, MessageContext> authnRequest =
-            this.samlHttpRequestExtractor.extract(request, decoder, AuthnRequest.class);
+        val authnRequest = this.samlHttpRequestExtractor.extract(request, decoder, AuthnRequest.class);
         initiateAuthenticationRequest(authnRequest, response, request);
     }
 

@@ -1,6 +1,6 @@
 package org.apereo.cas.web.report;
 
-import org.apereo.cas.authentication.BasicIdentifiableCredential;
+import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
@@ -19,14 +19,14 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Endpoint(id = "resolve-attributes", enableByDefault = false)
+@Endpoint(id = "resolveAttributes", enableByDefault = false)
 public class CasResolveAttributesReportEndpoint extends BaseCasMvcEndpoint {
-    private final PrincipalResolver personDirectoryPrincipalResolver;
+    private final PrincipalResolver defaultPrincipalResolver;
 
     public CasResolveAttributesReportEndpoint(final CasConfigurationProperties casProperties,
-                                              final PrincipalResolver personDirectoryPrincipalResolver) {
+                                              final PrincipalResolver defaultPrincipalResolver) {
         super(casProperties);
-        this.personDirectoryPrincipalResolver = personDirectoryPrincipalResolver;
+        this.defaultPrincipalResolver = defaultPrincipalResolver;
     }
 
 
@@ -38,7 +38,7 @@ public class CasResolveAttributesReportEndpoint extends BaseCasMvcEndpoint {
      */
     @ReadOperation
     public Map<String, Object> resolvePrincipalAttributes(@Selector final String uid) {
-        val p = personDirectoryPrincipalResolver.resolve(new BasicIdentifiableCredential(uid));
+        val p = defaultPrincipalResolver.resolve(new BasicIdentifiableCredential(uid));
         val map = new HashMap<String, Object>();
         map.put("uid", p.getId());
         map.put("attributes", p.getAttributes());

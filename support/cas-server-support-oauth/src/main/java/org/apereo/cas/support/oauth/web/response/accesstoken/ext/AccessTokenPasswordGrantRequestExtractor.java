@@ -58,7 +58,7 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
         val context = Pac4jUtils.getPac4jJ2EContext(request, response);
         val manager = Pac4jUtils.getPac4jProfileManager(request, response);
         val profile = (Optional<CommonProfile>) manager.get(true);
-        if (!profile.isPresent()) {
+        if (profile.isEmpty()) {
             throw new UnauthorizedServiceException("OAuth user profile cannot be determined");
         }
         val uProfile = profile.get();

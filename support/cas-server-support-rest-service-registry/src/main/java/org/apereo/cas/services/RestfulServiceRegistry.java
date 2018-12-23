@@ -1,15 +1,15 @@
 package org.apereo.cas.services;
 
-import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -19,11 +19,19 @@ import java.util.stream.Stream;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiredArgsConstructor
 public class RestfulServiceRegistry extends AbstractServiceRegistry {
     private final transient RestTemplate restTemplate;
     private final String url;
     private final MultiValueMap<String, String> headers;
+
+    public RestfulServiceRegistry(final ApplicationEventPublisher eventPublisher,
+                                  final RestTemplate restTemplate, final String url,
+                                  final MultiValueMap<String, String> headers) {
+        super(eventPublisher);
+        this.restTemplate = restTemplate;
+        this.url = url;
+        this.headers = headers;
+    }
 
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
@@ -43,7 +51,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
-    public List<RegisteredService> load() {
+    public Collection<RegisteredService> load() {
         val responseEntity = restTemplate.exchange(this.url, HttpMethod.GET,
             new HttpEntity<>(this.headers), RegisteredService[].class);
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
@@ -55,8 +63,8 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public RegisteredService findServiceById(final long id) {
-        val url = StringUtils.appendIfMissing(this.url, "/").concat(String.valueOf(id));
-        val responseEntity = restTemplate.exchange(url, HttpMethod.GET,
+        val completeUrl = StringUtils.appendIfMissing(this.url, "/").concat(String.valueOf(id));
+        val responseEntity = restTemplate.exchange(completeUrl, HttpMethod.GET,
             new HttpEntity<>(id, this.headers), RegisteredService.class);
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
             return responseEntity.getBody();
@@ -66,8 +74,8 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public RegisteredService findServiceById(final String id) {
-        val url = StringUtils.appendIfMissing(this.url, "/").concat(String.valueOf(id));
-        val responseEntity = restTemplate.exchange(url, HttpMethod.GET,
+        val completeUrl = StringUtils.appendIfMissing(this.url, "/").concat(String.valueOf(id));
+        val responseEntity = restTemplate.exchange(completeUrl, HttpMethod.GET,
             new HttpEntity<>(id, this.headers), RegisteredService.class);
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
             return responseEntity.getBody();

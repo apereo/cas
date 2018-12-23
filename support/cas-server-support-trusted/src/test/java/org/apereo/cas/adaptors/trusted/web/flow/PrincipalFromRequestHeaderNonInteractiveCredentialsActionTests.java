@@ -1,13 +1,9 @@
 package org.apereo.cas.adaptors.trusted.web.flow;
 
-import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
-import org.apereo.cas.adaptors.trusted.config.TrustedAuthenticationConfiguration;
-
 import lombok.val;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -26,8 +22,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Import(TrustedAuthenticationConfiguration.class)
-public class PrincipalFromRequestHeaderNonInteractiveCredentialsActionTests extends AbstractCentralAuthenticationServiceTests {
+public class PrincipalFromRequestHeaderNonInteractiveCredentialsActionTests extends BaseNonInteractiveCredentialsActionTests {
     @Autowired
     @Qualifier("principalFromRemoteHeaderPrincipalAction")
     private Action action;

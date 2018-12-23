@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Amazon Cloud Directory Authentication
+category: Authentication
 ---
 
 # Amazon Cloud Directory Authentication
@@ -21,7 +22,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#amazon-cloud-directory-authentication).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#amazon-cloud-directory-authentication).
 
 AWS credentials are fetched from the following sources automatically, where relevant and made possible via CAS configuration:
 
@@ -32,3 +33,15 @@ AWS credentials are fetched from the following sources automatically, where rele
 5. Environment variables that include `AWS_ACCESS_KEY_ID`, `AWS_SECRET_KEY` and `AWS_SESSION_TOKEN`.
 6. Properties file on the classpath as `awscredentials.properties` that contains `accessKey` and `secretKey` as property keys.
 7. Static credentials for access key and secret provided directly by the configuration at hand (logging, etc).
+
+## Troubleshooting
+
+To enable additional logging, configure the log4j configuration file to add the following levels:
+
+```xml
+...
+<AsyncLogger name="com.amazonaws" level="debug" additivity="false">
+    <AppenderRef ref="console"/>
+    <AppenderRef ref="file"/>
+</AsyncLogger>
+...

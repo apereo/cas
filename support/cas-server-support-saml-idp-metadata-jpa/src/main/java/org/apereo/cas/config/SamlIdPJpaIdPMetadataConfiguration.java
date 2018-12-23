@@ -16,6 +16,7 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -52,7 +53,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
 
     @Autowired
     @Qualifier("samlSelfSignedCertificateWriter")
-    private SamlIdPCertificateAndKeyWriter samlSelfSignedCertificateWriter;
+    private ObjectProvider<SamlIdPCertificateAndKeyWriter> samlSelfSignedCertificateWriter;
 
     @Autowired
     private ResourceLoader resourceLoader;
@@ -66,6 +67,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
         return JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
 
+    @RefreshScope
     @Bean
     public DataSource dataSourceSamlMetadataIdP() {
         val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
@@ -99,6 +101,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
     }
 
 
+    @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "jpaSamlIdPMetadataCipherExecutor")
     public CipherExecutor jpaSamlIdPMetadataCipherExecutor() {
@@ -109,7 +112,9 @@ public class SamlIdPJpaIdPMetadataConfiguration {
             return new JpaSamlIdPMetadataCipherExecutor(
                 crypto.getEncryption().getKey(),
                 crypto.getSigning().getKey(),
-                crypto.getAlg());
+                crypto.getAlg(),
+                crypto.getSigning().getKeySize(),
+                crypto.getEncryption().getKeySize());
         }
         LOGGER.info("JPA SAML IdP metadata encryption/signing is turned off and "
             + "MAY NOT be safe in a production environment. "
@@ -125,7 +130,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
 
         return new JpaSamlIdPMetadataGenerator(
             samlIdPMetadataLocator(),
-            samlSelfSignedCertificateWriter,
+            samlSelfSignedCertificateWriter.getIfAvailable(),
             idp.getEntityId(),
             resourceLoader,
             casProperties.getServer().getPrefix(),
@@ -134,6 +139,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
             transactionTemplate);
     }
 
+    @RefreshScope
     @Bean
     @SneakyThrows
     public SamlIdPMetadataLocator samlIdPMetadataLocator() {

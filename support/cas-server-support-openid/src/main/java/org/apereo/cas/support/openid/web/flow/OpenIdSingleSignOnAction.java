@@ -49,7 +49,6 @@ public class OpenIdSingleSignOnAction extends AbstractNonInteractiveCredentialsA
         val userName = getOpenIdSelectedIdentifier(context, ticketGrantingTicketId, openidIdentityParameter);
         val service = WebUtils.getService(context);
 
-        // clear the service because otherwise we can fake the username
         if (service instanceof OpenIdService && StringUtils.isBlank(userName)) {
             context.getFlowScope().remove(CasProtocolConstants.PARAMETER_SERVICE);
         }

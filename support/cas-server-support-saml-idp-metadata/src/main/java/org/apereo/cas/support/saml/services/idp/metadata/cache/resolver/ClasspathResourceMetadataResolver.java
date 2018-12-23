@@ -29,7 +29,7 @@ public class ClasspathResourceMetadataResolver extends BaseSamlRegisteredService
     }
 
     @Override
-    public Collection<MetadataResolver> resolve(final SamlRegisteredService service) {
+    public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service) {
         val metadataLocation = service.getMetadataLocation();
         LOGGER.info("Loading SAML metadata from [{}]", metadataLocation);
         try (val in = ResourceUtils.getResourceFrom(metadataLocation).getInputStream()) {
@@ -53,7 +53,7 @@ public class ClasspathResourceMetadataResolver extends BaseSamlRegisteredService
             val metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
             return metadataResource instanceof ClassPathResource;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.trace(e.getMessage(), e);
         }
         return false;
     }

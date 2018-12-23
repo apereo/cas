@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.rest.RestPasswordManagementService;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -27,12 +28,12 @@ public class RestPasswordManagementConfiguration {
 
     @Autowired
     @Qualifier("passwordManagementCipherExecutor")
-    private CipherExecutor passwordManagementCipherExecutor;
+    private ObjectProvider<CipherExecutor> passwordManagementCipherExecutor;
 
     @RefreshScope
     @Bean
     public PasswordManagementService passwordChangeService() {
-        return new RestPasswordManagementService(passwordManagementCipherExecutor,
+        return new RestPasswordManagementService(passwordManagementCipherExecutor.getIfAvailable(),
             casProperties.getServer().getPrefix(),
             new RestTemplate(),
             casProperties.getAuthn().getPm());

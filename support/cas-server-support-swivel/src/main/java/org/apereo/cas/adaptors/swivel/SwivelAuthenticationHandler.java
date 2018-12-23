@@ -36,7 +36,7 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
     public SwivelAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                        final PrincipalFactory principalFactory,
                                        final SwivelMultifactorProperties swivelProperties) {
-        super(name, servicesManager, principalFactory, null);
+        super(name, servicesManager, principalFactory, swivelProperties.getOrder());
         this.swivelProperties = swivelProperties;
     }
 
@@ -130,6 +130,11 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
         val agentError = StringUtils.isBlank(req.getAgentError()) ? SWIVEL_ERR_CODE_AUTHN_FAIL : req.getAgentError();
         LOGGER.error("Failed Swivel MFA authentication for [{}] ([{}])", uid, agentError);
         throw new FailedLoginException(ERROR_MAP.getOrDefault(agentError, SWIVEL_ERR_CODE_AUTHN_FAIL));
+    }
+
+    @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return SwivelTokenCredential.class.isAssignableFrom(clazz);
     }
 
     @Override

@@ -46,7 +46,7 @@ public class SurrogateAuthorizationActionTests extends BaseSurrogateInitialAuthe
     public void verifyAuthorized() {
         try {
             val context = new MockRequestContext();
-            WebUtils.putService(context, CoreAuthenticationTestUtils.getWebApplicationService());
+            WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
             WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
             val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
             val strategy = new SurrogateRegisteredServiceAccessStrategy();
@@ -64,7 +64,7 @@ public class SurrogateAuthorizationActionTests extends BaseSurrogateInitialAuthe
     @SneakyThrows
     public void verifyNotAuthorized() {
         val context = new MockRequestContext();
-        WebUtils.putService(context, CoreAuthenticationTestUtils.getWebApplicationService());
+        WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
 
         val attributes = new LinkedHashMap<String, Object>();
         attributes.put(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, true);

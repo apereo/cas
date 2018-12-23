@@ -26,15 +26,16 @@ import java.util.Optional;
 public class SpnegoPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     public SpnegoPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,
-                                   final boolean returnNullIfNoAttributes, final PrincipalNameTransformer principalNameTransformer, final String principalAttributeName) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalNameTransformer, principalAttributeName);
+                                   final boolean returnNullIfNoAttributes, final PrincipalNameTransformer principalNameTransformer,
+                                   final String principalAttributeName, final boolean useCurrentPrincipalId) {
+        super(attributeRepository, principalFactory, returnNullIfNoAttributes,
+            principalNameTransformer, principalAttributeName, useCurrentPrincipalId);
     }
 
     @Override
     protected String extractPrincipalId(final Credential credential, final Optional<Principal> currentPrincipal) {
         val c = (SpnegoCredential) credential;
-        val id = c.getPrincipal().getId();
-        return id;
+        return c.getPrincipal().getId();
     }
 
     @Override

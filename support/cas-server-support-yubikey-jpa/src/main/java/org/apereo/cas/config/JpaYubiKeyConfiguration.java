@@ -11,6 +11,7 @@ import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -44,11 +45,11 @@ public class JpaYubiKeyConfiguration {
 
     @Autowired
     @Qualifier("yubiKeyAccountValidator")
-    private YubiKeyAccountValidator yubiKeyAccountValidator;
+    private ObjectProvider<YubiKeyAccountValidator> yubiKeyAccountValidator;
 
     @Autowired
     @Qualifier("yubikeyAccountCipherExecutor")
-    private CipherExecutor yubikeyAccountCipherExecutor;
+    private ObjectProvider<CipherExecutor> yubikeyAccountCipherExecutor;
 
     @RefreshScope
     @Bean
@@ -76,22 +77,20 @@ public class JpaYubiKeyConfiguration {
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean yubiKeyEntityManagerFactory() {
-        val bean =
-            JpaBeans.newHibernateEntityManagerFactoryBean(
-                new JpaConfigDataHolder(
-                    jpaYubiKeyVendorAdapter(),
-                    "jpaYubiKeyRegistryContext",
-                    jpaYubiKeyPackagesToScan(),
-                    dataSourceYubiKey()),
-                casProperties.getAuthn().getMfa().getYubikey().getJpa());
 
-        return bean;
+        return JpaBeans.newHibernateEntityManagerFactoryBean(
+            new JpaConfigDataHolder(
+                jpaYubiKeyVendorAdapter(),
+                "jpaYubiKeyRegistryContext",
+                jpaYubiKeyPackagesToScan(),
+                dataSourceYubiKey()),
+            casProperties.getAuthn().getMfa().getYubikey().getJpa());
     }
 
     @Bean
     public YubiKeyAccountRegistry yubiKeyAccountRegistry() {
-        val registry = new JpaYubiKeyAccountRegistry(yubiKeyAccountValidator);
-        registry.setCipherExecutor(this.yubikeyAccountCipherExecutor);
+        val registry = new JpaYubiKeyAccountRegistry(yubiKeyAccountValidator.getIfAvailable());
+        registry.setCipherExecutor(yubikeyAccountCipherExecutor.getIfAvailable());
         return registry;
     }
 }

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 /**
@@ -22,6 +23,7 @@ import java.io.Serializable;
 public class PasswordChangeBean implements Serializable {
     private static final long serialVersionUID = 8885460875620586503L;
 
-    private String password;
-    private String confirmedPassword;
+    private @Size(min = 1, message = "required.password") String password;
+
+    private @Size(min = 1, message = "required.confirmedPassword") String confirmedPassword;
 }

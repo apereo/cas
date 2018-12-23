@@ -103,7 +103,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      */
     protected final AuditableExecution registeredServiceAccessStrategyEnforcer;
 
-
     /**
      * Publish CAS events.
      *
@@ -111,14 +110,14 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      */
     protected void doPublishEvent(final ApplicationEvent e) {
         if (applicationEventPublisher != null) {
-            LOGGER.debug("Publishing [{}]", e);
+            LOGGER.trace("Publishing [{}]", e);
             this.applicationEventPublisher.publishEvent(e);
         }
     }
 
     @Transactional(transactionManager = "ticketTransactionManager", noRollbackFor = InvalidTicketException.class)
     @Override
-    public Ticket getTicket(@NonNull final String ticketId) throws InvalidTicketException {
+    public Ticket getTicket(final @NonNull String ticketId) throws InvalidTicketException {
         val ticket = this.ticketRegistry.getTicket(ticketId);
         verifyTicketState(ticket, ticketId, null);
         return ticket;
@@ -134,7 +133,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      */
     @Transactional(transactionManager = "ticketTransactionManager", noRollbackFor = InvalidTicketException.class)
     @Override
-    public <T extends Ticket> T getTicket(@NonNull final String ticketId, final Class<T> clazz) throws InvalidTicketException {
+    public <T extends Ticket> T getTicket(final @NonNull String ticketId, final Class<T> clazz) throws InvalidTicketException {
         val ticket = this.ticketRegistry.getTicket(ticketId, clazz);
         verifyTicketState(ticket, ticketId, clazz);
         return (T) ticket;
@@ -182,7 +181,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     protected void evaluateProxiedServiceIfNeeded(final Service service, final TicketGrantingTicket ticketGrantingTicket, final RegisteredService registeredService) {
         val proxiedBy = ticketGrantingTicket.getProxiedBy();
         if (proxiedBy != null) {
-            LOGGER.debug("TGT is proxied by [{}]. Locating proxy service in registry...", proxiedBy.getId());
+            LOGGER.debug("Ticket-granting ticket is proxied by [{}]. Locating proxy service in registry...", proxiedBy.getId());
             val proxyingService = this.servicesManager.findServiceBy(proxiedBy);
             if (proxyingService != null) {
                 LOGGER.debug("Located proxying service [{}] in the service registry", proxyingService);
@@ -195,7 +194,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
                 throw new UnauthorizedProxyingException(UnauthorizedProxyingException.MESSAGE + registeredService.getId());
             }
         } else {
-            LOGGER.trace("TGT is not proxied by another service");
+            LOGGER.trace("Ticket-granting ticket is not proxied by another service");
         }
     }
 
@@ -245,7 +244,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      */
     protected boolean isTicketAuthenticityVerified(final String ticketId) {
         if (this.cipherExecutor != null) {
-            LOGGER.debug("Attempting to decode service ticket [{}] to verify authenticity", ticketId);
+            LOGGER.trace("Attempting to decode service ticket [{}] to verify authenticity", ticketId);
             return !StringUtils.isEmpty(this.cipherExecutor.decode(ticketId));
         }
         return !StringUtils.isEmpty(ticketId);

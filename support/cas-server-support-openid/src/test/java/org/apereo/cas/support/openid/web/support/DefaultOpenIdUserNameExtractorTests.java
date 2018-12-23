@@ -4,6 +4,7 @@ import org.apereo.cas.support.openid.AbstractOpenIdTests;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import static org.junit.Assert.*;
 
@@ -14,23 +15,21 @@ import static org.junit.Assert.*;
 public class DefaultOpenIdUserNameExtractorTests extends AbstractOpenIdTests {
 
     @Autowired
-    private DefaultOpenIdUserNameExtractor extractor;
+    @Qualifier("defaultOpenIdUserNameExtractor")
+    private OpenIdUserNameExtractor extractor;
 
     @Test
     public void verifyExtractionSuccessful() {
-        assertEquals("scootman28", this.extractor
-            .extractLocalUsernameFromUri("http://test.com/scootman28"));
+        assertEquals("scootman28", this.extractor.extractLocalUsernameFromUri("http://test.com/scootman28"));
     }
 
     @Test
     public void verifyExtractionFailed() {
-        assertNull(this.extractor
-            .extractLocalUsernameFromUri("test.com"));
+        assertNull(this.extractor.extractLocalUsernameFromUri("test.com"));
     }
 
     @Test
     public void verifyNull() {
-        assertNull(this.extractor
-            .extractLocalUsernameFromUri(null));
+        assertNull(this.extractor.extractLocalUsernameFromUri(null));
     }
 }

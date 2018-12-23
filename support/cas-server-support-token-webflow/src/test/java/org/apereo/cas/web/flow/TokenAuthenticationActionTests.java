@@ -13,6 +13,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.apereo.cas.util.gen.RandomStringGenerator;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.flow.config.TokenAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.support.WebUtils;
@@ -48,6 +49,7 @@ import static org.junit.Assert.*;
 @Import({
     CasCoreWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,
+    CasMultifactorAuthenticationWebflowConfiguration.class,
     TokenAuthenticationConfiguration.class,
     TokenAuthenticationWebflowConfiguration.class
 })
@@ -96,7 +98,7 @@ public class TokenAuthenticationActionTests extends AbstractCentralAuthenticatio
         request.addHeader(TokenConstants.PARAMETER_NAME_TOKEN, token);
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        WebUtils.putService(context, CoreAuthenticationTestUtils.getWebApplicationService("https://example.token.org"));
+        WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService("https://example.token.org"));
         assertEquals("success", this.action.execute(context).getId());
     }
 }

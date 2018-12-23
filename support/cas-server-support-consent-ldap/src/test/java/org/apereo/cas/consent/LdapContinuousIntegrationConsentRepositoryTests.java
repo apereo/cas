@@ -6,6 +6,7 @@ import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
+import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.BeforeClass;
@@ -19,7 +20,15 @@ import org.springframework.test.context.TestPropertySource;
  * @author Arnold Bergner
  * @since 5.3.0
  */
-@TestPropertySource(locations = "classpath:/ldapconsentci.properties")
+@TestPropertySource(properties = {
+    "cas.consent.ldap.ldapUrl=ldap://localhost:10389",
+    "cas.consent.ldap.useSsl=false",
+    "cas.consent.ldap.baseDn=ou=people,dc=example,dc=org",
+    "cas.consent.ldap.searchFilter=cn={0}",
+    "cas.consent.ldap.consentAttributeName=description",
+    "cas.consent.ldap.bindDn=cn=Directory Manager",
+    "cas.consent.ldap.bindCredential=password"
+    })
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 public class LdapContinuousIntegrationConsentRepositoryTests extends BaseLdapConsentRepositoryTests {
     private static final int LDAP_PORT = 10389;
@@ -30,6 +39,7 @@ public class LdapContinuousIntegrationConsentRepositoryTests extends BaseLdapCon
     @BeforeClass
     @SneakyThrows
     public static void bootstrap() {
+        @Cleanup
         val localhost = new LDAPConnection("localhost", LDAP_PORT,
             "cn=Directory Manager", "password");
         LdapIntegrationTestsOperations.populateEntries(

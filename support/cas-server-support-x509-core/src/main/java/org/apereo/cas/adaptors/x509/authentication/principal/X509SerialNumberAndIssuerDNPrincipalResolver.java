@@ -41,23 +41,17 @@ public class X509SerialNumberAndIssuerDNPrincipalResolver extends AbstractX509Pr
     private final String valueDelimiter;
 
     public X509SerialNumberAndIssuerDNPrincipalResolver(final String serialNumberPrefix, final String valueDelimiter) {
-        this(new StubPersonAttributeDao(new HashMap<>()), new DefaultPrincipalFactory(), false, null, serialNumberPrefix, valueDelimiter);
+        this(new StubPersonAttributeDao(new HashMap<>()), new DefaultPrincipalFactory(), false,
+            null, serialNumberPrefix, valueDelimiter, false);
     }
 
-    /**
-     * Creates a new instance.
-     *
-     * @param attributeRepository      the attribute repository
-     * @param principalFactory         the principal factory
-     * @param returnNullIfNoAttributes the return null if no attributes
-     * @param principalAttributeName   the principal attribute name
-     * @param serialNumberPrefix       prefix for the certificate serialnumber (default: "SERIALNUMBER=").
-     * @param valueDelimiter           delimiter to separate the two certificate properties in the string. (default: ", ")
-     */
     public X509SerialNumberAndIssuerDNPrincipalResolver(final IPersonAttributeDao attributeRepository,
-                                                        final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
-                                                        final String principalAttributeName, final String serialNumberPrefix, final String valueDelimiter) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
+                                                        final PrincipalFactory principalFactory,
+                                                        final boolean returnNullIfNoAttributes,
+                                                        final String principalAttributeName,
+                                                        final String serialNumberPrefix, final String valueDelimiter,
+                                                        final boolean useCurrentPrincipalId) {
+        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName, useCurrentPrincipalId);
         this.serialNumberPrefix = StringUtils.defaultString(serialNumberPrefix, "SERIALNUMBER=");
         this.valueDelimiter = StringUtils.defaultIfBlank(valueDelimiter, ", ");
     }

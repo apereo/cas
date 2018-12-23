@@ -10,6 +10,7 @@ import org.apereo.cas.rest.factory.UserAuthenticationResourceEntityResponseFacto
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -44,6 +45,7 @@ public class UserAuthenticationResource {
     private final RestHttpRequestCredentialFactory credentialFactory;
     private final ServiceFactory serviceFactory;
     private final UserAuthenticationResourceEntityResponseFactory userAuthenticationResourceEntityResponseFactory;
+    private final ApplicationContext applicationContext;
 
     /**
      * Create new ticket granting ticket.
@@ -56,7 +58,7 @@ public class UserAuthenticationResource {
     public ResponseEntity<String> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
                                                              final HttpServletRequest request) {
         try {
-            val credential = this.credentialFactory.fromRequestBody(requestBody);
+            val credential = this.credentialFactory.fromRequest(request, requestBody);
             if (credential == null || credential.isEmpty()) {
                 throw new BadRestRequestException("No credentials are provided or extracted to authenticate the REST request");
             }
@@ -68,7 +70,7 @@ public class UserAuthenticationResource {
             }
             return this.userAuthenticationResourceEntityResponseFactory.build(authenticationResult, request);
         } catch (final AuthenticationException e) {
-            return RestResourceUtils.createResponseEntityForAuthnFailure(e);
+            return RestResourceUtils.createResponseEntityForAuthnFailure(e, request, applicationContext);
         } catch (final BadRestRequestException e) {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

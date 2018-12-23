@@ -3,7 +3,10 @@ package org.apereo.cas.util;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Collection;
+import java.util.function.Predicate;
 
 /**
  * This ticket registry only stores one ticket at the same time and offers the ability to update a ticket.
@@ -40,18 +43,29 @@ public class MockOnlyOneTicketRegistry implements TicketRegistry {
     }
 
     @Override
+    public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
+        return this.ticket;
+    }
+
+    @Override
     public int deleteTicket(final String ticketId) {
         this.ticket = null;
         return 1;
     }
 
     @Override
-    public long deleteAll() {
-        return deleteTicket(null);
+    public int deleteTicket(final Ticket ticketId) {
+        this.ticket = null;
+        return 1;
     }
 
     @Override
-    public Collection<Ticket> getTickets() {
+    public long deleteAll() {
+        return deleteTicket(StringUtils.EMPTY);
+    }
+
+    @Override
+    public Collection<? extends Ticket> getTickets() {
         throw new UnsupportedOperationException("Not implemented");
     }
 

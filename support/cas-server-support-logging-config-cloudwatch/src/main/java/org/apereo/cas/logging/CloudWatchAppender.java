@@ -181,7 +181,7 @@ public class CloudWatchAppender extends AbstractAppender {
             awsLogsClient.describeLogGroups(new DescribeLogGroupsRequest().withLogGroupNamePrefix(logGroupName));
         var createLogGroup = true;
         if (describeLogGroupsResult != null && describeLogGroupsResult.getLogGroups() != null && !describeLogGroupsResult.getLogGroups().isEmpty()) {
-            createLogGroup = !describeLogGroupsResult.getLogGroups().stream().anyMatch(g -> g.getLogGroupName().equals(logGroupName));
+            createLogGroup = describeLogGroupsResult.getLogGroups().stream().noneMatch(g -> g.getLogGroupName().equals(logGroupName));
         }
         if (createLogGroup) {
             LOGGER.debug("Creating log group [{}]", logGroupName);
@@ -254,7 +254,7 @@ public class CloudWatchAppender extends AbstractAppender {
                 LOGGER.error(e.getMessage(), e);
             }
         }
-        if (queue.size() > 0) {
+        if (!queue.isEmpty()) {
             flush();
         }
     }

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Overlay Installation
+category: Installation
 ---
 
 # WAR Overlay Installation
@@ -71,7 +72,7 @@ and/or other instructed locations to avoid surprises.
 
 See this [Maven WAR overlay](https://github.com/apereo/cas-configserver-overlay) for more details.
 
-To learn more about the configuration server, please [review this guide](Configuration-Server-Management.html).
+To learn more about the configuration server, please [review this guide](../configuration/Configuration-Server-Management.html).
 
 ## Dockerized Deployment
 

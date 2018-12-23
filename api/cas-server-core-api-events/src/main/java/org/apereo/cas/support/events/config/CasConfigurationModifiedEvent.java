@@ -4,7 +4,6 @@ import org.apereo.cas.support.events.AbstractCasEvent;
 
 import lombok.Getter;
 import lombok.ToString;
-import lombok.val;
 
 import java.nio.file.Path;
 import java.util.regex.Pattern;
@@ -70,8 +69,7 @@ public class CasConfigurationModifiedEvent extends AbstractCasEvent {
             return true;
         }
         if (getFile() != null) {
-            val file = getFile().toFile();
-            return CONFIG_FILE_PATTERN.matcher(file.getName()).find();
+            return CONFIG_FILE_PATTERN.matcher(getFile().toFile().getName()).find();
         }
         return false;
     }

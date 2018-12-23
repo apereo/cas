@@ -21,21 +21,23 @@ import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.SurrogateAuthenticationAuditConfiguration;
 import org.apereo.cas.config.SurrogateAuthenticationConfiguration;
 import org.apereo.cas.config.SurrogateAuthenticationWebflowConfiguration;
-import org.apereo.cas.config.SurrogateWebflowEventResolutionConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
-import org.junit.runner.RunWith;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 /**
  * This is {@link BaseSurrogateInitialAuthenticationActionTests}.
@@ -43,12 +45,11 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
     BaseSurrogateInitialAuthenticationActionTests.TestAuthenticationConfiguration.class,
     RefreshAutoConfiguration.class,
+    SurrogateAuthenticationConfiguration.class,
     SurrogateAuthenticationWebflowConfiguration.class,
-    SurrogateWebflowEventResolutionConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreHttpConfiguration.class,
@@ -57,6 +58,7 @@ import org.springframework.test.context.junit4.SpringRunner;
     CasCoreAuthenticationPolicyConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
+    CasMultifactorAuthenticationWebflowConfiguration.class,
     CasCoreWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,
     CasCoreWebConfiguration.class,
@@ -70,11 +72,16 @@ import org.springframework.test.context.junit4.SpringRunner;
     CasCookieConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    SurrogateAuthenticationConfiguration.class
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
 })
-@TestPropertySource(locations = {"classpath:/surrogate-webflow.properties"})
+@TestPropertySource(properties = {"cas.authn.surrogate.simple.surrogates.casuser=cassurrogate"})
 public abstract class BaseSurrogateInitialAuthenticationActionTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
     @TestConfiguration
     public static class TestAuthenticationConfiguration implements AuthenticationEventExecutionPlanConfigurer {
         @Override

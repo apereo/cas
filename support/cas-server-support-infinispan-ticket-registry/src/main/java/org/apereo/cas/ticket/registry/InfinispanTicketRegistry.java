@@ -9,6 +9,7 @@ import org.infinispan.Cache;
 
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 
 /**
  * This is {@link InfinispanTicketRegistry}. Infinispan is a distributed in-memory
@@ -34,32 +35,30 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
     @Override
     public void addTicket(final Ticket ticketToAdd) {
         val ticket = encodeTicket(ticketToAdd);
-
-        final long idleTime = ticketToAdd.getExpirationPolicy().getTimeToIdle() <= 0
-            ? ticketToAdd.getExpirationPolicy().getTimeToLive()
-            : ticketToAdd.getExpirationPolicy().getTimeToIdle();
+        val expirationPolicy = ticketToAdd.getExpirationPolicy();
+        val idleTime = expirationPolicy.getTimeToIdle() <= 0
+            ? expirationPolicy.getTimeToLive()
+            : expirationPolicy.getTimeToIdle();
 
         LOGGER.debug("Adding ticket [{}] to cache store to live [{}] seconds and stay idle for [{}]",
-            ticketToAdd.getId(), ticketToAdd.getExpirationPolicy().getTimeToLive(), idleTime);
+            ticketToAdd.getId(), expirationPolicy.getTimeToLive(), idleTime);
 
         this.cache.put(ticket.getId(), ticket,
-            ticketToAdd.getExpirationPolicy().getTimeToLive(), TimeUnit.SECONDS,
+            expirationPolicy.getTimeToLive(), TimeUnit.SECONDS,
             idleTime, TimeUnit.SECONDS);
     }
 
     @Override
-    public Ticket getTicket(final String ticketId) {
+    public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         val encTicketId = encodeTicketId(ticketId);
         if (ticketId == null) {
             return null;
         }
         val result = decodeTicket(Ticket.class.cast(cache.get(encTicketId)));
-        if (result != null && result.isExpired()) {
-            LOGGER.debug("Ticket [{}] has expired and is now removed from the cache", result.getId());
-            this.cache.remove(encTicketId);
-            return null;
+        if (predicate.test(result)) {
+            return result;
         }
-        return result;
+        return null;
     }
 
     @Override
@@ -82,7 +81,7 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
      * might or might not be valid i.e. expired.
      */
     @Override
-    public Collection<Ticket> getTickets() {
+    public Collection<? extends Ticket> getTickets() {
         return decodeTickets(this.cache.values());
     }
 }

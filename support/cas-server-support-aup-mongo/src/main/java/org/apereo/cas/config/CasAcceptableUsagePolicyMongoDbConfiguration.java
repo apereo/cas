@@ -7,6 +7,7 @@ import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -29,7 +30,7 @@ public class CasAcceptableUsagePolicyMongoDbConfiguration {
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
-    private TicketRegistrySupport ticketRegistrySupport;
+    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -48,7 +49,7 @@ public class CasAcceptableUsagePolicyMongoDbConfiguration {
     @Bean
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
         val mongo = casProperties.getAcceptableUsagePolicy().getMongo();
-        return new MongoDbAcceptableUsagePolicyRepository(ticketRegistrySupport,
+        return new MongoDbAcceptableUsagePolicyRepository(ticketRegistrySupport.getIfAvailable(),
             casProperties.getAcceptableUsagePolicy().getAupAttributeName(),
             mongoAcceptableUsagePolicyTemplate(),
             mongo.getCollection());

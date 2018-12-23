@@ -12,6 +12,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -49,6 +50,7 @@ public class TicketGrantingTicketResource {
     private final CentralAuthenticationService centralAuthenticationService;
     private final ServiceFactory serviceFactory;
     private final TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory;
+    private final ApplicationContext applicationContext;
 
     /**
      * Create new ticket granting ticket.
@@ -58,13 +60,13 @@ public class TicketGrantingTicketResource {
      * @return ResponseEntity representing RESTful response
      */
     @PostMapping(value = "/v1/tickets", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<String> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
+    public ResponseEntity<String> createTicketGrantingTicket(@RequestBody(required=false) final MultiValueMap<String, String> requestBody,
                                                              final HttpServletRequest request) {
         try {
             val tgtId = createTicketGrantingTicketForRequest(requestBody, request);
             return createResponseEntityForTicket(request, tgtId);
         } catch (final AuthenticationException e) {
-            return RestResourceUtils.createResponseEntityForAuthnFailure(e);
+            return RestResourceUtils.createResponseEntityForAuthnFailure(e, request, applicationContext);
         } catch (final BadRestRequestException e) {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -109,7 +111,7 @@ public class TicketGrantingTicketResource {
      */
     protected TicketGrantingTicket createTicketGrantingTicketForRequest(final MultiValueMap<String, String> requestBody,
                                                                         final HttpServletRequest request) {
-        val credential = this.credentialFactory.fromRequestBody(requestBody);
+        val credential = this.credentialFactory.fromRequest(request, requestBody);
         if (credential == null || credential.isEmpty()) {
             throw new BadRestRequestException("No credentials are provided or extracted to authenticate the REST request");
         }

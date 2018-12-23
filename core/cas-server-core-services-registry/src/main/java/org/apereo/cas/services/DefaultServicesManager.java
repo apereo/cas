@@ -13,12 +13,11 @@ import java.util.concurrent.ConcurrentSkipListSet;
  * @since 3.1
  */
 public class DefaultServicesManager extends AbstractServicesManager {
-    private static final long serialVersionUID = -8581398063126547772L;
 
     private Set<RegisteredService> orderedServices = new ConcurrentSkipListSet<>();
 
-    public DefaultServicesManager(final ServiceRegistry serviceRegistry, final ApplicationEventPublisher eventPublisher) {
-        super(serviceRegistry, eventPublisher);
+    public DefaultServicesManager(final ServiceRegistry serviceRegistry, final ApplicationEventPublisher eventPublisher, final Set<String> environments) {
+        super(serviceRegistry, eventPublisher, environments);
     }
 
     @Override

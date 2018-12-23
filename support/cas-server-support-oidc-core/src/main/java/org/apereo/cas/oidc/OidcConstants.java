@@ -67,6 +67,11 @@ public interface OidcConstants {
      * Base OIDC URL.
      */
     String BASE_OIDC_URL = "oidc";
+
+    /**
+     * Logout url.
+     */
+    String LOGOUT_URL = "logout";
     /**
      * JWKS Endpoint url.
      */

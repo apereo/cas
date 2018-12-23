@@ -105,10 +105,10 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     @JsonCreator
     public TicketGrantingTicketImpl(@JsonProperty("id") final String id, @JsonProperty("proxiedBy") final Service proxiedBy,
                                     @JsonProperty("ticketGrantingTicket") final TicketGrantingTicket parentTicketGrantingTicket,
-                                    @NonNull @JsonProperty("authentication") final Authentication authentication, @JsonProperty("expirationPolicy") final ExpirationPolicy policy) {
+                                    @JsonProperty("authentication") final @NonNull Authentication authentication, @JsonProperty("expirationPolicy") final ExpirationPolicy policy) {
         super(id, policy);
         if (parentTicketGrantingTicket != null && proxiedBy == null) {
-            throw new IllegalArgumentException("Must specify proxiedBy when providing parent TGT");
+            throw new IllegalArgumentException("Must specify proxiedBy when providing parent ticket-granting ticket");
         }
         this.ticketGrantingTicket = parentTicketGrantingTicket;
         this.authentication = authentication;
@@ -169,7 +169,6 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
         if (onlyTrackMostRecentSession) {
             val path = normalizePath(service);
             val existingServices = this.services.values();
-            // loop on existing services
             existingServices.stream().filter(existingService -> path.equals(normalizePath(existingService))).findFirst().ifPresent(existingServices::remove);
         }
         this.services.put(id, service);

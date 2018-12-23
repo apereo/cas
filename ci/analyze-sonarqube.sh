@@ -28,7 +28,7 @@ echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
 echo -e "Installing NPM...\n"
-./gradlew npmInstall --stacktrace -q
+./gradlew npmInstall --stacktrace -q --no-daemon
 
 gradleBuild="$gradleBuild sonarqube -x javadoc -Dsonar.organization=apereo \
             -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${SONARCLOUD_TOKEN} \
@@ -37,6 +37,14 @@ gradleBuild="$gradleBuild sonarqube -x javadoc -Dsonar.organization=apereo \
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
     gradleBuild="$gradleBuild -DshowStandardStreams=true "
+fi
+
+if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[rerun tasks]"* ]]; then
+    gradleBuild="$gradleBuild --rerun-tasks "
+fi
+
+if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[refresh dependencies]"* ]]; then
+    gradleBuild="$gradleBuild --refresh-dependencies "
 fi
 
 if [ -z "$gradleBuild" ]; then

@@ -68,7 +68,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * Helper class that does the heavy lifting with the openSaml library.
@@ -182,8 +181,9 @@ public class WsFederationHelper {
         val attributes = new HashMap<String, List<Object>>();
         assertion.getAttributeStatements().stream().flatMap(attributeStatement -> attributeStatement.getAttributes().stream()).forEach(item -> {
             LOGGER.debug("Processed attribute: [{}]", item.getAttributeName());
-            final List<Object> itemList = IntStream.range(0, item.getAttributeValues().size())
-                .mapToObj(i -> ((XSAny) item.getAttributeValues().get(i)).getTextContent()).collect(Collectors.toList());
+            final List<Object> itemList = item.getAttributeValues().stream()
+                .map(xmlObject -> ((XSAny) xmlObject).getTextContent())
+                .collect(Collectors.toList());
             if (!itemList.isEmpty()) {
                 attributes.put(item.getAttributeName(), itemList);
             }

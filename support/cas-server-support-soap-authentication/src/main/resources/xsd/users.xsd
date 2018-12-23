@@ -1,0 +1,29 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://apereo.org/cas"
+           targetNamespace="http://apereo.org/cas"
+           elementFormDefault="qualified">
+
+    <xs:element name="getSoapAuthenticationRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="username" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getSoapAuthenticationResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="attributes" type="tns:MapItemType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="status" type="xs:int"/>
+                <xs:element name="username" type="xs:string" minOccurs="0"/>
+                <xs:element name="message" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="MapItemType">
+        <xs:sequence>
+            <xs:element name="key" type="xs:anyType"/>
+            <xs:element name="value" type="xs:anyType"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

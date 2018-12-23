@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -56,6 +57,9 @@ public class OidcClientRegistrationRequest implements Serializable {
 
     @JsonProperty("request_object_signing_alg")
     private String requestObjectSigningAlg;
+
+    @JsonProperty("post_logout_redirect_uris")
+    private List<String> postLogoutRedirectUris = new ArrayList<>();
 
     @JsonIgnore
     public Collection<String> getScopes() {

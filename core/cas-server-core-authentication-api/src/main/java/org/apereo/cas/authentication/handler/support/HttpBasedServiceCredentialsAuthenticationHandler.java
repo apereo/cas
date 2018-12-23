@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.AbstractAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
-import org.apereo.cas.authentication.HttpBasedServiceCredential;
+import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
@@ -67,10 +67,12 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAu
         return new DefaultAuthenticationHandlerExecutionResult(this, httpCredential, this.principalFactory.createPrincipal(httpCredential.getId()));
     }
 
-    /**
-     * @return true if the credential provided are not null and the credential
-     * are a subclass of (or equal to) HttpBasedServiceCredential.
-     */
+    @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return HttpBasedServiceCredential.class.isAssignableFrom(clazz);
+    }
+
+
     @Override
     public boolean supports(final Credential credential) {
         return credential instanceof HttpBasedServiceCredential;

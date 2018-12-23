@@ -27,7 +27,7 @@ public class CasServicesRegistryStreamingEventListener {
      */
     @EventListener
     public void handleCasRegisteredServiceLoadedEvent(final CasRegisteredServiceLoadedEvent event) {
-        LOGGER.debug("Received event [{}]", event);
+        LOGGER.trace("Received event [{}]", event);
         this.publisher.publish(event.getRegisteredService(), event);
     }
 
@@ -38,7 +38,7 @@ public class CasServicesRegistryStreamingEventListener {
      */
     @EventListener
     public void handleCasRegisteredServiceSavedEvent(final CasRegisteredServiceSavedEvent event) {
-        LOGGER.debug("Received event [{}]", event);
+        LOGGER.trace("Received event [{}]", event);
         this.publisher.publish(event.getRegisteredService(), event);
     }
 
@@ -49,7 +49,7 @@ public class CasServicesRegistryStreamingEventListener {
      */
     @EventListener
     public void handleCasRegisteredServiceDeletedEvent(final CasRegisteredServiceDeletedEvent event) {
-        LOGGER.debug("Received event [{}]", event);
+        LOGGER.trace("Received event [{}]", event);
         this.publisher.publish(event.getRegisteredService(), event);
     }
 }

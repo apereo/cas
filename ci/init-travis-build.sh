@@ -16,6 +16,7 @@ echo -e "Job number: ${TRAVIS_JOB_NUMBER}"
 echo -e "************************************"
 echo -e "Repo slug: ${TRAVIS_REPO_SLUG}"
 echo -e "JAVA_HOME: ${JAVA_HOME}"
+echo -e "JAVA_OPTS: ${JAVA_OPTS}"
 echo -e "OS name: ${TRAVIS_OS_NAME}"
 echo -e "************************************"
 echo -e "Commit: ${TRAVIS_COMMIT}"
@@ -29,6 +30,7 @@ echo -e "************************************"
 
 echo -e "Stopping current services...\n"
 sudo service mysql stop
+sudo service postgresql stop
 
 echo -e "Setting build environment...\n"
 sudo mkdir -p /etc/cas/config /etc/cas/saml /etc/cas/services
@@ -39,6 +41,6 @@ chmod -R 777 ./gradlew
 echo "Home directory: $HOME"
 
 echo "Gradle Home directory:"
-./gradlew gradleHome
+./gradlew gradleHome --no-daemon
 
 echo -e "Configured build environment\n"

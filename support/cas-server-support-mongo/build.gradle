@@ -5,7 +5,11 @@ dependencies {
     implementation project(":support:cas-server-support-pac4j-authentication")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")
-    implementation libraries.pac4j
+    implementation project(":support:cas-server-support-mongo-core")
+
+    implementation libraries.nimbus
+    implementation libraries.pac4jcore
+    implementation libraries.pac4jmongodb
     implementation libraries.mongo
 
     testImplementation project(":support:cas-server-support-person-directory")
@@ -16,6 +20,7 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-web")

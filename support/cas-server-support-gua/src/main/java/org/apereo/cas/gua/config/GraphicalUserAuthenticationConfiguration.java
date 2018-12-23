@@ -16,6 +16,7 @@ import org.apereo.cas.web.flow.PrepareForGraphicalAuthenticationAction;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -44,11 +45,11 @@ public class GraphicalUserAuthenticationConfiguration implements CasWebflowExecu
 
     @Autowired
     @Qualifier("loginFlowRegistry")
-    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -61,7 +62,7 @@ public class GraphicalUserAuthenticationConfiguration implements CasWebflowExecu
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer graphicalUserAuthenticationWebflowConfigurer() {
         return new GraphicalUserAuthenticationWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry, applicationContext, casProperties);
+            loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
     }
 
     @Bean
@@ -73,30 +74,34 @@ public class GraphicalUserAuthenticationConfiguration implements CasWebflowExecu
             return new StaticUserGraphicalAuthenticationRepository(gua.getResource().getLocation());
         }
 
-        if (StringUtils.isNotBlank(gua.getLdap().getLdapUrl())
-            && StringUtils.isNotBlank(gua.getLdap().getSearchFilter())
-            && StringUtils.isNotBlank(gua.getLdap().getBaseDn())
-            && StringUtils.isNotBlank(gua.getLdap().getImageAttribute())) {
-            return new LdapUserGraphicalAuthenticationRepository();
+        val ldap = gua.getLdap();
+        if (StringUtils.isNotBlank(ldap.getLdapUrl())
+            && StringUtils.isNotBlank(ldap.getSearchFilter())
+            && StringUtils.isNotBlank(ldap.getBaseDn())
+            && StringUtils.isNotBlank(ldap.getImageAttribute())) {
+            return new LdapUserGraphicalAuthenticationRepository(casProperties);
         }
         throw new BeanCreationException("A repository instance must be configured to locate user-defined graphics");
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "acceptUserGraphicsForAuthenticationAction")
+    @RefreshScope
     public Action acceptUserGraphicsForAuthenticationAction() {
         return new AcceptUserGraphicsForAuthenticationAction();
     }
 
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "displayUserGraphicsBeforeAuthenticationAction")
     public Action displayUserGraphicsBeforeAuthenticationAction() {
         return new DisplayUserGraphicsBeforeAuthenticationAction(userGraphicalAuthenticationRepository());
     }
 
     @Bean
+    @RefreshScope
     public Action initializeLoginAction() {
-        return new PrepareForGraphicalAuthenticationAction(servicesManager);
+        return new PrepareForGraphicalAuthenticationAction(servicesManager.getIfAvailable());
     }
 
     @Override

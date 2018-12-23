@@ -86,25 +86,23 @@ public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
                 return new HashMap<>(0);
             }
             val names = EncodingUtils.decodeBase64ToString(result);
-            val attributes = MAPPER.readValue(names, Map.class);
-            return attributes;
+            return MAPPER.readValue(names, Map.class);
         } catch (final Exception e) {
             throw new IllegalArgumentException("Could not serialize attributes for consent decision");
         }
     }
 
-    private String sha512ConsentAttributeNames(final Map<String, Object> attributes) {
-        val allNames = attributes.keySet().stream().collect(Collectors.joining("|"));
+    private static String sha512ConsentAttributeNames(final Map<String, Object> attributes) {
+        val allNames = String.join("|", attributes.keySet());
         return DigestUtils.sha512(allNames);
     }
 
-    private String sha512ConsentAttributeValues(final Map<String, Object> attributes) {
+    private static String sha512ConsentAttributeValues(final Map<String, Object> attributes) {
         val allValues = attributes.values().stream()
             .map(CollectionUtils::toCollection)
             .map(c -> c.stream().map(Object::toString).collect(Collectors.joining()))
             .collect(Collectors.joining("|"));
-        val attributeValues = DigestUtils.sha512(allValues);
-        return attributeValues;
+        return DigestUtils.sha512(allValues);
     }
 
     /**

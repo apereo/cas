@@ -35,8 +35,11 @@ public class X509CommonNameEDIPIPrincipalResolver extends AbstractX509PrincipalR
     private static final int EDIPI_LENGTH = 10;
 
     public X509CommonNameEDIPIPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,
-                                                final boolean returnNullIfNoAttributes, final String principalAttributeName) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
+                                                final boolean returnNullIfNoAttributes,
+                                                final String principalAttributeName,
+                                                final String alternatePrincipalAttribute,
+                                                final boolean useCurrentPrincipalId) {
+        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName, alternatePrincipalAttribute, useCurrentPrincipalId);
     }
 
     @Override
@@ -44,18 +47,21 @@ public class X509CommonNameEDIPIPrincipalResolver extends AbstractX509PrincipalR
         val subjectDn = certificate.getSubjectDN().getName();
         LOGGER.debug("Creating principal based on subject DN [{}]", subjectDn);
         if (StringUtils.isBlank(subjectDn)) {
-            return null;
+            return getAlternatePrincipal(certificate);
         }
         val commonName = retrieveTheCommonName(subjectDn);
         if (StringUtils.isBlank(commonName)) {
-            return null;
+            return getAlternatePrincipal(certificate);
         }
         val result = retrieveTheEDIPI(commonName);
+        if (StringUtils.isBlank(result)) {
+            return getAlternatePrincipal(certificate);
+        }
         LOGGER.debug("Final principal id extracted from [{}] is [{}]", subjectDn, result);
         return result;
     }
 
-    private String retrieveTheCommonName(final String inSubjectDN) {
+    private static String retrieveTheCommonName(final String inSubjectDN) {
         var commonNameFound = false;
         var tempCommonName = StringUtils.EMPTY;
         val st = new StringTokenizer(inSubjectDN, ",");
@@ -69,7 +75,7 @@ public class X509CommonNameEDIPIPrincipalResolver extends AbstractX509PrincipalR
         return StringUtils.remove(tempCommonName, COMMON_NAME_VAR + '=');
     }
 
-    private String retrieveTheEDIPI(final String commonName) {
+    private static String retrieveTheEDIPI(final String commonName) {
         var found = false;
         var tempEDIPI = StringUtils.EMPTY;
         val st = new StringTokenizer(commonName, ".");
@@ -89,12 +95,12 @@ public class X509CommonNameEDIPIPrincipalResolver extends AbstractX509PrincipalR
      * @param inToken The input token to be tested
      * @return Returns boolean value indicating whether or not the token string is the Common Name (CN) number
      */
-    private boolean isTokenCommonName(final String inToken) {
+    private static boolean isTokenCommonName(final String inToken) {
         val st = new StringTokenizer(inToken, "=");
         return st.nextToken().equals(COMMON_NAME_VAR);
     }
 
-    private boolean isTokenEDIPI(final String inToken) {
+    private static boolean isTokenEDIPI(final String inToken) {
         return inToken.length() == EDIPI_LENGTH && NumberUtils.isCreatable(inToken);
     }
 }

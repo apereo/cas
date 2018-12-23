@@ -28,7 +28,7 @@ public class Cas20WithoutProxyingValidationSpecification extends AbstractCasProt
 
     @Override
     protected boolean isSatisfiedByInternal(final Assertion assertion) {
-        LOGGER.debug("Number of chained authentications in the assertion [{}]", assertion.getChainedAuthentications().size());
+        LOGGER.trace("Number of chained authentications in the assertion [{}]", assertion.getChainedAuthentications().size());
         return assertion.getChainedAuthentications().size() == 1;
     }
 }

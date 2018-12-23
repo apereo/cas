@@ -49,7 +49,7 @@ public interface YubiKeyAccountRegistry {
      *
      * @return the accounts
      */
-    Collection<YubiKeyAccount> getAccounts();
+    Collection<? extends YubiKeyAccount> getAccounts();
 
     /**
      * Gets account.
@@ -57,7 +57,7 @@ public interface YubiKeyAccountRegistry {
      * @param uid the uid
      * @return the account
      */
-    Optional<YubiKeyAccount> getAccount(String uid);
+    Optional<? extends YubiKeyAccount> getAccount(String uid);
 
     /**
      * Gets account validator.

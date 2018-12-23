@@ -28,8 +28,9 @@ public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPos
     public CasSimpleMultifactorAuthenticationHandler(final String name,
                                                      final ServicesManager servicesManager,
                                                      final PrincipalFactory principalFactory,
-                                                     final TicketRegistry ticketRegistry) {
-        super(name, servicesManager, principalFactory, null);
+                                                     final TicketRegistry ticketRegistry,
+                                                     final Integer order) {
+        super(name, servicesManager, principalFactory, order);
         this.ticketRegistry = ticketRegistry;
     }
 
@@ -59,6 +60,11 @@ public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPos
 
         LOGGER.debug("Validated token [{}] successfully for [{}]. Creating authentication result and building principal...", tokenCredential.getId(), uid);
         return createHandlerResult(tokenCredential, this.principalFactory.createPrincipal(uid));
+    }
+
+    @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return CasSimpleMultifactorTokenCredential.class.isAssignableFrom(clazz);
     }
 
     @Override

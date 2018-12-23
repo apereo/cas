@@ -14,6 +14,7 @@ import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.io.PathWatcherService;
 import org.apereo.cas.util.serialization.StringSerializer;
 
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +35,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -63,6 +63,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
     /**
      * The Service registry directory.
      */
+    @Getter
     protected Path serviceRegistryDirectory;
 
     /**
@@ -91,16 +92,6 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             new DefaultRegisteredServiceResourceNamingStrategy());
     }
 
-    /**
-     * Instantiates a new service registry dao.
-     *
-     * @param configDirectory                      the config directory
-     * @param serializer                           the registered service json serializer
-     * @param enableWatcher                        enable watcher thread
-     * @param eventPublisher                       the event publisher
-     * @param registeredServiceReplicationStrategy the registered service replication strategy
-     * @param resourceNamingStrategy               the registered service naming strategy
-     */
     public AbstractResourceBasedServiceRegistry(final Path configDirectory, final StringSerializer<RegisteredService> serializer,
                                                 final boolean enableWatcher, final ApplicationEventPublisher eventPublisher,
                                                 final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
@@ -109,65 +100,54 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             registeredServiceReplicationStrategy, resourceNamingStrategy);
     }
 
-    /**
-     * Instantiates a new Abstract resource based service registry dao.
-     *
-     * @param configDirectory                      the config directory
-     * @param serializers                          the serializers
-     * @param enableWatcher                        the enable watcher
-     * @param eventPublisher                       the event publisher
-     * @param registeredServiceReplicationStrategy the registered service replication strategy
-     * @param resourceNamingStrategy               the registered service naming strategy
-     */
     public AbstractResourceBasedServiceRegistry(final Path configDirectory,
-                                                final Collection<StringSerializer<RegisteredService>> serializers, final boolean enableWatcher,
+                                                final Collection<StringSerializer<RegisteredService>> serializers,
+                                                final boolean enableWatcher,
                                                 final ApplicationEventPublisher eventPublisher,
                                                 final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
                                                 final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) {
-        initializeRegistry(configDirectory, serializers, enableWatcher,
-            eventPublisher, registeredServiceReplicationStrategy, resourceNamingStrategy);
+        super(eventPublisher);
+        initializeRegistry(configDirectory, serializers, enableWatcher, registeredServiceReplicationStrategy, resourceNamingStrategy);
     }
 
-    /**
-     * Instantiates a new Abstract resource based service registry dao.
-     *
-     * @param configDirectory                      the config directory
-     * @param serializers                          the serializers
-     * @param enableWatcher                        the enable watcher
-     * @param eventPublisher                       the event publisher
-     * @param registeredServiceReplicationStrategy the registered service replication strategy
-     * @param resourceNamingStrategy               the registered service naming strategy
-     * @throws Exception the exception
-     */
     public AbstractResourceBasedServiceRegistry(final Resource configDirectory,
-                                                final Collection<StringSerializer<RegisteredService>> serializers, final boolean enableWatcher,
+                                                final Collection<StringSerializer<RegisteredService>> serializers,
+                                                final boolean enableWatcher,
                                                 final ApplicationEventPublisher eventPublisher,
                                                 final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
                                                 final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) throws Exception {
-        val servicesDirectory = ResourceUtils.prepareClasspathResourceIfNeeded(configDirectory, true, getExtension());
+        super(eventPublisher);
+        LOGGER.trace("Provided service registry directory is specified at [{}]", configDirectory);
+        val pattern = String.join("|", getExtensions());
+        val servicesDirectory = ResourceUtils.prepareClasspathResourceIfNeeded(configDirectory, true, pattern);
         if (servicesDirectory == null) {
             throw new IllegalArgumentException("Could not determine the services configuration directory from " + configDirectory);
         }
         val file = servicesDirectory.getFile();
-        initializeRegistry(Paths.get(file.getCanonicalPath()), serializers, enableWatcher, eventPublisher,
+        LOGGER.trace("Prepared service registry directory is specified at [{}]", file);
+
+        initializeRegistry(Paths.get(file.getCanonicalPath()), serializers, enableWatcher,
             registeredServiceReplicationStrategy, resourceNamingStrategy);
     }
 
     private void initializeRegistry(final Path configDirectory, final Collection<StringSerializer<RegisteredService>> serializers,
-                                    final boolean enableWatcher, final ApplicationEventPublisher eventPublisher,
+                                    final boolean enableWatcher,
                                     final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
                                     final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) {
-        setEventPublisher(eventPublisher);
         this.registeredServiceReplicationStrategy = ObjectUtils.defaultIfNull(registeredServiceReplicationStrategy,
             new NoOpRegisteredServiceReplicationStrategy());
-        this.resourceNamingStrategy = ObjectUtils.defaultIfNull(resourceNamingStrategy,
-            new DefaultRegisteredServiceResourceNamingStrategy());
+        this.resourceNamingStrategy = ObjectUtils.defaultIfNull(resourceNamingStrategy, new DefaultRegisteredServiceResourceNamingStrategy());
         this.registeredServiceSerializers = serializers;
-        this.serviceFileNamePattern = RegexUtils.createPattern(PATTERN_REGISTERED_SERVICE_FILE_NAME + getExtension());
+
+        val pattern = String.join("|", getExtensions());
+        this.serviceFileNamePattern = RegexUtils.createPattern(PATTERN_REGISTERED_SERVICE_FILE_NAME.concat(pattern));
+        LOGGER.trace("Constructed service name file pattern [{}]", serviceFileNamePattern.pattern());
+
         this.serviceRegistryDirectory = configDirectory;
         val file = this.serviceRegistryDirectory.toFile();
         Assert.isTrue(file.exists(), this.serviceRegistryDirectory + " does not exist");
         Assert.isTrue(file.isDirectory(), this.serviceRegistryDirectory + " is not a directory");
+        LOGGER.trace("Service registry directory is specified at [{}]", file);
         if (enableWatcher) {
             enableServicesDirectoryPathWatcher();
         }
@@ -225,7 +205,6 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         }
         publishEvent(new CasRegisteredServiceDeletedEvent(this, service));
         return result;
-
     }
 
     /**
@@ -238,8 +217,11 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
     }
 
     @Override
-    public synchronized List<RegisteredService> load() {
-        val files = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), new String[]{getExtension()}, true);
+    public synchronized Collection<RegisteredService> load() {
+        LOGGER.trace("Loading files from [{}]", this.serviceRegistryDirectory);
+        val files = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), getExtensions(), true);
+        LOGGER.trace("Located [{}] files from [{}] are [{}]", getExtensions(), this.serviceRegistryDirectory, files);
+
         this.serviceMap = files
             .stream()
             .map(this::load)
@@ -255,13 +237,8 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         return results;
     }
 
-    /**
-     * Load registered service from file.
-     *
-     * @param file the file
-     * @return the registered service, or null if file cannot be read, is not found, is empty or parsing error occurs.
-     */
     @Override
+    @SneakyThrows
     public Collection<RegisteredService> load(final File file) {
         val fileName = file.getName();
         if (!file.canRead()) {
@@ -276,6 +253,10 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             LOGGER.debug("[{}] appears to be empty so no service definition will be loaded", fileName);
             return new ArrayList<>(0);
         }
+        if (fileName.startsWith(".")) {
+            LOGGER.debug("[{}] starts with ., ignoring", fileName);
+            return new ArrayList<>(0);
+        }
         if (!RegexUtils.matches(this.serviceFileNamePattern, fileName)) {
             LOGGER.warn("[{}] does not match the recommended pattern [{}]. "
                     + "While CAS tries to be forgiving as much as possible, it's recommended "
@@ -283,6 +264,8 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                     + "Future CAS versions may try to strictly force the naming syntax, refusing to load the file.",
                 fileName, this.serviceFileNamePattern.pattern());
         }
+
+        LOGGER.trace("Attempting to read and parse [{}]", file.getCanonicalFile());
         try (val in = Files.newBufferedReader(file.toPath())) {
             return this.registeredServiceSerializers
                 .stream()
@@ -358,7 +341,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
 
     /**
      * Creates a file for a registered service.
-     * The file is named as {@code [SERVICE-NAME]-[SERVICE-ID]-.{@value #getExtension()}}
+     * The file is named as {@code [SERVICE-NAME]-[SERVICE-ID]-.{@value #getExtensions()}}
      *
      * @param service Registered service.
      * @return file in service registry directory.
@@ -366,8 +349,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
      */
     @SneakyThrows
     protected File getRegisteredServiceFileName(final RegisteredService service) {
-        val fileName = resourceNamingStrategy.build(service, getExtension());
-
+        val fileName = resourceNamingStrategy.build(service, getExtensions()[0]);
         val svcFile = new File(this.serviceRegistryDirectory.toFile(), fileName);
         LOGGER.debug("Using [{}] as the service definition file", svcFile.getCanonicalPath());
         return svcFile;
@@ -379,5 +361,5 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
      *
      * @return the extension
      */
-    protected abstract String getExtension();
+    protected abstract String[] getExtensions();
 }

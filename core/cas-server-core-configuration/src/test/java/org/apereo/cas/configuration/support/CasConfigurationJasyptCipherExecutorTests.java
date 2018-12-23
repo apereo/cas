@@ -1,12 +1,15 @@
 package org.apereo.cas.configuration.support;
 
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import static org.junit.Assert.*;
 
@@ -16,14 +19,20 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RunWith(SpringRunner.class)
 public class CasConfigurationJasyptCipherExecutorTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
     static {
         System.setProperty(CasConfigurationJasyptCipherExecutor.JasyptEncryptionParameters.PASSWORD.getPropertyName(), "P@$$w0rd");
     }
 
     @Autowired
     private Environment environment;
+
     private CasConfigurationJasyptCipherExecutor jasypt;
 
     @Before
@@ -50,14 +59,14 @@ public class CasConfigurationJasyptCipherExecutorTests {
     @Test
     public void verifyDecryptionEncryptionPairFails() {
         val encVal = CasConfigurationJasyptCipherExecutor.ENCRYPTED_VALUE_PREFIX + "keyValue";
-        val result = jasypt.decode(encVal, new Object[]{});
+        val result = jasypt.decode(encVal, ArrayUtils.EMPTY_OBJECT_ARRAY);
         assertNull(result);
     }
 
     @Test
     public void verifyDecryptionEncryptionPairSuccess() {
         val value = jasypt.encryptValue("Testing");
-        val result = jasypt.decode(value, new Object[]{});
+        val result = jasypt.decode(value, ArrayUtils.EMPTY_OBJECT_ARRAY);
         assertNotNull(result);
         assertEquals("Testing", result);
     }

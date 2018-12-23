@@ -1,6 +1,7 @@
 package org.apereo.cas.impl.calcs;
 
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
@@ -22,25 +23,21 @@ import java.util.Collection;
 @Slf4j
 public class UserAgentAuthenticationRequestRiskCalculator extends BaseAuthenticationRequestRiskCalculator {
 
-
-    public UserAgentAuthenticationRequestRiskCalculator(final CasEventRepository casEventRepository) {
-        super(casEventRepository);
+    public UserAgentAuthenticationRequestRiskCalculator(final CasEventRepository casEventRepository,
+                                                        final CasConfigurationProperties casProperties) {
+        super(casEventRepository, casProperties);
     }
 
     @Override
     protected BigDecimal calculateScore(final HttpServletRequest request,
                                         final Authentication authentication,
                                         final RegisteredService service,
-                                        final Collection<CasEvent> events) {
+                                        final Collection<? extends CasEvent> events) {
 
         val agent = HttpRequestUtils.getHttpServletRequestUserAgent(request);
         LOGGER.debug("Filtering authentication events for user agent [{}]", agent);
         val count = events.stream().filter(e -> e.getAgent().equalsIgnoreCase(agent)).count();
         LOGGER.debug("Total authentication events found for [{}]: [{}]", agent, count);
-        if (count == events.size()) {
-            LOGGER.debug("Principal [{}] has always authenticated from [{}]", authentication.getPrincipal(), agent);
-            return LOWEST_RISK_SCORE;
-        }
-        return getFinalAveragedScore(count, events.size());
+        return calculateScoreBasedOnEventsCount(authentication, events, count);
     }
 }

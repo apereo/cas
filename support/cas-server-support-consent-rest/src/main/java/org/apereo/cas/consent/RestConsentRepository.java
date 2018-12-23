@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,7 @@ import java.util.List;
  */
 @Slf4j
 @ToString
+@Getter
 @RequiredArgsConstructor
 public class RestConsentRepository implements ConsentRepository {
 
@@ -38,12 +40,12 @@ public class RestConsentRepository implements ConsentRepository {
     private final String endpoint;
 
     @Override
-    public Collection<ConsentDecision> findConsentDecisions(final String principal) {
+    public Collection<? extends ConsentDecision> findConsentDecisions(final String principal) {
         try {
             val headers = new HttpHeaders();
             headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
             headers.put("principal", CollectionUtils.wrap(principal));
-            val entity = new HttpEntity<>(headers);
+            val entity = new HttpEntity<Object>(headers);
             val result = restTemplate.exchange(this.endpoint, HttpMethod.GET, entity, List.class);
             if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
                 return result.getBody();
@@ -55,11 +57,11 @@ public class RestConsentRepository implements ConsentRepository {
     }
 
     @Override
-    public Collection<ConsentDecision> findConsentDecisions() {
+    public Collection<? extends ConsentDecision> findConsentDecisions() {
         try {
             val headers = new HttpHeaders();
             headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
-            val entity = new HttpEntity<>(headers);
+            val entity = new HttpEntity<Object>(headers);
             val result = restTemplate.exchange(this.endpoint, HttpMethod.GET, entity, List.class);
             if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
                 return result.getBody();
@@ -77,7 +79,7 @@ public class RestConsentRepository implements ConsentRepository {
             headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
             headers.put("service", CollectionUtils.wrap(service.getId()));
             headers.put("principal", CollectionUtils.wrap(authentication.getPrincipal().getId()));
-            val entity = new HttpEntity<>(headers);
+            val entity = new HttpEntity<Object>(headers);
             val result = restTemplate.exchange(this.endpoint, HttpMethod.GET, entity, ConsentDecision.class);
             if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
                 return result.getBody();
@@ -93,7 +95,7 @@ public class RestConsentRepository implements ConsentRepository {
         try {
             val headers = new HttpHeaders();
             headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
-            val entity = new HttpEntity<>(decision, headers);
+            val entity = new HttpEntity<ConsentDecision>(decision, headers);
             val result = restTemplate.exchange(this.endpoint, HttpMethod.POST, entity, ConsentDecision.class);
             return result.getStatusCodeValue() == HttpStatus.OK.value();
         } catch (final Exception e) {
@@ -107,7 +109,7 @@ public class RestConsentRepository implements ConsentRepository {
         try {
             val headers = new HttpHeaders();
             headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
-            val entity = new HttpEntity<>(headers);
+            val entity = new HttpEntity<Object>(headers);
             val deleteEndpoint = this.endpoint.concat('/' + Long.toString(decisionId));
             val result = restTemplate.exchange(deleteEndpoint, HttpMethod.DELETE, entity, Boolean.class);
             return result.getStatusCodeValue() == HttpStatus.OK.value();

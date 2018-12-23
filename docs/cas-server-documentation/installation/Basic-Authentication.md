@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Basic Authentication
+category: Authentication
 ---
 
 # Basic Authentication

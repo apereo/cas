@@ -1,7 +1,10 @@
 description = "Apereo CAS RADIUS RSA MFA Support"
 
 dependencies {
-    implementation project(":core:cas-server-core-authentication-mfa")
+    api project(":api:cas-server-core-api-util")
+    
+    implementation project(":core:cas-server-core-authentication-mfa-api")
     implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-authentication-api")
     implementation project(":support:cas-server-support-radius-core")
 }

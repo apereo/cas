@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -26,10 +27,13 @@ import org.springframework.data.redis.core.RedisTemplate;
  */
 @Configuration("redisServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class RedisServiceRegistryConfiguration implements ServiceRegistryExecutionPlanConfigurer {
+public class RedisServiceRegistryConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     @Bean
     @ConditionalOnMissingBean(name = "redisServiceConnectionFactory")
@@ -49,11 +53,18 @@ public class RedisServiceRegistryConfiguration implements ServiceRegistryExecuti
     @Bean
     @RefreshScope
     public ServiceRegistry redisServiceRegistry() {
-        return new RedisServiceRegistry(registeredServiceRedisTemplate());
+        return new RedisServiceRegistry(eventPublisher, registeredServiceRedisTemplate());
     }
 
-    @Override
-    public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-        plan.registerServiceRegistry(redisServiceRegistry());
+    @Bean
+    @ConditionalOnMissingBean(name = "redisServiceRegistryExecutionPlanConfigurer")
+    public ServiceRegistryExecutionPlanConfigurer redisServiceRegistryExecutionPlanConfigurer() {
+        return new ServiceRegistryExecutionPlanConfigurer() {
+            @Override
+            public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
+                plan.registerServiceRegistry(redisServiceRegistry());
+            }
+        };
     }
+
 }

@@ -1,1 +1,2 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.web.flow.config.TrustedAuthenticationWebflowConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.web.flow.config.TrustedAuthenticationWebflowConfiguration,\
+  org.apereo.cas.web.flow.config.TrustedAuthenticationComponentSerializationConfiguration

@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.profile;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
@@ -37,15 +38,20 @@ public class DefaultOAuth20UserProfileDataCreator implements OAuth20UserProfileD
      */
     private final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter;
 
+
     @Override
     @Audit(action = "OAUTH2_USER_PROFILE_DATA",
         actionResolverName = "OAUTH2_USER_PROFILE_DATA_ACTION_RESOLVER",
         resourceResolverName = "OAUTH2_USER_PROFILE_DATA_RESOURCE_RESOLVER")
     public Map<String, Object> createFrom(final AccessToken accessToken, final J2EContext context) {
-        val principal = getAccessTokenAuthenticationPrincipal(accessToken, context);
+        val service = accessToken.getService();
+        val registeredService = this.servicesManager.findServiceBy(service);
+
+        val principal = getAccessTokenAuthenticationPrincipal(accessToken, context, registeredService);
         val map = new HashMap<String, Object>();
         map.put(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID, principal.getId());
-        map.put(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES, principal.getAttributes());
+        val attributes = principal.getAttributes();
+        map.put(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES, attributes);
         finalizeProfileResponse(accessToken, map, principal);
         return map;
     }
@@ -53,19 +59,16 @@ public class DefaultOAuth20UserProfileDataCreator implements OAuth20UserProfileD
     /**
      * Gets access token authentication principal.
      *
-     * @param accessToken the access token
-     * @param context     the context
+     * @param accessToken       the access token
+     * @param context           the context
+     * @param registeredService the registered service
      * @return the access token authentication principal
      */
-    protected Principal getAccessTokenAuthenticationPrincipal(final AccessToken accessToken, final J2EContext context) {
-        val service = accessToken.getService();
-        val registeredService = this.servicesManager.findServiceBy(service);
-
+    protected Principal getAccessTokenAuthenticationPrincipal(final AccessToken accessToken, final J2EContext context, final RegisteredService registeredService) {
         val currentPrincipal = accessToken.getAuthentication().getPrincipal();
         LOGGER.debug("Preparing user profile response based on CAS principal [{}]", currentPrincipal);
 
-        val principal = this.scopeToAttributesFilter.filter(accessToken.getService(), currentPrincipal,
-            registeredService, context, accessToken);
+        val principal = this.scopeToAttributesFilter.filter(accessToken.getService(), currentPrincipal, registeredService, context, accessToken);
         LOGGER.debug("Created CAS principal [{}] based on requested/authorized scopes", principal);
 
         return principal;

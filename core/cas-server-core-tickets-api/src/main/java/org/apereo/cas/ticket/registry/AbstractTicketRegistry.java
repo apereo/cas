@@ -43,15 +43,21 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      */
     protected CipherExecutor cipherExecutor;
 
-    /**
-     * @return specified ticket from the registry
-     * @throws IllegalArgumentException if class is null.
-     * @throws ClassCastException       if class does not match requested ticket
-     *                                  class.
-     */
     @Override
-    public <T extends Ticket> T getTicket(final String ticketId, @NonNull final Class<T> clazz) {
-        val ticket = this.getTicket(ticketId);
+    public Ticket getTicket(final String ticketId) {
+        return getTicket(ticketId, ticket -> {
+            if (ticket != null && ticket.isExpired()) {
+                LOGGER.debug("Ticket [{}] has expired and is now removed from the ticket registry", ticket.getId());
+                deleteSingleTicket(ticketId);
+                return false;
+            }
+            return true;
+        });
+    }
+
+    @Override
+    public <T extends Ticket> T getTicket(final String ticketId, final @NonNull Class<T> clazz) {
+        val ticket = getTicket(ticketId);
         if (ticket == null) {
             return null;
         }
@@ -85,14 +91,21 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     @Override
     public int deleteTicket(final String ticketId) {
-        val count = new AtomicInteger(0);
         if (StringUtils.isBlank(ticketId)) {
-            return count.intValue();
+            LOGGER.trace("No ticket id is provided for deletion");
+            return 0;
         }
         val ticket = getTicket(ticketId);
         if (ticket == null) {
-            return count.intValue();
+            LOGGER.debug("Ticket [{}] could not be fetched from the registry; it may have been expired and deleted.", ticketId);
+            return 0;
         }
+        return deleteTicket(ticket);
+    }
+
+    @Override
+    public int deleteTicket(final Ticket ticket) {
+        val count = new AtomicInteger(0);
         if (ticket instanceof TicketGrantingTicket) {
             LOGGER.debug("Removing children of ticket [{}] from the registry.", ticket.getId());
             val tgt = (TicketGrantingTicket) ticket;
@@ -104,7 +117,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             }
         }
         LOGGER.debug("Removing ticket [{}] from the registry.", ticket);
-        if (deleteSingleTicket(ticketId)) {
+        if (deleteSingleTicket(ticket.getId())) {
             count.incrementAndGet();
         }
         return count.intValue();
@@ -131,7 +144,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     }
 
     private void deleteLinkedProxyGrantingTickets(final AtomicInteger count, final TicketGrantingTicket tgt) {
-        val pgts = new LinkedHashSet<>(tgt.getProxyGrantingTickets().keySet());
+        val pgts = new LinkedHashSet<String>(tgt.getProxyGrantingTickets().keySet());
         val hasPgts = !pgts.isEmpty();
         count.getAndAdd(deleteTickets(pgts));
         if (hasPgts) {
@@ -142,9 +155,8 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     }
 
     private void deleteProxyGrantingTicketFromParent(final ProxyGrantingTicket ticket) {
-        val thePgt = ticket;
-        thePgt.getTicketGrantingTicket().getProxyGrantingTickets().remove(thePgt.getId());
-        updateTicket(thePgt.getTicketGrantingTicket());
+        ticket.getTicketGrantingTicket().getProxyGrantingTickets().remove(ticket.getId());
+        updateTicket(ticket.getTicketGrantingTicket());
     }
 
     /**

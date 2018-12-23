@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.Service;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link AuthenticationTransaction}.
@@ -45,6 +46,17 @@ public interface AuthenticationTransaction extends Serializable {
      */
     default boolean hasCredentialOfType(final Class<? extends Credential> type) {
         return getCredentials().stream().anyMatch(type::isInstance);
+    }
+
+    /**
+     * Gets credentials of type.
+     *
+     * @param <T>  the type parameter
+     * @param type the type
+     * @return the credentials of type
+     */
+    default <T extends Credential> Collection<T> getCredentialsOfType(final Class<T> type) {
+        return getCredentials().stream().filter(type::isInstance).map(c -> (T) c).collect(Collectors.toList());
     }
 }
 

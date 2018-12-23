@@ -1,21 +1,21 @@
 ---
 layout: default
 title: CAS - Shibboleth Integration
+category: Integration
 ---
 
 # Overview
 
 CAS can be integrated with the [Shibboleth federated SSO platform](http://shibboleth.net/) by a couple
-different strategies.
-It is possible to designate CAS to serve as the authentication provider for the Shibboleth IdP.
-With such a setup, when user
-is routed to the IdP, the following may take place:
+different strategies. It is possible to designate CAS to serve as the authentication provider for the Shibboleth IdP.
+With such a setup, when user is routed to the IdP, the following may take place:
 
 - If the user has already authenticated to CAS and has a valid CAS SSO session, the IdP will transparently
 perform the requested action, e.g. attribute release.
-
 - If the user does not have a valid CAS SSO session, the user will be redirected to CAS and must
 authenticate before the IdP proceeds with the requested action.
+
+<div class="alert alert-info"><strong>Note</strong><p>Remember that this page is specifically dedicated to integration options with the Shibboleth Identity Provider. If you need CAS to act as a SAML2 identity provider on its own, you should <a href="../installation/Configuring-SAML2-Authentication.html">start here instead</a>.</p></div>
 
 ## SSO for Shibboleth IdP (External)
 
@@ -40,7 +40,7 @@ https://sso.example.org/cas/login?service=<authentication-plugin-url>&entityId=<
 You can also take advantage of the `entityId` parameter and treat it as a normal CAS service definition,
 so it can be used for multifactor authentication and authorization.
 
-See [this guide](../installation/Configuring-Multifactor-Authentication-Triggers.html) for more info.
+See [this guide](../mfa/Configuring-Multifactor-Authentication-Triggers.html) for more info.
 
 ## Displaying SAML MDUI
 
@@ -63,7 +63,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 You may allow CAS to recognize SAML MDUI directly from metadata documents that are fed to CAS via settings. If the metadata for the relying party matches the requested `entityId` and contains MDUI elements, those will be passed onto the login page for decorations. If MDUI is not available in the metadata, the relevant elements from the matching service in the service registry will be used all the same.
 
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#saml-metadata-ui).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#saml-metadata-ui).
 
 ### Service Registry Metadata
 

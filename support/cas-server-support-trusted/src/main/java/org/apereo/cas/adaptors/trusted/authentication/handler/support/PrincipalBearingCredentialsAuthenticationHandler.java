@@ -23,8 +23,9 @@ import lombok.val;
  */
 @Slf4j
 public class PrincipalBearingCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
-    public PrincipalBearingCredentialsAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory) {
-        super(name, servicesManager, principalFactory, null);
+    public PrincipalBearingCredentialsAuthenticationHandler(final String name, final ServicesManager servicesManager,
+                                                            final PrincipalFactory principalFactory, final Integer order) {
+        super(name, servicesManager, principalFactory, order);
     }
 
     @Override
@@ -32,6 +33,11 @@ public class PrincipalBearingCredentialsAuthenticationHandler extends AbstractAu
         LOGGER.debug("Trusting credential for: [{}]", credential);
         val bearingCredential = (PrincipalBearingCredential) credential;
         return new DefaultAuthenticationHandlerExecutionResult(this, bearingCredential, bearingCredential.getPrincipal());
+    }
+
+    @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return PrincipalBearingCredential.class.isAssignableFrom(clazz);
     }
 
     @Override

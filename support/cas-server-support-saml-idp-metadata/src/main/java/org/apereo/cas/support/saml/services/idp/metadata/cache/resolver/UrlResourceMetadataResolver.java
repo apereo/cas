@@ -65,7 +65,8 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
     }
 
     @Override
-    public Collection<MetadataResolver> resolve(final SamlRegisteredService service) {
+    public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service) {
+        HttpResponse response = null;
         try {
             val metadataLocation = getMetadataLocationForService(service);
             LOGGER.info("Loading SAML metadata from [{}]", metadataLocation);
@@ -76,7 +77,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
             LOGGER.debug("Metadata backup file will be at [{}]", canonicalPath);
             FileUtils.forceMkdirParent(backupFile);
 
-            val response = fetchMetadata(metadataLocation);
+            response = fetchMetadata(metadataLocation);
             cleanUpExpiredBackupMetadataFilesFor(metadataResource, service);
             if (response != null) {
                 val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
@@ -88,6 +89,8 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+        } finally {
+            HttpUtils.close(response);
         }
         return new ArrayList<>(0);
     }
@@ -181,11 +184,11 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
         return backupFile;
     }
 
-    private String getBackupMetadataFilenameSuffix(final AbstractResource metadataResource, final RegisteredService service) {
+    private static String getBackupMetadataFilenameSuffix(final AbstractResource metadataResource, final RegisteredService service) {
         return UUID.randomUUID().toString() + ".xml";
     }
 
-    private String getBackupMetadataFilenamePrefix(final AbstractResource metadataResource, final RegisteredService service) {
+    private static String getBackupMetadataFilenamePrefix(final AbstractResource metadataResource, final RegisteredService service) {
         return service.getName()
             .concat("-")
             .concat(String.valueOf(service.getId()))
@@ -200,7 +203,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
             val metadataLocation = getMetadataLocationForService(service);
             return StringUtils.isNotBlank(metadataLocation) && StringUtils.startsWith(metadataLocation, "http");
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.trace(e.getMessage(), e);
         }
         return false;
     }

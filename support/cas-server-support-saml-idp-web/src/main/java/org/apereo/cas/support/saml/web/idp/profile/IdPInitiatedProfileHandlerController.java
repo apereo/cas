@@ -13,12 +13,10 @@ import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
 
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -29,6 +27,7 @@ import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.MessageDecodingException;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.SignableSAMLObject;
+import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -51,7 +50,6 @@ import java.util.concurrent.TimeUnit;
 public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHandlerController {
 
     public IdPInitiatedProfileHandlerController(final SamlIdPObjectSigner samlObjectSigner,
-                                                final ParserPool parserPool,
                                                 final AuthenticationSystemSupport authenticationSystemSupport,
                                                 final ServicesManager servicesManager,
                                                 final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
@@ -61,7 +59,7 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
                                                 final CasConfigurationProperties casProperties,
                                                 final SamlObjectSignatureValidator samlObjectSignatureValidator,
                                                 final Service callbackService) {
-        super(samlObjectSigner, parserPool, authenticationSystemSupport,
+        super(samlObjectSigner, authenticationSystemSupport,
             servicesManager, webApplicationServiceFactory,
             samlRegisteredServiceCachingMetadataResolver,
             configBean, responseBuilder, casProperties,
@@ -79,7 +77,6 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
     protected void handleIdPInitiatedSsoRequest(final HttpServletResponse response,
                                                 final HttpServletRequest request) throws Exception {
 
-        // The name (i.e., the entity ID) of the service provider.
         val providerId = CommonUtils.safeGetParameter(request, SamlIdPConstants.PROVIDER_ID);
         if (StringUtils.isBlank(providerId)) {
             LOGGER.warn("No providerId parameter given in unsolicited SSO authentication request.");
@@ -88,19 +85,23 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
 
         val registeredService = verifySamlRegisteredService(providerId);
         val adaptor = getSamlMetadataFacadeFor(registeredService, providerId);
-        if (!adaptor.isPresent()) {
+        if (adaptor.isEmpty()) {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Cannot find metadata linked to " + providerId);
         }
 
-        // The URL of the response location at the SP (called the "Assertion Consumer Service")
-        // but can be omitted in favor of the IdP picking the default endpoint location from metadata.
+        /*
+         The URL of the response location at the SP (called the "Assertion Consumer Service")
+         but can be omitted in favor of the IdP picking the default endpoint location from metadata.
+          */
         var shire = CommonUtils.safeGetParameter(request, SamlIdPConstants.SHIRE);
         val facade = adaptor.get();
         if (StringUtils.isBlank(shire)) {
             LOGGER.warn("Resolving service provider assertion consumer service URL for [{}] and binding [{}]",
                 providerId, SAMLConstants.SAML2_POST_BINDING_URI);
-            @NonNull
             val acs = facade.getAssertionConsumerService(SAMLConstants.SAML2_POST_BINDING_URI);
+            if (acs == null || StringUtils.isBlank(acs.getLocation())) {
+                throw new MessageDecodingException("Unable to resolve SP ACS URL location for binding " + SAMLConstants.SAML2_POST_BINDING_URI);
+            }
             shire = acs.getLocation();
         }
         if (StringUtils.isBlank(shire)) {
@@ -108,10 +109,8 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
             throw new MessageDecodingException("Unable to resolve SP ACS URL for AuthnRequest construction");
         }
 
-        // The target resource at the SP, or a state token generated by an SP to represent the resource.
         val target = CommonUtils.safeGetParameter(request, SamlIdPConstants.TARGET);
 
-        // A timestamp to help with stale request detection.
         val time = CommonUtils.safeGetParameter(request, SamlIdPConstants.TIME);
 
         val builder = (SAMLObjectBuilder) configBean.getBuilderFactory().getBuilder(AuthnRequest.DEFAULT_ELEMENT_NAME);
@@ -149,6 +148,7 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
         }
         ctx.setMessage(authnRequest);
         ctx.getSubcontext(SAMLBindingContext.class, true).setHasBindingSignature(false);
+        SAMLBindingSupport.setRelayState(ctx, target);
 
         val pair = Pair.<SignableSAMLObject, MessageContext>of(authnRequest, ctx);
         initiateAuthenticationRequest(pair, response, request);

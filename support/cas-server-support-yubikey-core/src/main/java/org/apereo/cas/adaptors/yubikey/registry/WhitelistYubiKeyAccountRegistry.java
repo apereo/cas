@@ -54,7 +54,7 @@ public class WhitelistYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry 
     }
 
     @Override
-    public Collection<YubiKeyAccount> getAccounts() {
+    public Collection<? extends YubiKeyAccount> getAccounts() {
         return this.devices.entrySet().stream()
             .map(entry -> new YubiKeyAccount(System.currentTimeMillis(),
                 entry.getKey(),
@@ -63,7 +63,7 @@ public class WhitelistYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry 
     }
 
     @Override
-    public Optional<YubiKeyAccount> getAccount(final String uid) {
+    public Optional<? extends YubiKeyAccount> getAccount(final String uid) {
         if (devices.containsKey(uid)) {
             val publicId = getCipherExecutor().decode(devices.get(uid));
             return Optional.of(new YubiKeyAccount(System.currentTimeMillis(), publicId, uid));

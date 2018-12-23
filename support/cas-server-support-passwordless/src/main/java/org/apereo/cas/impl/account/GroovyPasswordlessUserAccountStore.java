@@ -2,7 +2,7 @@ package org.apereo.cas.impl.account;
 
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
-import org.apereo.cas.util.ScriptingUtils;
+import org.apereo.cas.util.scripting.ScriptingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,7 @@ public class GroovyPasswordlessUserAccountStore implements PasswordlessUserAccou
     @Override
     public Optional<PasswordlessUserAccount> findUser(final String username) {
         val account = ScriptingUtils.executeGroovyScript(groovyResource,
-            new Object[]{username, LOGGER}, PasswordlessUserAccount.class);
+            new Object[]{username, LOGGER}, PasswordlessUserAccount.class, true);
         return Optional.ofNullable(account);
     }
 }

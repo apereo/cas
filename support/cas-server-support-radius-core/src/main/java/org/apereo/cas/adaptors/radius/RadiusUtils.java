@@ -29,20 +29,23 @@ public class RadiusUtils {
      * @param servers                         the servers
      * @param failoverOnAuthenticationFailure the failover on authentication failure
      * @param failoverOnException             the failover on exception
+     * @param state                           the state
      * @return the pair
      * @throws Exception the exception
      */
-    public static Pair<Boolean, Optional<Map<String, Object>>> authenticate(final String username, final String password,
+    public static Pair<Boolean, Optional<Map<String, Object>>> authenticate(final String username,
+                                                                            final String password,
                                                                             final List<RadiusServer> servers,
                                                                             final boolean failoverOnAuthenticationFailure,
-                                                                            final boolean failoverOnException) throws Exception {
+                                                                            final boolean failoverOnException,
+                                                                            final Optional state) throws Exception {
         for (val radiusServer : servers) {
             LOGGER.debug("Attempting to authenticate [{}] at [{}]", username, radiusServer);
             try {
-                val response = radiusServer.authenticate(username, password);
+                val response = radiusServer.authenticate(username, password, state);
                 if (response != null) {
                     val attributes = new HashMap<String, Object>();
-                    response.getAttributes().forEach(attribute -> attributes.put(attribute.getAttributeName(), attribute.getValue().toString()));
+                    response.getAttributes().forEach(attribute -> attributes.put(attribute.getAttributeName(), attribute.getValue()));
                     return Pair.of(Boolean.TRUE, Optional.of(attributes));
                 }
 

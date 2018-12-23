@@ -1,5 +1,7 @@
 package org.apereo.cas.audit.spi;
 
+import org.apereo.cas.audit.spi.principal.DefaultAuditPrincipalIdProvider;
+import org.apereo.cas.audit.spi.principal.ThreadLocalPrincipalResolver;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 

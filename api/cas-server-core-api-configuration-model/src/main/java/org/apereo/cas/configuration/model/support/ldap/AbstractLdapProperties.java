@@ -5,6 +5,9 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is {@link AbstractLdapProperties}.
@@ -17,6 +20,7 @@ import java.io.Serializable;
 public abstract class AbstractLdapProperties implements Serializable {
 
     private static final long serialVersionUID = 2682743362616979324L;
+
     /**
      * Path of the trust certificates to use for the SSL connection.
      * Ignores keystore-related settings when activated and used.
@@ -187,9 +191,31 @@ public abstract class AbstractLdapProperties implements Serializable {
     @NestedConfigurationProperty
     private LdapValidatorProperties validator = new LdapValidatorProperties();
     /**
+     * Hostname verification options.
+     * Accepted values are {@link LdapHostnameVerifierOptions#DEFAULT} and {@link LdapHostnameVerifierOptions#ANY}.
+     */
+    private LdapHostnameVerifierOptions hostnameVerifier = LdapHostnameVerifierOptions.DEFAULT;
+
+    /**
      * Name of the authentication handler.
      */
     private String name;
+
+    /**
+     * Set if multiple Entries are allowed.
+     */
+    private boolean allowMultipleEntries;
+
+    /**
+     * Set if search referrals should be followed.
+     */
+    private boolean followReferrals = true;
+
+    /**
+     * Indicate the collection of attributes that are to be tagged and processed as binary
+     * attributes by the underlying search resolver.
+     */
+    private List<String> binaryAttributes = Stream.of("objectGUID", "objectSid").collect(Collectors.toList());
 
     /**
      * The ldap type used to handle specific ops.
@@ -258,5 +284,19 @@ public abstract class AbstractLdapProperties implements Serializable {
          * ldap urls based on DNS SRV records.
          */
         DNS_SRV
+    }
+
+    /**
+     * Describe hostname verification strategies.
+     */
+    public enum LdapHostnameVerifierOptions {
+        /**
+         * Default option, forcing verification.
+         */
+        DEFAULT,
+        /**
+         * Skip hostname verification and allow all.
+         */
+        ANY
     }
 }

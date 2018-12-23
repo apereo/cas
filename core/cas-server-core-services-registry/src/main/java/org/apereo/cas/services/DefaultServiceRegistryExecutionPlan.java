@@ -21,15 +21,15 @@ public class DefaultServiceRegistryExecutionPlan implements ServiceRegistryExecu
 
     @Override
     public ServiceRegistryExecutionPlan registerServiceRegistry(final ServiceRegistry registry) {
-        LOGGER.debug("Registering service registry [{}] into the execution plan", registry.getName());
+        LOGGER.trace("Registering service registry [{}] into the execution plan", registry.getName());
         serviceRegistries.add(registry);
         return this;
     }
 
     @Override
-    public Collection<ServiceRegistry> getServiceRegistries(final Predicate<ServiceRegistry> typeFilter) {
-        return getServiceRegistries().stream()
-            .filter(typeFilter::test)
+    public Collection<ServiceRegistry> find(final Predicate<ServiceRegistry> typeFilter) {
+        return serviceRegistries.stream()
+            .filter(typeFilter)
             .collect(Collectors.toList());
     }
 }

@@ -1,6 +1,6 @@
 package org.apereo.cas.support.saml.metadata.resolver;
 
-import org.apereo.cas.category.FileSystemCategory;
+import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -69,7 +69,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Category(FileSystemCategory.class)
+@Category(RestfulApiCategory.class)
 @SpringBootTest(classes = {
     SamlIdPRestMetadataConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
@@ -104,7 +104,10 @@ import static org.junit.Assert.*;
     CoreSamlConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasCoreUtilConfiguration.class})
-@TestPropertySource(locations = {"classpath:/rest.properties"})
+@TestPropertySource(properties = {
+    "cas.authn.samlIdp.metadata.rest.url=http://localhost:8078",
+    "cas.authn.samlIdp.metadata.location=file:/tmp"
+})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class RestSamlRegisteredServiceMetadataResolverTests {
 

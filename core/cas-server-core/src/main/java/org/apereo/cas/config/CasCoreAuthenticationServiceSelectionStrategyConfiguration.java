@@ -18,7 +18,6 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreAuthenticationServiceSelectionStrategyConfiguration implements AuthenticationServiceSelectionStrategyConfigurer {
 
-
     @Override
     public void configureAuthenticationServiceSelectionStrategy(final AuthenticationServiceSelectionPlan plan) {
         plan.registerStrategy(new DefaultAuthenticationServiceSelectionStrategy());

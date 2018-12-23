@@ -11,9 +11,11 @@ import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.LinkedMultiValueMap;
@@ -27,9 +29,12 @@ import org.springframework.web.client.RestTemplate;
  */
 @Configuration("restServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class RestServiceRegistryConfiguration implements ServiceRegistryExecutionPlanConfigurer {
+public class RestServiceRegistryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     @Bean
     @RefreshScope
@@ -44,14 +49,21 @@ public class RestServiceRegistryConfiguration implements ServiceRegistryExecutio
             && StringUtils.isNotBlank(registry.getBasicAuthPassword())) {
             headers.putAll(HttpUtils.createBasicAuthHeaders(registry.getBasicAuthUsername(), registry.getBasicAuthPassword()));
         }
-        return new RestfulServiceRegistry(restTemplate, registry.getUrl(), headers);
+        return new RestfulServiceRegistry(eventPublisher, restTemplate, registry.getUrl(), headers);
     }
 
-    @Override
-    public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-        val registry = casProperties.getServiceRegistry().getRest();
-        if (StringUtils.isNotBlank(registry.getUrl())) {
-            plan.registerServiceRegistry(restfulServiceRegistry());
-        }
+    @Bean
+    @ConditionalOnMissingBean(name = "restfulServiceRegistryExecutionPlanConfigurer")
+    public ServiceRegistryExecutionPlanConfigurer restfulServiceRegistryExecutionPlanConfigurer() {
+        return new ServiceRegistryExecutionPlanConfigurer() {
+            @Override
+            public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
+                val registry = casProperties.getServiceRegistry().getRest();
+                if (StringUtils.isNotBlank(registry.getUrl())) {
+                    plan.registerServiceRegistry(restfulServiceRegistry());
+                }
+            }
+        };
     }
+
 }

@@ -3,7 +3,7 @@ package org.apereo.cas.web.report;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -26,7 +26,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Endpoint(id = "release-attributes", enableByDefault = false)
+@Endpoint(id = "releaseAttributes", enableByDefault = false)
 public class CasReleaseAttributesReportEndpoint extends BaseCasMvcEndpoint {
     private final ServicesManager servicesManager;
     private final AuthenticationSystemSupport authenticationSystemSupport;
@@ -52,12 +52,11 @@ public class CasReleaseAttributesReportEndpoint extends BaseCasMvcEndpoint {
      * @param password the password
      * @param service  the service
      * @return the map
-     * @throws Exception the exception
      */
     @ReadOperation
     public Map<String, Object> releasePrincipalAttributes(final String username,
                                                           final String password,
-                                                          final String service) throws Exception {
+                                                          final String service) {
 
 
         val selectedService = this.serviceFactory.createService(service);

@@ -20,9 +20,7 @@ import java.util.Objects;
  * @since 5.2.0
  */
 public class ChainingPrincipalFromRequestNonInteractiveCredentialsAction extends BasePrincipalFromNonInteractiveCredentialsAction {
-
-
-    private List<BasePrincipalFromNonInteractiveCredentialsAction> chain = new ArrayList<>();
+    private final List<BasePrincipalFromNonInteractiveCredentialsAction> chain = new ArrayList<>();
 
     public ChainingPrincipalFromRequestNonInteractiveCredentialsAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
                                                                        final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,

@@ -2,7 +2,7 @@ package org.apereo.cas.pm;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.category.LdapCategory;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.LdapPasswordManagementConfiguration;
@@ -108,6 +108,8 @@ public class LdapPasswordManagementServiceTests {
         val questions = passwordChangeService.getSecurityQuestions("caspm");
         assertEquals(2, questions.size());
         assertTrue(questions.containsKey("RegisteredAddressQuestion"));
+        assertEquals("666", questions.get("RegisteredAddressQuestion"));
         assertTrue(questions.containsKey("PostalCodeQuestion"));
+        assertEquals("1776", questions.get("PostalCodeQuestion"));
     }
 }

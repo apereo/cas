@@ -14,6 +14,7 @@ import org.apereo.cas.services.ServicesManager;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -36,14 +37,14 @@ public class FileAuthenticationEventExecutionPlanConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("personDirectoryPrincipalResolver")
-    private PrincipalResolver personDirectoryPrincipalResolver;
+    @Qualifier("defaultPrincipalResolver")
+    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
 
     @ConditionalOnMissingBean(name = "filePrincipalFactory")
     @Bean
@@ -56,7 +57,7 @@ public class FileAuthenticationEventExecutionPlanConfiguration {
     @Bean
     public AuthenticationHandler fileAuthenticationHandler() {
         val fileProperties = casProperties.getAuthn().getFile();
-        val h = new FileAuthenticationHandler(fileProperties.getName(), servicesManager, filePrincipalFactory(),
+        val h = new FileAuthenticationHandler(fileProperties.getName(), servicesManager.getIfAvailable(), filePrincipalFactory(),
             fileProperties.getFilename(), fileProperties.getSeparator());
 
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(fileProperties.getPasswordEncoder()));
@@ -73,7 +74,7 @@ public class FileAuthenticationEventExecutionPlanConfiguration {
             val file = casProperties.getAuthn().getFile().getFilename();
             if (file != null) {
                 LOGGER.debug("Added file-based authentication handler for the target file [{}]", file.getDescription());
-                plan.registerAuthenticationHandlerWithPrincipalResolver(fileAuthenticationHandler(), personDirectoryPrincipalResolver);
+                plan.registerAuthenticationHandlerWithPrincipalResolver(fileAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
             }
         };
     }

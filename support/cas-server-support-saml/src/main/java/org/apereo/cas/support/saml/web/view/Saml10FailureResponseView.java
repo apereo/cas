@@ -1,9 +1,11 @@
 package org.apereo.cas.support.saml.web.view;
 
-import org.apereo.cas.authentication.AuthenticationAttributeReleasePolicy;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
+import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
+import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
 import org.opensaml.saml.saml1.core.Response;
@@ -23,15 +25,18 @@ public class Saml10FailureResponseView extends AbstractSaml10ResponseView {
     public Saml10FailureResponseView(
         final ProtocolAttributeEncoder protocolAttributeEncoder,
         final ServicesManager servicesManager,
-        final String authenticationContextAttribute,
         final Saml10ObjectBuilder samlObjectBuilder,
         final ArgumentExtractor samlArgumentExtractor,
         final String encoding,
         final int skewAllowance,
         final int issueLength,
-        final AuthenticationAttributeReleasePolicy authAttrReleasePolicy) {
-        super(false, protocolAttributeEncoder, servicesManager, authenticationContextAttribute, samlObjectBuilder,
-            samlArgumentExtractor, encoding, skewAllowance, issueLength, authAttrReleasePolicy);
+        final AuthenticationAttributeReleasePolicy authAttrReleasePolicy,
+        final AuthenticationServiceSelectionPlan serviceSelectionStrategy,
+        final CasProtocolAttributesRenderer attributesRenderer) {
+
+        super(false, protocolAttributeEncoder, servicesManager, samlObjectBuilder,
+            samlArgumentExtractor, encoding, skewAllowance, issueLength, authAttrReleasePolicy,
+            serviceSelectionStrategy, attributesRenderer);
     }
 
     @Override

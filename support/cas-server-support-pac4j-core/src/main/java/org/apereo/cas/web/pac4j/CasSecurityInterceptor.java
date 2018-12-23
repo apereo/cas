@@ -32,7 +32,7 @@ public class CasSecurityInterceptor extends SecurityInterceptor {
     public CasSecurityInterceptor(final Config config, final String clients, final String authorizers) {
         super(config, clients, authorizers);
 
-        final DefaultSecurityLogic secLogic = new DefaultSecurityLogic() {
+        val secLogic = new DefaultSecurityLogic() {
             @Override
             protected HttpAction unauthorized(final WebContext context, final List currentClients) {
                 return HttpAction.forbidden(context);

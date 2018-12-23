@@ -1,7 +1,7 @@
 package org.apereo.cas.util.transforms;
 
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
-import org.apereo.cas.util.ScriptingUtils;
+import org.apereo.cas.util.scripting.ScriptingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +24,6 @@ public class GroovyPrincipalNameTransformer implements PrincipalNameTransformer 
     public String transform(final String formUserId) {
         return ScriptingUtils.executeGroovyScript(this.script,
             new Object[]{formUserId, LOGGER},
-            String.class);
+            String.class, true);
     }
 }

@@ -35,7 +35,7 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
     }
 
     @Override
-    public Collection<MetadataResolver> resolve(final SamlRegisteredService service) {
+    public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service) {
         try {
             val metadataLocation = service.getMetadataLocation();
             LOGGER.info("Loading SAML metadata from [{}]", metadataLocation);
@@ -66,7 +66,7 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
             val metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
             return metadataResource instanceof FileSystemResource;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.trace(e.getMessage(), e);
         }
         return false;
     }

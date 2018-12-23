@@ -1,7 +1,7 @@
 package org.apereo.cas.support.spnego.authentication.handler.support;
 
 import org.apereo.cas.authentication.PreventedException;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.spnego.MockJcifsAuthentication;
@@ -31,7 +31,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
     public void verifySuccessfulAuthenticationWithDomainName() throws Exception {
         val credentials = new SpnegoCredential(new byte[]{0, 1, 2});
         val authenticationHandler = new JcifsSpnegoAuthenticationHandler("", null, null,
-            CollectionUtils.wrapList(new MockJcifsAuthentication()), true, true);
+            CollectionUtils.wrapList(new MockJcifsAuthentication()), true, true, null);
         assertNotNull(authenticationHandler.authenticate(credentials));
         assertEquals("test", credentials.getPrincipal().getId());
         assertNotNull(credentials.getNextToken());
@@ -41,7 +41,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
     public void verifySuccessfulAuthenticationWithoutDomainName() throws Exception {
         val credentials = new SpnegoCredential(new byte[]{0, 1, 2});
         val authenticationHandler = new JcifsSpnegoAuthenticationHandler("", null, null,
-            CollectionUtils.wrapList(new MockJcifsAuthentication()), false, true);
+            CollectionUtils.wrapList(new MockJcifsAuthentication()), false, true, null);
         assertNotNull(authenticationHandler.authenticate(credentials));
         assertEquals("test", credentials.getPrincipal().getId());
         assertNotNull(credentials.getNextToken());
@@ -52,12 +52,12 @@ public class JcifsSpnegoAuthenticationHandlerTests {
         val credentials = new SpnegoCredential(new byte[]{0, 1, 2});
         val authenticationHandler = new JcifsSpnegoAuthenticationHandler("", null, null,
             CollectionUtils.wrapList(new MockUnsuccessfulJcifsAuthentication(true)),
-            true, true);
+            true, true, null);
 
         authenticate(credentials, authenticationHandler);
     }
 
-    private void authenticate(final SpnegoCredential credentials, final JcifsSpnegoAuthenticationHandler authenticationHandler) throws PreventedException {
+    private static void authenticate(final SpnegoCredential credentials, final JcifsSpnegoAuthenticationHandler authenticationHandler) throws PreventedException {
         try {
             authenticationHandler.authenticate(credentials);
             throw new AssertionError("An AbstractAuthenticationException should have been thrown");
@@ -72,7 +72,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
         val credentials = new SpnegoCredential(new byte[]{0, 1, 2});
         val authenticationHandler = new JcifsSpnegoAuthenticationHandler("", null, null,
             CollectionUtils.wrapList(new MockUnsuccessfulJcifsAuthentication(false)),
-            true, true);
+            true, true, null);
 
         authenticate(credentials, authenticationHandler);
     }
@@ -80,9 +80,9 @@ public class JcifsSpnegoAuthenticationHandlerTests {
     @Test
     public void verifySupports() {
         val authenticationHandler = new JcifsSpnegoAuthenticationHandler("", null, null,
-            CollectionUtils.wrapList(new MockJcifsAuthentication()), true, true);
+            CollectionUtils.wrapList(new MockJcifsAuthentication()), true, true, null);
 
-        assertFalse(authenticationHandler.supports(null));
+        assertFalse(authenticationHandler.supports((SpnegoCredential) null));
         assertTrue(authenticationHandler.supports(new SpnegoCredential(new byte[]{0, 1, 2})));
         assertFalse(authenticationHandler.supports(new UsernamePasswordCredential()));
     }
@@ -96,14 +96,15 @@ public class JcifsSpnegoAuthenticationHandlerTests {
         val factory = new DefaultPrincipalFactory();
         val authenticationHandler = new JcifsSpnegoAuthenticationHandler("", null, null,
             CollectionUtils.wrapList(new MockJcifsAuthentication()), true,
-            true);
+            true, null);
 
         assertEquals(factory.createPrincipal(myNtlmUser), authenticationHandler.getPrincipal(myNtlmUser, true));
         assertEquals(factory.createPrincipal(myNtlmUserWithNoDomain), authenticationHandler.getPrincipal(myNtlmUserWithNoDomain, false));
         assertEquals(factory.createPrincipal(myKerberosUser), authenticationHandler.getPrincipal(myKerberosUser, false));
 
         val handlerNoDomain = new JcifsSpnegoAuthenticationHandler(StringUtils.EMPTY, mock(ServicesManager.class),
-            new DefaultPrincipalFactory(), CollectionUtils.wrapList(new MockJcifsAuthentication()), false, true);
+            new DefaultPrincipalFactory(), CollectionUtils.wrapList(new MockJcifsAuthentication()),
+            false, true, null);
         assertEquals(factory.createPrincipal(USERNAME), handlerNoDomain.getPrincipal(myNtlmUser, true));
         assertEquals(factory.createPrincipal(USERNAME), handlerNoDomain.getPrincipal(myNtlmUserWithNoDomain, true));
         assertEquals(factory.createPrincipal(USERNAME), handlerNoDomain.getPrincipal(myKerberosUser, false));

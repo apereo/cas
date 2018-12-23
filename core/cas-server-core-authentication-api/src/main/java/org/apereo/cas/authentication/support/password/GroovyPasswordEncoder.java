@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication.support.password;
 
-import org.apereo.cas.util.ScriptingUtils;
+import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,6 @@ public class GroovyPasswordEncoder extends AbstractPasswordEncoder {
     protected byte[] encode(final CharSequence rawPassword, final byte[] salt) {
         val resource = ApplicationContextProvider.getResourceLoader().getResource(this.scriptFile);
         final Object[] args = {rawPassword, salt, LOGGER, ApplicationContextProvider.getApplicationContext()};
-        val result = ScriptingUtils.executeGroovyScript(resource, args, byte[].class);
-        return result;
+        return ScriptingUtils.executeGroovyScript(resource, args, byte[].class, true);
     }
 }

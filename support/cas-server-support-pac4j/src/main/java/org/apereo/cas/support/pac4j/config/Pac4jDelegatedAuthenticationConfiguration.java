@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.github.scribejava.core.model.OAuth1RequestToken;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -48,7 +49,7 @@ public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketV
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -96,7 +97,10 @@ public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketV
         val c = casProperties.getAuthn().getPac4j().getCookie().getCrypto();
         if (c.isEnabled()) {
             return new DelegatedSessionCookieCipherExecutor(c.getEncryption().getKey(),
-                c.getSigning().getKey(), c.getAlg());
+                c.getSigning().getKey(),
+                c.getAlg(),
+                c.getSigning().getKeySize(),
+                c.getEncryption().getKeySize());
         }
         LOGGER.info("Delegated authentication cookie encryption/signing is turned off and "
             + "MAY NOT be safe in a production environment. "
@@ -107,7 +111,7 @@ public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketV
 
     @Bean
     public ServiceTicketValidationAuthorizer pac4jServiceTicketValidationAuthorizer() {
-        return new DelegatedAuthenticationServiceTicketValidationAuthorizer(this.servicesManager,
+        return new DelegatedAuthenticationServiceTicketValidationAuthorizer(servicesManager.getIfAvailable(),
             registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer());
     }
 

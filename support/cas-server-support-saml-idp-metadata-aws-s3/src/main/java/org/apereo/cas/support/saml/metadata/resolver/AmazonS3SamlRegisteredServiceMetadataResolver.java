@@ -41,9 +41,8 @@ public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegis
     }
 
     @Override
-    public Collection<MetadataResolver> resolve(final SamlRegisteredService service) {
+    public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service) {
         try {
-            LOGGER.debug("Locating S3 object(s) from bucket [{}]...", bucketName);
             val result = s3Client.listObjectsV2(bucketName);
             val objects = result.getObjectSummaries();
             LOGGER.debug("Located [{}] S3 object(s) from bucket [{}]", objects.size(), bucketName);

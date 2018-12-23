@@ -9,14 +9,15 @@ import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.services.ServicesManager;
 
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.credentials.password.SpringSecurityPasswordEncoder;
 import org.pac4j.mongo.profile.service.MongoProfileService;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -36,18 +37,16 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasMongoAuthenticationConfiguration {
-
-
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
-    @Qualifier("personDirectoryPrincipalResolver")
-    private PrincipalResolver personDirectoryPrincipalResolver;
+    @Qualifier("defaultPrincipalResolver")
+    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
 
     @ConditionalOnMissingBean(name = "mongoPrincipalFactory")
     @Bean
@@ -59,7 +58,7 @@ public class CasMongoAuthenticationConfiguration {
     @RefreshScope
     public AuthenticationHandler mongoAuthenticationHandler() {
         val mongo = casProperties.getAuthn().getMongo();
-        val handler = new MongoDbAuthenticationHandler(mongo.getName(), servicesManager, mongoPrincipalFactory());
+        val handler = new MongoDbAuthenticationHandler(mongo.getName(), servicesManager.getIfAvailable(), mongoPrincipalFactory());
         handler.setAuthenticator(mongoAuthenticatorProfileService());
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(mongo.getPrincipalTransformation()));
         return handler;
@@ -68,7 +67,7 @@ public class CasMongoAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "mongoAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer mongoAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(mongoAuthenticationHandler(), personDirectoryPrincipalResolver);
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(mongoAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "mongoAuthenticatorProfileService")
@@ -76,16 +75,20 @@ public class CasMongoAuthenticationConfiguration {
     public MongoProfileService mongoAuthenticatorProfileService() {
         val mongo = casProperties.getAuthn().getMongo();
 
-        val uri = new MongoClientURI(mongo.getMongoHostUri());
-        val client = new MongoClient(uri);
-        LOGGER.info("Connected to MongoDb instance @ [{}] using database [{}]", uri.getHosts(), uri.getDatabase());
+        val factory = new MongoDbConnectionFactory();
+        val client = factory.buildMongoDbClient(mongo);
+        LOGGER.info("Connected to MongoDb instance using mongo client [{}]", client.toString());
 
         val encoder = new SpringSecurityPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(mongo.getPasswordEncoder()));
         val auth = new MongoProfileService(client, mongo.getAttributes());
-        auth.setUsersCollection(mongo.getCollectionName());
-        auth.setUsersDatabase(uri.getDatabase());
+        auth.setUsersCollection(mongo.getCollection());
+        auth.setUsersDatabase(mongo.getDatabaseName());
         auth.setUsernameAttribute(mongo.getUsernameAttribute());
         auth.setPasswordAttribute(mongo.getPasswordAttribute());
+
+        if (StringUtils.isNotBlank(mongo.getPrincipalIdAttribute())) {
+            auth.setIdAttribute(mongo.getPrincipalIdAttribute());
+        }
         auth.setPasswordEncoder(encoder);
         return auth;
     }

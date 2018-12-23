@@ -1,9 +1,9 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorMongoDbTokenRepository;
-import org.apereo.cas.adaptors.gauth.MongoDbGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.gauth.credential.MongoDbGoogleAuthenticatorTokenCredentialRepository;
+import org.apereo.cas.gauth.token.GoogleAuthenticatorMongoDbTokenRepository;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;

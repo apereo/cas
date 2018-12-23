@@ -25,9 +25,9 @@
                        required/>
                 <div>
                     <br/>
-                    <input class="btn btn-submit" name="_eventId_submit" accesskey="l"
-                           th:value="#{cas.mfa.registerdevice.button.register}" tabindex="4" type="submit"
-                           value="Register"/>
+                    <input class="btn btn-submit" accesskey="l"
+                           th:value="#{cas.mfa.registerdevice.button.register}" tabindex="4" type="submit"/>
+                    <input type="hidden" name="_eventId_submit" value="Register" />
                 </div>
             </div>
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>

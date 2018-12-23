@@ -72,8 +72,8 @@ public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
     private String codeChallengeMethod;
 
     public OAuthCodeImpl(final String id,
-                         @NonNull final Service service,
-                         @NonNull final Authentication authentication,
+                         final @NonNull Service service,
+                         final @NonNull Authentication authentication,
                          final ExpirationPolicy expirationPolicy,
                          final TicketGrantingTicket ticketGrantingTicket,
                          final Collection<String> scopes,

@@ -11,8 +11,10 @@ import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
 public class PasswordlessTokenCipherExecutor extends BaseStringCipherExecutor {
     public PasswordlessTokenCipherExecutor(final String secretKeyEncryption,
                                            final String secretKeySigning,
-                                           final String alg) {
-        super(secretKeyEncryption, secretKeySigning, alg);
+                                           final String alg,
+                                           final int signingKeySize,
+                                           final int encryptionKeySize) {
+        super(secretKeyEncryption, secretKeySigning, alg, signingKeySize, encryptionKeySize);
     }
 
     @Override

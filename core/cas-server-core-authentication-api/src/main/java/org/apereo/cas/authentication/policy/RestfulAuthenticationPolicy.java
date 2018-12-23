@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.policy;
 
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
@@ -23,6 +24,7 @@ import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
+import java.util.Set;
 
 /**
  * This is {@link RestfulAuthenticationPolicy}.
@@ -37,18 +39,14 @@ public class RestfulAuthenticationPolicy implements AuthenticationPolicy {
     private final String endpoint;
 
     @Override
-    public boolean isSatisfiedBy(final Authentication authentication) throws Exception {
+    public boolean isSatisfiedBy(final Authentication authentication, final Set<AuthenticationHandler> authenticationHandlers) throws Exception {
         val principal = authentication.getPrincipal();
         try {
             val acceptHeaders = new HttpHeaders();
             acceptHeaders.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
-            val entity = new HttpEntity<>(principal, acceptHeaders);
+            val entity = new HttpEntity<Principal>(principal, acceptHeaders);
             LOGGER.warn("Checking authentication policy for [{}] via POST at [{}]", principal, this.endpoint);
             val resp = restTemplate.exchange(this.endpoint, HttpMethod.POST, entity, String.class);
-            if (resp == null) {
-                LOGGER.warn("[{}] returned no responses", this.endpoint);
-                throw new GeneralSecurityException("No response returned from REST endpoint to determine authentication policy");
-            }
             val statusCode = resp.getStatusCode();
             if (statusCode != HttpStatus.OK) {
                 val ex = handleResponseStatusCode(statusCode, principal);
@@ -61,7 +59,7 @@ public class RestfulAuthenticationPolicy implements AuthenticationPolicy {
         }
     }
 
-    private Exception handleResponseStatusCode(final HttpStatus statusCode, final Principal p) {
+    private static Exception handleResponseStatusCode(final HttpStatus statusCode, final Principal p) {
         if (statusCode == HttpStatus.FORBIDDEN || statusCode == HttpStatus.METHOD_NOT_ALLOWED) {
             return new AccountDisabledException("Could not authenticate forbidden account for " + p.getId());
         }

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title th:text="#{screen.mfaUnavailable.header}">MFA Provider Unavailable</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
+</head>
+
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content">
+        <div class="alert alert-danger">
+            <h2 th:utext="#{screen.mfaUnavailable.heading}">MFA Provider Unavailable</h2>
+            <p th:utext="#{screen.mfaUnavailable.message}">Your MFA provider is currently unvailable.</p>
+        </div>
+    </div>
+</main>
+</body>
+</html>

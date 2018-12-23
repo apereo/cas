@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.util.Assert;
@@ -27,6 +28,7 @@ import java.time.temporal.ChronoUnit;
 @Slf4j
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /**
@@ -61,7 +63,6 @@ public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationP
         Assert.isTrue(this.maxTimeToLiveInSeconds >= this.timeToKillInSeconds,
             "maxTimeToLiveInSeconds must be greater than or equal to timeToKillInSeconds.");
 
-        // Ticket has been used, check maxTimeToLive (hard window)
         val currentSystemTime = getCurrentSystemTime();
         val creationTime = ticketState.getCreationTime();
         val lastTimeUsed = ticketState.getLastTimeUsed();

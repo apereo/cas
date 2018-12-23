@@ -1,7 +1,10 @@
 package org.apereo.cas.web.flow.login;
 
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -18,6 +21,7 @@ import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Class to automatically set the paths for the CookieGenerators.
@@ -41,6 +45,7 @@ public class InitialFlowSetupAction extends AbstractAction {
     private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
     private final CookieRetrievingCookieGenerator warnCookieGenerator;
     private final CasConfigurationProperties casProperties;
+    private final AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 
     @Override
     public Event doExecute(final RequestContext context) {
@@ -57,6 +62,7 @@ public class InitialFlowSetupAction extends AbstractAction {
 
             val selectedService = authenticationRequestServiceSelectionStrategies.resolveService(service);
             val registeredService = this.servicesManager.findServiceBy(selectedService);
+            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
             if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
                 LOGGER.debug("Placing registered service [{}] with id [{}] in context scope",
                     registeredService.getServiceId(),
@@ -77,7 +83,7 @@ public class InitialFlowSetupAction extends AbstractAction {
             throw new NoSuchFlowExecutionException(context.getFlowExecutionContext().getKey(),
                 new UnauthorizedServiceException("screen.service.required.message", "Service is required"));
         }
-        WebUtils.putService(context, service);
+        WebUtils.putServiceIntoFlowScope(context, service);
     }
 
     private void configureWebflowContext(final RequestContext context) {
@@ -92,6 +98,17 @@ public class InitialFlowSetupAction extends AbstractAction {
         WebUtils.putStaticAuthenticationIntoFlowScope(context,
             StringUtils.isNotBlank(casProperties.getAuthn().getAccept().getUsers())
                 || StringUtils.isNotBlank(casProperties.getAuthn().getReject().getUsers()));
+
+        if (casProperties.getAuthn().getPolicy().isSourceSelectionEnabled()) {
+            val availableHandlers = authenticationEventExecutionPlan.getAuthenticationHandlers()
+                .stream()
+                .filter(h -> h.supports(UsernamePasswordCredential.class))
+                .map(h -> StringUtils.capitalize(h.getName().trim()))
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
+            WebUtils.putAvailableAuthenticationHandleNames(context, availableHandlers);
+        }
     }
 
     private void configureCookieGenerators(final RequestContext context) {
@@ -102,14 +119,14 @@ public class InitialFlowSetupAction extends AbstractAction {
             LOGGER.info("Setting path for cookies for warn cookie generator to: [{}] ", cookiePath);
             this.warnCookieGenerator.setCookiePath(cookiePath);
         } else {
-            LOGGER.debug("Warning cookie path is set to [{}] and path [{}]", this.warnCookieGenerator.getCookieDomain(),
+            LOGGER.trace("Warning cookie path is set to [{}] and path [{}]", this.warnCookieGenerator.getCookieDomain(),
                 this.warnCookieGenerator.getCookiePath());
         }
         if (StringUtils.isBlank(this.ticketGrantingTicketCookieGenerator.getCookiePath())) {
             LOGGER.debug("Setting path for cookies for TGC cookie generator to: [{}] ", cookiePath);
             this.ticketGrantingTicketCookieGenerator.setCookiePath(cookiePath);
         } else {
-            LOGGER.debug("TGC cookie path is set to [{}] and path [{}]", this.ticketGrantingTicketCookieGenerator.getCookieDomain(),
+            LOGGER.trace("TGC cookie path is set to [{}] and path [{}]", this.ticketGrantingTicketCookieGenerator.getCookieDomain(),
                 this.ticketGrantingTicketCookieGenerator.getCookiePath());
         }
     }

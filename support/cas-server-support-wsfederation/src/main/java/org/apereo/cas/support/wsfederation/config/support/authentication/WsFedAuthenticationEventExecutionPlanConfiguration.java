@@ -2,7 +2,6 @@ package org.apereo.cas.support.wsfederation.config.support.authentication;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
-import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -23,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -49,11 +49,11 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
 
     @Autowired
     @Qualifier("attributeRepository")
-    private IPersonAttributeDao attributeRepository;
+    private ObjectProvider<IPersonAttributeDao> attributeRepository;
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     private ResourceLoader resourceLoader;
@@ -89,7 +89,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
         return config;
     }
 
-    private WsFederationAttributeMutator getAttributeMutatorForWsFederationConfig(final WsFederationDelegationProperties wsfed) {
+    private static WsFederationAttributeMutator getAttributeMutatorForWsFederationConfig(final WsFederationDelegationProperties wsfed) {
         val location = wsfed.getAttributeMutatorScript().getLocation();
         if (location != null) {
             return new GroovyWsFederationAttributeMutator(location);
@@ -97,16 +97,19 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
         return WsFederationAttributeMutator.noOp();
     }
 
-    private WsFederationCookieGenerator getCookieGeneratorForWsFederationConfig(final WsFederationDelegationProperties wsfed) {
+    private static WsFederationCookieGenerator getCookieGeneratorForWsFederationConfig(final WsFederationDelegationProperties wsfed) {
         val cookie = wsfed.getCookie();
         val cipher = getCipherExecutorForWsFederationConfig(cookie);
         return new WsFederationCookieGenerator(new DefaultCasCookieValueManager(cipher, cookie), cookie);
     }
 
-    private CipherExecutor getCipherExecutorForWsFederationConfig(final WsFederationDelegatedCookieProperties cookie) {
+    private static CipherExecutor getCipherExecutorForWsFederationConfig(final WsFederationDelegatedCookieProperties cookie) {
         val crypto = cookie.getCrypto();
         if (crypto.isEnabled()) {
-            return new WsFederationCookieCipherExecutor(crypto.getEncryption().getKey(), crypto.getSigning().getKey(), crypto.getAlg());
+            return new WsFederationCookieCipherExecutor(crypto.getEncryption().getKey(), crypto.getSigning().getKey(),
+                crypto.getAlg(),
+                crypto.getSigning().getKeySize(),
+                crypto.getEncryption().getKeySize());
         }
         LOGGER.info("WsFederation delegated authentication cookie encryption/signing is turned off and "
             + "MAY NOT be safe in a production environment. "
@@ -134,17 +137,17 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
-
     @ConditionalOnMissingBean(name = "wsfedAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer wsfedAuthenticationEventExecutionPlanConfigurer() {
+        val personDirectory = casProperties.getPersonDirectory();
         return plan -> casProperties.getAuthn().getWsfed()
             .stream()
             .filter(wsfed -> StringUtils.isNotBlank(wsfed.getIdentityProviderUrl())
                 && StringUtils.isNotBlank(wsfed.getIdentityProviderIdentifier()))
             .forEach(wsfed -> {
-                final AuthenticationHandler handler =
-                    new WsFederationAuthenticationHandler(wsfed.getName(), servicesManager, wsfedPrincipalFactory());
+                val handler = new WsFederationAuthenticationHandler(wsfed.getName(), servicesManager.getIfAvailable(),
+                    wsfedPrincipalFactory(), wsfed.getOrder());
                 if (!wsfed.isAttributeResolverEnabled()) {
                     plan.registerAuthenticationHandler(handler);
                 } else {
@@ -154,10 +157,14 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
                         .findFirst()
                         .orElseThrow(() -> new RuntimeException("Unable to find configuration for identity provider " + wsfed.getIdentityProviderUrl()));
 
-                    val r = new WsFederationCredentialsToPrincipalResolver(attributeRepository, wsfedPrincipalFactory(),
-                        wsfed.getPrincipal().isReturnNull(),
-                        wsfed.getPrincipal().getPrincipalAttribute(),
-                        cfg);
+                    val principal = wsfed.getPrincipal();
+                    val principalAttribute = StringUtils.defaultIfBlank(principal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
+                    val r = new WsFederationCredentialsToPrincipalResolver(attributeRepository.getIfAvailable(),
+                        wsfedPrincipalFactory(),
+                        principal.isReturnNull() || personDirectory.isReturnNull(),
+                        principalAttribute,
+                        cfg,
+                        personDirectory.isUseExistingPrincipalId() || principal.isUseExistingPrincipalId());
                     plan.registerAuthenticationHandlerWithPrincipalResolver(handler, r);
                 }
             });

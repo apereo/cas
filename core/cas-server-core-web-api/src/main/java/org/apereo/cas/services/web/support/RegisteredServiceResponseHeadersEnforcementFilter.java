@@ -1,5 +1,6 @@
 package org.apereo.cas.services.web.support;
 
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.security.ResponseHeadersEnforcementFilter;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
@@ -25,6 +26,7 @@ import java.util.Optional;
 public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseHeadersEnforcementFilter {
     private final ServicesManager servicesManager;
     private final ArgumentExtractor argumentExtractor;
+    private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
     @Override
     protected void decideInsertContentSecurityPolicyHeader(final HttpServletResponse httpServletResponse, final HttpServletRequest httpServletRequest) {
@@ -50,7 +52,8 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
     protected void decideInsertXFrameOptionsHeader(final HttpServletResponse httpServletResponse, final HttpServletRequest httpServletRequest) {
         if (shouldHttpHeaderBeInjectedIntoResponse(httpServletRequest,
             RegisteredServiceProperties.HTTP_HEADER_ENABLE_XFRAME_OPTIONS)) {
-            super.insertXFrameOptionsHeader(httpServletResponse, httpServletRequest);
+            val xFrameOptions = getStringProperty(httpServletRequest, RegisteredServiceProperties.HTTP_HEADER_XFRAME_OPTIONS);
+            super.insertXFrameOptionsHeader(httpServletResponse, httpServletRequest, xFrameOptions);
         } else {
             super.decideInsertXFrameOptionsHeader(httpServletResponse, httpServletRequest);
         }
@@ -86,17 +89,23 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
         }
     }
 
-    private boolean shouldHttpHeaderBeInjectedIntoResponse(final HttpServletRequest request,
-                                                           final RegisteredServiceProperties property) {
+    private String getStringProperty(final HttpServletRequest request,
+                                     final RegisteredServiceProperties property) {
         val result = getRegisteredServiceFromRequest(request);
         if (result.isPresent()) {
             val properties = result.get().getProperties();
             if (properties.containsKey(property.getPropertyName())) {
                 val prop = properties.get(property.getPropertyName());
-                return BooleanUtils.toBoolean(prop.getValue());
+                return prop.getValue();
             }
         }
-        return false;
+        return null;
+    }
+
+    private boolean shouldHttpHeaderBeInjectedIntoResponse(final HttpServletRequest request,
+                                                           final RegisteredServiceProperties property) {
+        val result = getRegisteredServiceFromRequest(request);
+        return result.filter(registeredService -> property.isAssignedTo(registeredService, BooleanUtils::toBoolean)).isPresent();
     }
 
     /**
@@ -114,7 +123,8 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
     private Optional<RegisteredService> getRegisteredServiceFromRequest(final HttpServletRequest request) {
         val service = this.argumentExtractor.extractService(request);
         if (service != null) {
-            return Optional.ofNullable(this.servicesManager.findServiceBy(service));
+            val resolved = authenticationRequestServiceSelectionStrategies.resolveService(service);
+            return Optional.ofNullable(this.servicesManager.findServiceBy(resolved));
         }
         return Optional.empty();
     }

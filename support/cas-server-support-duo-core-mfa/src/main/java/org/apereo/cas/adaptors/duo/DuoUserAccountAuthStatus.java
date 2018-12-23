@@ -22,5 +22,9 @@ public enum DuoUserAccountAuthStatus {
     /**
      * The user is not known to Duo and needs to enroll.
      */
-    ENROLL
+    ENROLL,
+    /**
+     * Duo service was unavailable.
+     */
+    UNAVAILABLE
 }

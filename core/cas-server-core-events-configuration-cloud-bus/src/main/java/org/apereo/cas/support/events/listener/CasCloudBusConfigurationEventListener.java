@@ -27,7 +27,7 @@ public class CasCloudBusConfigurationEventListener {
      */
     @EventListener
     public void handleRefreshEvent(final RefreshRemoteApplicationEvent event) {
-        LOGGER.debug("Received event [{}]", event);
+        LOGGER.trace("Received event [{}]", event);
         configurationPropertiesEnvironmentManager.rebindCasConfigurationProperties(this.applicationContext);
     }
 }

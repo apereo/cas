@@ -4,6 +4,7 @@ dependencies {
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-tickets")
     implementation project(":support:cas-server-support-hazelcast-core")
+    implementation project(":support:cas-server-support-hazelcast")
     implementation project(":core:cas-server-core-configuration-api")
     
     api project(":api:cas-server-core-api-util")
@@ -14,6 +15,7 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core")
@@ -28,4 +30,5 @@ dependencies {
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-configuration")
+    
 }

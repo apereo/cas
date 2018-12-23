@@ -6,6 +6,7 @@ import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.io.SmsSender;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -26,13 +27,13 @@ public class TextMagicSmsConfiguration {
 
     @Autowired
     @Qualifier("noRedirectHttpClient")
-    private HttpClient httpClient;
+    private ObjectProvider<HttpClient> httpClient;
 
 
     @Bean
     public SmsSender smsSender() {
         val textMagic = casProperties.getSmsProvider().getTextMagic();
         return new TextMagicSmsSender(textMagic.getUsername(), textMagic.getToken(),
-            textMagic.getUrl(), httpClient);
+            textMagic.getUrl(), httpClient.getIfAvailable());
     }
 }

@@ -4,7 +4,6 @@ import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
-import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
 import org.apereo.cas.web.config.CasValidationConfiguration;
@@ -57,7 +56,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
 
     @Test
     public void verifyExistingPGT() {
-        final ProxyGrantingTicket ticket = new ProxyGrantingTicketImpl(
+        val ticket = new ProxyGrantingTicketImpl(
             WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, CoreAuthenticationTestUtils.getAuthentication(),
             new NeverExpiresExpirationPolicy());
         getTicketRegistry().addTicket(ticket);
@@ -72,7 +71,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
 
     @Test
     public void verifyNotAuthorizedPGT() {
-        final ProxyGrantingTicket ticket = new ProxyGrantingTicketImpl(WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID,
+        val ticket = new ProxyGrantingTicketImpl(WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID,
             CoreAuthenticationTestUtils.getAuthentication(),
             new NeverExpiresExpirationPolicy());
         getTicketRegistry().addTicket(ticket);

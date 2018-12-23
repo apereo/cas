@@ -2,10 +2,10 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 
-import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.springframework.context.ApplicationEventPublisher;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * This is {@link DynamoDbServiceRegistry}.
@@ -13,9 +13,13 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@RequiredArgsConstructor
 public class DynamoDbServiceRegistry extends AbstractServiceRegistry {
     private final DynamoDbServiceRegistryFacilitator dbTableService;
+
+    public DynamoDbServiceRegistry(final ApplicationEventPublisher eventPublisher, final DynamoDbServiceRegistryFacilitator dbTableService) {
+        super(eventPublisher);
+        this.dbTableService = dbTableService;
+    }
 
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
@@ -29,7 +33,7 @@ public class DynamoDbServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
-    public List<RegisteredService> load() {
+    public Collection<RegisteredService> load() {
         val svc = dbTableService.getAll();
         svc.forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));
         return svc;

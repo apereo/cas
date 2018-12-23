@@ -18,13 +18,14 @@ import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.util.CollectionUtils;
 
+import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -42,6 +43,7 @@ public class CasRegisteredServicesTestConfiguration {
     }
 
     @Bean
+    @SneakyThrows
     public List inMemoryRegisteredServices() {
         val l = new ArrayList();
 
@@ -69,8 +71,7 @@ public class CasRegisteredServicesTestConfiguration {
         val svc4 = RegisteredServiceTestUtils.getRegisteredService("https://example\\.com/high/.*");
         svc4.setEvaluationOrder(20);
         svc4.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
-        final HashSet handlers = CollectionUtils.wrapHashSet(AcceptUsersAuthenticationHandler.class.getSimpleName(),
-            TestOneTimePasswordAuthenticationHandler.class.getSimpleName());
+        val handlers = CollectionUtils.wrapHashSet(AcceptUsersAuthenticationHandler.class.getSimpleName(), TestOneTimePasswordAuthenticationHandler.class.getSimpleName());
         svc4.setRequiredHandlers(handlers);
         svc4.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
         l.add(svc4);
@@ -162,7 +163,9 @@ public class CasRegisteredServicesTestConfiguration {
         l.add(svc17);
 
         val svc18 = RegisteredServiceTestUtils.getRegisteredService("https://github.com/apereo/cas");
-        svc18.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy());
+        val accessStrategy = new DefaultRegisteredServiceAccessStrategy();
+        accessStrategy.setUnauthorizedRedirectUrl(new URI("https://www.github.com"));
+        svc18.setAccessStrategy(accessStrategy);
         svc18.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
         svc18.setEvaluationOrder(98);
         l.add(svc18);

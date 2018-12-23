@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;

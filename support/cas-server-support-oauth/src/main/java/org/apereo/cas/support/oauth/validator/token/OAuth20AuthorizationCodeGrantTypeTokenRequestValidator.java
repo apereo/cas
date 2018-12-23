@@ -2,6 +2,8 @@ package org.apereo.cas.support.oauth.validator.token;
 
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -24,14 +26,13 @@ import org.pac4j.core.profile.UserProfile;
  */
 @Slf4j
 public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends BaseOAuth20TokenRequestValidator {
-    private final ServicesManager servicesManager;
     private final TicketRegistry ticketRegistry;
 
     public OAuth20AuthorizationCodeGrantTypeTokenRequestValidator(final ServicesManager servicesManager,
                                                                   final TicketRegistry ticketRegistry,
-                                                                  final AuditableExecution registeredServiceAccessStrategyEnforcer) {
-        super(registeredServiceAccessStrategyEnforcer);
-        this.servicesManager = servicesManager;
+                                                                  final AuditableExecution registeredServiceAccessStrategyEnforcer,
+                                                                  final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory) {
+        super(registeredServiceAccessStrategyEnforcer, servicesManager, webApplicationServiceServiceFactory);
         this.ticketRegistry = ticketRegistry;
     }
 
@@ -78,6 +79,12 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
                     code, id, clientRegisteredService.getName(), redirectUri);
                 return false;
             }
+
+            if (!isGrantTypeSupportedBy(clientRegisteredService, grantType)) {
+                LOGGER.warn("Requested grant type [{}] is not authorized by service definition [{}]", getGrantType(), clientRegisteredService.getServiceId());
+                return false;
+            }
+
             return true;
         }
         LOGGER.warn("Access token request cannot be validated for grant type [{}} and client id [{}] given the redirect URI [{}]", grantType, clientId, redirectUri);

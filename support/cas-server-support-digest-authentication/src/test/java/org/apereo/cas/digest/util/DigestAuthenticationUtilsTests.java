@@ -2,8 +2,6 @@ package org.apereo.cas.digest.util;
 
 import lombok.val;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 import static org.junit.Assert.*;
 
@@ -13,7 +11,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RunWith(JUnit4.class)
 public class DigestAuthenticationUtilsTests {
 
     @Test

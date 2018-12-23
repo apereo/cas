@@ -7,6 +7,9 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustS
 import org.apereo.cas.trusted.config.MongoDbMultifactorAuthenticationTrustConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
+import org.apereo.cas.util.junit.ConditionalIgnore;
+import org.apereo.cas.util.junit.ConditionalIgnoreRule;
+import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
 import lombok.val;
 import org.junit.ClassRule;
@@ -39,7 +42,16 @@ import static org.junit.Assert.*;
     MultifactorAuthnTrustConfiguration.class,
     CasCoreAuditConfiguration.class,
     RefreshAutoConfiguration.class})
-@TestPropertySource(locations = "classpath:trustedmongo.properties")
+@TestPropertySource(properties = {
+    "cas.authn.mfa.trusted.mongo.databaseName=mfa-trusted",
+    "cas.authn.mfa.trusted.mongo.host=localhost",
+    "cas.authn.mfa.trusted.mongo.port=27017",
+    "cas.authn.mfa.trusted.mongo.userId=root",
+    "cas.authn.mfa.trusted.mongo.password=secret",
+    "cas.authn.mfa.trusted.mongo.authenticationDatabaseName=admin",
+    "cas.authn.mfa.trusted.mongo.dropCollection=true"
+    })
+@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 27017)
 public class MongoDbMultifactorAuthenticationTrustStorageTests {
 
     @ClassRule
@@ -47,6 +59,9 @@ public class MongoDbMultifactorAuthenticationTrustStorageTests {
 
     @Rule
     public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
+    @Rule
+    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
 
     @Autowired
     @Qualifier("mfaTrustEngine")

@@ -8,6 +8,7 @@ import lombok.val;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.Id;
@@ -79,7 +80,6 @@ public class JpaLockingStrategy implements LockingStrategy {
         if (lock == null) {
             return;
         }
-        // Only the current owner can release the lock
         val owner = lock.getUniqueId();
         if (!this.uniqueId.equals(owner)) {
             throw new IllegalStateException("Cannot release lock owned by " + owner);
@@ -157,7 +157,8 @@ public class JpaLockingStrategy implements LockingStrategy {
     @Table(name = "locks")
     @Getter
     @Setter
-    private static class Lock implements Serializable {
+    @Embeddable
+    public static class Lock implements Serializable {
 
         private static final long serialVersionUID = -5750740484289616656L;
         @Version

@@ -65,7 +65,7 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
     }
 
     @Override
-    public Set<MultifactorAuthenticationTrustRecord> get(final LocalDateTime onOrAfterDate) {
+    public Set<? extends MultifactorAuthenticationTrustRecord> get(final LocalDateTime onOrAfterDate) {
         expire(onOrAfterDate);
         return storage
             .values()
@@ -76,7 +76,7 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
     }
 
     @Override
-    public Set<MultifactorAuthenticationTrustRecord> get(final String principal) {
+    public Set<? extends MultifactorAuthenticationTrustRecord> get(final String principal) {
         return storage
             .values()
             .stream()
@@ -98,9 +98,8 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
         this.storage = new LinkedHashMap<>();
         if (ResourceUtils.doesResourceExist(location)) {
             try (Reader reader = new InputStreamReader(location.getInputStream(), StandardCharsets.UTF_8)) {
-                final TypeReference<Map<String, MultifactorAuthenticationTrustRecord>> personList =
-                    new TypeReference<>() {
-                    };
+                val personList = new TypeReference<Map<String, MultifactorAuthenticationTrustRecord>>() {
+                };
                 this.storage = MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
             }
         }

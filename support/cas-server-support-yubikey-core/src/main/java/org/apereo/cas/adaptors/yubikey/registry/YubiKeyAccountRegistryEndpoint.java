@@ -19,7 +19,7 @@ import java.util.Collection;
  * @since 6.0.0
  */
 @RequiredArgsConstructor
-@Endpoint(id = "yubikey-account-repository", enableByDefault = false)
+@Endpoint(id = "yubikeyAccountRepository", enableByDefault = false)
 public class YubiKeyAccountRegistryEndpoint {
     /**
      * The Registry.
@@ -35,10 +35,7 @@ public class YubiKeyAccountRegistryEndpoint {
     @ReadOperation
     public YubiKeyAccount get(@Selector final String username) {
         val result = registry.getAccount(username);
-        if (result.isPresent()) {
-            return result.get();
-        }
-        return null;
+        return result.orElse(null);
     }
 
     /**
@@ -47,7 +44,7 @@ public class YubiKeyAccountRegistryEndpoint {
      * @return the collection
      */
     @ReadOperation
-    public Collection<YubiKeyAccount> load() {
+    public Collection<? extends YubiKeyAccount> load() {
         return registry.getAccounts();
     }
 

@@ -18,7 +18,11 @@ import static org.junit.Assert.*;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@TestPropertySource(locations = "classpath:/ldapsvc.properties")
+@TestPropertySource(properties = {
+    "cas.serviceRegistry.ldap.ldapUrl=ldap://localhost:1390",
+    "cas.serviceRegistry.ldap.useSsl=false",
+    "cas.serviceRegistry.ldap.baseDn=dc=example,dc=org"
+})
 @ConditionalIgnore(condition = RunningStandaloneCondition.class)
 public class LdapServiceRegistryTests extends BaseLdapServiceRegistryTests {
 
@@ -35,7 +39,7 @@ public class LdapServiceRegistryTests extends BaseLdapServiceRegistryTests {
         getServiceRegistry().save(buildRegisteredServiceInstance(8080));
         val services = getServiceRegistry().load();
         assertFalse(services.isEmpty());
-        val rs = getServiceRegistry().findServiceById(services.get(0).getId());
+        val rs = getServiceRegistry().findServiceById(services.stream().findFirst().orElse(null).getId());
         val originalId = rs.getId();
         assertNotNull(rs);
         rs.setId(666);

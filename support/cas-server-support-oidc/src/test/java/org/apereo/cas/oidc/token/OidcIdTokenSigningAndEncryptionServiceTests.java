@@ -20,4 +20,12 @@ public class OidcIdTokenSigningAndEncryptionServiceTests extends AbstractOidcTes
         val result = oidcTokenSigningAndEncryptionService.encode(getOidcRegisteredService(), claims);
         assertNotNull(result);
     }
+
+    @Test
+    public void verifyValidationOperation() {
+        val claims = getClaims();
+        val result = oidcTokenSigningAndEncryptionService.encode(getOidcRegisteredService(true, false), claims);
+        val jwt = oidcTokenSigningAndEncryptionService.validate(result);
+        assertNotNull(jwt);
+    }
 }

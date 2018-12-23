@@ -41,10 +41,11 @@ public class DelegatedClientFactoryTests {
         configureIdentifiableClient(props.getWindowsLive());
         configureIdentifiableClient(props.getWordpress());
         configureIdentifiableClient(props.getYahoo());
+        configureIdentifiableClient(props.getHiOrgServer());
 
         val factory = new DelegatedClientFactory(props);
         val clients = factory.build();
-        assertEquals(13, clients.size());
+        assertEquals(14, clients.size());
     }
 
     @Test
@@ -113,7 +114,7 @@ public class DelegatedClientFactoryTests {
         assertEquals(4, clients.size());
     }
 
-    private void configureIdentifiableClient(final Pac4jIdentifiableClientProperties props) {
+    private static void configureIdentifiableClient(final Pac4jIdentifiableClientProperties props) {
         props.setId("TestId");
         props.setSecret("TestSecret");
     }

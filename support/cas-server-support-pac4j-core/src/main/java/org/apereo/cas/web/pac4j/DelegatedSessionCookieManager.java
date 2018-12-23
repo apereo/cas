@@ -55,6 +55,15 @@ public class DelegatedSessionCookieManager {
             val session = serializer.from(blob);
             session.forEach((k, v) -> webContext.getSessionStore().set(webContext, k, v));
         }
+        removeCookie(webContext);
+    }
+
+    /**
+     * Remove cookie.
+     *
+     * @param webContext the web context
+     */
+    public void removeCookie(final J2EContext webContext) {
         cookieGenerator.removeCookie(webContext.getResponse());
     }
 

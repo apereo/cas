@@ -112,6 +112,10 @@ public interface RegisteredServiceProperty extends Serializable {
          */
         HTTP_HEADER_ENABLE_XFRAME_OPTIONS("httpHeaderEnableXFrameOptions", "true"),
         /**
+         * Whether CAS should override xframe options headers into the response when this service is in process.
+         */
+        HTTP_HEADER_XFRAME_OPTIONS("httpHeaderXFrameOptions", "DENY"),
+        /**
          * Whether CAS should inject content security policy headers into the response when this service is in process.
          */
         HTTP_HEADER_ENABLE_CONTENT_SECURITY_POLICY("httpHeaderEnableContentSecurityPolicy", "true"),
@@ -119,7 +123,6 @@ public interface RegisteredServiceProperty extends Serializable {
          * Whether CAS should inject xss protection headers into the response when this service is in process.
          */
         HTTP_HEADER_ENABLE_XSS_PROTECTION("httpHeaderEnableXSSProtection", "true");
-
 
         private final String propertyName;
         private final String defaultValue;

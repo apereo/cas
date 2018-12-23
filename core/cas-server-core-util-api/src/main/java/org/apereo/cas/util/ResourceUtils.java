@@ -23,7 +23,6 @@ import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
 
 import static org.springframework.util.ResourceUtils.CLASSPATH_URL_PREFIX;
 import static org.springframework.util.ResourceUtils.FILE_URL_PREFIX;
@@ -89,6 +88,9 @@ public class ResourceUtils {
             try {
                 IOUtils.read(res.getInputStream(), new byte[1]);
                 return res.contentLength() > 0;
+            } catch (final FileNotFoundException e) {
+                LOGGER.trace(e.getMessage());
+                return false;
             } catch (final Exception e) {
                 LOGGER.trace(e.getMessage(), e);
                 return false;
@@ -156,6 +158,7 @@ public class ResourceUtils {
     public static Resource prepareClasspathResourceIfNeeded(final Resource resource,
                                                             final boolean isDirectory,
                                                             final String containsName) {
+        LOGGER.trace("Preparing possible classpath resource [{}]", resource);
         if (resource == null) {
             LOGGER.debug("No resource defined to prepare. Returning null");
             return null;
@@ -171,24 +174,29 @@ public class ResourceUtils {
         val casDirectory = new File(FileUtils.getTempDirectory(), "cas");
         val destination = new File(casDirectory, resource.getFilename());
         if (isDirectory) {
+            LOGGER.trace("Creating resource directory [{}]", destination);
             FileUtils.forceMkdir(destination);
             FileUtils.cleanDirectory(destination);
         } else if (destination.exists()) {
+            LOGGER.trace("Deleting resource directory [{}]", destination);
             FileUtils.forceDelete(destination);
         }
 
+        LOGGER.trace("Processing file [{}]", file);
         try (val jFile = new JarFile(file)) {
             val e = jFile.entries();
             while (e.hasMoreElements()) {
-                val entry = (ZipEntry) e.nextElement();
-                if (entry.getName().contains(resource.getFilename()) && entry.getName().contains(containsName)) {
+                val entry = e.nextElement();
+                val name = entry.getName();
+                LOGGER.trace("Comparing [{}] against [{}] and pattern [{}]", name, resource.getFilename(), containsName);
+                if (name.contains(resource.getFilename()) && RegexUtils.find(containsName, name)) {
                     try (val stream = jFile.getInputStream(entry)) {
                         var copyDestination = destination;
                         if (isDirectory) {
-                            val entryFileName = new File(entry.getName());
+                            val entryFileName = new File(name);
                             copyDestination = new File(destination, entryFileName.getName());
                         }
-
+                        LOGGER.trace("Copying resource entry [{}] to [{}]", name, copyDestination);
                         try (val writer = Files.newBufferedWriter(copyDestination.toPath(), StandardCharsets.UTF_8)) {
                             IOUtils.copy(stream, writer, StandardCharsets.UTF_8);
                         }

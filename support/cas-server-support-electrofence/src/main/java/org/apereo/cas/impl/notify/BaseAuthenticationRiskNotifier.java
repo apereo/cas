@@ -7,8 +7,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This is {@link BaseAuthenticationRiskNotifier}.
@@ -18,13 +18,13 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @Setter
 @Getter
+@RequiredArgsConstructor
 public abstract class BaseAuthenticationRiskNotifier implements AuthenticationRiskNotifier {
 
     /**
      * Cas properties.
      */
-    @Autowired
-    protected CasConfigurationProperties casProperties;
+    protected final CasConfigurationProperties casProperties;
 
     /**
      * The Authentication.

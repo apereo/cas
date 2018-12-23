@@ -54,7 +54,7 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
     }
 
     @Override
-    public Set<MultifactorAuthenticationTrustRecord> get(final LocalDateTime onOrAfterDate) {
+    public Set<? extends MultifactorAuthenticationTrustRecord> get(final LocalDateTime onOrAfterDate) {
         try {
             val query = this.entityManager
                 .createQuery("SELECT r FROM " + TABLE_NAME + " r where r.recordDate >= :date", MultifactorAuthenticationTrustRecord.class)
@@ -68,7 +68,7 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
     }
 
     @Override
-    public Set<MultifactorAuthenticationTrustRecord> get(final String principal) {
+    public Set<? extends MultifactorAuthenticationTrustRecord> get(final String principal) {
         try {
             val query = this.entityManager
                 .createQuery("SELECT r FROM " + TABLE_NAME + " r where r.principal = :principal", MultifactorAuthenticationTrustRecord.class)

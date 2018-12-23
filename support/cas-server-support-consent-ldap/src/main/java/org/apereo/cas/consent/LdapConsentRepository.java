@@ -90,7 +90,7 @@ public class LdapConsentRepository implements ConsentRepository {
     }
 
     @Override
-    public Collection<ConsentDecision> findConsentDecisions(final String principal) {
+    public Collection<? extends ConsentDecision> findConsentDecisions(final String principal) {
         val entry = readConsentEntry(principal);
         if (entry != null) {
             val consentDecisions = entry.getAttribute(this.ldap.getConsentAttributeName());
@@ -106,7 +106,7 @@ public class LdapConsentRepository implements ConsentRepository {
     }
 
     @Override
-    public Collection<ConsentDecision> findConsentDecisions() {
+    public Collection<? extends ConsentDecision> findConsentDecisions() {
         val entries = readConsentEntries();
         if (entries != null && !entries.isEmpty()) {
             val decisions = new HashSet<ConsentDecision>();
@@ -169,7 +169,7 @@ public class LdapConsentRepository implements ConsentRepository {
      * @param decision    new decision
      * @return new decision set
      */
-    private Set<String> mergeDecision(final LdapAttribute ldapConsent, final ConsentDecision decision) {
+    private static Set<String> mergeDecision(final LdapAttribute ldapConsent, final ConsentDecision decision) {
         if (decision.getId() < 0) {
             decision.setId(System.currentTimeMillis());
         }
@@ -200,7 +200,7 @@ public class LdapConsentRepository implements ConsentRepository {
      * @param decisionId  the decision Id
      * @return the new decision set
      */
-    private Set<String> removeDecision(final LdapAttribute ldapConsent, final long decisionId) {
+    private static Set<String> removeDecision(final LdapAttribute ldapConsent, final long decisionId) {
         val result = new HashSet<String>();
         if (ldapConsent.size() != 0) {
             ldapConsent.getStringValues()

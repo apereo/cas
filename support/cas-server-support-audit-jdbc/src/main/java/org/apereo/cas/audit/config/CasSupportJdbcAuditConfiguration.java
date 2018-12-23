@@ -1,7 +1,7 @@
 package org.apereo.cas.audit.config;
 
 import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
-import org.apereo.cas.audit.entity.AuditTrailEntity;
+import org.apereo.cas.audit.spi.entity.AuditTrailEntity;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.audit.AuditJdbcProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
@@ -56,7 +56,7 @@ public class CasSupportJdbcAuditConfiguration {
         return t;
     }
 
-    private String getAuditTableNameFrom(final AuditJdbcProperties jdbc) {
+    private static String getAuditTableNameFrom(final AuditJdbcProperties jdbc) {
         var tableName = AuditTrailEntity.AUDIT_TRAIL_TABLE_NAME;
         if (StringUtils.isNotBlank(jdbc.getDefaultSchema())) {
             tableName = jdbc.getDefaultSchema().concat(".").concat(tableName);

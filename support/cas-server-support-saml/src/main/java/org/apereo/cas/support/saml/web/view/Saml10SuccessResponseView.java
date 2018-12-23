@@ -1,7 +1,6 @@
 package org.apereo.cas.support.saml.web.view;
 
-import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.authentication.AuthenticationAttributeReleasePolicy;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
@@ -9,6 +8,8 @@ import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopu
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
+import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -37,15 +38,11 @@ import java.util.Map;
  */
 @Slf4j
 public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
-
-
     private final String issuer;
-    private final String rememberMeAttributeName;
     private final String defaultAttributeNamespace;
 
     public Saml10SuccessResponseView(final ProtocolAttributeEncoder protocolAttributeEncoder,
                                      final ServicesManager servicesManager,
-                                     final String authenticationContextAttribute,
                                      final Saml10ObjectBuilder samlObjectBuilder,
                                      final ArgumentExtractor samlArgumentExtractor,
                                      final String encoding,
@@ -53,11 +50,13 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
                                      final int issueLength,
                                      final String issuer,
                                      final String defaultAttributeNamespace,
-                                     final AuthenticationAttributeReleasePolicy authAttrReleasePolicy) {
-        super(true, protocolAttributeEncoder, servicesManager, authenticationContextAttribute, samlObjectBuilder,
-            samlArgumentExtractor, encoding, skewAllowance, issueLength, authAttrReleasePolicy);
+                                     final AuthenticationAttributeReleasePolicy authAttrReleasePolicy,
+                                     final AuthenticationServiceSelectionPlan serviceSelectionStrategy,
+                                     final CasProtocolAttributesRenderer attributesRenderer) {
+        super(true, protocolAttributeEncoder, servicesManager, samlObjectBuilder,
+            samlArgumentExtractor, encoding, skewAllowance, issueLength, authAttrReleasePolicy,
+            serviceSelectionStrategy, attributesRenderer);
         this.issuer = issuer;
-        this.rememberMeAttributeName = CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME;
         this.defaultAttributeNamespace = defaultAttributeNamespace;
     }
 
@@ -106,28 +105,21 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
 
     /**
      * Prepare saml attributes. Combines both principal and authentication
-     * attributes. If the authentication is to be remembered, uses {@link #rememberMeAttributeName}
-     * for the remember-me attribute name.
+     * attributes.
      *
      * @param model the model
      * @return the final map
      * @since 4.1.0
      */
     private Map<String, Object> prepareSamlAttributes(final Map<String, Object> model, final Service service) {
-        val authnAttributes = authenticationAttributeReleasePolicy
-            .getAuthenticationAttributesForRelease(getPrimaryAuthenticationFrom(model));
-        if (isRememberMeAuthentication(model)) {
-            authnAttributes.put(this.rememberMeAttributeName, Boolean.TRUE.toString());
-        }
+        val registeredService = this.servicesManager.findServiceBy(service);
+
+        val authnAttributes = getCasProtocolAuthenticationAttributes(model, registeredService);
         LOGGER.debug("Retrieved authentication attributes [{}] from the model", authnAttributes);
 
-        val registeredService = this.servicesManager.findServiceBy(service);
         val attributesToReturn = new HashMap<String, Object>();
         attributesToReturn.putAll(getPrincipalAttributesAsMultiValuedAttributes(model));
         attributesToReturn.putAll(authnAttributes);
-
-        decideIfCredentialPasswordShouldBeReleasedAsAttribute(attributesToReturn, model, registeredService);
-        decideIfProxyGrantingTicketShouldBeReleasedAsAttribute(attributesToReturn, model, registeredService);
 
         LOGGER.debug("Beginning to encode attributes [{}] for service [{}]", attributesToReturn, registeredService.getServiceId());
         val finalAttributes = this.protocolAttributeEncoder.encodeAttributes(attributesToReturn, registeredService);

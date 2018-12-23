@@ -4,8 +4,8 @@ dependencies {
     api project(":api:cas-server-core-api-events")
     api project(":api:cas-server-core-api-audit")
     
-    implementation libraries.pac4j
-    implementation libraries.caffein
+
+    implementation libraries.nimbus
 
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-util-api")
@@ -35,4 +35,5 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
 }

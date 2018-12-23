@@ -2,15 +2,15 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 
-import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.regex.Pattern;
 
 /**
@@ -25,11 +25,17 @@ import java.util.regex.Pattern;
  */
 @Slf4j
 @ToString
-@RequiredArgsConstructor
 public class MongoDbServiceRegistry extends AbstractServiceRegistry {
 
     private final MongoOperations mongoTemplate;
     private final String collectionName;
+
+    public MongoDbServiceRegistry(final ApplicationEventPublisher eventPublisher, final MongoOperations mongoTemplate,
+                                  final String collectionName) {
+        super(eventPublisher);
+        this.mongoTemplate = mongoTemplate;
+        this.collectionName = collectionName;
+    }
 
     @Override
     public boolean delete(final RegisteredService svc) {
@@ -53,7 +59,7 @@ public class MongoDbServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
-    public List<RegisteredService> load() {
+    public Collection<RegisteredService> load() {
         val list = this.mongoTemplate.findAll(RegisteredService.class, this.collectionName);
         list.forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));
         return list;

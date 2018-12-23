@@ -25,6 +25,7 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
@@ -60,7 +61,7 @@ public class ValidateEndpointCommand {
                     x509TrustManagers.add(x509TrustManager);
                 }
             }
-            return x509TrustManagers.toArray(new X509TrustManager[]{});
+            return x509TrustManagers.toArray(X509TrustManager[]::new);
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);
         }
@@ -91,7 +92,7 @@ public class ValidateEndpointCommand {
             LOGGER.info("Setting connection timeout to [{}]", timeout);
             conn.setConnectTimeout(timeout);
 
-            try (val reader = new InputStreamReader(conn.getInputStream(), "UTF-8");
+            try (val reader = new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8);
                  val in = new BufferedReader(reader)) {
                 in.readLine();
 
@@ -110,9 +111,9 @@ public class ValidateEndpointCommand {
         }
     }
 
-    private URLConnection createConnection(final String url, final String proxy) throws Exception {
+    private static URLConnection createConnection(final String url, final String proxy) throws Exception {
         val constructedUrl = new URL(url);
-        val conn = FunctionUtils.doIf(StringUtils.isNotBlank(proxy),
+        return FunctionUtils.doIf(StringUtils.isNotBlank(proxy),
             Unchecked.supplier(() -> {
                 val proxyUrl = new URL(proxy);
                 LOGGER.info("Using proxy address [{}]", proxy);
@@ -121,10 +122,9 @@ public class ValidateEndpointCommand {
             }),
             Unchecked.supplier(constructedUrl::openConnection))
             .get();
-        return conn;
     }
 
-    private String consolidateExceptionMessages(final Throwable throwable) {
+    private static String consolidateExceptionMessages(final Throwable throwable) {
         val stringBuilder = new StringBuilder();
 
         var pointer = throwable;
@@ -139,7 +139,7 @@ public class ValidateEndpointCommand {
         return stringBuilder.toString();
     }
 
-    private void testBadTlsConnection(final String url, final String proxy) {
+    private static void testBadTlsConnection(final String url, final String proxy) {
         try {
             val urlConnection = createConnection(url, proxy);
             if (!(urlConnection instanceof HttpsURLConnection)) {
@@ -149,10 +149,9 @@ public class ValidateEndpointCommand {
 
             val httpsConnection = (HttpsURLConnection) urlConnection;
 
-            // Setting our own Trust Manager so the connection completes and we can examine the server cert chain.
             httpsConnection.setSSLSocketFactory(getTheAllTrustingSSLContext().getSocketFactory());
 
-            try (val reader = new InputStreamReader(httpsConnection.getInputStream(), "UTF-8")) {
+            try (val reader = new InputStreamReader(httpsConnection.getInputStream(), StandardCharsets.UTF_8)) {
                 tlsConnectionReport(httpsConnection);
             }
         } catch (final Exception e) {
@@ -160,7 +159,7 @@ public class ValidateEndpointCommand {
         }
     }
 
-    private void tlsConnectionReport(final HttpsURLConnection httpsConnection) {
+    private static void tlsConnectionReport(final HttpsURLConnection httpsConnection) {
         val systemTrustManagers = getSystemTrustManagers();
 
         final Certificate[] certificates;
@@ -192,7 +191,7 @@ public class ValidateEndpointCommand {
         }
     }
 
-    private String checkTrustedCertStatus(final X509Certificate certificate, final X509TrustManager[] trustManagers) {
+    private static String checkTrustedCertStatus(final X509Certificate certificate, final X509TrustManager[] trustManagers) {
 
         for (val trustManager : trustManagers) {
             for (val trustedCert : trustManager.getAcceptedIssuers()) {
@@ -210,7 +209,7 @@ public class ValidateEndpointCommand {
     }
 
     @SneakyThrows
-    private SSLContext getTheAllTrustingSSLContext() {
+    private static SSLContext getTheAllTrustingSSLContext() {
         val sslContext = SSLContext.getInstance("TLS");
         sslContext.init(null, new TrustManager[]{new X509TrustManager() {
 

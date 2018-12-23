@@ -17,7 +17,7 @@ import java.util.Map;
  */
 @NoArgsConstructor
 public class DefaultTicketFactory implements TicketFactory {
-    private final Map factoryMap = new HashMap<String, Object>();
+    private final Map<String, Object> factoryMap = new HashMap<>();
 
     @Override
     public TicketFactory get(final Class<? extends Ticket> clazz) {
@@ -31,7 +31,7 @@ public class DefaultTicketFactory implements TicketFactory {
      * @param factory     the factory
      * @return the default ticket factory
      */
-    public DefaultTicketFactory addTicketFactory(@NonNull final Class<? extends Ticket> ticketClass, @NonNull final TicketFactory factory) {
+    public DefaultTicketFactory addTicketFactory(final @NonNull Class<? extends Ticket> ticketClass, final @NonNull TicketFactory factory) {
         this.factoryMap.put(ticketClass.getCanonicalName(), factory);
         return this;
     }

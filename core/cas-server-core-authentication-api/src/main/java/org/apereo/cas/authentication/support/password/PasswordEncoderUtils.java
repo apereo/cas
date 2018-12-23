@@ -33,7 +33,7 @@ public class PasswordEncoderUtils {
     public static PasswordEncoder newPasswordEncoder(final PasswordEncoderProperties properties) {
         val type = properties.getType();
         if (StringUtils.isBlank(type)) {
-            LOGGER.debug("No password encoder type is defined, and so none shall be created");
+            LOGGER.trace("No password encoder type is defined, and so none shall be created");
             return NoOpPasswordEncoder.getInstance();
         }
 
@@ -77,13 +77,13 @@ public class PasswordEncoderUtils {
                 return new SCryptPasswordEncoder();
             case PBKDF2:
                 if (StringUtils.isBlank(properties.getSecret())) {
-                    LOGGER.debug("Creating PBKDF2 encoder without secret");
+                    LOGGER.trace("Creating PBKDF2 encoder without secret");
                     return new Pbkdf2PasswordEncoder();
                 }
                 return new Pbkdf2PasswordEncoder(properties.getSecret(), properties.getStrength(), HASH_WIDTH);
             case NONE:
             default:
-                LOGGER.debug("No password encoder shall be created given the requested encoder type [{}]", type);
+                LOGGER.trace("No password encoder shall be created given the requested encoder type [{}]", type);
                 return NoOpPasswordEncoder.getInstance();
         }
     }

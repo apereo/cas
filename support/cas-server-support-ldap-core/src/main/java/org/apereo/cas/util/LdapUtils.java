@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.support.Beans;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -56,7 +57,6 @@ import org.ldaptive.auth.FormatDnResolver;
 import org.ldaptive.auth.PooledBindAuthenticationHandler;
 import org.ldaptive.auth.PooledCompareAuthenticationHandler;
 import org.ldaptive.auth.PooledSearchDnResolver;
-import org.ldaptive.auth.PooledSearchEntryResolver;
 import org.ldaptive.control.PasswordPolicyControl;
 import org.ldaptive.extended.PasswordModifyOperation;
 import org.ldaptive.extended.PasswordModifyRequest;
@@ -86,6 +86,8 @@ import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.QualityOfProtection;
 import org.ldaptive.sasl.SaslConfig;
 import org.ldaptive.sasl.SecurityStrength;
+import org.ldaptive.ssl.AllowAnyHostnameVerifier;
+import org.ldaptive.ssl.DefaultHostnameVerifier;
 import org.ldaptive.ssl.KeyStoreCredentialConfig;
 import org.ldaptive.ssl.SslConfig;
 import org.ldaptive.ssl.X509CredentialConfig;
@@ -172,7 +174,7 @@ public class LdapUtils {
      */
     public static Long getLong(final LdapEntry entry, final String attribute, final Long nullValue) {
         val v = getString(entry, attribute, nullValue.toString());
-        if (v != null && NumberUtils.isCreatable(v)) {
+        if (NumberUtils.isCreatable(v)) {
             return Long.valueOf(v);
         }
         return nullValue;
@@ -324,15 +326,14 @@ public class LdapUtils {
                 LOGGER.debug("Executing password modification op for active directory based on "
                     + "[https://support.microsoft.com/en-us/kb/269190]");
                 val operation = new ModifyOperation(modifyConnection);
-                final Response response = operation.execute(new ModifyRequest(currentDn,
-                    new AttributeModification(AttributeModificationType.REPLACE, new UnicodePwdAttribute(newPassword))));
+                val response = operation.execute(new ModifyRequest(currentDn, new AttributeModification(AttributeModificationType.REPLACE, new UnicodePwdAttribute(newPassword))));
                 LOGGER.debug("Result code [{}], message: [{}]", response.getResult(), response.getMessage());
                 return response.getResultCode() == ResultCode.SUCCESS;
             }
 
             LOGGER.debug("Executing password modification op for generic LDAP");
             val operation = new PasswordModifyOperation(modifyConnection);
-            final Response response = operation.execute(new PasswordModifyRequest(currentDn,
+            val response = operation.execute(new PasswordModifyRequest(currentDn,
                 StringUtils.isNotBlank(oldPassword) ? new Credential(oldPassword) : null,
                 new Credential(newPassword)));
             LOGGER.debug("Result code [{}], message: [{}]", response.getResult(), response.getMessage());
@@ -358,7 +359,7 @@ public class LdapUtils {
             val mods = attributes.entrySet()
                 .stream()
                 .map(entry -> {
-                    val values = entry.getValue().toArray(new String[]{});
+                    val values = entry.getValue().toArray(ArrayUtils.EMPTY_STRING_ARRAY);
                     val attr = new LdapAttribute(entry.getKey(), values);
                     return new AttributeModification(AttributeModificationType.REPLACE, attr);
                 })
@@ -490,7 +491,7 @@ public class LdapUtils {
     }
 
     /**
-     * Constructs a new search filter using {@link SearchExecutor#searchFilter} as a template and
+     * Constructs a new search filter using {@link SearchExecutor#getSearchFilter()} as a template and
      * the username as a parameter.
      *
      * @param filterQuery the query filter
@@ -501,7 +502,7 @@ public class LdapUtils {
     }
 
     /**
-     * Constructs a new search filter using {@link SearchExecutor#searchFilter} as a template and
+     * Constructs a new search filter using {@link SearchExecutor#getSearchFilter()} as a template and
      * the username as a parameter.
      *
      * @param filterQuery the query filter
@@ -513,7 +514,7 @@ public class LdapUtils {
     }
 
     /**
-     * Constructs a new search filter using {@link SearchExecutor#searchFilter} as a template and
+     * Constructs a new search filter using {@link SearchExecutor#getSearchFilter()} as a template and
      * the username as a parameter.
      *
      * @param filterQuery the query filter
@@ -588,7 +589,7 @@ public class LdapUtils {
     public static SearchExecutor newLdaptiveSearchExecutor(final String baseDn, final String filterQuery,
                                                            final List<String> params,
                                                            final List<String> returnAttributes) {
-        return newLdaptiveSearchExecutor(baseDn, filterQuery, params, returnAttributes.toArray(new String[]{}));
+        return newLdaptiveSearchExecutor(baseDn, filterQuery, params, returnAttributes.toArray(ArrayUtils.EMPTY_STRING_ARRAY));
     }
 
     /**
@@ -659,7 +660,10 @@ public class LdapUtils {
         resolver.setAllowMultipleDns(l.isAllowMultipleDns());
         resolver.setConnectionFactory(connectionFactoryForSearch);
         resolver.setUserFilter(l.getSearchFilter());
-        resolver.setReferralHandler(new SearchReferralHandler());
+
+        if (l.isFollowReferrals()) {
+            resolver.setReferralHandler(new SearchReferralHandler());
+        }
 
         if (StringUtils.isNotBlank(l.getDerefAliases())) {
             resolver.setDerefAliases(DerefAliases.valueOf(l.getDerefAliases()));
@@ -679,6 +683,17 @@ public class LdapUtils {
         if (StringUtils.isBlank(l.getDnFormat())) {
             throw new IllegalArgumentException("Dn format cannot be empty/blank for direct bind authentication");
         }
+        return getAuthenticatorViaDnFormat(l);
+    }
+
+    private static Authenticator getActiveDirectoryAuthenticator(final AbstractLdapAuthenticationProperties l) {
+        if (StringUtils.isBlank(l.getDnFormat())) {
+            throw new IllegalArgumentException("Dn format cannot be empty/blank for active directory authentication");
+        }
+        return getAuthenticatorViaDnFormat(l);
+    }
+
+    private static Authenticator getAuthenticatorViaDnFormat(final AbstractLdapAuthenticationProperties l) {
         val resolver = new FormatDnResolver(l.getDnFormat());
         val authenticator = new Authenticator(resolver, getPooledBindAuthenticationHandler(l, newLdaptivePooledConnectionFactory(l)));
 
@@ -686,19 +701,6 @@ public class LdapUtils {
             authenticator.setEntryResolver(newLdaptiveSearchEntryResolver(l, newLdaptivePooledConnectionFactory(l)));
         }
         return authenticator;
-    }
-
-    private static Authenticator getActiveDirectoryAuthenticator(final AbstractLdapAuthenticationProperties l) {
-        if (StringUtils.isBlank(l.getDnFormat())) {
-            throw new IllegalArgumentException("Dn format cannot be empty/blank for active directory authentication");
-        }
-        val resolver = new FormatDnResolver(l.getDnFormat());
-        val authn = new Authenticator(resolver, getPooledBindAuthenticationHandler(l, newLdaptivePooledConnectionFactory(l)));
-
-        if (l.isEnhanceWithEntryResolver()) {
-            authn.setEntryResolver(newLdaptiveSearchEntryResolver(l, newLdaptivePooledConnectionFactory(l)));
-        }
-        return authn;
     }
 
     private static PooledBindAuthenticationHandler getPooledBindAuthenticationHandler(final AbstractLdapAuthenticationProperties l,
@@ -742,7 +744,7 @@ public class LdapUtils {
 
         val urls = l.getLdapUrl().contains(" ")
             ? l.getLdapUrl()
-            : Arrays.stream(l.getLdapUrl().split(",")).collect(Collectors.joining(" "));
+            : String.join(" ", l.getLdapUrl().split(","));
         LOGGER.debug("Transformed LDAP urls from [{}] to [{}]", l.getLdapUrl(), urls);
         cc.setLdapUrl(urls);
 
@@ -752,8 +754,7 @@ public class LdapUtils {
         cc.setResponseTimeout(Beans.newDuration(l.getResponseTimeout()));
 
         if (StringUtils.isNotBlank(l.getConnectionStrategy())) {
-            val strategy =
-                AbstractLdapProperties.LdapConnectionStrategy.valueOf(l.getConnectionStrategy());
+            val strategy = AbstractLdapProperties.LdapConnectionStrategy.valueOf(l.getConnectionStrategy());
             switch (strategy) {
                 case RANDOM:
                     cc.setConnectionStrategy(new RandomConnectionStrategy());
@@ -791,6 +792,20 @@ public class LdapUtils {
             LOGGER.debug("Creating LDAP SSL configuration via the native JVM truststore");
             cc.setSslConfig(new SslConfig());
         }
+
+        val sslConfig = cc.getSslConfig();
+        if (sslConfig != null) {
+            switch (l.getHostnameVerifier()) {
+                case ANY:
+                    sslConfig.setHostnameVerifier(new AllowAnyHostnameVerifier());
+                    break;
+                case DEFAULT:
+                default:
+                    sslConfig.setHostnameVerifier(new DefaultHostnameVerifier());
+                    break;
+            }
+        }
+
         if (StringUtils.isNotBlank(l.getSaslMechanism())) {
             LOGGER.debug("Creating LDAP SASL mechanism via [{}]", l.getSaslMechanism());
 
@@ -820,18 +835,16 @@ public class LdapUtils {
     }
 
     private static SaslConfig getSaslConfigFrom(final AbstractLdapProperties l) {
-        if ((Mechanism.valueOf(l.getSaslMechanism())) == Mechanism.DIGEST_MD5) {
+        if (Mechanism.valueOf(l.getSaslMechanism()) == Mechanism.DIGEST_MD5) {
             val sc = new DigestMd5Config();
-            ((DigestMd5Config) sc).setRealm(l.getSaslRealm());
+            sc.setRealm(l.getSaslRealm());
             return sc;
         }
-        if ((Mechanism.valueOf(l.getSaslMechanism())) == Mechanism.CRAM_MD5) {
-            val sc = new CramMd5Config();
-            return sc;
+        if (Mechanism.valueOf(l.getSaslMechanism()) == Mechanism.CRAM_MD5) {
+            return new CramMd5Config();
         }
-        if ((Mechanism.valueOf(l.getSaslMechanism())) == Mechanism.EXTERNAL) {
-            val sc = new ExternalConfig();
-            return sc;
+        if (Mechanism.valueOf(l.getSaslMechanism()) == Mechanism.EXTERNAL) {
+            return new ExternalConfig();
         }
         val sc = new GssApiConfig();
         sc.setRealm(l.getSaslRealm());
@@ -902,8 +915,11 @@ public class LdapUtils {
                 val compareRequest = new CompareRequest();
                 compareRequest.setDn(l.getValidator().getDn());
                 compareRequest.setAttribute(new LdapAttribute(l.getValidator().getAttributeName(),
-                    l.getValidator().getAttributeValues().toArray(new String[]{})));
-                compareRequest.setReferralHandler(new SearchReferralHandler());
+                    l.getValidator().getAttributeValues().toArray(ArrayUtils.EMPTY_STRING_ARRAY)));
+
+                if (l.isFollowReferrals()) {
+                    compareRequest.setReferralHandler(new SearchReferralHandler());
+                }
                 cp.setValidator(new CompareValidator(compareRequest));
                 break;
             case "none":
@@ -917,7 +933,9 @@ public class LdapUtils {
                 searchRequest.setReturnAttributes(ReturnAttributes.NONE.value());
                 searchRequest.setSearchScope(SearchScope.valueOf(l.getValidator().getScope()));
                 searchRequest.setSizeLimit(1L);
-                searchRequest.setReferralHandler(new SearchReferralHandler());
+                if (l.isFollowReferrals()) {
+                    searchRequest.setReferralHandler(new SearchReferralHandler());
+                }
                 cp.setValidator(new SearchValidator(searchRequest));
                 break;
         }
@@ -940,7 +958,7 @@ public class LdapUtils {
                         cp.setPassivator(new BindPassivator(bindRequest));
                         LOGGER.debug("Created [{}] passivator for [{}]", l.getPoolPassivator(), l.getLdapUrl());
                     } else {
-                        final List values = Arrays.stream(AbstractLdapProperties.LdapConnectionPoolPassivator.values())
+                        val values = Arrays.stream(AbstractLdapProperties.LdapConnectionPoolPassivator.values())
                             .filter(v -> v != AbstractLdapProperties.LdapConnectionPoolPassivator.BIND)
                             .collect(Collectors.toList());
                         LOGGER.warn("[{}] pool passivator could not be created for [{}] given bind credentials are not specified. "
@@ -976,36 +994,41 @@ public class LdapUtils {
             throw new IllegalArgumentException("To create a search entry resolver, user filter cannot be empty/blank");
         }
 
-        val entryResolver = new PooledSearchEntryResolver();
+        val entryResolver = new BinaryAttributeAwarePooledSearchEntryResolver();
         entryResolver.setBaseDn(l.getBaseDn());
         entryResolver.setUserFilter(l.getSearchFilter());
         entryResolver.setSubtreeSearch(l.isSubtreeSearch());
         entryResolver.setConnectionFactory(factory);
+        entryResolver.setAllowMultipleEntries(l.isAllowMultipleEntries());
+        entryResolver.setBinaryAttributes(l.getBinaryAttributes());
+
         if (StringUtils.isNotBlank(l.getDerefAliases())) {
             entryResolver.setDerefAliases(DerefAliases.valueOf(l.getDerefAliases()));
         }
-
         val handlers = new ArrayList<SearchEntryHandler>();
         l.getSearchEntryHandlers().forEach(h -> {
             switch (h.getType()) {
                 case CASE_CHANGE:
                     val eh = new CaseChangeEntryHandler();
-                    eh.setAttributeNameCaseChange(CaseChangeEntryHandler.CaseChange.valueOf(h.getCasChange().getAttributeNameCaseChange()));
-                    eh.setAttributeNames(h.getCasChange().getAttributeNames().toArray(new String[]{}));
-                    eh.setAttributeValueCaseChange(CaseChangeEntryHandler.CaseChange.valueOf(h.getCasChange().getAttributeValueCaseChange()));
-                    eh.setDnCaseChange(CaseChangeEntryHandler.CaseChange.valueOf(h.getCasChange().getDnCaseChange()));
+                    val caseChange = h.getCaseChange();
+                    eh.setAttributeNameCaseChange(CaseChangeEntryHandler.CaseChange.valueOf(caseChange.getAttributeNameCaseChange()));
+                    eh.setAttributeNames(caseChange.getAttributeNames().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
+                    eh.setAttributeValueCaseChange(CaseChangeEntryHandler.CaseChange.valueOf(caseChange.getAttributeValueCaseChange()));
+                    eh.setDnCaseChange(CaseChangeEntryHandler.CaseChange.valueOf(caseChange.getDnCaseChange()));
                     handlers.add(eh);
                     break;
                 case DN_ATTRIBUTE_ENTRY:
                     val ehd = new DnAttributeEntryHandler();
-                    ehd.setAddIfExists(h.getDnAttribute().isAddIfExists());
-                    ehd.setDnAttributeName(h.getDnAttribute().getDnAttributeName());
+                    val dnAttribute = h.getDnAttribute();
+                    ehd.setAddIfExists(dnAttribute.isAddIfExists());
+                    ehd.setDnAttributeName(dnAttribute.getDnAttributeName());
                     handlers.add(ehd);
                     break;
                 case MERGE:
                     val ehm = new MergeAttributeEntryHandler();
-                    ehm.setAttributeNames(h.getMergeAttribute().getAttributeNames().toArray(new String[]{}));
-                    ehm.setMergeAttributeName(h.getMergeAttribute().getMergeAttributeName());
+                    val mergeAttribute = h.getMergeAttribute();
+                    ehm.setAttributeNames(mergeAttribute.getAttributeNames().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
+                    ehm.setMergeAttributeName(mergeAttribute.getMergeAttributeName());
                     handlers.add(ehm);
                     break;
                 case OBJECT_GUID:
@@ -1016,16 +1039,17 @@ public class LdapUtils {
                     break;
                 case PRIMARY_GROUP:
                     val ehp = new PrimaryGroupIdHandler();
-                    ehp.setBaseDn(h.getPrimaryGroupId().getBaseDn());
-                    ehp.setGroupFilter(h.getPrimaryGroupId().getGroupFilter());
+                    val primaryGroupId = h.getPrimaryGroupId();
+                    ehp.setBaseDn(primaryGroupId.getBaseDn());
+                    ehp.setGroupFilter(primaryGroupId.getGroupFilter());
                     handlers.add(ehp);
                     break;
                 case RANGE_ENTRY:
                     handlers.add(new RangeEntryHandler());
                     break;
                 case RECURSIVE_ENTRY:
-                    handlers.add(new RecursiveEntryHandler(h.getRecursive().getSearchAttribute(),
-                        h.getRecursive().getMergeAttributes().toArray(new String[]{})));
+                    val recursive = h.getRecursive();
+                    handlers.add(new RecursiveEntryHandler(recursive.getSearchAttribute(), recursive.getMergeAttributes().toArray(ArrayUtils.EMPTY_STRING_ARRAY)));
                     break;
                 default:
                     break;
@@ -1034,10 +1058,11 @@ public class LdapUtils {
 
         if (!handlers.isEmpty()) {
             LOGGER.debug("Search entry handlers defined for the entry resolver of [{}] are [{}]", l.getLdapUrl(), handlers);
-            entryResolver.setSearchEntryHandlers(handlers.toArray(new SearchEntryHandler[]{}));
+            entryResolver.setSearchEntryHandlers(handlers.toArray(SearchEntryHandler[]::new));
         }
-        entryResolver.setReferralHandler(new SearchReferralHandler());
+        if (l.isFollowReferrals()) {
+            entryResolver.setReferralHandler(new SearchReferralHandler());
+        }
         return entryResolver;
     }
-
 }

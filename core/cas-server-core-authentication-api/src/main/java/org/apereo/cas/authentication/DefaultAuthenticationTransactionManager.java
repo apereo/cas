@@ -29,7 +29,7 @@ public class DefaultAuthenticationTransactionManager implements AuthenticationTr
         throws AuthenticationException {
         if (!authenticationTransaction.getCredentials().isEmpty()) {
             val authentication = this.authenticationManager.authenticate(authenticationTransaction);
-            LOGGER.debug("Successful authentication; Collecting authentication result [{}]", authentication);
+            LOGGER.trace("Successful authentication; Collecting authentication result [{}]", authentication);
             publishEvent(new CasAuthenticationTransactionCompletedEvent(this, authentication));
             authenticationResult.collect(authentication);
         } else {

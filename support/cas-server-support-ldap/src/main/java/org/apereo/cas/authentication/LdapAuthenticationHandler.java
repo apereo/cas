@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -10,6 +11,7 @@ import com.google.common.collect.Maps;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
@@ -88,7 +90,8 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @param strategy         the strategy
      */
     public LdapAuthenticationHandler(final String name, final ServicesManager servicesManager,
-                                     final PrincipalFactory principalFactory, final Integer order, final Authenticator authenticator,
+                                     final PrincipalFactory principalFactory, final Integer order,
+                                     final Authenticator authenticator,
                                      final AuthenticationPasswordPolicyHandlingStrategy strategy) {
         super(name, servicesManager, principalFactory, order);
         this.authenticator = authenticator;
@@ -251,7 +254,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 attributes.removeIf(authenticatorAttributes::contains);
             }
         }
-        this.authenticatedEntryAttributes = attributes.toArray(new String[0]);
+        this.authenticatedEntryAttributes = attributes.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
         LOGGER.debug("LDAP authentication entry attributes for the authentication request are [{}]", (Object[]) this.authenticatedEntryAttributes);
     }
 }

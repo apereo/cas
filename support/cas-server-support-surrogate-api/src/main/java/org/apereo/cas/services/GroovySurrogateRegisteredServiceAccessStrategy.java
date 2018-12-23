@@ -1,7 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.util.ScriptingUtils;
+import org.apereo.cas.util.scripting.ScriptingUtils;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -32,7 +32,7 @@ public class GroovySurrogateRegisteredServiceAccessStrategy extends BaseSurrogat
             try {
                 final Object[] args = {principal, principalAttributes, LOGGER};
                 val resource = ResourceUtils.getResourceFrom(this.groovyScript);
-                return ScriptingUtils.executeGroovyScript(resource, args, Boolean.class);
+                return ScriptingUtils.executeGroovyScript(resource, args, Boolean.class, true);
             } catch (final Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }

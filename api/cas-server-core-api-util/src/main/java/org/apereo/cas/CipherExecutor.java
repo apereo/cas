@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,16 @@ public interface CipherExecutor<I, O> {
      */
     String DEFAULT_CONTENT_ENCRYPTION_ALGORITHM =
         ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256;
+
+    /**
+     * Encryption key size for text data and ciphers.
+     */
+    int DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE = 256;
+
+    /**
+     * Signing key size for text data and ciphers.
+     */
+    int DEFAULT_STRINGABLE_SIGNING_KEY_SIZE = 512;
 
     /**
      * Factory method.
@@ -71,7 +82,7 @@ public interface CipherExecutor<I, O> {
      * @return the encrypted value or null
      */
     default O encode(final I value) {
-        return encode(value, new Object[]{});
+        return encode(value, ArrayUtils.EMPTY_OBJECT_ARRAY);
     }
 
     /**
@@ -90,7 +101,7 @@ public interface CipherExecutor<I, O> {
      * @return the decoded value or null
      */
     default O decode(final I value) {
-        return decode(value, new Object[]{});
+        return decode(value, ArrayUtils.EMPTY_OBJECT_ARRAY);
     }
 
     /**
@@ -100,14 +111,14 @@ public interface CipherExecutor<I, O> {
      * @param parameters the parameters
      * @return the map
      */
-    default Map<String, Object> decode(Map<String, Object> properties, final Object[] parameters) {
+    default Map<String, Object> decode(final Map<String, Object> properties, final Object[] parameters) {
         val decrypted = new HashMap<String, Object>();
         properties.forEach((key, value) -> {
             try {
-                LOGGER.debug("Attempting to decode key [{}]", key);
+                LOGGER.trace("Attempting to decode key [{}]", key);
                 val result = decode((I) value, parameters);
                 if (result != null) {
-                    LOGGER.debug("Decrypted key [{}] successfully", key);
+                    LOGGER.trace("Decrypted key [{}] successfully", key);
                     decrypted.put(key, result);
                 }
             } catch (final ClassCastException e) {

@@ -73,10 +73,7 @@ public class SamlServiceProviderProperties implements Serializable {
      * Settings related to Office365 acting as a SAML service provider.
      */
     private Office365 office365 = new Office365();
-    /**
-     * Settings related to TestShib acting as a SAML service provider.
-     */
-    private TestShib testShib = new TestShib();
+
     /**
      * Settings related to InCommon acting as a SAML service provider.
      */
@@ -374,7 +371,7 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = 5878458463269060163L;
 
         public Office365() {
-            setNameIdAttribute("scopedImmutableID");
+            setNameIdAttribute("objectGUID");
             addAttributes("IDPEmail", "ImmutableID");
             setSignResponses(false);
             setSignAssertions(true);
@@ -417,19 +414,6 @@ public class SamlServiceProviderProperties implements Serializable {
 
         public Tableau() {
             addAttributes(CommonAttributeNames.USERNAME.getAttributeName());
-        }
-    }
-
-    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
-    @Getter
-    @Setter
-    public static class TestShib extends AbstractSamlSPProperties {
-
-        private static final long serialVersionUID = -622256214333755377L;
-
-        public TestShib() {
-            //setMetadata("http://www.testshib.org/metadata/testshib-providers.xml");
-            addAttributes(CommonAttributeNames.EDU_PERSON_PRINCIPAL_NAME.getAttributeName());
         }
     }
 

@@ -37,8 +37,7 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
     /**
      * The pac4j profile creator used for authentication.
      */
-    @NonNull
-    protected ProfileCreator profileCreator = AuthenticatorProfileCreator.INSTANCE;
+    protected @NonNull ProfileCreator profileCreator = AuthenticatorProfileCreator.INSTANCE;
 
     public AbstractWrapperAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory, final Integer order) {
         super(name, servicesManager, principalFactory, order);
@@ -72,7 +71,7 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
             authenticator.validate(credentials, getWebContext());
             val profile = this.profileCreator.create(credentials, getWebContext());
             LOGGER.debug("profile: [{}]", profile);
-            return createResult(new ClientCredential(credentials, authenticator.getClass().getSimpleName()), profile);
+            return createResult(new ClientCredential(credentials, authenticator.getClass().getSimpleName()), profile, null);
         } catch (final Exception e) {
             LOGGER.error("Failed to validate credentials", e);
             throw new FailedLoginException("Failed to validate credentials: " + e.getMessage());

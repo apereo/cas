@@ -28,6 +28,7 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
         discoveryProperties.setIntrospectionSupportedAuthenticationMethods(oidc.getIntrospectionSupportedAuthenticationMethods());
         discoveryProperties.setGrantTypesSupported(oidc.getGrantTypesSupported());
         discoveryProperties.setIdTokenSigningAlgValuesSupported(oidc.getIdTokenSigningAlgValuesSupported());
+        discoveryProperties.setTokenEndpointAuthMethodsSupported(oidc.getTokenEndpointAuthMethodsSupported());
         return discoveryProperties;
     }
 

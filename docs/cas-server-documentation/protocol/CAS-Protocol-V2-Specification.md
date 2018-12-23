@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - CAS Protocol 2.0 Specification
+category: Protocols
 ---
 
 <a name="headTop"/>

@@ -16,7 +16,9 @@ import org.apereo.cas.support.spnego.authentication.principal.SpnegoPrincipalRes
 
 import jcifs.spnego.Authentication;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -45,11 +47,11 @@ public class SpnegoConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("attributeRepository")
-    private IPersonAttributeDao attributeRepository;
+    private ObjectProvider<IPersonAttributeDao> attributeRepository;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -92,17 +94,25 @@ public class SpnegoConfiguration {
     @ConditionalOnMissingBean(name = "spnegoHandler")
     public AuthenticationHandler spnegoHandler() {
         val spnegoProperties = casProperties.getAuthn().getSpnego();
-        return new JcifsSpnegoAuthenticationHandler(spnegoProperties.getName(), servicesManager, spnegoPrincipalFactory(),
-            spnegoAuthentications(), spnegoProperties.isPrincipalWithDomainName(), spnegoProperties.isNtlmAllowed());
+        return new JcifsSpnegoAuthenticationHandler(spnegoProperties.getName(),
+            servicesManager.getIfAvailable(),
+            spnegoPrincipalFactory(),
+            spnegoAuthentications(),
+            spnegoProperties.isPrincipalWithDomainName(),
+            spnegoProperties.isNtlmAllowed(),
+            spnegoProperties.getOrder());
     }
 
     @Bean
     @RefreshScope
     public AuthenticationHandler ntlmAuthenticationHandler() {
         val ntlmProperties = casProperties.getAuthn().getNtlm();
-        return new NtlmAuthenticationHandler(ntlmProperties.getName(), servicesManager, ntlmPrincipalFactory(),
+        return new NtlmAuthenticationHandler(ntlmProperties.getName(),
+            servicesManager.getIfAvailable(), ntlmPrincipalFactory(),
             ntlmProperties.isLoadBalance(),
-            ntlmProperties.getDomainController(), ntlmProperties.getIncludePattern());
+            ntlmProperties.getDomainController(),
+            ntlmProperties.getIncludePattern(),
+            ntlmProperties.getOrder());
     }
 
     @ConditionalOnMissingBean(name = "ntlmPrincipalFactory")
@@ -115,11 +125,16 @@ public class SpnegoConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "spnegoPrincipalResolver")
     public PrincipalResolver spnegoPrincipalResolver() {
+        val personDirectory = casProperties.getPersonDirectory();
         val spnegoProperties = casProperties.getAuthn().getSpnego();
-        return new SpnegoPrincipalResolver(attributeRepository, spnegoPrincipalFactory(),
-            spnegoProperties.getPrincipal().isReturnNull(),
+        val spnegoPrincipal = spnegoProperties.getPrincipal();
+        val principalAttribute = StringUtils.defaultIfBlank(spnegoPrincipal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
+        return new SpnegoPrincipalResolver(attributeRepository.getIfAvailable(),
+            spnegoPrincipalFactory(),
+            spnegoPrincipal.isReturnNull() || personDirectory.isReturnNull(),
             PrincipalNameTransformerUtils.newPrincipalNameTransformer(spnegoProperties.getPrincipalTransformation()),
-            spnegoProperties.getPrincipal().getPrincipalAttribute());
+            principalAttribute,
+            spnegoPrincipal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId());
     }
 
     @ConditionalOnMissingBean(name = "spnegoPrincipalFactory")

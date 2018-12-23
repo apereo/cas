@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - OIDC Protocol
+category: Protocols
 ---
 
 # OpenID Connect Protocol

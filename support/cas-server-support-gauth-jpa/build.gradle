@@ -1,5 +1,7 @@
-
 description = "Apereo CAS Google Authenticator JPA"
+ext {
+    maxParallelForksForTests = 1
+}
 dependencies {
     implementation project(":support:cas-server-support-gauth")
     implementation project(":support:cas-server-support-gauth-core")
@@ -8,6 +10,7 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":support:cas-server-support-otp-mfa")
+    implementation project(":support:cas-server-support-otp-mfa-core")
     implementation project(":support:cas-server-support-jpa-util")
     
     testImplementation project(":core:cas-server-core")
@@ -23,7 +26,9 @@ dependencies {
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-authentication-attributes")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
-    
+    testImplementation project(path: ":support:cas-server-support-gauth-core", configuration: "tests")
+
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 }

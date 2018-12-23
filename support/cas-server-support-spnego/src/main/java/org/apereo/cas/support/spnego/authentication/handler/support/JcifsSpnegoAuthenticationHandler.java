@@ -1,10 +1,10 @@
 package org.apereo.cas.support.spnego.authentication.handler.support;
 
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
-import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
+import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
@@ -44,8 +44,9 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
 
     public JcifsSpnegoAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                             final PrincipalFactory principalFactory, final List<Authentication> authentications,
-                                            final boolean principalWithDomainName, final boolean ntlmAllowed) {
-        super(name, servicesManager, principalFactory, null);
+                                            final boolean principalWithDomainName, final boolean ntlmAllowed,
+                                            final Integer order) {
+        super(name, servicesManager, principalFactory, order);
         this.authentications = authentications;
         this.principalWithDomainName = principalWithDomainName;
         this.ntlmAllowed = ntlmAllowed;
@@ -102,6 +103,11 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
     @Override
     public boolean supports(final Credential credential) {
         return credential instanceof SpnegoCredential;
+    }
+
+    @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return SpnegoCredential.class.isAssignableFrom(clazz);
     }
 
     /**

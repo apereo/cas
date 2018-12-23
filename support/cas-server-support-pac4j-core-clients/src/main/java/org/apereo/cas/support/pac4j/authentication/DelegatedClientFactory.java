@@ -1,12 +1,16 @@
 package org.apereo.cas.support.pac4j.authentication;
 
+import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.pac4j.oidc.BasePac4jOidcClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.oidc.Pac4jOidcClientProperties;
+import org.apereo.cas.configuration.model.support.pac4j.saml.Pac4jSamlClientProperties;
+import org.apereo.cas.support.pac4j.logout.CasServerSpecificLogoutHandler;
 
 import com.github.scribejava.core.model.Verb;
 import com.nimbusds.jose.JWSAlgorithm;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +21,8 @@ import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.cas.config.CasProtocol;
 import org.pac4j.core.client.BaseClient;
+import org.pac4j.core.http.callback.PathParameterCallbackUrlResolver;
+import org.pac4j.core.logout.handler.LogoutHandler;
 import org.pac4j.oauth.client.BitbucketClient;
 import org.pac4j.oauth.client.DropBoxClient;
 import org.pac4j.oauth.client.FacebookClient;
@@ -24,6 +30,7 @@ import org.pac4j.oauth.client.FoursquareClient;
 import org.pac4j.oauth.client.GenericOAuth20Client;
 import org.pac4j.oauth.client.GitHubClient;
 import org.pac4j.oauth.client.Google2Client;
+import org.pac4j.oauth.client.HiOrgServerClient;
 import org.pac4j.oauth.client.LinkedIn2Client;
 import org.pac4j.oauth.client.OrcidClient;
 import org.pac4j.oauth.client.PayPalClient;
@@ -39,12 +46,14 @@ import org.pac4j.oidc.config.AzureAdOidcConfiguration;
 import org.pac4j.oidc.config.KeycloakOidcConfiguration;
 import org.pac4j.oidc.config.OidcConfiguration;
 import org.pac4j.saml.client.SAML2Client;
-import org.pac4j.saml.client.SAML2ClientConfiguration;
+import org.pac4j.saml.config.SAML2Configuration;
+import org.pac4j.saml.metadata.SAML2ServiceProvicerRequestedAttribute;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link DelegatedClientFactory}.
@@ -54,11 +63,21 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @RequiredArgsConstructor
 @Slf4j
+@Getter
 public class DelegatedClientFactory {
     /**
      * The Pac 4 j properties.
      */
     private final Pac4jDelegatedAuthenticationProperties pac4jProperties;
+
+    /**
+     * The pac4j specific logout handler for the CAS server.
+     */
+    private final LogoutHandler casServerSpecificLogoutHandler;
+
+    public DelegatedClientFactory(final Pac4jDelegatedAuthenticationProperties pac4jProperties) {
+        this(pac4jProperties, new CasServerSpecificLogoutHandler());
+    }
 
     /**
      * Configure github client.
@@ -221,6 +240,24 @@ public class DelegatedClientFactory {
     }
 
     /**
+     * Configure HiOrg-Server client.
+     *
+     * @param properties the properties
+     */
+    protected void configureHiOrgServerClient(final Collection<BaseClient> properties) {
+        val hiOrgServer = pac4jProperties.getHiOrgServer();
+        if (StringUtils.isNotBlank(hiOrgServer.getId()) && StringUtils.isNotBlank(hiOrgServer.getSecret())) {
+            val client = new HiOrgServerClient(hiOrgServer.getId(), hiOrgServer.getSecret());
+            configureClient(client, hiOrgServer);
+            if (StringUtils.isNotBlank(hiOrgServer.getScope())) {
+                client.getConfiguration().setScope(hiOrgServer.getScope());
+            }
+            LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
+            properties.add(client);
+        }
+    }
+
+    /**
      * Configure twitter client.
      *
      * @param properties the properties
@@ -301,7 +338,11 @@ public class DelegatedClientFactory {
             LOGGER.warn("Client name for [{}] is set to a generated value of [{}]. "
                 + "Consider defining an explicit name for the delegated provider", className, genName);
         }
-        client.getCustomProperties().put("autoRedirect", props.isAutoRedirect());
+        val customProperties = client.getCustomProperties();
+        customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT, props.isAutoRedirect());
+        if (StringUtils.isNotBlank(props.getPrincipalAttributeId())) {
+            customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID, props.getPrincipalAttributeId());
+        }
     }
 
     /**
@@ -316,12 +357,14 @@ public class DelegatedClientFactory {
             .filter(cas -> StringUtils.isNotBlank(cas.getLoginUrl()))
             .forEach(cas -> {
                 val cfg = new CasConfiguration(cas.getLoginUrl(), CasProtocol.valueOf(cas.getProtocol()));
+                cfg.setLogoutHandler(casServerSpecificLogoutHandler);
                 val client = new CasClient(cfg);
 
                 val count = index.intValue();
                 if (StringUtils.isBlank(cas.getClientName())) {
                     client.setName(client.getClass().getSimpleName() + count);
                 }
+                client.setCallbackUrlResolver(new PathParameterCallbackUrlResolver());
                 configureClient(client, cas);
 
                 index.incrementAndGet();
@@ -344,19 +387,22 @@ public class DelegatedClientFactory {
                 && StringUtils.isNotBlank(saml.getServiceProviderEntityId())
                 && StringUtils.isNotBlank(saml.getServiceProviderMetadataPath()))
             .forEach(saml -> {
-                val cfg = new SAML2ClientConfiguration(saml.getKeystorePath(),
+                val cfg = new SAML2Configuration(saml.getKeystorePath(),
                     saml.getKeystorePassword(),
                     saml.getPrivateKeyPassword(), saml.getIdentityProviderMetadataPath());
                 cfg.setMaximumAuthenticationLifetime(saml.getMaximumAuthenticationLifetime());
                 cfg.setServiceProviderEntityId(saml.getServiceProviderEntityId());
                 cfg.setServiceProviderMetadataPath(saml.getServiceProviderMetadataPath());
-                cfg.setDestinationBindingType(saml.getDestinationBinding());
+                cfg.setAuthnRequestBindingType(saml.getDestinationBinding());
                 cfg.setForceAuth(saml.isForceAuth());
                 cfg.setPassive(saml.isPassive());
+                cfg.setSignMetadata(saml.isSignServiceProviderMetadata());
+
                 if (StringUtils.isNotBlank(saml.getPrincipalIdAttribute())) {
                     cfg.setAttributeAsId(saml.getPrincipalIdAttribute());
                 }
                 cfg.setWantsAssertionsSigned(saml.isWantsAssertionsSigned());
+                cfg.setLogoutHandler(casServerSpecificLogoutHandler);
                 cfg.setUseNameQualifier(saml.isUseNameQualifier());
                 cfg.setAttributeConsumingServiceIndex(saml.getAttributeConsumingServiceIndex());
                 if (saml.getAssertionConsumerServiceIndex() >= 0) {
@@ -371,6 +417,22 @@ public class DelegatedClientFactory {
                 }
                 if (StringUtils.isNotBlank(saml.getNameIdPolicyFormat())) {
                     cfg.setNameIdPolicyFormat(saml.getNameIdPolicyFormat());
+                }
+
+                if (!saml.getRequestedAttributes().isEmpty()) {
+                    saml.getRequestedAttributes().stream()
+                        .map(attribute -> new SAML2ServiceProvicerRequestedAttribute(attribute.getName(), attribute.getFriendlyName(),
+                            attribute.getNameFormat(), attribute.isRequired()))
+                        .forEach(attribute -> cfg.getRequestedServiceProviderAttributes().add(attribute));
+                }
+
+                val mappedAttributes = saml.getMappedAttributes();
+                if (!mappedAttributes.isEmpty()) {
+                    val results = mappedAttributes
+                        .stream()
+                        .collect(Collectors.toMap(Pac4jSamlClientProperties.ServiceProviderMappedAttribute::getName,
+                            Pac4jSamlClientProperties.ServiceProviderMappedAttribute::getMappedTo));
+                    cfg.setMappedAttributes(results);
                 }
 
                 val client = new SAML2Client(cfg);
@@ -412,6 +474,7 @@ public class DelegatedClientFactory {
                 if (StringUtils.isBlank(oauth.getClientName())) {
                     client.setName(client.getClass().getSimpleName() + count);
                 }
+                client.setCallbackUrlResolver(new PathParameterCallbackUrlResolver());
                 configureClient(client, oauth);
 
                 index.incrementAndGet();
@@ -427,7 +490,6 @@ public class DelegatedClientFactory {
      */
     protected void configureOidcClient(final Collection<BaseClient> properties) {
         pac4jProperties.getOidc()
-            .stream()
             .forEach(oidc -> {
                 val client = getOidcClientFrom(oidc);
                 LOGGER.debug("Created client [{}]", client);
@@ -462,12 +524,13 @@ public class DelegatedClientFactory {
         LOGGER.debug("Building generic OpenID Connect client...");
         val generic = getOidcConfigurationForClient(oidc.getGeneric(), OidcConfiguration.class);
         val oc = new OidcClient(generic);
+        oc.setCallbackUrlResolver(new PathParameterCallbackUrlResolver());
         configureClient(oc, oidc.getGeneric());
         return oc;
     }
 
     @SneakyThrows
-    private <T extends OidcConfiguration> T getOidcConfigurationForClient(final BasePac4jOidcClientProperties oidc, final Class<T> clazz) {
+    private static <T extends OidcConfiguration> T getOidcConfigurationForClient(final BasePac4jOidcClientProperties oidc, final Class<T> clazz) {
         val cfg = clazz.getDeclaredConstructor().newInstance();
         if (StringUtils.isNotBlank(oidc.getScope())) {
             cfg.setScope(oidc.getScope());
@@ -511,6 +574,7 @@ public class DelegatedClientFactory {
         configureWordPressClient(clients);
         configureBitBucketClient(clients);
         configureOrcidClient(clients);
+        configureHiOrgServerClient(clients);
 
         return clients;
     }

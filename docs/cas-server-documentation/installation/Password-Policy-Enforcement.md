@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Password Policy Enforcement
+category: Authentication
 ---
 
 # Password Policy Enforcement
@@ -27,7 +28,7 @@ fully explaining the nature of the problem.
 
 The translation of LDAP errors into CAS workflow is all
 handled by [ldaptive](http://www.ldaptive.org/docs/guide/authentication/accountstate). To see the relevant list of CAS properties,
-please [review this guide](Configuration-Properties.html#ldap-authentication-1).
+please [review this guide](../configuration/Configuration-Properties.html#ldap-authentication-1).
 
 ### Account Expiration Notification
 
@@ -38,4 +39,4 @@ determined through pre-configured LDAP attributes with default values in place.
 
 A certain number of database authentication schemes have limited support for detecting locked/disabled/etc accounts
 via column names that are defined in the CAS settings. To see the relevant list of CAS properties,
-please [review this guide](Configuration-Properties.html#database-authentication).
+please [review this guide](../configuration/Configuration-Properties.html#database-authentication).

@@ -1,6 +1,8 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
+import org.apereo.cas.configuration.model.support.couchdb.BaseAsynchronousCouchDbProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
@@ -83,6 +85,11 @@ public class U2FMultifactorProperties extends BaseMultifactorProviderProperties 
     private boolean trustedDeviceEnabled;
 
     /**
+     * Store device registration records via CouchDb.
+     */
+    private CouchDb couchDb = new CouchDb();
+
+    /**
      * Clean up expired records via a background cleaner process.
      */
     @NestedConfigurationProperty
@@ -95,7 +102,19 @@ public class U2FMultifactorProperties extends BaseMultifactorProviderProperties 
     private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
 
     public U2FMultifactorProperties() {
+        crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
+        crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
         setId(DEFAULT_IDENTIFIER);
+    }
+
+    @RequiresModule(name = "cas-server-support-u2f-couchdb")
+    public static class CouchDb extends BaseAsynchronousCouchDbProperties {
+
+        private static final long serialVersionUID = 2751957521987245445L;
+
+        public CouchDb() {
+            setDbName("u2f_multifactor");
+        }
     }
 
     @Getter

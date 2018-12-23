@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Shiro Authentication
+category: Authentication
 ---
 
 
@@ -28,7 +29,7 @@ of the authentication, so that in their absence, the authentication may fail.
 While by default these settings are optional, you may configure roles and/or permissions
 for the given authentication handler to check their presence and report back.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#shiro-authentication).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#shiro-authentication).
 
 Sample `shiro.ini` that needs be placed on the classpath based on the example above:
 

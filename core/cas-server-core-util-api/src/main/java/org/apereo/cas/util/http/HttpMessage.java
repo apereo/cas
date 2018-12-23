@@ -38,6 +38,7 @@ public class HttpMessage implements Serializable {
      * Default is true.
      **/
     private final boolean asynchronous;
+
     private int responseCode;
     /**
      * The content type for this message once submitted.

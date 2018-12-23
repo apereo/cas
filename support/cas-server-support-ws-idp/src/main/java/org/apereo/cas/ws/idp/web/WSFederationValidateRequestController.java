@@ -64,17 +64,22 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
     @GetMapping(path = WSFederationConstants.ENDPOINT_FEDERATION_REQUEST)
     protected void handleFederationRequest(final HttpServletResponse response, final HttpServletRequest request) throws Exception {
         val fedRequest = WSFederationRequest.of(request);
-        switch (fedRequest.getWa().toLowerCase()) {
+        val wa = fedRequest.getWa();
+        if (StringUtils.isBlank(wa)) {
+            throw new UnauthorizedAuthenticationException("Unable to determine the [WA] parameter", new HashMap<>(0));
+        }
+
+        switch (wa.toLowerCase()) {
             case WSFederationConstants.WSIGNOUT10:
             case WSFederationConstants.WSIGNOUT_CLEANUP10:
                 handleLogoutRequest(fedRequest, request, response);
                 break;
             case WSFederationConstants.WSIGNIN10:
-                handleInitialAuthenticationRequest(fedRequest, response, request);
+                val targetService = webApplicationServiceFactory.createService(fedRequest.getWreply());
+                handleInitialAuthenticationRequest(fedRequest, targetService, response, request);
                 break;
             default:
-                throw new UnauthorizedAuthenticationException("The authentication request is not recognized",
-                    new HashMap<>(0));
+                throw new UnauthorizedAuthenticationException("The authentication request is not recognized", new HashMap<>(0));
         }
     }
 
@@ -97,9 +102,9 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
         authenticationRedirectStrategy.redirect(request, response, logoutUrl);
     }
 
-    private void handleInitialAuthenticationRequest(final WSFederationRequest fedRequest,
+    private void handleInitialAuthenticationRequest(final WSFederationRequest fedRequest, final Service targetService,
                                                     final HttpServletResponse response, final HttpServletRequest request) {
-        val service = findAndValidateFederationRequestForRegisteredService(response, request, fedRequest);
+        val service = findAndValidateFederationRequestForRegisteredService(targetService, fedRequest);
         LOGGER.debug("Redirecting to identity provider for initial authentication [{}]", fedRequest);
         redirectToIdentityProvider(fedRequest, response, request, service);
     }

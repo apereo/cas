@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - LDAP Authentication
+category: Authentication
 ---
 
 # LDAP Authentication
@@ -17,7 +18,7 @@ LDAP integration is enabled by including the following dependency in the overlay
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#ldap-authentication-1).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#ldap-authentication-1).
 
 ## Password Policy Enforcement
 

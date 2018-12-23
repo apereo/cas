@@ -22,8 +22,10 @@ import java.util.Map;
  */
 public class WsFederationAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
-    public WsFederationAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory) {
-        super(name, servicesManager, principalFactory, null);
+    public WsFederationAuthenticationHandler(final String name, final ServicesManager servicesManager,
+                                             final PrincipalFactory principalFactory,
+                                             final Integer order) {
+        super(name, servicesManager, principalFactory, order);
     }
 
     /**
@@ -35,6 +37,11 @@ public class WsFederationAuthenticationHandler extends AbstractPreAndPostProcess
     @Override
     public boolean supports(final Credential credentials) {
         return credentials != null && WsFederationCredential.class.isAssignableFrom(credentials.getClass());
+    }
+
+    @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return WsFederationCredential.class.isAssignableFrom(clazz);
     }
 
     @Override

@@ -101,7 +101,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     @Override
     public Map<String, Object> getAttributes(final Principal principal, final Service selectedService, final RegisteredService registeredService) {
         LOGGER.debug("Initiating attributes release phase for principal [{}] accessing service [{}] defined by registered service [{}]...",
-            principal.getId(), selectedService.getId(), registeredService.getServiceId());
+            principal.getId(), selectedService, registeredService.getServiceId());
         LOGGER.debug("Locating principal attributes for [{}]", principal.getId());
         val principalAttributes = resolveAttributesFromPrincipalAttributeRepository(principal);
         LOGGER.debug("Found principal attributes [{}] for [{}]", principalAttributes, principal.getId());
@@ -109,7 +109,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
         val policyAttributes = getAttributesInternal(principal, principalAttributes, registeredService);
         LOGGER.debug("Attribute policy [{}] allows release of [{}] for [{}]", getClass().getSimpleName(), policyAttributes, principal.getId());
         LOGGER.debug("Attempting to merge policy attributes and default attributes");
-        val attributesToRelease = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        val attributesToRelease = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
         if (isExcludeDefaultAttributes()) {
             LOGGER.debug("Ignoring default attribute policy attributes");
         } else {
@@ -121,7 +121,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
                 attributesToRelease.putAll(defaultAttributes);
             }
         }
-        LOGGER.debug("Adding policy attributes to the released set of attributes");
+        LOGGER.trace("Adding policy attributes to the released set of attributes");
         attributesToRelease.putAll(policyAttributes);
         insertPrincipalIdAsAttributeIfNeeded(principal, attributesToRelease, selectedService, registeredService);
         if (getAttributeFilter() != null) {
@@ -129,7 +129,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
             return getAttributeFilter().filter(attributesToRelease);
         }
         LOGGER.debug("Finalizing attributes release phase for principal [{}] accessing service [{}] defined by registered service [{}]...",
-            principal.getId(), selectedService.getId(), registeredService.getServiceId());
+            principal.getId(), selectedService, registeredService.getServiceId());
         return returnFinalAttributesCollection(attributesToRelease, registeredService);
     }
 
@@ -149,11 +149,11 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
         return principal.getAttributes();
     }
 
-    private PrincipalAttributesRepository getPrincipalAttributesRepositoryFromApplicationContext() {
+    private static PrincipalAttributesRepository getPrincipalAttributesRepositoryFromApplicationContext() {
         val applicationContext = ApplicationContextProvider.getApplicationContext();
         if (applicationContext != null) {
             if (applicationContext.containsBean("globalPrincipalAttributeRepository")) {
-                LOGGER.debug("Loading global principal attribute repository with caching policies...");
+                LOGGER.trace("Loading global principal attribute repository with caching policies...");
                 return applicationContext.getBean("globalPrincipalAttributeRepository", PrincipalAttributesRepository.class);
             }
             LOGGER.warn("No global principal attribute repository can be located from the application context.");
@@ -203,11 +203,11 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     protected Map<String, Object> getReleasedByDefaultAttributes(final Principal p, final Map<String, Object> attributes) {
         val ctx = ApplicationContextProvider.getApplicationContext();
         if (ctx != null) {
-            LOGGER.debug("Located application context. Retrieving default attributes for release, if any");
+            LOGGER.trace("Located application context. Retrieving default attributes for release, if any");
             val props = ctx.getAutowireCapableBeanFactory().getBean(CasConfigurationProperties.class);
             val defaultAttrs = props.getAuthn().getAttributeRepository().getDefaultAttributesToRelease();
             LOGGER.debug("Default attributes for release are: [{}]", defaultAttrs);
-            val defaultAttributesToRelease = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+            val defaultAttributesToRelease = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
             defaultAttrs.forEach(key -> {
                 if (attributes.containsKey(key)) {
                     LOGGER.debug("Found and added default attribute for release: [{}]", key);

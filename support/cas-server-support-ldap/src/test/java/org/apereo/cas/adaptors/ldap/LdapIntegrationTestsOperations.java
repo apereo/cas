@@ -20,7 +20,7 @@ import java.util.Map;
  * @since 4.1.0
  */
 public class LdapIntegrationTestsOperations {
-    private static Map<Integer, InMemoryTestLdapDirectoryServer> DIRECTORY_MAP = new HashMap<>();
+    private static final Map<Integer, InMemoryTestLdapDirectoryServer> DIRECTORY_MAP = new HashMap<>();
 
     /**
      * Init directory server.

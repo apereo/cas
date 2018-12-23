@@ -1,7 +1,6 @@
 package org.apereo.cas.oidc.web;
 
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.oidc.token.OidcIdTokenGeneratorService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
@@ -9,6 +8,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerat
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20TokenAuthorizationResponseBuilder;
 import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 
@@ -30,10 +30,10 @@ import java.util.List;
 @Slf4j
 public class OidcImplicitIdTokenAuthorizationResponseBuilder extends OAuth20TokenAuthorizationResponseBuilder {
 
-    private final OidcIdTokenGeneratorService idTokenGenerator;
+    private final IdTokenGeneratorService idTokenGenerator;
     private final ExpirationPolicy idTokenExpirationPolicy;
 
-    public OidcImplicitIdTokenAuthorizationResponseBuilder(final OidcIdTokenGeneratorService idTokenGenerator,
+    public OidcImplicitIdTokenAuthorizationResponseBuilder(final IdTokenGeneratorService idTokenGenerator,
                                                            final OAuth20TokenGenerator accessTokenGenerator,
                                                            final ExpirationPolicy accessTokenExpirationPolicy,
                                                            final ExpirationPolicy idTokenExpirationPolicy) {

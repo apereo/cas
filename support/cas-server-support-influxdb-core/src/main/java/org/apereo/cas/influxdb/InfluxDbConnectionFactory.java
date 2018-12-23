@@ -35,15 +35,6 @@ public class InfluxDbConnectionFactory implements AutoCloseable {
      */
     private InfluxDbProperties influxDbProperties;
 
-    /**
-     * Instantiates a new Influx db connection factory.
-     *
-     * @param url          the url
-     * @param uid          the uid
-     * @param psw          the psw
-     * @param dbName       the db name
-     * @param dropDatabase the drop database
-     */
     public InfluxDbConnectionFactory(final String url, final String uid,
                                      final String psw, final String dbName,
                                      final boolean dropDatabase) {

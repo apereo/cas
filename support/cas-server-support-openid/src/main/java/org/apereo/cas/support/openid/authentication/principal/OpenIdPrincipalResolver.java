@@ -21,8 +21,9 @@ import java.util.Optional;
 public class OpenIdPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     public OpenIdPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,
-                                   final boolean returnNullIfNoAttributes, final String principalAttributeName) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
+                                   final boolean returnNullIfNoAttributes, final String principalAttributeName,
+                                   final boolean useCurrentPrincipalId) {
+        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName, useCurrentPrincipalId);
     }
 
     @Override

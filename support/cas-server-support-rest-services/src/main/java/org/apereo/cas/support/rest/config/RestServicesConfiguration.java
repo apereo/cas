@@ -10,6 +10,7 @@ import org.apereo.cas.support.rest.RegisteredServiceResource;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -29,18 +30,18 @@ public class RestServicesConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport;
+    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")
-    private ServiceFactory webApplicationServiceFactory;
+    private ObjectProvider<ServiceFactory> webApplicationServiceFactory;
 
     @Bean
     public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
@@ -59,8 +60,11 @@ public class RestServicesConfiguration {
             throw new BeanCreationException("No attribute value is defined to enforce authorization when adding services via CAS REST APIs. "
                 + "This is likely due to misconfiguration in CAS settings where the attribute value definition is absent");
         }
-        return new RegisteredServiceResource(authenticationSystemSupport, webApplicationServiceFactory,
-            servicesManager, rest.getAttributeName(), rest.getAttributeValue());
+        return new RegisteredServiceResource(authenticationSystemSupport.getIfAvailable(),
+            webApplicationServiceFactory.getIfAvailable(),
+            servicesManager.getIfAvailable(),
+            rest.getAttributeName(),
+            rest.getAttributeValue());
     }
 }
 

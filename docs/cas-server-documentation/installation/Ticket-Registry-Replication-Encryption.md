@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuring Ticketing Components
+category: Ticketing
 ---
 
 # Ticket Registry Replication Encryption
@@ -10,6 +11,7 @@ by encrypting and signing tickets:
 * [Hazelcast](Hazelcast-Ticket-Registry.html)
 * [Ehcache](Ehcache-Ticket-Registry.html)
 * [Ignite](Ignite-Ticket-Registry.html)
+* [CouchDb](CouchDb-Ticket-Registry.html)
 * [Memcached](Memcached-Ticket-Registry.html)
 
 <div class="alert alert-info"><strong>Default Behavior</strong><p>Encryption by default is turned off

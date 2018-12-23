@@ -15,9 +15,10 @@ import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
 import org.ldaptive.Response;
 import org.ldaptive.SearchResult;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.Objects;
 
 /**
@@ -41,8 +42,12 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
 
     private final String loadFilter;
 
-    public LdapServiceRegistry(final ConnectionFactory connectionFactory, final String baseDn,
-                               final LdapRegisteredServiceMapper ldapServiceMapper, final LdapServiceRegistryProperties ldapProperties) {
+    public LdapServiceRegistry(final ConnectionFactory connectionFactory,
+                               final String baseDn,
+                               final LdapRegisteredServiceMapper ldapServiceMapper,
+                               final LdapServiceRegistryProperties ldapProperties,
+                               final ApplicationEventPublisher eventPublisher) {
+        super(eventPublisher);
         this.connectionFactory = connectionFactory;
         this.baseDn = baseDn;
         if (ldapServiceMapper == null) {
@@ -139,7 +144,10 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
         try {
             val response = getSearchResultResponse();
             if (LdapUtils.containsResultEntry(response)) {
-                return response.getResult().size();
+                return response.getResult().getEntries()
+                    .stream()
+                    .map(this.ldapServiceMapper::mapToRegisteredService)
+                    .filter(Objects::nonNull).count();
             }
         } catch (final LdapException e) {
             LOGGER.error(e.getMessage(), e);
@@ -148,7 +156,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
-    public List<RegisteredService> load() {
+    public Collection<RegisteredService> load() {
         val list = new ArrayList<RegisteredService>();
         try {
             val response = getSearchResultResponse();

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Design Authentication Strategies
+category: Authentication
 ---
 
 # Custom Authentication Strategies

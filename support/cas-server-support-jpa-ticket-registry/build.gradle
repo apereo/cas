@@ -7,8 +7,8 @@ dependencies {
     implementation project(":core:cas-server-core-monitor")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-services-authentication")
-    implementation project(":support:cas-server-support-jpa-util")
     implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":support:cas-server-support-jpa-util")
 
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-logout-api")
@@ -33,5 +33,6 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
 }

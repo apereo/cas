@@ -7,8 +7,6 @@ description = "Apereo CAS Spring Boot Admin Server"
 
 dependencies {
     implementation libraries.springboottomcat
-    implementation libraries.springbootadminserver
 
-    implementation project(":core:cas-server-core-logging")
-    implementation project(":core:cas-server-core-util-api")
+    implementation project(":webapp:cas-server-webapp-init-bootadmin-server")
 }

@@ -29,10 +29,8 @@ public class Cas30JsonResponseViewTests extends Cas30ResponseViewTests {
         return new Cas30JsonResponseView(true,
             encoder,
             servicesManager,
-            "attribute",
             viewDelegated,
-            true,
-            new DefaultAuthenticationAttributeReleasePolicy(),
+            new DefaultAuthenticationAttributeReleasePolicy("attribute"),
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
             new DefaultCas30ProtocolAttributesRenderer());
     }

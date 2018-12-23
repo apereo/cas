@@ -8,16 +8,17 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,7 +27,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 
 import static org.junit.Assert.*;
@@ -37,13 +38,18 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     DatabaseAuthenticationTestConfiguration.class
 })
 @DirtiesContext
 public class NamedQueryDatabaseAuthenticationHandlerTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
@@ -77,7 +83,7 @@ public class NamedQueryDatabaseAuthenticationHandlerTests {
     @Test
     public void verifySuccess() throws Exception {
         val sql = "SELECT * FROM casusers where username=:username";
-        val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(Arrays.asList("phone:phoneNumber"));
+        val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(Collections.singletonList("phone:phoneNumber"));
         val q = new QueryDatabaseAuthenticationHandler("namedHandler",
             null, PrincipalFactoryUtils.newPrincipalFactory(), 0,
             this.dataSource, sql, "password",
@@ -93,7 +99,7 @@ public class NamedQueryDatabaseAuthenticationHandlerTests {
     @Test
     public void verifySuccessWithCount() throws Exception {
         val sql = "SELECT count(*) as total FROM casusers where username=:username AND password=:password";
-        val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(Arrays.asList("phone:phoneNumber"));
+        val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(Collections.singletonList("phone:phoneNumber"));
         val q = new QueryDatabaseAuthenticationHandler("namedHandler",
             null, PrincipalFactoryUtils.newPrincipalFactory(), 0,
             this.dataSource, sql, null,

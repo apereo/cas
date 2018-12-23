@@ -34,8 +34,9 @@ import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 
 import com.nimbusds.jwt.JWTParser;
 import lombok.val;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -45,7 +46,8 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.nio.charset.StandardCharsets;
 
@@ -57,7 +59,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
     CasRegisteredServicesTestConfiguration.class,
     TokenTicketsConfiguration.class,
@@ -89,6 +90,11 @@ import static org.junit.Assert.*;
 @EnableScheduling
 @TestPropertySource(locations = "classpath:tokentests.properties")
 public class TokenWebApplicationServiceResponseBuilderTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     @Qualifier("webApplicationServiceResponseBuilder")
@@ -103,7 +109,7 @@ public class TokenWebApplicationServiceResponseBuilderTests {
         val signingSecret = "EihBwA3OuDQMm4gdWzkqRJ87596G7o7a_naJAJipxFoRJbXK7APRcnCA91Y30rJdh4q-C2dmpfV6eNhQT0bR5A";
         val encryptionSecret = "dJ2YpUd-r_Qd7e3nDm79WiIHkqaLT8yZt6nN5eG0YnE";
 
-        val cipher = new TokenTicketCipherExecutor(encryptionSecret, signingSecret, true);
+        val cipher = new TokenTicketCipherExecutor(encryptionSecret, signingSecret, true, 0, 0);
         val result = cipher.decode(cipher.encode("ThisIsValue"));
         assertEquals("ThisIsValue", result);
     }

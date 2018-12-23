@@ -3,7 +3,7 @@ package org.apereo.cas.support.saml.services;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.util.ScriptingUtils;
+import org.apereo.cas.util.scripting.ScriptingUtils;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -43,7 +43,7 @@ public class GroovySamlRegisteredServiceAttributeReleasePolicy extends BaseSamlR
         try {
             final Object[] args = {attributes, service, resolver, facade, entityDescriptor, applicationContext, LOGGER};
             val resource = ResourceUtils.getResourceFrom(this.groovyScript);
-            return ScriptingUtils.executeGroovyScript(resource, args, Map.class);
+            return ScriptingUtils.executeGroovyScript(resource, args, Map.class, true);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

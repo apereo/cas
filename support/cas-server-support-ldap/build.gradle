@@ -5,7 +5,8 @@ dependencies {
     implementation project(":support:cas-server-support-ldap-core")
     implementation project(":core:cas-server-core-configuration-api")
     
-    implementation libraries.pac4j
+    implementation libraries.ldaptive
+    
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-web")
@@ -14,5 +15,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
 }

@@ -5,6 +5,7 @@ import org.apereo.cas.support.openid.AbstractOpenIdTests;
 import lombok.val;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -25,6 +26,7 @@ public class SmartOpenIdControllerTests extends AbstractOpenIdTests {
     private final HttpServletResponse response = new MockHttpServletResponse();
 
     @Autowired
+    @Qualifier("smartOpenIdAssociationController")
     private SmartOpenIdController smartOpenIdController;
 
     @Test

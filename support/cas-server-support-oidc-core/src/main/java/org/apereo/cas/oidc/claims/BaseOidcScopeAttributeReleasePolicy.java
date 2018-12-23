@@ -54,7 +54,7 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
             LOGGER.warn("Could not locate the application context to process attributes");
             return new HashMap<>();
         }
-        val resolvedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        val resolvedAttributes = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attributes);
         val attributesToRelease = Maps.<String, Object>newHashMapWithExpectedSize(attributes.size());
         LOGGER.debug("Attempting to map and filter claims based on resolved attributes [{}]", resolvedAttributes);
@@ -72,7 +72,7 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
         return attributesToRelease;
     }
 
-    private Pair<String, Object> mapClaimToAttribute(final String claim, final Map<String, Object> resolvedAttributes) {
+    private static Pair<String, Object> mapClaimToAttribute(final String claim, final Map<String, Object> resolvedAttributes) {
         val applicationContext = ApplicationContextProvider.getApplicationContext();
         val attributeToScopeClaimMapper =
             applicationContext.getBean("oidcAttributeToScopeClaimMapper", OidcAttributeToScopeClaimMapper.class);

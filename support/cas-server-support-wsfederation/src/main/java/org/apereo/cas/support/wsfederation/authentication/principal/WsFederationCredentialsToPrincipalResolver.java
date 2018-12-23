@@ -30,9 +30,12 @@ public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryP
     private final WsFederationConfiguration configuration;
 
     public WsFederationCredentialsToPrincipalResolver(final IPersonAttributeDao attributeRepository,
-                                                      final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
-                                                      final String principalAttributeName, final WsFederationConfiguration configuration) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
+                                                      final PrincipalFactory principalFactory,
+                                                      final boolean returnNullIfNoAttributes,
+                                                      final String principalAttributeName,
+                                                      final WsFederationConfiguration configuration,
+                                                      final boolean useCurrentPrincipalId) {
+        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName, useCurrentPrincipalId);
         this.configuration = configuration;
     }
 
@@ -56,7 +59,7 @@ public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryP
             } else {
                 LOGGER.debug("Found principal id attribute as [{}]", idAttributeAsList);
             }
-            
+
             val result = CollectionUtils.firstElement(idAttributeAsList);
             if (result.isPresent()) {
                 val principalId = result.get().toString();

@@ -28,7 +28,7 @@ public class CheckConsentRequiredActionTests extends BaseConsentActionTests {
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
-        WebUtils.putService(context, CoreAuthenticationTestUtils.getWebApplicationService("consentService"));
+        WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService("consentService"));
         assertEquals(CheckConsentRequiredAction.EVENT_ID_CONSENT_REQUIRED, checkConsentRequiredAction.execute(context).getId());
         assertTrue(context.getFlowScope().contains("attributes"));
         assertTrue(context.getFlowScope().contains("principal"));

@@ -47,7 +47,7 @@ public class DelegatedAuthenticationSAML2ClientLogoutAction extends AbstractActi
             Client<?, ?> client;
             try {
                 val currentClientName = findCurrentClientName(context);
-                client = (currentClientName == null) ? null : clients.findClient(currentClientName);
+                client = currentClientName == null ? null : clients.findClient(currentClientName);
             } catch (final TechnicalException e) {
                 LOGGER.debug("No SAML2 client found: " + e.getMessage(), e);
                 client = null;
@@ -75,7 +75,7 @@ public class DelegatedAuthenticationSAML2ClientLogoutAction extends AbstractActi
      * @param webContext A web context (request + response).
      * @return The currently used client's name or {@code null} if there is no active profile.
      */
-    private String findCurrentClientName(final WebContext webContext) {
+    private static String findCurrentClientName(final WebContext webContext) {
         val pm = Pac4jUtils.getPac4jProfileManager(webContext);
         val profile = (Optional<CommonProfile>) pm.get(true);
         return profile.map(CommonProfile::getClientName).orElse(null);

@@ -1,0 +1,9 @@
+description = "Apereo CAS Web Application JDBC Session Management"
+dependencies {
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":support:cas-server-support-jpa-util")
+    runtimeOnly project(":support:cas-server-support-jdbc-drivers")
+    
+    implementation libraries.springsession
+    implementation libraries.springsessionjdbc
+}

@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.directory.fortress.core.AccessMgr;
 import org.apache.directory.fortress.core.rest.AccessMgrRestImpl;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -36,7 +37,7 @@ public class FortressAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @ConditionalOnMissingBean(name = "fortressPrincipalFactory")
     @Bean
@@ -59,7 +60,7 @@ public class FortressAuthenticationConfiguration {
     @RefreshScope
     public AuthenticationHandler fortressAuthenticationHandler() {
         return new FortressAuthenticationHandler(fortressAccessManager(), null,
-            servicesManager, fortressPrincipalFactory(), null);
+            servicesManager.getIfAvailable(), fortressPrincipalFactory(), null);
     }
 
     @ConditionalOnMissingBean(name = "fortressAuthenticationEventExecutionPlanConfigurer")

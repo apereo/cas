@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
-import org.apereo.cas.util.ScriptingUtils;
+import org.apereo.cas.util.scripting.ScriptingUtils;
 
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +24,6 @@ public class GroovyPrincipalFactory extends DefaultPrincipalFactory {
 
     @Override
     public Principal createPrincipal(final String id, final Map<String, Object> attributes) {
-        return ScriptingUtils.executeGroovyScript(this.groovyResource, new Object[]{id, attributes, LOGGER}, Principal.class);
+        return ScriptingUtils.executeGroovyScript(this.groovyResource, new Object[]{id, attributes, LOGGER}, Principal.class, true);
     }
 }

@@ -1,0 +1,4 @@
+dn: ou=surrogates,dc=example,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: surrogates

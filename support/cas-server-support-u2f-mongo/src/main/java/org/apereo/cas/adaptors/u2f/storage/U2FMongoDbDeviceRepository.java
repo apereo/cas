@@ -45,7 +45,7 @@ public class U2FMongoDbDeviceRepository extends BaseU2FDeviceRepository {
     }
 
     @Override
-    public Collection<DeviceRegistration> getRegisteredDevices(final String username) {
+    public Collection<? extends DeviceRegistration> getRegisteredDevices(final String username) {
         try {
             val expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
             val query = new Query();

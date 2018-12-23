@@ -60,8 +60,8 @@ public class SessionMonitor extends AbstractHealthIndicator {
         buildHealthCheckStatus(builder.up(), sessionCount, ticketCount, "OK");
     }
 
-    private void buildHealthCheckStatus(final Health.Builder builder,
-                                        final long sessionCount, final long ticketCount, final String msg) {
+    private static void buildHealthCheckStatus(final Health.Builder builder,
+                                               final long sessionCount, final long ticketCount, final String msg) {
         builder
             .withDetail("sessionCount", sessionCount)
             .withDetail("ticketCount", ticketCount)

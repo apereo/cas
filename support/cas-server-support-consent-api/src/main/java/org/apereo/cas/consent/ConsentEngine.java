@@ -79,4 +79,11 @@ public interface ConsentEngine extends Serializable {
      * @return true /false
      */
     Pair<Boolean, ConsentDecision> isConsentRequiredFor(Service service, RegisteredService registeredService, Authentication authentication);
+
+    /**
+     * Gets consent repository.
+     *
+     * @return the consent repository
+     */
+    ConsentRepository getConsentRepository();
 }

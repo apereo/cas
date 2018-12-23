@@ -1,0 +1,8 @@
+---
+test:
+  dir:
+    profile: standaloneProfileProp
+
+profile:
+  override:
+    me: standaloneProfileProp

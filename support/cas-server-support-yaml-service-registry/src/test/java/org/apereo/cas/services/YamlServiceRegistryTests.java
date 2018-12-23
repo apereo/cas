@@ -8,8 +8,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.context.ApplicationEventPublisher;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 import static org.mockito.Mockito.*;
 
@@ -28,16 +28,16 @@ public class YamlServiceRegistryTests extends AbstractResourceBasedServiceRegist
 
     @Parameterized.Parameters
     public static Collection<Object> getTestParameters() {
-        return Arrays.asList(RegexRegisteredService.class);
+        return Collections.singletonList(RegexRegisteredService.class);
     }
 
     @Override
     @SneakyThrows
-    public void initializeServiceRegistry() {
+    public ServiceRegistry getNewServiceRegistry() {
         this.dao = new YamlServiceRegistry(RESOURCE, false,
             mock(ApplicationEventPublisher.class),
             new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy());
-        super.initializeServiceRegistry();
+        return this.dao;
     }
 }

@@ -32,6 +32,7 @@ import java.security.PublicKey;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
+import java.util.stream.Stream;
 
 /**
  * Builds the google accounts service response.
@@ -114,7 +115,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
             this.samlObjectBuilder.generateSecureRandomId(), currentDateTime, null, service);
         response.setStatus(this.samlObjectBuilder.newStatus(StatusCode.SUCCESS, null));
 
-        val sessionIndex = '_' + String.valueOf(Math.abs(RandomUtils.getNativeInstance().nextLong()));
+        val sessionIndex = '_' + String.valueOf(RandomUtils.getNativeInstance().nextLong());
         val authnStatement = this.samlObjectBuilder.newAuthnStatement(AuthnContext.PASSWORD_AUTHN_CTX, currentDateTime, sessionIndex);
         val assertion = this.samlObjectBuilder.newAssertion(authnStatement, casServerPrefix,
             notBeforeIssueInstant, this.samlObjectBuilder.generateSecureRandomId());
@@ -192,9 +193,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
     }
 
     private boolean isValidConfiguration() {
-        return StringUtils.isNotBlank(this.privateKeyLocation)
-            || StringUtils.isNotBlank(this.publicKeyLocation)
-            || StringUtils.isNotBlank(this.keyAlgorithm);
+        return Stream.of(this.privateKeyLocation, this.publicKeyLocation, this.keyAlgorithm).anyMatch(StringUtils::isNotBlank);
     }
 
     @Override

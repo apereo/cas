@@ -76,7 +76,8 @@ function jqueryReady() {
     var policyPatternRegex = new RegExp(policyPattern);
     var password = document.getElementById('password');
     var confirmed = document.getElementById('confirmedPassword');
-    
+
+    $('#strengthProgressBar').text('');
     
     password.addEventListener('input', validate);
     confirmed.addEventListener('input', validate);
@@ -106,7 +107,7 @@ function jqueryReady() {
             $('#password-strength-text').show();
 
             var title = 'Strength: <strong>' + strength[result.score] + '</strong>';
-            var text = '<p><span class=\'feedback\'>' + result.feedback.warning + ' ' + result.feedback.suggestions + '</span></p>';
+            var text = '<p><span class=\'feedback\'>' + result.feedback.warning + ' <ul>' + result.feedback.suggestions.join('<li>') + '</ul></span></p>';
             var clz = 'danger';
             switch (result.score) {
             case 0:

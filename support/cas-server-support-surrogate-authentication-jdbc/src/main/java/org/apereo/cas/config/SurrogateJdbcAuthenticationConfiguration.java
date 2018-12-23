@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -27,7 +28,7 @@ import javax.sql.DataSource;
 public class SurrogateJdbcAuthenticationConfiguration {
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -39,7 +40,7 @@ public class SurrogateJdbcAuthenticationConfiguration {
         return new SurrogateJdbcAuthenticationService(su.getJdbc().getSurrogateSearchQuery(),
             surrogateAuthenticationJdbcDataSource(),
             su.getJdbc().getSurrogateAccountQuery(),
-            servicesManager);
+            servicesManager.getIfAvailable());
     }
 
     @Bean

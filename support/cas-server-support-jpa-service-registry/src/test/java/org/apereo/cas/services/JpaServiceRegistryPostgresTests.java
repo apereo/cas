@@ -10,8 +10,8 @@ import org.springframework.test.context.TestPropertySource;
 /**
  * Handles tests for {@link JpaServiceRegistry}
  *
- * @author battags
- * @since 3.1.0
+ * @author Misagh Moayyed
+ * @since 6.0.0
  */
 @TestPropertySource(locations = "classpath:svcregpostgres.properties")
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 5432)

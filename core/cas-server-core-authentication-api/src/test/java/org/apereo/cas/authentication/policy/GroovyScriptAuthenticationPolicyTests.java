@@ -4,19 +4,21 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.util.LinkedHashSet;
 
 import static org.junit.Assert.*;
 
@@ -26,9 +28,14 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {RefreshAutoConfiguration.class})
 public class GroovyScriptAuthenticationPolicyTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
@@ -42,7 +49,7 @@ public class GroovyScriptAuthenticationPolicyTests {
             + " return Optional.empty()\n"
             + '}';
         val p = new GroovyScriptAuthenticationPolicy(resourceLoader, script);
-        assertTrue(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication()));
+        assertTrue(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication(), new LinkedHashSet<>()));
     }
 
     @Test
@@ -54,7 +61,7 @@ public class GroovyScriptAuthenticationPolicyTests {
             + '}';
         val p = new GroovyScriptAuthenticationPolicy(resourceLoader, script);
         thrown.expect(GeneralSecurityException.class);
-        p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication());
+        p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication(), new LinkedHashSet<>());
     }
 
     @Test
@@ -70,6 +77,6 @@ public class GroovyScriptAuthenticationPolicyTests {
         FileUtils.write(scriptFile, script, StandardCharsets.UTF_8);
         val p = new GroovyScriptAuthenticationPolicy(resourceLoader, "file:" + scriptFile.getCanonicalPath());
         thrown.expect(GeneralSecurityException.class);
-        p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication());
+        p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication(), new LinkedHashSet<>());
     }
 }

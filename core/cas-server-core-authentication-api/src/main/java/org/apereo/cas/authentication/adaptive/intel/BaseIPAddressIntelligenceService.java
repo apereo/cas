@@ -39,7 +39,7 @@ public abstract class BaseIPAddressIntelligenceService implements IPAddressIntel
         return response;
     }
 
-    private void trackResponseInRequestContext(final RequestContext context, final IPAddressIntelligenceResponse response) {
+    private static void trackResponseInRequestContext(final RequestContext context, final IPAddressIntelligenceResponse response) {
         context.getFlowScope().put("ipAddressIntelligenceResponse", response);
     }
 

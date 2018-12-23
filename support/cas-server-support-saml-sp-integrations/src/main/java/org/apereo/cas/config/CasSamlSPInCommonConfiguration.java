@@ -8,6 +8,7 @@ import org.apereo.cas.util.SamlSPUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -30,24 +31,25 @@ public class CasSamlSPInCommonConfiguration implements InitializingBean {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
-    private SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver;
+    private ObjectProvider<SamlRegisteredServiceCachingMetadataResolver> samlRegisteredServiceCachingMetadataResolver;
 
     @Override
     public void afterPropertiesSet() {
+        val resolver = samlRegisteredServiceCachingMetadataResolver.getIfAvailable();
         val service = SamlSPUtils.newSamlServiceProviderService(
             casProperties.getSamlSp().getInCommon(),
-            samlRegisteredServiceCachingMetadataResolver);
+            resolver);
         if (service != null) {
-            SamlSPUtils.saveService(service, servicesManager);
+            SamlSPUtils.saveService(service, servicesManager.getIfAvailable());
 
             LOGGER.info("Launching background thread to load the InCommon metadata. Depending on bandwidth, this might take a while...");
             new Thread(() -> {
                 LOGGER.debug("Loading InCommon metadata at [{}]...", service.getMetadataLocation());
-                samlRegisteredServiceCachingMetadataResolver.resolve(service);
+                resolver.resolve(service);
             }).start();
         }
     }

@@ -3,9 +3,8 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
-import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
@@ -13,6 +12,8 @@ import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -39,10 +40,11 @@ public class SurrogateWebflowEventResolver extends AbstractCasWebflowEventResolv
                                          final TicketRegistrySupport ticketRegistrySupport,
                                          final CookieGenerator warnCookieGenerator,
                                          final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
-                                         final MultifactorAuthenticationProviderSelector selector,
-                                         final SurrogateAuthenticationService surrogateService) {
+                                         final SurrogateAuthenticationService surrogateService,
+                                         final ApplicationEventPublisher eventPublisher,
+                                         final ConfigurableApplicationContext applicationContext) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport,
-            warnCookieGenerator, authenticationSelectionStrategies, selector);
+            warnCookieGenerator, authenticationSelectionStrategies, eventPublisher, applicationContext);
         this.surrogateService = surrogateService;
     }
 
@@ -51,7 +53,7 @@ public class SurrogateWebflowEventResolver extends AbstractCasWebflowEventResolv
         if (requestContext.getFlowScope().getBoolean(CONTEXT_ATTRIBUTE_REQUEST_SURROGATE, Boolean.FALSE)) {
             requestContext.getFlowScope().remove(CONTEXT_ATTRIBUTE_REQUEST_SURROGATE);
             if (loadSurrogates(requestContext)) {
-                return CollectionUtils.wrapSet(new Event(this, SurrogateWebflowConfigurer.VIEW_ID_SURROGATE_VIEW));
+                return CollectionUtils.wrapSet(new Event(this, SurrogateWebflowConfigurer.TRANSITION_ID_SURROGATE_VIEW));
             }
         }
         return null;

@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.DefaultCasSslContext;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 
+import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.junit.Before;
@@ -25,10 +26,10 @@ public class TrustedProxyAuthenticationTrustStoreSslSocketFactoryTests {
     private HttpClient client;
 
     @Before
+    @SneakyThrows
     public void prepareHttpClient() {
         val clientFactory = new SimpleHttpClientFactoryBean();
-        clientFactory.setSslSocketFactory(new SSLConnectionSocketFactory(
-            new DefaultCasSslContext(TRUST_STORE, TRUST_STORE_PSW, KeyStore.getDefaultType()).getSslContext()));
+        clientFactory.setSslSocketFactory(new SSLConnectionSocketFactory(new DefaultCasSslContext(TRUST_STORE, TRUST_STORE_PSW, KeyStore.getDefaultType()).getSslContext()));
         this.client = clientFactory.getObject();
     }
 

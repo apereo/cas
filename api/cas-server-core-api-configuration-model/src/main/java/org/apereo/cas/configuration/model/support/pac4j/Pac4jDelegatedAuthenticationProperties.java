@@ -125,6 +125,12 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
     private Bitbucket bitbucket = new Bitbucket();
 
     /**
+     * Settings that deal with having HiOrg-Server as an external delegated-to
+     * authentication provider.
+     */
+    private HiOrgServer hiOrgServer = new HiOrgServer();
+    
+    /**
      * The name of the authentication handler in CAS used for delegation.
      */
     private String name;
@@ -278,6 +284,20 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
 
         public Dropbox() {
             setClientName("Dropbox");
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-pac4j-webflow")
+    @Getter
+    @Setter
+    public static class HiOrgServer extends Pac4jIdentifiableClientProperties {
+        private static final long serialVersionUID = -1898237349924741147L;
+        /**
+         * The requested scope.
+         */
+        private String scope;
+        public HiOrgServer() {
+            setClientName("HiOrg-Server");
         }
     }
 

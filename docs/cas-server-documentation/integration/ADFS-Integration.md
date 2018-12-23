@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - ADFS Integration
+category: Authentication
 ---
 
 # Overview
@@ -43,7 +44,7 @@ Be sure to pick the right version of the JCE for your Java version. Java version
 Adjust and provide settings for the ADFS instance, and make sure you have obtained the ADFS signing certificate
 and made it available to CAS at a location that can be resolved at runtime.
 
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#ws-fed-delegated-authentication).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#ws-fed-delegated-authentication).
 
 ## Encrypted Assertions
 
@@ -103,7 +104,7 @@ An optional step, the `casLogoutView.html` can be modified to place a link to AD
 ```
 
 Alternatively, you may simply instruct CAS to redirect to the above endpoint after logout operations have executed.
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#logout).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#logout).
 
 ## Per-Service Relying Party Id
 

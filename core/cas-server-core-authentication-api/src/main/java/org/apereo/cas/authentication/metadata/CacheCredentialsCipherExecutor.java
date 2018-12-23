@@ -11,17 +11,12 @@ import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
  */
 public class CacheCredentialsCipherExecutor extends BaseStringCipherExecutor {
 
-    /**
-     * Instantiates a new cipher executor.
-     *
-     * @param secretKeyEncryption the secret key encryption
-     * @param secretKeySigning    the secret key signing
-     * @param alg                 the alg
-     */
     public CacheCredentialsCipherExecutor(final String secretKeyEncryption,
                                           final String secretKeySigning,
-                                          final String alg) {
-        super(secretKeyEncryption, secretKeySigning, alg);
+                                          final String alg,
+                                          final int signingKeySize,
+                                          final int encryptionKeySize) {
+        super(secretKeyEncryption, secretKeySigning, alg, signingKeySize, encryptionKeySize);
     }
 
 

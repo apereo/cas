@@ -6,9 +6,10 @@ dependencies {
     implementation project(":core:cas-server-core-monitor")
     implementation project(":support:cas-server-support-hazelcast-ticket-registry")
     implementation project(":support:cas-server-support-hazelcast-core")
+    implementation project(":support:cas-server-support-hazelcast")
 
-    testImplementation project(":core:cas-server-core")
     testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-services")

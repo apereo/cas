@@ -72,11 +72,13 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
      *                                 <li>L</li><li>O</li><li>OU</li><li>SERIALNUMBER</li>
      *                                 <li>ST</li><li>UID</li><li>UNIQUEIDENTIFIER</li></ul>
      *                                 For a complete list of supported attributes, see {@link org.cryptacular.x509.dn.StandardAttributeType}.
+     * @param useCurrentPrincipalId    whether the principal id from the resolved principal should be used
      */
     public X509SubjectPrincipalResolver(final IPersonAttributeDao attributeRepository,
                                         final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
-                                        final String principalAttributeName, final String descriptor) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
+                                        final String principalAttributeName, final String descriptor,
+                                        final boolean useCurrentPrincipalId) {
+        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName, useCurrentPrincipalId);
         this.descriptor = descriptor;
     }
 
@@ -86,6 +88,7 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
      * <p><strong>NOTE:</strong> no escaping is done on special characters in the
      * values, which could be different from what would appear in the string
      * representation of the DN.</p>
+     * Iterates sequence in reverse order as specified in section 2.1 of RFC 2253.
      *
      * @param rdnSequence list of relative distinguished names
      *                    that contains the attributes comprising the DN.
@@ -95,7 +98,6 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
      * array if the given attribute does not exist.
      */
     private static String[] getAttributeValues(final RDNSequence rdnSequence, final AttributeType attribute) {
-        // Iterates sequence in reverse order as specified in section 2.1 of RFC 2253
         val values = new ArrayList<String>();
         for (val rdn : rdnSequence.backward()) {
             for (val attr : rdn.getAttributes()) {
@@ -104,16 +106,9 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
                 }
             }
         }
-        return values.toArray(new String[0]);
+        return values.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
     }
 
-    /**
-     * Replaces placeholders in the descriptor with values extracted from attribute
-     * values in relative distinguished name components of the DN.
-     *
-     * @param certificate X.509 certificate credential.
-     * @return Resolved principal ID.
-     */
     @Override
     protected String resolvePrincipalInternal(final X509Certificate certificate) {
         LOGGER.debug("Resolving principal for [{}]", certificate);

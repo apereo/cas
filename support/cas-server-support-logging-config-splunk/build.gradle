@@ -4,10 +4,12 @@ dependencies {
     api project(":api:cas-server-core-api-ticket")
 
     implementation libraries.splunklogging
+    implementation libraries.log4j
+    
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-util-api")
 
-    compileOnly project(":core:cas-server-core-logging-config")
+    compileOnly project(":core:cas-server-core-logging-api")
 }
 
 

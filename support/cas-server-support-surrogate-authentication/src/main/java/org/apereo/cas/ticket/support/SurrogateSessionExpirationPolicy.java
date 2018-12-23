@@ -5,6 +5,7 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketState;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -17,6 +18,7 @@ import lombok.val;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Slf4j
+@ToString(callSuper = true)
 public class SurrogateSessionExpirationPolicy extends BaseDelegatingExpirationPolicy {
     private static final long serialVersionUID = -2735975347698196127L;
 
@@ -34,11 +36,11 @@ public class SurrogateSessionExpirationPolicy extends BaseDelegatingExpirationPo
         val attributes = ticketState.getAuthentication().getAttributes();
         if (attributes.containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL)
             && attributes.containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_USER)) {
-            LOGGER.debug("Ticket is associated with a surrogate authentication.");
+            LOGGER.trace("Ticket is associated with a surrogate authentication.");
             return PolicyTypes.SURROGATE.name();
         }
 
-        LOGGER.debug("Ticket is not associated with a surrogate authentication.");
+        LOGGER.trace("Ticket is not associated with a surrogate authentication.");
         return PolicyTypes.DEFAULT.name();
     }
 

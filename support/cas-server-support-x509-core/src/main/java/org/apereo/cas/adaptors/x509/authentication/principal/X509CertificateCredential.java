@@ -2,7 +2,7 @@ package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import org.apereo.cas.adaptors.x509.util.X509CertificateCredentialJsonDeserializer;
 import org.apereo.cas.adaptors.x509.util.X509CertificateCredentialJsonSerializer;
-import org.apereo.cas.authentication.AbstractCredential;
+import org.apereo.cas.authentication.credential.AbstractCredential;
 import org.apereo.cas.util.crypto.CertUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Setter;
+import org.apache.commons.lang3.ObjectUtils;
 
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
@@ -57,7 +58,7 @@ public class X509CertificateCredential extends AbstractCredential {
     }
 
     public X509Certificate getCertificate() {
-        return this.certificate;
+        return ObjectUtils.defaultIfNull(this.certificate, this.certificates[0]);
     }
 
     @Override

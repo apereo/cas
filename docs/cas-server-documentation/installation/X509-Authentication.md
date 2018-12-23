@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - X.509 Authentication
+category: Authentication
 ---
 
 # X.509 Authentication
@@ -57,7 +58,7 @@ by the Web server terminating the SSL connection. Since an SSL peer may be confi
 certificates, the CAS X.509 handler provides a number of properties that place additional restrictions on
 acceptable client certificates.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#x509-authentication).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#x509-authentication).
 
 ## Web Server Configuration
 

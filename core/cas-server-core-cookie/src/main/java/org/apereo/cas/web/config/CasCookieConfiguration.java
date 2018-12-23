@@ -31,8 +31,6 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCookieConfiguration {
-
-
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -59,7 +57,7 @@ public class CasCookieConfiguration {
     public CipherExecutor cookieCipherExecutor() {
         val crypto = casProperties.getTgc().getCrypto();
         var enabled = crypto.isEnabled();
-        if (!enabled && (StringUtils.isNotBlank(crypto.getEncryption().getKey())) && StringUtils.isNotBlank(crypto.getSigning().getKey())) {
+        if (!enabled && StringUtils.isNotBlank(crypto.getEncryption().getKey()) && StringUtils.isNotBlank(crypto.getSigning().getKey())) {
             LOGGER.warn("Token encryption/signing is not enabled explicitly in the configuration, yet signing/encryption keys "
                 + "are defined for operations. CAS will proceed to enable the cookie encryption/signing functionality.");
             enabled = true;
@@ -67,7 +65,10 @@ public class CasCookieConfiguration {
 
         if (enabled) {
             return new TicketGrantingCookieCipherExecutor(crypto.getEncryption().getKey(),
-                crypto.getSigning().getKey(), crypto.getAlg());
+                crypto.getSigning().getKey(),
+                crypto.getAlg(),
+                crypto.getSigning().getKeySize(),
+                crypto.getEncryption().getKeySize());
         }
 
         LOGGER.warn("Ticket-granting cookie encryption/signing is turned off. This "

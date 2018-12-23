@@ -77,7 +77,7 @@ public class YubiKeyAuthenticationHandlerTests {
         val handler = new YubiKeyAuthenticationHandler(StringUtils.EMPTY,
             null, new DefaultPrincipalFactory(),
             YubicoClient.getClient(CLIENT_ID, SECRET_KEY),
-            registry);
+            registry, null);
         this.thrown.expect(AccountNotFoundException.class);
         handler.authenticate(new YubiKeyCredential(OTP));
     }
@@ -87,7 +87,7 @@ public class YubiKeyAuthenticationHandlerTests {
         val registry = new WhitelistYubiKeyAccountRegistry(new HashMap<>(), (uid, token) -> true);
         registry.setCipherExecutor(new YubikeyAccountCipherExecutor(
             "1PbwSbnHeinpkZOSZjuSJ8yYpUrInm5aaV18J2Ar4rM",
-            "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w"));
+            "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w", 0, 0));
         assertTrue(registry.registerAccountFor("encrypteduser", OTP));
         assertTrue(registry.isYubiKeyRegisteredFor("encrypteduser", registry.getAccountValidator().getTokenPublicId(OTP)));
     }

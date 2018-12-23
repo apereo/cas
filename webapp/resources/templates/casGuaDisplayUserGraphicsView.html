@@ -30,8 +30,9 @@
             </div>
 
             <form method="post" id="fm1" class="fm-v clearfix" th:action="@{/login}">
-                <input class="btn btn-submit" name="_eventId_submit" accesskey="l"
-                       th:value="#{screen.button.continue}" tabindex="4" type="submit" value="Continue"/>
+                <input class="btn btn-submit" accesskey="l"
+                       th:value="#{screen.button.continue}" tabindex="4" type="submit"/>
+                <input type="hidden" name="_eventId_submit" value="Continue" />
                 <div class="row btn-row">
                     <input type="hidden" name="username" th:value="${guaUsername}"/>
                     <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>

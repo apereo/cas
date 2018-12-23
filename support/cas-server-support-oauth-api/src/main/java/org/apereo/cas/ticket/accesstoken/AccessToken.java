@@ -15,4 +15,18 @@ public interface AccessToken extends OAuthToken {
      * The prefix for access tokens.
      */
     String PREFIX = "AT";
+
+    /**
+     * Sets id token.
+     *
+     * @param idToken the id token
+     */
+    void setIdToken(String idToken);
+
+    /**
+     * Gets id token.
+     *
+     * @return the id token
+     */
+    String getIdToken();
 }

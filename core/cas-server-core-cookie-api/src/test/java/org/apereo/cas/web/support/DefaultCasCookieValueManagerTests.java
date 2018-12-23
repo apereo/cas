@@ -57,7 +57,7 @@ public class DefaultCasCookieValueManagerTests {
 
         // test encoding first
         val encoded = cookieValueManager.buildCookieValue(VALUE, request);
-        assertEquals(VALUE + '@' + CLIENT_IP + '@' + USER_AGENT, encoded);
+        assertEquals(String.join("@", VALUE, CLIENT_IP, USER_AGENT), encoded);
 
         // now test decoding the cookie
         when(cookie.getValue()).thenReturn(encoded);

@@ -134,7 +134,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
     public String getDescription(final String locale) {
         if (this.uiInfo != null) {
             val description = getLocalizedValues(locale, this.uiInfo.getDescriptions());
-            return (description != null) ? description : super.getDescription();
+            return description != null ? description : super.getDescription();
         }
         return super.getDescription();
     }
@@ -153,7 +153,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
     public String getDisplayName(final String locale) {
         if (this.uiInfo != null) {
             val displayName = getLocalizedValues(locale, this.uiInfo.getDisplayNames());
-            return (displayName != null) ? displayName : super.getDisplayName();
+            return displayName != null ? displayName : super.getDisplayName();
         }
         return super.getDisplayName();
     }
@@ -172,7 +172,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
     public String getInformationURL(final String locale) {
         if (this.uiInfo != null) {
             val informationUrl = getLocalizedValues(locale, this.uiInfo.getInformationURLs());
-            return (informationUrl != null) ? informationUrl : super.getInformationURL();
+            return informationUrl != null ? informationUrl : super.getInformationURL();
         }
         return super.getInformationURL();
     }
@@ -191,7 +191,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
     public String getPrivacyStatementURL(final String locale) {
         if (this.uiInfo != null) {
             val privacyStatementURL = getLocalizedValues(locale, this.uiInfo.getPrivacyStatementURLs());
-            return (privacyStatementURL != null) ? privacyStatementURL : super.getPrivacyStatementURL();
+            return privacyStatementURL != null ? privacyStatementURL : super.getPrivacyStatementURL();
         }
         return super.getPrivacyStatementURL();
     }
@@ -208,7 +208,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
      * @param items  the items
      * @return the string value
      */
-    private String getLocalizedValues(final String locale, final List<?> items) {
+    private static String getLocalizedValues(final String locale, final List<?> items) {
         val foundLocale = findLocale(StringUtils.defaultString(locale, "en"), items);
         if (foundLocale.isPresent()) {
             return foundLocale.get();
@@ -232,18 +232,17 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
         return null;
     }
 
-    private Optional<String> findLocale(final String locale, final List<?> items) {
+    private static Optional<String> findLocale(final String locale, final List<?> items) {
         LOGGER.trace("Looking for locale [{}]", locale);
-        for (var i = 0; i < items.size(); i++) {
-            if (items.get(i) instanceof LocalizedName) {
-                val p = Pattern.compile(locale, Pattern.CASE_INSENSITIVE);
-                val value = (LocalizedName) items.get(i);
-                if (p.matcher(value.getXMLLang()).matches()) {
-                    LOGGER.trace("Found locale [{}]", value);
-                    return Optional.of(value.getValue());
-                }
-            }
-        }
-        return Optional.empty();
+        val p = Pattern.compile(locale, Pattern.CASE_INSENSITIVE);
+        return items.stream()
+            .filter(item -> item instanceof LocalizedName)
+            .map(item -> (LocalizedName) item)
+            .filter(item -> {
+                val xmlLang = item.getXMLLang();
+                return StringUtils.isNotBlank(xmlLang) && p.matcher(xmlLang).matches() && StringUtils.isNotBlank(item.getValue());
+            })
+            .map(XSString::getValue)
+            .findFirst();
     }
 }

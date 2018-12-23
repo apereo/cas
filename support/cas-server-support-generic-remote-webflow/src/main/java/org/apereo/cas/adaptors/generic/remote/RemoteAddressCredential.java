@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.generic.remote;
 
-import org.apereo.cas.authentication.AbstractCredential;
+import org.apereo.cas.authentication.credential.AbstractCredential;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;

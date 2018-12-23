@@ -5,6 +5,7 @@ import org.apereo.cas.CasProtocolConstants;
 import lombok.val;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -21,7 +22,7 @@ public class WebApplicationServiceFactoryTests {
     @Test
     public void verifyServiceCreationSuccessfullyById() {
         val request = new MockHttpServletRequest();
-        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService("testservice");
         assertNotNull(service);

@@ -6,6 +6,8 @@ import org.apereo.cas.configuration.support.RequiredProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.cfg.AvailableSettings;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -92,13 +94,14 @@ public abstract class AbstractJpaProperties implements Serializable {
     /**
      * Additional settings provided by Hibernate in form of key-value pairs.
      *
-     * @see org.hibernate.cfg.AvailableSettings
+     * @see AvailableSettings
      */
     private Map<String, String> properties = new HashMap<>();
 
     /**
      * Database connection pooling settings.
      */
+    @NestedConfigurationProperty
     private ConnectionPoolingProperties pool = new ConnectionPoolingProperties();
 
     /**
@@ -160,4 +163,9 @@ public abstract class AbstractJpaProperties implements Serializable {
      * or returned back verbatim.
      */
     private boolean dataSourceProxy;
+
+    /**
+     * Fully-qualified name of the class that can control the physical naming strategy of hibernate.
+     */
+    private String physicalNamingStrategyClassName = "org.apereo.cas.jpa.CasHibernatePhysicalNamingStrategy";
 }

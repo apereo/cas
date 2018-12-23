@@ -33,8 +33,8 @@ public class MemoryMonitor extends AbstractHealthIndicator {
         }
     }
 
-    private void buildHealthCheckStatus(final Health.Builder builder,
-                                        final long freeMemory, final long totalMemory) {
+    private static void buildHealthCheckStatus(final Health.Builder builder,
+                                               final long freeMemory, final long totalMemory) {
         builder
             .withDetail("freeMemory", freeMemory)
             .withDetail("totalMemory", totalMemory);

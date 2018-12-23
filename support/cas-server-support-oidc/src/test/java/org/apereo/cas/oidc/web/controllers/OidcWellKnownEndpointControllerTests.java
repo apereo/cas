@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.web.controllers;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.oidc.web.controllers.discovery.OidcWellKnownEndpointController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;

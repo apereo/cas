@@ -10,6 +10,7 @@ import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.ws.idp.web.flow.WSFederationMetadataUIAction;
 import org.apereo.cas.ws.idp.web.flow.WSFederationWebflowConfigurer;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -43,23 +44,23 @@ public class CoreWsSecurityIdentityProviderWebflowConfiguration implements CasWe
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("loginFlowRegistry")
-    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
     @Qualifier("wsFederationAuthenticationServiceSelectionStrategy")
-    private AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy;
+    private ObjectProvider<AuthenticationServiceSelectionStrategy> wsFederationAuthenticationServiceSelectionStrategy;
 
     @Bean
     @RefreshScope
     public Action wsFederationMetadataUIAction() {
-        return new WSFederationMetadataUIAction(servicesManager, wsFederationAuthenticationServiceSelectionStrategy);
+        return new WSFederationMetadataUIAction(servicesManager.getIfAvailable(), wsFederationAuthenticationServiceSelectionStrategy.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "wsFederationWebflowConfigurer")
@@ -67,7 +68,7 @@ public class CoreWsSecurityIdentityProviderWebflowConfiguration implements CasWe
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer wsFederationWebflowConfigurer() {
         return new WSFederationWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry, wsFederationMetadataUIAction(), applicationContext, casProperties);
+            loginFlowDefinitionRegistry.getIfAvailable(), wsFederationMetadataUIAction(), applicationContext, casProperties);
     }
 
     @Override

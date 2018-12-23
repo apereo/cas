@@ -12,14 +12,17 @@ public interface OAuth20Constants {
      * Device code flow verification uri.
      */
     String DEVICE_VERIFICATION_URI = "verification_uri";
+
     /**
      * Device code flow user code.
      */
     String DEVICE_USER_CODE = "user_code";
+
     /**
      * Device code flow device code.
      */
     String DEVICE_CODE = "device_code";
+
     /**
      * Device code flow refresh interval.
      */
@@ -131,11 +134,6 @@ public interface OAuth20Constants {
     String REFRESH_TOKEN = "refresh_token";
 
     /**
-     * The bearer token.
-     */
-    String BEARER_TOKEN = "Bearer";
-
-    /**
      * The missing access token.
      */
     String MISSING_ACCESS_TOKEN = "missing_accessToken";
@@ -166,6 +164,12 @@ public interface OAuth20Constants {
     String ERROR_VIEW = "casServiceErrorView";
 
     /**
+     * The invalid client.
+     */
+    String INVALID_CLIENT = "invalid_client";
+
+
+    /**
      * The invalid request.
      */
     String INVALID_REQUEST = "invalid_request";
@@ -184,6 +188,16 @@ public interface OAuth20Constants {
      * Authz pending error.
      */
     String AUTHORIZATION_PENDING = "authorization_pending";
+
+    /**
+     * Authz state.
+     */
+    String AUTHORIZATION_STATE = "authorization_state";
+
+    /**
+     * Authz state claims submitted.
+     */
+    String CLAIMS_SUBMITTED = "claims_submitted";
 
     /**
      * slow down error for when approval requests are too quick.
@@ -249,4 +263,67 @@ public interface OAuth20Constants {
      * The bearer type.
      */
     String TOKEN_TYPE_BEARER = "bearer";
+
+    /**
+     * Registration endpoint URL.
+     */
+    String UMA_REGISTRATION_URL = "register";
+
+    /**
+     * resource set registration endpoint URL.
+     */
+    String UMA_RESOURCE_SET_REGISTRATION_URL = "resourceSet";
+
+    /**
+     * permission registration endpoint URL.
+     */
+    String UMA_PERMISSION_URL = "permission";
+
+    /**
+     * policy registration endpoint URL.
+     */
+    String UMA_POLICY_URL = "policy";
+
+    /**
+     * authorization registration endpoint URL.
+     */
+    String UMA_AUTHORIZATION_REQUEST_URL = "rptAuthzRequest";
+
+    /**
+     * claims collection endpoint URL.
+     */
+    String UMA_CLAIMS_COLLECTION_URL = "rqpClaims";
+    /**
+     * URL endpoint that exposes JWKS for token signing.
+     */
+    String UMA_JWKS_URL = "umaJwks";
+
+    /**
+     * UMA protection scope.
+     */
+    String UMA_PROTECTION_SCOPE = "uma_protection";
+
+    /**
+     * UMA authz scope.
+     */
+    String UMA_AUTHORIZATION_SCOPE = "uma_authorization";
+
+    /**
+     * requesting party claim.
+     */
+    String REQUESTING_PARTY_CLAIMS = "requesting_party_claims";
+    /**
+     * error details.
+     */
+    String ERROR_DETAILS = "error_details";
+    /**
+     * need information.
+     */
+    String NEED_INFO = "need_info";
+
+    /**
+     * The unauthorized client.
+     */
+    String UNAUTHORIZED_CLIENT = "unauthorized_client";
+
 }

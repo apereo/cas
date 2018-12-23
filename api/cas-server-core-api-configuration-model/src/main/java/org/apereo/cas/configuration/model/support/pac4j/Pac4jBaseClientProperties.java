@@ -32,4 +32,10 @@ public class Pac4jBaseClientProperties implements Serializable {
      * Auto-redirect to this client.
      */
     private boolean autoRedirect;
+
+    /**
+     * The attribute to use as the principal identifier built during and upon a successful authentication attempt.
+     */
+    private String principalAttributeId;
+
 }

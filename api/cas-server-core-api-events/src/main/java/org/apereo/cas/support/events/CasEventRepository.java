@@ -32,7 +32,7 @@ public interface CasEventRepository {
      * @param dateTime the date time
      * @return the collection
      */
-    Collection<CasEvent> load(ZonedDateTime dateTime);
+    Collection<? extends CasEvent> load(ZonedDateTime dateTime);
 
     /**
      * Gets events of type for principal.
@@ -41,7 +41,7 @@ public interface CasEventRepository {
      * @param principal the principal
      * @return the events of type
      */
-    Collection<CasEvent> getEventsOfTypeForPrincipal(String type, String principal);
+    Collection<? extends CasEvent> getEventsOfTypeForPrincipal(String type, String principal);
 
     /**
      * Gets events of type for principal after date.
@@ -51,7 +51,7 @@ public interface CasEventRepository {
      * @param dateTime  the date time
      * @return the events of type
      */
-    Collection<CasEvent> getEventsOfTypeForPrincipal(String type, String principal, ZonedDateTime dateTime);
+    Collection<? extends CasEvent> getEventsOfTypeForPrincipal(String type, String principal, ZonedDateTime dateTime);
 
     /**
      * Gets events of type.
@@ -59,7 +59,7 @@ public interface CasEventRepository {
      * @param type the type
      * @return the events of type
      */
-    Collection<CasEvent> getEventsOfType(String type);
+    Collection<? extends CasEvent> getEventsOfType(String type);
 
     /**
      * Gets events of type after date.
@@ -68,7 +68,7 @@ public interface CasEventRepository {
      * @param dateTime the date time
      * @return the events of type
      */
-    Collection<CasEvent> getEventsOfType(String type, ZonedDateTime dateTime);
+    Collection<? extends CasEvent> getEventsOfType(String type, ZonedDateTime dateTime);
 
     /**
      * Gets events for principal.
@@ -76,7 +76,7 @@ public interface CasEventRepository {
      * @param id the id
      * @return the events for principal
      */
-    Collection<CasEvent> getEventsForPrincipal(String id);
+    Collection<? extends CasEvent> getEventsForPrincipal(String id);
 
     /**
      * Gets events for principal after date.
@@ -85,5 +85,5 @@ public interface CasEventRepository {
      * @param dateTime the date time
      * @return the events for principal
      */
-    Collection<CasEvent> getEventsForPrincipal(String id, ZonedDateTime dateTime);
+    Collection<? extends CasEvent> getEventsForPrincipal(String id, ZonedDateTime dateTime);
 }

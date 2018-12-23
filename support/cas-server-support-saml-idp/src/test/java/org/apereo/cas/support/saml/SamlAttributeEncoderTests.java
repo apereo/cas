@@ -1,13 +1,15 @@
 package org.apereo.cas.support.saml;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlAttributeEncoder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.attribute.SamlAttributeEncoder;
 import org.apereo.cas.util.EncodingUtils;
 
 import lombok.val;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.util.HashMap;
 
@@ -19,8 +21,12 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@RunWith(SpringRunner.class)
 public class SamlAttributeEncoderTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Test
     public void verifyAction() {
@@ -37,8 +43,7 @@ public class SamlAttributeEncoderTests {
         val encoder = new SamlAttributeEncoder();
         val attributes = new HashMap<String, Object>();
         attributes.put(EncodingUtils.hexEncode("urn:oid:2.5.4.3"), "testValue");
-        val result =
-            encoder.encodeAttributes(attributes, CoreAuthenticationTestUtils.getRegisteredService("test"));
+        val result = encoder.encodeAttributes(attributes, CoreAuthenticationTestUtils.getRegisteredService("test"));
         assertTrue(result.containsKey("urn:oid:2.5.4.3"));
     }
 

@@ -1,7 +1,7 @@
 package org.apereo.cas.config.support.authentication;
 
-import org.apereo.cas.adaptors.gauth.rest.GoogleAuthenticatorRestHttpRequestCredentialFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.gauth.rest.GoogleAuthenticatorRestHttpRequestCredentialFactory;
 import org.apereo.cas.rest.factory.ChainingRestHttpRequestCredentialFactory;
 import org.apereo.cas.rest.plan.RestHttpRequestCredentialFactoryConfigurer;
 

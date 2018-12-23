@@ -1,0 +1,28 @@
+description = "Apereo CAS Core Webflow MFA API"
+dependencies {
+    api project(":api:cas-server-core-api-authentication")
+    api project(":api:cas-server-core-api-ticket")
+    api project(":api:cas-server-core-api")
+    api project(":api:cas-server-core-api-audit")
+    api project(":api:cas-server-core-api-webflow")
+    api project(":api:cas-server-core-api-mfa")
+
+    implementation libraries.bouncycastle
+    
+    implementation project(":core:cas-server-core-webflow-api")
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-authentication-mfa-api")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-services-api")
+    implementation project(":core:cas-server-core-services-registry")
+    implementation project(":core:cas-server-core-services-authentication")
+    implementation project(":core:cas-server-core-validation-api")
+    implementation project(":core:cas-server-core-tickets-api")
+    implementation project(":core:cas-server-core-cookie-api")
+    implementation project(":core:cas-server-core-logout-api")
+}
+
+
+

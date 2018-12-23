@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - OpenID Protocol
+category: Protocols
 ---
 
 # OpenID Protocol
@@ -33,7 +34,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#openid-authentication).
+To see the relevant list of CAS properties for this feature, please [review this guide](../configuration/Configuration-Properties.html#openid-authentication).
 
 ## Register Clients
 
@@ -48,6 +49,10 @@ Register clients in the CAS service registry:
   "id" : 10
 }
 ```
+
+## Sample Client Applications
+
+- [OpenID Client Webapp](https://github.com/cas-projects/openid-sample-java-webapp)
 
 # OpenID Provider Delegation
 

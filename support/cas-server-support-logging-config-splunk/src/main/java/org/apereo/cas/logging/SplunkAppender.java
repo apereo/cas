@@ -29,7 +29,7 @@ public class SplunkAppender extends AbstractAppender {
     private final Configuration config;
     private final AppenderRef appenderRef;
 
-    public SplunkAppender(final String name, @NonNull final Configuration config, @NonNull final AppenderRef appenderRef) {
+    public SplunkAppender(final String name, final @NonNull Configuration config, final @NonNull AppenderRef appenderRef) {
         super(name, null, PatternLayout.createDefaultLayout());
         this.config = config;
         this.appenderRef = appenderRef;

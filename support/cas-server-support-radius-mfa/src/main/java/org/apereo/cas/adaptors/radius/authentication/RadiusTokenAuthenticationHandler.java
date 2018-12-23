@@ -7,15 +7,19 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import net.jradius.dictionary.Attr_State;
+import net.jradius.packet.attribute.value.AttributeValue;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This is {@link RadiusTokenAuthenticationHandler}.
@@ -35,8 +39,9 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
                                             final PrincipalFactory principalFactory,
                                             final List<RadiusServer> servers,
                                             final boolean failoverOnException,
-                                            final boolean failoverOnAuthenticationFailure) {
-        super(name, servicesManager, principalFactory, null);
+                                            final boolean failoverOnAuthenticationFailure,
+                                            final Integer order) {
+        super(name, servicesManager, principalFactory, order);
         this.servers = servers;
         this.failoverOnException = failoverOnException;
         this.failoverOnAuthenticationFailure = failoverOnAuthenticationFailure;
@@ -47,6 +52,11 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
     @Override
     public boolean supports(final Credential credential) {
         return RadiusTokenCredential.class.isAssignableFrom(credential.getClass());
+    }
+
+    @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return RadiusTokenCredential.class.isAssignableFrom(clazz);
     }
 
     @Override
@@ -62,9 +72,19 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
             val principal = authentication.getPrincipal();
             val username = principal.getId();
 
-            val result =
-                RadiusUtils.authenticate(username, password, this.servers,
-                    this.failoverOnAuthenticationFailure, this.failoverOnException);
+            var state = Optional.empty();
+            val attributes = principal.getAttributes();
+            if (attributes.containsKey(Attr_State.NAME)) {
+                LOGGER.debug("Found state attribute in principal attributes for multifactor authentication");
+                val stateValue = CollectionUtils.firstElement(attributes.get(Attr_State.NAME));
+                if (stateValue.isPresent()) {
+                    val stateAttr = AttributeValue.class.cast(stateValue.get());
+                    state = Optional.of(stateAttr.getValueObject());
+                }
+            }
+
+            val result = RadiusUtils.authenticate(username, password, this.servers,
+                this.failoverOnAuthenticationFailure, this.failoverOnException, state);
             if (result.getKey()) {
                 val finalPrincipal = this.principalFactory.createPrincipal(username, result.getValue().get());
                 return createHandlerResult(credential, finalPrincipal, new ArrayList<>());

@@ -1,6 +1,8 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
+import org.apereo.cas.throttle.ThrottledRequestExecutor;
+import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -8,7 +10,6 @@ import lombok.val;
 import javax.servlet.http.HttpServletRequest;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
@@ -24,16 +25,21 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
 
     private static final double SUBMISSION_RATE_DIVIDEND = 1000.0;
 
-    private final ConcurrentMap<String, ZonedDateTime> ipMap = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, ZonedDateTime> ipMap;
 
     public AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter(final int failureThreshold,
                                                                         final int failureRangeInSeconds,
                                                                         final String usernameParameter,
                                                                         final String authenticationFailureCode,
                                                                         final AuditTrailExecutionPlan auditTrailExecutionPlan,
-                                                                        final String applicationCode) {
+                                                                        final String applicationCode,
+                                                                        final ThrottledRequestResponseHandler throttledRequestResponseHandler,
+                                                                        final ConcurrentMap map,
+                                                                        final ThrottledRequestExecutor throttledRequestExecutor) {
         super(failureThreshold, failureRangeInSeconds, usernameParameter,
-            authenticationFailureCode, auditTrailExecutionPlan, applicationCode);
+            authenticationFailureCode, auditTrailExecutionPlan, applicationCode,
+            throttledRequestResponseHandler, throttledRequestExecutor);
+        this.ipMap = map;
     }
 
     /**
@@ -55,7 +61,9 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
 
     @Override
     public void recordSubmissionFailure(final HttpServletRequest request) {
-        this.ipMap.put(constructKey(request), ZonedDateTime.now(ZoneOffset.UTC));
+        val key = constructKey(request);
+        LOGGER.debug("Recording submission failure [{}]", key);
+        this.ipMap.put(key, ZonedDateTime.now(ZoneOffset.UTC));
     }
 
     /**

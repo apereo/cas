@@ -14,7 +14,7 @@ import org.apereo.cas.web.report.AuditLogEndpoint;
 import org.apereo.cas.web.report.CasInfoEndpointContributor;
 import org.apereo.cas.web.report.CasReleaseAttributesReportEndpoint;
 import org.apereo.cas.web.report.CasResolveAttributesReportEndpoint;
-import org.apereo.cas.web.report.LoggingConfigurationEndpoint;
+import org.apereo.cas.web.report.ExportRegisteredServicesEndpoint;
 import org.apereo.cas.web.report.RegisteredServicesEndpoint;
 import org.apereo.cas.web.report.SingleSignOnSessionStatusEndpoint;
 import org.apereo.cas.web.report.SingleSignOnSessionsEndpoint;
@@ -27,13 +27,14 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
+import org.springframework.boot.actuate.autoconfigure.jdbc.DataSourceHealthIndicatorAutoConfiguration;
 import org.springframework.boot.actuate.health.HealthEndpoint;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
-import org.springframework.core.io.ResourceLoader;
+import org.springframework.context.annotation.Import;
 
 /**
  * This this {@link CasReportsConfiguration}.
@@ -46,11 +47,6 @@ import org.springframework.core.io.ResourceLoader;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasReportsConfiguration {
 
-    @Autowired
-    private ResourceLoader resourceLoader;
-
-    @Autowired
-    private Environment environment;
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
@@ -69,30 +65,30 @@ public class CasReportsConfiguration {
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport;
+    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")
-    private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+    private ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory;
 
     @Autowired
-    @Qualifier("personDirectoryPrincipalResolver")
-    private PrincipalResolver personDirectoryPrincipalResolver;
+    @Qualifier("defaultPrincipalResolver")
+    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
 
     @Autowired
     @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService centralAuthenticationService;
+    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("principalFactory")
-    private PrincipalFactory principalFactory;
+    private ObjectProvider<PrincipalFactory> principalFactory;
 
     @Bean
     @ConditionalOnEnabledEndpoint
@@ -108,14 +104,14 @@ public class CasReportsConfiguration {
 
     @Bean
     @ConditionalOnEnabledEndpoint
-    public LoggingConfigurationEndpoint loggingConfigurationEndpoint() {
-        return new LoggingConfigurationEndpoint(casProperties, resourceLoader, environment);
+    public RegisteredServicesEndpoint registeredServicesReportEndpoint() {
+        return new RegisteredServicesEndpoint(casProperties, servicesManager.getIfAvailable());
     }
 
     @Bean
     @ConditionalOnEnabledEndpoint
-    public RegisteredServicesEndpoint registeredServicesReportEndpoint() {
-        return new RegisteredServicesEndpoint(casProperties, servicesManager);
+    public ExportRegisteredServicesEndpoint exportRegisteredServicesEndpoint() {
+        return new ExportRegisteredServicesEndpoint(casProperties, servicesManager.getIfAvailable());
     }
 
     @Bean
@@ -126,7 +122,7 @@ public class CasReportsConfiguration {
     @Bean
     @ConditionalOnEnabledEndpoint
     public SingleSignOnSessionsEndpoint singleSignOnSessionsEndpoint() {
-        return new SingleSignOnSessionsEndpoint(centralAuthenticationService, casProperties);
+        return new SingleSignOnSessionsEndpoint(centralAuthenticationService.getIfAvailable(), casProperties);
     }
 
     @Bean
@@ -135,27 +131,38 @@ public class CasReportsConfiguration {
         return new SingleSignOnSessionStatusEndpoint(ticketGrantingTicketCookieGenerator.getIfAvailable(), ticketRegistrySupport.getIfAvailable());
     }
 
-
     @Bean
     @ConditionalOnEnabledEndpoint
     public StatisticsEndpoint statisticsReportEndpoint() {
-        return new StatisticsEndpoint(centralAuthenticationService, casProperties);
+        return new StatisticsEndpoint(centralAuthenticationService.getIfAvailable(), casProperties);
     }
 
     @Bean
     @ConditionalOnEnabledEndpoint
     public CasResolveAttributesReportEndpoint resolveAttributesReportEndpoint() {
-        return new CasResolveAttributesReportEndpoint(casProperties, personDirectoryPrincipalResolver);
+        return new CasResolveAttributesReportEndpoint(casProperties, defaultPrincipalResolver.getIfAvailable());
     }
 
     @Bean
     @ConditionalOnEnabledEndpoint
     public CasReleaseAttributesReportEndpoint releaseAttributesReportEndpoint() {
         return new CasReleaseAttributesReportEndpoint(casProperties,
-            servicesManager,
-            authenticationSystemSupport,
-            webApplicationServiceFactory,
-            principalFactory);
+            servicesManager.getIfAvailable(),
+            authenticationSystemSupport.getIfAvailable(),
+            webApplicationServiceFactory.getIfAvailable(),
+            principalFactory.getIfAvailable());
+    }
+
+    /**
+     * This this {@link ConditionalDataSourceHealthIndicatorConfiguration}.
+     *
+     * @author Misagh Moayyed
+     * @since 6.0.0
+     */
+    @ConditionalOnBean(name = "dataSource")
+    @Configuration("conditionalDataSourceHealthIndicatorConfiguration")
+    @Import(DataSourceHealthIndicatorAutoConfiguration.class)
+    public static class ConditionalDataSourceHealthIndicatorConfiguration {
     }
 
     /**

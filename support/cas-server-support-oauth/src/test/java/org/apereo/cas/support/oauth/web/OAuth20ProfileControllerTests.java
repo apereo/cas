@@ -1,11 +1,11 @@
 package org.apereo.cas.support.oauth.web;
 
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.BasicCredentialMetaData;
-import org.apereo.cas.authentication.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
+import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -15,12 +15,13 @@ import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.accesstoken.DefaultAccessTokenFactory;
 import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -37,18 +38,7 @@ import static org.junit.Assert.*;
  * @author Jerome Leleu
  * @since 3.5.2
  */
-
 public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
-
-    private static final ObjectMapper MAPPER = new ObjectMapper();
-    private static final String CONTEXT = "/oauth2.0/";
-    private static final String ID = "1234";
-    private static final String NAME = "attributeName";
-    private static final String NAME2 = "attributeName2";
-    private static final String VALUE = "attributeValue";
-    private static final String CONTENT_TYPE = "application/json";
-    private static final String GET = "GET";
-    private static final String ATTRIBUTES_PARAM = "attributes";
 
     @Autowired
     @Qualifier("defaultAccessTokenFactory")
@@ -73,26 +63,26 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyNoGivenAccessToken() throws Exception {
-        val mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.PROFILE_URL);
+        val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.PROFILE_URL);
         val mockResponse = new MockHttpServletResponse();
 
         val entity = oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
 
         assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
-        assertEquals(CONTENT_TYPE, mockResponse.getContentType());
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, mockResponse.getContentType());
         assertTrue(entity.getBody().contains(OAuth20Constants.MISSING_ACCESS_TOKEN));
     }
 
     @Test
     public void verifyNoExistingAccessToken() throws Exception {
-        val mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.PROFILE_URL);
+        val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.PROFILE_URL);
         mockRequest.setParameter(OAuth20Constants.ACCESS_TOKEN, "DOES NOT EXIST");
         val mockResponse = new MockHttpServletResponse();
 
         val entity = oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
 
         assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
-        assertEquals(CONTENT_TYPE, mockResponse.getContentType());
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, mockResponse.getContentType());
         assertTrue(entity.getBody().contains(OAuth20Constants.EXPIRED_ACCESS_TOKEN));
     }
 
@@ -105,13 +95,13 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
             new MockTicketGrantingTicket("casuser"), new ArrayList<>());
         this.ticketRegistry.addTicket(accessToken);
 
-        val mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.PROFILE_URL);
+        val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.PROFILE_URL);
         mockRequest.setParameter(OAuth20Constants.ACCESS_TOKEN, accessToken.getId());
         val mockResponse = new MockHttpServletResponse();
 
         val entity = oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
-        assertEquals(CONTENT_TYPE, mockResponse.getContentType());
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, mockResponse.getContentType());
         assertTrue(entity.getBody().contains(OAuth20Constants.EXPIRED_ACCESS_TOKEN));
     }
 
@@ -128,13 +118,13 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
             new MockTicketGrantingTicket("casuser"), new ArrayList<>());
         this.ticketRegistry.addTicket(accessToken);
 
-        val mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.PROFILE_URL);
+        val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.PROFILE_URL);
         mockRequest.setParameter(OAuth20Constants.ACCESS_TOKEN, accessToken.getId());
         val mockResponse = new MockHttpServletResponse();
 
         val entity = oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.OK, entity.getStatusCode());
-        assertEquals(CONTENT_TYPE, mockResponse.getContentType());
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, mockResponse.getContentType());
 
         val expected = "{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"},{\"" + NAME2
             + "\":[\"" + VALUE + "\",\"" + VALUE + "\"]}]}";
@@ -163,13 +153,13 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         accessToken.getTicketGrantingTicket().markTicketExpired();
         this.ticketRegistry.addTicket(accessToken);
 
-        val mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.PROFILE_URL);
+        val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.PROFILE_URL);
         mockRequest.setParameter(OAuth20Constants.ACCESS_TOKEN, accessToken.getId());
         val mockResponse = new MockHttpServletResponse();
 
         val entity = oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.OK, entity.getStatusCode());
-        assertEquals(CONTENT_TYPE, mockResponse.getContentType());
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, mockResponse.getContentType());
 
         val expectedObj = MAPPER.createObjectNode();
         val attrNode = MAPPER.createObjectNode();
@@ -204,12 +194,12 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
             new MockTicketGrantingTicket("casuser"), new ArrayList<>());
         this.ticketRegistry.addTicket(accessToken);
 
-        val mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.PROFILE_URL);
-        mockRequest.addHeader("Authorization", OAuth20Constants.BEARER_TOKEN + ' ' + accessToken.getId());
+        val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.PROFILE_URL);
+        mockRequest.addHeader("Authorization", OAuth20Constants.TOKEN_TYPE_BEARER + ' ' + accessToken.getId());
         val mockResponse = new MockHttpServletResponse();
         val entity = oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.OK, entity.getStatusCode());
-        assertEquals(CONTENT_TYPE, mockResponse.getContentType());
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, mockResponse.getContentType());
 
         val expected = "{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"},{\"" + NAME2
             + "\":[\"" + VALUE + "\",\"" + VALUE + "\"]}]}";

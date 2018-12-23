@@ -116,10 +116,9 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
      * @return the map
      */
     private Map<String, String> filterAttributes(final Map<String, String> valuesToFilter) {
-        return valuesToFilter.entrySet().stream().filter(entry -> patternMatchesAttributeValue(entry.getValue())).map(entry -> {
-            logReleasedAttributeEntry(entry.getKey(), entry.getValue());
-            return entry;
-        }).collect(Collectors.toMap(Map.Entry::getKey, entry -> valuesToFilter.get(entry.getKey()), (e, f) -> f == null ? e : f));
+        return valuesToFilter.entrySet().stream().filter(entry -> patternMatchesAttributeValue(entry.getValue()))
+            .peek(entry -> logReleasedAttributeEntry(entry.getKey(), entry.getValue()))
+            .collect(Collectors.toMap(Map.Entry::getKey, entry -> valuesToFilter.get(entry.getKey()), (e, f) -> f == null ? e : f));
     }
 
     /**
@@ -130,10 +129,9 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
      * @return the string[]
      */
     private List filterAttributes(final Collection<String> valuesToFilter, final String attributeName) {
-        return valuesToFilter.stream().filter(this::patternMatchesAttributeValue).map(attributeValue -> {
-            logReleasedAttributeEntry(attributeName, attributeValue);
-            return attributeValue;
-        }).collect(Collectors.toList());
+        return valuesToFilter.stream().filter(this::patternMatchesAttributeValue)
+            .peek(attributeValue -> logReleasedAttributeEntry(attributeName, attributeValue))
+            .collect(Collectors.toList());
     }
 
     /**

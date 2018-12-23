@@ -2,7 +2,7 @@ package org.apereo.cas.authentication.support.password;
 
 import org.apereo.cas.authentication.AuthenticationPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.MessageDescriptor;
-import org.apereo.cas.util.ScriptingUtils;
+import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.RequiredArgsConstructor;
@@ -29,6 +29,6 @@ public class GroovyPasswordPolicyHandlingStrategy<AuthenticationResponse> implem
                                           final PasswordPolicyConfiguration configuration) {
         val applicationContext = ApplicationContextProvider.getApplicationContext();
         return ScriptingUtils.executeGroovyScript(groovyResource,
-            new Object[]{response, configuration, LOGGER, applicationContext}, List.class);
+            new Object[]{response, configuration, LOGGER, applicationContext}, List.class, true);
     }
 }

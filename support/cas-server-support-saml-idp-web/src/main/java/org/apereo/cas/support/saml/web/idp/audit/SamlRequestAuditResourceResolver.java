@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.audit;
 
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.commons.lang3.tuple.Pair;
@@ -22,7 +23,7 @@ public class SamlRequestAuditResourceResolver extends ReturnValueAsStringResourc
         if (returnValue instanceof Pair) {
             return getAuditResourceFromSamlRequest((Pair) returnValue);
         }
-        return new String[]{};
+        return ArrayUtils.EMPTY_STRING_ARRAY;
     }
 
     private String[] getAuditResourceFromSamlRequest(final Pair result) {
@@ -33,24 +34,22 @@ public class SamlRequestAuditResourceResolver extends ReturnValueAsStringResourc
         if (returnValue instanceof LogoutRequest) {
             return getAuditResourceFromSamlLogoutRequest((LogoutRequest) returnValue);
         }
-        return new String[]{};
+        return ArrayUtils.EMPTY_STRING_ARRAY;
     }
 
     private String[] getAuditResourceFromSamlLogoutRequest(final LogoutRequest returnValue) {
-        val request = returnValue;
         val result =
             new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
-                .append("issuer", request.getIssuer().getValue())
+                .append("issuer", returnValue.getIssuer().getValue())
                 .toString();
         return new String[]{result};
     }
 
     private String[] getAuditResourceFromSamlAuthnRequest(final AuthnRequest returnValue) {
-        val request = returnValue;
         val result =
             new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
-                .append("issuer", request.getIssuer().getValue())
-                .append("binding", request.getProtocolBinding())
+                .append("issuer", returnValue.getIssuer().getValue())
+                .append("binding", returnValue.getProtocolBinding())
                 .toString();
         return new String[]{result};
     }

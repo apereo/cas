@@ -31,6 +31,7 @@ build/
 MANIFEST.MF
 classes/
 *.bin
+**/gpg-*.txt
 
 out
 ajcore.*

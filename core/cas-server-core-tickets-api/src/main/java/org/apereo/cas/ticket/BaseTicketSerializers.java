@@ -125,7 +125,11 @@ public abstract class BaseTicketSerializers {
      */
     public static String serializeTicket(final Ticket ticket) {
         val writer = new StringWriter();
-        if (ticket instanceof TicketGrantingTicket) {
+        if (ticket instanceof ProxyGrantingTicket) {
+            getProxyGrantingTicketSerializer().to(writer, ProxyGrantingTicket.class.cast(ticket));
+        } else if (ticket instanceof ProxyTicket) {
+            getProxyTicketSerializer().to(writer, ProxyTicket.class.cast(ticket));
+        } else if (ticket instanceof TicketGrantingTicket) {
             getTicketGrantingTicketSerializer().to(writer, TicketGrantingTicket.class.cast(ticket));
         } else if (ticket instanceof ServiceTicket) {
             getServiceTicketSerializer().to(writer, ServiceTicket.class.cast(ticket));

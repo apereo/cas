@@ -38,7 +38,7 @@ import java.util.Properties;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CoreSamlConfiguration {
 
-    private static final int POOL_SIZE = 100;
+    private static final int POOL_SIZE = 200;
 
     @Autowired
     private CasConfigurationProperties casProperties;

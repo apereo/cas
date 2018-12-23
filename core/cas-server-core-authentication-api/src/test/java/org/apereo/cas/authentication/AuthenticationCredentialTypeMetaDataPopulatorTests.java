@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.metadata.AuthenticationCredentialTypeMetaDataPopulator;
 
 import lombok.val;
@@ -14,7 +15,7 @@ import static org.junit.Assert.*;
  * @since 5.3.0
  */
 public class AuthenticationCredentialTypeMetaDataPopulatorTests {
-    private AuthenticationCredentialTypeMetaDataPopulator populator =
+    private final AuthenticationCredentialTypeMetaDataPopulator populator =
         new AuthenticationCredentialTypeMetaDataPopulator();
 
     @Test

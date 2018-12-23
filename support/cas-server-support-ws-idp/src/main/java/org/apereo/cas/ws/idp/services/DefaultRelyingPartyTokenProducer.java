@@ -23,6 +23,7 @@ import org.jasig.cas.client.validation.Assertion;
 import org.w3c.dom.Element;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.XMLConstants;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -44,7 +45,9 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
     @SneakyThrows
     private static String serializeRelyingPartyToken(final Element rpToken) {
         val sw = new StringWriter();
-        val t = TransformerFactory.newInstance().newTransformer();
+        val transformerFactory = TransformerFactory.newInstance();
+        transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        val t = transformerFactory.newTransformer();
         t.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, BooleanUtils.toStringYesNo(Boolean.TRUE));
         t.transform(new DOMSource(rpToken), new StreamResult(sw));
         return sw.toString();
@@ -59,7 +62,9 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
             writer.writeNamespace("ic", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
             writer.writeAttribute("Dialect", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
 
-            assertion.getPrincipal().getAttributes().forEach((k, v) -> {
+            val attributes = assertion.getPrincipal().getAttributes();
+            LOGGER.debug("Mapping principal attributes [{}] to claims for service [{}]", attributes, service);
+            attributes.forEach((k, v) -> {
                 try {
                     if (WSFederationClaims.contains(k)) {
                         val uri = WSFederationClaims.valueOf(k).getUri();

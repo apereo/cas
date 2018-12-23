@@ -40,7 +40,7 @@ import static org.mockito.Mockito.*;
 })
 @Category(MailCategory.class)
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 25000)
-@TestPropertySource(locations = "classpath:cas-mail.properties")
+@TestPropertySource(properties = {"spring.mail.host=localhost", "spring.mail.port=25000", "spring.mail.testConnection=true"})
 public class CommunicationsManagerTests {
 
     @ClassRule

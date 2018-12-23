@@ -66,7 +66,7 @@ public class CasAddonsRegisteredServicesJsonSerializer extends DefaultRegistered
         return results;
     }
 
-    private RegisteredService convertServiceProperties(final Map serviceDataMap) {
+    private static RegisteredService convertServiceProperties(final Map serviceDataMap) {
         val service = new RegexRegisteredService();
 
         service.setId(Long.parseLong(serviceDataMap.get("id").toString()));

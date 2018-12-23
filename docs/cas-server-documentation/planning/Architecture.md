@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Architecture
+category: Planning
 ---
 
 # Architecture
@@ -74,7 +75,7 @@ Supported protocols:
 It is helpful to describe the CAS server in terms of three layered subsystems:
 
 * Web (Spring MVC/Spring Webflow)
-* [Ticketing](../installation/Configuring-Ticketing-Components.html)
+* [Ticketing](../ticketing/Configuring-Ticketing-Components.html)
 * [Authentication](../installation/Configuring-Authentication-Components.html)
 
 Almost all deployment considerations and component configuration involve those three subsystems. The Web tier is the endpoint for communication with all external systems including CAS clients. The Web tier delegates to the ticketing subsystem to generate tickets for CAS client access. The SSO session begins with the issuance of a ticket-granting ticket on successful authentication, thus the ticketing subsystem frequently delegates to the authentication subsystem.

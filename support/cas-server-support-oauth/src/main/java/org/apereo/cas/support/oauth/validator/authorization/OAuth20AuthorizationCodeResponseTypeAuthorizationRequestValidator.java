@@ -19,6 +19,8 @@ import lombok.val;
 import org.pac4j.core.context.J2EContext;
 import org.springframework.core.Ordered;
 
+import java.util.stream.Stream;
+
 /**
  * This is {@link OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator}.
  *
@@ -48,9 +50,8 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator i
     @Override
     public boolean validate(final J2EContext context) {
         val request = context.getRequest();
-        val checkParameterExist = HttpRequestUtils.doesParameterExist(request, OAuth20Constants.CLIENT_ID)
-            && HttpRequestUtils.doesParameterExist(request, OAuth20Constants.REDIRECT_URI)
-            && HttpRequestUtils.doesParameterExist(request, OAuth20Constants.RESPONSE_TYPE);
+        val checkParameterExist = Stream.of(OAuth20Constants.CLIENT_ID, OAuth20Constants.REDIRECT_URI, OAuth20Constants.RESPONSE_TYPE)
+            .allMatch(s -> HttpRequestUtils.doesParameterExist(request, s));
 
         if (!checkParameterExist) {
             LOGGER.warn("Missing required parameters (client id, redirect uri, etc) for response type [{}].", getResponseType());

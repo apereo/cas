@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.http.HttpResponse;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.RequestContext;
@@ -30,12 +31,17 @@ public class RestfulLoginWebflowDecorator implements WebflowDecorator {
     @Override
     @SneakyThrows
     public void decorate(final RequestContext requestContext, final ApplicationContext applicationContext) {
-        val response = HttpUtils.execute(restProperties.getUrl(), restProperties.getUrl(),
-            restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword());
-        val statusCode = response.getStatusLine().getStatusCode();
-        if (response != null && HttpStatus.valueOf(statusCode).is2xxSuccessful()) {
-            val jsonObject = MAPPER.readValue(response.getEntity().getContent(), Map.class);
-            requestContext.getFlowScope().put("decoration", jsonObject);
+        HttpResponse response = null;
+        try {
+            response = HttpUtils.execute(restProperties.getUrl(), restProperties.getUrl(),
+                    restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword());
+            val statusCode = response.getStatusLine().getStatusCode();
+            if (response != null && HttpStatus.valueOf(statusCode).is2xxSuccessful()) {
+                val jsonObject = MAPPER.readValue(response.getEntity().getContent(), Map.class);
+                requestContext.getFlowScope().put("decoration", jsonObject);
+            }
+        } finally {
+            HttpUtils.close(response);
         }
     }
 }

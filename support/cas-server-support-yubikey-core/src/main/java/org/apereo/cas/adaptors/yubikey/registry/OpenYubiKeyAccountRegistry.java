@@ -35,12 +35,12 @@ public class OpenYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
-    public Optional<YubiKeyAccount> getAccount(final String uid) {
+    public Optional<? extends YubiKeyAccount> getAccount(final String uid) {
         return Optional.of(new YubiKeyAccount(System.currentTimeMillis(), UUID.randomUUID().toString(), uid));
     }
 
     @Override
-    public Collection<YubiKeyAccount> getAccounts() {
+    public Collection<? extends YubiKeyAccount> getAccounts() {
         return new ArrayList<>(0);
     }
 }

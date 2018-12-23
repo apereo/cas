@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.trusted.authentication.principal;
 
-import org.apereo.cas.authentication.AbstractCredential;
+import org.apereo.cas.authentication.credential.AbstractCredential;
 import org.apereo.cas.authentication.principal.Principal;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -44,7 +44,7 @@ public class PrincipalBearingCredential extends AbstractCredential {
      * @param principal the principal
      */
     @JsonCreator
-    public PrincipalBearingCredential(@NonNull @JsonProperty("principal") final Principal principal) {
+    public PrincipalBearingCredential(@JsonProperty("principal") final @NonNull Principal principal) {
         this.principal = principal;
     }
 

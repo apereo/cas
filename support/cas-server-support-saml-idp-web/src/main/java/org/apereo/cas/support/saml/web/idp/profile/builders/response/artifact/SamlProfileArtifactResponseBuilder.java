@@ -1,13 +1,14 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response.artifact;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.soap.SamlProfileSamlSoap11ResponseBuilder;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicket;
 
@@ -36,13 +37,15 @@ import javax.servlet.http.HttpServletResponse;
 public class SamlProfileArtifactResponseBuilder extends SamlProfileSamlSoap11ResponseBuilder {
     private static final long serialVersionUID = -5582616946993706815L;
 
-    public SamlProfileArtifactResponseBuilder(final OpenSamlConfigBean openSamlConfigBean, final SamlIdPObjectSigner samlObjectSigner,
+    public SamlProfileArtifactResponseBuilder(final OpenSamlConfigBean openSamlConfigBean,
+                                              final SamlIdPObjectSigner samlObjectSigner,
                                               final VelocityEngine velocityEngineFactory,
                                               final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
                                               final SamlProfileObjectBuilder<? extends SAMLObject> saml2ResponseBuilder,
-                                              final SamlObjectEncrypter samlObjectEncrypter) {
+                                              final SamlIdPObjectEncrypter samlObjectEncrypter,
+                                              final CasConfigurationProperties casProperties) {
         super(openSamlConfigBean, samlObjectSigner, velocityEngineFactory, samlProfileSamlAssertionBuilder,
-            saml2ResponseBuilder, samlObjectEncrypter);
+            saml2ResponseBuilder, samlObjectEncrypter, casProperties);
     }
 
     @Override
