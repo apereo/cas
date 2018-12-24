@@ -39,16 +39,16 @@ public class OidcSecurityInterceptor extends SecurityInterceptor {
             clearCreds = true;
         }
 
-        val auth = authorizationRequestSupport.isAuthenticationProfileAvailable(ctx);
+        val auth = OidcAuthorizationRequestSupport.isAuthenticationProfileAvailable(ctx);
 
         if (auth.isPresent()) {
-            val maxAge = authorizationRequestSupport.getOidcMaxAgeFromAuthorizationRequest(ctx);
+            val maxAge = OidcAuthorizationRequestSupport.getOidcMaxAgeFromAuthorizationRequest(ctx);
             if (maxAge.isPresent()) {
-                clearCreds = authorizationRequestSupport.isCasAuthenticationOldForMaxAgeAuthorizationRequest(ctx, auth.get());
+                clearCreds = OidcAuthorizationRequestSupport.isCasAuthenticationOldForMaxAgeAuthorizationRequest(ctx, auth.get());
             }
         }
 
-        val prompts = authorizationRequestSupport.getOidcPromptFromAuthorizationRequest(ctx);
+        val prompts = OidcAuthorizationRequestSupport.getOidcPromptFromAuthorizationRequest(ctx);
 
         if (!clearCreds) {
             clearCreds = prompts.contains(OidcConstants.PROMPT_LOGIN);

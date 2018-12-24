@@ -33,7 +33,6 @@ public class CasHazelcastConfiguration {
     public HazelcastInstance casHazelcastInstance() {
         val hz = casProperties.getTicket().getRegistry().getHazelcast();
         LOGGER.debug("Creating Hazelcast instance using properties [{}]", hz);
-        val factory = new HazelcastConfigurationFactory();
-        return Hazelcast.newHazelcastInstance(factory.build(hz));
+        return Hazelcast.newHazelcastInstance(HazelcastConfigurationFactory.build(hz));
     }
 }

@@ -33,7 +33,7 @@ public class RegisteredServiceHazelcastDistributedCacheManagerTests {
         val factory = new HazelcastConfigurationFactory();
         val properties = new BaseHazelcastProperties();
         properties.getCluster().setInstanceName(getClass().getSimpleName());
-        val config = factory.build(properties, factory.buildMapConfig(properties, "cache", 10));
+        val config = HazelcastConfigurationFactory.build(properties, factory.buildMapConfig(properties, "cache", 10));
         this.hz = Hazelcast.newHazelcastInstance(config);
         mgr = new RegisteredServiceHazelcastDistributedCacheManager(this.hz);
     }

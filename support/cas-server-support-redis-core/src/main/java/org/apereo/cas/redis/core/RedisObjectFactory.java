@@ -35,12 +35,9 @@ public class RedisObjectFactory {
      * @param <K>               the type parameter
      * @param <V>               the type parameter
      * @param connectionFactory the connection factory
-     * @param keyClass          the key class
-     * @param valueClass        the value class
      * @return the redis template
      */
-    public <K, V> RedisTemplate<K, V> newRedisTemplate(final RedisConnectionFactory connectionFactory,
-                                                       final Class<K> keyClass, final Class<V> valueClass) {
+    public static <K, V> RedisTemplate<K, V> newRedisTemplate(final RedisConnectionFactory connectionFactory) {
         val template = new RedisTemplate<K, V>();
         val string = new StringRedisSerializer();
         val jdk = new JdkSerializationRedisSerializer();

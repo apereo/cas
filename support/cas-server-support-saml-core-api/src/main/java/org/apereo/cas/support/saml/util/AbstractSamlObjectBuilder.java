@@ -112,6 +112,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             builder.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             return builder.build(new ByteArrayInputStream(xmlString.getBytes(Charset.defaultCharset())));
         } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
             return null;
         }
     }

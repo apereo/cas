@@ -7,6 +7,9 @@ import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.util.CollectionUtils;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -23,7 +26,6 @@ import org.springframework.test.context.TestPropertySource;
 import redis.embedded.RedisServer;
 
 import java.util.Collection;
-import java.util.Collections;
 
 /**
  * Unit test for {@link RedisServiceRegistry} class.
@@ -43,7 +45,7 @@ public class RedisEmbeddedServiceRegistryTests extends AbstractServiceRegistryTe
     @Autowired
     @Qualifier("redisServiceRegistry")
     private ServiceRegistry dao;
-
+    
     public RedisEmbeddedServiceRegistryTests(final Class<? extends RegisteredService> registeredServiceClass) {
         super(registeredServiceClass);
     }
@@ -61,7 +63,7 @@ public class RedisEmbeddedServiceRegistryTests extends AbstractServiceRegistryTe
 
     @Parameterized.Parameters
     public static Collection<Object> getTestParameters() {
-        return Collections.singletonList(RegexRegisteredService.class);
+        return CollectionUtils.wrapList(RegexRegisteredService.class, OAuthRegisteredService.class, SamlRegisteredService.class);
     }
 
     @Override

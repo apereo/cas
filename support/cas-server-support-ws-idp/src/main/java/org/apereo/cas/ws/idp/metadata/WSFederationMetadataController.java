@@ -38,9 +38,7 @@ public class WSFederationMetadataController {
         try {
             response.setContentType(MediaType.TEXT_HTML_VALUE);
             val out = response.getWriter();
-            val mw = new WSFederationMetadataWriter();
-
-            val metadata = mw.produceMetadataDocument(casProperties);
+            val metadata = WSFederationMetadataWriter.produceMetadataDocument(casProperties);
             out.write(DOM2Writer.nodeToString(metadata));
         } catch (final Exception ex) {
             LOGGER.error("Failed to get metadata document", ex);

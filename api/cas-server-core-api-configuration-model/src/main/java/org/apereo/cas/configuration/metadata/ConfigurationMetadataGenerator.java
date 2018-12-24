@@ -110,7 +110,7 @@ public class ConfigurationMetadataGenerator {
                 final var matcher = NESTED_TYPE_PATTERN.matcher(p.getType());
                 final var indexBrackets = matcher.matches();
                 final var typeName = matcher.group(1);
-                final var typePath = ConfigurationMetadataClassSourceLocator.getInstance().buildTypeSourcePath(this.sourcePath, typeName);
+                final var typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, typeName);
 
                 final var parser = new ConfigurationMetadataUnitParser(this.sourcePath);
                 parser.parseCompilationUnit(collectedProps, collectedGroups, p, typePath, typeName, indexBrackets);
@@ -147,7 +147,7 @@ public class ConfigurationMetadataGenerator {
 
             val parent = matcher.group(1);
             val innerType = matcher.group(2);
-            val typePath = ConfigurationMetadataClassSourceLocator.getInstance().buildTypeSourcePath(this.sourcePath, parent);
+            val typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, parent);
 
             try {
                 val cu = JavaParser.parse(new File(typePath));

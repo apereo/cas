@@ -286,7 +286,7 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
 
     @Bean
     public OAuth20CallbackAuthorizeViewResolver callbackAuthorizeViewResolver() {
-        return new OidcCallbackAuthorizeViewResolver(oidcAuthorizationRequestSupport());
+        return new OidcCallbackAuthorizeViewResolver();
     }
 
     @Bean

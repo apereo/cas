@@ -12,6 +12,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -31,18 +32,6 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
     public RedisServiceRegistry(final ApplicationEventPublisher eventPublisher, final RedisTemplate<String, RegisteredService> template) {
         super(eventPublisher);
         this.template = template;
-    }
-
-    private static String getRegisteredServiceRedisKey(final RegisteredService registeredService) {
-        return getRegisteredServiceRedisKey(registeredService.getId());
-    }
-
-    private static String getRegisteredServiceRedisKey(final long id) {
-        return CAS_SERVICE_PREFIX + id;
-    }
-
-    private static String getPatternRegisteredServiceRedisKey() {
-        return CAS_SERVICE_PREFIX + '*';
     }
 
     @Override
@@ -71,7 +60,7 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
     @Override
     public long size() {
         try {
-            return this.template.keys(getPatternRegisteredServiceRedisKey()).size();
+            return getRegisteredServiceKeys().size();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -81,7 +70,7 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
     @Override
     public Collection<RegisteredService> load() {
         try {
-            return this.template.keys(getPatternRegisteredServiceRedisKey())
+            return getRegisteredServiceKeys()
                 .stream()
                 .map(redisKey -> this.template.boundValueOps(redisKey).get())
                 .filter(Objects::nonNull).collect(Collectors.toList());
@@ -105,5 +94,21 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
     @Override
     public RegisteredService findServiceById(final String id) {
         return load().stream().filter(r -> r.matches(id)).findFirst().orElse(null);
+    }
+
+    private static String getRegisteredServiceRedisKey(final RegisteredService registeredService) {
+        return getRegisteredServiceRedisKey(registeredService.getId());
+    }
+
+    private static String getRegisteredServiceRedisKey(final long id) {
+        return CAS_SERVICE_PREFIX + id;
+    }
+
+    private static String getPatternRegisteredServiceRedisKey() {
+        return CAS_SERVICE_PREFIX + '*';
+    }
+
+    private Set<String> getRegisteredServiceKeys() {
+        return this.template.keys(getPatternRegisteredServiceRedisKey());
     }
 }

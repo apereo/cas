@@ -48,17 +48,17 @@ public class SimpleHttpClientTests {
 
     @Test
     public void verifyOkayUrl() {
-        assertTrue(this.getHttpClient().isValidEndPoint("http://www.google.com"));
+        assertTrue(getHttpClient().isValidEndPoint("http://www.google.com"));
     }
 
     @Test
     public void verifyBadUrl() {
-        assertFalse(this.getHttpClient().isValidEndPoint("https://www.abc1234.org"));
+        assertFalse(getHttpClient().isValidEndPoint("https://www.abc1234.org"));
     }
 
     @Test
     public void verifyInvalidHttpsUrl() {
-        val client = this.getHttpClient();
+        val client = getHttpClient();
         assertFalse(client.isValidEndPoint("https://wrong.host.badssl.com/"));
     }
 
