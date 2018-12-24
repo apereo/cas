@@ -107,7 +107,7 @@ function jqueryReady() {
             $('#password-strength-text').show();
 
             var title = 'Strength: <strong>' + strength[result.score] + '</strong>';
-            var text = '<p><span class=\'feedback\'>' + result.feedback.warning + ' <ul>' + result.feedback.suggestions.join('<li>') + '</ul></span></p>';
+            var text = '<p><span class=\'feedback\'>' + result.feedback.warning + ' <ul><li>' + result.feedback.suggestions.join('<li>') + '</ul></span></p>';
             var clz = 'danger';
             switch (result.score) {
             case 0:
