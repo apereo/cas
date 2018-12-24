@@ -23,11 +23,9 @@ import java.util.HashMap;
  */
 @RequiredArgsConstructor
 public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthorizeViewResolver {
-    private final OidcAuthorizationRequestSupport authorizationRequestSupport;
-
     @Override
     public ModelAndView resolve(final J2EContext ctx, final ProfileManager manager, final String url) {
-        val prompt = authorizationRequestSupport.getOidcPromptFromAuthorizationRequest(url);
+        val prompt = OidcAuthorizationRequestSupport.getOidcPromptFromAuthorizationRequest(url);
         if (prompt.contains(OidcConstants.PROMPT_NONE)) {
             val result = manager.get(true);
             if (result.isPresent()) {

@@ -3,7 +3,6 @@ package org.apereo.cas.config;
 import org.apereo.cas.adaptors.redis.services.RedisServiceRegistry;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.redis.core.RedisObjectFactory;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
@@ -39,15 +38,13 @@ public class RedisServiceRegistryConfiguration {
     @ConditionalOnMissingBean(name = "redisServiceConnectionFactory")
     public RedisConnectionFactory redisServiceConnectionFactory() {
         val redis = casProperties.getServiceRegistry().getRedis();
-        val obj = new RedisObjectFactory();
-        return obj.newRedisConnectionFactory(redis);
+        return RedisObjectFactory.newRedisConnectionFactory(redis);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "registeredServiceRedisTemplate")
     public RedisTemplate registeredServiceRedisTemplate() {
-        val obj = new RedisObjectFactory();
-        return obj.newRedisTemplate(redisServiceConnectionFactory(), String.class, RegisteredService.class);
+        return RedisObjectFactory.newRedisTemplate(redisServiceConnectionFactory());
     }
 
     @Bean

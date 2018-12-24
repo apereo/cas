@@ -107,7 +107,7 @@ public class MongoDbAuthenticationHandlerTests {
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(new MockHttpServletRequest(), new MockHttpServletResponse()));
 
         val mongo = casProperties.getAuthn().getMongo();
-        val mongoClient = new MongoDbConnectionFactory().buildMongoDbClient(mongo);
+        val mongoClient = MongoDbConnectionFactory.buildMongoDbClient(mongo);
         mongoClient.dropDatabase(mongo.getDatabaseName());
         val database = mongoClient.getDatabase(mongo.getDatabaseName());
         val col = database.getCollection(mongo.getCollection());
