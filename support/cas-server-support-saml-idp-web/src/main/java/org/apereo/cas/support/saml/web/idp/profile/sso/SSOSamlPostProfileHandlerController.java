@@ -15,6 +15,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSig
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
 import org.apereo.cas.support.saml.web.idp.profile.sso.request.SSOSamlHttpRequestExtractor;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder;
@@ -23,6 +24,8 @@ import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Response;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,6 +37,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class SSOSamlPostProfileHandlerController extends AbstractSamlProfileHandlerController {
     private final SSOSamlHttpRequestExtractor samlHttpRequestExtractor;
 
@@ -63,7 +67,7 @@ public class SSOSamlPostProfileHandlerController extends AbstractSamlProfileHand
 
 
     /**
-     * Handle SSO POST profile request.
+     * Handle SSO GET profile redirect request.
      *
      * @param response the response
      * @param request  the request
@@ -73,6 +77,20 @@ public class SSOSamlPostProfileHandlerController extends AbstractSamlProfileHand
     public void handleSaml2ProfileSsoRedirectRequest(final HttpServletResponse response,
                                                      final HttpServletRequest request) throws Exception {
         handleSsoPostProfileRequest(response, request, new HTTPRedirectDeflateDecoder());
+    }
+
+    /**
+     * Handle SSO HEAD profile redirect request (not allowed).
+     *
+     * @param response the response
+     * @param request  the request
+     * @throws Exception the exception
+     */
+    @RequestMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_REDIRECT, method = { RequestMethod.HEAD })
+    public void handleSaml2ProfileSsoRedirectHeadRequest(final HttpServletResponse response,
+                                                         final HttpServletRequest request) throws Exception {
+        LOGGER.info("Endpoint [{}] called with HTTP HEAD returning 400 Bad Request", SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_REDIRECT);
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
     }
 
     /**
