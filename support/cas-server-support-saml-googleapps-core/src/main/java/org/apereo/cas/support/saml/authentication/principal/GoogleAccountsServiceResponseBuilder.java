@@ -84,7 +84,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         val service = (GoogleAccountsService) webApplicationService;
         val parameters = new HashMap<String, String>();
         val samlResponse = constructSamlResponse(service, authentication);
-        val signedResponse = this.samlObjectBuilder.signSamlResponse(samlResponse, this.privateKey, this.publicKey);
+        val signedResponse = GoogleSaml20ObjectBuilder.signSamlResponse(samlResponse, this.privateKey, this.publicKey);
         parameters.put(SamlProtocolConstants.PARAMETER_SAML_RESPONSE, signedResponse);
         parameters.put(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, service.getRelayState());
         return buildPost(service, parameters);

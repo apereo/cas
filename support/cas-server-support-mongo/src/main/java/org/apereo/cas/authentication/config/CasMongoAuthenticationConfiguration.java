@@ -74,9 +74,7 @@ public class CasMongoAuthenticationConfiguration {
     @Bean
     public MongoProfileService mongoAuthenticatorProfileService() {
         val mongo = casProperties.getAuthn().getMongo();
-
-        val factory = new MongoDbConnectionFactory();
-        val client = factory.buildMongoDbClient(mongo);
+        val client = MongoDbConnectionFactory.buildMongoDbClient(mongo);
         LOGGER.info("Connected to MongoDb instance using mongo client [{}]", client.toString());
 
         val encoder = new SpringSecurityPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(mongo.getPasswordEncoder()));

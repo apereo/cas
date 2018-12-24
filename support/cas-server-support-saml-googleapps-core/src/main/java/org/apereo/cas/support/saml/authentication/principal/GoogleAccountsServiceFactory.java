@@ -35,8 +35,9 @@ public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleA
             return null;
         }
 
-        val document = this.googleSaml20ObjectBuilder.constructDocumentFromXml(xmlRequest);
+        val document = GoogleSaml20ObjectBuilder.constructDocumentFromXml(xmlRequest);
         if (document == null) {
+            LOGGER.warn("Unable to construct XML document from request");
             return null;
         }
 
