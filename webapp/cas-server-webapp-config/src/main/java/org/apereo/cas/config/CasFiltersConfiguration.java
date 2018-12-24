@@ -96,7 +96,7 @@ public class CasFiltersConfiguration {
         final HttpCorsRequestProperties cors = casProperties.getHttpWebRequest().getCors();
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         final CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(cors.isEnabled());
+        config.setAllowCredentials(cors.isAllowCredentials());
         config.setAllowedOrigins(cors.getAllowOrigins());
         config.setAllowedMethods(cors.getAllowMethods());
         config.setAllowedHeaders(cors.getAllowHeaders());
