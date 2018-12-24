@@ -421,6 +421,7 @@ subprojects {
         }
         testImplementation libraries.tests
         testImplementation libraries.groovy
+        testImplementation libraries.log4j
         compileOnly libraries.findbugsannotations
     }
 

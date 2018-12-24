@@ -55,6 +55,14 @@ public class JsonServiceRegistryTests extends AbstractResourceBasedServiceRegist
     }
 
     @Test
+    public void verifyMultifactorNotSetFailureMode() throws Exception {
+        val resource = new ClassPathResource("MFA-FailureMode-1.json");
+        val serializer = new DefaultRegisteredServiceJsonSerializer();
+        val service = serializer.from(resource.getInputStream());
+        assertNotNull(service);
+    }
+
+    @Test
     public void verifyExistingDefinitionForCompatibility2() throws IOException {
         val resource = new ClassPathResource("returnMappedAttributeReleasePolicyTest2.json");
         val serializer = new DefaultRegisteredServiceJsonSerializer();
