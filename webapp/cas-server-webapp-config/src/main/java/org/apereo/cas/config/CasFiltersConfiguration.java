@@ -90,7 +90,7 @@ public class CasFiltersConfiguration {
         val cors = casProperties.getHttpWebRequest().getCors();
         val source = new UrlBasedCorsConfigurationSource();
         val config = new CorsConfiguration();
-        config.setAllowCredentials(cors.isEnabled());
+        config.setAllowCredentials(cors.isAllowCredentials());
         config.setAllowedOrigins(cors.getAllowOrigins());
         config.setAllowedMethods(cors.getAllowMethods());
         config.setAllowedHeaders(cors.getAllowHeaders());
