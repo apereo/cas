@@ -113,15 +113,18 @@ public class CasThemesConfiguration {
 
     @Bean
     public AbstractTemplateResolver themeTemplateResolver(final ThemeResolver themeResolver) {
-        val defaultResolver = springResourceTemplateResolver.getObject();
         val resolver = new ThemeTemplateResolver(themeResolver);
-        resolver.setOrder(defaultResolver.getOrder() - 1);
         resolver.setApplicationContext(this.applicationContext);
-        resolver.setPrefix(defaultResolver.getPrefix() + "%s/");
-        resolver.setSuffix(defaultResolver.getSuffix());
-        resolver.setTemplateMode(defaultResolver.getTemplateMode());
         resolver.setCacheable(false);
         resolver.setCheckExistence(true);
+
+        val defaultResolver = springResourceTemplateResolver.getIfAvailable();
+        if (defaultResolver != null) {
+            resolver.setOrder(defaultResolver.getOrder() - 1);
+            resolver.setPrefix(defaultResolver.getPrefix() + "%s/");
+            resolver.setSuffix(defaultResolver.getSuffix());
+            resolver.setTemplateMode(defaultResolver.getTemplateMode());
+        }
         return resolver;
     }
 
