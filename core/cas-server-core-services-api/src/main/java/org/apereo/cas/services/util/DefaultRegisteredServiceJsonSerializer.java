@@ -28,17 +28,6 @@ public class DefaultRegisteredServiceJsonSerializer extends AbstractJacksonBacke
         super(prettyPrinter);
     }
 
-    /**
-     * Mixins are added to the object mapper in order to
-     * ignore certain method signatures from serialization
-     * that are otherwise treated as getters. Each mixin
-     * implements the appropriate interface as a private
-     * dummy class and is annotated with JsonIgnore elements
-     * throughout. This helps us catch errors at compile-time
-     * when the interface changes.
-     *
-     * @return the prepped object mapper.
-     */
     @Override
     protected ObjectMapper initializeObjectMapper() {
         val mapper = super.initializeObjectMapper();

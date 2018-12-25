@@ -212,7 +212,7 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
         method.setConfirmationMethod(confirmationMethod);
         confirmation.getConfirmationMethods().add(method);
         val nameIdentifier = newSamlObject(NameIdentifier.class);
-        nameIdentifier.setNameIdentifier(identifier);
+        nameIdentifier.setValue(identifier);
         val subject = newSamlObject(Subject.class);
         subject.setNameIdentifier(nameIdentifier);
         subject.setSubjectConfirmation(confirmation);

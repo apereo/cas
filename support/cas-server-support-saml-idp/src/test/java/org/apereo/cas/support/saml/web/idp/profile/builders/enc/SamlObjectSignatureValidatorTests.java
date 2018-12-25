@@ -23,7 +23,7 @@ import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.pac4j.saml.client.SAML2Client;
-import org.pac4j.saml.client.SAML2ClientConfiguration;
+import org.pac4j.saml.config.SAML2Configuration;
 import org.pac4j.saml.context.SAML2MessageContext;
 import org.pac4j.saml.sso.impl.SAML2AuthnRequestBuilder;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -38,9 +38,8 @@ import java.io.File;
  */
 @Category(FileSystemCategory.class)
 public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
-    private SAML2ClientConfiguration saml2ClientConfiguration;
+    private SAML2Configuration saml2ClientConfiguration;
     private SAML2MessageContext saml2MessageContext;
-    private String spMetadataPath;
     private MessageContext<SAMLObject> samlContext;
     private SamlRegisteredServiceServiceProviderMetadataFacade adaptor;
 
@@ -48,9 +47,9 @@ public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationT
     public void before() throws Exception {
         val idpMetadata = new File("src/test/resources/metadata/idp-metadata.xml").getCanonicalPath();
         val keystorePath = new File(FileUtils.getTempDirectory(), "keystore").getCanonicalPath();
-        spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata.xml").getCanonicalPath();
+        val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata.xml").getCanonicalPath();
 
-        saml2ClientConfiguration = new SAML2ClientConfiguration(keystorePath, "changeit", "changeit", idpMetadata);
+        saml2ClientConfiguration = new SAML2Configuration(keystorePath, "changeit", "changeit", idpMetadata);
         saml2ClientConfiguration.setServiceProviderEntityId("cas:example:sp");
         saml2ClientConfiguration.setServiceProviderMetadataPath(spMetadataPath);
         saml2ClientConfiguration.init();
