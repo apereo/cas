@@ -90,7 +90,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Collection<Ticket> getTickets() {
-        try (final Stream<Ticket> ticketsStream = getTicketsStream()) {
+        try (Stream<Ticket> ticketsStream = getTicketsStream()) {
             return ticketsStream.collect(Collectors.toSet());
         }
     }
