@@ -35,6 +35,8 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import lombok.Setter;
 
 /**
@@ -152,7 +154,9 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     @Counted(name = "GET_TICKETS_COUNTER", monotonic = true)
     @Override
     public Collection<Ticket> getTickets(final Predicate<Ticket> predicate) {
-        return this.ticketRegistry.getTicketsStream().filter(predicate).collect(Collectors.toSet());
+        try (Stream<Ticket> ticketsStream = this.ticketRegistry.getTicketsStream().filter(predicate)) {
+            return ticketsStream.collect(Collectors.toSet());
+        }
     }
 
     @Transactional(transactionManager = "ticketTransactionManager")

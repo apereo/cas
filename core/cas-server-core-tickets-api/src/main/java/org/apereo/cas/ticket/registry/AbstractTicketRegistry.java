@@ -64,8 +64,8 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     @Override
     public long sessionCount() {
-        try {
-            return getTicketsStream().filter(TicketGrantingTicket.class::isInstance).count();
+        try (Stream<Ticket> tgtStream = getTicketsStream().filter(TicketGrantingTicket.class::isInstance)) {
+            return tgtStream.count();
         } catch (final Exception t) {
             LOGGER.trace("sessionCount() operation is not implemented by the ticket registry instance [{}]. "
                 + "Message is: [{}] Returning unknown as [{}]", this.getClass().getName(), t.getMessage(), Long.MIN_VALUE);
@@ -75,8 +75,8 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     @Override
     public long serviceTicketCount() {
-        try {
-            return getTicketsStream().filter(ServiceTicket.class::isInstance).count();
+        try (Stream<Ticket> stStream = getTicketsStream().filter(ServiceTicket.class::isInstance)) {
+            return stStream.count();
         } catch (final Exception t) {
             LOGGER.trace("serviceTicketCount() operation is not implemented by the ticket registry instance [{}]. "
                 + "Message is: [{}] Returning unknown as [{}]", this.getClass().getName(), t.getMessage(), Long.MIN_VALUE);
