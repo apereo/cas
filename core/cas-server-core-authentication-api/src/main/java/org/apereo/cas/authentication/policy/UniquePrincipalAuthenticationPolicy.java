@@ -31,7 +31,7 @@ public class UniquePrincipalAuthenticationPolicy implements AuthenticationPolicy
     public boolean isSatisfiedBy(final Authentication authentication) throws Exception {
         try {
             final Principal authPrincipal = authentication.getPrincipal();
-            try (final Stream<Ticket> ticketsStream =
+            try (Stream<Ticket> ticketsStream =
                          this.ticketRegistry.getTickets(t -> isSamePrincipalId(t, authPrincipal))) {
                 final long count = ticketsStream.count();
                 if (count == 0) {

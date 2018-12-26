@@ -58,7 +58,7 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner, Seri
      * Clean tickets.
      */
     protected void cleanInternal() {
-        try (final Stream<Ticket> ticketsStream = ticketRegistry.getTicketsStream()) {
+        try (Stream<Ticket> ticketsStream = ticketRegistry.getTicketsStream()) {
             final int ticketsDeleted = ticketsStream
                     .filter(Objects::nonNull)
                     .filter(Ticket::isExpired)
