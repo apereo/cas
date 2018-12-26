@@ -13,7 +13,6 @@ import org.ektorp.UpdateConflictException;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * This is {@link CouchDbTicketRegistry }.
