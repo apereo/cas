@@ -65,7 +65,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     @Override
     public long sessionCount() {
         try {
-            return getTickets().stream().filter(TicketGrantingTicket.class::isInstance).count();
+            return getTicketsStream().filter(TicketGrantingTicket.class::isInstance).count();
         } catch (final Exception t) {
             LOGGER.trace("sessionCount() operation is not implemented by the ticket registry instance [{}]. "
                 + "Message is: [{}] Returning unknown as [{}]", this.getClass().getName(), t.getMessage(), Long.MIN_VALUE);
@@ -76,7 +76,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     @Override
     public long serviceTicketCount() {
         try {
-            return getTickets().stream().filter(ServiceTicket.class::isInstance).count();
+            return getTicketsStream().filter(ServiceTicket.class::isInstance).count();
         } catch (final Exception t) {
             LOGGER.trace("serviceTicketCount() operation is not implemented by the ticket registry instance [{}]. "
                 + "Message is: [{}] Returning unknown as [{}]", this.getClass().getName(), t.getMessage(), Long.MIN_VALUE);
@@ -268,11 +268,21 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      * @return the set
      */
     protected Collection<Ticket> decodeTickets(final Collection<Ticket> items) {
+        return decodeTickets(items.stream()).collect(Collectors.toSet());
+    }
+
+    /**
+     * Decode tickets.
+     *
+     * @param items the items
+     * @return the set
+     */
+    protected Stream<Ticket> decodeTickets(final Stream<Ticket> items) {
         if (!isCipherExecutorEnabled()) {
             LOGGER.trace(MESSAGE);
             return items;
         }
-        return items.stream().map(this::decodeTicket).collect(Collectors.toSet());
+        return items.map(this::decodeTicket);
     }
 
     protected boolean isCipherExecutorEnabled() {

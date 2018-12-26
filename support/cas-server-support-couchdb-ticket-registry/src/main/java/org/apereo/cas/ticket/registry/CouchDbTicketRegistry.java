@@ -147,9 +147,4 @@ public class CouchDbTicketRegistry extends AbstractTicketRegistry {
         }
         return null;
     }
-
-    @Override
-    public Stream<Ticket> getTicketsStream() {
-        return getTickets().stream();
-    }
 }

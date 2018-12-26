@@ -152,7 +152,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     @Counted(name = "GET_TICKETS_COUNTER", monotonic = true)
     @Override
     public Collection<Ticket> getTickets(final Predicate<Ticket> predicate) {
-        return this.ticketRegistry.getTickets().stream().filter(predicate).collect(Collectors.toSet());
+        return this.ticketRegistry.getTicketsStream().filter(predicate).collect(Collectors.toSet());
     }
 
     @Transactional(transactionManager = "ticketTransactionManager")
