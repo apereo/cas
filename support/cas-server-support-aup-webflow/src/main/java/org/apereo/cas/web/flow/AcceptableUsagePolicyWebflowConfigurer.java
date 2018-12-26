@@ -102,7 +102,7 @@ public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowCo
         transitionSet.add(createTransition(AcceptableUsagePolicyVerifyAction.EVENT_ID_MUST_ACCEPT, VIEW_ID_ACCEPTABLE_USAGE_POLICY_VIEW));
 
         final ActionState ticketCreateState = getState(flow, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET, ActionState.class);
-        prependActionsToActionStateExecutionList(flow, ticketCreateState, "acceptableUsagePolicyVerifyAction");
+        ticketCreateState.getEntryActionList().add(createEvaluateAction("acceptableUsagePolicyVerifyAction"));
         createTransitionForState(ticketCreateState, AcceptableUsagePolicyVerifyAction.EVENT_ID_MUST_ACCEPT, VIEW_ID_ACCEPTABLE_USAGE_POLICY_VIEW);
     }
 }
