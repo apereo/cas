@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.stream.Stream;
+
 
 /**
  * This is {@link DefaultTicketRegistryCleaner}.
@@ -56,12 +58,14 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner, Seri
      * Clean tickets.
      */
     protected void cleanInternal() {
-        final int ticketsDeleted = ticketRegistry.getTicketsStream()
-            .filter(Objects::nonNull)
-            .filter(Ticket::isExpired)
-            .mapToInt(this::cleanTicket)
-            .sum();
-        LOGGER.info("[{}] expired tickets removed.", ticketsDeleted);
+        try (final Stream<Ticket> ticketsStream = ticketRegistry.getTicketsStream()) {
+            final int ticketsDeleted = ticketsStream
+                    .filter(Objects::nonNull)
+                    .filter(Ticket::isExpired)
+                    .mapToInt(this::cleanTicket)
+                    .sum();
+            LOGGER.info("[{}] expired tickets removed.", ticketsDeleted);
+        }
     }
 
     @Override

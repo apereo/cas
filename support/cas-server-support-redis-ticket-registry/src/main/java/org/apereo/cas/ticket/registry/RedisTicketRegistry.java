@@ -90,7 +90,9 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Collection<Ticket> getTickets() {
-        return getTicketsStream().collect(Collectors.toSet());
+        try (final Stream<Ticket> ticketsStream = getTicketsStream()) {
+            return ticketsStream.collect(Collectors.toSet());
+        }
     }
 
     @Override
@@ -123,8 +125,13 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
         return null;
     }
 
+    /**
+     * Get a stream of all CAS-related keys from Redis DB.
+     *
+     * @return stream of all CAS-related keys from Redis DB
+     */
     private Stream<String> getKeysStream() {
-        try (Cursor<byte[]> cursor =
+        try (final Cursor<byte[]> cursor =
                      client
                              .getConnectionFactory()
                              .getConnection()
@@ -136,10 +143,15 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
             return StreamSupport
                     .stream(Spliterators.spliteratorUnknownSize(cursor, Spliterator.ORDERED), false)
                     .map(key -> (String) client.getKeySerializer().deserialize(key))
-                    .collect(Collectors.toList())
-                    .stream();
-        } catch (final IOException ex) {
-            LOGGER.error("Could not acquire a Redis connection", ex);
+                    .onClose(() -> {
+                        try {
+                            cursor.close();
+                        } catch (final IOException e) {
+                            LOGGER.error("Could not close Redis connection", e);
+                        }
+                    });
+        } catch (final IOException e) {
+            LOGGER.error("Could not acquire a Redis connection", e);
             return Stream.empty();
         }
     }
