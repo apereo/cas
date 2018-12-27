@@ -111,12 +111,10 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
         LOGGER.debug("Final principal id determined based on client [{}] and user profile [{}] is [{}]", profile, client, id);
         return id;
     }
-    
+
     private String typePrincipalId(final String id, final UserProfile profile) {
-        if (isTypedIdUsed) {
-            return profile.getClass().getName() + UserProfile.SEPARATOR + id;
-        } else {
-            return id;
-        }
+        return isTypedIdUsed
+            ? profile.getClass().getName() + UserProfile.SEPARATOR + id
+            : id;
     }
 }
