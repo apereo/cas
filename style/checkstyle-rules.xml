@@ -582,6 +582,14 @@
     </module>
 
     <module name="RegexpMultiline">
+        <property name="id" value="needlessElseClause"/>
+        <property name="severity" value="error"/>
+        <property name="format" value="\s*\}\s*else\s*\{\s*return\s+.+;"/>
+        <property name="message" value="Remove the unnecessary else clause: consider using the Elvis operator"/>
+        <property name="fileExtensions" value="java" />
+    </module>
+
+    <module name="RegexpMultiline">
         <property name="id" value="useQualifier"/>
         <property name="severity" value="error"/>
         <property name="format"
@@ -684,7 +692,6 @@
         <property name="format" value="new.*Set&lt;&gt;\((Arrays\.asList\([^,]+\)|Collections\.singletonList\(.*\))\)"/>
         <property name="message" value="Consider using Collections.singleton instead"/>
     </module>
-
 
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Use specific request annotation"/>
