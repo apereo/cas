@@ -86,7 +86,7 @@ dependencyCheck {
      * Specifies if the build should be failed if a CVSS score equal
      * to or above a specified level is identified.
      */
-    failBuildOnCVSS = 7
+    failBuildOnCVSS = 8
     skipTestGroups = true
     skipConfigurations = ['jacocoAgent', 'jacocoAnt', 'optional', 'provided', 'providedCompile', 'providedRuntime',
                           'signatures', 'spotbugs','spotbugsPlugins', 'checkstyle', 'errorprone', 'errorproneJavac',
@@ -421,6 +421,7 @@ subprojects {
         }
         testImplementation libraries.tests
         testImplementation libraries.groovy
+        testImplementation libraries.log4j
         compileOnly libraries.findbugsannotations
     }
 

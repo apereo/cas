@@ -2,6 +2,7 @@ package org.apereo.cas.ws.idp.metadata;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.util.CryptoUtils;
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.ws.idp.WSFederationClaims;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 
@@ -16,7 +17,6 @@ import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.common.crypto.CryptoFactory;
 import org.apache.wss4j.common.util.DOM2Writer;
 import org.apache.xml.security.stax.impl.util.IDGenerator;
-import org.apache.xml.security.utils.Base64;
 import org.jooq.lambda.Unchecked;
 import org.w3c.dom.Document;
 
@@ -92,7 +92,7 @@ public class WSFederationMetadataWriter {
 
         val keyAlias = crypto.getDefaultX509Identifier();
         val cert = CertsUtils.getX509CertificateFromCrypto(crypto, keyAlias);
-        writer.writeCharacters(Base64.encode(cert.getEncoded()));
+        writer.writeCharacters(EncodingUtils.encodeBase64(cert.getEncoded()));
 
         writer.writeEndElement();
         writer.writeEndElement();

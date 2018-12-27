@@ -30,9 +30,9 @@ public class CasWsSecurityTokenTicketCatalogConfiguration extends BaseTicketCata
     @Override
     public void configureTicketCatalog(final TicketCatalog plan) {
         LOGGER.debug("Registering core WS security token ticket definitions...");
-        val defn = buildTicketDefinition(plan, SecurityTokenTicket.PREFIX, DefaultSecurityTokenTicket.class);
-        defn.getProperties().setStorageName("wsSecurityTokenTicketsCache");
-        defn.getProperties().setStorageTimeout(casProperties.getTicket().getTgt().getMaxTimeToLiveInSeconds());
-        registerTicketDefinition(plan, defn);
+        val definition = buildTicketDefinition(plan, SecurityTokenTicket.PREFIX, DefaultSecurityTokenTicket.class);
+        definition.getProperties().setStorageName("wsSecurityTokenTicketsCache");
+        definition.getProperties().setStorageTimeout(casProperties.getTicket().getTgt().getMaxTimeToLiveInSeconds());
+        registerTicketDefinition(plan, definition);
     }
 }
