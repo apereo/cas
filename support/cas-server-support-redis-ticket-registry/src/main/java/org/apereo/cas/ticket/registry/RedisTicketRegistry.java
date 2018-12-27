@@ -6,12 +6,18 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ScanOptions;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Key-value ticket registry implementation that stores tickets in redis keyed on the ticket ID.
@@ -23,6 +29,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RedisTicketRegistry extends AbstractTicketRegistry {
     private static final String CAS_TICKET_PREFIX = "CAS_TICKET:";
+    private static final long SCAN_COUNT = 100L;
 
     private final RedisTemplate<String, Ticket> client;
 
@@ -103,18 +110,25 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Collection<? extends Ticket> getTickets() {
-        return this.client.keys(getPatternTicketRedisKey()).stream()
-            .map(redisKey -> {
-                val ticket = this.client.boundValueOps(redisKey).get();
-                if (ticket == null) {
-                    this.client.delete(redisKey);
-                    return null;
-                }
-                return ticket;
-            })
-            .filter(Objects::nonNull)
-            .map(this::decodeTicket)
-            .collect(Collectors.toSet());
+        try (val ticketsStream = getTicketsStream()) {
+            return ticketsStream.collect(Collectors.toSet());
+        }
+    }
+
+    @Override
+    public Stream<? extends Ticket> getTicketsStream() {
+        return getKeysStream()
+                .map(redisKey -> {
+                    val ticket = this.client.boundValueOps(redisKey).get();
+                    if (ticket == null) {
+                        this.client.delete(redisKey);
+                        return null;
+                    }
+                    return ticket;
+                })
+                .filter(Objects::nonNull)
+                .map(this::decodeTicket);
+
     }
 
     @Override
@@ -132,5 +146,36 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
             LOGGER.error("Failed to update [{}]", ticket, e);
         }
         return null;
+    }
+
+    /**
+     * Get a stream of all CAS-related keys from Redis DB.
+     *
+     * @return stream of all CAS-related keys from Redis DB
+     */
+    private Stream<String> getKeysStream() {
+        try (val cursor =
+                     client
+                             .getConnectionFactory()
+                             .getConnection()
+                             .scan(ScanOptions
+                                     .scanOptions()
+                                     .match(getPatternTicketRedisKey())
+                                     .count(SCAN_COUNT)
+                                     .build())) {
+            return StreamSupport
+                    .stream(Spliterators.spliteratorUnknownSize(cursor, Spliterator.ORDERED), false)
+                    .map(key -> (String) client.getKeySerializer().deserialize(key))
+                    .onClose(() -> {
+                        try {
+                            cursor.close();
+                        } catch (final IOException e) {
+                            LOGGER.error("Could not close Redis connection", e);
+                        }
+                    });
+        } catch (final IOException e) {
+            LOGGER.error("Could not acquire a Redis connection", e);
+            return Stream.empty();
+        }
     }
 }
