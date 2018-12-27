@@ -39,7 +39,6 @@ public class StatusEndpoint extends BaseCasMvcEndpoint {
      */
     @ReadOperation
     public Map<String, Object> handle() {
-
         val model = new LinkedHashMap<String, Object>();
         val health = this.healthEndpoint.health();
         val status = health.getStatus();
@@ -52,10 +51,10 @@ public class StatusEndpoint extends BaseCasMvcEndpoint {
             model.put("description", HttpStatus.OK.name());
         }
         model.put("health", status.getCode());
-        model.put("host", StringUtils.isBlank(getCasProperties().getHost().getName())
+        model.put("host", StringUtils.isBlank(casProperties.getHost().getName())
             ? InetAddressUtils.getCasServerHostName()
-            : getCasProperties().getHost().getName());
-        model.put("server", getCasProperties().getServer().getName());
+            : casProperties.getHost().getName());
+        model.put("server", casProperties.getServer().getName());
         model.put("version", CasVersion.asString());
         return model;
     }

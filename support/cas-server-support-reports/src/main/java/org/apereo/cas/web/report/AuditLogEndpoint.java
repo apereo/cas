@@ -37,7 +37,7 @@ public class AuditLogEndpoint extends BaseCasMvcEndpoint {
      */
     @ReadOperation
     public Set<AuditActionContext> getAuditLog() {
-        val sinceDate = LocalDate.now().minusDays(getCasProperties().getAudit().getNumberOfDaysInHistory());
+        val sinceDate = LocalDate.now().minusDays(casProperties.getAudit().getNumberOfDaysInHistory());
         return this.auditTrailManager.getAuditRecordsSince(sinceDate);
     }
 }
