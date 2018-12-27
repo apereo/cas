@@ -7,23 +7,42 @@ title: CAS - Release Process
 
 This page documents the steps that a release engineer should take for cutting a CAS server release. 
 
-## Account Setup
+## Sonatype Setup
 
-- You will need to sign up for a [Sonatype account](http://central.sonatype.org/pages/ossrh-guide.html) and must ask 
+You will need to sign up for a [Sonatype account](http://central.sonatype.org/pages/ossrh-guide.html) and must ask 
 to be authorized to publish releases to the `org.apereo` package by creating a JIRA. Once you have, you may be asked to have one of the
 current project members *vouch* for you. 
-- You will need to [generate your own PGP signatures](http://blog.sonatype.com/2010/01/how-to-generate-pgp-signatures-with-maven/) to sign the release artifacts prior to uploading them to a central repository.
 
-## Environment Review
+## GPG Setup
+
+You will need to [generate your own PGP signatures](http://blog.sonatype.com/2010/01/how-to-generate-pgp-signatures-with-maven/) to sign the release artifacts prior to uploading them to a central repository. In order to create OpenPGP signatures, you will need to generate a key pair. You need to provide the build with your key information, which means three things:
+
+- The public key ID (The last 8 symbols of the keyId. You can use `gpg -K to get it`).
+- The absolute path to the secret key ring file containing your private key. Since gpg 2.1, you need to export the keys with command:
+
+```bash
+gpg --keyring secring.gpg --export-secret-keys > ~/.gnupg/secring.gpg).
+```
+
+- The passphrase used to protect your private key.
+
+The above settings will need to be placed into the `~/.gradle/gradle.properties` file:
+
+```properties
+signing.keyId=7A24P9QB
+signing.password=P@$$w0rd
+signing.secretKeyRingFile=/Users/example/.gnupg/secring.gpg
+```
+
+Additional notes on how artifacts are signed using the Gradle signing plugin are [available here](https://docs.gradle.org/current/userguide/signing_plugin.html)
+
+## Environment Setup
 
 - Load your SSH key and ensure this SSH key is also referenced in GitHub.
 - Adjust `$GRADLE_OPTS` to initialize the JVM heap size, if necessary.
 - Load your `~/.gradle/gradle.properties` file with the following *as an example*:
 
-```bash
-signing.keyId=7A24P9QB
-signing.password=P@$$w0rd
-signing.secretKeyRingFile=/Users/example/.gnupg/secring.gpg
+```properties
 org.gradle.daemon=false
 org.gradle.parallel=false
 ```
