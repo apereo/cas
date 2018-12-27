@@ -51,4 +51,6 @@ public interface GitHubOperations {
     PullRequest mergeWithBase(final String organization, final String repository, PullRequest pr);
 
     Page<PullRequestFile> getPullRequestFiles(String organization, final String repository, String number);
+
+    Page<Commit> getPullRequestCommits(String organization, final String repository, String number);
 }

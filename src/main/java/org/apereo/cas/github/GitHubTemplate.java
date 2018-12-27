@@ -141,6 +141,12 @@ public class GitHubTemplate implements GitHubOperations {
     }
 
     @Override
+    public Page<Commit> getPullRequestCommits(final String organization, final String repository, final String number) {
+        final String url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + number + "/commits";
+        return getPage(url, Commit[].class);
+    }
+
+    @Override
     public PullRequest mergeWithBase(final String organization, final String repository, final PullRequest pr) {
         if (pr.getHead().getRepository().isFork()) {
             log.info("Unable to merge pull request [{}] with base on a forked repository [{}]", pr.getUrl(), pr.getHead().getRepository());

@@ -22,7 +22,7 @@ public class CasPullRequestListener implements PullRequestListener {
     @Override
     public void onOpenPullRequest(final PullRequest pr) {
         log.debug("Processing {}", pr);
-
+        
         if (processLabelSeeMaintenancePolicy(pr)) {
             return;
         }

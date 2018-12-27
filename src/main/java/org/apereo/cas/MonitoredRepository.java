@@ -16,6 +16,7 @@
 
 package org.apereo.cas;
 
+import org.apereo.cas.github.Commit;
 import org.apereo.cas.github.GitHubOperations;
 import org.apereo.cas.github.Label;
 import org.apereo.cas.github.Milestone;
@@ -120,13 +121,23 @@ public class MonitoredRepository implements InitializingBean {
         });
     }
 
-    public Collection<PullRequestFile> getPullRequestFiles(final PullRequest pr) {
-        Collection<PullRequestFile> files = new ArrayList<>();
+    public List<PullRequestFile> getPullRequestFiles(final PullRequest pr) {
+        List<PullRequestFile> files = new ArrayList<>();
         Page<PullRequestFile> pages = this.gitHub.getPullRequestFiles(getOrganization(), getName(), pr.getNumber());
         while (pages != null) {
             files.addAll(pages.getContent());
             pages = pages.next();
         }
         return files;
+    }
+
+    public List<Commit> getPullRequestCommits(final PullRequest pr) {
+        List<Commit> commits = new ArrayList<>();
+        Page<Commit> pages = this.gitHub.getPullRequestCommits(getOrganization(), getName(), pr.getNumber());
+        while (pages != null) {
+            commits.addAll(pages.getContent());
+            pages = pages.next();
+        }
+        return commits;
     }
 }
