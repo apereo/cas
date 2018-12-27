@@ -82,6 +82,7 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
                     val firstAttribute = CollectionUtils.firstElement(profile.getAttribute(principalAttribute));
                     if (firstAttribute.isPresent()) {
                         id = firstAttribute.get().toString();
+                        id = typePrincipalId(id, profile);
                     }
                     LOGGER.debug("Delegated authentication indicates usage of client principal attribute [{}] for the identifier [{}]", principalAttribute, id);
                 } else {
@@ -95,6 +96,7 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
                 val firstAttribute = CollectionUtils.firstElement(profile.getAttribute(principalAttributeId));
                 if (firstAttribute.isPresent()) {
                     id = firstAttribute.get().toString();
+                    id = typePrincipalId(id, profile);
                 }
             } else {
                 LOGGER.warn("CAS cannot use [{}] as the principal attribute id, since the profile attributes do not contain the attribute. "
@@ -108,5 +110,13 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
         }
         LOGGER.debug("Final principal id determined based on client [{}] and user profile [{}] is [{}]", profile, client, id);
         return id;
+    }
+    
+    private String typePrincipalId(final String id, final UserProfile profile) {
+        if (isTypedIdUsed) {
+            return profile.getClass().getName() + UserProfile.SEPARATOR + id;
+        } else {
+            return id;
+        }
     }
 }
