@@ -59,7 +59,7 @@ public class CoreWsSecuritySecurityTokenServiceSamlConfiguration {
         LOGGER.trace("Locating field name [{}]", fieldName);
         val field = ReflectionUtils.findField(OpenSAMLUtil.class, fieldName);
         if (field == null) {
-            LOGGER.error("[{}] is undefined and cannot be located in OpenSAMLUtil");
+            LOGGER.error("[{}] is undefined and cannot be located in OpenSAMLUtil", fieldName);
             return;
         }
         ReflectionUtils.makeAccessible(field);
