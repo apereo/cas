@@ -59,12 +59,13 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner, Seri
      * @return the int
      */
     protected int cleanInternal() {
-        val ticketsDeleted = ticketRegistry.getTicketsStream()
-            .filter(Ticket::isExpired)
-            .mapToInt(this::cleanTicket)
-            .sum();
-        LOGGER.info("[{}] expired tickets removed.", ticketsDeleted);
-        return ticketsDeleted;
+        try (val expiredTickets = ticketRegistry.getTicketsStream().filter(Ticket::isExpired)) {
+            val ticketsDeleted = expiredTickets
+                    .mapToInt(this::cleanTicket)
+                    .sum();
+            LOGGER.info("[{}] expired tickets removed.", ticketsDeleted);
+            return ticketsDeleted;
+        }
     }
 
     @Override
