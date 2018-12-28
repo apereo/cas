@@ -131,7 +131,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
      * @return stream of all CAS-related keys from Redis DB
      */
     private Stream<String> getKeysStream() {
-        Cursor<byte[]> cursor =
+        final Cursor<byte[]> cursor =
                 client
                         .getConnectionFactory()
                         .getConnection()
