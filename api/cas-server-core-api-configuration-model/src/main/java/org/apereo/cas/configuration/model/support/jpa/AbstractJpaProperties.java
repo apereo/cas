@@ -35,7 +35,7 @@ public abstract class AbstractJpaProperties implements Serializable {
      * Hibernate feature to automatically validate and exports DDL to the schema.
      * By default, creates and drops the schema automatically when a session is starts and ends
      */
-    private String ddlAuto = "create-drop";
+    private String ddlAuto = "update";
 
     /**
      * The JDBC driver used to connect to the database.
