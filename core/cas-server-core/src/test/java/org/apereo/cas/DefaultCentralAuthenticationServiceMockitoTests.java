@@ -240,6 +240,7 @@ public class DefaultCentralAuthenticationServiceMockitoTests {
         when(ticketRegMock.getTicket(eq(stMock.getId()), eq(ServiceTicket.class))).thenReturn(stMock);
         when(ticketRegMock.getTicket(eq(stMock2.getId()), eq(ServiceTicket.class))).thenReturn(stMock2);
         when(ticketRegMock.getTickets()).thenReturn(Arrays.asList(tgtMock, tgtMock2, stMock, stMock2));
+        when(ticketRegMock.getTicketsStream()).thenCallRealMethod();
     }
 
     @Test
