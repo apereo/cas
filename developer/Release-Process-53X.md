@@ -110,12 +110,11 @@ Update the following overlay projects to point to the newly released CAS version
 over to a maintenance branch for each of the below overlay projects, specially if/when dealing with major/minor releases
 and if the release process here had you create a new branch. 
 
-- [CAS Webapp Maven Overlay](https://github.com/apereo/cas-overlay-template)
-- [CAS Webapp Gradle Overlay](https://github.com/apereo/cas-gradle-overlay-template)
+- [CAS Overlay](https://github.com/apereo/cas-overlay-template)
 
 ## Update Documentation
 
-If you did create a new release branch as part of a new major/minor release:
+<div class="alert alert-warning"><strong>Remember</strong><p>You should do this only for major or minor releases (i.e. <code>4.2.x</code>, <code>5.0.x</code>).</p></div>
 
 - Configure docs to point `current` to the latest available version [here](https://github.com/apereo/cas/blob/gh-pages/current/index.html).
 - Update [this page](https://github.com/apereo/cas/edit/gh-pages/Older-Versions.md/) and add the newly released version.
@@ -124,10 +123,13 @@ If you did create a new release branch as part of a new major/minor release:
 
 ## Update Maintenance Policy
 
-Update the [Maintenance Policy](Maintenance-Policy.html) to note the release schedule and EOL timeline. 
-This task is only relevant when dealing with major or minor releases.
+<div class="alert alert-warning"><strong>Remember</strong><p>You should do this only for major or minor releases (i.e. <code>4.2.x</code>, <code>5.0.x</code>).</p></div>
+
+Update the [Maintenance Policy](Maintenance-Policy.html) to note the release schedule and EOL timeline.
 
 ## Optional
+
+The following tasks are considered optional and may be done at the time of the release or later.
 
 ### Update Demos
 
