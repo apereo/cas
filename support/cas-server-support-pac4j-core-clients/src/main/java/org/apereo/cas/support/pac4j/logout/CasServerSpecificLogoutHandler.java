@@ -13,7 +13,6 @@ public class CasServerSpecificLogoutHandler implements LogoutHandler<J2EContext>
 
     @Override
     public void recordSession(final J2EContext context, final String key) {
-        // ignore: we have nothing to record
     }
 
     @Override
@@ -23,12 +22,10 @@ public class CasServerSpecificLogoutHandler implements LogoutHandler<J2EContext>
 
     @Override
     public void destroySessionBack(final J2EContext context, final String key) {
-        // request the SLO even if we cannot get the TGT in back channel
         throw new RequestSloException(key, false);
     }
 
     @Override
     public void renewSession(final String oldSessionId, final J2EContext context) {
-        // ignore
     }
 }

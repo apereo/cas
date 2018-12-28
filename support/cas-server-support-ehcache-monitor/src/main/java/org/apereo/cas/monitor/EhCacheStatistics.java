@@ -25,7 +25,9 @@ public class EhCacheStatistics implements CacheStatistics {
 
     private long heapSize;
 
-    // Off heap size is always in units of bytes
+    /**
+     * Off heap size is always in units of bytes.
+     */
     private long offHeapSize;
 
     public EhCacheStatistics(final Cache cache) {

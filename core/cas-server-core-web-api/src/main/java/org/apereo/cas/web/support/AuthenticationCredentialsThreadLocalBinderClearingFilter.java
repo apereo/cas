@@ -33,11 +33,9 @@ public class AuthenticationCredentialsThreadLocalBinderClearingFilter implements
 
     @Override
     public void init(final FilterConfig filterConfig) {
-        //noop
     }
 
     @Override
     public void destroy() {
-        //noop
     }
 }

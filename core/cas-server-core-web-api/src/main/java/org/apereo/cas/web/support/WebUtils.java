@@ -380,7 +380,6 @@ public class WebUtils {
         if (credential == null || StringUtils.isBlank(credential.getId())) {
             credential = cFromConversation;
             if (credential != null && !StringUtils.isBlank(credential.getId())) {
-                //aup and some other modules look only in flow scope via expressions, push down if needed
                 context.getFlowScope().put(PARAMETER_CREDENTIAL, credential);
             }
         }
