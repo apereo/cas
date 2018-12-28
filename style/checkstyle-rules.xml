@@ -258,6 +258,7 @@
             <property name="severity" value="error"/>
         </module>
         <module name="Indentation">
+            <property name="forceStrictCondition" value="false" />
             <property name="severity" value="error"/>
         </module>
         <!--

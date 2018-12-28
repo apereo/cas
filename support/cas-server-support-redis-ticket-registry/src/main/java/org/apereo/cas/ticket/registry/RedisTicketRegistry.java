@@ -58,6 +58,10 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     @Override
     public long deleteAll() {
         val redisKeys = this.client.keys(getPatternTicketRedisKey());
+        if (redisKeys == null) {
+            LOGGER.warn("Unable to locate tickets via redis key");
+            return 0;
+        }
         val size = redisKeys.size();
         this.client.delete(redisKeys);
         return size;
@@ -99,7 +103,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
                     return result;
                 }
                 LOGGER.debug("The condition enforced by the predicate [{}] cannot successfully accept/test the ticket id [{}]", ticketId,
-                    predicate.getClass().getSimpleName());
+                        predicate.getClass().getSimpleName());
                 return null;
             }
         } catch (final Exception e) {
@@ -118,16 +122,16 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     @Override
     public Stream<? extends Ticket> getTicketsStream() {
         return getKeysStream()
-                .map(redisKey -> {
-                    val ticket = this.client.boundValueOps(redisKey).get();
-                    if (ticket == null) {
-                        this.client.delete(redisKey);
-                        return null;
-                    }
-                    return ticket;
-                })
-                .filter(Objects::nonNull)
-                .map(this::decodeTicket);
+            .map(redisKey -> {
+                val ticket = this.client.boundValueOps(redisKey).get();
+                if (ticket == null) {
+                    this.client.delete(redisKey);
+                    return null;
+                }
+                return ticket;
+            })
+            .filter(Objects::nonNull)
+            .map(this::decodeTicket);
 
     }
 
@@ -154,25 +158,21 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
      * @return stream of all CAS-related keys from Redis DB
      */
     private Stream<String> getKeysStream() {
-        val cursor =
-                client.getConnectionFactory()
-                        .getConnection()
-                        .scan(ScanOptions
-                                .scanOptions()
-                                .match(getPatternTicketRedisKey())
-                                .count(SCAN_COUNT)
-                                .build());
+        val cursor = client.getConnectionFactory().getConnection()
+                .scan(ScanOptions.scanOptions().match(getPatternTicketRedisKey())
+                .count(SCAN_COUNT)
+                .build());
         return StreamSupport
-                .stream(Spliterators.spliteratorUnknownSize(cursor, Spliterator.ORDERED), false)
-                .map(key -> (String) client.getKeySerializer().deserialize(key))
-                .collect(Collectors.toSet())
-                .stream()
-                .onClose(() -> {
-                    try {
-                        cursor.close();
-                    } catch (final IOException e) {
-                        LOGGER.error("Could not close Redis connection", e);
-                    }
-                });
+            .stream(Spliterators.spliteratorUnknownSize(cursor, Spliterator.ORDERED), false)
+            .map(key -> (String) client.getKeySerializer().deserialize(key))
+            .collect(Collectors.toSet())
+            .stream()
+            .onClose(() -> {
+                try {
+                    cursor.close();
+                } catch (final IOException e) {
+                    LOGGER.error("Could not close Redis connection", e);
+                }
+            });
     }
 }
