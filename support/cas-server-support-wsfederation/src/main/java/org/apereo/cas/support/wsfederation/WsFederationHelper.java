@@ -100,9 +100,15 @@ public class WsFederationHelper {
         return new ExplicitKeySignatureTrustEngine(resolver, keyResolver);
     }
 
+    /**
+     * Gets encryption credential.
+     * The encryption private key will need to contain the private keypair in PEM format.
+     * The encryption certificate is shared with ADFS in DER format, i.e certificate.crt.
+     * @param config the config
+     * @return the encryption credential
+     */
     @SneakyThrows
     private static Credential getEncryptionCredential(final WsFederationConfiguration config) {
-        // This will need to contain the private keypair in PEM format
         LOGGER.debug("Locating encryption credential private key [{}]", config.getEncryptionPrivateKey());
         val br = new BufferedReader(new InputStreamReader(config.getEncryptionPrivateKey().getInputStream(), StandardCharsets.UTF_8));
         Security.addProvider(new BouncyCastleProvider());
@@ -126,7 +132,6 @@ public class WsFederationHelper {
                 .apply(privateKeyPemObject);
 
             val certParser = new X509CertParser();
-            // This is the certificate shared with ADFS in DER format, i.e certificate.crt
             LOGGER.debug("Locating encryption certificate [{}]", config.getEncryptionCertificate());
             certParser.engineInit(config.getEncryptionCertificate().getInputStream());
             LOGGER.debug("Invoking certificate engine to parse the certificate [{}]", config.getEncryptionCertificate());
