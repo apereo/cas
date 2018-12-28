@@ -13,7 +13,6 @@ import org.ektorp.UpdateConflictException;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * This is {@link CouchDbTicketRegistry }.
@@ -146,10 +145,5 @@ public class CouchDbTicketRegistry extends AbstractTicketRegistry {
             LOGGER.debug("Could not update [{}] {}", encodedTicket.getId(), exception.getMessage());
         }
         return null;
-    }
-
-    @Override
-    public Stream<Ticket> getTicketsStream() {
-        return getTickets().stream();
     }
 }
