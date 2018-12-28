@@ -58,7 +58,7 @@ public class NamedQueryDatabaseAuthenticationHandlerTests {
     private DataSource dataSource;
 
     private static String getSqlInsertStatementToCreateUserAccount(final int i, final String expired, final String disabled) {
-        return String.format("insert into casusers (username, password, expired, disabled, phone) values('%s', '%s', '%s', '%s', '%s');",
+        return String.format("insert into cas_named_users (username, password, expired, disabled, phone) values('%s', '%s', '%s', '%s', '%s');",
             "user" + i, "psw" + i, expired, disabled, "123456789");
     }
 
@@ -76,13 +76,13 @@ public class NamedQueryDatabaseAuthenticationHandlerTests {
         val c = this.dataSource.getConnection();
         val s = c.createStatement();
         c.setAutoCommit(true);
-        s.execute("delete from casusers;");
+        s.execute("delete from cas_named_users;");
         c.close();
     }
 
     @Test
     public void verifySuccess() throws Exception {
-        val sql = "SELECT * FROM casusers where username=:username";
+        val sql = "SELECT * FROM cas_named_users where username=:username";
         val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(Collections.singletonList("phone:phoneNumber"));
         val q = new QueryDatabaseAuthenticationHandler("namedHandler",
             null, PrincipalFactoryUtils.newPrincipalFactory(), 0,
@@ -98,7 +98,7 @@ public class NamedQueryDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifySuccessWithCount() throws Exception {
-        val sql = "SELECT count(*) as total FROM casusers where username=:username AND password=:password";
+        val sql = "SELECT count(*) as total FROM cas_named_users where username=:username AND password=:password";
         val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(Collections.singletonList("phone:phoneNumber"));
         val q = new QueryDatabaseAuthenticationHandler("namedHandler",
             null, PrincipalFactoryUtils.newPrincipalFactory(), 0,
@@ -114,7 +114,7 @@ public class NamedQueryDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyFailsWithMissingTotalField() throws Exception {
-        val sql = "SELECT count(*) FROM casusers where username=:username AND password=:password";
+        val sql = "SELECT count(*) FROM cas_named_users where username=:username AND password=:password";
         val q = new QueryDatabaseAuthenticationHandler("namedHandler",
             null, PrincipalFactoryUtils.newPrincipalFactory(), 0,
             this.dataSource, sql, null,
@@ -124,7 +124,7 @@ public class NamedQueryDatabaseAuthenticationHandlerTests {
         q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("whatever", "psw0"));
     }
 
-    @Entity(name = "casusers")
+    @Entity(name = "cas_named_users")
     public static class UsersTable {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
