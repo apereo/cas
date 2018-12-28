@@ -107,10 +107,7 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventEventResolver
 
         val providerValues = providers.values();
 
-        // remove providers that don't support the event
         providerValues.removeIf(p -> resolveEvents.stream().noneMatch(e -> p.matches(e.getId())));
-
-        // remove events that are not supported by providers.
         resolveEvents.removeIf(e -> providerValues.stream().noneMatch(p -> p.matches(e.getId())));
 
         LOGGER.debug("Finalized set of resolved events are [{}]", resolveEvents);

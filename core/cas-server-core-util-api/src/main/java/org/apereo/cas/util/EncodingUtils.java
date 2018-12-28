@@ -440,8 +440,7 @@ public class EncodingUtils {
             if (LOGGER.isTraceEnabled()) {
                 throw new DecryptionException(e);
             }
-            //noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
-            throw new DecryptionException(); //NOPMD
+            throw new DecryptionException();
         }
     }
 
