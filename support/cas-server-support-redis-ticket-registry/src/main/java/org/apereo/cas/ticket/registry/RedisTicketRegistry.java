@@ -154,28 +154,25 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
      * @return stream of all CAS-related keys from Redis DB
      */
     private Stream<String> getKeysStream() {
-        try (val cursor =
-                     client
-                             .getConnectionFactory()
-                             .getConnection()
-                             .scan(ScanOptions
-                                     .scanOptions()
-                                     .match(getPatternTicketRedisKey())
-                                     .count(SCAN_COUNT)
-                                     .build())) {
-            return StreamSupport
-                    .stream(Spliterators.spliteratorUnknownSize(cursor, Spliterator.ORDERED), false)
-                    .map(key -> (String) client.getKeySerializer().deserialize(key))
-                    .onClose(() -> {
-                        try {
-                            cursor.close();
-                        } catch (final IOException e) {
-                            LOGGER.error("Could not close Redis connection", e);
-                        }
-                    });
-        } catch (final IOException e) {
-            LOGGER.error("Could not acquire a Redis connection", e);
-            return Stream.empty();
-        }
+        val cursor =
+                client.getConnectionFactory()
+                        .getConnection()
+                        .scan(ScanOptions
+                                .scanOptions()
+                                .match(getPatternTicketRedisKey())
+                                .count(SCAN_COUNT)
+                                .build());
+        return StreamSupport
+                .stream(Spliterators.spliteratorUnknownSize(cursor, Spliterator.ORDERED), false)
+                .map(key -> (String) client.getKeySerializer().deserialize(key))
+                .collect(Collectors.toSet())
+                .stream()
+                .onClose(() -> {
+                    try {
+                        cursor.close();
+                    } catch (final IOException e) {
+                        LOGGER.error("Could not close Redis connection", e);
+                    }
+                });
     }
 }
