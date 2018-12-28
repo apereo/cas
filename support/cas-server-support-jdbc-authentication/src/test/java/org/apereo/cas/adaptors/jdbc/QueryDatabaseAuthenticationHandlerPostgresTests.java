@@ -48,7 +48,7 @@ import static org.junit.Assert.*;
     DatabaseAuthenticationTestConfiguration.class
 })
 @DirtiesContext
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 5432)
+//@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 5432)
 @Category(PostgresCategory.class)
 @TestPropertySource(properties = {
     "database.user=postgres",

@@ -23,7 +23,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.config.support.authentication.GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
-import org.apereo.cas.couchdb.gauth.credential.OneTimeTokenAccountCouchDbRepository;
+import org.apereo.cas.couchdb.gauth.credential.GoogleAuthenticatorAccountCouchDbRepository;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 
@@ -95,7 +95,7 @@ public class CouchDbGoogleAuthenticatorTokenCredentialRepositoryTests extends Ba
 
     @Autowired
     @Qualifier("couchDbOneTimeTokenAccountRepository")
-    private OneTimeTokenAccountCouchDbRepository couchDbRepository;
+    private GoogleAuthenticatorAccountCouchDbRepository couchDbRepository;
 
     @Before
     public void setUp() {
