@@ -142,7 +142,9 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     @Transactional(transactionManager = "ticketTransactionManager")
     @Override
     public Collection<Ticket> getTickets(final Predicate<Ticket> predicate) {
-        return this.ticketRegistry.getTickets().stream().filter(predicate).collect(Collectors.toSet());
+        try (val ticketsStream = this.ticketRegistry.getTicketsStream().filter(predicate)) {
+            return ticketsStream.collect(Collectors.toSet());
+        }
     }
 
     @Transactional(transactionManager = "ticketTransactionManager")
