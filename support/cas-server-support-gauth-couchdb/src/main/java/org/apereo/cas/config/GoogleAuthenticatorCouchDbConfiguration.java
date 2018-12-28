@@ -3,8 +3,8 @@ package org.apereo.cas.config;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
-import org.apereo.cas.couchdb.gauth.credential.OneTimeTokenAccountCouchDbRepository;
-import org.apereo.cas.couchdb.gauth.token.OneTimeTokenCouchDbRepository;
+import org.apereo.cas.couchdb.gauth.credential.GoogleAuthenticatorAccountCouchDbRepository;
+import org.apereo.cas.couchdb.gauth.token.GoogleAuthenticatorTokenCouchDbRepository;
 import org.apereo.cas.gauth.credential.CouchDbGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.gauth.token.GoogleAuthenticatorCouchDbTokenRepository;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
@@ -56,7 +56,7 @@ public class GoogleAuthenticatorCouchDbConfiguration {
     public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(
         @Qualifier("googleAuthenticatorInstance") final IGoogleAuthenticator googleAuthenticatorInstance,
         @Qualifier("googleAuthenticatorAccountCipherExecutor") final CipherExecutor googleAuthenticatorAccountCipherExecutor,
-        @Qualifier("couchDbOneTimeTokenAccountRepository") final OneTimeTokenAccountCouchDbRepository couchDbRepository) {
+        @Qualifier("couchDbOneTimeTokenAccountRepository") final GoogleAuthenticatorAccountCouchDbRepository couchDbRepository) {
         return new CouchDbGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance, couchDbRepository,
             googleAuthenticatorAccountCipherExecutor);
     }
@@ -64,9 +64,9 @@ public class GoogleAuthenticatorCouchDbConfiguration {
     @ConditionalOnMissingBean(name = "couchDbOneTimeTokenAccountRepository")
     @Bean
     @RefreshScope
-    public OneTimeTokenAccountCouchDbRepository couchDbOneTimeTokenAccountRepository(
+    public GoogleAuthenticatorAccountCouchDbRepository couchDbOneTimeTokenAccountRepository(
         @Qualifier("oneTimeTokenAccountCouchDbFactory") final CouchDbConnectorFactory oneTimeTokenCouchDbFactory) {
-        val repository = new OneTimeTokenAccountCouchDbRepository(oneTimeTokenCouchDbFactory.getCouchDbConnector(),
+        val repository = new GoogleAuthenticatorAccountCouchDbRepository(oneTimeTokenCouchDbFactory.getCouchDbConnector(),
             casProperties.getAuthn().getMfa().getGauth().getCouchDb().isCreateIfNotExists());
         repository.initStandardDesignDocument();
         return repository;
@@ -76,7 +76,7 @@ public class GoogleAuthenticatorCouchDbConfiguration {
     @Bean
     @RefreshScope
     public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository(
-        @Qualifier("couchDbOneTimeTokenRepository") final OneTimeTokenCouchDbRepository couchDbOneTimeTokenRepository) {
+        @Qualifier("couchDbOneTimeTokenRepository") final GoogleAuthenticatorTokenCouchDbRepository couchDbOneTimeTokenRepository) {
         return new GoogleAuthenticatorCouchDbTokenRepository(couchDbOneTimeTokenRepository,
             casProperties.getAuthn().getMfa().getGauth().getTimeStepSize());
     }
@@ -91,9 +91,9 @@ public class GoogleAuthenticatorCouchDbConfiguration {
     @ConditionalOnMissingBean(name = "couchDbbOneTimeTokenRepository")
     @Bean
     @RefreshScope
-    public OneTimeTokenCouchDbRepository couchDbOneTimeTokenRepository(
+    public GoogleAuthenticatorTokenCouchDbRepository couchDbOneTimeTokenRepository(
         @Qualifier("oneTimeTokenAccountCouchDbFactory") final CouchDbConnectorFactory oneTimeTokenCouchDbFactory) {
-        val repository = new OneTimeTokenCouchDbRepository(oneTimeTokenCouchDbFactory.getCouchDbConnector(),
+        val repository = new GoogleAuthenticatorTokenCouchDbRepository(oneTimeTokenCouchDbFactory.getCouchDbConnector(),
             casProperties.getAuthn().getMfa().getGauth().getCouchDb().isCreateIfNotExists());
         repository.initStandardDesignDocument();
         return repository;

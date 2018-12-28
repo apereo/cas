@@ -12,15 +12,15 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * This is {@link OneTimeTokenCouchDbRepository}.
+ * This is {@link GoogleAuthenticatorTokenCouchDbRepository}.
  *
  * @author Timur Duehr
  * @since 6.0.0
  */
 @View(name = "all", map = "function(doc) { if(doc.token && doc.userId) { emit(doc._id, doc) } }")
-public class OneTimeTokenCouchDbRepository extends CouchDbRepositorySupport<CouchDbOneTimeToken> {
-    public OneTimeTokenCouchDbRepository(final CouchDbConnector db, final boolean createIfNotExists) {
-        super(CouchDbOneTimeToken.class, db, createIfNotExists);
+public class GoogleAuthenticatorTokenCouchDbRepository extends CouchDbRepositorySupport<CouchDbGoogleAuthenticatorToken> {
+    public GoogleAuthenticatorTokenCouchDbRepository(final CouchDbConnector db, final boolean createIfNotExists) {
+        super(CouchDbGoogleAuthenticatorToken.class, db, createIfNotExists);
     }
 
     /**
@@ -30,9 +30,9 @@ public class OneTimeTokenCouchDbRepository extends CouchDbRepositorySupport<Couc
      * @return token for uid, otp pair
      */
     @View(name = "by_uid_otp", map = "function(doc) { if(doc.token && doc.userId) { emit([doc.userId, doc.token], doc) } }")
-    public CouchDbOneTimeToken findOneByUidForOtp(final String uid, final Integer otp) {
+    public CouchDbGoogleAuthenticatorToken findOneByUidForOtp(final String uid, final Integer otp) {
         val view = createQuery("by_uid_otp").key(ComplexKey.of(uid, otp)).limit(1);
-        return db.queryView(view, CouchDbOneTimeToken.class).stream().findFirst().orElse(null);
+        return db.queryView(view, CouchDbGoogleAuthenticatorToken.class).stream().findFirst().orElse(null);
     }
 
     /**
@@ -41,9 +41,9 @@ public class OneTimeTokenCouchDbRepository extends CouchDbRepositorySupport<Couc
      * @return tokens issued before given date
      */
     @View(name = "by_issued_date_time", map = "function(doc) { if(doc.token && doc.userId) { emit(doc.issuedDateTime, doc) } }")
-    public Collection<CouchDbOneTimeToken> findByIssuedDateTimeBefore(final LocalDateTime localDateTime) {
+    public Collection<CouchDbGoogleAuthenticatorToken> findByIssuedDateTimeBefore(final LocalDateTime localDateTime) {
         val view = createQuery("by_issued_date_time").endKey(localDateTime);
-        return db.queryView(view, CouchDbOneTimeToken.class);
+        return db.queryView(view, CouchDbGoogleAuthenticatorToken.class);
     }
 
     /**
@@ -52,7 +52,7 @@ public class OneTimeTokenCouchDbRepository extends CouchDbRepositorySupport<Couc
      * @return tokens belonging to use id
      */
     @View(name = "by_userId", map = "function(doc) { if(doc.token && doc.userId) { emit(doc.userId, doc) } }")
-    public List<CouchDbOneTimeToken> findByUserId(final String userId) {
+    public List<CouchDbGoogleAuthenticatorToken> findByUserId(final String userId) {
         return queryView("by_userId", userId);
     }
 
@@ -81,7 +81,7 @@ public class OneTimeTokenCouchDbRepository extends CouchDbRepositorySupport<Couc
      * @param token token to delete
      */
     @UpdateHandler(name = "delete_token", file = "CouchDbOneTimeToken_delete.js")
-    public void deleteToken(final CouchDbOneTimeToken token) {
+    public void deleteToken(final CouchDbGoogleAuthenticatorToken token) {
         db.callUpdateHandler(stdDesignDocumentId, "delete_token", token.getCid(), null);
     }
 
@@ -92,7 +92,7 @@ public class OneTimeTokenCouchDbRepository extends CouchDbRepositorySupport<Couc
      * @param otp otp to search
      * @return token for uid, otp pair
      */
-    public List<CouchDbOneTimeToken> findByUidForOtp(final String uid, final Integer otp) {
+    public List<CouchDbGoogleAuthenticatorToken> findByUidForOtp(final String uid, final Integer otp) {
         return queryView("by_uid_otp", ComplexKey.of());
     }
 
@@ -102,7 +102,7 @@ public class OneTimeTokenCouchDbRepository extends CouchDbRepositorySupport<Couc
      * @return token for the otp
      */
     @View(name = "by_token", map = "function(doc) { if(doc.token && doc.userId) { emit(doc.token, doc) } }")
-    public List<CouchDbOneTimeToken> findByToken(final Integer otp) {
+    public List<CouchDbGoogleAuthenticatorToken> findByToken(final Integer otp) {
         return queryView("by_token", otp);
     }
 }

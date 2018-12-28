@@ -2,8 +2,8 @@ package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
-import org.apereo.cas.couchdb.gauth.credential.CouchDbOneTimeTokenAccount;
-import org.apereo.cas.couchdb.gauth.credential.OneTimeTokenAccountCouchDbRepository;
+import org.apereo.cas.couchdb.gauth.credential.CouchDbGoogleAuthenticatorAccount;
+import org.apereo.cas.couchdb.gauth.credential.GoogleAuthenticatorAccountCouchDbRepository;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.extern.slf4j.Slf4j;
@@ -23,10 +23,10 @@ public class CouchDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
     /**
      * CouchDb instance for tokens storage.
      */
-    private final OneTimeTokenAccountCouchDbRepository couchDb;
+    private final GoogleAuthenticatorAccountCouchDbRepository couchDb;
 
     public CouchDbGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
-                                                               final OneTimeTokenAccountCouchDbRepository googleAuthenticatorAccountRepository,
+                                                               final GoogleAuthenticatorAccountCouchDbRepository googleAuthenticatorAccountRepository,
                                                                final CipherExecutor<String, String> tokenCredentialCipher) {
         super(googleAuthenticator, tokenCredentialCipher);
         this.couchDb = googleAuthenticatorAccountRepository;
@@ -51,7 +51,7 @@ public class CouchDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
     public OneTimeTokenAccount update(final OneTimeTokenAccount account) {
         val couchDbOneTimeTokenAccount = couchDb.findOneByUsername(account.getUsername());
         if (couchDbOneTimeTokenAccount == null) {
-            val newAccount = new CouchDbOneTimeTokenAccount(encode(account));
+            val newAccount = new CouchDbGoogleAuthenticatorAccount(encode(account));
             couchDb.add(newAccount);
             return newAccount;
         }

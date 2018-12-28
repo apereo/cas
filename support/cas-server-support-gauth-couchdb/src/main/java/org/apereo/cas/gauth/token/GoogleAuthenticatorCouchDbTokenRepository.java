@@ -1,8 +1,8 @@
 package org.apereo.cas.gauth.token;
 
 import org.apereo.cas.authentication.OneTimeToken;
-import org.apereo.cas.couchdb.gauth.token.CouchDbOneTimeToken;
-import org.apereo.cas.couchdb.gauth.token.OneTimeTokenCouchDbRepository;
+import org.apereo.cas.couchdb.gauth.token.CouchDbGoogleAuthenticatorToken;
+import org.apereo.cas.couchdb.gauth.token.GoogleAuthenticatorTokenCouchDbRepository;
 import org.apereo.cas.otp.repository.token.BaseOneTimeTokenRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -22,13 +22,13 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class GoogleAuthenticatorCouchDbTokenRepository extends BaseOneTimeTokenRepository {
 
-    private final OneTimeTokenCouchDbRepository couchDb;
+    private final GoogleAuthenticatorTokenCouchDbRepository couchDb;
     private final long expireTokensInSeconds;
 
 
     @Override
     public void store(final OneTimeToken token) {
-        couchDb.add(new CouchDbOneTimeToken(token));
+        couchDb.add(new CouchDbGoogleAuthenticatorToken(token));
     }
 
     @Override
