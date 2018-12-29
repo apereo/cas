@@ -13,7 +13,7 @@ services:
 - docker
 branches:
   only:
-  - master
+  - 6.0.x
 before_cache:
 - rm -rf $HOME/.gradle/caches/4.*/
 - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
