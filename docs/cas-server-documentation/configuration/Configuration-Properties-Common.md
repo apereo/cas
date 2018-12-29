@@ -737,7 +737,7 @@ please review [this guide](http://docs.spring.io/spring-framework/docs/current/j
 ## SAML2 Service Provider Integrations
 
 The settings defined for each service provider simply attempt to automate the creation of 
-a [SAML service definition](Configuring-SAML2-Authentication.html#saml-services) and nothing more. If you find the 
+a [SAML service definition](../installation/Configuring-SAML2-Authentication.html#saml-services) and nothing more. If you find the 
 applicable settings lack in certain areas, it is best to fall back onto the native configuration strategy for registering 
 SAML service providers with CAS which would depend on your service registry of choice.
 
