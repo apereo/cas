@@ -4,15 +4,15 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.rest.RestPasswordManagementService;
-
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.util.StringUtils;
 
 /**
  * This is {@link RestPasswordManagementConfiguration}.
@@ -32,10 +32,20 @@ public class RestPasswordManagementConfiguration {
 
     @RefreshScope
     @Bean
-    public PasswordManagementService passwordChangeService() {
+    public PasswordManagementService passwordChangeService(final RestTemplateBuilder restTemplateBuilder) {
+        var pm = casProperties.getAuthn().getPm();
+        var username = pm.getRest().getEndpointUsername();
+        var password = pm.getRest().getEndpointPassword();
+
+        var templateBuilder = restTemplateBuilder;
+
+        if (StringUtils.hasText(username) && StringUtils.hasText(password)) {
+            templateBuilder = restTemplateBuilder.basicAuthentication(username, password);
+        }
+
         return new RestPasswordManagementService(passwordManagementCipherExecutor.getIfAvailable(),
-            casProperties.getServer().getPrefix(),
-            new RestTemplate(),
-            casProperties.getAuthn().getPm());
+                casProperties.getServer().getPrefix(),
+                templateBuilder.build(),
+                pm);
     }
 }
