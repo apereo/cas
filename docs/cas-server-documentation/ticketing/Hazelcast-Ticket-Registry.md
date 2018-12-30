@@ -118,6 +118,22 @@ With the multicast auto-discovery mechanism, Hazelcast allows cluster members to
 
 Pay special attention to timeouts when multicast is enabled. Multicast timeout specifies the time in seconds that a member should wait for a valid multicast response from another member running in the network before declaring itself the leader member (the first member joined to the cluster) and creating its own cluster. This only applies to the startup of members where no leader has been assigned yet. If you specify a high value such as 60 seconds, it means that until a leader is selected each member will wait 60 seconds before moving on. Be careful when providing a high value. Also, be careful not to set the value too low, or the members might give up too early and create their own cluster.
 
+## WAN Replication
+
+Hazelcast WAN Replication allows you to keep multiple Hazelcast clusters in sync by replicating their state over WAN environments such as the Internet.
+
+<div class="alert alert-warning"><strong>Usage Warning!</strong><p>Using Hazelcast WAN Replication requires a Hazelcast Enterprise subscription. Make sure you 
+have acquired the proper license, SDK and tooling from Hazelcast before activating this feature. Please contact Hazelcast for more information.</p></div>
+
+Hazelcast supports two different operation modes of WAN Replication:
+
+- Active-Passive: This mode is mostly used for failover scenarios where you want to replicate an active cluster to one or more passive clusters, for the purpose of maintaining a backup.
+- Active-Active: Every cluster is equal, each cluster replicates to all other clusters. This is normally used to connect different clients to different clusters for the sake of the shortest path between client and server.
+
+See [this page](https://hazelcast.com/products/wan-replication/) for more information.
+
+Defining WAN replication endpoints in CAS is done using static endpoints and discovery.
+
 ## Logging
 
 To enable additional logging for the registry, configure the log4j configuration file to add the following
