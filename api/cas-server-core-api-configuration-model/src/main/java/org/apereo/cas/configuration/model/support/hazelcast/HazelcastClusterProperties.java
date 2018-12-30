@@ -225,4 +225,10 @@ public class HazelcastClusterProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private HazelcastDiscoveryProperties discovery = new HazelcastDiscoveryProperties();
+
+    /**
+     * WAN replication settings.
+     */
+    @NestedConfigurationProperty
+    private HazelcastWANReplicationProperties wanReplication = new HazelcastWANReplicationProperties();
 }
