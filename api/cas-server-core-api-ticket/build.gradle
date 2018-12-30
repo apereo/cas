@@ -2,6 +2,6 @@
 description = "Apereo CAS Core Ticket APIs"
 dependencies {
     api project(":api:cas-server-core-api-authentication")
-
+    api project(":api:cas-server-core-api-util")
 }
 
