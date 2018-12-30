@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
@@ -40,6 +41,7 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = {
     RestPasswordManagementConfiguration.class,
     PasswordManagementConfiguration.class,
+    RestTemplateAutoConfiguration.class,
     CasCoreUtilConfiguration.class,
     RefreshAutoConfiguration.class
 })
