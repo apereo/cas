@@ -749,7 +749,7 @@ Each SAML service provider supports the following settings:
 | `name`                | The name of the service provider registered in the service registry.
 | `description`         | The description of the service provider registered in the service registry.
 | `nameIdAttribute`     | Attribute to use when generating name ids for this service provider.
-| `nameIdFormat`        | The forced SAML Name Id Format identifier (emailAddress, persistent, unspecified, transient, etc).
+| `nameIdFormat`        | The forced SAML NameID Format identifier (i.e. `urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress`).
 | `attributes`          | Attributes to release to the service provider, which may virtually be mapped and renamed.
 | `signatureLocation`   | Signature location to verify metadata.
 | `entityIds`           | List of entity ids allowed for this service provider.
