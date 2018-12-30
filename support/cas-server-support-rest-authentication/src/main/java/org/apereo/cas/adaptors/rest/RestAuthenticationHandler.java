@@ -21,7 +21,6 @@ import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
-
 import java.security.GeneralSecurityException;
 import java.time.Duration;
 import java.time.Instant;
@@ -39,7 +38,8 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
     private final RestAuthenticationApi api;
 
-    public RestAuthenticationHandler(final String name, final RestAuthenticationApi api, final ServicesManager servicesManager,
+    public RestAuthenticationHandler(final String name, final RestAuthenticationApi api,
+                                     final ServicesManager servicesManager,
                                      final PrincipalFactory principalFactory) {
         super(name, servicesManager, principalFactory, null);
         this.api = api;
@@ -104,8 +104,8 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         val warnings = authenticationResponse.getHeaders().get("X-CAS-Warning");
         if (warnings != null) {
             warnings.stream()
-                    .map(warning -> new DefaultMessageDescriptor(warning, warning, null))
-                    .forEach(messageDescriptors::add);
+                .map(DefaultMessageDescriptor::new)
+                .forEach(messageDescriptors::add);
         }
 
         return messageDescriptors;
