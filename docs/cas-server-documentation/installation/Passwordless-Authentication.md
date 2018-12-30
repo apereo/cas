@@ -113,5 +113,5 @@ The following operations need to be supported by the endpoint:
 ### Messaging & Notifications
 
 Users may be notified of tokens via text messages, mail, etc.
-To learn more about available options, please [see this guide](SMS-Messaging-Configuration.html)
+To learn more about available options, please [see this guide](../notifications/SMS-Messaging-Configuration.html)
 or [this guide](Sending-Email-Configuration.html).

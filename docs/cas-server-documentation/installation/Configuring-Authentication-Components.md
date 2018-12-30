@@ -54,7 +54,7 @@ collection and controlling its execution sequence.
 
 Each authentication handler in CAS can be named via CAS settings and if left undefined, the short name of 
 the handler component itself is used (i.e. `LdapAuthenticationHandler`). The name itself can be any arbitrary string and typically is used
-to identify and refer to the handler components in areas such as [required authentication for a service](Configuring-Service-Required-AuthN.html), etc.
+to identify and refer to the handler components in areas such as [required authentication for a service](../services/Configuring-Service-Required-AuthN.html), etc.
 In the event that multiple authentication handlers *of the same type* are defined, it is **RECOMMENDED** that each be given a unique name so as to avoid conflicts.
 Authentication failures are typically collected in CAS by the name of each authentication handler. Leaving the name undefined will likely result in subsequent components
 in the authentication chain overriding previous results.

@@ -1578,7 +1578,7 @@ To learn more about this topic, [please review this guide](../installation/Diges
 
 ## Radius Authentication
 
-To learn more about this topic, [please review this guide](../installation/RADIUS-Authentication.html).
+To learn more about this topic, [please review this guide](../mfa/RADIUS-Authentication.html).
 
 Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.radius`.
 
@@ -1728,7 +1728,7 @@ Password encoding  settings for this feature are available [here](Configuration-
 
 ## CouchDb Authentication
 
-To learn more about this topic, [please review this guide](CouchDb-Authentication.html).
+To learn more about this topic, [please review this guide](../installation/CouchDb-Authentication.html).
 
 Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.couchDb`.
 Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.couchDb`.
@@ -2297,7 +2297,7 @@ The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encrypt
 
 ## Multifactor Authentication
 
-To learn more about this topic, [please review this guide](Configuring-Multifactor-Authentication.html).
+To learn more about this topic, [please review this guide](../mfa/Configuring-Multifactor-Authentication.html).
 
 ```properties
 # Activate MFA globally for all, regardless of other settings
@@ -3146,7 +3146,7 @@ To learn more about this topic, [please review this guide](../installation/OAuth
 
 ### OAuth2 UMA
 
-To learn more about this topic, [please review this guide](../protocol/OAuth-OpenId-Authentication.html).
+To learn more about this topic, [please review this guide](../installation/OAuth-OpenId-Authentication.html).
 
 ```properties
 # cas.authn.uma.issuer=http://localhost:8080/cas
