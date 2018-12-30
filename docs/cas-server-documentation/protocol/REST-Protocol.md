@@ -132,7 +132,7 @@ Note that JWTs created are typically signed and encrypted by default with pre-ge
 
 ## Validate Service Ticket
 
-Service ticket validation is handled through the [CAS Protocol](Cas-Protocol.html)
+Service ticket validation is handled through the [CAS Protocol](CAS-Protocol.html)
 via any of the validation endpoints such as `/p3/serviceValidate`. 
 
 ```bash
