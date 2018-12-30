@@ -47,9 +47,8 @@ Expected responses from the REST endpoint are mapped to CAS as such:
 
 ## Warnings
 
-The remote REST endpoint can send warnings back to the CAS server using custom headers:
-If the authentication was successful (response code 200) these warnings will be shown to the user
-directly after the login.
+The remote REST endpoint can send warnings back to the CAS server using custom headers.
+If the authentication is successful, these warnings will be shown to the user directly after the login.
 
 ### `X-CAS-Warning`
 
