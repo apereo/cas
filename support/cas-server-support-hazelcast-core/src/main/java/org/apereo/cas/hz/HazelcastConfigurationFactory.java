@@ -15,6 +15,10 @@ import com.hazelcast.config.MulticastConfig;
 import com.hazelcast.config.NetworkConfig;
 import com.hazelcast.config.PartitionGroupConfig;
 import com.hazelcast.config.TcpIpConfig;
+import com.hazelcast.config.WANQueueFullBehavior;
+import com.hazelcast.config.WanAcknowledgeType;
+import com.hazelcast.config.WanPublisherConfig;
+import com.hazelcast.config.WanReplicationConfig;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
@@ -96,6 +100,17 @@ public class HazelcastConfigurationFactory {
         val cluster = hz.getCluster();
         val config = new Config();
 
+        config.setLicenseKey(hz.getLicenseKey());
+
+        if (cluster.getWanReplication().isEnabled()) {
+            if (!StringUtils.hasText(hz.getLicenseKey())) {
+                throw new IllegalArgumentException("Cannot activate WAN replication, a Hazelcast enterprise feature, without a license key");
+            }
+            LOGGER.warn("Using Hazelcast WAN Replication requires a Hazelcast Enterprise subscription. Make sure you "
+                + "have acquired the proper license, SDK and tooling from Hazelcast before activating this feature.");
+            buildWanReplicationSettingsForConfig(hz, config);
+        }
+
         val networkConfig = new NetworkConfig()
             .setPort(cluster.getPort())
             .setPortAutoIncrement(cluster.isPortAutoIncrement());
@@ -114,6 +129,35 @@ public class HazelcastConfigurationFactory {
             .setProperty(BaseHazelcastProperties.IPV4_STACK_PROP, String.valueOf(cluster.isIpv4Enabled()))
             .setProperty(BaseHazelcastProperties.LOGGING_TYPE_PROP, cluster.getLoggingType())
             .setProperty(BaseHazelcastProperties.MAX_HEARTBEAT_SECONDS_PROP, String.valueOf(cluster.getMaxNoHeartbeatSeconds()));
+    }
+
+    private static void buildWanReplicationSettingsForConfig(final BaseHazelcastProperties hz, final Config config) {
+        val wan = hz.getCluster().getWanReplication();
+
+        val wanReplicationConfig = new WanReplicationConfig();
+        wanReplicationConfig.setName(wan.getReplicationName());
+
+        wan.getTargets().forEach(target -> {
+            val nextCluster = new WanPublisherConfig();
+            nextCluster.setClassName(target.getPublisherClassName());
+            nextCluster.setGroupName(target.getGroupName());
+            nextCluster.setQueueFullBehavior(WANQueueFullBehavior.valueOf(target.getQueueFullBehavior()));
+            nextCluster.setQueueCapacity(target.getQueueCapacity());
+
+            val props = nextCluster.getProperties();
+            props.put("batch.size", target.getBatchSize());
+            props.put("batch.max.delay.millis", target.getBatchMaximumDelayMilliseconds());
+            props.put("response.timeout.millis", target.getResponseTimeoutMilliseconds());
+            props.put("snapshot.enabled", target.isSnapshotEnabled());
+            props.put("endpoints", target.getEndpoints());
+            if (StringUtils.hasText(target.getGroupPassword())) {
+                props.put("group.password", target.getGroupPassword());
+            }
+            props.put("ack.type", WanAcknowledgeType.valueOf(target.getAcknowledgeType()));
+            props.put("executorThreadCount", target.getExecutorThreadCount());
+            wanReplicationConfig.addWanPublisherConfig(nextCluster);
+        });
+        config.addWanReplicationConfig(wanReplicationConfig);
     }
 
     private static JoinConfig createDiscoveryJoinConfig(final Config config, final HazelcastClusterProperties cluster, final NetworkConfig networkConfig) {
@@ -182,6 +226,4 @@ public class HazelcastConfigurationFactory {
         }
         return config;
     }
-
-
 }

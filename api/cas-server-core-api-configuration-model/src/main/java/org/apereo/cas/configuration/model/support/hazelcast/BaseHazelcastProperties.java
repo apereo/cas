@@ -52,6 +52,11 @@ public class BaseHazelcastProperties implements Serializable {
     private static final long serialVersionUID = 4204884717547468480L;
 
     /**
+     * Hazelcast enterprise license key.
+     */
+    private String licenseKey;
+
+    /**
      * Hazelcast cluster settings if CAS is able to auto-create caches.
      */
     @NestedConfigurationProperty
