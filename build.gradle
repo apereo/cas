@@ -245,9 +245,9 @@ subprojects {
 
     configurations.all {
         resolutionStrategy {
-            //if (!Boolean.getBoolean("skipVersionConflict")) {
+            if (!Boolean.getBoolean("skipVersionConflict")) {
                 failOnVersionConflict()
-            ///}
+            }
             preferProjectModules()
             cacheDynamicVersionsFor 1, "days"
             cacheChangingModulesFor 5, "days"

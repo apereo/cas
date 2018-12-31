@@ -8,6 +8,8 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.util.DigestUtils;
+import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 
@@ -36,6 +38,7 @@ import org.opensaml.saml.security.impl.SAMLMetadataSignatureSigningParametersRes
 import org.opensaml.security.credential.AbstractCredential;
 import org.opensaml.security.credential.BasicCredential;
 import org.opensaml.security.credential.Credential;
+import org.opensaml.security.credential.MutableCredential;
 import org.opensaml.security.credential.UsageType;
 import org.opensaml.security.criteria.UsageCriterion;
 import org.opensaml.security.x509.BasicX509Credential;
@@ -49,6 +52,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.PrivateKey;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 /**
  * This is {@link SamlIdPObjectSigner}.
@@ -271,9 +275,16 @@ public class SamlIdPObjectSigner {
         credentials.forEach(c -> {
             val cred = getResolvedSigningCredential(c, privateKey, service);
             if (cred != null) {
-                creds.add(cred);
+                if (doesCredentialFingerprintMatch(cred, service)) {
+                    creds.add(cred);
+                }
             }
         });
+
+        if (creds.isEmpty()) {
+            LOGGER.error("Unable to locate any signing credentials for service [{}]", service.getName());
+            throw new IllegalArgumentException("Unable to locate signing credentials");
+        }
 
         config.setSigningCredentials(creds);
         LOGGER.trace("Signature signing credentials configured with [{}] credentials", creds.size());
@@ -291,24 +302,45 @@ public class SamlIdPObjectSigner {
 
             switch (credType) {
                 case BASIC:
-                    LOGGER.debug("Building basic credential signing key [{}] based on requested credential type", credType);
-                    return new BasicCredential(c.getPublicKey(), privateKey);
+                    LOGGER.debug("Building credential signing key [{}] based on requested credential type", credType);
+                    if (c.getPublicKey() == null) {
+                        throw new IllegalArgumentException("Unable to identify the public key from the signing credential");
+                    }
+                    return finalizeSigningCredential(new BasicCredential(c.getPublicKey(), privateKey), c);
                 case X509:
                 default:
                     if (c instanceof BasicX509Credential) {
                         val certificate = BasicX509Credential.class.cast(c).getEntityCertificate();
                         LOGGER.debug("Locating signature signing certificate from credential [{}]", CertUtils.toString(certificate));
-                        return new BasicX509Credential(certificate, privateKey);
+                        return finalizeSigningCredential(new BasicX509Credential(certificate, privateKey), c);
                     }
                     val signingCert = samlIdPMetadataLocator.getSigningCertificate();
                     LOGGER.debug("Locating signature signing certificate file from [{}]", signingCert);
                     val certificate = SamlUtils.readCertificate(signingCert);
-                    return new BasicX509Credential(certificate, privateKey);
+                    return finalizeSigningCredential(new BasicX509Credential(certificate, privateKey), c);
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
         return null;
+    }
+
+    private static boolean doesCredentialFingerprintMatch(final AbstractCredential credential, final SamlRegisteredService samlRegisteredService) {
+        val fingerprint = samlRegisteredService.getSigningCredentialFingerprint();
+        if (StringUtils.isNotBlank(fingerprint)) {
+            val digest = DigestUtils.digest("SHA-1", credential.getPublicKey().getEncoded());
+            val pattern = RegexUtils.createPattern(fingerprint, Pattern.CASE_INSENSITIVE);
+            LOGGER.debug("Matching credential fingerprint [{}] against filter [{}] for service [{}]", digest, fingerprint, samlRegisteredService.getName());
+            return pattern.matcher(digest).find();
+        }
+        return true;
+    }
+
+    private static AbstractCredential finalizeSigningCredential(final MutableCredential credential, final Credential original) {
+        credential.setEntityId(original.getEntityId());
+        credential.setUsageType(original.getUsageType());
+        original.getCredentialContextSet().forEach(ctx -> credential.getCredentialContextSet().add(ctx));
+        return (AbstractCredential) credential;
     }
 
     /**

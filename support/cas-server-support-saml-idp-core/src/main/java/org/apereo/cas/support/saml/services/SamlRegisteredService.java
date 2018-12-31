@@ -76,6 +76,9 @@ public class SamlRegisteredService extends RegexRegisteredService {
     private String metadataExpirationDuration = "PT60M";
 
     @Column
+    private String signingCredentialFingerprint;
+
+    @Column
     private boolean signAssertions;
 
     @Column(name = "skipGenAssertionNameId")
