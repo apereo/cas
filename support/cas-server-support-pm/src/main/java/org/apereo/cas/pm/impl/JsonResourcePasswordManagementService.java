@@ -19,7 +19,6 @@ import org.hjson.JsonValue;
 import org.springframework.core.io.Resource;
 
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -49,7 +48,7 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
     }
 
     private void readAccountsFromJsonResource() {
-        try (Reader reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
+        try (val reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
             final TypeReference<Map<String, JsonBackedAccount>> personList = new TypeReference<>() {
             };
             this.jsonBackedAccounts = MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
