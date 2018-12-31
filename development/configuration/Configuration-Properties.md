@@ -1054,7 +1054,7 @@ with the following configured properties:
 
 ### Couchbase
 
-This option will fetch attributes from a Couchbase database for a given CAS principal. To learn more about this topic, [please review this guide](../ticketing/Couchbase-Authentication.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) under the configuration key `cas.authn.attributeRepository.couchbase`.
+This option will fetch attributes from a Couchbase database for a given CAS principal. To learn more about this topic, [please review this guide](../installation/Couchbase-Authentication.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) under the configuration key `cas.authn.attributeRepository.couchbase`.
 
 ```properties
 # cas.authn.attributeRepository.couchbase.usernameAttribute=username
@@ -3729,7 +3729,11 @@ Signing & encryption settings for this registry are available [here](Configurati
 
 To learn more about this topic, [please review this guide](../ticketing/Hazelcast-Ticket-Registry.html).
 
-Hazelcast settings for this feature are available [here](Configuration-Properties-Common.html#hazelcast-configuration) under the configuration key `cas.ticket.registry.hazelcast`.
+Common Hazelcast settings for this feature are available [here](Configuration-Properties-Common.html#hazelcast-configuration) under the configuration key `cas.ticket.registry.hazelcast`.
+
+```properties
+# cas.ticket.registry.hazelcast.pageSize=500
+```
 
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.hazelcast`.
 

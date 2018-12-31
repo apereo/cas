@@ -57,7 +57,7 @@ Certain functionality in CAS, such as [OAuth](../installation/OAuth-OpenId-Authe
 or [REST API](../protocol/REST-Protocol.html), allow you to throttle requests to specific endpoints in addition to the more 
 generic authentication throttling functionality applied during the login flow and authentication attempts.
 
-To fully deliver this functionality, it is expected that [authentication throttling](Configuring-Authentication-Throttling.html) is turned on.
+To fully deliver this functionality, it is expected that [authentication throttling](../installation/Configuring-Authentication-Throttling.html) is turned on.
 
 ## Authentication Credential Selection
 
@@ -441,6 +441,8 @@ The following options related to Hazelcast support in CAS apply equally to a num
 # ${configurationKey}.cluster.members=123.456.789.000,123.456.789.001
 # ${configurationKey}.cluster.instanceName=localhost
 # ${configurationKey}.cluster.port=5701
+
+# ${configurationKey}.licenseKey=
 ```
 
 More advanced Hazelcast configuration settings are listed below, given the component's *configuration key*:
@@ -459,6 +461,26 @@ More advanced Hazelcast configuration settings are listed below, given the compo
 # ${configurationKey}.cluster.asyncBackupCount=0
 # ${configurationKey}.cluster.maxSizePolicy=USED_HEAP_PERCENTAGE
 # ${configurationKey}.cluster.timeout=5
+```
+
+### Static WAN Replication
+
+```properties
+# ${configurationKey}.cluster.wanReplication.enabled=false
+# ${configurationKey}.cluster.wanReplication.replicationName=CAS
+
+# ${configurationKey}.cluster.wanReplication[0].groupName=
+# ${configurationKey}.cluster.wanReplication[0].groupPassword=
+# ${configurationKey}.cluster.wanReplication[0].endpoints=1.2.3.4,4.5.6.7
+# ${configurationKey}.cluster.wanReplication[0].publisherClassName=com.hazelcast.enterprise.wan.replication.WanBatchReplication
+# ${configurationKey}.cluster.wanReplication[0].queueFullBehavior=THROW_EXCEPTION
+# ${configurationKey}.cluster.wanReplication[0].acknowledgeType=ACK_ON_OPERATION_COMPLETE
+# ${configurationKey}.cluster.wanReplication[0].queueCapacity=10000
+# ${configurationKey}.cluster.wanReplication[0].batchSize=500
+# ${configurationKey}.cluster.wanReplication[0].snapshotEnabled=false
+# ${configurationKey}.cluster.wanReplication[0].batchMaximumDelayMilliseconds=1000
+# ${configurationKey}.cluster.wanReplication[0].responseTimeoutMilliseconds=60000
+# ${configurationKey}.cluster.wanReplication[0].executorThreadCount=2
 ```
 
 ### Multicast Discovery
