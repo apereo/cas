@@ -97,7 +97,7 @@ Please [review this guide](Service-Management.html) to better understand the CAS
 
 You may experience `INVAILD_TICKET` related errors when attempting to use a CAS ticket whose expiration policy dictates that the ticket 
 has expired. The CAS log should further explain in more detail if the ticket is considered expired, but for diagnostic purposes, 
-you may want to adjust the [ticket expiration policy configuration](Configuring-Ticket-Expiration-Policy.html) to remove and troubleshoot this error.
+you may want to adjust the [ticket expiration policy configuration](../ticketing/Configuring-Ticket-Expiration-Policy.html) to remove and troubleshoot this error.
 
 Furthermore, if the ticket itself cannot be located in the CAS ticket registry the ticket is also considered invalid. You will need 
 to observe the ticket used and compare it with the value that exists in the ticket registry to ensure that the ticket id provided is valid.  

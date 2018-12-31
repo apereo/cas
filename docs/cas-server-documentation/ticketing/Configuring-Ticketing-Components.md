@@ -68,7 +68,7 @@ Cassandra, for ticket storage and persistence:
 
 A number of cache-based ticket registries support secure replication of ticket data across the wire,
 so that tickets are encrypted and signed on replication attempts to prevent sniffing and eavesdrops.
-[See this guide](Ticket-Registry-Replication-Encryption.html) for more info.
+[See this guide](../installation/Ticket-Registry-Replication-Encryption.html) for more info.
 
 ## Ticket Expiration Policies
 
