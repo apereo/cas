@@ -23,7 +23,7 @@ settings in their CAS properties file, specially when running a multi-node CAS d
 to appropriate decrypt and encrypt the cookie value and will prevent successful single sign-on.
 
 <div class="alert alert-info"><strong>SSO Sessions</strong><p>It is possible to review the current collection of active SSO sessions,
-and determine if CAS itself maintains an active SSO session via the <a href="Monitoring-Statistics.html">CAS administration panels.</a></p></div>
+and determine if CAS itself maintains an active SSO session via the <a href="../monitoring/Monitoring-Statistics.html">CAS administration panels.</a></p></div>
 
 ## Configuration
 
@@ -51,7 +51,7 @@ If you wish you manually generate keys, you may [use the following tool](https:/
 
 By default, forced authentication requests that challenge the user for credentials
 either via the [`renew` request parameter](../protocol/CAS-Protocol.html)
-or via [the service-specific setting](Service-Management.html) of
+or via [the service-specific setting](../services/Service-Management.html) of
 the CAS service registry will always generate the ticket-granting cookie
 nonetheless. What this means is, logging in to a non-SSO-participating application
 via CAS nonetheless creates a valid CAS single sign-on session that will be honored on a
