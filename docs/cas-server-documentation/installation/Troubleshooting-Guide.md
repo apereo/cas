@@ -80,7 +80,7 @@ If your client application is not receiving attributes, you will need to make su
 3. The CAS server itself is [resolving and retrieving attributes](../integration/Attribute-Resolution.html) correctly.
 4. The CAS server is authorized to [release attributes](../integration/Attribute-Release.html) to that particular client application inside its service registry.
 
-Please [review this guide](Service-Management.html) to better understand the CAS service registry.
+Please [review this guide](../services/Service-Management.html) to better understand the CAS service registry.
 
 ## Application Not Authorized
 
@@ -91,13 +91,13 @@ message will be displayed back. Since service definitions in the registry have t
 it is entirely possible that the pattern in the registry for the service definition is misconfigured and does not produce a successful match 
 for the requested application url.
 
-Please [review this guide](Service-Management.html) to better understand the CAS service registry.
+Please [review this guide](../services/Service-Management.html) to better understand the CAS service registry.
 
 ## Invalid/Expired CAS Tickets
 
 You may experience `INVAILD_TICKET` related errors when attempting to use a CAS ticket whose expiration policy dictates that the ticket 
 has expired. The CAS log should further explain in more detail if the ticket is considered expired, but for diagnostic purposes, 
-you may want to adjust the [ticket expiration policy configuration](Configuring-Ticket-Expiration-Policy.html) to remove and troubleshoot this error.
+you may want to adjust the [ticket expiration policy configuration](../ticketing/Configuring-Ticket-Expiration-Policy.html) to remove and troubleshoot this error.
 
 Furthermore, if the ticket itself cannot be located in the CAS ticket registry the ticket is also considered invalid. You will need 
 to observe the ticket used and compare it with the value that exists in the ticket registry to ensure that the ticket id provided is valid.  
