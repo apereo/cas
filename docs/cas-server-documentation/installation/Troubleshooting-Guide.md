@@ -80,7 +80,7 @@ If your client application is not receiving attributes, you will need to make su
 3. The CAS server itself is [resolving and retrieving attributes](../integration/Attribute-Resolution.html) correctly.
 4. The CAS server is authorized to [release attributes](../integration/Attribute-Release.html) to that particular client application inside its service registry.
 
-Please [review this guide](Service-Management.html) to better understand the CAS service registry.
+Please [review this guide](../services/Service-Management.html) to better understand the CAS service registry.
 
 ## Application Not Authorized
 
@@ -91,7 +91,7 @@ message will be displayed back. Since service definitions in the registry have t
 it is entirely possible that the pattern in the registry for the service definition is misconfigured and does not produce a successful match 
 for the requested application url.
 
-Please [review this guide](Service-Management.html) to better understand the CAS service registry.
+Please [review this guide](../services/Service-Management.html) to better understand the CAS service registry.
 
 ## Invalid/Expired CAS Tickets
 
