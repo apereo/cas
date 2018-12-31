@@ -37,8 +37,8 @@ public class FortressAuthenticationHandler extends AbstractUsernamePasswordAuthe
      */
     public static final String FORTRESS_SESSION_KEY = "fortressSession";
 
-    private final AccessMgr accessManager;
-    private final Marshaller marshaller;
+    private AccessMgr accessManager;
+    private Marshaller marshaller;
 
     public FortressAuthenticationHandler(final AccessMgr accessManager, final String name, final ServicesManager servicesManager,
                                          final PrincipalFactory principalFactory, final Integer order) {
