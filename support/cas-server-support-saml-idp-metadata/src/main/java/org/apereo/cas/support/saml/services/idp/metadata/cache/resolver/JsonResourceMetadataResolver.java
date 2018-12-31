@@ -110,6 +110,9 @@ public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetad
     }
 
 
+    /**
+     * The Saml service provider metadata.
+     */
     @Getter
     @Setter
     public static class SamlServiceProviderMetadata implements Serializable {
