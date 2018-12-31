@@ -96,8 +96,8 @@ To see the relevant list of CAS properties, please [review this guide](../config
 ### Messaging & Notifications
 
 Users may be notified of risky authentication attempts via text messages and/or email.
-To learn more about available options, please [see this guide](SMS-Messaging-Configuration.html)
-or [this guide](Sending-Email-Configuration.html).
+To learn more about available options, please [see this guide](../notifications/SMS-Messaging-Configuration.html)
+or [this guide](../notifications/Sending-Email-Configuration.html).
 
 ### Remember
 

@@ -17,7 +17,7 @@ Support is enabled by adding the following module into the overlay:
 </dependency>
 ```
 
-To learn how to configure database drivers, [please see this guide](JDBC-Drivers.html).
+To learn how to configure database drivers, [please see this guide](../installation/JDBC-Drivers.html).
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#database-service-registry).
 
 ## Auto Initialization

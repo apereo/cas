@@ -26,7 +26,7 @@ CAS during the SSO session. While this is a best-effort process, in many cases i
 user experience by creating symmetry between login and logout.
 
 <div class="alert alert-info"><strong>SSO Sessions</strong><p>It is possible to review the current collection of active SSO sessions,
-and determine if CAS itself maintains an active SSO session via the <a href="Monitoring-Statistics.html">CAS administration panels.</a></p></div>
+and determine if CAS itself maintains an active SSO session via the <a href="../monitoring/Monitoring-Statistics.html">CAS administration panels.</a></p></div>
 
 ## CAS Logout
 
@@ -109,7 +109,7 @@ Logout requests may be optionally routed to an external URL bypassing the CAS lo
 ### Single Logout Per Service
 
 Registered applications with CAS have the option to control single logout behavior individually via
-the [Service Management](Service-Management.html) component. Each registered service in the service registry will include configuration
+the [Service Management](../services/Service-Management.html) component. Each registered service in the service registry will include configuration
 that describes how to the logout request should be submitted. This behavior is controlled via the `logoutType` property
 which allows to specify whether the logout request should be submitted via back/front channel or turned off for this application.
 
