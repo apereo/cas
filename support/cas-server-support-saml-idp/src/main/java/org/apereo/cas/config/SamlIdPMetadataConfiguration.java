@@ -17,6 +17,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredSer
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.ClasspathResourceMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.FileSystemResourceMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.GroovyResourceMetadataResolver;
+import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.JsonResourceMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.MetadataQueryProtocolMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.UrlResourceMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.plan.DefaultSamlRegisteredServiceMetadataResolutionPlan;
@@ -148,13 +149,13 @@ public class SamlIdPMetadataConfiguration {
         val samlIdp = casProperties.getAuthn().getSamlIdp();
         val cfgBean = openSamlConfigBean.getIfAvailable();
         plan.registerMetadataResolver(new MetadataQueryProtocolMetadataResolver(samlIdp, cfgBean));
+        plan.registerMetadataResolver(new JsonResourceMetadataResolver(samlIdp, cfgBean));
         plan.registerMetadataResolver(new FileSystemResourceMetadataResolver(samlIdp, cfgBean));
         plan.registerMetadataResolver(new UrlResourceMetadataResolver(samlIdp, cfgBean));
         plan.registerMetadataResolver(new ClasspathResourceMetadataResolver(samlIdp, cfgBean));
         plan.registerMetadataResolver(new GroovyResourceMetadataResolver(samlIdp, cfgBean));
 
-        val configurers =
-            this.applicationContext.getBeansOfType(SamlRegisteredServiceMetadataResolutionPlanConfigurator.class, false, true);
+        val configurers = applicationContext.getBeansOfType(SamlRegisteredServiceMetadataResolutionPlanConfigurator.class, false, true);
 
         configurers.values().forEach(c -> {
             val name = RegExUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
