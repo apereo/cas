@@ -1,9 +1,9 @@
 ---
 layout: default
-title: CAS - SAML2 Dynamic Metadata Management
+title: CAS - SAML2 Metadata Management
 ---
 
-# SAML2 Dynamic Metadata Management
+# SAML2 Metadata Management
 
 Management of service provider metadata in a dynamic on-the-fly fashion may be accomplished via strategies outlined here.
 
