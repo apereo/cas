@@ -57,7 +57,7 @@ Certain functionality in CAS, such as [OAuth](../installation/OAuth-OpenId-Authe
 or [REST API](../protocol/REST-Protocol.html), allow you to throttle requests to specific endpoints in addition to the more 
 generic authentication throttling functionality applied during the login flow and authentication attempts.
 
-To fully deliver this functionality, it is expected that [authentication throttling](Configuring-Authentication-Throttling.html) is turned on.
+To fully deliver this functionality, it is expected that [authentication throttling](../installation/Configuring-Authentication-Throttling.html) is turned on.
 
 ## Authentication Credential Selection
 
