@@ -27,8 +27,8 @@ The current implementation provides support for:
 - [Authorization Code Flow](http://openid.net/specs/openid-connect-basic-1_0.html)
 - [Implicit Flow](https://openid.net/specs/openid-connect-implicit-1_0.html)
 - [Dynamic Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html)
-- Administration and registration of [OIDC clients and relying parties](Service-Management.html).
-- Administration and registration of [OIDC clients and relying parties](Service-Management.html) via [Dynamic Client Registration protocol](https://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-management-01).
+- Administration and registration of [OIDC clients and relying parties](../services/Service-Management.html).
+- Administration and registration of [OIDC clients and relying parties](../services/Service-Management.html) via [Dynamic Client Registration protocol](https://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-management-01).
 - Ability to [resolve, map and release claims](../integration/Attribute-Release-Policies.html).
 - Ability to configure expiration policies for various tokens.
 
@@ -90,7 +90,7 @@ particular integration. It is UNNECESSARY to grab a copy of all service fields a
 you may wish to keep a copy as a reference, this strategy would ultimately lead to poor upgrades increasing chances of breaking changes and a messy 
 deployment at that.</p></div>
 
-Service definitions are typically managed and registered with CAS by the [service management](Service-Management.html) facility.
+Service definitions are typically managed and registered with CAS by the [service management](../services/Service-Management.html) facility.
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>CAS today does not strictly enforce the collection of authorized supported 
 response/grant types for backward compatibility reasons if left blank. This means that if left undefined, all grant and response types may be allowed by 
