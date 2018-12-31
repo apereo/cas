@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.services;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.ClasspathResourceMetadataResolverTests;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.DynamicResourceMetadataResolverTests;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.GroovyResourceMetadataResolverTests;
+import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.JsonResourceMetadataResolverTests;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.UrlResourceMetadataResolverTests;
 
 import org.junit.runner.RunWith;
@@ -20,7 +21,8 @@ import org.junit.runners.Suite;
     ClasspathResourceMetadataResolverTests.class,
     DynamicResourceMetadataResolverTests.class,
     GroovyResourceMetadataResolverTests.class,
-    UrlResourceMetadataResolverTests.class
+    UrlResourceMetadataResolverTests.class,
+    JsonResourceMetadataResolverTests.class
 })
 public class SamlIdPMetadataTestsSuite {
 }

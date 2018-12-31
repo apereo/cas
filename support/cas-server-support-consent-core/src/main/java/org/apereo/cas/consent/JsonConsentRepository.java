@@ -10,7 +10,6 @@ import org.hjson.JsonValue;
 import org.springframework.core.io.Resource;
 
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -49,7 +48,7 @@ public class JsonConsentRepository extends BaseConsentRepository {
     @SneakyThrows
     private Set<ConsentDecision> readDecisionsFromJsonResource() {
         if (ResourceUtils.doesResourceExist(jsonResource)) {
-            try (Reader reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
+            try (val reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
                 final TypeReference<Set<ConsentDecision>> personList = new TypeReference<>() {
                 };
                 return MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
