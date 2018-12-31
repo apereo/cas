@@ -15,7 +15,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -53,7 +52,7 @@ public class JsonResourceInterruptInquirer extends BaseInterruptInquirer {
     private void readResourceForInterrupts() {
         this.interrupts = new LinkedHashMap<>();
         if (ResourceUtils.doesResourceExist(resource)) {
-            try (Reader reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)) {
+            try (val reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)) {
                 final TypeReference<Map<String, InterruptResponse>> personList = new TypeReference<>() {
                 };
                 this.interrupts = MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
