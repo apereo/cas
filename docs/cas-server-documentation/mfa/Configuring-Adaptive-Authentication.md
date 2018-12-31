@@ -18,7 +18,7 @@ Adaptive authentication can also be configured to trigger multifactor based on s
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#adaptive-authentication).
 
 To enable adaptive authentication, you will need to allow CAS to geo-locate authentication requests.
-To learn more, please [see this guide](GeoTracking-Authentication-Requests.html)
+To learn more, please [see this guide](../installation/GeoTracking-Authentication-Requests.html)
 
 ## IP Intelligence
 
