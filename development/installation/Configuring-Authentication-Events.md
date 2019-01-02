@@ -37,6 +37,14 @@ CAS attempts to record the geolocation properties of the authentication requests
 Should consent not be granted or geolocation not supported by the browser, CAS will ignore the geolocation data when it attempts to
 record the event. To learn more, please [review this guide](GeoTracking-Authentication-Requests.html).
 
+## Administrative Endpoints
+
+The following endpoints are provided by CAS:
+ 
+| Endpoint                 | Description
+|--------------------------|------------------------------------------------
+| `events`                 | Provides a JSON representation of all CAS recorded events.
+
 ## Configuration
 
 The following storage backends are available for consumption of events.

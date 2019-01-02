@@ -12,6 +12,14 @@ Allow CAS to act as an OAuth/OpenID authentication provider. Please [review the 
 OAuth/OpenID server support for CAS. If you would like to have CAS act as an OAuth/OpenID client communicating with
 other providers (such as Google, Facebook, etc), <a href="../integration/Delegate-Authentication.html">see this page</a>.</p></div>
 
+## Administrative Endpoints
+
+The following endpoints are provided by CAS:
+ 
+| Endpoint                 | Description
+|--------------------------|------------------------------------------------
+| `oauthTokens`            | Manage and control [OAuth2 access tokens](OAuth-OpenId-Authentication.html). A `GET` operation produces a list of all access/refresh tokens. A `DELETE` operation will delete the provided access/refresh token provided in form of a parameter selector. (i.e. `/{token}`). A `GET` operation produces with a parameter selector of `/{token}` will list the details of the fetched access/refresh token.
+
 ## Configuration
 
 Support is enabled by including the following dependency in the WAR overlay:
