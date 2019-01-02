@@ -27,10 +27,7 @@ public class RegisteredServiceTokenTicketCipherExecutor extends TokenTicketCiphe
             val registeredService = service.get();
             if (supports(registeredService)) {
                 LOGGER.debug("Found signing and/or encryption keys for [{}] in service registry to decode", registeredService.getServiceId());
-                val encryptionKey = getEncryptionKey(registeredService).get();
-                val signingKey = getSigningKey(registeredService).get();
-                val cipher = new TokenTicketCipherExecutor(encryptionKey, signingKey,
-                    StringUtils.isNotBlank(encryptionKey), StringUtils.isNotBlank(signingKey), 0, 0);
+                val cipher = getTokenTicketCipherExecutorForService(registeredService);
                 if (cipher.isEnabled()) {
                     return cipher.decode(data);
                 }
@@ -39,16 +36,14 @@ public class RegisteredServiceTokenTicketCipherExecutor extends TokenTicketCiphe
         return decode(data);
     }
 
+
     @Override
     public String encode(final String data, final Optional<RegisteredService> service) {
         if (service.isPresent()) {
             val registeredService = service.get();
             if (supports(registeredService)) {
                 LOGGER.debug("Found signing and/or encryption keys for [{}] in service registry to encode", registeredService.getServiceId());
-                val encryptionKey = getEncryptionKey(registeredService).get();
-                val signingKey = getSigningKey(registeredService).get();
-                val cipher = new TokenTicketCipherExecutor(encryptionKey, signingKey,
-                    StringUtils.isNotBlank(encryptionKey), StringUtils.isNotBlank(signingKey), 0, 0);
+                val cipher = getTokenTicketCipherExecutorForService(registeredService);
                 if (cipher.isEnabled()) {
                     return cipher.encode(data);
                 }
@@ -60,6 +55,19 @@ public class RegisteredServiceTokenTicketCipherExecutor extends TokenTicketCiphe
     @Override
     public boolean supports(final RegisteredService registeredService) {
         return getSigningKey(registeredService).isPresent() || getEncryptionKey(registeredService).isPresent();
+    }
+
+    /**
+     * Gets token ticket cipher executor for service.
+     *
+     * @param registeredService the registered service
+     * @return the token ticket cipher executor for service
+     */
+    public TokenTicketCipherExecutor getTokenTicketCipherExecutorForService(final RegisteredService registeredService) {
+        val encryptionKey = getEncryptionKey(registeredService).get();
+        val signingKey = getSigningKey(registeredService).get();
+        return new TokenTicketCipherExecutor(encryptionKey, signingKey,
+            StringUtils.isNotBlank(encryptionKey), StringUtils.isNotBlank(signingKey), 0, 0);
     }
 
     /**

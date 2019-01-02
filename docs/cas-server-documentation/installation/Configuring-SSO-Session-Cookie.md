@@ -25,6 +25,15 @@ to appropriate decrypt and encrypt the cookie value and will prevent successful 
 <div class="alert alert-info"><strong>SSO Sessions</strong><p>It is possible to review the current collection of active SSO sessions,
 and determine if CAS itself maintains an active SSO session via the <a href="../monitoring/Monitoring-Statistics.html">CAS administration panels.</a></p></div>
 
+## Administrative Endpoints
+
+The following endpoints are provided by CAS:
+ 
+| Endpoint                 | Description
+|--------------------------|------------------------------------------------
+| `ssoSessions`                 | Review the current single sign-on sessions establishes with CAS and manage each session remotely.
+| `sso`                         | Indicate the current status of the single signon session tied to the browser session and the SSO cookie. A `GET` operation produces a list of current SSO sessions that are filtered by a provided `type` parameter with values `ALL`, `PROXIED` or `DIRECT`. A `DELETE` operation without specifying a ticket id will attempt to destroy all SSO sessions. Specifying a ticket-granting ticket identifier in the URL as a placeholder/selector will attempt to destroy the session controlled by that ticket. (i.e. `ssoSessions/{ticket}`).
+
 ## Configuration
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#ticket-granting-cookie).

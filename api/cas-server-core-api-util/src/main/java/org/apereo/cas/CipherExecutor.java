@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.security.Key;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -147,5 +148,12 @@ public interface CipherExecutor<I, O> {
         return getClass().getSimpleName();
     }
 
-
+    /**
+     * Produce the signing key used to sign tokens in this cipher.
+     *
+     * @return key instance
+     */
+    default Key getSigningKey() {
+        return null;
+    }
 }

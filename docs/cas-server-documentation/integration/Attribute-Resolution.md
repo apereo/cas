@@ -20,6 +20,14 @@ a different caching model, attributes by default and from
 a CAS perspective will not be refreshed and retrieved again on subsequent requests
 as long as the SSO session exists.</p></div>
 
+## Administrative Endpoints
+
+The following endpoints are provided by CAS:
+ 
+| Endpoint                 | Description
+|--------------------------|------------------------------------------------
+| `resolveAttributes/{name}`    | Invoke the CAS [attribute resolution](Attribute-Resolution.html) engine to locate attributes for `{name}`.
+
 ## Person Directory
 
 A framework for resolving persons and attributes from a variety of underlying sources.

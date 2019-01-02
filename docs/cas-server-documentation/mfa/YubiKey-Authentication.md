@@ -21,6 +21,14 @@ To configure YubiKey accounts and obtain API keys, [refer to the documentation](
 </dependency>
 ```
 
+## Administrative Endpoints
+
+The following endpoints are provided by CAS:
+ 
+| Endpoint                 | Description
+|--------------------------|------------------------------------------------
+| `yubikeyAccountRepository`    | Manage and control [Google Authenticator account records](YubiKey-Authentication.html). A `GET` operation produces a list of all account records. A `DELETE` operation will delete all account records. A `GET` operation produces with a parameter selector of `/{username}` will list the record assigned to the user. A `DELETE` operation produces with a parameter selector of `/{username}` will remove the record assigned to the user.
+
 ## Configuration
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#yubikey).

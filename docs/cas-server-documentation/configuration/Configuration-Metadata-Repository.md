@@ -13,11 +13,13 @@ that apply to a particular group of functionality in CAS, such as LDAP authentic
 
 Configuration metadata may also be accessed and queried using the CAS actuator endpoints. [See this guide](../monitoring/Monitoring-Statistics.html) to learn more.
 
-## Metadata Endpoint
+## Administrative Endpoints
 
-Configuration metadata can be queried via the following endpoint that are prefixed at `/actuator/configuration-metadata/{name}`. The default endpoint present a list of all settings
-recognized by CAS, with the added capability to search for specific CAS setting by its partial `name`. This interface ships with CAS by default and you need 
-not do anything special to enable it.
+The following endpoints are provided by CAS:
+ 
+| Endpoint                 | Description
+|--------------------------|------------------------------------------------
+| `configurationMetadata`       | Exposes [CAS configuration metadata](Configuration-Metadata-Repository.html) that can be used to query settings. The default endpoint present a list of all settings recognized by CAS, with the added capability to search for a specific CAS setting by its partial `name` as a selector. This interface ships with CAS by default and you need not do anything special to enable it.
 
 ## Metadata via Commandline
 

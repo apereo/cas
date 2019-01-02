@@ -21,6 +21,15 @@ Support is enabled by including the following module in the Overlay:
 </dependency>
 ```
 
+## Administrative Endpoints
+
+The following endpoints are provided by CAS:
+ 
+| Endpoint                 | Description
+|--------------------------|------------------------------------------------
+| `attributeConsent`       | Manage and control [attribute consent decisions](Attribute-Release-Consent.html). A `GET` operation produces a list of all consent decisions. A `DELETE` operation with a record key id will attempt to remove and revoke the registered device (i.e. `attributeConsent/{principal}/{id}`).
+
+
 ## Attribute Selection
 
 By default, all attributes that are marked for release do qualify for consent. To control this process, you may define a consent policy that indicates a criteria by which attribute selection for consent is carried out.

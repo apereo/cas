@@ -87,13 +87,12 @@ public class JWTTokenTicketBuilder implements TokenTicketBuilder {
                             final String subject,
                             final Date validUntilDate,
                             final Map<String, Object> attributes) {
-        val claims =
-            new JWTClaimsSet.Builder()
-                .audience(serviceAudience)
-                .issuer(casSeverPrefix)
-                .jwtID(jwtId)
-                .issueTime(issueDate)
-                .subject(subject);
+        val claims = new JWTClaimsSet.Builder()
+            .audience(serviceAudience)
+            .issuer(casSeverPrefix)
+            .jwtID(jwtId)
+            .issueTime(issueDate)
+            .subject(subject);
 
         attributes.forEach(claims::claim);
         claims.expirationTime(validUntilDate);
@@ -104,19 +103,19 @@ public class JWTTokenTicketBuilder implements TokenTicketBuilder {
         val jwtJson = object.toJSONString();
         LOGGER.debug("Generated JWT [{}]", JsonValue.readJSON(jwtJson).toString(Stringify.FORMATTED));
 
-        LOGGER.debug("Locating service [{}] in service registry", serviceAudience);
+        LOGGER.trace("Locating service [{}] in service registry", serviceAudience);
         val registeredService = this.servicesManager.findServiceBy(serviceAudience);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
 
-        LOGGER.debug("Locating service specific signing and encryption keys for [{}] in service registry", serviceAudience);
+        LOGGER.trace("Locating service specific signing and encryption keys for [{}] in service registry", serviceAudience);
         val serviceCipher = new RegisteredServiceTokenTicketCipherExecutor();
         if (serviceCipher.supports(registeredService)) {
-            LOGGER.debug("Encoding JWT based on keys provided by service [{}]", registeredService.getServiceId());
+            LOGGER.trace("Encoding JWT based on keys provided by service [{}]", registeredService.getServiceId());
             return serviceCipher.encode(jwtJson, Optional.of(registeredService));
         }
 
         if (defaultTokenCipherExecutor.isEnabled()) {
-            LOGGER.debug("Encoding JWT based on default global keys for [{}]", serviceAudience);
+            LOGGER.trace("Encoding JWT based on default global keys for [{}]", serviceAudience);
             return defaultTokenCipherExecutor.encode(jwtJson);
         }
         val header = new PlainHeader.Builder()

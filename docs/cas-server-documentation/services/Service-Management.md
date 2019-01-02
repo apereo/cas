@@ -18,6 +18,15 @@ service registry that stores one or more registered services containing metadata
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#service-registry).
 
+## Administrative Endpoints
+
+The following endpoints are provided by CAS:
+ 
+| Endpoint                 | Description
+|--------------------------|------------------------------------------------
+| `registeredServices`     | Provides a JSON representation of the [CAS service registry](Service-Management.html). The endpoint can also accept a mime-type of `application/vnd.cas.services+yaml` to produce YAML output.
+| `exportRegisteredServices`    | Provides a ZIP-file representation of the [CAS service registry](Service-Management.html).
+
 ## Service Management Web Application
 
 The service management webapp is a standalone web application that may be deployed along side CAS that provides a GUI

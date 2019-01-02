@@ -48,6 +48,14 @@ You can drill down to view information about a particular meter by providing its
 
 [See this guide](Monitoring-Statistics.html) to learn more.
 
+## Administrative Endpoints
+
+The following endpoints are provided by CAS:
+ 
+| Endpoint                 | Description
+|--------------------------|------------------------------------------------
+| `statistics`             | Exposes statistics data on tickets, memory, server availability and uptime, etc.
+
 ## Custom Metrics
 
 To register custom metrics, inject `MeterRegistry` into your component, as shown in the following example:
