@@ -77,4 +77,4 @@ than 500 queries per day & 15 queries per minute. See [FAQ](https://getipintel.n
 # Risk-based Authentication
 
 CAS is able to track and examine authentication requests for suspicious behavior.
-To learn more, please [see this guide](Configuring-RiskBased-Authentication.html).
+To learn more, please [see this guide](../installation/Configuring-RiskBased-Authentication.html).
