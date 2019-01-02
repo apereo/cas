@@ -6,6 +6,7 @@ import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -30,6 +31,7 @@ import java.security.Security;
 @Slf4j
 @Setter
 @NoArgsConstructor
+@Getter
 public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, R> {
 
     static {

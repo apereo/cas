@@ -4,6 +4,7 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.token.JWTTokenCipherSigningPublicKeyEndpoint;
 import org.apereo.cas.token.JWTTokenTicketBuilder;
 import org.apereo.cas.token.TokenTicketBuilder;
 import org.apereo.cas.token.cipher.TokenTicketCipherExecutor;
@@ -16,6 +17,7 @@ import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -90,5 +92,11 @@ public class TokenCoreConfiguration {
             tokenCipherExecutor(),
             grantingTicketExpirationPolicy.getIfAvailable(),
             servicesManager.getIfAvailable());
+    }
+
+    @Bean
+    @ConditionalOnEnabledEndpoint
+    public JWTTokenCipherSigningPublicKeyEndpoint jwtTokenCipherSigningPublicKeyEndpoint() {
+        return new JWTTokenCipherSigningPublicKeyEndpoint(tokenCipherExecutor(), this.servicesManager.getIfAvailable());
     }
 }
