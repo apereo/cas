@@ -42,7 +42,7 @@ public class ConfigurationMetadataFieldVisitor extends VoidVisitorAdapter<Config
             throw new IllegalArgumentException("Field " + field + " has no variable definitions");
         }
         val var = field.getVariable(0);
-        if (field.getModifiers().contains(Modifier.STATIC)) {
+        if (field.getModifiers().contains(Modifier.staticModifier())) {
             LOGGER.debug("Field [{}] is static and will be ignored for metadata generation", var.getNameAsString());
             return;
         }
