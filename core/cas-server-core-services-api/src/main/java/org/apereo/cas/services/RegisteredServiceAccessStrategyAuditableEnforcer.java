@@ -106,6 +106,6 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
             return result;
         }
 
-        throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Service unauthorized");
+        throw new IllegalArgumentException("RegisteredServiceAccessStrategyAuditableEnforcer called with invalid AuditableContext");
     }
 }
