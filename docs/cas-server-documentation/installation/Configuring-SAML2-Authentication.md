@@ -81,12 +81,6 @@ Here is a generated metadata file as an example:
 
 SAML2 identity provider metadata can be managed in dynamics ways as well. To learn more, please [review this guide](Configuring-SAML2-DynamicMetadata.html).
 
-## Service Provider Metadata
-
-If the SP you wish to integrate with does not produce SAML metadata, you may be able to
-use [this service](https://www.samltool.com/sp_metadata.php) to create the metadata,
-save it in an XML file and then reference and register it with CAS for the SP.
-
 ## Configuration
 
 Support is enabled by including the following dependency in the WAR overlay:
@@ -160,6 +154,7 @@ The following fields are available for SAML services:
 | `skipGeneratingSubjectConfirmationRecipient` | Whether generation of the `Recipient` element should be skipped for subject confirmations. Default is `false`.
 | `skipGeneratingSubjectConfirmationNotBefore` | Whether generation of the `NotBefore` element should be skipped for subject confirmations. Default is `true`.
 | `skipGeneratingSubjectConfirmationNameId` | Whether generation of the `NameID` element should be skipped for subject confirmations. Default is `true`.
+| `signingCredentialFingerprint` | `SHA-1` digest of the signing credential's public key, parsed as a regular expression, used for the purposes of key rotation when dealing with multiple credentials.
 | `signingCredentialType` | Acceptable values are `BASIC` and `X509`. This setting controls the type of the signature block produced in the final SAML response for this application. The latter, being the default, encodes the signature in `PEM` format inside a `X509Data` block while the former encodes the signature based on the resolved public key under a `DEREncodedKeyValue` block.
 
 <div class="alert alert-info"><strong>Keep What You Need!</strong><p>You are encouraged to only keep and maintain properties and settings needed for a 
@@ -222,7 +217,7 @@ Attribute name formats can be specified per relying party in the service registr
 ```
 
 You may also have the option to define attributes and their relevant name format globally
-via CAS properties. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.#saml-idp).
+via CAS properties. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#saml-idp).
 
 ### Attribute Friendly Names
 
@@ -286,6 +281,43 @@ To see the relevant list of CAS properties, please [review this guide](../config
 A number of SAML2 service provider integrations are provided natively by CAS. To learn more,
 please [review this guide](../integration/Configuring-SAML-SP-Integrations.html).
 
+## Service Provider Metadata
+
+If the SP you wish to integrate with does not produce SAML metadata, you may be able to
+use [this service](https://www.samltool.com/sp_metadata.php) to create the metadata,
+save it in an XML file and then reference and register it with CAS for the SP.
+
+Alternatively, you may take advantage of a standalone `saml-sp-metadata.json` file that may be found in the same directory
+as the CAS metadata artifacts. The contents of this file may be as follows:
+
+```json
+{
+  "https://example.org/saml": {
+    "entityId": "https://example.org/saml",
+    "certificate": "MIIDUj...",
+    "assertionConsumerServiceUrl": "https://example.org/sso/"
+  }
+}
+```
+
+Each entry in the file is identified by the service provider entity id, allowing CAS to dynamically locate and build the required metadata on the fly
+to resume the authentication flow. This may prove easier for those service providers that only present a URL and a signing certificate for the
+integration relieving you from creating and managing XML metadata files separately.
+ 
+The service providers are registered with the CAS service registry as such:
+
+```json
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "https://example.org/saml",
+  "name" : "SAMLService",
+  "id" : 10000003,
+  "metadataLocation" : "json://"
+}
+```
+ 
+<div class="alert alert-info"><strong>Metadata Location</strong><p>The metadata location in the registration record above simply needs to be specified as <code>json://</code> to signal to CAS that SAML metadata for registered service provider must be fetched from the designated JSON file.</p></div>
+ 
 ## Client Libraries
 
 For Java-based applications, the following frameworks may be used to integrate your application with CAS acting as a SAML2 identity provider:

@@ -18,6 +18,15 @@ service registry that stores one or more registered services containing metadata
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#service-registry).
 
+## Administrative Endpoints
+
+The following endpoints are provided by CAS:
+ 
+| Endpoint                 | Description
+|--------------------------|------------------------------------------------
+| `registeredServices`     | Provides a JSON representation of the [CAS service registry](Service-Management.html). The endpoint can also accept a mime-type of `application/vnd.cas.services+yaml` to produce YAML output.
+| `exportRegisteredServices`    | Provides a ZIP-file representation of the [CAS service registry](Service-Management.html).
+
 ## Service Management Web Application
 
 The service management webapp is a standalone web application that may be deployed along side CAS that provides a GUI
@@ -43,12 +52,12 @@ Registered services present the following metadata:
 | `evaluationOrder`                 | Determines relative order of evaluation of registered services. This flag is particularly important in cases where two service URL expressions cover the same services; evaluation order determines which registration is evaluated first and acts as an internal sorting factor.
 | `requiredHandlers`                | Set of authentication handler names that must successfully authenticate credentials in order to access the service. If defined, only the selected required handlers are chosen to respond to authentication requests from this registered service.  See [this guide](Configuring-Service-Required-AuthN.html) for more details.
 | `attributeReleasePolicy`          | The policy that describes the set of attributes allows to be released to the application, as well as any other filtering logic needed to weed some out. See [this guide](../integration/Attribute-Release.html) for more details on attribute release and filters.
-| `logoutType`                      | Defines how this service should be treated once the logout protocol is initiated. Acceptable values are `LogoutType.BACK_CHANNEL`, `LogoutType.FRONT_CHANNEL` or `LogoutType.NONE`. See [this guide](Logout-Single-Signout.html) for more details on logout.
+| `logoutType`                      | Defines how this service should be treated once the logout protocol is initiated. Acceptable values are `LogoutType.BACK_CHANNEL`, `LogoutType.FRONT_CHANNEL` or `LogoutType.NONE`. See [this guide](../installation/Logout-Single-Signout.html) for more details on logout.
 | `responseType`                      | Defines how CAS should respond to requests for this service. See [this guide](Configuring-Service-Response-Type.html) for more details.
 | `usernameAttributeProvider`       | The provider configuration which dictates what value as the "username" should be sent back to the application. See [this guide](../integration/Attribute-Release.html) for more details on attribute release and filters.
 | `accessStrategy`                  | The strategy configuration that outlines and access rules for this service. It describes whether the service is allowed, authorized to participate in SSO, or can be granted access from the CAS perspective based on a particular attribute-defined role, aka RBAC. See [this guide](../integration/Attribute-Release.html) for more details on attribute release and filters.
-| `publicKey`                          | The public key associated with this service that is used to authorize the request by encrypting certain elements and attributes in the CAS validation protocol response, such as [the PGT](Configuring-Proxy-Authentication.html) or [the credential](../integration/ClearPass.html). See [this guide](../integration/Attribute-Release.html) for more details on attribute release and filters.
-| `logoutUrl`                          | URL endpoint for this service to receive logout requests. See [this guide](Logout-Single-Signout.html) for more details
+| `publicKey`                          | The public key associated with this service that is used to authorize the request by encrypting certain elements and attributes in the CAS validation protocol response, such as [the PGT](../installation/Configuring-Proxy-Authentication.html) or [the credential](../integration/ClearPass.html). See [this guide](../integration/Attribute-Release.html) for more details on attribute release and filters.
+| `logoutUrl`                          | URL endpoint for this service to receive logout requests. See [this guide](../installation/Logout-Single-Signout.html) for more details
 | `properties`                      | Extra metadata associated with this service in form of key/value pairs. This is used to inject custom fields into the service definition, to be used later by extension modules to define additional behavior on a per-service basis. [See this guide](Configuring-Service-Custom-Properties.html) for more info please.
 | `multifactorPolicy`               | The policy that describes the configuration required for this service authentication, typically for [multifactor authentication](../mfa/Configuring-Multifactor-Authentication.html).
 | `contacts`               | Specify the collection of contacts associated with service that own the application. See [this guide](Configuring-Service-Contacts.html) for more info.

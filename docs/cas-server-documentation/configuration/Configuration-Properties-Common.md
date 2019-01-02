@@ -53,11 +53,11 @@ in each case to learn the exact unit of measure.
 
 ## Authentication Throttling
 
-Certain functionality in CAS, such as [OAuth](OAuth-OpenId-Authentication.html) 
+Certain functionality in CAS, such as [OAuth](../installation/OAuth-OpenId-Authentication.html) 
 or [REST API](../protocol/REST-Protocol.html), allow you to throttle requests to specific endpoints in addition to the more 
 generic authentication throttling functionality applied during the login flow and authentication attempts.
 
-To fully deliver this functionality, it is expected that [authentication throttling](Configuring-Authentication-Throttling.html) is turned on.
+To fully deliver this functionality, it is expected that [authentication throttling](../installation/Configuring-Authentication-Throttling.html) is turned on.
 
 ## Authentication Credential Selection
 
@@ -441,6 +441,8 @@ The following options related to Hazelcast support in CAS apply equally to a num
 # ${configurationKey}.cluster.members=123.456.789.000,123.456.789.001
 # ${configurationKey}.cluster.instanceName=localhost
 # ${configurationKey}.cluster.port=5701
+
+# ${configurationKey}.licenseKey=
 ```
 
 More advanced Hazelcast configuration settings are listed below, given the component's *configuration key*:
@@ -459,6 +461,26 @@ More advanced Hazelcast configuration settings are listed below, given the compo
 # ${configurationKey}.cluster.asyncBackupCount=0
 # ${configurationKey}.cluster.maxSizePolicy=USED_HEAP_PERCENTAGE
 # ${configurationKey}.cluster.timeout=5
+```
+
+### Static WAN Replication
+
+```properties
+# ${configurationKey}.cluster.wanReplication.enabled=false
+# ${configurationKey}.cluster.wanReplication.replicationName=CAS
+
+# ${configurationKey}.cluster.wanReplication[0].groupName=
+# ${configurationKey}.cluster.wanReplication[0].groupPassword=
+# ${configurationKey}.cluster.wanReplication[0].endpoints=1.2.3.4,4.5.6.7
+# ${configurationKey}.cluster.wanReplication[0].publisherClassName=com.hazelcast.enterprise.wan.replication.WanBatchReplication
+# ${configurationKey}.cluster.wanReplication[0].queueFullBehavior=THROW_EXCEPTION
+# ${configurationKey}.cluster.wanReplication[0].acknowledgeType=ACK_ON_OPERATION_COMPLETE
+# ${configurationKey}.cluster.wanReplication[0].queueCapacity=10000
+# ${configurationKey}.cluster.wanReplication[0].batchSize=500
+# ${configurationKey}.cluster.wanReplication[0].snapshotEnabled=false
+# ${configurationKey}.cluster.wanReplication[0].batchMaximumDelayMilliseconds=1000
+# ${configurationKey}.cluster.wanReplication[0].responseTimeoutMilliseconds=60000
+# ${configurationKey}.cluster.wanReplication[0].executorThreadCount=2
 ```
 
 ### Multicast Discovery
@@ -737,7 +759,7 @@ please review [this guide](http://docs.spring.io/spring-framework/docs/current/j
 ## SAML2 Service Provider Integrations
 
 The settings defined for each service provider simply attempt to automate the creation of 
-a [SAML service definition](Configuring-SAML2-Authentication.html#saml-services) and nothing more. If you find the 
+a [SAML service definition](../installation/Configuring-SAML2-Authentication.html#saml-services) and nothing more. If you find the 
 applicable settings lack in certain areas, it is best to fall back onto the native configuration strategy for registering 
 SAML service providers with CAS which would depend on your service registry of choice.
 
@@ -749,7 +771,7 @@ Each SAML service provider supports the following settings:
 | `name`                | The name of the service provider registered in the service registry.
 | `description`         | The description of the service provider registered in the service registry.
 | `nameIdAttribute`     | Attribute to use when generating name ids for this service provider.
-| `nameIdFormat`        | The name of the service provider registered in the service registry.
+| `nameIdFormat`        | The forced NameID Format identifier (i.e. `urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress`).
 | `attributes`          | Attributes to release to the service provider, which may virtually be mapped and renamed.
 | `signatureLocation`   | Signature location to verify metadata.
 | `entityIds`           | List of entity ids allowed for this service provider.

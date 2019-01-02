@@ -71,7 +71,7 @@ In order to trigger this behavior, applications (i.e. `curl`, REST APIs, etc) ne
 `Content-Type` to signal to CAS that the request is submitted from a non-web based environment. The multifactor authentication request is [submitted to Duo Security](https://duo.com/docs/authapi#/auth) in `auto` mode which effectively may translate into an out-of-band factor (push or phone) recommended by Duo as the best for the user's devices.
 
 In order to successfully complete the authentication flow, CAS must also be configured with a method
-of primary authentication that is able to support non-web based environments such as [Basic Authentication](Basic-Authentication.html).
+of primary authentication that is able to support non-web based environments such as [Basic Authentication](../installation/Basic-Authentication.html).
 
 Here is an example using `curl` that attempts to authenticate into a service by first exercising
 basic authentication while identifying the request content type as `application/cas`. It is assumed that the

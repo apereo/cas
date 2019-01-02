@@ -23,7 +23,16 @@ settings in their CAS properties file, specially when running a multi-node CAS d
 to appropriate decrypt and encrypt the cookie value and will prevent successful single sign-on.
 
 <div class="alert alert-info"><strong>SSO Sessions</strong><p>It is possible to review the current collection of active SSO sessions,
-and determine if CAS itself maintains an active SSO session via the <a href="Monitoring-Statistics.html">CAS administration panels.</a></p></div>
+and determine if CAS itself maintains an active SSO session via the <a href="../monitoring/Monitoring-Statistics.html">CAS administration panels.</a></p></div>
+
+## Administrative Endpoints
+
+The following endpoints are provided by CAS:
+ 
+| Endpoint                 | Description
+|--------------------------|------------------------------------------------
+| `ssoSessions`                 | Review the current single sign-on sessions establishes with CAS and manage each session remotely.
+| `sso`                         | Indicate the current status of the single signon session tied to the browser session and the SSO cookie. A `GET` operation produces a list of current SSO sessions that are filtered by a provided `type` parameter with values `ALL`, `PROXIED` or `DIRECT`. A `DELETE` operation without specifying a ticket id will attempt to destroy all SSO sessions. Specifying a ticket-granting ticket identifier in the URL as a placeholder/selector will attempt to destroy the session controlled by that ticket. (i.e. `ssoSessions/{ticket}`).
 
 ## Configuration
 
@@ -51,7 +60,7 @@ If you wish you manually generate keys, you may [use the following tool](https:/
 
 By default, forced authentication requests that challenge the user for credentials
 either via the [`renew` request parameter](../protocol/CAS-Protocol.html)
-or via [the service-specific setting](Service-Management.html) of
+or via [the service-specific setting](../services/Service-Management.html) of
 the CAS service registry will always generate the ticket-granting cookie
 nonetheless. What this means is, logging in to a non-SSO-participating application
 via CAS nonetheless creates a valid CAS single sign-on session that will be honored on a

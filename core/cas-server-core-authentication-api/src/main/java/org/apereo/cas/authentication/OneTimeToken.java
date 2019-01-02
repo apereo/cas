@@ -1,18 +1,19 @@
 package org.apereo.cas.authentication;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
+import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -22,8 +23,8 @@ import java.time.LocalDateTime;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@MappedSuperclass
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @ToString
 @Getter
 @Setter
@@ -34,7 +35,9 @@ public class OneTimeToken implements Serializable, Comparable<OneTimeToken> {
 
     @org.springframework.data.annotation.Id
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+    @GenericGenerator(name = "native", strategy = "native")
+    @JsonProperty("id")
     private long id;
 
     @Column(nullable = false)
@@ -62,6 +65,7 @@ public class OneTimeToken implements Serializable, Comparable<OneTimeToken> {
             .append(token, o.getToken())
             .append(userId, o.getUserId())
             .append(issuedDateTime, o.getIssuedDateTime())
-            .append(id, o.id).build();
+            .append(id, o.id)
+            .build();
     }
 }

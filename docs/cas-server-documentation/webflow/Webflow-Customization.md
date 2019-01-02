@@ -45,6 +45,14 @@ CAS by default is configured to hot reload changes to the Spring webflow configu
 
 If you want to learn how to modify and extend the CAS authentication flows, [please see this guide](Webflow-Customization-Extensions.html).
 
+## Administrative Endpoints
+
+The following endpoints are provided by CAS:
+ 
+| Endpoint                 | Description
+|--------------------------|------------------------------------------------
+| `springWebflow`          | Provides a JSON representation of the CAS authentication webflows. The endpoint can accept a `flowId` parameter as part of a `GET` operation to only present the flow body of the requested flow id.
+
 ### Webflow Decorations
 
 Learn how to fetch and display data dynamically from external data sources and endpoints and pass those along to the webflow by [reviewing this guide](Webflow-Customization-Extensions.html).

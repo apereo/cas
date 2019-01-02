@@ -23,7 +23,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.config.support.authentication.GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
-import org.apereo.cas.couchdb.gauth.token.OneTimeTokenCouchDbRepository;
+import org.apereo.cas.couchdb.gauth.token.GoogleAuthenticatorTokenCouchDbRepository;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 
 import lombok.Getter;
@@ -90,7 +90,7 @@ public class GoogleAuthenticatorCouchDbTokenRepositoryTests extends BaseOneTimeT
 
     @Autowired
     @Qualifier("couchDbOneTimeTokenRepository")
-    private OneTimeTokenCouchDbRepository couchDbRepository;
+    private GoogleAuthenticatorTokenCouchDbRepository couchDbRepository;
 
     @Before
     public void setUp() {

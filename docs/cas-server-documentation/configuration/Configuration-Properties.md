@@ -1054,7 +1054,7 @@ with the following configured properties:
 
 ### Couchbase
 
-This option will fetch attributes from a Couchbase database for a given CAS principal. To learn more about this topic, [please review this guide](../ticketing/Couchbase-Authentication.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) under the configuration key `cas.authn.attributeRepository.couchbase`.
+This option will fetch attributes from a Couchbase database for a given CAS principal. To learn more about this topic, [please review this guide](../installation/Couchbase-Authentication.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) under the configuration key `cas.authn.attributeRepository.couchbase`.
 
 ```properties
 # cas.authn.attributeRepository.couchbase.usernameAttribute=username
@@ -1578,7 +1578,7 @@ To learn more about this topic, [please review this guide](../installation/Diges
 
 ## Radius Authentication
 
-To learn more about this topic, [please review this guide](../installation/RADIUS-Authentication.html).
+To learn more about this topic, [please review this guide](../mfa/RADIUS-Authentication.html).
 
 Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.radius`.
 
@@ -1728,7 +1728,7 @@ Password encoding  settings for this feature are available [here](Configuration-
 
 ## CouchDb Authentication
 
-To learn more about this topic, [please review this guide](CouchDb-Authentication.html).
+To learn more about this topic, [please review this guide](../installation/CouchDb-Authentication.html).
 
 Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.couchDb`.
 Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.couchDb`.
@@ -2297,7 +2297,7 @@ The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encrypt
 
 ## Multifactor Authentication
 
-To learn more about this topic, [please review this guide](Configuring-Multifactor-Authentication.html).
+To learn more about this topic, [please review this guide](../mfa/Configuring-Multifactor-Authentication.html).
 
 ```properties
 # Activate MFA globally for all, regardless of other settings
@@ -3146,7 +3146,7 @@ To learn more about this topic, [please review this guide](../installation/OAuth
 
 ### OAuth2 UMA
 
-To learn more about this topic, [please review this guide](../protocol/OAuth-OpenId-Authentication.html).
+To learn more about this topic, [please review this guide](../installation/OAuth-OpenId-Authentication.html).
 
 ```properties
 # cas.authn.uma.issuer=http://localhost:8080/cas
@@ -3729,7 +3729,11 @@ Signing & encryption settings for this registry are available [here](Configurati
 
 To learn more about this topic, [please review this guide](../ticketing/Hazelcast-Ticket-Registry.html).
 
-Hazelcast settings for this feature are available [here](Configuration-Properties-Common.html#hazelcast-configuration) under the configuration key `cas.ticket.registry.hazelcast`.
+Common Hazelcast settings for this feature are available [here](Configuration-Properties-Common.html#hazelcast-configuration) under the configuration key `cas.ticket.registry.hazelcast`.
+
+```properties
+# cas.ticket.registry.hazelcast.pageSize=500
+```
 
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.hazelcast`.
 
@@ -4571,4 +4575,6 @@ feature are available [here](Configuration-Properties-Common.html#password-encod
 # cas.authn.pm.rest.endpointUrlUser=
 # cas.authn.pm.rest.endpointUrlSecurityQuestions=
 # cas.authn.pm.rest.endpointUrlChange=
+# cas.authn.pm.rest.endpointUsername=
+# cas.authn.pm.rest.endpointPassword=
 ```

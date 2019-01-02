@@ -38,7 +38,6 @@ public class FortressAuthenticationHandler extends AbstractUsernamePasswordAuthe
     public static final String FORTRESS_SESSION_KEY = "fortressSession";
 
     private AccessMgr accessManager;
-
     private Marshaller marshaller;
 
     public FortressAuthenticationHandler(final AccessMgr accessManager, final String name, final ServicesManager servicesManager,
@@ -50,6 +49,7 @@ public class FortressAuthenticationHandler extends AbstractUsernamePasswordAuthe
             this.marshaller = jaxbContext.createMarshaller();
         } catch (final Exception e) {
             LOGGER.error("Failed initialize fortress context", e);
+            throw new IllegalArgumentException(e);
         }
     }
 
@@ -59,7 +59,7 @@ public class FortressAuthenticationHandler extends AbstractUsernamePasswordAuthe
         val username = c.getUsername();
         val password = c.getPassword();
         try {
-            LOGGER.debug("Trying to delegate authentication for [{}] to fortress", new Object[]{username});
+            LOGGER.debug("Trying to delegate authentication for [{}] to fortress", username);
             val user = new User(username, password);
             val fortressSession = accessManager.createSession(user, false);
             if (fortressSession != null && fortressSession.isAuthenticated()) {
