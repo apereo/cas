@@ -24,6 +24,14 @@ Support is enabled by including the following module in the overlay:
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#google-authenticator).
 
+## Administrative Endpoints
+
+The following endpoints are provided by CAS:
+ 
+| Endpoint                 | Description
+|--------------------------|------------------------------------------------
+| `gauthCredentialRepository`   | Manage and control [Google Authenticator account records](GoogleAuthenticator-Authentication.html). A `GET` operation produces a list of all account records. A `DELETE` operation will delete all account records. A `GET` operation produces with a parameter selector of `/{username}` will list the record assigned to the user. A `DELETE` operation produces with a parameter selector of `/{username}` will remove the record assigned to the user.
+
 ## Token Repository
 
 In order to prevent reuse of tokens issued, CAS will attempt to keep track of tokens that are successfully used to authenticate the user.

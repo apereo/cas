@@ -15,6 +15,14 @@ CAS server auto-configures all the relevant Inspektr components.   All the avail
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#audits).
 
+## Administrative Endpoints
+
+The following endpoints are provided by CAS:
+ 
+| Endpoint                 | Description
+|--------------------------|------------------------------------------------
+| `auditLog`               | Provides a JSON representation of all the audit log.
+
 ## File-based Audits
 
 File-based audit logs appear in a `cas_audit.log` file defined in the [Logging](../logging/Logging.html) configuration.
