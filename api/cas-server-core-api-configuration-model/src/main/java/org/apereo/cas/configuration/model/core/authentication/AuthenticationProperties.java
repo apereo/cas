@@ -71,6 +71,12 @@ public class AuthenticationProperties implements Serializable {
     private PasswordlessAuthenticationProperties passwordless = new PasswordlessAuthenticationProperties();
 
     /**
+     * Passwordless sync settings.
+     */
+    @NestedConfigurationProperty
+    private PasswordSynchronizationProperties passwordSync = new PasswordSynchronizationProperties();
+
+    /**
      * JSON authentication settings.
      */
     @NestedConfigurationProperty

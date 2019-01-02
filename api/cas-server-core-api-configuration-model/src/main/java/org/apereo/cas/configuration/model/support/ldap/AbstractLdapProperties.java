@@ -118,7 +118,7 @@ public abstract class AbstractLdapProperties implements Serializable {
     /**
      * The LDAP url to the server. More than one may be specified, separated by space and/or comma.
      */
-    private String ldapUrl = "ldap://localhost:389";
+    private String ldapUrl;
     /**
      * If the LDAP connection should be used with SSL enabled.
      */
