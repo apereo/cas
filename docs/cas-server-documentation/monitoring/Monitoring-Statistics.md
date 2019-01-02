@@ -33,29 +33,6 @@ exposed over the endpoint `/actuator`. The following endpoints are secured and a
 | `logfile`                 | Returns the contents of the log file if `logging.file` or `logging.path` properties are set with support for HTTP `Range` header.
 | `prometheus`              | Exposes metrics in a format that can be scraped by a Prometheus server.
 
- The following endpoints are provided by CAS:
- 
-| Endpoint                 | Description
-|--------------------------|-------------------------------------------------------------------------------------
-| `springWebflow`          | Provides a JSON representation of the CAS authentication webflows.
-| `events`                 | Provides a JSON representation of all CAS recorded events.
-| `auditLog`               | Provides a JSON representation of all the audit log.
-| `discoveryProfile`       | Provides a JSON representation of the [CAS configuration and capabilities](../configuration/Configuration-Discovery.html).
-| `registeredServices`     | Provides a JSON representation of the [CAS service registry](../services/Service-Management.html).
-| `exportRegisteredServices`    | Provides a ZIP-file representation of the [CAS service registry](../services/Service-Management.html).
-| `configurationMetadata`       | Exposes [CAS configuration metadata](../configuration/Configuration-Metadata-Repository.html) that can be used to query settings.
-| `statistics`                  | Exposes statistics data on tickets, memory, server availability and uptime, etc.
-| `ssoSessions`                 | Review the current single sign-on sessions establishes with CAS and manage each session remotely.
-| `sso`                         | Indicate the current status of the single signon session tied to the browser session and the SSO cookie.
-| `resolveAttributes/{name}`    | Invoke the CAS [attribute resolution](../integration/Attribute-Resolution.html) engine to locate attributes for `{name}`.
-| `releaseAttributes`           | Invoke the CAS [attribute release](../integration/Attribute-Release.html) engine to release attributes to an application.
-| `multifactorTrustedDevices`   | Expose devices currently [registered and trusted](../mfa/Multifactor-TrustedDevice-Authentication.html) by the CAS multifactor authentication engine.
-| `attributeConsent`            | Manage and control [attribute consent decisions](../integration/Attribute-Release-Consent.html).
-| `gauthCredentialRepository`   | Manage and control [Google Authenticator account records](../mfa/GoogleAuthenticator-Authentication.html).
-| `yubikeyAccountRepository`    | Manage and control [Google Authenticator account records](../mfa/YubiKey-Authentication.html).
-| `oauthTokens`                 | Manage and control [OAuth2 access tokens](../installation/OAuth-OpenId-Authentication.html).
-| `consentReview`               | Manage and control [Consent decisions](../integration/Attribute-Release-Consent.html).
-
 <div class="alert alert-info"><strong>Exposed Endpoints</strong><p>
 Note that by default the only endpoints exposed over the web are <code>info</code>, <code>status</code>, <code>health</code> and <code>configurationMetadata</code>.
 Other endpoints need to be explicitly enabled and then exposed over the web in CAS settings in order to allow access.
@@ -65,65 +42,6 @@ Actuator endpoints provided by Spring Boot can also be visually managed and moni
  via the [Spring Boot Administration Server](Configuring-Monitoring-Administration.html).
 <div class="alert alert-info"><strong>Obtaining Health Info</strong><p>Note that <code>/status</code> endpoint is kept mostly 
 as a legacy endpoint. If you wish to obtain health status of each monitor in detail, we recommend the <code>/actuator/health</code> endpoint instead.</p></div>
- 
-### Registered Services Endpoint
-
-The endpoint can also accept a mime-type of `application/vnd.cas.services+yaml` to produce YAML output.
-
-### Attribute Release Endpoint
-
-Supported parameters are the following:
-
-| Query Parameter           | Description
-|---------------------------|--------------------------------------------
-| `username`                | The username to use for authentication.
-| `password`                | The password to use for authentication.
-| `service`                 | Service to which attributes should be released.
-
-### Spring Webflow Endpoint
-
-The endpoint can accept a `flowId` parameter as part of a `GET` operation to only present the flow body of the requested flow id.
-
-### Single SignOn Sessions Endpoint
-
-A `GET` operation produces a list of current SSO sessions that are filtered by a provided `type` parameter with values `ALL`, `PROXIED` or `DIRECT`.
-
-A `DELETE` operation without specifying a ticket id will attempt to destroy all SSO sessions. Specifying a ticket-granting ticket identifier 
-in the URL as a placeholder/selector will attempt to destroy the session controlled by that ticket. (i.e. `ssoSessions/{ticket}`)
-
-### Multifactor Trusted Devices
-
-A `GET` operation produces a list of all trusted devices. Specifying a username in the URL
-as the placeholder/selector will fetch devices registered for that user (i.e. `multifactorTrustedDevices/{/{username}`).
-
-A `DELETE` operation with a device key  id will attempt to remove the trusted device (i.e. `multifactorTrustedDevices/{/{id}`).
-
-### Attribute Release Consent
-
-A `GET` operation produces a list of all consent decisions.
-A `DELETE` operation with a record key id will attempt to remove and revoke the registered device (i.e. `attributeConsent/{principal}/{id}`).
-
-### Google Authenticator Accounts
-
-A `GET` operation produces a list of all account records.
-A `DELETE` operation will delete all account records.
-
-A `GET` operation produces with a parameter selector of `/{username}` will list the record assigned to the user.
-A `DELETE` operation produces with a parameter selector of `/{username}` will remove the record assigned to the user.
-
-### YubiKey Accounts
-
-A `GET` operation produces a list of all account records.
-A `DELETE` operation will delete all account records.
-
-A `GET` operation produces with a parameter selector of `/{username}` will list the record assigned to the user.
-A `DELETE` operation produces with a parameter selector of `/{username}` will remove the record assigned to the user.
-
-### OAuth Tokens
-
-A `GET` operation produces a list of all access/refresh tokens.
-A `DELETE` operation will delete the provided access/refresh token provided in form of a parameter selector. (i.e. `/{token}`)
-A `GET` operation produces with a parameter selector of `/{token}` will list the details of the fetched access/refresh token.
 
 ### Metrics
 
