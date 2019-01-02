@@ -126,7 +126,7 @@ layout: null
         *   [JPA](/$version/ticketing/JPA-Ticket-Registry.html)
         *   [Ignite](/$version/ticketing/Ignite-Ticket-Registry.html)
         *   [Couchbase](/$version/ticketing/Couchbase-Ticket-Registry.html)
-        *   [CouchDb](/$version/ticketing/CouchDB-Ticket-Registry.html)
+        *   [CouchDb](/$version/ticketing/CouchDb-Ticket-Registry.html)
         *   [Infinispan](/$version/ticketing/Infinispan-Ticket-Registry.html)
         *   [Redis](/$version/ticketing/Redis-Ticket-Registry.html)
         *   [MongoDb](/$version/ticketing/MongoDb-Ticket-Registry.html)
