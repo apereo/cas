@@ -3,10 +3,7 @@ package org.apereo.cas.services.util;
 import lombok.val;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.AuthenticationResult;
-import org.apereo.cas.authentication.DefaultAuthentication;
-import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
@@ -18,7 +15,6 @@ import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.mockito.Mockito;
 
-import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -266,14 +262,10 @@ public class RegisteredServiceAccessStrategyAuditableEnforcerTests {
         val principal = createPrincipal();
         val attributes = new HashMap<String, Object>();
         attributes.put("attribute", "value");
-        val successes = new HashMap<String, AuthenticationHandlerExecutionResult>();
-        successes.put("success1", createSuccess(principal));
-        return new DefaultAuthentication(
-                ZonedDateTime.now(),
-                principal,
-                attributes,
-                successes
-        );
+        val mock = mock(Authentication.class);
+        when(mock.getAttributes()).thenReturn(attributes);
+        when(mock.getPrincipal()).thenReturn(principal);
+        return mock;
     }
 
     private Principal createPrincipal() {
@@ -285,15 +277,10 @@ public class RegisteredServiceAccessStrategyAuditableEnforcerTests {
         };
     }
 
-    private AuthenticationHandlerExecutionResult createSuccess(final Principal principal) {
-        val success = new DefaultAuthenticationHandlerExecutionResult();
-        success.setPrincipal(principal);
-        return success;
-    }
-
     private TicketGrantingTicket createTicketGrantingTicket() {
         val mock = Mockito.mock(TicketGrantingTicket.class);
-        when(mock.getAuthentication()).thenReturn(createAuthentication());
+        val authentication = createAuthentication();
+        when(mock.getAuthentication()).thenReturn(authentication);
         when(mock.isRoot()).thenReturn(true);
         when(mock.getRoot()).thenReturn(mock);
         return mock;
@@ -307,7 +294,8 @@ public class RegisteredServiceAccessStrategyAuditableEnforcerTests {
 
     private AuthenticationResult createAuthenticationResult() {
         val mock = mock(AuthenticationResult.class);
-        when(mock.getAuthentication()).thenReturn(createAuthentication());
+        val authentication = createAuthentication();
+        when(mock.getAuthentication()).thenReturn(authentication);
         when(mock.getService()).thenReturn(createService());
         return mock;
     }
