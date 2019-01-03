@@ -12,6 +12,13 @@
       /*<![CDATA[*/
 
       var policyPattern = /*[[${policyPattern}]]*/;
+      var passwordStrengthI18n = {
+          0: /*[[#{screen.pm.password.strength.0}]]*/,
+          1: /*[[#{screen.pm.password.strength.1}]]*/,
+          2: /*[[#{screen.pm.password.strength.2}]]*/,
+          3: /*[[#{screen.pm.password.strength.3}]]*/,
+          4: /*[[#{screen.pm.password.strength.4}]]*/
+      };
 
       /*]]>*/
     </script>
@@ -38,9 +45,23 @@
 
             <div class="form-group">
                 <div class="progress">
-                    <div id="strengthProgressBar" class="progress-bar">progress bar</div>
+                    <div id="strengthProgressBar" class="progress-bar"></div>
                 </div>
-                <p id="password-strength-text"/>
+            </div>
+            <div class="form-group" id="password-strength-notes">
+                <div id="password-policy-violation-msg" class="alert alert-danger" role="alert" style="display: none;">
+                    <span class="fas fa-exclamation-circle" aria-hidden="true"></span>&nbsp;
+                    <strong th:text="#{screen.pm.password.policyViolation}">Password does not match the password policy requirement.</strong>
+                </div>
+                <div id="password-confirm-mismatch-msg" class="alert alert-danger" role="alert" style="display: none;">
+                    <span class="fas fa-exclamation-circle" aria-hidden="true"></span>&nbsp;
+                    <strong th:text="#{screen.pm.password.confirmMismatch}">Passwords do not match.</strong>
+                </div>
+                <div id="password-strength-msg" class="alert" style="display: none;">
+                    <p><span th:text="#{screen.pm.password.strength}">Strength:</span>&nbsp;<strong id="password-strength-score">&nbsp;</strong></p>
+                    <p id="password-strength-warning"></p>
+                    <p id="password-strength-suggestions"></p>
+                </div>
             </div>
 
 
