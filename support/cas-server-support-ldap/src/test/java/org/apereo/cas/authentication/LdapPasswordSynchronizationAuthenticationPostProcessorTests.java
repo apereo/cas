@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
     "cas.authn.passwordSync.ldap[0].baseDn=dc=example,dc=org",
     "cas.authn.passwordSync.ldap[0].searchFilter=cn={user}",
     "cas.authn.passwordSync.ldap[0].bindDn=cn=Directory Manager",
-    "cas.authn.passwordSync.ldap[0].bindCredential=password",
+    "cas.authn.passwordSync.ldap[0].bindCredential=password"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 //@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
