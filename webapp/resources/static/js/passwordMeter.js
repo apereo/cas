@@ -75,11 +75,11 @@ function jqueryReady() {
     confirmed.addEventListener('input', validate);
     
     var alertSettings = {
-        allAlertClasses: 'alert-danger alert-warning alert-info alert-success',
-        alertClassDanger: 'alert-danger',
-        alertClassWarning: 'alert-warning',
-        alertClassInfo: 'alert-info',
-        alertClassSuccess: 'alert-success'
+        allAlertClasses: 'fa-times-circle fa-exclamation-circle fa-info-circle fa-check-circle',
+        alertClassDanger: 'fa-times-circle',
+        alertClassWarning: 'fa-exclamation-circle',
+        alertClassInfo: 'fa-info-circle',
+        alertClassSuccess: 'fa-check-circle'
     };
 
     function validate() {
@@ -88,7 +88,6 @@ function jqueryReady() {
         
         $('#password-policy-violation-msg').hide();
         $('#password-confirm-mismatch-msg').hide();
-        $('#password-strength-msg').hide();
 
         var passwordPolicyViolated = val === '' || !policyPatternRegex.test(val); 
         var passwordMismatch = val !== '' && val !== cnf;
@@ -96,19 +95,10 @@ function jqueryReady() {
         $('#submit').prop('disabled', disableSubmit);
 
         var result = zxcvbn(val);
-        $('#strengthProgressBar').zxcvbnProgressBar({ passwordInput: '#password' });
-        
-        // Check password policy
-        if (passwordPolicyViolated) {
-            $('#password-policy-violation-msg').show();
-            return;
-        }
+        $('#strengthProgressBar').zxcvbnProgressBar({ passwordInput: '#password' });       
         
         // Check strength, update the text indicator
         if (val !== '') {
-            $('#password-strength-msg').show();
-            
-            $('#password-strength-score').text(strength[result.score]);
             $('#password-strength-warning').text(result.feedback.warning);
             $('#password-strength-suggestions').text(result.feedback.suggestions);
             
@@ -130,12 +120,22 @@ function jqueryReady() {
                 clz = alertSettings.alertClassSuccess;
                 break;
             }
-            $('#password-strength-msg').removeClass(alertSettings.allAlertClasses).addClass(clz);
+            $('#password-strength-icon').removeClass(alertSettings.allAlertClasses).addClass(clz);
+        } else {
+            $('#password-strength-icon').removeClass(alertSettings.allAlertClasses);
+            $('#password-strength-warning').text('');
+            $('#password-strength-suggestions').text('');
         }
         
         // Check for mismatch
-        if (passwordMismatch) {
+        if (passwordMismatch && cnf !== '') {
             $('#password-confirm-mismatch-msg').show();
+        }
+        
+        // Check password policy
+        if (passwordPolicyViolated) {
+            $('#password-policy-violation-msg').show();
+            return;
         }
     }
 }
