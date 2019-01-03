@@ -3,7 +3,7 @@ package org.apereo.cas.services.util;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
-import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegexRegisteredService;
@@ -252,31 +252,13 @@ public class RegisteredServiceAccessStrategyAuditableEnforcerTests {
     }
 
     private Service createService() {
-        return new Service() {
-            @Override
-            public String getId() {
-                return "serviceid";
-            }
-        };
+        return CoreAuthenticationTestUtils.getService("serviceid");
     }
 
     private Authentication createAuthentication() {
-        val principal = createPrincipal();
-        val attributes = new HashMap<String, Object>();
+        val attributes = CoreAuthenticationTestUtils.getAttributes();
         attributes.put("attribute", "value");
-        val mock = mock(Authentication.class);
-        when(mock.getAttributes()).thenReturn(attributes);
-        when(mock.getPrincipal()).thenReturn(principal);
-        return mock;
-    }
-
-    private Principal createPrincipal() {
-        return new Principal() {
-            @Override
-            public String getId() {
-                return "principal";
-            }
-        };
+        return CoreAuthenticationTestUtils.getAuthentication("principal", attributes);
     }
 
     private TicketGrantingTicket createTicketGrantingTicket() {
@@ -290,15 +272,14 @@ public class RegisteredServiceAccessStrategyAuditableEnforcerTests {
 
     private ServiceTicket createServiceTicket() {
         val mock = mock(ServiceTicket.class);
-        when(mock.getService()).thenReturn(createService());
+        val service = createService();
+        when(mock.getService()).thenReturn(service);
         return mock;
     }
 
     private AuthenticationResult createAuthenticationResult() {
-        val mock = mock(AuthenticationResult.class);
         val authentication = createAuthentication();
-        when(mock.getAuthentication()).thenReturn(authentication);
-        when(mock.getService()).thenReturn(createService());
+        val mock = CoreAuthenticationTestUtils.getAuthenticationResult(authentication);
         return mock;
     }
 
