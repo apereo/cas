@@ -75,12 +75,12 @@ function jqueryReady() {
     confirmed.addEventListener('input', validate);
     
     var alertSettings = {
-            allAlertClasses: 'alert-danger alert-warning alert-info alert-success',
-            alertClassDanger: 'alert-danger',
-            alertClassWarning: 'alert-warning',
-            alertClassInfo: 'alert-info',
-            alertClassSuccess: 'alert-success'
-        };
+        allAlertClasses: 'alert-danger alert-warning alert-info alert-success',
+        alertClassDanger: 'alert-danger',
+        alertClassWarning: 'alert-warning',
+        alertClassInfo: 'alert-info',
+        alertClassSuccess: 'alert-success'
+    };
 
     function validate() {
         var val = password.value;
@@ -116,7 +116,7 @@ function jqueryReady() {
             switch (result.score) {
             case 0:
             case 1:
-                clz = alertSettings.alertClassDanger;;
+                clz = alertSettings.alertClassDanger;
                 break;
             case 2:
                 clz = alertSettings.alertClassWarning;
