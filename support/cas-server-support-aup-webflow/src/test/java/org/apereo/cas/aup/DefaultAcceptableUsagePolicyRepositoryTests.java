@@ -35,15 +35,19 @@ public class DefaultAcceptableUsagePolicyRepositoryTests extends BaseAcceptableU
 
     @Test
     public void verifyActionDefaultGlobal() {
-        verifyAction(AcceptableUsagePolicyProperties.Scope.GLOBAL);
+        val properties = new AcceptableUsagePolicyProperties();
+        properties.setScope(AcceptableUsagePolicyProperties.Scope.GLOBAL);
+        verifyAction(properties);
     }
 
     @Test
     public void verifyActionDefaultAuthentication() {
-        verifyAction(AcceptableUsagePolicyProperties.Scope.AUTHENTICATION);
+        val properties = new AcceptableUsagePolicyProperties();
+        properties.setScope(AcceptableUsagePolicyProperties.Scope.AUTHENTICATION);
+        verifyAction(properties);
     }
 
-    private static void verifyAction(final AcceptableUsagePolicyProperties.Scope scope) {
+    private static void verifyAction(final AcceptableUsagePolicyProperties properties) {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -51,7 +55,7 @@ public class DefaultAcceptableUsagePolicyRepositoryTests extends BaseAcceptableU
         val support = mock(TicketRegistrySupport.class);
         when(support.getAuthenticatedPrincipalFrom(anyString()))
             .thenReturn(CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("carLicense", "false")));
-        val repo = new DefaultAcceptableUsagePolicyRepository(support, scope);
+        val repo = new DefaultAcceptableUsagePolicyRepository(support, properties);
 
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         WebUtils.putTicketGrantingTicketInScopes(context, "TGT-12345");

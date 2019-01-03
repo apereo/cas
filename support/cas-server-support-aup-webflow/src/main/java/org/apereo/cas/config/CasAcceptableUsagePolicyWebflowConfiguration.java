@@ -82,7 +82,7 @@ public class CasAcceptableUsagePolicyWebflowConfiguration implements CasWebflowE
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
         return new DefaultAcceptableUsagePolicyRepository(
                 ticketRegistrySupport.getIfAvailable(),
-                casProperties.getAcceptableUsagePolicy().getScope());
+                casProperties.getAcceptableUsagePolicy());
     }
 
     @ConditionalOnMissingBean(name = "casAcceptableUsagePolicyWebflowExecutionPlanConfigurer")

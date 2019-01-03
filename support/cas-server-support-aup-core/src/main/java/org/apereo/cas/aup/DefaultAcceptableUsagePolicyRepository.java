@@ -28,14 +28,14 @@ public class DefaultAcceptableUsagePolicyRepository extends AbstractPrincipalAtt
 
     private static final String AUP_ACCEPTED = "AUP_ACCEPTED";
 
-    private final AcceptableUsagePolicyProperties.Scope scope;
+    private final AcceptableUsagePolicyProperties aupProperties;
 
     private final Map<String, Boolean> policyMap = new ConcurrentHashMap<>();
 
     public DefaultAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport,
-                                                  final AcceptableUsagePolicyProperties.Scope scope) {
+                                                  final AcceptableUsagePolicyProperties aupProperties) {
         super(ticketRegistrySupport, null);
-        this.scope = scope;
+        this.aupProperties = aupProperties;
     }
 
     @Override
@@ -56,7 +56,7 @@ public class DefaultAcceptableUsagePolicyRepository extends AbstractPrincipalAtt
 
     @Override
     public boolean submit(final RequestContext requestContext, final Credential credential) {
-        Pair<String, Map> storageInfo = getKeyAndMap(requestContext, credential);
+        val storageInfo = getKeyAndMap(requestContext, credential);
         val key = storageInfo.getLeft();
         val map = storageInfo.getRight();
         map.put(key, Boolean.TRUE);
@@ -64,7 +64,7 @@ public class DefaultAcceptableUsagePolicyRepository extends AbstractPrincipalAtt
     }
 
     private Pair<String, Map> getKeyAndMap(final RequestContext requestContext, final Credential credential) {
-        switch (scope) {
+        switch (aupProperties.getScope()) {
             case GLOBAL:
                 if (credential == null) {
                     LOGGER.debug("Falling back to AUP scope AUTHENTICATION because credential is null");
