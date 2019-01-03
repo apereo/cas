@@ -14,7 +14,6 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import lombok.val;
 
 import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
 import org.mockito.Mockito;
 
 import java.util.HashMap;
@@ -237,10 +236,11 @@ public class RegisteredServiceAccessStrategyAuditableEnforcerTests {
     }
 
     @Test
-    public void verifyExceptionThrown() {
+    public void verifyExceptionNotThrown() {
         val context = AuditableContext.builder().build();
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () -> new RegisteredServiceAccessStrategyAuditableEnforcer().execute(context));
+        val result= new RegisteredServiceAccessStrategyAuditableEnforcer().execute(context);
+        assertTrue(result.isExecutionFailure());
+        assertTrue(result.getException().isPresent());
     }
 
     private RegexRegisteredService createRegisteredService(final boolean enabled) {

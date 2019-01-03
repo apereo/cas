@@ -106,6 +106,8 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
             return result;
         }
 
-        throw new IllegalArgumentException("RegisteredServiceAccessStrategyAuditableEnforcer called with invalid AuditableContext");
+        val result = AuditableExecutionResult.builder().build();
+        result.setException(new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Service unauthorized"));
+        return result;
     }
 }
