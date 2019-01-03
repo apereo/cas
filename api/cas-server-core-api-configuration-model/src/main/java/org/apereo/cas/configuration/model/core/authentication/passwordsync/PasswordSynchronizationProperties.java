@@ -1,6 +1,5 @@
-package org.apereo.cas.configuration.model.core.authentication;
+package org.apereo.cas.configuration.model.core.authentication.passwordsync;
 
-import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -25,17 +24,6 @@ public class PasswordSynchronizationProperties implements Serializable {
     /**
      * Options for password sync via LDAP.
      */
-    private List<Ldap> ldap = new ArrayList<>();
+    private List<LdapPasswordSynchronizationProperties> ldap = new ArrayList<>();
 
-    @RequiresModule(name = "cas-server-support-ldap")
-    @Getter
-    @Setter
-    public static class Ldap extends AbstractLdapSearchProperties {
-        private static final long serialVersionUID = -2521286056194686825L;
-
-        /**
-         * Whether or not password sync should be enabled for this ldap instance.
-         */
-        private boolean enabled;
-    }
 }
