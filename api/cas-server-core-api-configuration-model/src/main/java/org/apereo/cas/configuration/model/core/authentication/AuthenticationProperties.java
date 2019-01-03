@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import org.apereo.cas.configuration.model.core.authentication.passwordsync.PasswordSynchronizationProperties;
 import org.apereo.cas.configuration.model.support.cassandra.authentication.CassandraAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.clouddirectory.CloudDirectoryProperties;
 import org.apereo.cas.configuration.model.support.cognito.AmazonCognitoAuthenticationProperties;
@@ -69,6 +70,12 @@ public class AuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private PasswordlessAuthenticationProperties passwordless = new PasswordlessAuthenticationProperties();
+
+    /**
+     * Passwordless sync settings.
+     */
+    @NestedConfigurationProperty
+    private PasswordSynchronizationProperties passwordSync = new PasswordSynchronizationProperties();
 
     /**
      * JSON authentication settings.

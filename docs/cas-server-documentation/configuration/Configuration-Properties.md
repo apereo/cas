@@ -2193,8 +2193,8 @@ be bypassed by users and that the proxy ensures the header
 never originates from the browser.
 
 ```properties
-cas.authn.x509.extractCert=false
-cas.authn.x509.sslHeaderName=ssl_client_cert
+# cas.authn.x509.extractCert=false
+# cas.authn.x509.sslHeaderName=ssl_client_cert
 ```
 
 The specific parsing logic for the certificate is compatible
@@ -2204,7 +2204,7 @@ Apache HTTPD, Nginx, Haproxy, BigIP F5, etc.
 ### X509 Principal Resolution
 
 ```properties
-cas.authn.x509.principalType=SERIAL_NO|SERIAL_NO_DN|SUBJECT|SUBJECT_ALT_NAME|SUBJECT_DN
+# cas.authn.x509.principalType=SERIAL_NO|SERIAL_NO_DN|SUBJECT|SUBJECT_ALT_NAME|SUBJECT_DN
 ```
 
 Principal resolution and Person Directory settings for this feature are available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) under the configuration key `cas.authn.x509.principal`.
@@ -4502,6 +4502,20 @@ Configure settings relevant to the Java CAS client configured to handle inbound 
 # cas.client.validatorType=CAS10|CAS20|CAS30
 ```
 
+## Password Synchronization
+
+Allow the user to synchronize account password to a variety of destinations in-place. To learn more about this 
+topic, [please review this guide](../installation/Password-Synchronization.html).
+
+### LDAP Password Sync
+
+Common LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under 
+the configuration key `cas.authn.passwordSync.ldap[0]`.
+
+```properties
+# cas.authn.passwordSync.ldap[0].enabled=false
+``` 
+
 ## Password Management
 
 Allow the user to update their account password, etc in-place.
@@ -4520,7 +4534,7 @@ To learn more about this topic, [please review this guide](../installation/Passw
 # cas.authn.pm.autoLogin=false
 ```
 
-Email notifications settings for this feature are available [here](Configuration-Properties-Common.html#email-notifications) 
+Common email notifications settings for this feature are available [here](Configuration-Properties-Common.html#email-notifications) 
 under the configuration key `cas.authn.pm.reset`.
 
 The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
@@ -4540,7 +4554,7 @@ The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encrypt
 
 ### LDAP Password Management
 
-LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.pm.ldap`.
+Common LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.pm.ldap`.
 
 ```properties
 # cas.authn.pm.ldap.type=AD|GENERIC|EDirectory|FreeIPA
@@ -4555,8 +4569,8 @@ LDAP settings for this feature are available [here](Configuration-Properties-Com
 
 ### JDBC Password Management
 
-Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) 
-under the configuration key `cas.authn.pm.jdbc`. Password encoding  settings for this 
+Common Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) 
+under the configuration key `cas.authn.pm.jdbc`. Common password encoding  settings for this 
 feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.pm.jdbc`.
 
 ```properties
