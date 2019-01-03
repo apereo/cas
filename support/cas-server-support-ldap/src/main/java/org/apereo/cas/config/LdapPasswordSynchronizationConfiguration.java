@@ -3,7 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.LdapPasswordSynchronizationAuthenticationPostProcessor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.authentication.PasswordSynchronizationProperties;
+import org.apereo.cas.configuration.model.core.authentication.passwordsync.LdapPasswordSynchronizationProperties;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -32,7 +32,7 @@ public class LdapPasswordSynchronizationConfiguration {
         return plan -> {
             val ldap = casProperties.getAuthn().getPasswordSync().getLdap();
             ldap.stream()
-                .filter(PasswordSynchronizationProperties.Ldap::isEnabled)
+                .filter(LdapPasswordSynchronizationProperties::isEnabled)
                 .forEach(instance -> plan.registerAuthenticationPostProcessor(new LdapPasswordSynchronizationAuthenticationPostProcessor(instance)));
         };
     }
