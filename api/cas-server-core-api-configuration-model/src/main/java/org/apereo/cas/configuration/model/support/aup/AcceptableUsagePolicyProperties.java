@@ -94,12 +94,14 @@ public class AcceptableUsagePolicyProperties implements Serializable {
         private String principalIdColumn = "username";
         
         /**
-         * The profile attribute to extract the username from. If empty, the principal ID will be used.
+         * The profile attribute to extract the value for the <code>principalIdColumn</code> used in the WHERE clause
+         * of <code>sqlUpdateAUP</code>. If empty, the principal ID will be used.
          */
         private String principalIdAttribute;
         
         /**
          * The query template to update the AUP attribute.
+         * %s placeholders represent tableName, aupColumn, principalIdColumn settings.
          */
         private String sqlUpdateAUP = "UPDATE %s SET %s=true WHERE %s=?";
     }
