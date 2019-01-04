@@ -123,7 +123,7 @@ Note that JWTs created are typically signed and encrypted by default with pre-ge
 
 ## Validate Service Ticket
 
-Service ticket validation is handled through the [CAS Protocol](Cas-Protocol.html)
+Service ticket validation is handled through the [CAS Protocol](CAS-Protocol.html)
 via any of the validation endpoints such as `/p3/serviceValidate`. 
 
 ```bash
@@ -316,7 +316,7 @@ To activate this functionality, you will need to choose an appropriate throttler
 The same throttling mechanism that handles the usual CAS server endpoints for authentication
 and ticket validation, etc is then activated for the REST endpoints that are supported for throttling. 
 
-To see the relevant options, [please review this guide](https://apereo.github.io/cas/development/installation/Configuration-Properties.html#rest-api).
+To see the relevant options, [please review this guide](../installation/Configuration-Properties.html#rest-api).
 
 ## Swagger API
 
