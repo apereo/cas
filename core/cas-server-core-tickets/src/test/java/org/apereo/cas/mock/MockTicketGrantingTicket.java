@@ -20,6 +20,7 @@ import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.val;
 
 import java.time.ZoneOffset;
@@ -52,6 +53,9 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     private final Map<String, Service> proxyGrantingTickets = new HashMap<>();
     private int usageCount;
     private boolean expired;
+
+    @Setter
+    private ExpirationPolicy expirationPolicy = new TicketGrantingTicketExpirationPolicy(100, 100);
 
     public MockTicketGrantingTicket(final String principal, final Credential c, final Map attributes) {
         id = ID_GENERATOR.getNewTicketId("TGT");
@@ -131,7 +135,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
 
     @Override
     public ExpirationPolicy getExpirationPolicy() {
-        return new TicketGrantingTicketExpirationPolicy(100, 100);
+        return this.expirationPolicy;
     }
 
     @Override
@@ -147,7 +151,6 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     public int compareTo(final Ticket o) {
         return this.id.compareTo(o.getId());
     }
-
 
     @Override
     public String getPrefix() {
