@@ -48,27 +48,33 @@ public class JdbcAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
                 aupColumnName = jdbc.getAupColumn();
             }
             final String sql = String.format(jdbc.getSqlUpdateAUP(), jdbc.getTableName(), aupColumnName, jdbc.getPrincipalIdColumn());
-            String principalId = credential.getId();
-            if (StringUtils.isNotBlank(jdbc.getPrincipalIdAttribute())) {
-                @NonNull
-                final Principal principal = WebUtils.getAuthentication(requestContext).getPrincipal();
-                final String pIdAttribName = jdbc.getPrincipalIdAttribute();
-                if (principal.getAttributes().containsKey(pIdAttribName)) {
-                    final Object pIdAttribValue = principal.getAttributes().get(pIdAttribName);
-                    if (pIdAttribValue instanceof String) {
-                        principalId = pIdAttribValue.toString();
-                    } else {
-                        LOGGER.warn("Principal attribute [{}] was found, but its value [{}] is not a String", pIdAttribName, pIdAttribValue);
-                    }
-                } else {
-                    LOGGER.warn("Principal attribute [{}] cannot be found. Falling back to principal ID", pIdAttribName);
-                }
-            }
+            String principalId = determinePrincipalId(requestContext, credential, jdbc);
             LOGGER.debug("Executing update query [{}] for principal [{}]", sql, principalId);
             return this.jdbcTemplate.update(sql, principalId) > 0;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
         return false;
+    }
+    
+    protected String determinePrincipalId(final RequestContext requestContext, final Credential credential, final AcceptableUsagePolicyProperties.Jdbc jdbc) {
+        String principalId = credential.getId();
+        if (StringUtils.isNotBlank(jdbc.getPrincipalIdAttribute())) {
+            @NonNull
+            final Principal principal = WebUtils.getAuthentication(requestContext).getPrincipal();
+            final String pIdAttribName = jdbc.getPrincipalIdAttribute();
+            if (principal.getAttributes().containsKey(pIdAttribName)) {
+                final Object pIdAttribValue = principal.getAttributes().get(pIdAttribName);
+                if (pIdAttribValue instanceof String) {
+                    principalId = pIdAttribValue.toString();
+                } else {
+                    throw new IllegalStateException("Principal attribute ["+ pIdAttribName + "] was found, but its value [" +
+                            pIdAttribValue + "] is not a String");
+                }
+            } else {
+                throw new IllegalStateException("Principal attribute [" + pIdAttribName + "] cannot be found");
+            }
+        }
+        return principalId;
     }
 }
