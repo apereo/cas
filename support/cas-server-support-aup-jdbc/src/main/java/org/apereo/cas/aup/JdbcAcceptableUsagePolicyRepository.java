@@ -52,9 +52,9 @@ public class JdbcAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
             if (StringUtils.isNotBlank(jdbc.getPrincipalIdAttribute())) {
                 @NonNull
                 final Principal principal = WebUtils.getAuthentication(requestContext).getPrincipal();
-                String pIdAttribName = jdbc.getPrincipalIdAttribute();
+                final String pIdAttribName = jdbc.getPrincipalIdAttribute();
                 if (principal.getAttributes().containsKey(pIdAttribName)) {
-                    Object pIdAttribValue = principal.getAttributes().get(pIdAttribName);
+                    final Object pIdAttribValue = principal.getAttributes().get(pIdAttribName);
                     if (pIdAttribValue instanceof String) {
                         principalId = pIdAttribValue.toString();
                     } else {
