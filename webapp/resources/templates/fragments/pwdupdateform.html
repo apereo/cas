@@ -12,6 +12,13 @@
       /*<![CDATA[*/
 
       var policyPattern = /*[[${policyPattern}]]*/;
+      var passwordStrengthI18n = {
+          0: /*[[#{screen.pm.password.strength.0}]]*/,
+          1: /*[[#{screen.pm.password.strength.1}]]*/,
+          2: /*[[#{screen.pm.password.strength.2}]]*/,
+          3: /*[[#{screen.pm.password.strength.3}]]*/,
+          4: /*[[#{screen.pm.password.strength.4}]]*/
+      };
 
       /*]]>*/
     </script>
@@ -37,10 +44,26 @@
             </div>
 
             <div class="form-group">
-                <div class="progress">
-                    <div id="strengthProgressBar" class="progress-bar">progress bar</div>
+                <div>
+                    <span th:text="#{screen.pm.password.strength}">Strength:</span>&nbsp;
+                    <span id="password-strength-icon" class="fas" aria-hidden="true"></span>
                 </div>
-                <p id="password-strength-text"/>
+                <div class="progress">
+                    <div id="strengthProgressBar" class="progress-bar"></div>
+                </div>
+                <div>
+                    <span id="password-strength-warning"></span>&nbsp;<span id="password-strength-suggestions"></span>
+                </div>
+            </div>
+            <div class="form-group" id="password-strength-notes">
+                <div id="password-policy-violation-msg" class="alert alert-danger" role="alert" style="display: none;">
+                    <span class="fas fa-exclamation-circle" aria-hidden="true"></span>&nbsp;
+                    <strong th:text="#{screen.pm.password.policyViolation}">Password does not match the password policy requirement.</strong>
+                </div>
+                <div id="password-confirm-mismatch-msg" class="alert alert-danger" role="alert" style="display: none;">
+                    <span class="fas fa-exclamation-circle" aria-hidden="true"></span>&nbsp;
+                    <strong th:text="#{screen.pm.password.confirmMismatch}">Passwords do not match.</strong>
+                </div>
             </div>
 
 
@@ -56,14 +79,7 @@
                        type="submit"
                        disabled="true"/>
                 &nbsp;
-                <input
-                        class="btn btn-danger"
-                        name="cancel"
-                        accesskey="c"
-                        th:value="#{screen.pm.button.cancel}"
-                        value="CANCEL"
-                        type="button"
-                        onclick="location.href = location.href;"/>
+                <a class="btn btn-danger" th:href="@{/login}" th:text="#{screen.pm.button.cancel}">CANCEL</a>
             </div>
         </form>
         <p th:unless="${passwordManagementEnabled}"
