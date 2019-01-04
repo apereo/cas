@@ -71,7 +71,7 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
             .collect(Collectors.toSet());
 
         if (!attrs.isEmpty()) {
-            LOGGER.warn("Found [{}] attribute(s) that need to be sanitized/encoded.", attrs);
+            LOGGER.info("Found [{}] attribute(s) that need to be sanitized/encoded.", attrs);
             attributes.keySet().removeIf(getSanitizingAttributeNamePredicate());
             attrs.forEach(p -> {
                 val key = p.getKey();
