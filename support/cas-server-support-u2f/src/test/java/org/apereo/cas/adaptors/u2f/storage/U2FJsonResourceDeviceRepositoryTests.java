@@ -4,6 +4,8 @@ import org.apereo.cas.config.U2FConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,8 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
+
+import java.io.File;
 
 /**
  * This is {@link U2FJsonResourceDeviceRepositoryTests}.
@@ -41,9 +45,13 @@ public class U2FJsonResourceDeviceRepositoryTests extends AbstractU2FDeviceRepos
     @Qualifier("u2fDeviceRepository")
     private U2FDeviceRepository u2fDeviceRepository;
 
-
     @Override
     protected U2FDeviceRepository getDeviceRepository() {
         return this.u2fDeviceRepository;
+    }
+
+    @BeforeClass
+    public static void cleanUp() {
+        FileUtils.deleteQuietly(new File("/tmp/u2f.json"));
     }
 }
