@@ -82,26 +82,26 @@ public class AcceptableUsagePolicyProperties implements Serializable {
         private String tableName;
         
         /**
-         * The column to store the AUP attribute. May differ from the profile attribute defined by <code>aupAttributeName</code>.
-         * SQL query can be further customized by setting <code>sqlUpdateAUP</code>.
+         * The column to store the AUP attribute. May differ from the profile attribute defined by {@link #aupAttributeName}</code>.
+         * SQL query can be further customized by setting {@link #sqlUpdateAUP}.
          */
         private String aupColumn;
         
         /**
          * The column to idetify the principal.
-         * SQL query can be further customized by setting <code>sqlUpdateAUP</code>.
+         * SQL query can be further customized by setting {@link #sqlUpdateAUP}.
          */
         private String principalIdColumn = "username";
         
         /**
-         * The profile attribute to extract the value for the <code>principalIdColumn</code> used in the WHERE clause
-         * of <code>sqlUpdateAUP</code>. If empty, the principal ID will be used.
+         * The profile attribute to extract the value for the {@link #principalIdColumn} used in the WHERE clause
+         * of {@link #sqlUpdateAUP}. If empty, the principal ID will be used.
          */
         private String principalIdAttribute;
         
         /**
          * The query template to update the AUP attribute.
-         * %s placeholders represent tableName, aupColumn, principalIdColumn settings.
+         * %s placeholders represent {@link #tableName}, {@link #aupColumn}, {@link #principalIdColumn} settings.
          */
         private String sqlUpdateAUP = "UPDATE %s SET %s=true WHERE %s=?";
     }
