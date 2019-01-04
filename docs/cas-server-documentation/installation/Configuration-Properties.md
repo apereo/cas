@@ -3760,8 +3760,6 @@ RESTful settings for this feature are available [here](Configuration-Properties-
 
 If AUP is controlled via JDBC, decide how choices should be remembered back inside the database instance. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.acceptableUsagePolicy.jdbc`.
 
-See source code of `AcceptableUsagePolicyProperties.java` for more detailed explainations of the settings.
-
 ```properties
 # cas.acceptableUsagePolicy.jdbc.tableName=usage_policies_table
 # cas.acceptableUsagePolicy.jdbc.aupColumn=
