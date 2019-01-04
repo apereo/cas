@@ -4,8 +4,6 @@ import org.apereo.cas.config.U2FConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.commons.io.FileUtils;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +12,9 @@ import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
-
-import java.io.File;
 
 /**
  * This is {@link U2FJsonResourceDeviceRepositoryTests}.
@@ -32,24 +29,13 @@ import java.io.File;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
+@TestPropertySource(properties = "cas.authn.mfa.u2f.json.location=file:/tmp/u2f.json")
 public class U2FJsonResourceDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
 
     @Rule
     public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
-    static {
-        try {
-            val file = new File(System.getProperty("java.io.tmpdir"), "u2f.json");
-            if (file.exists()) {
-                FileUtils.forceDelete(file);
-            }
-            System.setProperty("cas.authn.mfa.u2f.json.location", "file://" + file.getCanonicalPath());
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-    }
 
     @Autowired
     @Qualifier("u2fDeviceRepository")
