@@ -1,13 +1,7 @@
-/* global jqueryReady, policyPattern, zxcvbn */
+/* global jqueryReady, policyPattern, zxcvbn, passwordStrengthI18n */
 /*eslint-disable no-unused-vars*/
 function jqueryReady() {
-    var strength = {
-        0: 'Worst',
-        1: 'Bad',
-        2: 'Weak',
-        3: 'Good',
-        4: 'Strong'
-    };
+    var strength = passwordStrengthI18n;
     
     $.fn.zxcvbnProgressBar = function (options) {
 
@@ -80,55 +74,69 @@ function jqueryReady() {
     
     password.addEventListener('input', validate);
     confirmed.addEventListener('input', validate);
+    
+    var alertSettings = {
+        allAlertClasses: 'fa-times-circle fa-exclamation-circle fa-info-circle fa-check-circle',
+        alertClassDanger: 'fa-times-circle',
+        alertClassWarning: 'fa-exclamation-circle',
+        alertClassInfo: 'fa-info-circle',
+        alertClassSuccess: 'fa-check-circle'
+    };
 
     function validate() {
         var val = password.value;
         var cnf = confirmed.value;
-        var responseText;
+        
+        $('#password-policy-violation-msg').hide();
+        $('#password-confirm-mismatch-msg').hide();
 
-        var disableSubmit = val == '' || cnf == '' || val != cnf || !policyPatternRegex.test(val) || !policyPatternRegex.test(cnf);
+        var passwordPolicyViolated = val === '' || !policyPatternRegex.test(val); 
+        var passwordMismatch = val !== '' && val !== cnf;
+        var disableSubmit = passwordPolicyViolated || passwordMismatch;
         $('#submit').prop('disabled', disableSubmit);
 
         var result = zxcvbn(val);
-        $('#strengthProgressBar').zxcvbnProgressBar({ passwordInput: '#password' });
+        $('#strengthProgressBar').zxcvbnProgressBar({ passwordInput: '#password' });       
         
-        if (disableSubmit) {
-            $('#password-strength-text').show();
-            responseText = '<div class=\'alert alert-danger\' role=\'alert\'>' +
-                '<span class=\'glyphicon glyphicon-exclamation-sign\' aria-hidden=\'true\'></span>' +
-                '<strong>Password does not match the password policy requirement.</strong></div>';
-            $('#password-strength-text').html(responseText);
-            return;
-        }
-        
-        // Update the text indicator
+        // Check strength, update the text indicator
         if (val !== '') {
-            $('#password-strength-text').show();
-
-            var title = 'Strength: <strong>' + strength[result.score] + '</strong>';
-            var text = '<p><span class=\'feedback\'>' + result.feedback.warning + ' ' + result.feedback.suggestions + '</span></p>';
-            var clz = 'danger';
+            $('#password-strength-warning').text(result.feedback.warning);
+            $('#password-strength-suggestions').text(result.feedback.suggestions);
+            
+            var clz = alertSettings.alertClassDanger;
             switch (result.score) {
             case 0:
             case 1:
-                clz = 'danger';
+                clz = alertSettings.alertClassDanger;
                 break;
             case 2:
-                clz = 'warning';
+                clz = alertSettings.alertClassWarning;
                 break;
             case 3:
-                clz = 'info';
+                clz = alertSettings.alertClassInfo;
                 break;
             case 4:
             case 5:
             default:
-                clz = 'success';
+                clz = alertSettings.alertClassSuccess;
                 break;
             }
-            responseText = '<div class=\'alert alert-' + clz + '\'>' + title + text + '</div>';
-            $('#password-strength-text').html(responseText);
+            $('#password-strength-icon').removeClass(alertSettings.allAlertClasses).addClass(clz);
         } else {
-            $('#password-strength-text').hide();
+            $('#password-strength-icon').removeClass(alertSettings.allAlertClasses);
+            $('#password-strength-warning').text('');
+            $('#password-strength-suggestions').text('');
+        }
+        
+        // Check for mismatch
+        if (passwordMismatch && cnf !== '') {
+            $('#password-confirm-mismatch-msg').show();
+        }
+        
+        // Check password policy
+        if (passwordPolicyViolated) {
+            $('#password-policy-violation-msg').show();
+            return;
         }
     }
 }
