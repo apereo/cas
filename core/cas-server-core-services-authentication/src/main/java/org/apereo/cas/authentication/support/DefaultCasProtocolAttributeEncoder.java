@@ -153,7 +153,7 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
             .map(s -> Pair.of(EncodingUtils.hexEncode(s.getBytes(StandardCharsets.UTF_8)), attributes.get(s)))
             .collect(Collectors.toSet());
         if (!attrs.isEmpty()) {
-            LOGGER.warn("Found [{}] attribute(s) that need to be sanitized/encoded.", attrs);
+            LOGGER.info("Found [{}] attribute(s) that need to be sanitized/encoded.", attrs);
             attributes.keySet().removeIf(getSanitizingAttributeNamePredicate());
             attrs.forEach(p -> {
                 final String key = p.getKey();
