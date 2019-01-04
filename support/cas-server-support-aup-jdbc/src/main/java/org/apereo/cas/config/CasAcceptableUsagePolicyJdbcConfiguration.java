@@ -45,15 +45,19 @@ public class CasAcceptableUsagePolicyJdbcConfiguration {
     @RefreshScope
     @Bean
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
-        final AcceptableUsagePolicyProperties.Jdbc jdbc = casProperties.getAcceptableUsagePolicy().getJdbc();
+        final AcceptableUsagePolicyProperties properties = casProperties.getAcceptableUsagePolicy();
 
-        if (StringUtils.isBlank(jdbc.getTableName())) {
+        if (StringUtils.isBlank(properties.getJdbc().getTableName())) {
             throw new BeanCreationException("Database table for acceptable usage policy must be specified.");
+        }
+        
+        if (StringUtils.isBlank(properties.getJdbc().getSqlUpdateAUP())) {
+            throw new BeanCreationException("SQL to update acceptable usage policy must be specified.");
         }
 
         return new JdbcAcceptableUsagePolicyRepository(ticketRegistrySupport,
             casProperties.getAcceptableUsagePolicy().getAupAttributeName(),
             acceptableUsagePolicyDataSource(),
-            jdbc.getTableName());
+            properties);
     }
 }
