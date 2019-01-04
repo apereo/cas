@@ -4,6 +4,8 @@ import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketState;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +29,8 @@ public class SurrogateSessionExpirationPolicy extends BaseDelegatingExpirationPo
      *
      * @param policy the policy
      */
-    public SurrogateSessionExpirationPolicy(final ExpirationPolicy policy) {
+    @JsonCreator
+    public SurrogateSessionExpirationPolicy(@JsonProperty("policy") final ExpirationPolicy policy) {
         super(policy);
     }
 
