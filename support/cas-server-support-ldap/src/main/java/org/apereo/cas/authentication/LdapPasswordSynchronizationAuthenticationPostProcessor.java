@@ -16,6 +16,7 @@ import org.ldaptive.ResultCode;
 import org.ldaptive.ad.UnicodePwdAttribute;
 
 import java.util.Collections;
+import java.util.Optional;
 
 /**
  * This is {@link LdapPasswordSynchronizationAuthenticationPostProcessor}.
@@ -35,13 +36,14 @@ public class LdapPasswordSynchronizationAuthenticationPostProcessor implements A
 
     @Override
     public void process(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) throws AuthenticationException {
-        if (transaction.getPrimaryCredential().isEmpty()) {
+        val primaryCredential = transaction.getPrimaryCredential();
+        if (primaryCredential.isEmpty()) {
             LOGGER.warn("Current authentication transaction does not have a primary credential");
             return;
         }
 
         try {
-            val credential = UsernamePasswordCredential.class.cast(transaction.getPrimaryCredential().get());
+            val credential = UsernamePasswordCredential.class.cast(primaryCredential.get());
             val filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSearchFilter(),
                 LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, Collections.singletonList(credential.getUsername()));
             LOGGER.trace("Constructed LDAP filter [{}] to locate user and update password", filter);
