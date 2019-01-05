@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
  * Class to test {@link RegisteredServiceAccessStrategyAuditableEnforcer}.
  *
  * @author Travis Schmidt
- * @since 6.0
+ * @since 6.1
  */
 public class RegisteredServiceAccessStrategyAuditableEnforcerTests {
 
@@ -251,17 +251,17 @@ public class RegisteredServiceAccessStrategyAuditableEnforcerTests {
         return service;
     }
 
-    private Service createService() {
+    private static Service createService() {
         return CoreAuthenticationTestUtils.getService("serviceid");
     }
 
-    private Authentication createAuthentication() {
+    private static Authentication createAuthentication() {
         val attributes = CoreAuthenticationTestUtils.getAttributes();
         attributes.put("attribute", "value");
         return CoreAuthenticationTestUtils.getAuthentication("principal", attributes);
     }
 
-    private TicketGrantingTicket createTicketGrantingTicket() {
+    private static TicketGrantingTicket createTicketGrantingTicket() {
         val mock = Mockito.mock(TicketGrantingTicket.class);
         val authentication = createAuthentication();
         when(mock.getAuthentication()).thenReturn(authentication);
@@ -270,20 +270,20 @@ public class RegisteredServiceAccessStrategyAuditableEnforcerTests {
         return mock;
     }
 
-    private ServiceTicket createServiceTicket() {
+    private static ServiceTicket createServiceTicket() {
         val mock = mock(ServiceTicket.class);
         val service = createService();
         when(mock.getService()).thenReturn(service);
         return mock;
     }
 
-    private AuthenticationResult createAuthenticationResult() {
+    private static AuthenticationResult createAuthenticationResult() {
         val authentication = createAuthentication();
         val mock = CoreAuthenticationTestUtils.getAuthenticationResult(authentication);
         return mock;
     }
 
-    private Map<String, Set<String>> reject(final boolean fail) {
+    private static Map<String, Set<String>> reject(final boolean fail) {
         val reject = new HashMap<String, Set<String>>();
         reject.put("attribute", Set.of(fail ? "other_value" : "value"));
         return reject;
