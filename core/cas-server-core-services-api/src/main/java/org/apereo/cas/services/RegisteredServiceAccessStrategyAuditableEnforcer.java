@@ -27,7 +27,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
             try {
                 RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(context.getServiceTicket().get(),
                     context.getAuthenticationResult().get(), providedRegisteredService.get());
-            } catch (final PrincipalException e) {
+            } catch (final PrincipalException | UnauthorizedServiceException e) {
                 result.setException(e);
             }
             return result;
@@ -48,7 +48,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
                     registeredService,
                     ticketGrantingTicket.get(),
                     context.getRetrievePrincipalAttributesFromReleasePolicy().orElse(Boolean.TRUE));
-            } catch (final PrincipalException e) {
+            } catch (final PrincipalException | UnauthorizedServiceException e) {
                 result.setException(e);
             }
             return result;
@@ -71,7 +71,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
                     registeredService,
                     authentication,
                     context.getRetrievePrincipalAttributesFromReleasePolicy().orElse(Boolean.TRUE));
-            } catch (final PrincipalException e) {
+            } catch (final PrincipalException | UnauthorizedServiceException e) {
                 result.setException(e);
             }
             return result;
@@ -87,7 +87,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
                 .build();
             try {
                 RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
-            } catch (final PrincipalException e) {
+            } catch (final PrincipalException | UnauthorizedServiceException e) {
                 result.setException(e);
             }
             return result;
@@ -100,12 +100,14 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
                 .build();
             try {
                 RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
-            } catch (final PrincipalException e) {
+            } catch (final PrincipalException | UnauthorizedServiceException e) {
                 result.setException(e);
             }
             return result;
         }
 
-        throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Service unauthorized");
+        val result = AuditableExecutionResult.builder().build();
+        result.setException(new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Service unauthorized"));
+        return result;
     }
 }
