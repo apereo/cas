@@ -2,6 +2,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.services.util.CasAddonsRegisteredServicesJsonSerializerTests;
+import org.apereo.cas.services.util.RegisteredServiceAccessStrategyAuditableEnforcerTests;
 import org.apereo.cas.services.util.RegisteredServicePublicKeyCipherExecutorTests;
 
 import org.junit.runner.RunWith;
@@ -16,7 +17,8 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
     RegisteredServicePublicKeyCipherExecutorTests.class,
-    CasAddonsRegisteredServicesJsonSerializerTests.class
+    CasAddonsRegisteredServicesJsonSerializerTests.class,
+    RegisteredServiceAccessStrategyAuditableEnforcerTests.class
 })
 public class AllTestsSuite {
 }
