@@ -38,7 +38,7 @@ public abstract class AbstractPrincipalAttributeAcceptableUsagePolicyRepository 
     @Override
     public Pair<Boolean, Principal> verify(final RequestContext requestContext, final Credential credential) {
         @NonNull
-        final Principal principal = WebUtils.getAuthentication(requestContext).getPrincipal();
+        val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
 
         if (isUsagePolicyAcceptedBy(principal)) {
             LOGGER.debug("Usage policy has been accepted by [{}]", principal.getId());
