@@ -191,14 +191,6 @@ public class CoreAuthenticationTestUtils {
         return getAuthenticationResult(support, getService(), getCredentialsWithSameUsernameAndPassword());
     }
 
-    public static AuthenticationResult getAuthenticationResult() {
-        val result = mock(AuthenticationResult.class);
-        when(result.getAuthentication()).thenReturn(getAuthentication());
-        when(result.getService()).thenReturn(getService());
-        return result;
-    }
-
-
     public static AuthenticationResult getAuthenticationResult(final AuthenticationSystemSupport support, final Credential... credentials)
         throws AuthenticationException {
         return getAuthenticationResult(support, getService(), credentials);
@@ -208,6 +200,25 @@ public class CoreAuthenticationTestUtils {
                                                                final Credential... credentials) throws AuthenticationException {
 
         return support.handleAndFinalizeSingleAuthenticationTransaction(service, credentials);
+    }
+
+    public static AuthenticationResult getAuthenticationResult() throws AuthenticationException {
+        return getAuthenticationResult(getService(), getAuthentication());
+    }
+
+    public static AuthenticationResult getAuthenticationResult(final Service service) {
+        return getAuthenticationResult(service, getAuthentication());
+    }
+
+    public static AuthenticationResult getAuthenticationResult(final Authentication authentication) throws AuthenticationException {
+        return getAuthenticationResult(getService(), authentication);
+    }
+
+    public static AuthenticationResult getAuthenticationResult(final Service service, final Authentication authentication) throws AuthenticationException {
+        val result = mock(AuthenticationResult.class);
+        when(result.getAuthentication()).thenReturn(authentication);
+        when(result.getService()).thenReturn(service);
+        return result;
     }
 
     public static Principal mockPrincipal(final String attrName, final String... attrValues) {
