@@ -74,7 +74,7 @@ public class GroovyScriptMultifactorAuthenticationTrigger implements Multifactor
         }
 
         try {
-            final Object[] args = {registeredService, registeredService, authentication, httpServletRequest, LOGGER};
+            val args = new Object[]{registeredService, registeredService, authentication, httpServletRequest, LOGGER};
             val provider = this.watchableScript.execute(args, String.class);
             LOGGER.debug("Groovy script run for [{}] returned the provider id [{}]", registeredService, provider);
             if (StringUtils.isBlank(provider)) {

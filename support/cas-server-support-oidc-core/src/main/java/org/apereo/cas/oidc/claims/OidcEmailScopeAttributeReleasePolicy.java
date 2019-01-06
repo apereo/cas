@@ -17,11 +17,11 @@ import java.util.stream.Stream;
 public class OidcEmailScopeAttributeReleasePolicy extends BaseOidcScopeAttributeReleasePolicy {
     private static final long serialVersionUID = 1532960981124784595L;
 
-    private List<String> allowedAttributes = Stream.of("email", "email_verified").collect(Collectors.toList());
+    private static final List<String> ALLOWED_ATTRIBUTES = Stream.of("email", "email_verified").collect(Collectors.toList());
 
     public OidcEmailScopeAttributeReleasePolicy() {
         super(OidcConstants.StandardScopes.EMAIL.getScope());
-        setAllowedAttributes(allowedAttributes);
+        setAllowedAttributes(ALLOWED_ATTRIBUTES);
     }
 
     @JsonIgnore
