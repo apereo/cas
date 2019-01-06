@@ -5,6 +5,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.gen.HexRandomStringGenerator;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -73,10 +74,10 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
 
     private static final long serialVersionUID = -6833230731146922780L;
 
-
     /**
      * The Config bean.
      */
+    @Getter
     protected final OpenSamlConfigBean configBean;
 
     /**
@@ -355,10 +356,6 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             LOGGER.debug("Generating SAML attribute [{}] with value [{}]", attributeName, attributeValue);
             attributeList.add(newAttributeValue(attributeValue, defaultElementName));
         }
-    }
-
-    public OpenSamlConfigBean getConfigBean() {
-        return configBean;
     }
 }
 

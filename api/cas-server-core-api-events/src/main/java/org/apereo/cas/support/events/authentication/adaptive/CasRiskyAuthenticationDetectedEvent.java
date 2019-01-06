@@ -4,6 +4,8 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.events.AbstractCasEvent;
 
+import lombok.Getter;
+import lombok.ToString;
 
 /**
  * This is {@link CasRiskyAuthenticationDetectedEvent}.
@@ -11,6 +13,8 @@ import org.apereo.cas.support.events.AbstractCasEvent;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@ToString(callSuper = true)
+@Getter
 public class CasRiskyAuthenticationDetectedEvent extends AbstractCasEvent {
 
     private static final long serialVersionUID = 291168297497263298L;
@@ -34,18 +38,5 @@ public class CasRiskyAuthenticationDetectedEvent extends AbstractCasEvent {
         this.authentication = authentication;
         this.service = service;
         this.score = riskScore;
-    }
-
-
-    public Authentication getAuthentication() {
-        return authentication;
-    }
-
-    public RegisteredService getService() {
-        return service;
-    }
-
-    public Object getScore() {
-        return score;
     }
 }

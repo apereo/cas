@@ -36,6 +36,7 @@ public class MapItemType {
 
     @XmlElement(required = true)
     protected Object key;
+
     @XmlElement(required = true)
     protected Object value;
 

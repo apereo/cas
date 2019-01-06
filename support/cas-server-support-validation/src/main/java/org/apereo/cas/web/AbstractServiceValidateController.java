@@ -33,6 +33,7 @@ import org.apereo.cas.validation.ValidationResponseType;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -78,7 +79,11 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     private final CentralAuthenticationService centralAuthenticationService;
 
     private ProxyHandler proxyHandler;
+
+    @Getter
     private final View successView;
+
+    @Getter
     private final View failureView;
 
     private final ArgumentExtractor argumentExtractor;
@@ -390,14 +395,6 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     @Override
     public boolean canHandle(final HttpServletRequest request, final HttpServletResponse response) {
         return true;
-    }
-
-    public View getSuccessView() {
-        return successView;
-    }
-
-    public View getFailureView() {
-        return failureView;
     }
 
     /**
