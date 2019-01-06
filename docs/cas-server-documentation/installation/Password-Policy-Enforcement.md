@@ -28,7 +28,7 @@ fully explaining the nature of the problem.
 
 The translation of LDAP errors into CAS workflow is all
 handled by [ldaptive](http://www.ldaptive.org/docs/guide/authentication/accountstate). To see the relevant list of CAS properties,
-please [review this guide](../configuration/Configuration-Properties.html#ldap-authentication-1).
+please [review this guide](../configuration/Configuration-Properties.html#ldap-authentication).
 
 ### Account Expiration Notification
 
