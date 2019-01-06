@@ -59,7 +59,7 @@ public class ScriptedRegisteredServiceAttributeReleasePolicy extends AbstractReg
     }
 
     private Map<String, Object> getScriptedAttributesFromFile(final Map<String, Object> attributes) {
-        final Object[] args = {attributes, LOGGER};
+        val args = new Object[]{attributes, LOGGER};
         val map = ScriptingUtils.executeScriptEngine(this.scriptFile, args, Map.class);
         return ObjectUtils.defaultIfNull(map, new HashMap<>());
     }

@@ -41,7 +41,7 @@ public class GroovySamlRegisteredServiceAttributeReleasePolicy extends BaseSamlR
                                                                         final SamlRegisteredServiceServiceProviderMetadataFacade facade,
                                                                         final EntityDescriptor entityDescriptor) {
         try {
-            final Object[] args = {attributes, service, resolver, facade, entityDescriptor, applicationContext, LOGGER};
+            val args = new Object[] {attributes, service, resolver, facade, entityDescriptor, applicationContext, LOGGER};
             val resource = ResourceUtils.getResourceFrom(this.groovyScript);
             return ScriptingUtils.executeGroovyScript(resource, args, Map.class, true);
         } catch (final Exception e) {

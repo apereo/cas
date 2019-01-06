@@ -35,7 +35,7 @@ public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
     @Override
     public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attributes, final RegisteredService service) {
         try {
-            final Object[] args = {attributes, LOGGER, principal, service};
+            val args = new Object[] {attributes, LOGGER, principal, service};
             val resource = ResourceUtils.getResourceFrom(this.groovyScript);
             return ScriptingUtils.executeGroovyScript(resource, args, Map.class, true);
         } catch (final Exception e) {

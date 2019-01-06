@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.support.password;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.DefaultPasswordEncoder;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -39,7 +40,8 @@ public class PasswordEncoderUtils {
 
         if (type.endsWith(".groovy")) {
             LOGGER.debug("Creating Groovy-based password encoder at [{}]", type);
-            return new GroovyPasswordEncoder(properties.getType());
+            val resource = ApplicationContextProvider.getResourceLoader().getResource(type);
+            return new GroovyPasswordEncoder(resource);
         }
 
         if (type.contains(".")) {

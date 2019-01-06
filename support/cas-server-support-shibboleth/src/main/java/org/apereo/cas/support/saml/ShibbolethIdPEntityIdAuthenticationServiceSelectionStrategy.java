@@ -10,6 +10,7 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import com.google.common.base.Splitter;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -29,6 +30,7 @@ import java.util.Optional;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Getter
 public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy implements AuthenticationServiceSelectionStrategy {
     private static final long serialVersionUID = -2059445756475980894L;
 
@@ -105,11 +107,6 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy impleme
     public boolean supports(final Service service) {
         val casPattern = "^".concat(idpServerPrefix).concat(".*");
         return service != null && service.getId().matches(casPattern) && getEntityIdAsParameter(service).isPresent();
-    }
-
-    @Override
-    public int getOrder() {
-        return this.order;
     }
 
     private boolean isEntityIdServiceRegistered(final String entityId) {

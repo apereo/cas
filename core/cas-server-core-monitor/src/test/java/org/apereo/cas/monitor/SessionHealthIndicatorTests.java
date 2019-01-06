@@ -35,7 +35,7 @@ public class SessionHealthIndicatorTests {
     private DefaultTicketRegistry defaultRegistry;
 
     private static void addTicketsToRegistry(final TicketRegistry registry, final int tgtCount, final int stCount) {
-        final TicketGrantingTicketImpl[] ticket = {null};
+        val ticket = new TicketGrantingTicketImpl[]{null};
         IntStream.range(0, tgtCount).forEach(i -> {
             ticket[0] = new TicketGrantingTicketImpl(GENERATOR.getNewTicketId("TGT"), CoreAuthenticationTestUtils.getAuthentication(), TEST_EXP_POLICY);
             registry.addTicket(ticket[0]);
