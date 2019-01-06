@@ -20,7 +20,6 @@ import java.net.URL;
  */
 public class AuthyClientInstance {
 
-    private final AuthyApiClient authyClient;
     private final Users authyUsers;
     private final Tokens authyTokens;
 
@@ -42,9 +41,9 @@ public class AuthyClientInstance {
         val authyUrl = StringUtils.defaultIfBlank(apiUrl, AuthyApiClient.DEFAULT_API_URI);
         val url = new URL(authyUrl);
         val testFlag = url.getProtocol().equalsIgnoreCase("http");
-        this.authyClient = new AuthyApiClient(apiKey, authyUrl, testFlag);
-        this.authyUsers = this.authyClient.getUsers();
-        this.authyTokens = this.authyClient.getTokens();
+        val authyClient = new AuthyApiClient(apiKey, authyUrl, testFlag);
+        this.authyUsers = authyClient.getUsers();
+        this.authyTokens = authyClient.getTokens();
 
     }
 

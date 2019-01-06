@@ -10,6 +10,7 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.HttpRequestUtils;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -28,6 +29,7 @@ import java.util.Optional;
  * @since 5.0.0
  */
 @Slf4j
+@Getter
 @RequiredArgsConstructor
 public class OAuth20AuthenticationServiceSelectionStrategy implements AuthenticationServiceSelectionStrategy {
     private static final long serialVersionUID = 8517547235465666978L;
@@ -43,8 +45,7 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
             val builder = new URIBuilder(service.getId());
             return builder.getQueryParams()
                 .stream()
-                .filter(p -> p.getName()
-                    .equals(OAuth20Constants.CLIENT_ID))
+                .filter(p -> p.getName().equals(OAuth20Constants.CLIENT_ID))
                 .findFirst();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage());
@@ -114,10 +115,5 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
         LOGGER.trace("Authentication request is{} identified as an OAuth request",
             BooleanUtils.toString(res, StringUtils.EMPTY, " not"));
         return res;
-    }
-
-    @Override
-    public int getOrder() {
-        return this.order;
     }
 }

@@ -18,7 +18,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import javax.security.auth.login.AccountExpiredException;
@@ -42,7 +41,6 @@ public class JsonResourceAuthenticationHandlerTests {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-    private final Resource resource;
     private final JsonResourceAuthenticationHandler handler;
 
     public JsonResourceAuthenticationHandlerTests() throws Exception {
@@ -84,7 +82,7 @@ public class JsonResourceAuthenticationHandlerTests {
         acct.setAttributes(CollectionUtils.wrap("firstName", "Apereo", "lastName", "CAS"));
         accounts.put("casexpired", acct);
 
-        this.resource = new FileSystemResource(File.createTempFile("account", ".json"));
+        val resource = new FileSystemResource(File.createTempFile("account", ".json"));
 
         val mapper = Jackson2ObjectMapperBuilder.json()
             .featuresToDisable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
@@ -98,7 +96,7 @@ public class JsonResourceAuthenticationHandlerTests {
             .writerWithDefaultPrettyPrinter()
             .writeValue(resource.getFile(), accounts);
         this.handler = new JsonResourceAuthenticationHandler(null, mock(ServicesManager.class),
-            new DefaultPrincipalFactory(), null, this.resource);
+            new DefaultPrincipalFactory(), null, resource);
         this.handler.setPasswordPolicyConfiguration(new PasswordPolicyConfiguration(15));
     }
 
