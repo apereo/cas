@@ -82,7 +82,7 @@ public class AcceptableUsagePolicyProperties implements Serializable {
         private String tableName;
         
         /**
-         * The column to store the AUP attribute. May differ from the profile attribute defined by {@link #aupAttributeName}</code>.
+         * The column to store the AUP attribute. May differ from the profile attribute defined by {@link #aupAttributeName}.
          * SQL query can be further customized by setting {@link #sqlUpdateAUP}.
          */
         private String aupColumn;
