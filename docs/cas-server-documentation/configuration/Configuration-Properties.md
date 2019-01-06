@@ -1265,7 +1265,7 @@ under the configuration key `cas.authn.throttle.jdbc`.
 ### CouchDb
 
 Queries the data source used by the CAS audit facility to prevent successive failed login attempts for a particular username from the
-same IP address. CouchDb settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-settings) under the configuration key
+same IP address. CouchDb settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key
 `cas.authn.throttle`. When using this feature the audit facility should be in synchronous mode.
 
 ## Adaptive Authentication
@@ -1351,7 +1351,7 @@ LDAP settings for this feature are available [here](Configuration-Properties-Com
 
 ### CouchDb Surrogate Accounts
 
-Settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-settings) under the configuration key `cas.authn.surrogate`. Surrogates may be stored either as part of the principals profile or as a series of principal/surrogate pair. The default is a key/value pair.
+Settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.authn.surrogate`. Surrogates may be stored either as part of the principals profile or as a series of principal/surrogate pair. The default is a key/value pair.
 
 ```properties
 # cas.authn.surrogate.ldap.surrogateSearchFilter=(&(principal={user})(memberOf=cn=edu:example:cas:something:{user},dc=example,dc=edu))
@@ -2464,6 +2464,10 @@ under the configuration key `cas.authn.mfa.gauth`.
 The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.  Signing & encryption settings for this feature are
 available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.mfa.gauth`.
+
+#### Google Authenticator CouchDb
+
+Configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.authn.mfa.gauth`.  
 
 #### Google Authenticator JSON
 
@@ -3718,6 +3722,10 @@ To learn more about this topic, [please review this guide](../ticketing/JPA-Tick
 ```
 
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.jpa`.
+
+### CouchDb Ticket Registry
+
+To learn more about this topic, [please review this guide](../ticketing/CouchDb-Ticket-Registry.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-integration-settings) under the configuration key `cas.ticket.registry.couchdb`.
 
 ### Couchbase Ticket Registry
 

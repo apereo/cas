@@ -128,4 +128,4 @@ Monitor the status and availability of an LDAP server.
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#ldap-connection-pool).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties-Common.html#ldap-connection-settings).
