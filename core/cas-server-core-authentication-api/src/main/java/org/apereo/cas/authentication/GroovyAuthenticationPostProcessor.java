@@ -9,26 +9,26 @@ import lombok.val;
 import org.springframework.core.io.Resource;
 
 /**
- * This is {@link GroovyAuthenticationPreProcessor}.
+ * This is {@link GroovyAuthenticationPostProcessor}.
  *
  * @author Misagh Moayyed
- * @since 5.3.0
+ * @since 6.1.0
  */
-@Getter
-@Setter
 @Slf4j
-public class GroovyAuthenticationPreProcessor implements AuthenticationPreProcessor {
+@Setter
+@Getter
+public class GroovyAuthenticationPostProcessor implements AuthenticationPostProcessor {
     private final transient WatchableGroovyScriptResource watchableScript;
     private int order;
 
-    public GroovyAuthenticationPreProcessor(final Resource groovyResource) {
+    public GroovyAuthenticationPostProcessor(final Resource groovyResource) {
         this.watchableScript = new WatchableGroovyScriptResource(groovyResource);
     }
 
     @Override
-    public boolean process(final AuthenticationTransaction transaction) throws AuthenticationException {
-        val args = new Object[]{transaction, LOGGER};
-        return watchableScript.execute(args, Boolean.class);
+    public void process(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) throws AuthenticationException {
+        val args = new Object[]{builder, transaction, LOGGER};
+        watchableScript.execute(args, Void.class);
     }
 
     @Override
@@ -37,3 +37,4 @@ public class GroovyAuthenticationPreProcessor implements AuthenticationPreProces
         return watchableScript.execute("supports", Boolean.class, args);
     }
 }
+

@@ -186,6 +186,12 @@ public class AuthenticationProperties implements Serializable {
     private AuthenticationExceptionsProperties exceptions = new AuthenticationExceptionsProperties();
 
     /**
+     * Customization of authentication engine and pre/post processing.
+     */
+    @NestedConfigurationProperty
+    private AuthenticationEngineProperties engine = new AuthenticationEngineProperties();
+
+    /**
      * Authentication policy settings.
      */
     @NestedConfigurationProperty

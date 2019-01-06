@@ -5,12 +5,15 @@ import org.apereo.cas.authentication.AuthenticationHandlerResolver;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.AuthenticationTransactionManager;
 import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
+import org.apereo.cas.authentication.GroovyAuthenticationPostProcessor;
+import org.apereo.cas.authentication.GroovyAuthenticationPreProcessor;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.handler.ByCredentialSourceAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.handler.RegisteredServiceAuthenticationHandlerResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 
+import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -73,6 +76,22 @@ public class CasCoreAuthenticationSupportConfiguration {
                 plan.registerAuthenticationHandlerResolver(byCredentialSourceAuthenticationHandlerResolver());
             }
             plan.registerAuthenticationHandlerResolver(registeredServiceAuthenticationHandlerResolver());
+        };
+    }
+
+    @ConditionalOnMissingBean(name = "groovyAuthenticationProcessorExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer groovyAuthenticationProcessorExecutionPlanConfigurer() {
+        return plan -> {
+            val engine = casProperties.getAuthn().getEngine();
+            val preResource = engine.getGroovyPreProcessor().getLocation();
+            if (preResource != null) {
+                plan.registerAuthenticationPreProcessor(new GroovyAuthenticationPreProcessor(preResource));
+            }
+            val postResource = engine.getGroovyPostProcessor().getLocation();
+            if (postResource != null) {
+                plan.registerAuthenticationPostProcessor(new GroovyAuthenticationPostProcessor(postResource));
+            }
         };
     }
 }

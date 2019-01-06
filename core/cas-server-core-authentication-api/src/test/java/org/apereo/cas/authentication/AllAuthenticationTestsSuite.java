@@ -31,7 +31,8 @@ import org.junit.runners.Suite;
     GroovyAuthenticationPreProcessorTests.class,
     GroovyPrincipalFactoryTests.class,
     OneTimeTokenAccountTests.class,
-    DefaultAuthenticationResultBuilderTests.class
+    DefaultAuthenticationResultBuilderTests.class,
+    GroovyAuthenticationPostProcessorTests.class
 })
 public class AllAuthenticationTestsSuite {
 }

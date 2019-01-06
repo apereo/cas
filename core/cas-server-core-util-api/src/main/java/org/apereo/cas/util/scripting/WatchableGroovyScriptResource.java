@@ -53,8 +53,21 @@ public class WatchableGroovyScriptResource {
      * @return the result
      */
     public <T> T execute(final Object[] args, final Class<T> clazz) {
+        return execute(args, clazz, true);
+    }
+
+    /**
+     * Execute.
+     *
+     * @param <T>         the type parameter
+     * @param args        the args
+     * @param clazz       the clazz
+     * @param failOnError the fail on error
+     * @return the t
+     */
+    public <T> T execute(final Object[] args, final Class<T> clazz, final boolean failOnError) {
         if (this.groovyScript != null) {
-            return ScriptingUtils.executeGroovyScript(this.groovyScript, args, clazz, true);
+            return ScriptingUtils.executeGroovyScript(this.groovyScript, args, clazz, failOnError);
         }
         return null;
     }
@@ -69,8 +82,22 @@ public class WatchableGroovyScriptResource {
      * @return the t
      */
     public <T> T execute(final String methodName, final Class<T> clazz, final Object... args) {
+        return execute(methodName, clazz, true, args);
+    }
+
+    /**
+     * Execute.
+     *
+     * @param <T>         the type parameter
+     * @param methodName  the method name
+     * @param clazz       the clazz
+     * @param failOnError the fail on error
+     * @param args        the args
+     * @return the t
+     */
+    public <T> T execute(final String methodName, final Class<T> clazz, final boolean failOnError, final Object... args) {
         if (this.groovyScript != null) {
-            return ScriptingUtils.executeGroovyScript(this.groovyScript, methodName, args, clazz, true);
+            return ScriptingUtils.executeGroovyScript(this.groovyScript, methodName, args, clazz, failOnError);
         }
         return null;
     }
