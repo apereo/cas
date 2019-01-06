@@ -73,8 +73,11 @@ public class OAuthRefreshTokenExpirationPolicy extends AbstractCasExpirationPoli
      */
     @JsonIgnore
     protected boolean isRefreshTokenExpired(final TicketState ticketState) {
+        if (ticketState == null) {
+            return true;
+        }
         val expiringTime = ticketState.getCreationTime().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
-        return ticketState == null || expiringTime.isBefore(ZonedDateTime.now(ZoneOffset.UTC));
+        return expiringTime.isBefore(ZonedDateTime.now(ZoneOffset.UTC));
     }
 
     /**
