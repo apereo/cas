@@ -17,15 +17,14 @@ import java.util.stream.Stream;
 public class OidcProfileScopeAttributeReleasePolicy extends BaseOidcScopeAttributeReleasePolicy {
     private static final long serialVersionUID = 1532960981124784595L;
 
-    private List<String> allowedAttributes = Stream.of("name", "family_name", "given_name",
-        "middle_name", "nickname", "preferred_username",
-        "profile", "picture", "website",
-        "gender", "birthdate", "zoneinfo",
-        "locale", "updated_at").collect(Collectors.toList());
+    private static final List<String> ALLOWED_ATTRIBUTES = Stream.of("name", "family_name", "given_name",
+        "middle_name", "nickname", "preferred_username", "profile", "picture", "website",
+        "gender", "birthdate", "zoneinfo", "locale", "updated_at")
+        .collect(Collectors.toList());
 
     public OidcProfileScopeAttributeReleasePolicy() {
         super(OidcConstants.StandardScopes.PROFILE.getScope());
-        setAllowedAttributes(allowedAttributes);
+        setAllowedAttributes(ALLOWED_ATTRIBUTES);
     }
 
     @JsonIgnore

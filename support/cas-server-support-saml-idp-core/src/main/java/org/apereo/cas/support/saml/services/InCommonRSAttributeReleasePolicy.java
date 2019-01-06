@@ -15,11 +15,12 @@ import java.util.Set;
  */
 public class InCommonRSAttributeReleasePolicy extends MetadataEntityAttributesAttributeReleasePolicy {
     private static final long serialVersionUID = 1532960981124784595L;
-    private List<String> allowedAttributes = CollectionUtils.wrapList("eduPersonPrincipalName",
+
+    private static final List<String> ALLOWED_ATTRIBUTES = CollectionUtils.wrapList("eduPersonPrincipalName",
         "eduPersonTargetedID", "email", "displayName", "givenName", "surname", "eduPersonScopedAffiliation");
 
     public InCommonRSAttributeReleasePolicy() {
-        setAllowedAttributes(allowedAttributes);
+        setAllowedAttributes(ALLOWED_ATTRIBUTES);
     }
 
     @JsonIgnore

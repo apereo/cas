@@ -46,7 +46,7 @@ public class GroovyScriptAuthenticationPolicy implements AuthenticationPolicy {
             return ScriptingUtils.executeGroovyShellScript(inlineScript, args, Optional.class);
         }
         val res = this.resourceLoader.getResource(script);
-        final Object[] args = {auth.getPrincipal(), LOGGER};
+        val args = new Object[] {auth.getPrincipal(), LOGGER};
         return ScriptingUtils.executeGroovyScript(res, args, Optional.class, true);
     }
 }

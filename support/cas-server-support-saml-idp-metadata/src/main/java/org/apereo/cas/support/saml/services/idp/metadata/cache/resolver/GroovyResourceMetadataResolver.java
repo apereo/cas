@@ -33,7 +33,7 @@ public class GroovyResourceMetadataResolver extends BaseSamlRegisteredServiceMet
             val metadataLocation = service.getMetadataLocation();
             LOGGER.info("Loading SAML metadata via [{}]", metadataLocation);
             val metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
-            final Object[] args = {service, this.configBean, this.samlIdPProperties, LOGGER};
+            val args = new Object[] {service, this.configBean, this.samlIdPProperties, LOGGER};
             val metadataResolver =
                 ScriptingUtils.executeGroovyScript(metadataResource, args, MetadataResolver.class, true);
             if (metadataResolver != null) {

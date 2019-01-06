@@ -82,11 +82,9 @@ public class JdbcPasswordManagementServiceTests {
     @Qualifier("jdbcPasswordManagementDataSource")
     private DataSource jdbcPasswordManagementDataSource;
 
-    private JdbcTemplate jdbcTemplate;
-
     @Before
     public void before() {
-        jdbcTemplate = new JdbcTemplate(this.jdbcPasswordManagementDataSource);
+        val jdbcTemplate = new JdbcTemplate(this.jdbcPasswordManagementDataSource);
 
         jdbcTemplate.execute("drop table pm_table_accounts if exists;");
         jdbcTemplate.execute("create table pm_table_accounts (id int, userid varchar(255),"
