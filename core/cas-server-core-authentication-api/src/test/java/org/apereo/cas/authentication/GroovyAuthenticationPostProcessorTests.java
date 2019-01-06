@@ -16,13 +16,13 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link GroovyAuthenticationPreProcessorTests}.
+ * This is {@link GroovyAuthenticationPostProcessorTests}.
  *
  * @author Misagh Moayyed
- * @since 5.3.0
+ * @since 6.1.0
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
-public class GroovyAuthenticationPreProcessorTests {
+public class GroovyAuthenticationPostProcessorTests {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
 
@@ -31,11 +31,14 @@ public class GroovyAuthenticationPreProcessorTests {
 
     @Test
     public void verifyAction() {
-        val g = new GroovyAuthenticationPreProcessor(new ClassPathResource("GroovyPreProcessor.groovy"));
+        val g = new GroovyAuthenticationPostProcessor(new ClassPathResource("GroovyPostProcessor.groovy"));
         val transaction = mock(AuthenticationTransaction.class);
         val creds = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         when(transaction.getPrimaryCredential()).thenReturn(Optional.of(creds));
-        assertTrue(g.process(transaction));
         assertTrue(g.supports(creds));
+        val authenticationBuilder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
+        g.process(authenticationBuilder, transaction);
+        assertFalse(authenticationBuilder.getSuccesses().isEmpty());
+        assertFalse(authenticationBuilder.getSuccesses().get("test").getWarnings().isEmpty());
     }
 }
