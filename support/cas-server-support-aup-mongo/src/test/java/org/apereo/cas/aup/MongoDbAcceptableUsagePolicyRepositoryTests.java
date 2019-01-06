@@ -90,9 +90,9 @@ public class MongoDbAcceptableUsagePolicyRepositoryTests {
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
         final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casaup");
-        final TicketGrantingTicket tgt = new MockTicketGrantingTicket("casaup", c, CollectionUtils.wrap("accepted", "false"));
-        ticketRegistry.addTicket(tgt);
-        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
+        final Principal pricipal = CoreAuthenticationTestUtils.getPrincipal(c.getId(), CollectionUtils.wrap("accepted", "false"));
+        final Authentication auth = CoreAuthenticationTestUtils.getAuthentication(pricipal);
+        WebUtils.putAuthentication(auth, context);
 
         assertFalse(acceptableUsagePolicyRepository.verify(context, c).getLeft());
         assertTrue(acceptableUsagePolicyRepository.submit(context, c));
