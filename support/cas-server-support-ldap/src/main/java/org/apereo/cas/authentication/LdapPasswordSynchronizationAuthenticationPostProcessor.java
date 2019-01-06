@@ -16,7 +16,6 @@ import org.ldaptive.ResultCode;
 import org.ldaptive.ad.UnicodePwdAttribute;
 
 import java.util.Collections;
-import java.util.Optional;
 
 /**
  * This is {@link LdapPasswordSynchronizationAuthenticationPostProcessor}.
