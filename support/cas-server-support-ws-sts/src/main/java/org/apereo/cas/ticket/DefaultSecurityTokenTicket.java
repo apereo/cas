@@ -3,6 +3,7 @@ package org.apereo.cas.ticket;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.util.EncodingUtils;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.SerializationUtils;
@@ -31,6 +32,7 @@ public class DefaultSecurityTokenTicket extends AbstractTicket implements Securi
     private static final long serialVersionUID = 3940671352560102114L;
 
     @ManyToOne(targetEntity = TicketGrantingTicketImpl.class)
+    @Getter
     private TicketGrantingTicket ticketGrantingTicket;
 
     @Column(name = "SECURITY_TOKEN")
@@ -40,11 +42,6 @@ public class DefaultSecurityTokenTicket extends AbstractTicket implements Securi
         super(id, expirationPolicy);
         this.ticketGrantingTicket = ticketGrantingTicket;
         this.securityToken = securityToken;
-    }
-
-    @Override
-    public TicketGrantingTicket getTicketGrantingTicket() {
-        return this.ticketGrantingTicket;
     }
 
     @Override
