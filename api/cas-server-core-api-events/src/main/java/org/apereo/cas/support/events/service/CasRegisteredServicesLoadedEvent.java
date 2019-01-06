@@ -2,6 +2,9 @@ package org.apereo.cas.support.events.service;
 
 import org.apereo.cas.services.RegisteredService;
 
+import lombok.Getter;
+import lombok.ToString;
+
 import java.util.Collection;
 
 /**
@@ -11,6 +14,8 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@ToString(callSuper = true)
+@Getter
 public class CasRegisteredServicesLoadedEvent extends BaseCasRegisteredServiceEvent {
 
     private static final long serialVersionUID = 291168299712263298L;
@@ -26,9 +31,5 @@ public class CasRegisteredServicesLoadedEvent extends BaseCasRegisteredServiceEv
     public CasRegisteredServicesLoadedEvent(final Object source, final Collection<RegisteredService> services) {
         super(source);
         this.services = services;
-    }
-
-    public Collection<RegisteredService> getServices() {
-        return services;
     }
 }
