@@ -19,6 +19,9 @@ import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.junit.Before;
@@ -51,8 +54,8 @@ import static org.junit.Assert.*;
 /**
  * This is {@link JdbcAcceptableUsagePolicyRepositoryTests}.
  *
- * @author Misagh Moayyed
- * @since 5.3.0
+ * @author Martin Böhmer
+ * @since 5.3.8
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
@@ -75,8 +78,8 @@ import static org.junit.Assert.*;
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class
 })
-@TestPropertySource(locations = {"classpath:/jdbc-aup.properties"})
-public class JdbcAcceptableUsagePolicyRepositoryTests {
+@TestPropertySource(locations = {"classpath:/jdbc-aup-advanced.properties"})
+public class JdbcAcceptableUsagePolicyRepositoryAdvancedTests {
     @Autowired
     @Qualifier("acceptableUsagePolicyRepository")
     private AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
@@ -101,8 +104,8 @@ public class JdbcAcceptableUsagePolicyRepositoryTests {
         final Connection c = this.acceptableUsagePolicyDataSource.getConnection();
         final Statement s = c.createStatement();
         c.setAutoCommit(true);
-        s.execute("CREATE TABLE aup_table (id int primary key, username varchar(255), accepted boolean)");
-        s.execute("INSERT INTO aup_table (id, username, accepted) values (100, 'casuser', false);");
+        s.execute("CREATE TABLE users_table (id int primary key, username varchar(255), mail varchar(255), aup boolean)");
+        s.execute("INSERT INTO users_table (id, username, mail, aup) values (100, 'casuser', 'casuser@example.org', false);");
         c.close();
     }
     
@@ -111,7 +114,7 @@ public class JdbcAcceptableUsagePolicyRepositoryTests {
         final Connection c = this.acceptableUsagePolicyDataSource.getConnection();
         final Statement s = c.createStatement();
         c.setAutoCommit(true);
-        s.execute("DROP TABLE aup_table;");
+        s.execute("DROP TABLE users_table;");
         c.close();
     }
 
@@ -121,9 +124,13 @@ public class JdbcAcceptableUsagePolicyRepositoryTests {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser");
-        final Principal pricipal = CoreAuthenticationTestUtils.getPrincipal(c.getId(), CollectionUtils.wrap("accepted", "false"));
+        final Principal pricipal = CoreAuthenticationTestUtils.getPrincipal(c.getId(), CollectionUtils.wrap("aupAccepted", "false", "email", "CASuser@example.org"));
         final Authentication auth = CoreAuthenticationTestUtils.getAuthentication(pricipal);
         WebUtils.putAuthentication(auth, context);
+        // TGT can be deleted after merge of #3726
+        final TicketGrantingTicket tgt = new MockTicketGrantingTicket("casuser", c, CollectionUtils.wrap("aupAccepted", "false", "email", "CASuser@example.org"));
+        ticketRegistry.addTicket(tgt);
+        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
 
         assertFalse(acceptableUsagePolicyRepository.verify(context, c).getLeft());
         assertTrue(acceptableUsagePolicyRepository.submit(context, c));
@@ -139,12 +146,46 @@ public class JdbcAcceptableUsagePolicyRepositoryTests {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser");
-        final Principal pricipal = CoreAuthenticationTestUtils.getPrincipal(c.getId(), CollectionUtils.wrap("accepted", "false"));
+        final Principal pricipal = CoreAuthenticationTestUtils.getPrincipal(c.getId(), CollectionUtils.wrap("aupAccepted", "false", "email", "CASuser@example.org"));
         final Authentication auth = CoreAuthenticationTestUtils.getAuthentication(pricipal);
         WebUtils.putAuthentication(auth, context);
         
         String principalId = jdbcAupRepository.determinePrincipalId(context, c, aupProperties.getJdbc());
-        assertEquals("casuser", principalId);
+        assertEquals("CASuser@example.org", principalId);
+    }
+    
+    @Test(expected = IllegalStateException.class)
+    public void testMissingPrincipalAttribute() {
+        final AcceptableUsagePolicyProperties aupProperties = casProperties.getAcceptableUsagePolicy();
+        final JdbcAcceptableUsagePolicyRepository jdbcAupRepository = new JdbcAcceptableUsagePolicyRepository(ticketRegistrySupport,
+                aupProperties.getAupAttributeName(), acceptableUsagePolicyDataSource, aupProperties);
+        
+        final MockRequestContext context = new MockRequestContext();
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser");
+        final Principal pricipal = CoreAuthenticationTestUtils.getPrincipal(c.getId(), CollectionUtils.wrap("aupAccepted", "false", "wrong-attribute", "CASuser@example.org"));
+        final Authentication auth = CoreAuthenticationTestUtils.getAuthentication(pricipal);
+        WebUtils.putAuthentication(auth, context);
+        
+        jdbcAupRepository.determinePrincipalId(context, c, aupProperties.getJdbc());
+    }
+    
+    @Test(expected = IllegalStateException.class)
+    public void testBadTypePrincipalAttribute() {
+        final AcceptableUsagePolicyProperties aupProperties = casProperties.getAcceptableUsagePolicy();
+        final JdbcAcceptableUsagePolicyRepository jdbcAupRepository = new JdbcAcceptableUsagePolicyRepository(ticketRegistrySupport,
+                aupProperties.getAupAttributeName(), acceptableUsagePolicyDataSource, aupProperties);
+        
+        final MockRequestContext context = new MockRequestContext();
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser");
+        final Principal pricipal = CoreAuthenticationTestUtils.getPrincipal(c.getId(), CollectionUtils.wrap("aupAccepted", "false", "email", 42));
+        final Authentication auth = CoreAuthenticationTestUtils.getAuthentication(pricipal);
+        WebUtils.putAuthentication(auth, context);
+        
+        jdbcAupRepository.determinePrincipalId(context, c, aupProperties.getJdbc());
     }
     
 }
