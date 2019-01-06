@@ -1,5 +1,7 @@
 package org.apereo.cas.support.events.service;
 
+import lombok.Getter;
+import lombok.ToString;
 
 /**
  * This is {@link CasRegisteredServicesRefreshEvent} that is signaled
@@ -8,6 +10,8 @@ package org.apereo.cas.support.events.service;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
+@ToString(callSuper = true)
+@Getter
 public class CasRegisteredServicesRefreshEvent extends BaseCasRegisteredServiceEvent {
 
     private static final long serialVersionUID = 291168299766263298L;
@@ -20,5 +24,4 @@ public class CasRegisteredServicesRefreshEvent extends BaseCasRegisteredServiceE
     public CasRegisteredServicesRefreshEvent(final Object source) {
         super(source);
     }
-
 }
