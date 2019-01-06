@@ -1099,6 +1099,59 @@ Protocol/authentication attributes may also be released conditionally on a per-s
 
 In the event that a separate resolver is put into place, control how the final principal should be constructed by default. Principal resolution and Person Directory settings for this feature are available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) under the configuration key `cas.personDirectory`.
 
+## Authentication Engine
+
+Control inner-workings of the CAS authentication engine, before and after the execution.
+
+### Authentication Pre-Processing
+
+#### Groovy
+
+```properties
+# cas.authn.engine.groovyPreProcessor.location=file:/etc/cas/config/GroovyPreProcessor.groovy
+```
+
+The script itself may be designed as:
+
+```groovy
+def run(Object[] args) {
+    def transaction = args[0]
+    def logger = args[1]
+    true
+}
+
+def supports(Object[] args) {
+    def credential = args[0]
+    def logger = args[1]
+    true
+}
+```
+
+### Authentication Post-Processing
+
+#### Groovy
+
+```properties
+# cas.authn.engine.groovyPostProcessor.location=file:/etc/cas/config/GroovyPostProcessor.groovy
+```
+
+The script itself may be designed as:
+
+```groovy
+def run(Object[] args) {
+    def builder = args[0]
+    def transaction = args[1]
+    def logger = args[2]
+    true
+}
+
+def supports(Object[] args) {
+    def credential = args[0]
+    def logger = args[1]
+    true
+}
+```
+
 ## Authentication Policy
 
 To learn more about this topic, [please review this guide](../installation/Configuring-Authentication-Components.html#authentication-policy).
