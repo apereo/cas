@@ -84,6 +84,10 @@ jobs:
   - stage: build
     script: ./ci/build.sh
     name: "Build CAS"
+  - stage: build
+    script: ./ci/html-proofer-docs.sh
+    if: branch =~ /^\d+\.\d+\.x$/ or branch = master
+    name: "Validate Documentation"
     ############################################
   - stage: publish
     if: NOT commit_message =~ ^\[skip\s+snapshots\] and type != "pull_request" and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
@@ -97,10 +101,6 @@ jobs:
   - stage: postbuild
     script: ./ci/analyze-style.sh
     name: "Checkstyle Analysis"
-  - stage: postbuild
-    script: ./ci/html-proofer-docs.sh
-    if: branch =~ /^\d+\.\d+\.x$/ or branch = master
-    name: "Validate Documentation"
   - stage: postbuild
     script: ./ci/push-docs-ghpages.sh
     if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
