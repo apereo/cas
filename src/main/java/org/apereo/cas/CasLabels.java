@@ -119,7 +119,7 @@ public enum CasLabels {
     LABEL_TICKET_VALIDATION("Ticket Validation"),
     LABEL_TICKETS_REGISTRIES("Tickets & Registries", "ticket registry"),
     LABEL_UNIT_INTEGRATION_TESTS("Unit/Integration Tests", "\btest\b|junit|tests|mockito|suite|\bunit test\b"),
-    LABEL_USER_INTERFACE_THEMES("User Interface & Themes", "ux|thymeleaf|html|views|screen|page|gulp|javascript|js|sass|css"),
+    LABEL_USER_INTERFACE_THEMES("User Interface & Themes", "ux|thymeleaf|\bhtml\b|views|screen|page|gulp|javascript|js|sass|css"),
     LABEL_WS_FED_PROTOCOL("WS-FED Protocol"),
     LABEL_X509("X.509", "x509|certificates|tls|\bclient authentication\b"),
     LABEL_RECAPTCHA("reCAPTCHA");
