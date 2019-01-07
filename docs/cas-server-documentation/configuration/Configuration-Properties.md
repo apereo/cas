@@ -1099,6 +1099,59 @@ Protocol/authentication attributes may also be released conditionally on a per-s
 
 In the event that a separate resolver is put into place, control how the final principal should be constructed by default. Principal resolution and Person Directory settings for this feature are available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) under the configuration key `cas.personDirectory`.
 
+## Authentication Engine
+
+Control inner-workings of the CAS authentication engine, before and after the execution.
+
+### Authentication Pre-Processing
+
+#### Groovy
+
+```properties
+# cas.authn.engine.groovyPreProcessor.location=file:/etc/cas/config/GroovyPreProcessor.groovy
+```
+
+The script itself may be designed as:
+
+```groovy
+def run(Object[] args) {
+    def transaction = args[0]
+    def logger = args[1]
+    true
+}
+
+def supports(Object[] args) {
+    def credential = args[0]
+    def logger = args[1]
+    true
+}
+```
+
+### Authentication Post-Processing
+
+#### Groovy
+
+```properties
+# cas.authn.engine.groovyPostProcessor.location=file:/etc/cas/config/GroovyPostProcessor.groovy
+```
+
+The script itself may be designed as:
+
+```groovy
+def run(Object[] args) {
+    def builder = args[0]
+    def transaction = args[1]
+    def logger = args[2]
+    true
+}
+
+def supports(Object[] args) {
+    def credential = args[0]
+    def logger = args[1]
+    true
+}
+```
+
 ## Authentication Policy
 
 To learn more about this topic, [please review this guide](../installation/Configuring-Authentication-Components.html#authentication-policy).
@@ -1265,7 +1318,7 @@ under the configuration key `cas.authn.throttle.jdbc`.
 ### CouchDb
 
 Queries the data source used by the CAS audit facility to prevent successive failed login attempts for a particular username from the
-same IP address. CouchDb settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-settings) under the configuration key
+same IP address. CouchDb settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key
 `cas.authn.throttle`. When using this feature the audit facility should be in synchronous mode.
 
 ## Adaptive Authentication
@@ -1351,7 +1404,7 @@ LDAP settings for this feature are available [here](Configuration-Properties-Com
 
 ### CouchDb Surrogate Accounts
 
-Settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-settings) under the configuration key `cas.authn.surrogate`. Surrogates may be stored either as part of the principals profile or as a series of principal/surrogate pair. The default is a key/value pair.
+Settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.authn.surrogate`. Surrogates may be stored either as part of the principals profile or as a series of principal/surrogate pair. The default is a key/value pair.
 
 ```properties
 # cas.authn.surrogate.ldap.surrogateSearchFilter=(&(principal={user})(memberOf=cn=edu:example:cas:something:{user},dc=example,dc=edu))
@@ -2193,8 +2246,8 @@ be bypassed by users and that the proxy ensures the header
 never originates from the browser.
 
 ```properties
-cas.authn.x509.extractCert=false
-cas.authn.x509.sslHeaderName=ssl_client_cert
+# cas.authn.x509.extractCert=false
+# cas.authn.x509.sslHeaderName=ssl_client_cert
 ```
 
 The specific parsing logic for the certificate is compatible
@@ -2204,7 +2257,7 @@ Apache HTTPD, Nginx, Haproxy, BigIP F5, etc.
 ### X509 Principal Resolution
 
 ```properties
-cas.authn.x509.principalType=SERIAL_NO|SERIAL_NO_DN|SUBJECT|SUBJECT_ALT_NAME|SUBJECT_DN
+# cas.authn.x509.principalType=SERIAL_NO|SERIAL_NO_DN|SUBJECT|SUBJECT_ALT_NAME|SUBJECT_DN
 ```
 
 Principal resolution and Person Directory settings for this feature are available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) under the configuration key `cas.authn.x509.principal`.
@@ -2464,6 +2517,10 @@ under the configuration key `cas.authn.mfa.gauth`.
 The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.  Signing & encryption settings for this feature are
 available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.mfa.gauth`.
+
+#### Google Authenticator CouchDb
+
+Configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.authn.mfa.gauth`.  
 
 #### Google Authenticator JSON
 
@@ -3719,6 +3776,10 @@ To learn more about this topic, [please review this guide](../ticketing/JPA-Tick
 
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.jpa`.
 
+### CouchDb Ticket Registry
+
+To learn more about this topic, [please review this guide](../ticketing/CouchDb-Ticket-Registry.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-integration-settings) under the configuration key `cas.ticket.registry.couchdb`.
+
 ### Couchbase Ticket Registry
 
 To learn more about this topic, [please review this guide](../ticketing/Couchbase-Ticket-Registry.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) under the configuration key `cas.ticket.registry.couchbase`.
@@ -4502,6 +4563,20 @@ Configure settings relevant to the Java CAS client configured to handle inbound 
 # cas.client.validatorType=CAS10|CAS20|CAS30
 ```
 
+## Password Synchronization
+
+Allow the user to synchronize account password to a variety of destinations in-place. To learn more about this 
+topic, [please review this guide](../installation/Password-Synchronization.html).
+
+### LDAP Password Sync
+
+Common LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under 
+the configuration key `cas.authn.passwordSync.ldap[0]`.
+
+```properties
+# cas.authn.passwordSync.ldap[0].enabled=false
+``` 
+
 ## Password Management
 
 Allow the user to update their account password, etc in-place.
@@ -4520,7 +4595,7 @@ To learn more about this topic, [please review this guide](../installation/Passw
 # cas.authn.pm.autoLogin=false
 ```
 
-Email notifications settings for this feature are available [here](Configuration-Properties-Common.html#email-notifications) 
+Common email notifications settings for this feature are available [here](Configuration-Properties-Common.html#email-notifications) 
 under the configuration key `cas.authn.pm.reset`.
 
 The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
@@ -4540,7 +4615,7 @@ The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encrypt
 
 ### LDAP Password Management
 
-LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.pm.ldap`.
+Common LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.pm.ldap`.
 
 ```properties
 # cas.authn.pm.ldap.type=AD|GENERIC|EDirectory|FreeIPA
@@ -4555,8 +4630,8 @@ LDAP settings for this feature are available [here](Configuration-Properties-Com
 
 ### JDBC Password Management
 
-Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) 
-under the configuration key `cas.authn.pm.jdbc`. Password encoding  settings for this 
+Common Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) 
+under the configuration key `cas.authn.pm.jdbc`. Common password encoding  settings for this 
 feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.pm.jdbc`.
 
 ```properties

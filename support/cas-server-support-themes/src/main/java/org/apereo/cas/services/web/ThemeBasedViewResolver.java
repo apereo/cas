@@ -1,6 +1,7 @@
 package org.apereo.cas.services.web;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -25,6 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Slf4j
 @Setter
+@Getter
 public class ThemeBasedViewResolver implements ViewResolver, Ordered {
 
     private final ThemeResolver themeResolver;
@@ -67,10 +69,5 @@ public class ThemeBasedViewResolver implements ViewResolver, Ordered {
         val resolver = viewResolverFactory.create(theme);
         resolvers.put(theme, resolver);
         return resolver;
-    }
-
-    @Override
-    public int getOrder() {
-        return order;
     }
 }

@@ -80,10 +80,10 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
                 }
             }
             val registeredService = determineRegisteredServiceForEvent(context, service);
-            LOGGER.debug("Attempting to resolve candidate authentication events for service [{}]", service);
+            LOGGER.trace("Attempting to resolve candidate authentication events for service [{}]", service);
             val resolvedEvents = resolveCandidateAuthenticationEvents(context, service, registeredService);
             if (!resolvedEvents.isEmpty()) {
-                LOGGER.debug("The set of authentication events resolved for [{}] are [{}]. Beginning to select the final event...", service, resolvedEvents);
+                LOGGER.trace("The set of authentication events resolved for [{}] are [{}]. Beginning to select the final event...", service, resolvedEvents);
                 putResolvedEventsAsAttribute(context, resolvedEvents);
                 val finalResolvedEvent = this.selectiveResolver.resolveSingle(context);
                 LOGGER.debug("The final authentication event resolved for [{}] is [{}]", service, finalResolvedEvent);
@@ -91,7 +91,7 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
                     return CollectionUtils.wrapSet(finalResolvedEvent);
                 }
             } else {
-                LOGGER.debug("No candidate authentication events were resolved for service [{}]", service);
+                LOGGER.trace("No candidate authentication events were resolved for service [{}]", service);
             }
 
             val builder = WebUtils.getAuthenticationResultBuilder(context);

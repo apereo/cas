@@ -27,10 +27,15 @@ import java.util.function.Predicate;
 public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
 
     private static final long serialVersionUID = -8504842011648432398L;
-    /**
-     * Credential metadata.
-     */
+
     private final List<CredentialMetaData> credentials = new ArrayList<>();
+
+    /**
+     * Warnings here are considered global and apply
+     * to the authentication event vs individual attempts and results.
+     */
+    private final List<MessageDescriptor> warnings = new ArrayList<>();
+
     /**
      * Authentication metadata attributes.
      */
@@ -83,6 +88,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
         builder.setSuccesses(source.getSuccesses());
         builder.setFailures(source.getFailures());
         builder.setAttributes(source.getAttributes());
+        builder.setWarnings(source.getWarnings());
         return builder;
     }
 
@@ -96,10 +102,29 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     }
 
     @Override
+    public AuthenticationBuilder setWarnings(final List<MessageDescriptor> warning) {
+        this.warnings.clear();
+        this.warnings.addAll(warning);
+        return this;
+    }
+
+    @Override
     public AuthenticationBuilder setAuthenticationDate(final ZonedDateTime d) {
         if (d != null) {
             this.authenticationDate = d;
         }
+        return this;
+    }
+
+    @Override
+    public AuthenticationBuilder addWarnings(final List<MessageDescriptor> warning) {
+        this.warnings.addAll(warning);
+        return this;
+    }
+
+    @Override
+    public AuthenticationBuilder addWarning(final MessageDescriptor warning) {
+        this.warnings.add(warning);
         return this;
     }
 
@@ -217,6 +242,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
 
     @Override
     public Authentication build() {
-        return new DefaultAuthentication(this.authenticationDate, this.credentials, this.principal, this.attributes, this.successes, this.failures);
+        return new DefaultAuthentication(this.authenticationDate, this.credentials, this.principal,
+            this.attributes, this.successes, this.failures, this.warnings);
     }
 }

@@ -5,6 +5,8 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jasig.cas.client.util.URIBuilder;
@@ -19,6 +21,8 @@ import java.util.Optional;
  * @since 5.0.0
  */
 @Slf4j
+@Setter
+@Getter
 public class SamlIdPEntityIdAuthenticationServiceSelectionStrategy implements AuthenticationServiceSelectionStrategy {
     private static final long serialVersionUID = -2059445756475980894L;
     private final int order = Ordered.HIGHEST_PRECEDENCE;
@@ -56,10 +60,5 @@ public class SamlIdPEntityIdAuthenticationServiceSelectionStrategy implements Au
     public boolean supports(final Service service) {
         return service != null && service.getId().matches(this.casServiceUrlPattern)
             && getEntityIdAsParameter(service).isPresent();
-    }
-
-    @Override
-    public int getOrder() {
-        return this.order;
     }
 }

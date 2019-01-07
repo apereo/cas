@@ -53,8 +53,10 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
         val flowIds = sourceRegistry.getFlowDefinitionIds();
         for (val flowId : flowIds) {
             val definition = sourceRegistry.getFlowDefinition(flowId);
-            LOGGER.trace("Registering flow definition [{}]", flowId);
-            this.loginFlowDefinitionRegistry.registerFlowDefinition(definition);
+            if (definition != null) {
+                LOGGER.trace("Registering flow definition [{}]", flowId);
+                this.loginFlowDefinitionRegistry.registerFlowDefinition(definition);
+            }
         }
     }
 
@@ -77,7 +79,7 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
         val flowIds = mfaProviderFlowRegistry.getFlowDefinitionIds();
         Arrays.stream(flowIds).forEach(id -> {
             val flow = (Flow) mfaProviderFlowRegistry.getFlowDefinition(id);
-            if (containsFlowState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT)) {
+            if (flow != null && containsFlowState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT)) {
                 val states = getCandidateStatesForMultifactorAuthentication();
                 states.forEach(s -> {
                     val state = getState(flow, s);
@@ -102,8 +104,11 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
     protected void registerMultifactorProviderAuthenticationWebflow(final Flow flow, final String subflowId,
                                                                     final FlowDefinitionRegistry mfaProviderFlowRegistry,
                                                                     final String providerId) {
+        if (mfaProviderFlowRegistry.containsFlowDefinition(subflowId)) {
+            LOGGER.warn("Could not locate flow id [{}]", subflowId);
+            return;
+        }
         val mfaFlow = (Flow) mfaProviderFlowRegistry.getFlowDefinition(subflowId);
-
         mfaFlow.getStartActionList().add(createSetAction("flowScope.".concat(CasWebflowConstants.VAR_ID_MFA_PROVIDER_ID), StringUtils.quote(providerId)));
 
         val initStartState = (ActionState) mfaFlow.getStartState();

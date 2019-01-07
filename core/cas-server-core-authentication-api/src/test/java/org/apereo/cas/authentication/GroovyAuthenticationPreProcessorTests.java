@@ -33,8 +33,9 @@ public class GroovyAuthenticationPreProcessorTests {
     public void verifyAction() {
         val g = new GroovyAuthenticationPreProcessor(new ClassPathResource("GroovyPreProcessor.groovy"));
         val transaction = mock(AuthenticationTransaction.class);
-        when(transaction.getPrimaryCredential()).thenReturn(Optional.of(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
+        val creds = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
+        when(transaction.getPrimaryCredential()).thenReturn(Optional.of(creds));
         assertTrue(g.process(transaction));
-        assertTrue(g.supports(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
+        assertTrue(g.supports(creds));
     }
 }

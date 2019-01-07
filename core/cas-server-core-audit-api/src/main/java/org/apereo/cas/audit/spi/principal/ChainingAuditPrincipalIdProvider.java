@@ -18,7 +18,6 @@ import java.util.List;
 @Getter
 @RequiredArgsConstructor
 public class ChainingAuditPrincipalIdProvider implements AuditPrincipalIdProvider {
-    private static final int ORDER = Integer.MAX_VALUE;
     private final List<AuditPrincipalIdProvider> providers;
 
     /**
@@ -55,6 +54,6 @@ public class ChainingAuditPrincipalIdProvider implements AuditPrincipalIdProvide
 
     @Override
     public int getOrder() {
-        return ORDER;
+        return Integer.MAX_VALUE;
     }
 }

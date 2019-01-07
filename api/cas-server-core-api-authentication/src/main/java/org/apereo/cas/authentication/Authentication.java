@@ -74,6 +74,13 @@ public interface Authentication extends Serializable {
     List<CredentialMetaData> getCredentials();
 
     /**
+     * Get a list of authentication warnings that may be considered global
+     * and applicable to the entire authentication event.
+     * @return list of authentication attempts.
+     */
+    List<MessageDescriptor> getWarnings();
+
+    /**
      * Gets a map describing successful authentications produced by {@link AuthenticationHandler} components.
      *
      * @return Map of handler names to successful authentication result produced by that handler.

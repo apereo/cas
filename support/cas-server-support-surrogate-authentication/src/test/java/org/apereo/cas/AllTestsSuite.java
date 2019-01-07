@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.SurrogatePrincipalResolverTests;
 import org.apereo.cas.authentication.audit.SurrogateAuditPrincipalIdProviderTests;
 import org.apereo.cas.authentication.surrogate.JsonResourceSurrogateAuthenticationServiceTests;
 import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationServiceTests;
+import org.apereo.cas.ticket.support.SurrogateSessionExpirationPolicyJsonSerializerTests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -26,7 +27,8 @@ import org.junit.runners.Suite;
     SurrogateAuditPrincipalIdProviderTests.class,
     SimpleSurrogateAuthenticationServiceTests.class,
     JsonResourceSurrogateAuthenticationServiceTests.class,
-    SurrogatePrincipalElectionStrategyTests.class
+    SurrogatePrincipalElectionStrategyTests.class,
+    SurrogateSessionExpirationPolicyJsonSerializerTests.class
 })
 public class AllTestsSuite {
 }

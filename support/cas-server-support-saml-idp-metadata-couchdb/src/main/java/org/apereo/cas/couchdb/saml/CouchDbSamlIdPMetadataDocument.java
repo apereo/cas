@@ -13,10 +13,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class CouchDbSamlIdPMetadataDocument extends SamlIdPMetadataDocument {
     @JsonProperty("_id")
-    private String cid; //NOPMD
+    private String cid;
 
     @JsonProperty("_rev")
-    private String rev; //NOPMD
+    private String rev;
 
     @JsonCreator
     public CouchDbSamlIdPMetadataDocument(@JsonProperty("_id") final String cid,
