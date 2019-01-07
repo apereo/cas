@@ -43,4 +43,19 @@ public interface AuthenticationHandlerExecutionResult extends Serializable {
      * @return the warnings
      */
     List<MessageDescriptor> getWarnings();
+
+    /**
+     * Add warning to authentication handler execution result.
+     *
+     * @param message the message
+     * @return the authentication handler execution result
+     */
+    AuthenticationHandlerExecutionResult addWarning(MessageDescriptor message);
+
+    /**
+     * Clear warnings from authentication handler execution result.
+     *
+     * @return the authentication handler execution result
+     */
+    AuthenticationHandlerExecutionResult clearWarnings();
 }

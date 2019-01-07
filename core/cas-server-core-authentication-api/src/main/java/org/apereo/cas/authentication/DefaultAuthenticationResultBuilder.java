@@ -51,6 +51,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
             authenticationBuilder
                 .addSuccesses(authn.getSuccesses())
                 .addFailures(authn.getFailures())
+                .addWarnings(authn.getWarnings())
                 .addCredentials(authn.getCredentials());
         });
     }
@@ -120,6 +121,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
         LOGGER.trace("Collected authentication attributes for this result are [{}]", authenticationAttributes);
 
         authenticationBuilder.setAuthenticationDate(ZonedDateTime.now());
+
         val auth = authenticationBuilder.build();
         LOGGER.trace("Authentication result commenced at [{}]", auth.getAuthenticationDate());
         return auth;
