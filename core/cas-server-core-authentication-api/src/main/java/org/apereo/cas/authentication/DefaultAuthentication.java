@@ -41,6 +41,11 @@ public class DefaultAuthentication implements Authentication {
     private Principal principal;
 
     /**
+     * Authentication messages and warnings.
+     */
+    private List<MessageDescriptor> warnings;
+
+    /**
      * List of metadata about credentials presented at authentication.
      */
     private List<CredentialMetaData> credentials;
@@ -60,48 +65,32 @@ public class DefaultAuthentication implements Authentication {
      */
     private Map<String, Throwable> failures;
 
-
-    /**
-     * Creates a new instance with the given data.
-     *
-     * @param date       Non-null authentication date.
-     * @param principal  Non-null authenticated principal.
-     * @param attributes Nullable map of authentication metadata.
-     * @param successes  Non-null map of authentication successes containing at least one entry.
-     */
     public DefaultAuthentication(
         final @NonNull ZonedDateTime date,
         final @NonNull Principal principal,
         final @NonNull Map<String, Object> attributes,
-        final @NonNull Map<String, AuthenticationHandlerExecutionResult> successes) {
+        final @NonNull Map<String, AuthenticationHandlerExecutionResult> successes,
+        final @NonNull List<MessageDescriptor> warnings) {
 
         this.authenticationDate = date;
         this.principal = principal;
         this.attributes = attributes;
         this.successes = successes;
+        this.warnings = warnings;
         this.credentials = null;
         this.failures = null;
     }
 
-    /**
-     * Creates a new instance with the given data.
-     *
-     * @param date        Non-null authentication date.
-     * @param credentials Non-null list of credential metadata containing at least one entry.
-     * @param principal   Non-null authenticated principal.
-     * @param attributes  Nullable map of authentication metadata.
-     * @param successes   Non-null map of authentication successes containing at least one entry.
-     * @param failures    Nullable map of authentication failures.
-     */
     public DefaultAuthentication(
         final @NonNull ZonedDateTime date,
         final @NonNull List<CredentialMetaData> credentials,
         final @NonNull Principal principal,
         final @NonNull Map<String, Object> attributes,
         final @NonNull Map<String, AuthenticationHandlerExecutionResult> successes,
-        final @NonNull Map<String, Throwable> failures) {
+        final @NonNull Map<String, Throwable> failures,
+        final @NonNull List<MessageDescriptor> warnings) {
 
-        this(date, principal, attributes, successes);
+        this(date, principal, attributes, successes, warnings);
         this.credentials = credentials;
         this.failures = failures;
     }
