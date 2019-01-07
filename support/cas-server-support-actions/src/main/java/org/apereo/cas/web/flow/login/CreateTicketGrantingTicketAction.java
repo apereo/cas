@@ -55,9 +55,15 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
      */
     private static Collection<MessageDescriptor> calculateAuthenticationWarningMessages(final TicketGrantingTicket tgtId, final MessageContext messageContext) {
         val entries = tgtId.getAuthentication().getSuccesses().entrySet();
-        return entries
+        val messages = entries
             .stream()
             .map(entry -> entry.getValue().getWarnings())
+            .filter(entry -> !entry.isEmpty())
+            .collect(Collectors.toList());
+        messages.add(tgtId.getAuthentication().getWarnings());
+
+        return messages
+            .stream()
             .flatMap(Collection::stream)
             .peek(message -> addMessageDescriptorToMessageContext(messageContext, message))
             .collect(Collectors.toSet());
