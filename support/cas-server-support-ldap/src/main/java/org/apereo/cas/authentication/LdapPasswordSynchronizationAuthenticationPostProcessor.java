@@ -13,7 +13,6 @@ import org.ldaptive.LdapAttribute;
 import org.ldaptive.ModifyOperation;
 import org.ldaptive.ModifyRequest;
 import org.ldaptive.ResultCode;
-import org.ldaptive.SearchResult;
 import org.ldaptive.ad.UnicodePwdAttribute;
 
 import java.util.Collections;
