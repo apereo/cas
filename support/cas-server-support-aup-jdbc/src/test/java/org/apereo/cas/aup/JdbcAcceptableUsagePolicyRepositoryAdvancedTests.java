@@ -47,9 +47,12 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.hamcrest.Matchers;
 import org.junit.After;
 
 import static org.junit.Assert.*;
+import org.junit.Rule;
+import org.junit.rules.ExpectedException;
 
 /**
  * This is {@link JdbcAcceptableUsagePolicyRepositoryTests}.
@@ -80,6 +83,9 @@ import static org.junit.Assert.*;
 })
 @TestPropertySource(locations = {"classpath:/jdbc-aup-advanced.properties"})
 public class JdbcAcceptableUsagePolicyRepositoryAdvancedTests {
+    @Rule
+    public final ExpectedException expectedException = ExpectedException.none();
+    
     @Autowired
     @Qualifier("acceptableUsagePolicyRepository")
     private AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
@@ -137,7 +143,7 @@ public class JdbcAcceptableUsagePolicyRepositoryAdvancedTests {
     }
     
     @Test
-    public void testPrincipalIdDetermination() {
+    public void determinePrincipalId() {
         final AcceptableUsagePolicyProperties aupProperties = casProperties.getAcceptableUsagePolicy();
         final JdbcAcceptableUsagePolicyRepository jdbcAupRepository = new JdbcAcceptableUsagePolicyRepository(ticketRegistrySupport,
                 aupProperties.getAupAttributeName(), acceptableUsagePolicyDataSource, aupProperties);
@@ -150,12 +156,15 @@ public class JdbcAcceptableUsagePolicyRepositoryAdvancedTests {
         final Authentication auth = CoreAuthenticationTestUtils.getAuthentication(pricipal);
         WebUtils.putAuthentication(auth, context);
         
-        String principalId = jdbcAupRepository.determinePrincipalId(context, c, aupProperties.getJdbc());
+        final String principalId = jdbcAupRepository.determinePrincipalId(context, c, aupProperties.getJdbc());
         assertEquals("CASuser@example.org", principalId);
     }
     
-    @Test(expected = IllegalStateException.class)
-    public void testMissingPrincipalAttribute() {
+    @Test
+    public void raiseMissingPrincipalAttributeError() {
+        expectedException.expect(IllegalStateException.class);
+        expectedException.expectMessage(Matchers.containsString("cannot be found"));
+        
         final AcceptableUsagePolicyProperties aupProperties = casProperties.getAcceptableUsagePolicy();
         final JdbcAcceptableUsagePolicyRepository jdbcAupRepository = new JdbcAcceptableUsagePolicyRepository(ticketRegistrySupport,
                 aupProperties.getAupAttributeName(), acceptableUsagePolicyDataSource, aupProperties);
@@ -171,8 +180,11 @@ public class JdbcAcceptableUsagePolicyRepositoryAdvancedTests {
         jdbcAupRepository.determinePrincipalId(context, c, aupProperties.getJdbc());
     }
     
-    @Test(expected = IllegalStateException.class)
-    public void testBadTypePrincipalAttribute() {
+    @Test
+    public void raiseBadTypePrincipalAttributeError() {
+        expectedException.expect(IllegalStateException.class);
+        expectedException.expectMessage(Matchers.containsString("is not a String"));
+        
         final AcceptableUsagePolicyProperties aupProperties = casProperties.getAcceptableUsagePolicy();
         final JdbcAcceptableUsagePolicyRepository jdbcAupRepository = new JdbcAcceptableUsagePolicyRepository(ticketRegistrySupport,
                 aupProperties.getAupAttributeName(), acceptableUsagePolicyDataSource, aupProperties);

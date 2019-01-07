@@ -130,7 +130,7 @@ public class JdbcAcceptableUsagePolicyRepositoryTests {
     }
     
     @Test
-    public void testPrincipalIdDetermination() {
+    public void determinePrincipalId() {
         final AcceptableUsagePolicyProperties aupProperties = casProperties.getAcceptableUsagePolicy();
         final JdbcAcceptableUsagePolicyRepository jdbcAupRepository = new JdbcAcceptableUsagePolicyRepository(ticketRegistrySupport,
                 aupProperties.getAupAttributeName(), acceptableUsagePolicyDataSource, aupProperties);
@@ -143,7 +143,7 @@ public class JdbcAcceptableUsagePolicyRepositoryTests {
         final Authentication auth = CoreAuthenticationTestUtils.getAuthentication(pricipal);
         WebUtils.putAuthentication(auth, context);
         
-        String principalId = jdbcAupRepository.determinePrincipalId(context, c, aupProperties.getJdbc());
+        final String principalId = jdbcAupRepository.determinePrincipalId(context, c, aupProperties.getJdbc());
         assertEquals("casuser", principalId);
     }
     
