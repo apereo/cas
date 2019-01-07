@@ -1,7 +1,9 @@
 package org.apereo.cas.aup;
 
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.CasAcceptableUsagePolicyMongoDbConfiguration;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
@@ -20,9 +22,6 @@ import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.mock.MockTicketGrantingTicket;
-import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
@@ -78,10 +77,6 @@ public class MongoDbAcceptableUsagePolicyRepositoryTests {
     @Autowired
     @Qualifier("acceptableUsagePolicyRepository")
     private AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
-
-    @Autowired
-    @Qualifier("ticketRegistry")
-    private TicketRegistry ticketRegistry;
 
     @Test
     public void verifyAction() {
