@@ -1,9 +1,9 @@
 #!/bin/bash
 
 HTML_PROOFER_IMAGE=hdeadman/html-proofer:latest
-DOCS_FOLDER=`pwd`/docs/cas-server-documentation
-DOCS_OUTPUT=`pwd`/docs/cas-server-documentation/build/out
-HTML_PROOFER_SCRIPT=`pwd`/ci/html-proofer-docs.rb
+DOCS_FOLDER=$(pwd)/docs/cas-server-documentation
+DOCS_OUTPUT=$(pwd)/docs/cas-server-documentation/build/out
+HTML_PROOFER_SCRIPT=$(pwd)/ci/html-proofer-docs.rb
 
 echo "Running html-proof image: ${HTML_PROOFER_IMAGE}"
 docker run --name="html-proofer" --rm \
