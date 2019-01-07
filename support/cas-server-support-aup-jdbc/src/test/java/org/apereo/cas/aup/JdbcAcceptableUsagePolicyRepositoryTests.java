@@ -107,7 +107,7 @@ public class JdbcAcceptableUsagePolicyRepositoryTests {
     }
     
     @After
-    public void teardown() throws Exception {
+    public void tearDown() throws Exception {
         final Connection c = this.acceptableUsagePolicyDataSource.getConnection();
         final Statement s = c.createStatement();
         c.setAutoCommit(true);
