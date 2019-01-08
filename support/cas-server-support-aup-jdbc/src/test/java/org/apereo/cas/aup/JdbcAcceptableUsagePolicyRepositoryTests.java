@@ -19,9 +19,6 @@ import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.mock.MockTicketGrantingTicket;
-import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.junit.Before;
@@ -42,6 +39,8 @@ import org.springframework.webflow.test.MockRequestContext;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.Statement;
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.principal.Principal;
 
 import static org.junit.Assert.*;
 
@@ -82,10 +81,6 @@ public class JdbcAcceptableUsagePolicyRepositoryTests {
     @Qualifier("acceptableUsagePolicyDataSource")
     private DataSource acceptableUsagePolicyDataSource;
 
-    @Autowired
-    @Qualifier("ticketRegistry")
-    private TicketRegistry ticketRegistry;
-
     @Before
     public void setUp() throws Exception {
         final Connection c = this.acceptableUsagePolicyDataSource.getConnection();
@@ -102,9 +97,9 @@ public class JdbcAcceptableUsagePolicyRepositoryTests {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser");
-        final TicketGrantingTicket tgt = new MockTicketGrantingTicket("casuser", c, CollectionUtils.wrap("accepted", "false"));
-        ticketRegistry.addTicket(tgt);
-        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
+        final Principal pricipal = CoreAuthenticationTestUtils.getPrincipal(c.getId(), CollectionUtils.wrap("accepted", "false"));
+        final Authentication auth = CoreAuthenticationTestUtils.getAuthentication(pricipal);
+        WebUtils.putAuthentication(auth, context);
 
         assertFalse(acceptableUsagePolicyRepository.verify(context, c).getLeft());
         assertTrue(acceptableUsagePolicyRepository.submit(context, c));
