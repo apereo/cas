@@ -1,7 +1,9 @@
 package org.apereo.cas.aup;
 
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.CasAcceptableUsagePolicyMongoDbConfiguration;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
@@ -20,9 +22,6 @@ import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.mock.MockTicketGrantingTicket;
-import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
@@ -79,10 +78,6 @@ public class MongoDbAcceptableUsagePolicyRepositoryTests {
     @Qualifier("acceptableUsagePolicyRepository")
     private AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
 
-    @Autowired
-    @Qualifier("ticketRegistry")
-    private TicketRegistry ticketRegistry;
-
     @Test
     public void verifyAction() {
         final MockRequestContext context = new MockRequestContext();
@@ -90,9 +85,9 @@ public class MongoDbAcceptableUsagePolicyRepositoryTests {
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
         final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casaup");
-        final TicketGrantingTicket tgt = new MockTicketGrantingTicket("casaup", c, CollectionUtils.wrap("accepted", "false"));
-        ticketRegistry.addTicket(tgt);
-        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
+        final Principal pricipal = CoreAuthenticationTestUtils.getPrincipal(c.getId(), CollectionUtils.wrap("accepted", "false"));
+        final Authentication auth = CoreAuthenticationTestUtils.getAuthentication(pricipal);
+        WebUtils.putAuthentication(auth, context);
 
         assertFalse(acceptableUsagePolicyRepository.verify(context, c).getLeft());
         assertTrue(acceptableUsagePolicyRepository.submit(context, c));
