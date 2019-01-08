@@ -3260,6 +3260,11 @@ To learn more about this topic, [please review this guide](LDAP-Service-Manageme
 # cas.serviceRegistry.ldap.loadFilter=(objectClass=%s)
 ```
 
+### CouchDb Service Registry
+
+Control how CAS services should be found inside a CouchDb instance.
+To learn more about this topic, [please review this guide](Couchbase-Service-Management.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-integration-settings) under the configuration key `cas.serviceRegistry.couchdb`.
+
 ### Couchbase Service Registry
 
 Control how CAS services should be found inside a Couchbase instance.
@@ -3327,6 +3332,12 @@ To learn more about this topic, [please review this guide](JPA-Ticket-Registry.h
 ```
 
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.jpa`.
+
+### CouchDb Ticket Registry
+
+To learn more about this topic, [please review this guide](CouchDB-Ticket-Registry.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-integration-settings) under the configuration key `cas.ticket.registry.couchdb`.
+
+Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.couchdb`.
 
 ### Couchbase Ticket Registry
 
