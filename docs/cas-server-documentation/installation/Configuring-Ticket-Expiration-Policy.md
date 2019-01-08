@@ -84,4 +84,4 @@ PGT expiration policy governs the time span during which CAS may grant PTs with 
 At this time, the expiration policy assigned to proxy-granting tickets is controlled by the same policy
 assigned to ticket-granting tickets.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#proxy-granting-ticket-behavior).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#proxy-granting-tickets-behavior).
