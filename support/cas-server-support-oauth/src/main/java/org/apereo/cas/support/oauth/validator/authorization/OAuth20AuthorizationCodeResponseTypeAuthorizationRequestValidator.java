@@ -66,12 +66,7 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator i
 
         val clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
         val registeredService = getRegisteredServiceByClientId(clientId);
-        if (registeredService == null) {
-            LOGGER.warn("Registered service for {}=[{}] is not registered",
-                    OAuth20Constants.CLIENT_ID, clientId);
-            return false;
-        }
-        val service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
+        val service = registeredService != null ? webApplicationServiceServiceFactory.createService(registeredService.getServiceId()) : null;
         val audit = AuditableContext.builder()
             .service(service)
             .registeredService(registeredService)
