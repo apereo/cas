@@ -74,7 +74,7 @@ Forced authentication is suitable for services where higher security is desired 
 authentication is configured on a per-service basis, but the [service management](#service-management) facility
 provides some support for implementing forced authentication as a matter of centralized security policy.
 Forced authentication may be combined with 
-[multi-factor authentication](../configuration/Configuration-Properties.html#multifactor-authentication) features to
+[multi-factor authentication](../installation/Configuration-Properties.html#multifactor-authentication) features to
 implement arbitrary service-specific access control policy.
 
 
