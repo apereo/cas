@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.core.ticket.registry;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
+import org.apereo.cas.configuration.model.support.cassandra.ticketregistry.CassandraTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.couchbase.ticketregistry.CouchbaseTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.couchdb.ticketregistry.CouchDbTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbTicketRegistryProperties;
@@ -100,6 +101,12 @@ public class TicketRegistryProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private RedisTicketRegistryProperties redis = new RedisTicketRegistryProperties();
+
+    /**
+     * Cassandra registry settings
+     */
+    @NestedConfigurationProperty
+    private CassandraTicketRegistryProperties cassandra = new CassandraTicketRegistryProperties();
 
     /**
      * Settings relevant for the default in-memory ticket registry.
