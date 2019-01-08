@@ -3778,7 +3778,7 @@ Signing & encryption settings for this registry are available [here](Configurati
 
 ### CouchDb Ticket Registry
 
-To learn more about this topic, [please review this guide](../ticketing/CouchDb-Ticket-Registry.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-integration-settings) under the configuration key `cas.ticket.registry.couchdb`.
+To learn more about this topic, [please review this guide](../ticketing/CouchDb-Ticket-Registry.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.ticket.registry.couchdb`.
 
 ### Couchbase Ticket Registry
 
