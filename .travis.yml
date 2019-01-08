@@ -60,66 +60,98 @@ stages:
 - initialize
 - publish
 - build
+- docpublish
 - test
 - dependencies
 jobs:
   include:
   - stage: initialize
     script: ./ci/download-dependencies.sh
+    name: "Download Dependencies"
     ############################################
   - stage: publish
     if: NOT commit_message =~ ^\[skip\s+snapshots\] and type != "pull_request" and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
     script: ./ci/publish-snapshots.sh
+    name: "Publish Snapshots"
     ############################################
   - stage: build
     script: ./ci/build.sh
+    name: "Build CAS"
   - stage: build
     script: ./ci/analyze-style.sh
+    name: "Analyze Style"
   - stage: build
-    script: ./ci/push-docs-ghpages.sh
-    if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
+    script: ./ci/html-proofer-docs.sh
+    if: (branch =~ /^\d+\.\d+\.x$/ or branch = master)
+    name: "Validate Documentation"
   - stage: build
     script: ./ci/build-javadocs.sh
+    name: "Build Javadocs"
   - stage: build
     script: ./ci/build-config-metadata.sh
+    name: "Generate Config Metadata"
+    ############################################
+  - stage: docpublish
+    script: ./ci/push-docs-ghpages.sh
+    if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
+    name: "Publish Documentation"
     ############################################
   - stage: dependencies
     script: ./ci/analyze-dependencies.sh
+    name: "Analyze Dependencies"
   - stage: dependencies
     if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
     script: ./ci/report-dependency-updates.sh
+    name: "Report Dependency Updates"
     ############################################
   - stage: test
     script: ./ci/tests/run-tests-simple.sh
+    name: "Simple Tests"
   - stage: test
     script: ./ci/tests/cassandra/run-tests-cassandra.sh
+    name: "Cassandra Tests"
   - stage: test
     script: ./ci/tests/cosmosdb/run-tests-cosmosdb.sh
+    name: "CosmosDb Tests"
   - stage: test
     script: ./ci/tests/couchbase/run-tests-couchbase.sh
+    name: "Couchbase Tests"
   - stage: test
     script: ./ci/tests/dynamodb/run-tests-dynamodb.sh
+    name: "DynamoDb Tests"
   - stage: test
     script: ./ci/tests/filesystem/run-tests-filesystem.sh
+    name: "Filesystem Tests"
   - stage: test
     script: ./ci/tests/ignite/run-tests-ignite.sh
+    name: "Ignite Tests"
   - stage: test
     script: ./ci/tests/influxdb/run-tests-influxdb.sh
+    name: "InfluxDb Tests"
   - stage: test
     script: ./ci/tests/ldap/run-tests-ldap.sh
+    name: "LDAP Tests"
   - stage: test
     script: ./ci/tests/mail/run-tests-mail.sh
+    name: "Mail Tests"
   - stage: test
     script: ./ci/tests/couchdb/run-tests-couchdb.sh
+    name: "CouchDb Tests"
   - stage: test
     script: ./ci/tests/memcached/run-tests-memcached.sh
+    name: "Memcached Tests"
   - stage: test
     script: ./ci/tests/mysql/run-tests-mysql.sh
+    name: "Mysql Tests"
   - stage: test
     script: ./ci/tests/mssqlserver/run-tests-mssqlserver.sh
+    name: "MS SQL Server Tests"
   - stage: test
     script: ./ci/tests/postgres/run-tests-postgres.sh
+    name: "Postgres Tests"
   - stage: test
     script: ./ci/tests/mongodb/run-tests-mongodb.sh
+    name: "MongoDb Tests"
   - stage: test
     script: ./ci/tests/redis/run-tests-redis.sh
+    name: "Redis Tests"
