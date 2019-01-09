@@ -1039,6 +1039,8 @@ to an external OpenID Connect provider such as Azure AD, given the provider's *c
 # ${configurationKey}.scope=
 # ${configurationKey}.useNonce=
 # ${configurationKey}.preferredJwsAlgorithm=
+# ${configurationKey}.responseMode=
+# ${configurationKey}.responseType=
 # ${configurationKey}.customParams.param1=value1
 ```
 
