@@ -68,4 +68,18 @@ public class Pac4jOidcClientProperties extends Pac4jIdentifiableClientProperties
      * Tenant Id as required by Microsoft Azure integrations.
      */
     private String azureTenantId;
+
+    /**
+     * The response mode specifies how the result of the authorization request is formatted.
+     * For backward compatibility the default value is empty, which means the default pac4j (empty) response mode is used. 
+     * Possible values includes "query", "fragment", "form_post", or "web_message" 
+     */
+    private String responseMode;
+
+    /**
+     * The response type tells the authorization server which grant to execute.
+     * For backward compatibility the default value is empty, which means the default pac4j ("code") response type is used.
+     * Possibles values includes "code", "token" or "id_token".     
+     */
+    private String responseType;
 }
