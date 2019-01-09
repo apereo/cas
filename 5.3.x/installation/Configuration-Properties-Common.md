@@ -755,6 +755,29 @@ The following bypass options apply equally to multifactor authentication provide
 If multifactor authentication bypass is determined via REST, 
 RESTful settings are available [here](#restful-integrations) under the configuration key `${configurationKey}.bypass.rest`.
 
+## CouchDb Integration Settings
+
+The following options are shared and apply when CAS is configured to integrate with CouchDb (i.e ticket registry, etc), given the provider's *configuration key*:
+
+```properties
+# ${configurationKey}.url=http://localhost:5984
+# ${configurationKey}.username=
+# ${configurationKey}.password=
+# ${configurationKey}.socketTimeout=10000
+# ${configurationKey}.connectionTimeout=1000
+# ${configurationKey}.maxConnections=20
+# ${configurationKey}.enableSSL=false
+# ${configurationKey}.relaxedSSLSettings=false
+# ${configurationKey}.caching=true
+# ${configurationKey}.maxCacheEntries=1000
+# ${configurationKey}.maxObjectSizeBytes=8192
+# ${configurationKey}.useExpectContinue=true
+# ${configurationKey}.cleanupIdleConnections=true
+# ${configurationKey}.createIfNotExists=true
+# ${configurationKey}.retries=5
+# ${configurationKey}.dbName=serviceRegistry|ticketRegistry
+```
+
 ## Couchbase Integration Settings
 
 The following options are shared and apply when CAS is configured to integrate with Couchbase (i.e ticket registry, etc), given the provider's *configuration key*:
