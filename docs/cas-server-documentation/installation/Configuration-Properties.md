@@ -2683,6 +2683,8 @@ Delegate authentication to an external OpenID Connect server. Common settings fo
 # cas.authn.pac4j.oidc[0].azureTenantId=
 # cas.authn.pac4j.oidc[0].usePathBasedCallbackUrl=false
 # cas.authn.pac4j.oidc[0].principalAttributeId=
+# cas.authn.pac4j.oidc[0].responseMode=
+# cas.authn.pac4j.oidc[0].responseType=
 ```
 
 ### SAML2
