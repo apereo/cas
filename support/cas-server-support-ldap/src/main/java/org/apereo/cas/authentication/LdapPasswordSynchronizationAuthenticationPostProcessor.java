@@ -51,14 +51,15 @@ public class LdapPasswordSynchronizationAuthenticationPostProcessor implements A
             LOGGER.debug("LDAP response is [{}]", response);
 
             if (LdapUtils.containsResultEntry(response)) {
-                val dn = response.getResult().getEntry().getDn();
+                val searchResult = response.getResult();
+                val dn = searchResult.getEntry().getDn();
                 LOGGER.trace("Updating account password for [{}]", dn);
 
                 try (val modifyConnection = LdapUtils.createConnection(searchFactory)) {
                     val operation = new ModifyOperation(modifyConnection);
                     val mod = new AttributeModification(AttributeModificationType.REPLACE, getLdapPasswordAttribute(credential));
                     val updateResponse = operation.execute(new ModifyRequest(dn, mod));
-                    LOGGER.trace("Result code [{}], message: [{}]", response.getResult(), response.getMessage());
+                    LOGGER.trace("Result code [{}], message: [{}]", searchResult, response.getMessage());
                     val result = updateResponse.getResultCode() == ResultCode.SUCCESS;
                     if (result) {
                         LOGGER.info("Updated the LDAP entry's password for [{}] and base DN [{}]", filter.format(), ldapProperties.getBaseDn());
