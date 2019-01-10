@@ -34,17 +34,19 @@ public class RestProperties implements Serializable {
     private String attributeValue;
 
     /**
-     * Flag that enables X509Certificate extraction from the request headers for authentication.
+     * Flag that enables {@link java.security.cert.X509Certificate} extraction from the request headers
+     * for authentication.
      */
     private boolean headerAuth = true;
     
     /**
-     * Flag that enables X509Certificate extraction from the request body for authentication.
+     * Flag that enables {@link java.security.cert.X509Certificate} extraction from the request body for authentication.
      */
     private boolean bodyAuth;
 
     /**
-     * Flag that enables TLS client X509Certificate extraction from the servlet container for authentication.
+     * Flag that enables TLS client {@link java.security.cert.X509Certificate} extraction from the servlet container
+     * for authentication.
      */
     private boolean tlsClientAuth;
 }

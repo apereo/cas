@@ -18,7 +18,7 @@ import java.util.List;
  * fetch the TLS client certificate from the servlet container, to construct
  * X509 credentials.
  *
- * @author sadt
+ * @author Stéphane Adenot
  * @since 6.0.0
  */
 @Slf4j
