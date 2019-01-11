@@ -1,5 +1,6 @@
 package org.apereo.cas.aup;
 
+import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -11,6 +12,7 @@ import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 /**
@@ -48,7 +50,7 @@ public class JdbcAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
                 aupColumnName = jdbc.getAupColumn();
             }
             final String sql = String.format(jdbc.getSqlUpdateAUP(), jdbc.getTableName(), aupColumnName, jdbc.getPrincipalIdColumn());
-            final String principalId = determinePrincipalId(requestContext, credential, jdbc);
+            final String principalId = determinePrincipalId(requestContext, credential);
             LOGGER.debug("Executing update query [{}] for principal [{}]", sql, principalId);
             return this.jdbcTemplate.update(sql, principalId) > 0;
         } catch (final Exception e) {
@@ -62,24 +64,24 @@ public class JdbcAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
      * 
      * @param requestContext the context
      * @param credential the credential
-     * @param jdbc the AUP JDBC properties
      * @return the principal ID to update the AUP setting in the database for
      */
-    protected String determinePrincipalId(final RequestContext requestContext, final Credential credential, final AcceptableUsagePolicyProperties.Jdbc jdbc) {
-        if (StringUtils.isBlank(jdbc.getPrincipalIdAttribute())) {
+    protected String determinePrincipalId(final RequestContext requestContext, final Credential credential) {
+        if (StringUtils.isBlank(properties.getJdbc().getPrincipalIdAttribute())) {
             return credential.getId();
         }
         @NonNull
         final Principal principal = WebUtils.getAuthentication(requestContext).getPrincipal();
-        final String pIdAttribName = jdbc.getPrincipalIdAttribute();
+        final String pIdAttribName = properties.getJdbc().getPrincipalIdAttribute();
         if (!principal.getAttributes().containsKey(pIdAttribName)) {
             throw new IllegalStateException("Principal attribute [" + pIdAttribName + "] cannot be found");
         }
-        final Object pIdAttribValue = principal.getAttributes().get(pIdAttribName);
-        if (!(pIdAttribValue instanceof String)) {
+        final Object pIdAttributeValue = principal.getAttributes().get(pIdAttribName);
+        final Set<Object> pIdAttributeValues = CollectionUtils.toCollection(pIdAttributeValue);
+        if (pIdAttributeValues.size() != 1) {
             throw new IllegalStateException("Principal attribute [" + pIdAttribName + "] was found, but its value ["
-                        + pIdAttribValue + "] is not a String");
+                        + pIdAttributeValue + "] is either empty or multi-valued");
         }
-        return pIdAttribValue.toString();
+        return pIdAttributeValues.iterator().next().toString();
     }
 }
