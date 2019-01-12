@@ -99,7 +99,7 @@ public abstract class BaseJdbcAcceptableUsagePolicyRepositoryTests {
         assertTrue(acceptableUsagePolicyRepository.submit(context, c));
     }
     
-    protected void determinePrincipalId(final String actualPrincipalId, final String expectedPrincipalId, final Map<String, Object> profileAttributes) {
+    protected String determinePrincipalId(final String actualPrincipalId, final Map<String, Object> profileAttributes) {
         final AcceptableUsagePolicyProperties aupProperties = casProperties.getAcceptableUsagePolicy();
         final JdbcAcceptableUsagePolicyRepository jdbcAupRepository = new JdbcAcceptableUsagePolicyRepository(ticketRegistrySupport,
                 aupProperties.getAupAttributeName(), acceptableUsagePolicyDataSource, aupProperties);
@@ -113,8 +113,7 @@ public abstract class BaseJdbcAcceptableUsagePolicyRepositoryTests {
         final Authentication auth = CoreAuthenticationTestUtils.getAuthentication(pricipal);
         WebUtils.putAuthentication(auth, context);
         
-        final String principalId = jdbcAupRepository.determinePrincipalId(context, c);
-        assertEquals(expectedPrincipalId, principalId);
+        return jdbcAupRepository.determinePrincipalId(context, c);
     }
     
 }

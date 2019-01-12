@@ -7,6 +7,7 @@ import org.springframework.test.context.TestPropertySource;
 import java.sql.Connection;
 import java.sql.Statement;
 import org.junit.After;
+import static org.junit.Assert.*;
 
 
 /**
@@ -44,7 +45,8 @@ public class JdbcAcceptableUsagePolicyRepositoryTests extends BaseJdbcAcceptable
     
     @Test
     public void determinePrincipalIdWithDefaultConfig() {
-        determinePrincipalId("casuser", "casuser", CollectionUtils.wrap("accepted", "false"));
+        final String principalId = determinePrincipalId("casuser", CollectionUtils.wrap("accepted", "false"));
+        assertEquals("casuser", principalId);
     }
     
 }

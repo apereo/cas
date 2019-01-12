@@ -20,10 +20,11 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.hamcrest.Matchers;
-import org.junit.After;
 
+import org.junit.After;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
+import static org.junit.Assert.*;
 
 /**
  * This is {@link JdbcAcceptableUsagePolicyRepositoryTests}.
@@ -62,7 +63,8 @@ public class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAc
     
     @Test
     public void determinePrincipalIdWithAdvancedConfig() {
-        determinePrincipalId("casuser", "CASuser@example.org", CollectionUtils.wrap("aupAccepted", "false", "email", "CASuser@example.org"));
+        final String principalId = determinePrincipalId("casuser", CollectionUtils.wrap("aupAccepted", "false", "email", "CASuser@example.org"));
+        assertEquals("CASuser@example.org", principalId);
     }
     
     @Test
