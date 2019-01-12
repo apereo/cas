@@ -1,21 +1,19 @@
 package org.apereo.cas.aup;
 
-import java.util.Set;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.web.support.WebUtils;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.sql.DataSource;
-import lombok.NonNull;
-import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.web.support.WebUtils;
 
 /**
  * This is {@link JdbcAcceptableUsagePolicyRepository}.
@@ -46,13 +44,13 @@ public class JdbcAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
     @Override
     public boolean submit(final RequestContext requestContext, final Credential credential) {
         try {
-            final AcceptableUsagePolicyProperties.Jdbc jdbc = properties.getJdbc();
-            String aupColumnName = properties.getAupAttributeName();
+            val jdbc = properties.getJdbc();
+            var aupColumnName = properties.getAupAttributeName();
             if (StringUtils.isNotBlank(jdbc.getAupColumn())) {
                 aupColumnName = jdbc.getAupColumn();
             }
-            final String sql = String.format(jdbc.getSqlUpdateAUP(), jdbc.getTableName(), aupColumnName, jdbc.getPrincipalIdColumn());
-            final String principalId = determinePrincipalId(requestContext, credential);
+            val sql = String.format(jdbc.getSqlUpdateAUP(), jdbc.getTableName(), aupColumnName, jdbc.getPrincipalIdColumn());
+            val principalId = determinePrincipalId(requestContext, credential);
             LOGGER.debug("Executing update query [{}] for principal [{}]", sql, principalId);
             return this.jdbcTemplate.update(sql, principalId) > 0;
         } catch (final Exception e) {
@@ -73,13 +71,13 @@ public class JdbcAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
             return credential.getId();
         }
         @NonNull
-        final Principal principal = WebUtils.getAuthentication(requestContext).getPrincipal();
-        final String pIdAttribName = properties.getJdbc().getPrincipalIdAttribute();
+        val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
+        val pIdAttribName = properties.getJdbc().getPrincipalIdAttribute();
         if (!principal.getAttributes().containsKey(pIdAttribName)) {
             throw new IllegalStateException("Principal attribute [" + pIdAttribName + "] cannot be found");
         }
-        final Object pIdAttributeValue = principal.getAttributes().get(pIdAttribName);
-        final Set<Object> pIdAttributeValues = CollectionUtils.toCollection(pIdAttributeValue);
+        val pIdAttributeValue = principal.getAttributes().get(pIdAttribName);
+        val pIdAttributeValues = CollectionUtils.toCollection(pIdAttributeValue);
         if (pIdAttributeValues.size() != 1) {
             throw new IllegalStateException("Principal attribute [" + pIdAttribName + "] was found, but its value ["
                         + pIdAttributeValue + "] is either empty or multi-valued");

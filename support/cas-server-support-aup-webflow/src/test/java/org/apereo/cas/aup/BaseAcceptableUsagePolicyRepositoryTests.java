@@ -41,6 +41,7 @@ import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -96,16 +97,16 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
     public boolean hasLiveUpdates() {
         return false;
     }
-
-    @Test
-    public void verifyRepositoryAction() {
+    
+    protected void verifyRepositoryAction(final String actualPrincipalId, final Map<String, Object> profileAttributes) {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser");
-        val tgt = new MockTicketGrantingTicket("casuser", c, CollectionUtils.wrap("accepted", "false"));
+        val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(actualPrincipalId);
+        val tgt = new MockTicketGrantingTicket(actualPrincipalId, c, profileAttributes);
         ticketRegistry.addTicket(tgt);
-        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
+        val principal = CoreAuthenticationTestUtils.getPrincipal(c.getId(), profileAttributes);
+        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(principal), context);
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
 
         assertFalse(getAcceptableUsagePolicyRepository().verify(context, c).getLeft());
