@@ -20,7 +20,6 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
@@ -29,7 +28,6 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.ClassRule;
 import org.junit.Rule;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
