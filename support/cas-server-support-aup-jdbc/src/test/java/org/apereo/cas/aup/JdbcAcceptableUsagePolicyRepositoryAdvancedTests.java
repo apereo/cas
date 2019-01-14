@@ -80,10 +80,10 @@ public class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAc
     }
     
     @Test
-    public void raisePrincipalAttributeMultiValuedError() {
+    public void raiseEmptyPrincipalAttributeError() {
         expectedException.expect(IllegalStateException.class);
-        expectedException.expectMessage(Matchers.containsString("empty or multi-valued"));
-        raiseException(CollectionUtils.wrap("aupAccepted", "false", "email", CollectionUtils.wrapList("cas@exmaple.org", "42@example.org")));
+        expectedException.expectMessage(Matchers.containsString("empty or multi-valued with an empty element"));
+        raiseException(CollectionUtils.wrap("aupAccepted", "false", "email", ""));
     }
     
     private void raiseException(final Map<String, Object> profileAttributes) {

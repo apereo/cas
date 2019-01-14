@@ -78,10 +78,18 @@ public class JdbcAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
         }
         val pIdAttributeValue = principal.getAttributes().get(pIdAttribName);
         val pIdAttributeValues = CollectionUtils.toCollection(pIdAttributeValue);
-        if (pIdAttributeValues.size() != 1) {
-            throw new IllegalStateException("Principal attribute [" + pIdAttribName + "] was found, but its value ["
-                        + pIdAttributeValue + "] is either empty or multi-valued");
+        var principalId = "";
+        if (!pIdAttributeValues.isEmpty()) {
+            principalId = pIdAttributeValues.iterator().next().toString().trim();
         }
-        return pIdAttributeValues.iterator().next().toString();
+        if (pIdAttributeValues.size() > 1) {
+            LOGGER.warn("Principal attribute [{}] was found, but its value [{}] is multi-valued. "
+                    + "Proceeding with the first element [{}]", pIdAttribName, pIdAttributeValue, principalId);
+        }
+        if (principalId.isEmpty()) {
+            throw new IllegalStateException("Principal attribute [" + pIdAttribName + "] was found, but it is either empty"
+                    + " or multi-valued with an empty element");
+        }
+        return principalId;
     }
 }
