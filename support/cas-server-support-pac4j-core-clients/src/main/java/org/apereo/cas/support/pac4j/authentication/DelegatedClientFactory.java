@@ -546,6 +546,13 @@ public class DelegatedClientFactory {
         cfg.setDiscoveryURI(oidc.getDiscoveryUri());
         cfg.setCustomParams(oidc.getCustomParams());
         cfg.setLogoutUrl(oidc.getLogoutUrl());
+        
+        if (StringUtils.isNotBlank(oidc.getResponseMode())) {
+            cfg.setResponseMode(oidc.getResponseMode());
+        }
+        if (StringUtils.isNotBlank(oidc.getResponseType())) {
+            cfg.setResponseType(oidc.getResponseType());
+        }
         return cfg;
     }
 
