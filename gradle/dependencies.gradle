@@ -39,6 +39,9 @@ ext.libraries = [
         jgit                    : [
                 dependencies.create("org.eclipse.jgit:org.eclipse.jgit:$jgitVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.apache.commons", module: "commons-lang3")
                     force = true
                 }
         ],

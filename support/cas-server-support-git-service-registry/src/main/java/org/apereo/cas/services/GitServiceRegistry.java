@@ -63,14 +63,12 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
 
         val message = "Saved changes to registered service " + registeredService.getName();
         val result = getRegisteredServiceFileName(registeredService);
-        if (result.isPresent()) {
-            val file = result.get();
-            writeRegisteredServiceToFile(registeredService, file);
-        } else {
-            val fileName = resourceNamingStrategy.build(registeredService, FILE_EXTENSIONS.get(0));
-            val file = new File(gitRepository.getRepositoryDirectory(), fileName);
-            writeRegisteredServiceToFile(registeredService, file);
-        }
+        result.ifPresentOrElse(file -> writeRegisteredServiceToFile(registeredService, file),
+            () -> {
+                val fileName = resourceNamingStrategy.build(registeredService, FILE_EXTENSIONS.get(0));
+                val file = new File(gitRepository.getRepositoryDirectory(), fileName);
+                writeRegisteredServiceToFile(registeredService, file);
+            });
 
         this.gitRepository.commitAll(message);
         this.gitRepository.push();
@@ -140,9 +138,9 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
             .findFirst();
     }
 
-    private void writeRegisteredServiceToFile(final RegisteredService registeredService, final File file) {
+    private boolean writeRegisteredServiceToFile(final RegisteredService registeredService, final File file) {
         try (val out = Files.newOutputStream(file.toPath())) {
-            this.registeredServiceSerializers.stream().anyMatch(s -> {
+            return this.registeredServiceSerializers.stream().anyMatch(s -> {
                 s.to(out, registeredService);
                 return true;
             });
