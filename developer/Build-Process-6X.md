@@ -48,7 +48,7 @@ When done, you may build the codebase via the following command:
 ./gradlew build install --parallel -x test -x javadoc -x check
 ```
 
-The following commandline boolean flags are supported by the build:
+The following commandline boolean flags are supported by the build and can be passed in form of system properties via `-D`:
 
 | Flag                              | Description
 |-----------------------------------+---------------------------------------------------------------------------+
@@ -73,7 +73,7 @@ The following commandline boolean flags are supported by the build:
 
 - You can use `-x <task>` to entirely skip/ignore a phase in the build. (i.e. `-x test`, `-x check`).
 - If you have no need to let Gradle resolve/update dependencies and new module versions for you, you can take advantage of the `--offline` flag when you build which tends to make the build go a lot faster.
-- Using the Gradle daemon also is a big help. [It should be enabled by default](https://docs.gradle.org/current/userguide/gradle_daemon.html).
+- Using the Gradle daemon also is a big help. It should be enabled [by default](https://docs.gradle.org/current/userguide/gradle_daemon.html).
 - Enabling [Gradle's build cache](https://docs.gradle.org/current/userguide/build_cache.html) via `--build-cache` can also significantly improve build times.
 - If you are using Windows, you may find `-DskipNpmLint=true` needed for the build due to line ending differences.
 
@@ -89,7 +89,7 @@ See the **Build** section for more info.
 
 ## IDE Setup
 
-CAS development may be carried out using any modern IDE. 
+CAS development may be carried out using any modern IDE that supports Gradle. 
 
 ### IntelliJ IDEA
 
