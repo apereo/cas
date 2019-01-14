@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.SecurityTokenServiceTokenFetcher;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.claims.NonWSFederationClaimsClaimsHandler;
 import org.apereo.cas.support.claims.WrappingSecurityTokenServiceClaimsHandler;
 import org.apereo.cas.support.realm.RealmPasswordVerificationCallbackHandler;
 import org.apereo.cas.support.realm.UriRealmParser;
@@ -136,9 +137,9 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         final WsFederationProperties.IdentityProvider idp = casProperties.getAuthn().getWsfedIdp().getIdp();
 
         final ClaimsManager claimsManager = new ClaimsManager();
-        claimsManager.setClaimHandlers(CollectionUtils.wrap(new WrappingSecurityTokenServiceClaimsHandler(
-            idp.getRealmName(),
-            wsfed.getRealm().getIssuer())));
+        final WrappingSecurityTokenServiceClaimsHandler stsHandler = new WrappingSecurityTokenServiceClaimsHandler(idp.getRealmName(), wsfed.getRealm().getIssuer());
+        final NonWSFederationClaimsClaimsHandler casHandler = new NonWSFederationClaimsClaimsHandler(idp.getRealmName(), wsfed.getRealm().getIssuer());
+        claimsManager.setClaimHandlers(CollectionUtils.wrapList(stsHandler, casHandler));
 
         final TokenIssueOperation op = new TokenIssueOperation();
         op.setTokenProviders(transportTokenProviders());
