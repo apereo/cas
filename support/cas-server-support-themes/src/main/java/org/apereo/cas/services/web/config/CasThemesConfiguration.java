@@ -107,7 +107,6 @@ public class CasThemesConfiguration {
     @Bean
     public Map serviceThemeResolverSupportedBrowsers() {
         val map = new HashMap<String, String>();
-        map.put(".*iPhone.*", "iphone");
         map.put(".*Android.*", "android");
         map.put(".*Safari.*Pre.*", "safari");
         map.put(".*iPhone.*", "iphone");
@@ -193,7 +192,6 @@ public class CasThemesConfiguration {
 
         r.setTemplateEngine(engine);
         r.setViewNames(thymeleafResolver.getViewNames());
-
         r.setCache(false);
 
         thymeleafViewResolverConfigurers.stream()
