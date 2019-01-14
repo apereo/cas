@@ -3,12 +3,13 @@ package org.apereo.cas.ws.idp.services;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.SecurityTokenServiceClient;
 import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
+import org.apereo.cas.support.claims.WsFederationClaimsEncoder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.ws.idp.WSFederationClaims;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.web.WSFederationRequest;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
@@ -38,7 +39,7 @@ import java.util.Map;
  * @since 5.1.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPartyTokenProducer {
     private final SecurityTokenServiceClientBuilder clientBuilder;
     private final CipherExecutor<String, String> credentialCipherExecutor;
@@ -75,26 +76,20 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
             final Map<String, Object> attributes = assertion.getPrincipal().getAttributes();
             LOGGER.debug("Mapping principal attributes [{}] to claims for service [{}]", attributes, service);
 
+            final WsFederationClaimsEncoder encoder = new WsFederationClaimsEncoder();
             attributes.forEach((k, v) -> {
                 try {
-                    if (WSFederationClaims.contains(k)) {
+                    final String claimName = encoder.encodeClaim(k);
+                    if (WSFederationClaims.contains(claimName)) {
                         final String uri = WSFederationClaims.valueOf(k).getUri();
                         LOGGER.debug("Requesting claim [{}] mapped to [{}]", k, uri);
-                        writer.writeStartElement("ic", "ClaimValue", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
-                        writer.writeAttribute("Uri", uri);
-                        writer.writeAttribute("Optional", Boolean.TRUE.toString());
-
-                        final Collection vv = CollectionUtils.toCollection(v);
-                        for (final Object value : vv) {
-                            if (value instanceof String) {
-                                writer.writeStartElement("ic", "Value", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
-                                writer.writeCharacters((String) value);
-                                writer.writeEndElement();
-                            }
-                        }
-                        writer.writeEndElement();
+                        writeAttributeValue(writer, uri, v, service);
+                    } else if (WSFederationClaims.containsUri(claimName)) {
+                        LOGGER.debug("Requesting claim [{}] directly mapped to [{}]", k, claimName);
+                        writeAttributeValue(writer, claimName, v, service);
                     } else {
-                        LOGGER.warn("Request claim [{}] is not defined/supported by CAS", k);
+                        LOGGER.debug("Request claim [{}] is not defined/supported by CAS", claimName);
+                        writeAttributeValue(writer, WSFederationConstants.getClaimInCasNamespace(claimName), v, service);
                     }
                 } catch (final Exception e) {
                     LOGGER.error(e.getMessage(), e);
@@ -108,6 +103,22 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
+    }
+
+    private static void writeAttributeValue(final W3CDOMStreamWriter writer, final String uri,
+                                            final Object attributeValue,
+                                            final WSFederationRegisteredService service) throws Exception {
+        writer.writeStartElement("ic", "ClaimValue", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
+        writer.writeAttribute("Uri", uri);
+        writer.writeAttribute("Optional", Boolean.TRUE.toString());
+
+        final Collection values = CollectionUtils.toCollection(attributeValue);
+        for (final Object value : values) {
+            writer.writeStartElement("ic", "Value", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
+            writer.writeCharacters(value.toString());
+            writer.writeEndElement();
+        }
+        writer.writeEndElement();
     }
 
     @SneakyThrows
