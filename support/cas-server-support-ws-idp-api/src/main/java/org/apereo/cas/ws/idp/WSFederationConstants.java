@@ -60,6 +60,11 @@ public interface WSFederationConstants {
     String HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY = "http://schemas.xmlsoap.org/ws/2005/05/identity";
 
     /**
+     * The CAS namespace.
+     */
+    String HTTP_SCHEMAS_APEREO_CAS = "http://www.yale.edu/tp/cas/";
+
+    /**
      * Realm.
      */
     String WTREALM = "wtrealm";
@@ -149,4 +154,14 @@ public interface WSFederationConstants {
      * Metadata endpoint.
      */
     String ENDPOINT_FEDERATION_METADATA = "/ws/idp/metadata";
+
+    /**
+     * Gets claim in cas namespace.
+     *
+     * @param claim the claim
+     * @return the claim in cas namespace
+     */
+    static String getClaimInCasNamespace(final String claim) {
+        return String.format("%s%s", HTTP_SCHEMAS_APEREO_CAS, claim);
+    }
 }
