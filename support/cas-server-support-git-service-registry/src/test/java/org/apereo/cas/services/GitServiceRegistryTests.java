@@ -5,6 +5,8 @@ import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.GitServiceRegistryConfiguration;
+import org.apereo.cas.util.junit.ConditionalIgnore;
+import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -41,7 +43,7 @@ import java.util.Collections;
     "cas.serviceRegistry.git.repositoryUrl=file:/tmp/cas-sample-data.git"
 })
 @Category(FileSystemCategory.class)
-//@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
+@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired
