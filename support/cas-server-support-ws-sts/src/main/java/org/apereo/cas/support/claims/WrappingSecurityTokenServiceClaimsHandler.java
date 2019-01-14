@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.cxf.rt.security.claims.Claim;
 import org.apache.cxf.rt.security.claims.ClaimCollection;
 import org.apache.cxf.sts.claims.ClaimsHandler;
 import org.apache.cxf.sts.claims.ClaimsParameters;
@@ -56,15 +57,33 @@ public class WrappingSecurityTokenServiceClaimsHandler implements ClaimsHandler,
             return new ProcessedClaimCollection();
         }
         val claimCollection = new ProcessedClaimCollection();
-        claims.stream().map(requestClaim -> {
-            val claim = new ProcessedClaim();
-            claim.setClaimType(requestClaim.getClaimType());
-            claim.setIssuer(this.issuer);
-            claim.setOriginalIssuer(this.issuer);
-            claim.setValues(requestClaim.getValues());
-            return claim;
-        }).forEach(claimCollection::add);
+        claims.stream().map(this::createProcessedClaim).forEach(claimCollection::add);
         return claimCollection;
+    }
+
+    /**
+     * Create processed claim processed claim.
+     *
+     * @param requestClaim the request claim
+     * @return the processed claim
+     */
+    protected ProcessedClaim createProcessedClaim(final Claim requestClaim) {
+        val claim = new ProcessedClaim();
+        claim.setClaimType(createProcessedClaimType(requestClaim));
+        claim.setIssuer(this.issuer);
+        claim.setOriginalIssuer(this.issuer);
+        claim.setValues(requestClaim.getValues());
+        return claim;
+    }
+
+    /**
+     * Create processed claim type uri.
+     *
+     * @param requestClaim the request claim
+     * @return the uri
+     */
+    protected URI createProcessedClaimType(final Claim requestClaim) {
+        return requestClaim.getClaimType();
     }
 
     @Override

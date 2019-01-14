@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
 import org.apereo.cas.authentication.SecurityTokenServiceTokenFetcher;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.claims.NonWSFederationClaimsClaimsHandler;
 import org.apereo.cas.support.claims.WrappingSecurityTokenServiceClaimsHandler;
 import org.apereo.cas.support.realm.RealmPasswordVerificationCallbackHandler;
 import org.apereo.cas.support.realm.UriRealmParser;
@@ -144,9 +145,9 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         val idp = casProperties.getAuthn().getWsfedIdp().getIdp();
 
         val claimsManager = new ClaimsManager();
-        claimsManager.setClaimHandlers(CollectionUtils.wrap(new WrappingSecurityTokenServiceClaimsHandler(
-            idp.getRealmName(),
-            wsfed.getRealm().getIssuer())));
+        val stsHandler = new WrappingSecurityTokenServiceClaimsHandler(idp.getRealmName(), wsfed.getRealm().getIssuer());
+        val casHandler = new NonWSFederationClaimsClaimsHandler(idp.getRealmName(), wsfed.getRealm().getIssuer());
+        claimsManager.setClaimHandlers(CollectionUtils.wrapList(stsHandler, casHandler));
 
         val op = new TokenIssueOperation();
         op.setTokenProviders(transportTokenProviders());

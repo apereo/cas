@@ -3,6 +3,7 @@ package org.apereo.cas.ws.idp.services;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.SecurityTokenServiceClient;
 import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
+import org.apereo.cas.support.claims.WsFederationClaimsEncoder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.ws.idp.WSFederationClaims;
 import org.apereo.cas.ws.idp.WSFederationConstants;
@@ -64,25 +65,21 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
 
             val attributes = assertion.getPrincipal().getAttributes();
             LOGGER.debug("Mapping principal attributes [{}] to claims for service [{}]", attributes, service);
+
+            val encoder = new WsFederationClaimsEncoder();
             attributes.forEach((k, v) -> {
                 try {
-                    if (WSFederationClaims.contains(k)) {
+                    val claimName = encoder.encodeClaim(k);
+                    if (WSFederationClaims.contains(claimName)) {
                         val uri = WSFederationClaims.valueOf(k).getUri();
-                        LOGGER.debug("Requesting claim [{}] mapped to [{}]", k, uri);
-                        writer.writeStartElement("ic", "ClaimValue", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
-                        writer.writeAttribute("Uri", uri);
-                        writer.writeAttribute("Optional", Boolean.TRUE.toString());
-
-                        val vv = CollectionUtils.toCollection(v);
-                        for (val value : vv) {
-                            if (value instanceof String) {
-                                writer.writeStartElement("ic", "Value", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
-                                writer.writeCharacters((String) value);
-                                writer.writeEndElement();
-                            }
-                        }
-
-                        writer.writeEndElement();
+                        LOGGER.debug("Requested claim [{}] mapped to [{}]", k, uri);
+                        writeAttributeValue(writer, uri, v, service);
+                    } else if (WSFederationClaims.containsUri(claimName)) {
+                        LOGGER.debug("Requested claim [{}] directly mapped to [{}]", k, claimName);
+                        writeAttributeValue(writer, claimName, v, service);
+                    } else {
+                        LOGGER.debug("Requested claim [{}] is not defined/supported by CAS", claimName);
+                        writeAttributeValue(writer, WSFederationConstants.getClaimInCasNamespace(claimName), v, service);
                     }
                 } catch (final Exception e) {
                     LOGGER.error(e.getMessage(), e);
@@ -96,6 +93,22 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
+    }
+
+    private static void writeAttributeValue(final W3CDOMStreamWriter writer, final String uri,
+                                            final Object attributeValue,
+                                            final WSFederationRegisteredService service) throws Exception {
+        writer.writeStartElement("ic", "ClaimValue", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
+        writer.writeAttribute("Uri", uri);
+        writer.writeAttribute("Optional", Boolean.TRUE.toString());
+
+        val values = CollectionUtils.toCollection(attributeValue);
+        for (val value : values) {
+            writer.writeStartElement("ic", "Value", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
+            writer.writeCharacters(value.toString());
+            writer.writeEndElement();
+        }
+        writer.writeEndElement();
     }
 
     @Override
