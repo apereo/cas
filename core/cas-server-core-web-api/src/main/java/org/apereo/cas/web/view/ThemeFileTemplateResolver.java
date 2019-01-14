@@ -50,9 +50,11 @@ public class ThemeFileTemplateResolver extends FileTemplateResolver {
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
         if (request != null) {
             final HttpSession session = request.getSession(false);
+            final String paramName = casProperties.getTheme().getParamName();
             if (session != null) {
-                return (String) session.getAttribute(casProperties.getTheme().getParamName());
+                return (String) session.getAttribute(paramName);
             }
+            return (String) request.getAttribute(paramName);
         }
         return null;
     }
