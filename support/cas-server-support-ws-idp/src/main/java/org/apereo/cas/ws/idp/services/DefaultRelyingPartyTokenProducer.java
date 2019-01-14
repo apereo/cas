@@ -66,10 +66,9 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
             val attributes = assertion.getPrincipal().getAttributes();
             LOGGER.debug("Mapping principal attributes [{}] to claims for service [{}]", attributes, service);
 
-            val encoder = new WsFederationClaimsEncoder();
             attributes.forEach((k, v) -> {
                 try {
-                    val claimName = encoder.encodeClaim(k);
+                    val claimName = WsFederationClaimsEncoder.encodeClaim(k);
                     if (WSFederationClaims.contains(claimName)) {
                         val uri = WSFederationClaims.valueOf(k).getUri();
                         LOGGER.debug("Requested claim [{}] mapped to [{}]", k, uri);

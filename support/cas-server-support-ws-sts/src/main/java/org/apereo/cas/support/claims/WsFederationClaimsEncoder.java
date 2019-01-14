@@ -42,7 +42,7 @@ public class WsFederationClaimsEncoder implements ProtocolAttributeEncoder {
      * @param claim the claim
      * @return the string
      */
-    public String encodeClaim(final String claim) {
+    public static String encodeClaim(final String claim) {
         val attributeName = EncodingUtils.hexDecode(claim);
         if (StringUtils.isNotBlank(attributeName)) {
             LOGGER.debug("Decoded SAML attribute [{}] to [{}] with value(s) [{}]", claim, attributeName, claim);
