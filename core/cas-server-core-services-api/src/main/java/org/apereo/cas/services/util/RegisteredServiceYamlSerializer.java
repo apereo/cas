@@ -16,7 +16,7 @@ import java.nio.charset.StandardCharsets;
  * @since 5.0.0
  */
 @Slf4j
-public class RegisteredServiceYamlSerializer extends DefaultRegisteredServiceJsonSerializer {
+public class RegisteredServiceYamlSerializer extends RegisteredServiceJsonSerializer {
     private static final long serialVersionUID = -6026921045861422473L;
 
     @Override
@@ -28,10 +28,15 @@ public class RegisteredServiceYamlSerializer extends DefaultRegisteredServiceJso
     public boolean supports(final File file) {
         try {
             val contents = FileUtils.readFileToString(file, StandardCharsets.UTF_8.name()).trim();
-            return contents.startsWith("--- !<");
+            return supports(contents);
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);
             return false;
         }
+    }
+
+    @Override
+    public boolean supports(final String content) {
+        return content.startsWith("--- !<");
     }
 }
