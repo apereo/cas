@@ -2,7 +2,7 @@ package org.apereo.cas.web.report;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.io.TemporaryFileSystemResource;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
 
@@ -61,7 +61,7 @@ public class ExportRegisteredServicesEndpoint extends BaseCasMvcEndpoint {
         env.put("create", "true");
         env.put("encoding", StandardCharsets.UTF_8.name());
         try (val zipfs = FileSystems.newFileSystem(URI.create("jar:" + file.toURI().toString()), env)) {
-            val serializer = new DefaultRegisteredServiceJsonSerializer();
+            val serializer = new RegisteredServiceJsonSerializer();
             val services = this.servicesManager.load();
             services.forEach(Unchecked.consumer(service -> {
                 val fileName = String.format("%s-%s", service.getName(), service.getId());

@@ -33,7 +33,7 @@ public class ScriptingUtilsTests {
     @Test
     public void verifyGroovyScriptShellExecution() {
         val result = ScriptingUtils.executeGroovyShellScript("return name", CollectionUtils.wrap("name", "casuser"), String.class);
-        assertEquals("casuser", result.toString());
+        assertEquals("casuser", result);
     }
 
     @Test
@@ -63,7 +63,7 @@ public class ScriptingUtilsTests {
             FileUtils.write(file, "def run(String name) { return name }", StandardCharsets.UTF_8);
 
             val result = ScriptingUtils.executeScriptEngine(file.getCanonicalPath(), new Object[]{"casuser"}, String.class);
-            assertEquals("casuser", result.toString());
+            assertEquals("casuser", result);
         } catch (final Exception e) {
             throw new AssertionError(e.getMessage(), e);
         }
