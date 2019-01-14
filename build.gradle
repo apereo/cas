@@ -27,6 +27,7 @@ ext {
     def gitHead = git.head()
     currentRevision = gitHead.id
     currentAbbreviatedRevision = gitHead.abbreviatedId
+    git.close()
 }
 
 def isArtifactSigningRequired = {
