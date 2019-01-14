@@ -1,6 +1,6 @@
 package org.apereo.cas.services.resource;
 
-import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
 
 import lombok.val;
@@ -26,7 +26,7 @@ public class ModifyResourceBasedRegisteredServiceWatcherTests {
     public void verifyOperationFoundModified() throws Exception {
         val result = new AtomicBoolean(false);
         val registry = new AbstractResourceBasedServiceRegistry(new ClassPathResource("services"),
-            Collections.singletonList(new DefaultRegisteredServiceJsonSerializer()), o -> result.set(o.getClass().equals(CasRegisteredServiceSavedEvent.class))) {
+            Collections.singletonList(new RegisteredServiceJsonSerializer()), o -> result.set(o.getClass().equals(CasRegisteredServiceSavedEvent.class))) {
             @Override
             protected String[] getExtensions() {
                 return new String[]{"json"};
@@ -38,7 +38,7 @@ public class ModifyResourceBasedRegisteredServiceWatcherTests {
         service.setEvaluationOrder(666);
         registry.load();
         val temp = new FileSystemResource(File.createTempFile("Sample-1", ".json"));
-        new DefaultRegisteredServiceJsonSerializer().to(temp.getFile(), service);
+        new RegisteredServiceJsonSerializer().to(temp.getFile(), service);
 
         val watcher = new ModifyResourceBasedRegisteredServiceWatcher(registry);
         watcher.accept(temp.getFile());

@@ -2,7 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.cosmosdb.CosmosDbDocument;
 import org.apereo.cas.cosmosdb.CosmosDbObjectFactory;
-import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.serialization.StringSerializer;
 
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
@@ -47,7 +47,7 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
         this.collectionName = collectionName;
         this.documentDbFactory = dbFactory;
         this.databaseName = databaseName;
-        this.serializer = new DefaultRegisteredServiceJsonSerializer(new MinimalPrettyPrinter());
+        this.serializer = new RegisteredServiceJsonSerializer(new MinimalPrettyPrinter());
     }
 
     @Override

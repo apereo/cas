@@ -1,6 +1,6 @@
 package org.apereo.cas.services.resource;
 
-import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesLoadedEvent;
 
@@ -26,7 +26,7 @@ public class DeleteResourceBasedRegisteredServiceWatcherTests {
     public void verifyOperationNotFound() throws Exception {
         val result = new AtomicBoolean(false);
         val watcher = new DeleteResourceBasedRegisteredServiceWatcher(new AbstractResourceBasedServiceRegistry(new ClassPathResource("services"),
-            Collections.singletonList(new DefaultRegisteredServiceJsonSerializer()), o -> result.set(o.getClass().equals(CasRegisteredServicesLoadedEvent.class))) {
+            Collections.singletonList(new RegisteredServiceJsonSerializer()), o -> result.set(o.getClass().equals(CasRegisteredServicesLoadedEvent.class))) {
             @Override
             protected String[] getExtensions() {
                 return new String[]{"json"};
@@ -40,7 +40,7 @@ public class DeleteResourceBasedRegisteredServiceWatcherTests {
     public void verifyOperationFoundDeleted() throws Exception {
         val result = new AtomicBoolean(false);
         val registry = new AbstractResourceBasedServiceRegistry(new ClassPathResource("services"),
-            Collections.singletonList(new DefaultRegisteredServiceJsonSerializer()), o -> result.set(o.getClass().equals(CasRegisteredServiceDeletedEvent.class))) {
+            Collections.singletonList(new RegisteredServiceJsonSerializer()), o -> result.set(o.getClass().equals(CasRegisteredServiceDeletedEvent.class))) {
             @Override
             protected String[] getExtensions() {
                 return new String[]{"json"};

@@ -149,6 +149,7 @@ layout: null
         *   [InMemory XML](/$version/services/InMemory-Service-Management.html)
         *   [JSON](/$version/services/JSON-Service-Management.html)
         *   [YAML](/$version/services/YAML-Service-Management.html)
+        *   [Git](/$version/services/Git-Service-Management.html)
         *   [MongoDb](/$version/services/MongoDb-Service-Management.html)
         *   [LDAP](/$version/services/LDAP-Service-Management.html)
         *   [JPA](/$version/services/JPA-Service-Management.html)

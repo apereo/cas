@@ -4,7 +4,7 @@ import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistry;
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.CasAddonsRegisteredServicesJsonSerializer;
-import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.Getter;
@@ -36,7 +36,7 @@ public class JsonServiceRegistry extends AbstractResourceBasedServiceRegistry {
     /**
      * Instantiates a new Json service registry dao.
      * Sets the path to the directory where JSON service registry entries are
-     * stored. Uses the {@link DefaultRegisteredServiceJsonSerializer} by default.
+     * stored. Uses the {@link RegisteredServiceJsonSerializer} by default.
      *
      * @param configDirectory                      the config directory where service registry files can be found.
      * @param enableWatcher                        the enable watcher
@@ -47,14 +47,14 @@ public class JsonServiceRegistry extends AbstractResourceBasedServiceRegistry {
     public JsonServiceRegistry(final Path configDirectory, final boolean enableWatcher, final ApplicationEventPublisher eventPublisher,
                                final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
                                final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) {
-        super(configDirectory, new DefaultRegisteredServiceJsonSerializer(), enableWatcher,
+        super(configDirectory, new RegisteredServiceJsonSerializer(), enableWatcher,
             eventPublisher, registeredServiceReplicationStrategy, resourceNamingStrategy);
     }
 
     /**
      * Instantiates a new Json service registry dao.
      * Sets the path to the directory where JSON service registry entries are
-     * stored. Uses the {@link DefaultRegisteredServiceJsonSerializer} by default.
+     * stored. Uses the {@link RegisteredServiceJsonSerializer} by default.
      *
      * @param configDirectory                      the config directory where service registry files can be found.
      * @param enableWatcher                        the enable watcher
@@ -67,7 +67,7 @@ public class JsonServiceRegistry extends AbstractResourceBasedServiceRegistry {
                                final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
                                final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) throws Exception {
         super(configDirectory, CollectionUtils.wrapList(new CasAddonsRegisteredServicesJsonSerializer(),
-            new DefaultRegisteredServiceJsonSerializer()), enableWatcher, eventPublisher,
+            new RegisteredServiceJsonSerializer()), enableWatcher, eventPublisher,
             registeredServiceReplicationStrategy, resourceNamingStrategy);
     }
 

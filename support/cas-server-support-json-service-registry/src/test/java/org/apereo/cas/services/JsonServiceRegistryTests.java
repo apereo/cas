@@ -2,7 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
-import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 
 import lombok.SneakyThrows;
 import lombok.val;
@@ -49,7 +49,7 @@ public class JsonServiceRegistryTests extends AbstractResourceBasedServiceRegist
     @Test
     public void verifyLegacyServiceDefinition() throws Exception {
         val resource = new ClassPathResource("Legacy-10000003.json");
-        val serializer = new DefaultRegisteredServiceJsonSerializer();
+        val serializer = new RegisteredServiceJsonSerializer();
         val service = serializer.from(resource.getInputStream());
         assertNotNull(service);
     }
@@ -57,7 +57,7 @@ public class JsonServiceRegistryTests extends AbstractResourceBasedServiceRegist
     @Test
     public void verifyMultifactorNotSetFailureMode() throws Exception {
         val resource = new ClassPathResource("MFA-FailureMode-1.json");
-        val serializer = new DefaultRegisteredServiceJsonSerializer();
+        val serializer = new RegisteredServiceJsonSerializer();
         val service = serializer.from(resource.getInputStream());
         assertNotNull(service);
     }
@@ -65,7 +65,7 @@ public class JsonServiceRegistryTests extends AbstractResourceBasedServiceRegist
     @Test
     public void verifyExistingDefinitionForCompatibility2() throws IOException {
         val resource = new ClassPathResource("returnMappedAttributeReleasePolicyTest2.json");
-        val serializer = new DefaultRegisteredServiceJsonSerializer();
+        val serializer = new RegisteredServiceJsonSerializer();
         val service = serializer.from(resource.getInputStream());
         assertNotNull(service);
         assertNotNull(service.getAttributeReleasePolicy());
@@ -77,7 +77,7 @@ public class JsonServiceRegistryTests extends AbstractResourceBasedServiceRegist
     @Test
     public void verifyExistingDefinitionForCompatibility1() throws IOException {
         val resource = new ClassPathResource("returnMappedAttributeReleasePolicyTest1.json");
-        val serializer = new DefaultRegisteredServiceJsonSerializer();
+        val serializer = new RegisteredServiceJsonSerializer();
         val service = serializer.from(resource.getInputStream());
         assertNotNull(service);
         assertNotNull(service.getAttributeReleasePolicy());

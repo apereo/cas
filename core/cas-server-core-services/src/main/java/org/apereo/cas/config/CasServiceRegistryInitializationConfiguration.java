@@ -8,7 +8,7 @@ import org.apereo.cas.services.ServiceRegistryInitializer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistry;
 import org.apereo.cas.services.util.CasAddonsRegisteredServicesJsonSerializer;
-import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
 
@@ -106,7 +106,7 @@ public class CasServiceRegistryInitializationConfiguration {
         static Collection<StringSerializer<RegisteredService>> getRegisteredServiceSerializers() {
             return CollectionUtils.wrapList(
                 new CasAddonsRegisteredServicesJsonSerializer(),
-                new DefaultRegisteredServiceJsonSerializer());
+                new RegisteredServiceJsonSerializer());
         }
 
         @Override

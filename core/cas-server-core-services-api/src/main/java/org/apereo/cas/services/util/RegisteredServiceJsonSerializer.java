@@ -20,11 +20,11 @@ import java.nio.charset.StandardCharsets;
  * @since 4.1.0
  */
 @NoArgsConstructor
-public class DefaultRegisteredServiceJsonSerializer extends AbstractJacksonBackedStringSerializer<RegisteredService> {
+public class RegisteredServiceJsonSerializer extends AbstractJacksonBackedStringSerializer<RegisteredService> {
 
     private static final long serialVersionUID = 7645698151115635245L;
 
-    public DefaultRegisteredServiceJsonSerializer(final PrettyPrinter prettyPrinter) {
+    public RegisteredServiceJsonSerializer(final PrettyPrinter prettyPrinter) {
         super(prettyPrinter);
     }
 
@@ -44,9 +44,15 @@ public class DefaultRegisteredServiceJsonSerializer extends AbstractJacksonBacke
     @Override
     public boolean supports(final File file) {
         try {
-            return FileUtils.readFileToString(file, StandardCharsets.UTF_8.name()).contains(JsonTypeInfo.Id.CLASS.getDefaultPropertyName());
+            val content = FileUtils.readFileToString(file, StandardCharsets.UTF_8.name());
+            return supports(content);
         } catch (final Exception e) {
             return false;
         }
+    }
+
+    @Override
+    public boolean supports(final String content) {
+        return content.contains(JsonTypeInfo.Id.CLASS.getDefaultPropertyName());
     }
 }

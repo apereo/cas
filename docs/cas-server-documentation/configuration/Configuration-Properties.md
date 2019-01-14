@@ -3642,6 +3642,21 @@ to locate YAML service definitions, decide how those resources should be found.
 
 To learn more about this topic, [please review this guide](../services/YAML-Service-Management.html).
 
+### Git Service Registry
+
+Works with git repository to fetch and manage service registry definitions.
+
+```properties
+# cas.serviceRegistry.git.repositoryUrl=https://github.com/repository
+# cas.serviceRegistry.git.branchesToClone=master
+# cas.serviceRegistry.git.activeBranch=master
+# cas.serviceRegistry.git.username=
+# cas.serviceRegistry.git.password=
+# cas.serviceRegistry.git.cloneDirectory=file:/tmp/cas-service-registry
+```
+
+To learn more about this topic, [please review this guide](../services/Git-Service-Management.html).
+
 ### RESTful Service Registry
 
 To learn more about this topic, [please review this guide](../services/REST-Service-Management.html).

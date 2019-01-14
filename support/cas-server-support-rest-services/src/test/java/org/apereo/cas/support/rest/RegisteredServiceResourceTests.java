@@ -10,7 +10,7 @@ import org.apereo.cas.authentication.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.EncodingUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -71,7 +71,7 @@ public class RegisteredServiceResourceTests {
     }
 
     private static MockMvc configureMockMvcFor(final RegisteredServiceResource registeredServiceResource) {
-        val sz = new DefaultRegisteredServiceJsonSerializer();
+        val sz = new RegisteredServiceJsonSerializer();
         val converter = new MappingJackson2HttpMessageConverter(sz.getObjectMapper());
         return MockMvcBuilders.standaloneSetup(registeredServiceResource)
             .defaultRequest(get("/")
@@ -97,7 +97,7 @@ public class RegisteredServiceResourceTests {
     private void runTest(final String attrName, final String attrValue, final String credentials, final ResultMatcher result) throws Exception {
         val registeredServiceResource = getRegisteredServiceResource(attrName, attrValue);
         val service = RegisteredServiceTestUtils.getRegisteredService();
-        val sz = new DefaultRegisteredServiceJsonSerializer();
+        val sz = new RegisteredServiceJsonSerializer();
         try (val writer = new StringWriter()) {
             sz.to(writer, service);
             configureMockMvcFor(registeredServiceResource)

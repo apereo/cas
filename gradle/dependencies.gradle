@@ -36,6 +36,12 @@ ext.libraries = [
                     force = true
                 }
         ],
+        jgit                    : [
+                dependencies.create("org.eclipse.jgit:org.eclipse.jgit:$jgitVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                }
+        ],
         semver                  : [
                 dependencies.create("com.vdurmont:semver4j:$semverVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -811,7 +817,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        shibidpjavasupport : [
+        shibidpjavasupport      : [
                 dependencies.create("net.shibboleth.utilities:java-support:$shibbolethUtilJavaSupportVersion") {
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "joda-time", module: "joda-time")
@@ -2014,7 +2020,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        pac4jcore : [
+        pac4jcore               : [
                 dependencies.create("org.pac4j:pac4j-config:$pac4jVersion") {
                     exclude(group: "com.nimbusds", module: "oauth2-oidc-sdk")
                     exclude(group: "org.apache.commons", module: "commons-lang3")
@@ -2092,7 +2098,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        pac4jjwt : [
+        pac4jjwt                : [
                 dependencies.create("org.pac4j:pac4j-jwt:$pac4jVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "jcl-over-slf4j")
@@ -2105,9 +2111,9 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     force = true
-                }   
+                }
         ],
-        pac4jcas : [
+        pac4jcas                : [
                 dependencies.create("org.pac4j:pac4j-cas:$pac4jVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "joda-time", module: "joda-time")
@@ -2352,13 +2358,13 @@ ext.libraries = [
                     force = true
                 }
         ],
-        javaparser : [
+        javaparser              : [
                 dependencies.create("com.github.javaparser:javaparser-core:$javaParserVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "jul-to-slf4j")
                     exclude(group: "com.google.guava", module: "guava")
                     force = true
-                }      
+                }
         ],
         springbootadminserver   : [
                 dependencies.create("de.codecentric:spring-boot-admin-starter-server:$springBootAdminVersion") {
@@ -3424,7 +3430,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        wss4j: [
+        wss4j                   : [
                 dependencies.create("org.apache.wss4j:wss4j-ws-security-dom:$wss4jVersion") {
                     exclude(group: "org.jvnet.mimepull", module: "mimepull")
                     force = true

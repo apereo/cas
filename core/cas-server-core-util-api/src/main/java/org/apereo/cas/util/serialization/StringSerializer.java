@@ -130,4 +130,14 @@ public interface StringSerializer<T> extends Serializable {
     default boolean supports(final File file) {
         return true;
     }
+
+    /**
+     * Supports the input stream for serialization?
+     *
+     * @param content the content
+     * @return true /false
+     */
+    default boolean supports(final String content) {
+        return true;
+    }
 }
