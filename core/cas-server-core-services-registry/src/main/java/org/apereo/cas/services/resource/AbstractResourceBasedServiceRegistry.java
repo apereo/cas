@@ -258,7 +258,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             LOGGER.debug("[{}] starts with ., ignoring", fileName);
             return new ArrayList<>(0);
         }
-        if (!Arrays.asList(getExtensions()).stream().anyMatch(ext -> fileName.endsWith(ext))) {
+        if (Arrays.stream(getExtensions()).noneMatch(fileName::endsWith)) {
             LOGGER.debug("[{}] doesn't end with valid extension, ignoring", fileName);
             return new ArrayList<>(0);
         }
