@@ -1,16 +1,18 @@
 package org.apereo.cas.support.claims;
 
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.ws.idp.WSFederationClaims;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.cxf.rt.security.claims.Claim;
 import org.apache.cxf.rt.security.claims.ClaimCollection;
 import org.apache.cxf.sts.claims.ClaimsHandler;
 import org.apache.cxf.sts.claims.ClaimsParameters;
 import org.apache.cxf.sts.claims.ProcessedClaim;
 import org.apache.cxf.sts.claims.ProcessedClaimCollection;
 import org.apache.cxf.sts.token.realm.RealmSupport;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.ws.idp.WSFederationClaims;
 
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
@@ -54,15 +56,35 @@ public class WrappingSecurityTokenServiceClaimsHandler implements ClaimsHandler,
             return new ProcessedClaimCollection();
         }
         final ProcessedClaimCollection claimCollection = new ProcessedClaimCollection();
-        claims.stream().map(requestClaim -> {
-            final ProcessedClaim claim = new ProcessedClaim();
-            claim.setClaimType(requestClaim.getClaimType());
-            claim.setIssuer(this.issuer);
-            claim.setOriginalIssuer(this.issuer);
-            claim.setValues(requestClaim.getValues());
-            return claim;
-        }).forEach(claimCollection::add);
+        claims.stream().map(c -> createProcessedClaim(c, parameters)).forEach(claimCollection::add);
         return claimCollection;
+    }
+
+    /**
+     * Create processed claim processed claim.
+     *
+     * @param requestClaim the request claim
+     * @param parameters   the parameters
+     * @return the processed claim
+     */
+    protected ProcessedClaim createProcessedClaim(final Claim requestClaim, final ClaimsParameters parameters) {
+        final ProcessedClaim claim = new ProcessedClaim();
+        claim.setClaimType(createProcessedClaimType(requestClaim, parameters));
+        claim.setIssuer(this.issuer);
+        claim.setOriginalIssuer(this.issuer);
+        claim.setValues(requestClaim.getValues());
+        return claim;
+    }
+
+    /**
+     * Create processed claim type uri.
+     *
+     * @param requestClaim the request claim
+     * @param parameters   the parameters
+     * @return the uri
+     */
+    protected URI createProcessedClaimType(final Claim requestClaim, final ClaimsParameters parameters) {
+        return requestClaim.getClaimType();
     }
 
     @Override
