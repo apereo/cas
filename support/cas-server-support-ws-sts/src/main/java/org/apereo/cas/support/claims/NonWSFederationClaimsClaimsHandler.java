@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.rt.security.claims.Claim;
+import org.apache.cxf.sts.claims.ClaimsParameters;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -26,9 +27,13 @@ public class NonWSFederationClaimsClaimsHandler extends WrappingSecurityTokenSer
 
     @SneakyThrows
     @Override
-    protected URI createProcessedClaimType(final Claim requestClaim) {
-        val value = StringUtils.remove(requestClaim.getClaimType().toASCIIString(), WSFederationConstants.HTTP_SCHEMAS_APEREO_CAS);
-        return new URI(value);
+    protected URI createProcessedClaimType(final Claim requestClaim, final ClaimsParameters parameters) {
+        val tokenType = parameters.getTokenRequirements().getTokenType();
+        if (WSFederationConstants.WSS_SAML2_TOKEN_TYPE.equalsIgnoreCase(tokenType)) {
+            val value = StringUtils.remove(requestClaim.getClaimType().toASCIIString(), WSFederationConstants.HTTP_SCHEMAS_APEREO_CAS);
+            return new URI(value);
+        }
+        return requestClaim.getClaimType();
     }
 
     @Override
