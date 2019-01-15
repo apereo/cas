@@ -141,7 +141,7 @@ public class CasThemesConfiguration {
             new CasConfigurationProperties());
         serviceThemeResolver.setDefaultThemeName(defaultThemeName);
 
-        val header = new RequestHeaderThemeResolver();
+        val header = new RequestHeaderThemeResolver(casProperties.getTheme().getParamName());
         header.setDefaultThemeName(defaultThemeName);
 
         val chainingThemeResolver = new ChainingThemeResolver();
@@ -200,5 +200,4 @@ public class CasThemesConfiguration {
 
         return r;
     }
-
 }
