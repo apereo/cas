@@ -5,13 +5,11 @@ import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.GitServiceRegistryConfiguration;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.eclipse.jgit.api.Git;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -43,7 +41,7 @@ import java.util.Collections;
     "cas.serviceRegistry.git.repositoryUrl=file:/tmp/cas-sample-data.git"
 })
 @Category(FileSystemCategory.class)
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
+//@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired
@@ -52,16 +50,13 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
 
     static {
         try {
-            val repositoryBuilder = new FileRepositoryBuilder();
-            val gitDir = new File(FileUtils.getTempDirectory(), "cas-sample-data");
+            val gitDir = new File(FileUtils.getTempDirectory(), "cas-service-registry");
             if (gitDir.exists()) {
                 FileUtils.deleteDirectory(gitDir);
             }
-            repositoryBuilder.setGitDir(gitDir)
-                .readEnvironment()
-                .findGitDir()
-                .setMustExist(false)
-                .build();
+            val git = Git.init().setDirectory(gitDir).setBare(false).call();
+            LOGGER.debug(git.getRepository().getBranch());
+            git.commit().setMessage("Initial commit").call();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
