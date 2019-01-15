@@ -88,7 +88,12 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
         val id = '_' + String.valueOf(RandomUtils.getNativeInstance().nextLong());
         val samlResponse = newResponse(id, ZonedDateTime.now(ZoneOffset.UTC), authnRequest.getID(), null);
         samlResponse.setVersion(SAMLVersion.VERSION_20);
-        samlResponse.setIssuer(buildEntityIssuer());
+
+        if (StringUtils.isBlank(service.getIssuerEntityId())) {
+            samlResponse.setIssuer(buildSamlResponseIssuer(casProperties.getAuthn().getSamlIdp().getEntityId()));
+        } else {
+            samlResponse.setIssuer(buildSamlResponseIssuer(service.getIssuerEntityId()));
+        }
 
         val acs = SamlIdPUtils.determineEndpointForRequest(authnRequest, adaptor, binding);
         val location = StringUtils.isBlank(acs.getResponseLocation()) ? acs.getLocation() : acs.getResponseLocation();

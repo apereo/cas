@@ -166,10 +166,11 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
     /**
      * Build entity issuer issuer.
      *
+     * @param entityId the entity id
      * @return the issuer
      */
-    protected Issuer buildEntityIssuer() {
-        val issuer = newIssuer(casProperties.getAuthn().getSamlIdp().getEntityId());
+    protected Issuer buildSamlResponseIssuer(final String entityId) {
+        val issuer = newIssuer(entityId);
         issuer.setFormat(Issuer.ENTITY);
         return issuer;
     }

@@ -79,6 +79,9 @@ public class SamlRegisteredService extends RegexRegisteredService {
     private String signingCredentialFingerprint;
 
     @Column
+    private String issuerEntityId;
+
+    @Column
     private boolean signAssertions;
 
     @Column(name = "skipGenAssertionNameId")
