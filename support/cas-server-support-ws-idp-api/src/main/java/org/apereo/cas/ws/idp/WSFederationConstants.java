@@ -29,6 +29,10 @@ public interface WSFederationConstants {
      * SAML2 token type.
      */
     String WSS_SAML2_TOKEN_TYPE = "http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV2.0";
+    /**
+     * SAML1 token type.
+     */
+    String WSS_SAML1_TOKEN_TYPE = "http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV1.1";
 
     /**
      * WS-trust namespace.

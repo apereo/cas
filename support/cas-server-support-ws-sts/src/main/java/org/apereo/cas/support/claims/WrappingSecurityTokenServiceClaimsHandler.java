@@ -56,7 +56,7 @@ public class WrappingSecurityTokenServiceClaimsHandler implements ClaimsHandler,
             return new ProcessedClaimCollection();
         }
         final ProcessedClaimCollection claimCollection = new ProcessedClaimCollection();
-        claims.stream().map(this::createProcessedClaim).forEach(claimCollection::add);
+        claims.stream().map(c -> createProcessedClaim(c, parameters)).forEach(claimCollection::add);
         return claimCollection;
     }
 
@@ -64,11 +64,12 @@ public class WrappingSecurityTokenServiceClaimsHandler implements ClaimsHandler,
      * Create processed claim processed claim.
      *
      * @param requestClaim the request claim
+     * @param parameters   the parameters
      * @return the processed claim
      */
-    protected ProcessedClaim createProcessedClaim(final Claim requestClaim) {
+    protected ProcessedClaim createProcessedClaim(final Claim requestClaim, final ClaimsParameters parameters) {
         final ProcessedClaim claim = new ProcessedClaim();
-        claim.setClaimType(createProcessedClaimType(requestClaim));
+        claim.setClaimType(createProcessedClaimType(requestClaim, parameters));
         claim.setIssuer(this.issuer);
         claim.setOriginalIssuer(this.issuer);
         claim.setValues(requestClaim.getValues());
@@ -79,9 +80,10 @@ public class WrappingSecurityTokenServiceClaimsHandler implements ClaimsHandler,
      * Create processed claim type uri.
      *
      * @param requestClaim the request claim
+     * @param parameters   the parameters
      * @return the uri
      */
-    protected URI createProcessedClaimType(final Claim requestClaim) {
+    protected URI createProcessedClaimType(final Claim requestClaim, final ClaimsParameters parameters) {
         return requestClaim.getClaimType();
     }
 
