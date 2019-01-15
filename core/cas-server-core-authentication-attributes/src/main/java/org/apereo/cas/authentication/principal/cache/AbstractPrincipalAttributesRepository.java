@@ -68,6 +68,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      * are ignored and the source is always consulted.
      */
     protected MergingStrategy mergingStrategy;
+
     private transient IPersonAttributeDao attributeRepository;
 
     /**
