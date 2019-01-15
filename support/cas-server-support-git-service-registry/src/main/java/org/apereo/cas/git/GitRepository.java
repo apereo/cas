@@ -160,13 +160,17 @@ public class GitRepository {
      */
     @SneakyThrows
     public boolean pull() {
-        return this.gitInstance.pull()
-            .setTimeout(TIMEOUT_SECONDS)
-            .setFastForward(MergeCommand.FastForwardMode.FF_ONLY)
-            .setRebase(false)
-            .setProgressMonitor(new LoggingGitProgressMonitor())
-            .call()
-            .isSuccessful();
+        val remotes = this.gitInstance.getRepository().getRemoteNames();
+        if (!remotes.isEmpty()) {
+            return this.gitInstance.pull()
+                .setTimeout(TIMEOUT_SECONDS)
+                .setFastForward(MergeCommand.FastForwardMode.FF_ONLY)
+                .setRebase(false)
+                .setProgressMonitor(new LoggingGitProgressMonitor())
+                .call()
+                .isSuccessful();
+        }
+        return false;
     }
 
     /**
