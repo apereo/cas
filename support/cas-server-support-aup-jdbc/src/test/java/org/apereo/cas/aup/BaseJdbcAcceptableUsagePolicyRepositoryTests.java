@@ -69,7 +69,7 @@ import static org.junit.Assert.*;
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class
 })
-public abstract class BaseJdbcAcceptableUsagePolicyRepositoryTests {
+public class BaseJdbcAcceptableUsagePolicyRepositoryTests {
     @Autowired
     @Qualifier("acceptableUsagePolicyRepository")
     protected AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
@@ -84,6 +84,9 @@ public abstract class BaseJdbcAcceptableUsagePolicyRepositoryTests {
     
     @Autowired
     protected CasConfigurationProperties casProperties;
+
+    protected BaseJdbcAcceptableUsagePolicyRepositoryTests() {
+    }
 
     protected void verifyAction(final String actualPrincipalId, final Map<String, Object> profileAttributes) {
         final MockRequestContext context = new MockRequestContext();
