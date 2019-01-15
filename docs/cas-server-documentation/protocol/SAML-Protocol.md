@@ -58,7 +58,6 @@ Content-Type: text/xml
 </SOAP-ENV:Envelope>
 ```
 
-
 ## Sample Response
 
 ```xml
