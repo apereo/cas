@@ -95,15 +95,19 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
     @Override
     public Collection<RegisteredService> load() {
         if (gitRepository.pull()) {
-            val objects = this.gitRepository.getObjectsInRepository(new PathRegexPatternTreeFilter(PATTERN_ACCEPTED_REPOSITORY_FILES));
-            registeredServices.clear();
-            registeredServices.addAll(objects
-                .stream()
-                .filter(Objects::nonNull)
-                .map(this::parseGitObjectContentIntoRegisteredService)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList()));
+            LOGGER.debug("Successfully pulled changes from the remote repository");
+        } else {
+            LOGGER.warn("Unable to pull changes from the remote repository. Service definition files may be stale.");
         }
+
+        val objects = this.gitRepository.getObjectsInRepository(new PathRegexPatternTreeFilter(PATTERN_ACCEPTED_REPOSITORY_FILES));
+        registeredServices.clear();
+        registeredServices.addAll(objects
+            .stream()
+            .filter(Objects::nonNull)
+            .map(this::parseGitObjectContentIntoRegisteredService)
+            .flatMap(Collection::stream)
+            .collect(Collectors.toList()));
         return registeredServices;
     }
 
