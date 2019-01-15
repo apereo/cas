@@ -33,6 +33,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -257,6 +258,11 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             LOGGER.debug("[{}] starts with ., ignoring", fileName);
             return new ArrayList<>(0);
         }
+        if (!Arrays.asList(getExtensions()).stream().anyMatch(ext -> fileName.endsWith(ext))) {
+            LOGGER.debug("[{}] doesn't end with valid extension, ignoring", fileName);
+            return new ArrayList<>(0);
+        }
+
         if (!RegexUtils.matches(this.serviceFileNamePattern, fileName)) {
             LOGGER.warn("[{}] does not match the recommended pattern [{}]. "
                     + "While CAS tries to be forgiving as much as possible, it's recommended "
