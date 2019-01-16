@@ -64,7 +64,7 @@ public class CasCoreUtilConfiguration implements InitializingBean {
     private CasConfigurationProperties casProperties;
 
     @Bean
-    @Scope
+    @Scope(value = "prototype")
     public ApplicationContextProvider applicationContextProvider() {
         return new ApplicationContextProvider();
     }
@@ -113,13 +113,20 @@ public class CasCoreUtilConfiguration implements InitializingBean {
         return SmsSender.noOp();
     }
 
+    /**
+     * It's important to invoke the {@link #applicationContextProvider()}
+     * method here forcefully and not rely on the {@link #applicationContext}.
+     * Certain tests in the CAS context require access to the application context
+     * from the the {@link #applicationContextProvider()}.
+     */
     @Override
     public void afterPropertiesSet() {
+        val appContext = applicationContextProvider().getConfigurableApplicationContext();
         val conversionService = new DefaultFormattingConversionService(true);
-        conversionService.setEmbeddedValueResolver(new CasEmbeddedValueResolver(applicationContext));
-        applicationContext.getEnvironment().setConversionService(conversionService);
-        if (applicationContext.getParent() != null) {
-            var env = (ConfigurableEnvironment) applicationContext.getParent().getEnvironment();
+        conversionService.setEmbeddedValueResolver(new CasEmbeddedValueResolver(appContext));
+        appContext.getEnvironment().setConversionService(conversionService);
+        if (appContext.getParent() != null) {
+            var env = (ConfigurableEnvironment) appContext.getParent().getEnvironment();
             env.setConversionService(conversionService);
         }
         val registry = (ConverterRegistry) DefaultConversionService.getSharedInstance();
