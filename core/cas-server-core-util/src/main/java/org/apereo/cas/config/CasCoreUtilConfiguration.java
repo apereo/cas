@@ -64,7 +64,7 @@ public class CasCoreUtilConfiguration implements InitializingBean {
     private CasConfigurationProperties casProperties;
 
     @Bean
-    @Scope(value = "prototype")
+    @Scope
     public ApplicationContextProvider applicationContextProvider() {
         return new ApplicationContextProvider();
     }
