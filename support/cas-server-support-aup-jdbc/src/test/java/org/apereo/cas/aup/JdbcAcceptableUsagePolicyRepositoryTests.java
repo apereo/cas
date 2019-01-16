@@ -1,16 +1,15 @@
 package org.apereo.cas.aup;
 
-import org.apereo.cas.config.CasAcceptableUsagePolicyJdbcConfiguration;
+import org.apereo.cas.util.CollectionUtils;
 
-import lombok.Getter;
 import lombok.val;
+import org.junit.After;
 import org.junit.Before;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
+import org.junit.Test;
 import org.springframework.test.context.TestPropertySource;
 
-import javax.sql.DataSource;
+import static org.junit.Assert.*;
+
 
 /**
  * This is {@link JdbcAcceptableUsagePolicyRepositoryTests}.
@@ -18,25 +17,11 @@ import javax.sql.DataSource;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Import(CasAcceptableUsagePolicyJdbcConfiguration.class)
 @TestPropertySource(properties = {
     "cas.acceptableUsagePolicy.jdbc.tableName=aup_table",
     "cas.acceptableUsagePolicy.aupAttributeName=accepted"
 })
-@Getter
-public class JdbcAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
-    @Autowired
-    @Qualifier("acceptableUsagePolicyDataSource")
-    private DataSource acceptableUsagePolicyDataSource;
-
-    @Autowired
-    @Qualifier("acceptableUsagePolicyRepository")
-    private AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
-
-    @Override
-    public boolean hasLiveUpdates() {
-        return false;
-    }
+public class JdbcAcceptableUsagePolicyRepositoryTests extends BaseJdbcAcceptableUsagePolicyRepositoryTests {
 
     @Before
     public void initialize() throws Exception {
@@ -47,5 +32,26 @@ public class JdbcAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsag
                 s.execute("INSERT INTO aup_table (id, username, accepted) values (100, 'casuser', false);");
             }
         }
+    }
+    
+    @After
+    public void cleanup() throws Exception {
+        try (val c = this.acceptableUsagePolicyDataSource.getConnection()) {
+            try (val s = c.createStatement()) {
+                c.setAutoCommit(true);
+                s.execute("DROP TABLE aup_table;");
+            }
+        }
+    }
+    
+    @Test
+    public void verifyRepositoryAction() {
+        verifyRepositoryAction("casuser", CollectionUtils.wrap("accepted", "false"));
+    }
+    
+    @Test
+    public void determinePrincipalId() {
+        val principalId = determinePrincipalId("casuser", CollectionUtils.wrap("accepted", "false"));
+        assertEquals("casuser", principalId);
     }
 }
