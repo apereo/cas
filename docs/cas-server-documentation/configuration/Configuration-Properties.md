@@ -4269,6 +4269,10 @@ If AUP is controlled via JDBC, decide how choices should be remembered back insi
 
 ```properties
 # cas.acceptableUsagePolicy.jdbc.tableName=usage_policies_table
+# cas.acceptableUsagePolicy.jdbc.aupColumn=
+# cas.acceptableUsagePolicy.jdbc.principalIdColumn=username
+# cas.acceptableUsagePolicy.jdbc.principalIdAttribute=
+# cas.acceptableUsagePolicy.jdbc.sqlUpdateAUP=UPDATE %s SET %s=true WHERE %s=?
 ```
 
 #### CouchDb
