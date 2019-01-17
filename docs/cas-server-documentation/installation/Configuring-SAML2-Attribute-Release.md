@@ -13,7 +13,7 @@ A few additional policies specific to SAML services are also provided below.
 ## InCommon Research and Scholarship
 
 A specific attribute release policy is available to release the [attribute bundles](https://spaces.internet2.edu/display/InCFederation/Research+and+Scholarship+Attribute+Bundle)
-needed for InCommon's Research and Scholarship service providers:
+needed for InCommon Research and Scholarship service providers using the entity attribute value `http://id.incommon.org/category/research-and-scholarship`:
 
 ```json
 {
@@ -27,6 +27,29 @@ needed for InCommon's Research and Scholarship service providers:
     "policies": [ "java.util.ArrayList",
       [
          {"@class": "org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicy"}
+      ]
+    ]
+  }
+}
+```
+
+## REFEDS Research and Scholarship
+
+A specific attribute release policy is available to release the [attribute bundles](https://refeds.org/category/research-and-scholarship)
+needed for REFEDS Research and Scholarship service providers using the entity attribute value `http://refeds.org/category/research-and-scholarship`:
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "entity-ids-allowed-via-regex",
+  "name": "SAML",
+  "id": 10,
+  "metadataLocation": "path/to/incommon/metadata.xml",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "policies": [ "java.util.ArrayList",
+      [
+         {"@class": "org.apereo.cas.support.saml.services.RefedsRSAttributeReleasePolicy"}
       ]
     ]
   }
