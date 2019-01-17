@@ -46,8 +46,8 @@ public class MetadataEntityAttributesAttributeReleasePolicy extends BaseSamlRegi
                                                                         final SamlRegisteredServiceCachingMetadataResolver resolver,
                                                                         final SamlRegisteredServiceServiceProviderMetadataFacade facade,
                                                                         final EntityDescriptor entityDescriptor) {
-        val attr = new EntityAttributesPredicate.Candidate(this.entityAttribute, this.entityAttributeFormat);
-        attr.setValues(this.entityAttributeValues);
+        val attr = new EntityAttributesPredicate.Candidate(getEntityAttribute(), getEntityAttributeFormat());
+        attr.setValues(getEntityAttributeValues());
         LOGGER.debug("Loading entity attribute predicate filter for candidate [{}] with values [{}]", attr.getName(), attr.getValues());
         val predicate = new EntityAttributesPredicate(CollectionUtils.wrap(attr), true);
         if (predicate.apply(entityDescriptor)) {
