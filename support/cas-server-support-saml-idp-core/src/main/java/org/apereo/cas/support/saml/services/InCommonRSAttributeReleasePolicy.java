@@ -31,7 +31,8 @@ public class InCommonRSAttributeReleasePolicy extends MetadataEntityAttributesAt
     @JsonIgnore
     @Override
     public Set<String> getEntityAttributeValues() {
-        return CollectionUtils.wrapSet("http://refeds.org/category/research-and-scholarship");
+        return CollectionUtils.wrapSet("http://id.incommon.org/category/research-and-scholarship",
+            "http://refeds.org/category/research-and-scholarship");
     }
 
     @JsonIgnore
