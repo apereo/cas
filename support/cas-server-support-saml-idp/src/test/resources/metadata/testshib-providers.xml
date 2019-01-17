@@ -1,12 +1,31 @@
 <EntitiesDescriptor Name="urn:mace:shibboleth:testshib:two"
                     xmlns="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
-                    xmlns:mdalg="urn:oasis:names:tc:SAML:metadata:algsupport" xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui"
->
-
-
-    <EntityDescriptor entityID="https://sp.testshib.org/shibboleth-sp">
+                    xmlns:mdalg="urn:oasis:names:tc:SAML:metadata:algsupport" xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui">
+    
+    <EntityDescriptor entityID="https://sp.testshib.org/shibboleth-sp"
+                      xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+                      xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+                      xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute"
+                      xmlns:mdrpi="urn:oasis:names:tc:SAML:metadata:rpi"
+                      xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui"
+                      xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+                      xmlns:xrd="http://docs.oasis-open.org/ns/xri/xrd-1.0">
 
         <Extensions>
+
+            <mdattr:EntityAttributes>
+                <saml:Attribute Name="http://macedir.org/entity-category" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                    <saml:AttributeValue>
+                        http://id.incommon.org/category/research-and-scholarship
+                    </saml:AttributeValue>
+                </saml:Attribute>
+                <saml:Attribute Name="http://macedir.org/entity-category" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                    <saml:AttributeValue>
+                        http://refeds.org/category/research-and-scholarship
+                    </saml:AttributeValue>
+                </saml:Attribute>
+            </mdattr:EntityAttributes>
+
             <mdalg:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"/>
             <mdalg:DigestMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#sha384"/>
             <mdalg:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
@@ -102,11 +121,11 @@
             <NameIDFormat>urn:mace:shibboleth:1.0:nameIdentifier</NameIDFormat>
 
             <!--
-		This tells IdPs where and how to send authentication assertions. Mostly
-		the SP will tell the IdP what location to use in its request, but this
-		is how the IdP validates the location and also figures out which
-		SAML version/binding to use.
-		-->
+        This tells IdPs where and how to send authentication assertions. Mostly
+        the SP will tell the IdP what location to use in its request, but this
+        is how the IdP validates the location and also figures out which
+        SAML version/binding to use.
+        -->
 
             <AssertionConsumerService index="1" isDefault="true"
                                       Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"

@@ -3,7 +3,9 @@ package org.apereo.cas;
 import org.apereo.cas.support.saml.SamlAttributeEncoderTests;
 import org.apereo.cas.support.saml.SamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.GroovySamlRegisteredServiceAttributeReleasePolicyTests;
+import org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.PatternMatchingEntityIdAttributeReleasePolicyTests;
+import org.apereo.cas.support.saml.services.RefedsRSAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredServiceJpaMicrosoftSqlServerTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredServiceJpaPostgresTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredServiceJpaTests;
@@ -40,6 +42,8 @@ import org.junit.runners.Suite;
     GroovySamlRegisteredServiceAttributeReleasePolicyTests.class,
     SamlRegisteredServiceJpaPostgresTests.class,
     SamlIdPUtilsTests.class,
+    InCommonRSAttributeReleasePolicyTests.class,
+    RefedsRSAttributeReleasePolicyTests.class,
     SamlObjectSignatureValidatorTests.class,
     SamlProfileSaml2ResponseBuilderTests.class
 })
