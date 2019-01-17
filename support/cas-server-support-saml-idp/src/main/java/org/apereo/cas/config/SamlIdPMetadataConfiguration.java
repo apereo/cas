@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
@@ -24,6 +25,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.plan.DefaultSamlRegiste
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlan;
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlanConfigurator;
 import org.apereo.cas.support.saml.web.idp.metadata.SamlIdPMetadataController;
+import org.apereo.cas.support.saml.web.idp.metadata.SamlRegisteredServiceCachedMetadataEndpoint;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.http.HttpClient;
 
@@ -35,6 +37,7 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -79,6 +82,10 @@ public class SamlIdPMetadataConfiguration {
     @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")
     private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
+
+    @Autowired
+    @Qualifier("registeredServiceAccessStrategyEnforcer")
+    private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
 
     @Lazy
     @Bean(initMethod = "initialize", destroyMethod = "destroy")
@@ -180,5 +187,13 @@ public class SamlIdPMetadataConfiguration {
     public HealthIndicator samlRegisteredServiceMetadataHealthIndicator() {
         return new SamlRegisteredServiceMetadataHealthIndicator(samlRegisteredServiceMetadataResolvers(),
             servicesManager.getIfAvailable());
+    }
+
+    @Bean
+    @ConditionalOnEnabledEndpoint
+    public SamlRegisteredServiceCachedMetadataEndpoint samlRegisteredServiceCachedMetadataEndpoint() {
+        return new SamlRegisteredServiceCachedMetadataEndpoint(casProperties, defaultSamlRegisteredServiceCachingMetadataResolver(),
+            servicesManager.getIfAvailable(), registeredServiceAccessStrategyEnforcer.getIfAvailable(),
+            openSamlConfigBean.getIfAvailable());
     }
 }
