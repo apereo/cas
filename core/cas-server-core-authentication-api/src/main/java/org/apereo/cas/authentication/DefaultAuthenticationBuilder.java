@@ -1,6 +1,9 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.Getter;
@@ -244,5 +247,29 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     public Authentication build() {
         return new DefaultAuthentication(this.authenticationDate, this.credentials, this.principal,
             this.attributes, this.successes, this.failures, this.warnings);
+    }
+
+    /**
+     * Factory method.
+     *
+     * @param principal
+     * @param principalFactory
+     * @param principalAttributes
+     * @param service
+     * @param registeredService
+     * @param authentication
+     * @return AuthenticationBuilder
+     */
+    public static AuthenticationBuilder of(Principal principal,
+                                           PrincipalFactory principalFactory,
+                                           Map<String, Object> principalAttributes,
+                                           Service service,
+                                           RegisteredService registeredService,
+                                           Authentication authentication
+                                           ) {
+
+        val principalId = registeredService.getUsernameAttributeProvider().resolveUsername(principal, service, registeredService);
+        val newPrincipal = principalFactory.createPrincipal(principalId, principalAttributes);
+        return DefaultAuthenticationBuilder.newInstance(authentication).setPrincipal(newPrincipal);
     }
 }
