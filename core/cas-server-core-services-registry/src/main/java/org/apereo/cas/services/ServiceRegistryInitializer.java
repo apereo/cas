@@ -55,7 +55,7 @@ public class ServiceRegistryInitializer {
     private boolean findExistingMatchForService(final RegisteredService r) {
         if (StringUtils.isNotBlank(r.getServiceId())) {
             val match = this.serviceRegistry.findServiceById(r.getServiceId());
-            if (match != null) {
+            if (match != null && match.getClass().equals(r.getClass())) {
                 LOGGER.warn("Skipping [{}] JSON service definition as a matching service [{}] is found in the registry", r.getName(), match.getName());
                 return true;
             }
