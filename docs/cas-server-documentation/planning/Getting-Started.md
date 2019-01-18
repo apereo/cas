@@ -19,7 +19,7 @@ to learn about common trends, practices and patterns
 that may already have solved the same issues you face today. 
 
 <div class="alert alert-warning"><strong>KISS</strong><p>In general, avoid designing and/or adopting
-use cases and workflows that heavily alter the CAS internal components, induce a heavy burden your management
+use cases and workflows that heavily alter the CAS internal components, induce a heavy burden on your management
 and maintenance of the configuration or re-invent the CAS software and its supported protocols. All options simply
 add to maintenance cost and headache.</p></div>
 
