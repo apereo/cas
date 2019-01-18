@@ -294,19 +294,25 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     public ExpirationPolicy grantingTicketExpirationPolicy() {
         val tgt = casProperties.getTicket().getTgt();
         if (tgt.getRememberMe().isEnabled()) {
-            return rememberMeExpirationPolicy();
+            val p = rememberMeExpirationPolicy();
+            LOGGER.debug("Final effective TTL of remember me expiration policy is [{}] seconds", p.getTimeToLive());
+            return p;
         }
-        return ticketGrantingTicketExpirationPolicy();
+        val p = ticketGrantingTicketExpirationPolicy();
+        LOGGER.debug("Final effective TTL of TGT expiration policy is [{}] seconds", p.getTimeToLive());
+        return p;
     }
 
     @Bean
     public ExpirationPolicy rememberMeExpirationPolicy() {
         val tgt = casProperties.getTicket().getTgt();
-
+        LOGGER.debug("Remember me expiration policiy is being configured based on hard timeout of [{}] seconds",
+                tgt.getRememberMe().getTimeToKillInSeconds());
         val rememberMePolicy = new HardTimeoutExpirationPolicy(tgt.getRememberMe().getTimeToKillInSeconds());
         val p = new RememberMeDelegatingExpirationPolicy(ticketGrantingTicketExpirationPolicy());
         p.addPolicy(RememberMeDelegatingExpirationPolicy.PolicyTypes.REMEMBER_ME, rememberMePolicy);
         p.addPolicy(RememberMeDelegatingExpirationPolicy.PolicyTypes.DEFAULT, ticketGrantingTicketExpirationPolicy());
+
         return p;
     }
 
