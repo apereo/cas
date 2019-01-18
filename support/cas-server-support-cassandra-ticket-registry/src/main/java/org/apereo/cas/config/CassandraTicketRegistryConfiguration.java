@@ -18,24 +18,14 @@ import com.datastax.driver.core.Session;
 public class CassandraTicketRegistryConfiguration {
 
     private CasConfigurationProperties casConfigurationProperties;
-    //private CassandraTicketRegistryProperties cassandraTicketRegistryProperties;
     private CassandraSessionFactory cassandraSessionFactory;
 
     @Autowired
     public CassandraTicketRegistryConfiguration(CasConfigurationProperties casConfigurationProperties,
-                                                //CassandraTicketRegistryProperties cassandraTicketRegistryProperties,
                                                 CassandraSessionFactory cassandraSessionFactory) {
         this.casConfigurationProperties = casConfigurationProperties;
-        //this.cassandraTicketRegistryProperties = cassandraTicketRegistryProperties;
         this.cassandraSessionFactory = cassandraSessionFactory;
     }
-
-//    @Bean
-//    public CassandraSessionFactory cassandraSession(CassandraTicketRegistryProperties cassandraTicketRegistryProperties) {
-//        casConfigurationProperties.getTicket().getRegistry();//.getCassandra();
-//        casConfigurationProperties.getAuthn().getCassandra();
-//        return new DefaultCassandraSessionFactory(cassandraTicketRegistryProperties);
-//    }
 
     @Bean
     public TicketRegistry ticketRegistry(TicketCatalog ticketCatalog) {
