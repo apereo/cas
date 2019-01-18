@@ -28,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.sts.STSPropertiesMBean;
 import org.apache.cxf.sts.StaticSTSProperties;
 import org.apache.cxf.sts.claims.ClaimsAttributeStatementProvider;
+import org.apache.cxf.sts.claims.ClaimsHandler;
 import org.apache.cxf.sts.claims.ClaimsManager;
 import org.apache.cxf.sts.event.map.EventMapper;
 import org.apache.cxf.sts.event.map.MapEventLogger;
@@ -138,22 +139,46 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         return provider;
     }
 
+    @ConditionalOnMissingBean(name = "wrappingSecurityTokenServiceClaimsHandler")
+    @Bean
+    public ClaimsHandler wrappingSecurityTokenServiceClaimsHandler() {
+        val wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
+        val idp = casProperties.getAuthn().getWsfedIdp().getIdp();
+        return new WrappingSecurityTokenServiceClaimsHandler(idp.getRealmName(), wsfed.getRealm().getIssuer());
+    }
+
+    @ConditionalOnMissingBean(name = "nonWSFederationClaimsClaimsHandler")
+    @Bean
+    public ClaimsHandler nonWSFederationClaimsClaimsHandler() {
+        val wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
+        val idp = casProperties.getAuthn().getWsfedIdp().getIdp();
+        return new NonWSFederationClaimsClaimsHandler(idp.getRealmName(), wsfed.getRealm().getIssuer());
+    }
+
+    @ConditionalOnMissingBean(name = "wsfedClaimsHandlers")
+    @Bean
+    public List<ClaimsHandler> wsfedClaimsHandlers() {
+        return CollectionUtils.wrapList(wrappingSecurityTokenServiceClaimsHandler(), nonWSFederationClaimsClaimsHandler());
+    }
+
+    @ConditionalOnMissingBean(name = "wsfedClaimsManager")
+    @Bean
+    public ClaimsManager wsfedClaimsManager() {
+        val claimsManager = new ClaimsManager();
+        claimsManager.setClaimHandlers(wsfedClaimsHandlers());
+        return claimsManager;
+    }
+
     @ConditionalOnMissingBean(name = "transportIssueDelegate")
     @Bean
     public IssueOperation transportIssueDelegate() {
         val wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
         val idp = casProperties.getAuthn().getWsfedIdp().getIdp();
-
-        val claimsManager = new ClaimsManager();
-        val stsHandler = new WrappingSecurityTokenServiceClaimsHandler(idp.getRealmName(), wsfed.getRealm().getIssuer());
-        val casHandler = new NonWSFederationClaimsClaimsHandler(idp.getRealmName(), wsfed.getRealm().getIssuer());
-        claimsManager.setClaimHandlers(CollectionUtils.wrapList(stsHandler, casHandler));
-
         val op = new TokenIssueOperation();
         op.setTokenProviders(transportTokenProviders());
         op.setServices(CollectionUtils.wrap(transportService()));
         op.setStsProperties(transportSTSProperties());
-        op.setClaimsManager(claimsManager);
+        op.setClaimsManager(wsfedClaimsManager());
         op.setTokenValidators(transportTokenValidators());
         op.setEventListener(loggerListener());
         op.setDelegationHandlers(delegationHandlers());
@@ -207,7 +232,11 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         val wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
         val realmConfig = wsfed.getRealm();
         val realm = new RealmProperties();
-        realm.setIssuer(realmConfig.getIssuer());
+        val issuer = realmConfig.getIssuer();
+        if (StringUtils.isBlank(issuer)) {
+            throw new BeanCreationException("Realm issuer for the secure token service cannot be undefined");
+        }
+        realm.setIssuer(issuer);
         if (StringUtils.isBlank(realmConfig.getKeystoreFile())
             || StringUtils.isBlank(realmConfig.getKeyPassword())
             || StringUtils.isBlank(realmConfig.getKeystoreAlias())) {
