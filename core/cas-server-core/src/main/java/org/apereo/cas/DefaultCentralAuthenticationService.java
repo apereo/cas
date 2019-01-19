@@ -139,7 +139,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         this.ticketRegistry.updateTicket(ticketGrantingTicket);
         this.ticketRegistry.addTicket(serviceTicket);
 
-        LOGGER.info("Granted ticket [{}] for service [{}] and principal [{}]", serviceTicket.getId(), DigestUtils.abbreviate(service.getId()), principal.getId());
+        LOGGER.info("Granted service ticket [{}] for service [{}] and principal [{}]", serviceTicket.getId(), DigestUtils.abbreviate(service.getId()), principal.getId());
         doPublishEvent(new CasServiceTicketGrantedEvent(this, ticketGrantingTicket, serviceTicket));
         return serviceTicket;
     }
@@ -176,7 +176,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         this.ticketRegistry.updateTicket(proxyGrantingTicketObject);
         this.ticketRegistry.addTicket(proxyTicket);
 
-        LOGGER.info("Granted ticket [{}] for service [{}] for user [{}]",
+        LOGGER.info("Granted proxy ticket [{}] for service [{}] for user [{}]",
             proxyTicket.getId(), service.getId(), principal.getId());
 
         doPublishEvent(new CasProxyTicketGrantedEvent(this, proxyGrantingTicketObject, proxyTicket));
