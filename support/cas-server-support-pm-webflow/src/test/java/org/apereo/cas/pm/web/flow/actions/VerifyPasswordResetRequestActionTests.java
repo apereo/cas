@@ -1,6 +1,7 @@
 package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.category.MailCategory;
+import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
@@ -41,13 +42,13 @@ public class VerifyPasswordResetRequestActionTests extends BasePasswordManagemen
             ClientInfoHolder.setClientInfo(new ClientInfo(request));
 
             val token = passwordManagementService.createToken("casuser");
-            request.addParameter(SendPasswordResetInstructionsAction.PARAMETER_NAME_TOKEN, token);
+            request.addParameter(PasswordManagementWebflowUtils.REQUEST_PARAMETER_NAME_PASSWORD_RESET_TOKEN, token);
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals("success", verifyPasswordResetRequestAction.execute(context).getId());
 
-            assertTrue(context.getFlowScope().contains("questionsEnabled"));
-            assertTrue(context.getFlowScope().contains("username"));
-            assertTrue(context.getFlowScope().contains("token"));
+            assertTrue(PasswordManagementWebflowUtils.isPasswordResetSecurityQuestionsEnabled(context));
+            assertNotNull(PasswordManagementWebflowUtils.getPasswordResetUsername(context));
+            assertNotNull(PasswordManagementWebflowUtils.getPasswordResetToken(context));
         } catch (final Exception e) {
             throw new AssertionError(e.getMessage(), e);
         }
