@@ -1,9 +1,9 @@
 package org.apereo.cas.ws.idp.services;
 
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.SecurityTokenServiceClient;
 import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
-import org.apereo.cas.support.claims.WsFederationClaimsEncoder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.ws.idp.WSFederationClaims;
 import org.apereo.cas.ws.idp.WSFederationConstants;
@@ -30,6 +30,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.StringWriter;
+import java.util.List;
 
 /**
  * This is {@link DefaultRelyingPartyTokenProducer}.
@@ -42,6 +43,7 @@ import java.io.StringWriter;
 public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPartyTokenProducer {
     private final SecurityTokenServiceClientBuilder clientBuilder;
     private final CipherExecutor<String, String> credentialCipherExecutor;
+    private final List<String> customClaims;
 
     @SneakyThrows
     private static String serializeRelyingPartyToken(final Element rpToken) {
@@ -54,8 +56,8 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
         return sw.toString();
     }
 
-    private static void mapAttributesToRequestedClaims(final WSFederationRegisteredService service, final SecurityTokenServiceClient sts,
-                                                       final Assertion assertion) {
+    private void mapAttributesToRequestedClaims(final WSFederationRegisteredService service, final SecurityTokenServiceClient sts,
+                                                final Assertion assertion) {
         try {
             val writer = new W3CDOMStreamWriter();
             writer.writeStartElement("wst", "Claims", STSUtils.WST_NS_05_12);
@@ -68,13 +70,16 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
 
             attributes.forEach((k, v) -> {
                 try {
-                    val claimName = WsFederationClaimsEncoder.encodeClaim(k);
+                    val claimName = ProtocolAttributeEncoder.decodeAttribute(k);
                     if (WSFederationClaims.contains(claimName)) {
                         val uri = WSFederationClaims.valueOf(k).getUri();
                         LOGGER.debug("Requested claim [{}] mapped to [{}]", k, uri);
                         writeAttributeValue(writer, uri, v, service);
                     } else if (WSFederationClaims.containsUri(claimName)) {
                         LOGGER.debug("Requested claim [{}] directly mapped to [{}]", k, claimName);
+                        writeAttributeValue(writer, claimName, v, service);
+                    } else if (customClaims.contains(claimName)) {
+                        LOGGER.debug("Requested custom claim [{}]", claimName);
                         writeAttributeValue(writer, claimName, v, service);
                     } else {
                         LOGGER.debug("Requested claim [{}] is not defined/supported by CAS", claimName);

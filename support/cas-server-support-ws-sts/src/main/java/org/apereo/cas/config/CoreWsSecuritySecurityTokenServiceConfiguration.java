@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
 import org.apereo.cas.authentication.SecurityTokenServiceTokenFetcher;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.claims.CustomNamespaceWSFederationClaimsClaimsHandler;
 import org.apereo.cas.support.claims.NonWSFederationClaimsClaimsHandler;
 import org.apereo.cas.support.claims.WrappingSecurityTokenServiceClaimsHandler;
 import org.apereo.cas.support.realm.RealmPasswordVerificationCallbackHandler;
@@ -155,10 +156,22 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         return new NonWSFederationClaimsClaimsHandler(idp.getRealmName(), wsfed.getRealm().getIssuer());
     }
 
+    @ConditionalOnMissingBean(name = "customNamespaceWSFederationClaimsClaimsHandler")
+    @Bean
+    public ClaimsHandler customNamespaceWSFederationClaimsClaimsHandler() {
+        val wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
+        val idp = casProperties.getAuthn().getWsfedIdp().getIdp();
+        return new CustomNamespaceWSFederationClaimsClaimsHandler(idp.getRealmName(),
+            wsfed.getRealm().getIssuer(), wsfed.getCustomClaims());
+    }
+
     @ConditionalOnMissingBean(name = "wsfedClaimsHandlers")
     @Bean
     public List<ClaimsHandler> wsfedClaimsHandlers() {
-        return CollectionUtils.wrapList(wrappingSecurityTokenServiceClaimsHandler(), nonWSFederationClaimsClaimsHandler());
+        return CollectionUtils.wrapList(
+            wrappingSecurityTokenServiceClaimsHandler(),
+            nonWSFederationClaimsClaimsHandler(),
+            customNamespaceWSFederationClaimsClaimsHandler());
     }
 
     @ConditionalOnMissingBean(name = "wsfedClaimsManager")
