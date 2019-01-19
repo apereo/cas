@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.attribute.SamlAttributeEncoder;
 import org.apereo.cas.util.EncodingUtils;
 
@@ -42,7 +43,7 @@ public class SamlAttributeEncoderTests {
     public void ensureSamlUrnAttributesEncoded() {
         val encoder = new SamlAttributeEncoder();
         val attributes = new HashMap<String, Object>();
-        attributes.put('_' + EncodingUtils.hexEncode("urn:oid:2.5.4.3"), "testValue");
+        attributes.put(ProtocolAttributeEncoder.encodeAttribute("urn:oid:2.5.4.3"), "testValue");
         val result = encoder.encodeAttributes(attributes, CoreAuthenticationTestUtils.getRegisteredService("test"));
         assertTrue(result.containsKey("urn:oid:2.5.4.3"));
     }
