@@ -96,6 +96,7 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
     @Qualifier("securityTokenServiceTokenFetcher")
     private ObjectProvider<SecurityTokenServiceTokenFetcher> securityTokenServiceTokenFetcher;
 
+    @ConditionalOnMissingBean(name = "federationValidateRequestController")
     @Bean
     public WSFederationValidateRequestController federationValidateRequestController() {
         return new WSFederationValidateRequestController(servicesManager.getIfAvailable(),
@@ -143,14 +144,18 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
     @Autowired
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "wsFederationRelyingPartyTokenProducer")
     public WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer(
         @Qualifier("securityTokenServiceCredentialCipherExecutor") final CipherExecutor securityTokenServiceCredentialCipherExecutor,
         @Qualifier("securityTokenServiceClientBuilder") final SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder) {
-        return new DefaultRelyingPartyTokenProducer(securityTokenServiceClientBuilder, securityTokenServiceCredentialCipherExecutor);
+        return new DefaultRelyingPartyTokenProducer(securityTokenServiceClientBuilder,
+            securityTokenServiceCredentialCipherExecutor,
+            casProperties.getAuthn().getWsfedIdp().getSts().getCustomClaims());
     }
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "wsFederationAuthenticationServiceSelectionStrategy")
     public AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy() {
         return new WSFederationAuthenticationServiceSelectionStrategy(webApplicationServiceFactory.getIfAvailable());
     }
