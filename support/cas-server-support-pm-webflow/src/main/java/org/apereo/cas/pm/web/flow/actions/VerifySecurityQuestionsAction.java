@@ -2,6 +2,7 @@ package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.pm.BasePasswordManagementService;
 import org.apereo.cas.pm.PasswordManagementService;
+import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ public class VerifySecurityQuestionsAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        val username = requestContext.getFlowScope().getString("username");
+        val username = PasswordManagementWebflowUtils.getPasswordResetUsername(requestContext);
 
         val questions = passwordManagementService.getSecurityQuestions(username);
         val canonicalQuestions = BasePasswordManagementService.canonicalizeSecurityQuestions(questions);
