@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.services;
 import org.apereo.cas.util.CollectionUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.opensaml.saml.saml2.core.Attribute;
 
 import java.util.List;
 import java.util.Set;
@@ -15,11 +16,12 @@ import java.util.Set;
  */
 public class InCommonRSAttributeReleasePolicy extends MetadataEntityAttributesAttributeReleasePolicy {
     private static final long serialVersionUID = 1532960981124784595L;
-    private List<String> allowedAttributes = CollectionUtils.wrapList("eduPersonPrincipalName",
+
+    private static final List<String> ALLOWED_ATTRIBUTES = CollectionUtils.wrapList("eduPersonPrincipalName",
         "eduPersonTargetedID", "email", "displayName", "givenName", "surname", "eduPersonScopedAffiliation");
 
     public InCommonRSAttributeReleasePolicy() {
-        setAllowedAttributes(allowedAttributes);
+        setAllowedAttributes(ALLOWED_ATTRIBUTES);
     }
 
     @JsonIgnore
@@ -31,8 +33,13 @@ public class InCommonRSAttributeReleasePolicy extends MetadataEntityAttributesAt
     @JsonIgnore
     @Override
     public Set<String> getEntityAttributeValues() {
-        return CollectionUtils.wrapSet("http://id.incommon.org/category/research-and-scholarship",
-            "http://refeds.org/category/research-and-scholarship");
+        return CollectionUtils.wrapSet("http://id.incommon.org/category/research-and-scholarship");
+    }
+
+    @JsonIgnore
+    @Override
+    public String getEntityAttributeFormat() {
+        return Attribute.URI_REFERENCE;
     }
 
     @JsonIgnore
