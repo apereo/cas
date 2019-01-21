@@ -105,6 +105,17 @@ public class DelegatedClientWebflowManager {
     }
 
     /**
+     * Determine the service.
+     *
+     * @param ctx the web context
+     * @return the service
+     */
+    protected Service determineService(final J2EContext ctx) {
+        final Service service = argumentExtractor.extractService(ctx.getRequest());
+        return this.authenticationRequestServiceSelectionStrategies.resolveService(service);
+    }
+
+    /**
      * Build the ticket properties.
      *
      * @param webContext the web context
@@ -114,25 +125,14 @@ public class DelegatedClientWebflowManager {
     protected Map<String, Serializable> buildTicketProperties(final J2EContext webContext, final Service service) {
         final Map<String, Serializable> properties = new LinkedHashMap<>();
 
+        properties.put(CasProtocolConstants.PARAMETER_SERVICE, service);
+
         properties.put(this.themeParamName, StringUtils.defaultString(webContext.getRequestParameter(this.themeParamName)));
         properties.put(this.localParamName, StringUtils.defaultString(webContext.getRequestParameter(this.localParamName)));
         properties.put(CasProtocolConstants.PARAMETER_METHOD,
                 StringUtils.defaultString(webContext.getRequestParameter(CasProtocolConstants.PARAMETER_METHOD)));
 
-        properties.put(CasProtocolConstants.PARAMETER_SERVICE, service);
-
         return properties;
-    }
-
-    /**
-     * Determine the service.
-     *
-     * @param ctx the web context
-     * @return the service
-     */
-    protected Service determineService(final J2EContext ctx) {
-        final Service service = argumentExtractor.extractService(ctx.getRequest());
-        return this.authenticationRequestServiceSelectionStrategies.resolveService(service);
     }
 
     /**
