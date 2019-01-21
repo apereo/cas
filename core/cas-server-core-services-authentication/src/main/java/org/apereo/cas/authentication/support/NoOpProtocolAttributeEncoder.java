@@ -18,7 +18,6 @@ import java.util.Map;
 @Slf4j
 public class NoOpProtocolAttributeEncoder implements ProtocolAttributeEncoder {
 
-
     @Override
     public Map<String, Object> encodeAttributes(final Map<String, Object> attributes, final RegisteredService service) {
         LOGGER.warn("Attributes are not encoded via [{}]. Total of [{}] attributes will be returned for service [{}]",

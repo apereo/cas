@@ -83,8 +83,10 @@ public class CasCoreConfiguration {
     @ConditionalOnMissingBean(name = "authenticationPolicyFactory")
     public ContextualAuthenticationPolicyFactory<ServiceContext> authenticationPolicyFactory() {
         if (casProperties.getAuthn().getPolicy().isRequiredHandlerAuthenticationPolicyEnabled()) {
+            LOGGER.debug("Applying configuration for Required Handler Authentication Policy");
             return new RequiredHandlerAuthenticationPolicyFactory();
         }
+        LOGGER.debug("Applying configuration for Accept Any Authentication Policy");
         return new AcceptAnyAuthenticationPolicyFactory();
     }
 
