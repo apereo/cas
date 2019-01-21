@@ -25,7 +25,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class DefaultTransientSessionTicketFactory implements TransientSessionTicketFactory {
     private final ExpirationPolicy expirationPolicy;
-    private UniqueTicketIdGenerator ticketIdGenerator = new DefaultUniqueTicketIdGenerator();
+    private final UniqueTicketIdGenerator ticketIdGenerator = new DefaultUniqueTicketIdGenerator();
 
     /**
      * Create delegated authentication request ticket.

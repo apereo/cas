@@ -2,6 +2,7 @@ package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.pm.PasswordManagementService;
+import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class InitPasswordResetAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        val token = requestContext.getFlowScope().getString("token");
+        val token = PasswordManagementWebflowUtils.getPasswordResetToken(requestContext);
 
         if (StringUtils.isBlank(token)) {
             LOGGER.error("Password reset token is missing");
@@ -34,9 +35,10 @@ public class InitPasswordResetAction extends AbstractAction {
 
         val username = passwordManagementService.parseToken(token);
         if (StringUtils.isBlank(username)) {
-            LOGGER.error("Password reset token could not be verified");
+            LOGGER.error("Password reset token could not be verified to determine username");
             return error();
         }
+
         val c = new UsernamePasswordCredential();
         c.setUsername(username);
         WebUtils.putCredential(requestContext, c);
