@@ -104,7 +104,7 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
     protected void registerMultifactorProviderAuthenticationWebflow(final Flow flow, final String subflowId,
                                                                     final FlowDefinitionRegistry mfaProviderFlowRegistry,
                                                                     final String providerId) {
-        if (mfaProviderFlowRegistry.containsFlowDefinition(subflowId)) {
+        if (!mfaProviderFlowRegistry.containsFlowDefinition(subflowId)) {
             LOGGER.warn("Could not locate flow id [{}]", subflowId);
             return;
         }
