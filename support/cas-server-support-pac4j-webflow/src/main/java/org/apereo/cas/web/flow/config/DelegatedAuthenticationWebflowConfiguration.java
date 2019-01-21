@@ -176,6 +176,7 @@ public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowEx
             logoutFlowDefinitionRegistry.getIfAvailable(), saml2ClientLogoutAction.getIfAvailable(), applicationContext, casProperties);
     }
 
+    @ConditionalOnMissingBean(name = "delegatedClientWebflowManager")
     @RefreshScope
     @Bean
     public DelegatedClientWebflowManager delegatedClientWebflowManager() {
