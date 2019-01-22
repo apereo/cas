@@ -200,7 +200,9 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
 
     @Override
     public AuthenticationBuilder addSuccesses(final Map<String, AuthenticationHandlerExecutionResult> successes) {
-        successes.forEach(this::addSuccess);
+        if (successes != null) {
+            successes.forEach(this::addSuccess);
+        }
         return this;
     }
 
@@ -223,7 +225,9 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
 
     @Override
     public AuthenticationBuilder addFailures(final Map<String, Throwable> failures) {
-        failures.forEach(this::addFailure);
+        if (failures != null) {
+            failures.forEach(this::addFailure);
+        }
         return this;
     }
 
