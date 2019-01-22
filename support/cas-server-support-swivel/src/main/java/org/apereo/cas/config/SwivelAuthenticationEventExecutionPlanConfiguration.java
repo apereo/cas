@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -42,6 +41,10 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
 
+    @Autowired
+    @Qualifier("swivelBypassEvaluator")
+    private ObjectProvider<MultifactorAuthenticationProviderBypass> swivelBypassEvaluator;
+
     @Bean
     @RefreshScope
     public AuthenticationMetaDataPopulator swivelAuthenticationMetaDataPopulator() {
@@ -51,12 +54,6 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
             swivelAuthenticationHandler(),
             swivelMultifactorAuthenticationProvider().getId()
         );
-    }
-
-    @Bean
-    @RefreshScope
-    public MultifactorAuthenticationProviderBypass swivelBypassEvaluator() {
-        return MultifactorAuthenticationUtils.newMultifactorAuthenticationProviderBypass(casProperties.getAuthn().getMfa().getSwivel().getBypass());
     }
 
     @ConditionalOnMissingBean(name = "swivelPrincipalFactory")
@@ -78,7 +75,7 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
     public MultifactorAuthenticationProvider swivelMultifactorAuthenticationProvider() {
         val swivel = this.casProperties.getAuthn().getMfa().getSwivel();
         val p = new SwivelMultifactorAuthenticationProvider(swivel.getSwivelUrl());
-        p.setBypassEvaluator(swivelBypassEvaluator());
+        p.setBypassEvaluator(swivelBypassEvaluator.getIfAvailable());
         p.setFailureMode(swivel.getFailureMode());
         p.setOrder(swivel.getRank());
         p.setId(swivel.getId());
