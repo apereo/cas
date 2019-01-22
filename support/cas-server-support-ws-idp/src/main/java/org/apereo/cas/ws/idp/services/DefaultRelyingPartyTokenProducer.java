@@ -30,7 +30,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.StringWriter;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,7 +43,7 @@ import java.util.Map;
 public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPartyTokenProducer {
     private final SecurityTokenServiceClientBuilder clientBuilder;
     private final CipherExecutor<String, String> credentialCipherExecutor;
-    private final List<String> customClaims;
+    private final Collection<String> customClaims;
 
     @Override
     public String produce(final SecurityToken securityToken, final WSFederationRegisteredService service,
