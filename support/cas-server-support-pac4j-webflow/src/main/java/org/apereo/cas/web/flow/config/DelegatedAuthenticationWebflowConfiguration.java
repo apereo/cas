@@ -188,6 +188,7 @@ public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowEx
             casProperties);
     }
 
+    @ConditionalOnMissingBean(name = "delegatedClientWebflowManager")
     @RefreshScope
     @Bean
     public DelegatedClientWebflowManager delegatedClientWebflowManager() {
