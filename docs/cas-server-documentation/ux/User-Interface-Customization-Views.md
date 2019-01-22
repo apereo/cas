@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - User Interface Customization
+title: Views - User Interface Customization - CAS
 category: User Interface
 ---
 
