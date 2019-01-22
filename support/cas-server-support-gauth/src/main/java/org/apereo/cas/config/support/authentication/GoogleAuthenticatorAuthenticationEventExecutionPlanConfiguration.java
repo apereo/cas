@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -68,6 +67,10 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @Qualifier("googleAuthenticatorAccountRegistry")
     private ObjectProvider<OneTimeTokenCredentialRepository> googleAuthenticatorAccountRegistry;
 
+    @Autowired
+    @Qualifier("googleAuthenticatorBypassEvaluator")
+    private ObjectProvider<MultifactorAuthenticationProviderBypass> googleAuthenticatorBypassEvaluator;
+
     @Lazy
     @Autowired
     @Qualifier("oneTimeTokenAuthenticatorTokenRepository")
@@ -108,16 +111,10 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @RefreshScope
-    public MultifactorAuthenticationProviderBypass googleBypassEvaluator() {
-        return MultifactorAuthenticationUtils.newMultifactorAuthenticationProviderBypass(casProperties.getAuthn().getMfa().getGauth().getBypass());
-    }
-
-    @Bean
-    @RefreshScope
     public MultifactorAuthenticationProvider googleAuthenticatorMultifactorAuthenticationProvider() {
         val gauth = casProperties.getAuthn().getMfa().getGauth();
         val p = new GoogleAuthenticatorMultifactorAuthenticationProvider();
-        p.setBypassEvaluator(googleBypassEvaluator());
+        p.setBypassEvaluator(googleAuthenticatorBypassEvaluator.getIfAvailable());
         p.setFailureMode(gauth.getFailureMode());
         p.setOrder(gauth.getRank());
         p.setId(gauth.getId());
@@ -146,8 +143,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnProperty(prefix = "cas.authn.mfa.gauth.cleaner", name = "enabled", havingValue = "true", matchIfMissing = true)
     @Bean
     @Autowired
-    public OneTimeTokenRepositoryCleaner googleAuthenticatorTokenRepositoryCleaner(@Qualifier("oneTimeTokenAuthenticatorTokenRepository")
-                                                                                   final OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository) {
+    public OneTimeTokenRepositoryCleaner googleAuthenticatorTokenRepositoryCleaner(@Qualifier("oneTimeTokenAuthenticatorTokenRepository") final OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository) {
         return new GoogleAuthenticatorOneTimeTokenRepositoryCleaner(oneTimeTokenAuthenticatorTokenRepository);
     }
 
