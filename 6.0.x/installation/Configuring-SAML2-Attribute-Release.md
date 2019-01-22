@@ -26,7 +26,8 @@ needed for InCommon's Research and Scholarship service providers:
     "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
     "policies": [ "java.util.ArrayList",
       [
-         {"@class": "org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicy"}
+         {"@class": "org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicy"},
+         {"@class": "org.apereo.cas.support.saml.services.RefedsRSAttributeReleasePolicy"}
       ]
     ]
   }
