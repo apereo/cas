@@ -2,6 +2,8 @@ package org.apereo.cas.support.saml.services;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.extern.slf4j.Slf4j;
+import org.opensaml.saml.saml2.core.Attribute;
+
 import org.apereo.cas.util.CollectionUtils;
 
 import java.util.List;
@@ -39,5 +41,11 @@ public class InCommonRSAttributeReleasePolicy extends MetadataEntityAttributesAt
     @Override
     public List<String> getAllowedAttributes() {
         return super.getAllowedAttributes();
+    }
+
+    @JsonIgnore
+    @Override
+    public String getEntityAttributeFormat() {
+        return Attribute.URI_REFERENCE;
     }
 }

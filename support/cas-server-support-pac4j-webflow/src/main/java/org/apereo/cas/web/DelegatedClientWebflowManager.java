@@ -66,15 +66,10 @@ public class DelegatedClientWebflowManager {
      * @return the ticket
      */
     public Ticket store(final J2EContext webContext, final BaseClient client) {
-        final Map<String, Serializable> properties = new LinkedHashMap<>();
+        final Map<String, Serializable> properties = buildTicketProperties(webContext);
 
         final Service service = determineService(webContext);
         properties.put(CasProtocolConstants.PARAMETER_SERVICE, service);
-
-        properties.put(this.themeParamName, StringUtils.defaultString(webContext.getRequestParameter(this.themeParamName)));
-        properties.put(this.localParamName, StringUtils.defaultString(webContext.getRequestParameter(this.localParamName)));
-        properties.put(CasProtocolConstants.PARAMETER_METHOD,
-            StringUtils.defaultString(webContext.getRequestParameter(CasProtocolConstants.PARAMETER_METHOD)));
 
         final TransientSessionTicketFactory transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
         final TransientSessionTicket ticket = transientFactory.create(service, properties);
@@ -110,7 +105,30 @@ public class DelegatedClientWebflowManager {
         return ticket;
     }
 
-    private Service determineService(final J2EContext ctx) {
+    /**
+     * Build the ticket properties.
+     *
+     * @param webContext the web context
+     * @return the ticket properties
+     */
+    protected Map<String, Serializable> buildTicketProperties(final J2EContext webContext) {
+        final Map<String, Serializable> properties = new LinkedHashMap<>();
+
+        properties.put(this.themeParamName, StringUtils.defaultString(webContext.getRequestParameter(this.themeParamName)));
+        properties.put(this.localParamName, StringUtils.defaultString(webContext.getRequestParameter(this.localParamName)));
+        properties.put(CasProtocolConstants.PARAMETER_METHOD,
+                StringUtils.defaultString(webContext.getRequestParameter(CasProtocolConstants.PARAMETER_METHOD)));
+
+        return properties;
+    }
+
+    /**
+     * Determine the service.
+     *
+     * @param ctx the web context
+     * @return the service
+     */
+    protected Service determineService(final J2EContext ctx) {
         final Service service = argumentExtractor.extractService(ctx.getRequest());
         return this.authenticationRequestServiceSelectionStrategies.resolveService(service);
     }
@@ -154,7 +172,15 @@ public class DelegatedClientWebflowManager {
         return ticket;
     }
 
-    private Service restoreDelegatedAuthenticationRequest(final RequestContext requestContext, final WebContext webContext,
+    /**
+     * Restore the information saved in the ticket and return the service.
+     *
+     * @param requestContext the request context
+     * @param webContext     the web context
+     * @param ticket         the ticket
+     * @return the service
+     */
+    protected Service restoreDelegatedAuthenticationRequest(final RequestContext requestContext, final WebContext webContext,
                                                           final TransientSessionTicket ticket) {
         final Service service = ticket.getService();
         LOGGER.debug("Restoring requested service [{}] back in the authentication flow", service);
