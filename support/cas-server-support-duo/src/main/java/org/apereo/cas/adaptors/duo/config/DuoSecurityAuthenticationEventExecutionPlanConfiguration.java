@@ -12,7 +12,7 @@ import org.apereo.cas.adaptors.duo.web.flow.config.DuoMultifactorWebflowConfigur
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
-import org.apereo.cas.authentication.ChainingMultifactorAuthenticationProviderBypass;
+import org.apereo.cas.authentication.bypass.ChainingMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBean;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderFactoryBean;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;

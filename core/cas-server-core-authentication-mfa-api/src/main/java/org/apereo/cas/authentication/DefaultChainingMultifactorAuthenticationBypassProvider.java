@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.bypass.ChainingMultifactorAuthenticationProviderBypass;
+import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.authentication.bypass.NeverAllowMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.RegisteredService;
 
