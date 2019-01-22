@@ -2775,6 +2775,7 @@ To learn more about this topic, [please review this guide](../protocol/WS-Federa
 # cas.authn.wsfedIdp.idp.realm=urn:org:apereo:cas:ws:idp:realm-CAS
 # cas.authn.wsfedIdp.idp.realmName=CAS
 
+# cas.authn.wsfedIdp.sts.customClaims[0]=
 # cas.authn.wsfedIdp.sts.signingKeystoreFile=/etc/cas/config/ststrust.jks
 # cas.authn.wsfedIdp.sts.signingKeystorePassword=storepass
 # cas.authn.wsfedIdp.sts.encryptionKeystoreFile=/etc/cas/config/stsencrypt.jks
@@ -2788,6 +2789,7 @@ To learn more about this topic, [please review this guide](../protocol/WS-Federa
 # cas.authn.wsfedIdp.sts.realm.keystoreAlias=realmcas
 # cas.authn.wsfedIdp.sts.realm.keyPassword=cas
 # cas.authn.wsfedIdp.sts.realm.issuer=CAS
+
 ```
 
 ### Signing & Encryption

@@ -30,6 +30,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.StringWriter;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -43,6 +44,7 @@ import java.util.Map;
 public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPartyTokenProducer {
     private final SecurityTokenServiceClientBuilder clientBuilder;
     private final CipherExecutor<String, String> credentialCipherExecutor;
+    private final List<String> customClaims;
 
     @Override
     public String produce(final SecurityToken securityToken, final WSFederationRegisteredService service,
@@ -64,8 +66,8 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
         return sw.toString();
     }
 
-    private static void mapAttributesToRequestedClaims(final WSFederationRegisteredService service, final SecurityTokenServiceClient sts,
-                                                       final Assertion assertion) {
+    private void mapAttributesToRequestedClaims(final WSFederationRegisteredService service, final SecurityTokenServiceClient sts,
+                                                final Assertion assertion) {
         try {
             final W3CDOMStreamWriter writer = new W3CDOMStreamWriter();
             writer.writeStartElement("wst", "Claims", STSUtils.WST_NS_05_12);
@@ -87,6 +89,10 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
                     } else if (WSFederationClaims.containsUri(claimName)) {
                         LOGGER.debug("Requesting claim [{}] directly mapped to [{}]", k, claimName);
                         writeAttributeValue(writer, claimName, v, service);
+                    } else if (customClaims.contains(claimName)) {
+                        LOGGER.debug("Requesting CUSTOM CLAIM [{}] directly mapped to [{}]", k, claimName);
+                        writeAttributeValue(writer, customClaims.stream().filter(
+                            c -> c.equalsIgnoreCase(claimName)).findFirst().get(), v, service);
                     } else {
                         LOGGER.debug("Request claim [{}] is not defined/supported by CAS", claimName);
                         writeAttributeValue(writer, WSFederationConstants.getClaimInCasNamespace(claimName), v, service);

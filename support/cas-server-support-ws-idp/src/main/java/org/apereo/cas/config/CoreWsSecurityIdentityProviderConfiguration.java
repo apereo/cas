@@ -130,7 +130,8 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
     public WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer(
         @Qualifier("securityTokenServiceCredentialCipherExecutor") final CipherExecutor securityTokenServiceCredentialCipherExecutor,
         @Qualifier("securityTokenServiceClientBuilder") final SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder) {
-        return new DefaultRelyingPartyTokenProducer(securityTokenServiceClientBuilder, securityTokenServiceCredentialCipherExecutor);
+        return new DefaultRelyingPartyTokenProducer(securityTokenServiceClientBuilder, securityTokenServiceCredentialCipherExecutor,
+            casProperties.getAuthn().getWsfedIdp().getSts().getCustomClaims());
     }
 
     @Bean
