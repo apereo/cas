@@ -811,8 +811,6 @@ All configurable multifactor authentication providers have these base properties
 The following bypass options apply equally to multifactor authentication providers given the provider's *configuration key*:
 
 ```properties
-# ${configurationKey}.bypass.type=DEFAULT|GROOVY|REST
-
 # ${configurationKey}.bypass.principalAttributeName=bypass|skip
 # ${configurationKey}.bypass.principalAttributeValue=true|enabled.+
 

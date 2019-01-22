@@ -1,5 +1,7 @@
-package org.apereo.cas.authentication;
+package org.apereo.cas.authentication.bypass;
 
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
@@ -16,18 +18,20 @@ import javax.servlet.http.HttpServletRequest;
  * @since 5.2.0
  */
 @Slf4j
-public class GroovyMultifactorAuthenticationProviderBypass implements MultifactorAuthenticationProviderBypass {
+public class GroovyMultifactorAuthenticationProviderBypass extends BaseMultifactorAuthenticationProviderBypass {
     private static final long serialVersionUID = -4909072898415688377L;
 
     private final transient WatchableGroovyScriptResource watchableScript;
 
-    public GroovyMultifactorAuthenticationProviderBypass(final MultifactorAuthenticationProviderBypassProperties bypass) {
-        val groovyScript = bypass.getGroovy().getLocation();
+    public GroovyMultifactorAuthenticationProviderBypass(final MultifactorAuthenticationProviderBypassProperties bypassProperties,
+                                                         final String providerId) {
+        super(providerId);
+        val groovyScript = bypassProperties.getGroovy().getLocation();
         this.watchableScript = new WatchableGroovyScriptResource(groovyScript);
     }
 
     @Override
-    public boolean shouldMultifactorAuthenticationProviderExecute(final Authentication authentication,
+    public boolean shouldMultifactorAuthenticationProviderExecuteInternal(final Authentication authentication,
                                                                   final RegisteredService registeredService,
                                                                   final MultifactorAuthenticationProvider provider,
                                                                   final HttpServletRequest request) {

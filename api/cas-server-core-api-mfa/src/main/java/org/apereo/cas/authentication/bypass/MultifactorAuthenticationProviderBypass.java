@@ -1,10 +1,14 @@
-package org.apereo.cas.authentication;
+package org.apereo.cas.authentication.bypass;
 
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
+
 import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
+import java.util.Optional;
 
 /**
  * This is {@link MultifactorAuthenticationProviderBypass}.
@@ -12,7 +16,6 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@FunctionalInterface
 public interface MultifactorAuthenticationProviderBypass extends Serializable, Ordered {
 
     /**
@@ -34,33 +37,72 @@ public interface MultifactorAuthenticationProviderBypass extends Serializable, O
      * @param request           the request
      * @return false is request isn't supported and can be bypassed. true otherwise.
      */
-    boolean shouldMultifactorAuthenticationProviderExecute(Authentication authentication, RegisteredService registeredService,
+    boolean shouldMultifactorAuthenticationProviderExecute(Authentication authentication,
+                                                           RegisteredService registeredService,
                                                            MultifactorAuthenticationProvider provider,
                                                            HttpServletRequest request);
+
 
     /**
      * Method will remove any previous bypass set in the authentication.
      *
      * @param authentication - the authentication
      */
-    default void updateAuthenticationToForgetBypass(final Authentication authentication) {
-        authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, Boolean.FALSE);
+    default void forgetBypass(final Authentication authentication) {
     }
 
     /**
      * Method will set the bypass into the authentication.
      *
      * @param authentication - the authentication
-     * @param provider - the provider
+     * @param provider       - the provider
      */
-    default void updateAuthenticationToRememberBypass(final Authentication authentication,
-                                                      final MultifactorAuthenticationProvider provider) {
-        authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, Boolean.TRUE);
-        authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER, provider.getId());
+    default void rememberBypass(final Authentication authentication, final MultifactorAuthenticationProvider provider) {
     }
 
     @Override
     default int getOrder() {
         return Ordered.LOWEST_PRECEDENCE;
     }
+
+    /**
+     * Gets provider id of this bypass evaluator.
+     *
+     * @return the id
+     */
+    String getProviderId();
+
+    /**
+     * Gets id.
+     *
+     * @return the id
+     */
+    String getId();
+
+    /**
+     * Size.
+     *
+     * @return the int
+     */
+    default int size() {
+        return 1;
+    }
+
+    /**
+     * Is empty?.
+     *
+     * @return the boolean
+     */
+    default boolean isEmpty() {
+        return false;
+    }
+
+
+    /**
+     * Indicate whether this bypass belongs to given multifactor authentication provider.
+     *
+     * @param providerId the provider id
+     * @return the provider if a match, otherwise, empty.
+     */
+    Optional<MultifactorAuthenticationProviderBypass> belongsToMultifactorAuthenticationProvider(String providerId);
 }
