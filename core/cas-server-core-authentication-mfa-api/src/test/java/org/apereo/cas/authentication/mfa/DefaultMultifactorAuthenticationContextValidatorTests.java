@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication.mfa;
 
 import org.apereo.cas.authentication.DefaultMultifactorAuthenticationContextValidator;
-import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
+import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
