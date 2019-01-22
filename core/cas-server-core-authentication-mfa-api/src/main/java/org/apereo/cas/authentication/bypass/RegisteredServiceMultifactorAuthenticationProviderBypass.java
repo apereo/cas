@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,9 +15,12 @@ import javax.servlet.http.HttpServletRequest;
  * @since 6.0
  */
 @Slf4j
-@RequiredArgsConstructor
 public class RegisteredServiceMultifactorAuthenticationProviderBypass extends BaseMultifactorAuthenticationProviderBypass {
     private static final long serialVersionUID = -3553888418344342672L;
+
+    public RegisteredServiceMultifactorAuthenticationProviderBypass(final String providerId) {
+        super(providerId);
+    }
 
     @Override
     public boolean shouldMultifactorAuthenticationProviderExecute(final Authentication authentication,

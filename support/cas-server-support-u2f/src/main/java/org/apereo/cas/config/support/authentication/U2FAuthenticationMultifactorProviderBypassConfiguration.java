@@ -1,6 +1,6 @@
 package org.apereo.cas.config.support.authentication;
 
-import org.apereo.cas.authentication.ChainingMultifactorAuthenticationBypassProvider;
+import org.apereo.cas.authentication.DefaultChainingMultifactorAuthenticationBypassProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.authentication.bypass.AuthenticationMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.authentication.bypass.CredentialMultifactorAuthenticationProviderBypass;
@@ -37,30 +37,30 @@ public class U2FAuthenticationMultifactorProviderBypassConfiguration {
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProviderBypass u2fBypassEvaluator() {
-        val bypass = new ChainingMultifactorAuthenticationBypassProvider();
+        val bypass = new DefaultChainingMultifactorAuthenticationBypassProvider();
         val props = casProperties.getAuthn().getMfa().getU2f().getBypass();
 
         if (StringUtils.isNotBlank(props.getPrincipalAttributeName())) {
-            bypass.addBypass(u2fRegisteredServiceMultifactorAuthenticationProviderBypass());
+            bypass.addMultifactorAuthenticationProviderBypass(u2fRegisteredServiceMultifactorAuthenticationProviderBypass());
         }
 
         if (StringUtils.isNotBlank(props.getAuthenticationAttributeName())
             || StringUtils.isNotBlank(props.getAuthenticationHandlerName())
             || StringUtils.isNotBlank(props.getAuthenticationMethodName())) {
-            bypass.addBypass(u2fAuthenticationMultifactorAuthenticationProviderBypass());
+            bypass.addMultifactorAuthenticationProviderBypass(u2fAuthenticationMultifactorAuthenticationProviderBypass());
         }
 
         if (StringUtils.isNotBlank(props.getCredentialClassType())) {
-            bypass.addBypass(u2fCredentialMultifactorAuthenticationProviderBypass());
+            bypass.addMultifactorAuthenticationProviderBypass(u2fCredentialMultifactorAuthenticationProviderBypass());
         }
         if (StringUtils.isNotBlank(props.getHttpRequestHeaders()) || StringUtils.isNotBlank(props.getHttpRequestRemoteAddress())) {
-            bypass.addBypass(u2fHttpRequestMultifactorAuthenticationProviderBypass());
+            bypass.addMultifactorAuthenticationProviderBypass(u2fHttpRequestMultifactorAuthenticationProviderBypass());
         }
         if (props.getGroovy().getLocation() != null) {
-            bypass.addBypass(u2fGroovyMultifactorAuthenticationProviderBypass());
+            bypass.addMultifactorAuthenticationProviderBypass(u2fGroovyMultifactorAuthenticationProviderBypass());
         }
         if (StringUtils.isNotBlank(props.getRest().getUrl())) {
-            bypass.addBypass(u2fRestMultifactorAuthenticationProviderBypass());
+            bypass.addMultifactorAuthenticationProviderBypass(u2fRestMultifactorAuthenticationProviderBypass());
         }
         return bypass;
     }
@@ -69,54 +69,61 @@ public class U2FAuthenticationMultifactorProviderBypassConfiguration {
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProviderBypass u2fRestMultifactorAuthenticationProviderBypass() {
-        val props = casProperties.getAuthn().getMfa().getU2f().getBypass();
-        return new RestMultifactorAuthenticationProviderBypass(props);
+        val u2f = casProperties.getAuthn().getMfa().getU2f();
+        val props = u2f.getBypass();
+        return new RestMultifactorAuthenticationProviderBypass(props, u2f.getId());
     }
 
     @ConditionalOnMissingBean(name = "u2fGroovyMultifactorAuthenticationProviderBypass")
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProviderBypass u2fGroovyMultifactorAuthenticationProviderBypass() {
-        val props = casProperties.getAuthn().getMfa().getU2f().getBypass();
-        return new GroovyMultifactorAuthenticationProviderBypass(props);
+        val u2f = casProperties.getAuthn().getMfa().getU2f();
+        val props = u2f.getBypass();
+        return new GroovyMultifactorAuthenticationProviderBypass(props, u2f.getId());
     }
 
     @ConditionalOnMissingBean(name = "u2fHttpRequestMultifactorAuthenticationProviderBypass")
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProviderBypass u2fHttpRequestMultifactorAuthenticationProviderBypass() {
-        val props = casProperties.getAuthn().getMfa().getU2f().getBypass();
-        return new HttpRequestMultifactorAuthenticationProviderBypass(props);
+        val u2f = casProperties.getAuthn().getMfa().getU2f();
+        val props = u2f.getBypass();
+        return new HttpRequestMultifactorAuthenticationProviderBypass(props, u2f.getId());
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "u2fCredentialMultifactorAuthenticationProviderBypass")
     public MultifactorAuthenticationProviderBypass u2fCredentialMultifactorAuthenticationProviderBypass() {
-        val props = casProperties.getAuthn().getMfa().getU2f().getBypass();
-        return new CredentialMultifactorAuthenticationProviderBypass(props);
+        val u2f = casProperties.getAuthn().getMfa().getU2f();
+        val props = u2f.getBypass();
+        return new CredentialMultifactorAuthenticationProviderBypass(props, u2f.getId());
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "u2fRegisteredServiceMultifactorAuthenticationProviderBypass")
     public MultifactorAuthenticationProviderBypass u2fRegisteredServiceMultifactorAuthenticationProviderBypass() {
-        return new RegisteredServiceMultifactorAuthenticationProviderBypass();
+        val u2f = casProperties.getAuthn().getMfa().getU2f();
+        return new RegisteredServiceMultifactorAuthenticationProviderBypass(u2f.getId());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "u2fPrincipalMultifactorAuthenticationProviderBypass")
     public MultifactorAuthenticationProviderBypass u2fPrincipalMultifactorAuthenticationProviderBypass() {
-        val props = casProperties.getAuthn().getMfa().getU2f().getBypass();
-        return new PrincipalMultifactorAuthenticationProviderBypass(props);
+        val u2f = casProperties.getAuthn().getMfa().getU2f();
+        val props = u2f.getBypass();
+        return new PrincipalMultifactorAuthenticationProviderBypass(props, u2f.getId());
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "u2fAuthenticationMultifactorAuthenticationProviderBypass")
     public MultifactorAuthenticationProviderBypass u2fAuthenticationMultifactorAuthenticationProviderBypass() {
-        val props = casProperties.getAuthn().getMfa().getU2f().getBypass();
-        return new AuthenticationMultifactorAuthenticationProviderBypass(props);
+        val u2f = casProperties.getAuthn().getMfa().getU2f();
+        val props = u2f.getBypass();
+        return new AuthenticationMultifactorAuthenticationProviderBypass(props, u2f.getId());
     }
 
 }
