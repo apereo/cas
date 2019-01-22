@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -50,6 +49,10 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
     @Qualifier("ticketRegistry")
     private ObjectProvider<TicketRegistry> ticketRegistry;
 
+    @Autowired
+    @Qualifier("casSimpleMultifactorBypassEvaluator")
+    private ObjectProvider<MultifactorAuthenticationProviderBypass> casSimpleMultifactorBypassEvaluator;
+
     @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationHandler")
     @Bean
     @RefreshScope
@@ -62,16 +65,10 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @RefreshScope
-    public MultifactorAuthenticationProviderBypass casSimpleMultifactorBypassEvaluator() {
-        return MultifactorAuthenticationUtils.newMultifactorAuthenticationProviderBypass(casProperties.getAuthn().getMfa().getSimple().getBypass());
-    }
-
-    @Bean
-    @RefreshScope
     public MultifactorAuthenticationProvider casSimpleMultifactorAuthenticationProvider() {
         val simple = casProperties.getAuthn().getMfa().getSimple();
         val p = new CasSimpleMultifactorAuthenticationProvider();
-        p.setBypassEvaluator(casSimpleMultifactorBypassEvaluator());
+        p.setBypassEvaluator(casSimpleMultifactorBypassEvaluator.getIfAvailable());
         p.setFailureMode(simple.getFailureMode());
         p.setOrder(simple.getRank());
         p.setId(simple.getId());

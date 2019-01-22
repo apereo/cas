@@ -18,7 +18,6 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -69,6 +68,10 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @Qualifier("noRedirectHttpClient")
     private ObjectProvider<HttpClient> httpClient;
 
+    @Autowired
+    @Qualifier("yubikeyBypassEvaluator")
+    private ObjectProvider<MultifactorAuthenticationProviderBypass> yubikeyBypassEvaluator;
+
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "yubikeyAuthenticationMetaDataPopulator")
@@ -79,13 +82,6 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
             yubikeyAuthenticationHandler(),
             yubikeyMultifactorAuthenticationProvider().getId()
         );
-    }
-
-    @Bean
-    @RefreshScope
-    @ConditionalOnMissingBean(name = "yubikeyBypassEvaluator")
-    public MultifactorAuthenticationProviderBypass yubikeyBypassEvaluator() {
-        return MultifactorAuthenticationUtils.newMultifactorAuthenticationProviderBypass(casProperties.getAuthn().getMfa().getYubikey().getBypass());
     }
 
     @ConditionalOnMissingBean(name = "yubikeyPrincipalFactory")
@@ -154,17 +150,18 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     public YubiKeyAccountRegistry yubiKeyAccountRegistry() {
         val yubi = casProperties.getAuthn().getMfa().getYubikey();
 
+        val cipher = yubikeyAccountCipherExecutor.getIfAvailable();
         if (yubi.getJsonFile() != null) {
             LOGGER.debug("Using JSON resource [{}] as the YubiKey account registry", yubi.getJsonFile());
             val registry = new JsonYubiKeyAccountRegistry(yubi.getJsonFile(), yubiKeyAccountValidator());
-            registry.setCipherExecutor(yubikeyAccountCipherExecutor.getIfAvailable());
+            registry.setCipherExecutor(cipher);
             return registry;
         }
         if (yubi.getAllowedDevices() != null) {
             LOGGER.debug("Using statically-defined devices for [{}] as the YubiKey account registry",
                 yubi.getAllowedDevices().keySet());
             val registry = new WhitelistYubiKeyAccountRegistry(yubi.getAllowedDevices(), yubiKeyAccountValidator());
-            registry.setCipherExecutor(yubikeyAccountCipherExecutor.getIfAvailable());
+            registry.setCipherExecutor(cipher);
             return registry;
         }
 
@@ -172,7 +169,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
                 + "Consider providing an account registry implementation via [{}]",
             YubiKeyAccountRegistry.class.getName());
         val registry = new OpenYubiKeyAccountRegistry(new DefaultYubiKeyAccountValidator(yubicoClient()));
-        registry.setCipherExecutor(yubikeyAccountCipherExecutor.getIfAvailable());
+        registry.setCipherExecutor(cipher);
         return registry;
     }
 
@@ -187,7 +184,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     public MultifactorAuthenticationProvider yubikeyMultifactorAuthenticationProvider() {
         val yubi = casProperties.getAuthn().getMfa().getYubikey();
         val p = new YubiKeyMultifactorAuthenticationProvider(yubicoClient(), httpClient.getIfAvailable());
-        p.setBypassEvaluator(yubikeyBypassEvaluator());
+        p.setBypassEvaluator(yubikeyBypassEvaluator.getIfAvailable());
         p.setFailureMode(yubi.getFailureMode());
         p.setOrder(yubi.getRank());
         p.setId(yubi.getId());
