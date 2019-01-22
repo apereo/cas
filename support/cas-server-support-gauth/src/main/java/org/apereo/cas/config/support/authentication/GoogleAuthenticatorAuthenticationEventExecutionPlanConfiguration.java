@@ -143,7 +143,8 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnProperty(prefix = "cas.authn.mfa.gauth.cleaner", name = "enabled", havingValue = "true", matchIfMissing = true)
     @Bean
     @Autowired
-    public OneTimeTokenRepositoryCleaner googleAuthenticatorTokenRepositoryCleaner(@Qualifier("oneTimeTokenAuthenticatorTokenRepository") final OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository) {
+    public OneTimeTokenRepositoryCleaner googleAuthenticatorTokenRepositoryCleaner(@Qualifier("oneTimeTokenAuthenticatorTokenRepository")
+                                                                                   final OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository) {
         return new GoogleAuthenticatorOneTimeTokenRepositoryCleaner(oneTimeTokenAuthenticatorTokenRepository);
     }
 
