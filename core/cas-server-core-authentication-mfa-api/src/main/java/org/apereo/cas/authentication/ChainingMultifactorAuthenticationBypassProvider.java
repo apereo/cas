@@ -13,8 +13,8 @@ import java.util.List;
  * @since 5.3.4
  */
 public class ChainingMultifactorAuthenticationBypassProvider implements MultifactorAuthenticationProviderBypass {
-
     private static final long serialVersionUID = 2397239625822397286L;
+
     private final List<MultifactorAuthenticationProviderBypass> bypasses = new ArrayList<>();
 
     @Override
@@ -23,7 +23,8 @@ public class ChainingMultifactorAuthenticationBypassProvider implements Multifac
                                                                   final MultifactorAuthenticationProvider provider,
                                                                   final HttpServletRequest request) {
 
-        return bypasses.stream().allMatch(bypass -> bypass.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, request));
+        return bypasses.stream()
+            .allMatch(bypass -> bypass.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, request));
     }
 
     /**

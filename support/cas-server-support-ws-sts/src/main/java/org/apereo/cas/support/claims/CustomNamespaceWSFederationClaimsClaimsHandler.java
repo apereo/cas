@@ -26,7 +26,7 @@ public class CustomNamespaceWSFederationClaimsClaimsHandler extends NonWSFederat
     public CustomNamespaceWSFederationClaimsClaimsHandler(final String handlerRealm, final String issuer,
                                                           final List<String> namespaces) {
         super(handlerRealm, issuer);
-        this.supportedClaimTypes = new NonWSFederationClaimsList(namespaces);
+        this.supportedClaimTypes = new CustomNamespaceWSFederationClaimsList(namespaces);
     }
 
     @SneakyThrows
@@ -49,7 +49,7 @@ public class CustomNamespaceWSFederationClaimsClaimsHandler extends NonWSFederat
     }
 
     @RequiredArgsConstructor
-    private static class NonWSFederationClaimsList extends ArrayList<URI> {
+    private static class CustomNamespaceWSFederationClaimsList extends ArrayList<URI> {
         private static final long serialVersionUID = 8368878016992806802L;
         private final List<String> namespaces;
 
