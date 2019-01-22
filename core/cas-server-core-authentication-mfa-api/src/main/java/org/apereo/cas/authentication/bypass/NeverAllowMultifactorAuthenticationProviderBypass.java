@@ -37,7 +37,7 @@ public class NeverAllowMultifactorAuthenticationProviderBypass extends BaseMulti
     }
 
     @Override
-    public boolean shouldMultifactorAuthenticationProviderExecute(final Authentication authentication,
+    public boolean shouldMultifactorAuthenticationProviderExecuteInternal(final Authentication authentication,
                                                                   final RegisteredService registeredService,
                                                                   final MultifactorAuthenticationProvider provider,
                                                                   final HttpServletRequest request) {

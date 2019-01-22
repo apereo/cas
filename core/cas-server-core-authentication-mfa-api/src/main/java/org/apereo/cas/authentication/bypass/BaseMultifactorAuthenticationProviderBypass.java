@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.bypass;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.Getter;
@@ -10,7 +11,9 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.audit.annotation.Audit;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -40,6 +43,38 @@ public abstract class BaseMultifactorAuthenticationProviderBypass implements Mul
         authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, Boolean.TRUE);
         authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER, provider.getId());
     }
+
+    @Override
+    public Optional<MultifactorAuthenticationProviderBypass> belongsToMultifactorAuthenticationProvider(final String providerId) {
+        if (getProviderId().equalsIgnoreCase(providerId)) {
+            return Optional.of(this);
+        }
+        return Optional.empty();
+    }
+
+    @Audit(action = "MFA_BYPASS",
+        actionResolverName = "MFA_BYPASS_ACTION_RESOLVER",
+        resourceResolverName = "MFA_BYPASS_RESOURCE_RESOLVER")
+    @Override
+    public boolean shouldMultifactorAuthenticationProviderExecute(final Authentication authentication, final RegisteredService registeredService,
+                                                                  final MultifactorAuthenticationProvider provider, final HttpServletRequest request) {
+        return shouldMultifactorAuthenticationProviderExecuteInternal(authentication, registeredService, provider, request);
+    }
+
+    /**
+     * Should multifactor authentication provider execute internal.
+     *
+     * @param authentication    the authentication
+     * @param registeredService the registered service
+     * @param provider          the provider
+     * @param request           the request
+     * @return the boolean
+     */
+    protected abstract boolean shouldMultifactorAuthenticationProviderExecuteInternal(Authentication authentication,
+                                                                                      RegisteredService registeredService,
+                                                                                      MultifactorAuthenticationProvider provider,
+                                                                                      HttpServletRequest request);
+
 
     /**
      * Locate matching attribute value boolean.
@@ -105,11 +140,5 @@ public abstract class BaseMultifactorAuthenticationProviderBypass implements Mul
         return !values.isEmpty();
     }
 
-    @Override
-    public Optional<MultifactorAuthenticationProviderBypass> belongsToMultifactorAuthenticationProvider(final String providerId) {
-        if (getProviderId().equalsIgnoreCase(providerId)) {
-            return Optional.of(this);
-        }
-        return Optional.empty();
-    }
+
 }
