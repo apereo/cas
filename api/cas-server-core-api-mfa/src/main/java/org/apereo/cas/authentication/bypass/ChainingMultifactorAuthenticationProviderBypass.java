@@ -1,11 +1,7 @@
-package org.apereo.cas.authentication;
-
-import lombok.val;
-import org.springframework.aop.support.AopUtils;
+package org.apereo.cas.authentication.bypass;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * This is {@link ChainingMultifactorAuthenticationProviderBypass}.
