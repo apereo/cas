@@ -140,6 +140,20 @@ public class DefaultRegisteredServiceAccessStrategyTests {
         pAttrs.put(GIVEN_NAME, "theName");
         assertFalse(authz.doPrincipalAttributesAllowServiceAccess(TEST, pAttrs));
     }
+    
+    @Test
+    public void checkAuthzPrincipalWithAttrRequirementsWrongValue() {
+        final Map<String, Set<String>> reqAttrs = getRequiredAttributes();
+        // It is important that the non-matching attribute is not the first one,
+        // due to the use of anyMatch and allMatch in the access strategy, see #3755
+        reqAttrs.put(GIVEN_NAME, Collections.singleton("not present"));
+        
+        final DefaultRegisteredServiceAccessStrategy authz = new DefaultRegisteredServiceAccessStrategy();
+        authz.setRequireAllAttributes(true);
+        authz.setRequiredAttributes(reqAttrs);
+
+        assertFalse(authz.doPrincipalAttributesAllowServiceAccess(TEST, getPrincipalAttributes()));
+    }
 
     @Test
     public void checkAuthzPrincipalWithAttrValueCaseSensitiveComparison() {
