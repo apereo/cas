@@ -1,5 +1,7 @@
-package org.apereo.cas.authentication;
+package org.apereo.cas.authentication.bypass;
 
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
@@ -8,7 +10,6 @@ import org.apereo.cas.util.HttpUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import org.springframework.http.HttpStatus;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,7 +23,7 @@ import java.util.HashMap;
  */
 @RequiredArgsConstructor
 @Slf4j
-public class RestMultifactorAuthenticationProviderBypass implements MultifactorAuthenticationProviderBypass {
+public class RestMultifactorAuthenticationProviderBypass extends BaseMultifactorAuthenticationProviderBypass {
 
     private static final long serialVersionUID = -7553888418344342672L;
 

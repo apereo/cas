@@ -811,8 +811,6 @@ All configurable multifactor authentication providers have these base properties
 The following bypass options apply equally to multifactor authentication providers given the provider's *configuration key*:
 
 ```properties
-# ${configurationKey}.bypass.type=DEFAULT|GROOVY|REST
-
 # ${configurationKey}.bypass.principalAttributeName=bypass|skip
 # ${configurationKey}.bypass.principalAttributeValue=true|enabled.+
 
@@ -827,7 +825,7 @@ The following bypass options apply equally to multifactor authentication provide
 # ${configurationKey}.bypass.httpRequestRemoteAddress=127.+|example.*
 # ${configurationKey}.bypass.httpRequestHeaders=header-X-.+|header-Y-.+
 
-# ${configurationKey}.groovy.location=file:/etc/cas/config/mfa-bypass.groovy
+# ${configurationKey}.bypass.groovy.location=file:/etc/cas/config/mfa-bypass.groovy
 ```
 
 If multifactor authentication bypass is determined via REST, 

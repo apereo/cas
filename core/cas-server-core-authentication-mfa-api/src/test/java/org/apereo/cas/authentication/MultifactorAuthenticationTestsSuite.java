@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.mfa.DefaultMultifactorAuthenticationContextValidatorTests;
-import org.apereo.cas.authentication.mfa.DefaultMultifactorAuthenticationProviderBypassTests;
+import org.apereo.cas.authentication.mfa.MultifactorAuthenticationProviderBypassTests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -15,7 +15,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
     DefaultMultifactorAuthenticationContextValidatorTests.class,
-    DefaultMultifactorAuthenticationProviderBypassTests.class,
+    MultifactorAuthenticationProviderBypassTests.class,
     GroovyMultifactorAuthenticationProviderBypassTests.class,
     DefaultMultifactorTriggerSelectionStrategyTests.class,
     RestMultifactorAuthenticationProviderBypassTests.class

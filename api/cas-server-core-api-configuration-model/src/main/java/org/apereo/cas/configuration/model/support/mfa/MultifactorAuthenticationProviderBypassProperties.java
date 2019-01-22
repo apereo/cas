@@ -21,15 +21,7 @@ import java.io.Serializable;
 public class MultifactorAuthenticationProviderBypassProperties implements Serializable {
 
     private static final long serialVersionUID = -9181362378365850397L;
-    /**
-     * Acceptable values are:
-     * <ul>
-     * <li>{@code DEFAULT}: Default bypass rules to skip provider via attributes, etc.</li>
-     * <li>{@code GROOVY}: Handle bypass decisions via a groovy script.</li>
-     * <li>{@code REST}: Handle bypass rules via a REST endpoint</li>
-     * </ul>
-     */
-    private MultifactorProviderBypassTypes type = MultifactorProviderBypassTypes.DEFAULT;
+
     /**
      * Skip multifactor authentication based on designated principal attribute names.
      */
@@ -81,22 +73,6 @@ public class MultifactorAuthenticationProviderBypassProperties implements Serial
      * Handle bypass using a REST endpoint.
      */
     private Rest rest = new Rest();
-
-    public enum MultifactorProviderBypassTypes {
-
-        /**
-         * Handle multifactor authentication bypass per default CAS rules.
-         */
-        DEFAULT,
-        /**
-         * Handle multifactor authentication bypass via a Groovy script.
-         */
-        GROOVY,
-        /**
-         * Handle multifactor authentication bypass via a REST endpoint.
-         */
-        REST
-    }
 
     @RequiresModule(name = "cas-server-core-authentication", automated = true)
     @Getter

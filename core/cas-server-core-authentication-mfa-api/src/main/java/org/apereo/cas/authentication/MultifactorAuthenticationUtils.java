@@ -1,5 +1,12 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.bypass.AuthenticationMultifactorAuthenticationProviderBypass;
+import org.apereo.cas.authentication.bypass.CredentialMultifactorAuthenticationProviderBypass;
+import org.apereo.cas.authentication.bypass.GroovyMultifactorAuthenticationProviderBypass;
+import org.apereo.cas.authentication.bypass.HttpRequestMultifactorAuthenticationProviderBypass;
+import org.apereo.cas.authentication.bypass.PrincipalMultifactorAuthenticationProviderBypass;
+import org.apereo.cas.authentication.bypass.RegisteredServiceMultifactorAuthenticationProviderBypass;
+import org.apereo.cas.authentication.bypass.RestMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
 import org.apereo.cas.services.RegisteredService;
@@ -10,6 +17,7 @@ import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
@@ -109,7 +117,7 @@ public class MultifactorAuthenticationUtils {
                     LOGGER.debug("Ignoring [{}] since no matching transition could be found", value);
                 }
             });
-            return (Set) events;
+            return events;
         }
 
         return null;
@@ -123,7 +131,7 @@ public class MultifactorAuthenticationUtils {
      * @return the optional
      */
     public static Optional<MultifactorAuthenticationProvider> resolveProvider(final Map<String, MultifactorAuthenticationProvider> providers,
-                                                                       final Collection<String> requestMfaMethod) {
+                                                                              final Collection<String> requestMfaMethod) {
         return providers.values()
             .stream()
             .filter(p -> requestMfaMethod.stream().filter(Objects::nonNull).anyMatch(p::matches))
@@ -138,7 +146,7 @@ public class MultifactorAuthenticationUtils {
      * @return the optional
      */
     public static Optional<MultifactorAuthenticationProvider> resolveProvider(final Map<String, MultifactorAuthenticationProvider> providers,
-                                                                       final String requestMfaMethod) {
+                                                                              final String requestMfaMethod) {
         return resolveProvider(providers, Stream.of(requestMfaMethod).collect(Collectors.toList()));
     }
 
@@ -152,12 +160,26 @@ public class MultifactorAuthenticationUtils {
         final MultifactorAuthenticationProviderBypassProperties props) {
 
         val bypass = new ChainingMultifactorAuthenticationBypassProvider();
-        bypass.addBypass(new DefaultMultifactorAuthenticationProviderBypass(props));
+        bypass.addBypass(new RegisteredServiceMultifactorAuthenticationProviderBypass());
 
-        if (props.getType() == MultifactorAuthenticationProviderBypassProperties.MultifactorProviderBypassTypes.GROOVY) {
+        if (StringUtils.isNotBlank(props.getPrincipalAttributeName())) {
+            bypass.addBypass(new PrincipalMultifactorAuthenticationProviderBypass(props));
+        }
+        if (StringUtils.isNotBlank(props.getAuthenticationAttributeName())
+            || StringUtils.isNotBlank(props.getAuthenticationHandlerName())
+            || StringUtils.isNotBlank(props.getAuthenticationMethodName())) {
+            bypass.addBypass(new AuthenticationMultifactorAuthenticationProviderBypass(props));
+        }
+        if (StringUtils.isNotBlank(props.getCredentialClassType())) {
+            bypass.addBypass(new CredentialMultifactorAuthenticationProviderBypass(props));
+        }
+        if (StringUtils.isNotBlank(props.getHttpRequestHeaders()) || StringUtils.isNotBlank(props.getHttpRequestRemoteAddress())) {
+            bypass.addBypass(new HttpRequestMultifactorAuthenticationProviderBypass(props));
+        }
+        if (props.getGroovy().getLocation() != null) {
             bypass.addBypass(new GroovyMultifactorAuthenticationProviderBypass(props));
         }
-        if (props.getType() == MultifactorAuthenticationProviderBypassProperties.MultifactorProviderBypassTypes.REST) {
+        if (StringUtils.isNotBlank(props.getRest().getUrl())) {
             bypass.addBypass(new RestMultifactorAuthenticationProviderBypass(props));
         }
         return bypass;
@@ -176,11 +198,11 @@ public class MultifactorAuthenticationUtils {
      */
     @SneakyThrows
     public static Set<Event> resolveEventViaSingleAttribute(final Principal principal,
-                                                     final Object attributeValue,
-                                                     final RegisteredService service,
-                                                     final Optional<RequestContext> context,
-                                                     final MultifactorAuthenticationProvider provider,
-                                                     final Predicate<String> predicate) {
+                                                            final Object attributeValue,
+                                                            final RegisteredService service,
+                                                            final Optional<RequestContext> context,
+                                                            final MultifactorAuthenticationProvider provider,
+                                                            final Predicate<String> predicate) {
         if (attributeValue instanceof String) {
             LOGGER.debug("Attribute value [{}] is a single-valued attribute", attributeValue);
             if (predicate.test((String) attributeValue)) {
@@ -241,9 +263,9 @@ public class MultifactorAuthenticationUtils {
      * @return the set
      */
     public static Set<Event> evaluateEventForProviderInContext(final Principal principal,
-                                                        final RegisteredService service,
-                                                        final Optional<RequestContext> context,
-                                                        final MultifactorAuthenticationProvider provider) {
+                                                               final RegisteredService service,
+                                                               final Optional<RequestContext> context,
+                                                               final MultifactorAuthenticationProvider provider) {
         LOGGER.debug("Attempting check for availability of multifactor authentication provider [{}] for [{}]", provider, service);
         if (provider != null) {
             LOGGER.debug("Provider [{}] is successfully verified", provider);
