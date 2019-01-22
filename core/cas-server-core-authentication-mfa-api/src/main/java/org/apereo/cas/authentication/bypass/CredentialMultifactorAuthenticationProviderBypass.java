@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
 import org.apereo.cas.services.RegisteredService;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -19,10 +18,16 @@ import javax.servlet.http.HttpServletRequest;
  * @since 6.0
  */
 @Slf4j
-@RequiredArgsConstructor
 public class CredentialMultifactorAuthenticationProviderBypass extends BaseMultifactorAuthenticationProviderBypass {
     private static final long serialVersionUID = -1233888418344342672L;
+
     private final MultifactorAuthenticationProviderBypassProperties bypassProperties;
+
+    public CredentialMultifactorAuthenticationProviderBypass(final MultifactorAuthenticationProviderBypassProperties bypassProperties,
+                                                                 final String providerId) {
+        super(providerId);
+        this.bypassProperties = bypassProperties;
+    }
 
     @Override
     public boolean shouldMultifactorAuthenticationProviderExecute(final Authentication authentication,

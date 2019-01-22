@@ -5,11 +5,15 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.util.CollectionUtils;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -19,23 +23,18 @@ import java.util.stream.Collectors;
  * @since 6.1.0
  */
 @Slf4j
+@Getter
+@RequiredArgsConstructor
+@ToString
 public abstract class BaseMultifactorAuthenticationProviderBypass implements MultifactorAuthenticationProviderBypass {
-    /**
-     * Method will remove any previous bypass set in the authentication.
-     *
-     * @param authentication - the authentication
-     */
+    private final String providerId;
+    private final String id = this.getClass().getSimpleName();
+
     @Override
     public void forgetBypass(final Authentication authentication) {
         authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, Boolean.FALSE);
     }
 
-    /**
-     * Method will set the bypass into the authentication.
-     *
-     * @param authentication - the authentication
-     * @param provider       - the provider
-     */
     @Override
     public void rememberBypass(final Authentication authentication,
                                final MultifactorAuthenticationProvider provider) {
@@ -105,5 +104,13 @@ public abstract class BaseMultifactorAuthenticationProviderBypass implements Mul
 
         LOGGER.debug("Matching attribute values remaining are [{}]", values);
         return !values.isEmpty();
+    }
+
+    @Override
+    public Optional<MultifactorAuthenticationProviderBypass> belongsToMultifactorAuthenticationProvider(final String providerId) {
+        if (getProviderId().equalsIgnoreCase(providerId)) {
+            return Optional.of(this);
+        }
+        return Optional.empty();
     }
 }

@@ -3,9 +3,6 @@ package org.apereo.cas.authentication.mfa;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.bypass.AuthenticationMultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.bypass.CredentialMultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.bypass.HttpRequestMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.authentication.bypass.PrincipalMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.authentication.bypass.RegisteredServiceMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
@@ -49,12 +46,11 @@ public class MultifactorAuthenticationProviderBypassTests {
         val props = new MultifactorAuthenticationProviderBypassProperties();
         props.setPrincipalAttributeName("givenName");
         props.setPrincipalAttributeValue("CAS");
-        val bypass = new PrincipalMultifactorAuthenticationProviderBypass(props);
-
         val principal = MultifactorAuthenticationTestUtils.getPrincipal("casuser", CollectionUtils.wrap("givenName", "CAS"));
         val authentication = MultifactorAuthenticationTestUtils.getAuthentication(principal, CollectionUtils.wrap("authnFlag", "bypass"));
-
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+        val bypass = new PrincipalMultifactorAuthenticationProviderBypass(props, provider.getId());
+
         val service = MultifactorAuthenticationTestUtils.getRegisteredService();
         assertFalse(bypass.shouldMultifactorAuthenticationProviderExecute(authentication, service, provider, request));
     }
@@ -65,12 +61,12 @@ public class MultifactorAuthenticationProviderBypassTests {
         val props = new MultifactorAuthenticationProviderBypassProperties();
         props.setAuthenticationAttributeName("authnFlag");
         props.setAuthenticationAttributeValue("bypass");
-        val bypass = new AuthenticationMultifactorAuthenticationProviderBypass(props);
 
         val principal = MultifactorAuthenticationTestUtils.getPrincipal("casuser", CollectionUtils.wrap("givenName", "CAS"));
         val authentication = MultifactorAuthenticationTestUtils.getAuthentication(principal, CollectionUtils.wrap("authnFlag", "bypass"));
 
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+        val bypass = new PrincipalMultifactorAuthenticationProviderBypass(props, provider.getId());
         val service = MultifactorAuthenticationTestUtils.getRegisteredService();
         assertFalse(bypass.shouldMultifactorAuthenticationProviderExecute(authentication, service, provider, request));
     }
@@ -81,13 +77,13 @@ public class MultifactorAuthenticationProviderBypassTests {
         val request = new MockHttpServletRequest();
         val props = new MultifactorAuthenticationProviderBypassProperties();
         props.setAuthenticationMethodName("simpleAuthentication");
-        val bypass = new AuthenticationMultifactorAuthenticationProviderBypass(props);
 
         val principal = MultifactorAuthenticationTestUtils.getPrincipal("casuser", CollectionUtils.wrap("givenName", "CAS"));
         val authentication = MultifactorAuthenticationTestUtils.getAuthentication(principal,
             CollectionUtils.wrap(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE, "simpleAuthentication"));
 
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+        val bypass = new PrincipalMultifactorAuthenticationProviderBypass(props, provider.getId());
         val service = MultifactorAuthenticationTestUtils.getRegisteredService();
         assertFalse(bypass.shouldMultifactorAuthenticationProviderExecute(authentication, service, provider, request));
     }
@@ -97,13 +93,13 @@ public class MultifactorAuthenticationProviderBypassTests {
         val request = new MockHttpServletRequest();
         val props = new MultifactorAuthenticationProviderBypassProperties();
         props.setAuthenticationHandlerName("SimpleAuthenticationHandler");
-        val bypass = new AuthenticationMultifactorAuthenticationProviderBypass(props);
 
         val principal = MultifactorAuthenticationTestUtils.getPrincipal("casuser", CollectionUtils.wrap("givenName", "CAS"));
         val authentication = MultifactorAuthenticationTestUtils.getAuthentication(principal,
             CollectionUtils.wrap(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS, "SimpleAuthenticationHandler"));
 
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+        val bypass = new PrincipalMultifactorAuthenticationProviderBypass(props, provider.getId());
         val service = MultifactorAuthenticationTestUtils.getRegisteredService();
         assertFalse(bypass.shouldMultifactorAuthenticationProviderExecute(authentication, service, provider, request));
     }
@@ -113,12 +109,12 @@ public class MultifactorAuthenticationProviderBypassTests {
         val request = new MockHttpServletRequest();
         val props = new MultifactorAuthenticationProviderBypassProperties();
         props.setCredentialClassType(Credential.class.getName());
-        val bypass = new CredentialMultifactorAuthenticationProviderBypass(props);
 
         val principal = MultifactorAuthenticationTestUtils.getPrincipal("casuser");
         val authentication = MultifactorAuthenticationTestUtils.getAuthentication(principal);
 
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+        val bypass = new PrincipalMultifactorAuthenticationProviderBypass(props, provider.getId());
         val service = MultifactorAuthenticationTestUtils.getRegisteredService();
         assertFalse(bypass.shouldMultifactorAuthenticationProviderExecute(authentication, service, provider, request));
     }
@@ -129,12 +125,12 @@ public class MultifactorAuthenticationProviderBypassTests {
         request.addHeader("headerbypass", "true");
         val props = new MultifactorAuthenticationProviderBypassProperties();
         props.setHttpRequestHeaders("headerbypass");
-        val bypass = new HttpRequestMultifactorAuthenticationProviderBypass(props);
 
         val principal = MultifactorAuthenticationTestUtils.getPrincipal("casuser");
         val authentication = MultifactorAuthenticationTestUtils.getAuthentication(principal);
 
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+        val bypass = new PrincipalMultifactorAuthenticationProviderBypass(props, provider.getId());
         val service = MultifactorAuthenticationTestUtils.getRegisteredService();
         assertFalse(bypass.shouldMultifactorAuthenticationProviderExecute(authentication, service, provider, request));
     }
@@ -145,12 +141,12 @@ public class MultifactorAuthenticationProviderBypassTests {
         request.setRemoteAddr("123.456.789.000");
         val props = new MultifactorAuthenticationProviderBypassProperties();
         props.setHttpRequestRemoteAddress("123.+");
-        val bypass = new HttpRequestMultifactorAuthenticationProviderBypass(props);
 
         val principal = MultifactorAuthenticationTestUtils.getPrincipal("casuser");
         val authentication = MultifactorAuthenticationTestUtils.getAuthentication(principal);
 
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+        val bypass = new PrincipalMultifactorAuthenticationProviderBypass(props, provider.getId());
         val service = MultifactorAuthenticationTestUtils.getRegisteredService();
         assertFalse(bypass.shouldMultifactorAuthenticationProviderExecute(authentication, service, provider, request));
     }
@@ -161,12 +157,12 @@ public class MultifactorAuthenticationProviderBypassTests {
         request.setRemoteHost("somewhere.example.org");
         val props = new MultifactorAuthenticationProviderBypassProperties();
         props.setHttpRequestRemoteAddress(".+example\\.org");
-        val bypass = new HttpRequestMultifactorAuthenticationProviderBypass(props);
 
         val principal = MultifactorAuthenticationTestUtils.getPrincipal("casuser");
         val authentication = MultifactorAuthenticationTestUtils.getAuthentication(principal);
 
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+        val bypass = new PrincipalMultifactorAuthenticationProviderBypass(props, provider.getId());
         val service = MultifactorAuthenticationTestUtils.getRegisteredService();
         assertFalse(bypass.shouldMultifactorAuthenticationProviderExecute(authentication, service, provider, request));
     }
@@ -174,13 +170,12 @@ public class MultifactorAuthenticationProviderBypassTests {
     @Test
     public void verifyMultifactorAuthenticationBypassByService() {
         val request = new MockHttpServletRequest();
-        val props = new MultifactorAuthenticationProviderBypassProperties();
-        val bypass = new RegisteredServiceMultifactorAuthenticationProviderBypass();
 
         val principal = MultifactorAuthenticationTestUtils.getPrincipal("casuser");
         val authentication = MultifactorAuthenticationTestUtils.getAuthentication(principal);
 
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+        val bypass = new RegisteredServiceMultifactorAuthenticationProviderBypass(provider.getId());
         val service = MultifactorAuthenticationTestUtils.getRegisteredService();
 
         val policy = mock(RegisteredServiceMultifactorPolicy.class);
@@ -193,13 +188,12 @@ public class MultifactorAuthenticationProviderBypassTests {
     @Test
     public void verifyMultifactorAuthenticationBypassIgnored() {
         val request = new MockHttpServletRequest();
-        val props = new MultifactorAuthenticationProviderBypassProperties();
-        val bypass = new RegisteredServiceMultifactorAuthenticationProviderBypass();
 
         val principal = MultifactorAuthenticationTestUtils.getPrincipal("casuser");
         val authentication = MultifactorAuthenticationTestUtils.getAuthentication(principal);
 
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+        val bypass = new RegisteredServiceMultifactorAuthenticationProviderBypass(provider.getId());
         val service = MultifactorAuthenticationTestUtils.getRegisteredService();
         assertTrue(bypass.shouldMultifactorAuthenticationProviderExecute(authentication, service, provider, request));
     }

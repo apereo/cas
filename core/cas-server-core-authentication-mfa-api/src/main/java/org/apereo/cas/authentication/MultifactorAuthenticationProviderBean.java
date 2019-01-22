@@ -23,8 +23,8 @@ import java.util.List;
  */
 @RequiredArgsConstructor
 @Slf4j
-public class MultifactorAuthenticationProviderBean<T extends MultifactorAuthenticationProvider,
-    P extends BaseMultifactorProviderProperties> implements InitializingBean {
+public class MultifactorAuthenticationProviderBean<T extends MultifactorAuthenticationProvider, P extends BaseMultifactorProviderProperties>
+    implements InitializingBean {
 
     private final MultifactorAuthenticationProviderFactoryBean<T, P> providerFactory;
 
@@ -37,7 +37,7 @@ public class MultifactorAuthenticationProviderBean<T extends MultifactorAuthenti
         properties.forEach(p -> {
             val name = providerFactory.beanName(p.getId());
             beanFactory.destroySingleton(name);
-            beanFactory.registerSingleton(name, providerFactory.create(p));
+            beanFactory.registerSingleton(name, providerFactory.createProvider(p));
         });
     }
 

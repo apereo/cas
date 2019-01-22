@@ -34,9 +34,10 @@ public class RestMultifactorAuthenticationProviderBypassTests {
 
             val props = new MultifactorAuthenticationProviderBypassProperties();
             props.getRest().setUrl("http://localhost:9316");
-            val r = new RestMultifactorAuthenticationProviderBypass(props);
+            val provider = new TestMultifactorAuthenticationProvider();
+            val r = new RestMultifactorAuthenticationProviderBypass(props, provider.getId());
             val res = r.shouldMultifactorAuthenticationProviderExecute(MultifactorAuthenticationTestUtils.getAuthentication("casuser"),
-                MultifactorAuthenticationTestUtils.getRegisteredService(), new TestMultifactorAuthenticationProvider(),
+                MultifactorAuthenticationTestUtils.getRegisteredService(), provider,
                 new MockHttpServletRequest());
             assertTrue(res);
         } catch (final Exception e) {

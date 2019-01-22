@@ -6,6 +6,7 @@ import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
+import java.util.Optional;
 
 /**
  * This is {@link MultifactorAuthenticationProviderBypass}.
@@ -61,4 +62,45 @@ public interface MultifactorAuthenticationProviderBypass extends Serializable, O
     default int getOrder() {
         return Ordered.LOWEST_PRECEDENCE;
     }
+
+    /**
+     * Gets provider id of this bypass evaluator.
+     *
+     * @return the id
+     */
+    String getProviderId();
+
+    /**
+     * Gets id.
+     *
+     * @return the id
+     */
+    String getId();
+
+    /**
+     * Size.
+     *
+     * @return the int
+     */
+    default int size() {
+        return 1;
+    }
+
+    /**
+     * Is empty?.
+     *
+     * @return the boolean
+     */
+    default boolean isEmpty() {
+        return false;
+    }
+
+
+    /**
+     * Indicate whether this bypass belongs to given multifactor authentication provider.
+     *
+     * @param providerId the provider id
+     * @return the provider if a match, otherwise, empty.
+     */
+    Optional<MultifactorAuthenticationProviderBypass> belongsToMultifactorAuthenticationProvider(String providerId);
 }

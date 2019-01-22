@@ -23,8 +23,10 @@ public class GroovyMultifactorAuthenticationProviderBypass extends BaseMultifact
 
     private final transient WatchableGroovyScriptResource watchableScript;
 
-    public GroovyMultifactorAuthenticationProviderBypass(final MultifactorAuthenticationProviderBypassProperties bypass) {
-        val groovyScript = bypass.getGroovy().getLocation();
+    public GroovyMultifactorAuthenticationProviderBypass(final MultifactorAuthenticationProviderBypassProperties bypassProperties,
+                                                         final String providerId) {
+        super(providerId);
+        val groovyScript = bypassProperties.getGroovy().getLocation();
         this.watchableScript = new WatchableGroovyScriptResource(groovyScript);
     }
 
