@@ -2,7 +2,6 @@ package org.apereo.cas.authentication.bypass;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
-import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.Getter;

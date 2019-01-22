@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.duo.authn;
 
-import org.apereo.cas.authentication.ChainingMultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
+import org.apereo.cas.authentication.bypass.ChainingMultifactorAuthenticationProviderBypass;
+import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderFactoryBean;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
 import org.apereo.cas.util.http.HttpClient;
