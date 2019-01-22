@@ -1,14 +1,6 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.authentication.bypass.AuthenticationMultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.bypass.CredentialMultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.bypass.GroovyMultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.bypass.HttpRequestMultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.bypass.PrincipalMultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.bypass.RegisteredServiceMultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.bypass.RestMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
@@ -17,7 +9,6 @@ import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
@@ -150,40 +141,6 @@ public class MultifactorAuthenticationUtils {
         return resolveProvider(providers, Stream.of(requestMfaMethod).collect(Collectors.toList()));
     }
 
-    /**
-     * New multifactor authentication provider bypass multifactor.
-     *
-     * @param props the props
-     * @return the multifactor authentication provider bypass
-     */
-    public static MultifactorAuthenticationProviderBypass newMultifactorAuthenticationProviderBypass(
-        final MultifactorAuthenticationProviderBypassProperties props) {
-
-        val bypass = new ChainingMultifactorAuthenticationBypassProvider();
-        bypass.addBypass(new RegisteredServiceMultifactorAuthenticationProviderBypass());
-
-        if (StringUtils.isNotBlank(props.getPrincipalAttributeName())) {
-            bypass.addBypass(new PrincipalMultifactorAuthenticationProviderBypass(props));
-        }
-        if (StringUtils.isNotBlank(props.getAuthenticationAttributeName())
-            || StringUtils.isNotBlank(props.getAuthenticationHandlerName())
-            || StringUtils.isNotBlank(props.getAuthenticationMethodName())) {
-            bypass.addBypass(new AuthenticationMultifactorAuthenticationProviderBypass(props));
-        }
-        if (StringUtils.isNotBlank(props.getCredentialClassType())) {
-            bypass.addBypass(new CredentialMultifactorAuthenticationProviderBypass(props));
-        }
-        if (StringUtils.isNotBlank(props.getHttpRequestHeaders()) || StringUtils.isNotBlank(props.getHttpRequestRemoteAddress())) {
-            bypass.addBypass(new HttpRequestMultifactorAuthenticationProviderBypass(props));
-        }
-        if (props.getGroovy().getLocation() != null) {
-            bypass.addBypass(new GroovyMultifactorAuthenticationProviderBypass(props));
-        }
-        if (StringUtils.isNotBlank(props.getRest().getUrl())) {
-            bypass.addBypass(new RestMultifactorAuthenticationProviderBypass(props));
-        }
-        return bypass;
-    }
 
     /**
      * Resolve event via single attribute set.

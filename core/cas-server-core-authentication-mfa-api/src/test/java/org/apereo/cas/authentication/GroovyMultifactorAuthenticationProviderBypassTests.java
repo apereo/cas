@@ -31,8 +31,8 @@ public class GroovyMultifactorAuthenticationProviderBypassTests {
         val request = new MockHttpServletRequest();
         val properties = new MultifactorAuthenticationProviderBypassProperties();
         properties.getGroovy().setLocation(new ClassPathResource("GroovyBypass.groovy"));
-        val groovy = new GroovyMultifactorAuthenticationProviderBypass(properties);
         val provider = new TestMultifactorAuthenticationProvider();
+        val groovy = new GroovyMultifactorAuthenticationProviderBypass(properties, provider.getId());
 
         val authentication = mock(Authentication.class);
         val principal = mock(Principal.class);

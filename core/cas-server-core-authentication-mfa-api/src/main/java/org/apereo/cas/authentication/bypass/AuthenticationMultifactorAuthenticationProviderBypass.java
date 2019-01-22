@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
 import org.apereo.cas.services.RegisteredService;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -20,10 +19,14 @@ import javax.servlet.http.HttpServletRequest;
  * @since 6.0
  */
 @Slf4j
-@RequiredArgsConstructor
 public class AuthenticationMultifactorAuthenticationProviderBypass extends BaseMultifactorAuthenticationProviderBypass {
-
     private final MultifactorAuthenticationProviderBypassProperties bypassProperties;
+
+    public AuthenticationMultifactorAuthenticationProviderBypass(final MultifactorAuthenticationProviderBypassProperties bypassProperties,
+                                                                 final String providerId) {
+        super(providerId);
+        this.bypassProperties = bypassProperties;
+    }
 
     @Override
     public boolean shouldMultifactorAuthenticationProviderExecute(final Authentication authentication,
