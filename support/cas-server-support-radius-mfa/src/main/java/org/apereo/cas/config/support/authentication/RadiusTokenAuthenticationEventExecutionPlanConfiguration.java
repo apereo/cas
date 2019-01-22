@@ -11,7 +11,6 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -50,22 +49,20 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
 
+    @Autowired
+    @Qualifier("radiusBypassEvaluator")
+    private ObjectProvider<MultifactorAuthenticationProviderBypass> radiusBypassEvaluator;
+
     @RefreshScope
     @Bean
     public MultifactorAuthenticationProvider radiusMultifactorAuthenticationProvider() {
         val radius = casProperties.getAuthn().getMfa().getRadius();
         val p = new RadiusMultifactorAuthenticationProvider(radiusTokenServers());
-        p.setBypassEvaluator(radiusBypassEvaluator());
+        p.setBypassEvaluator(radiusBypassEvaluator.getIfAvailable());
         p.setFailureMode(radius.getFailureMode());
         p.setOrder(radius.getRank());
         p.setId(radius.getId());
         return p;
-    }
-
-    @Bean
-    @RefreshScope
-    public MultifactorAuthenticationProviderBypass radiusBypassEvaluator() {
-        return MultifactorAuthenticationUtils.newMultifactorAuthenticationProviderBypass(casProperties.getAuthn().getMfa().getRadius().getBypass());
     }
 
     @RefreshScope
@@ -111,8 +108,8 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationMetaDataPopulator radiusAuthenticationMetaDataPopulator() {
         val attribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
         return new AuthenticationContextAttributeMetaDataPopulator(attribute,
-                radiusTokenAuthenticationHandler(),
-                radiusMultifactorAuthenticationProvider().getId()
+            radiusTokenAuthenticationHandler(),
+            radiusMultifactorAuthenticationProvider().getId()
         );
     }
 
