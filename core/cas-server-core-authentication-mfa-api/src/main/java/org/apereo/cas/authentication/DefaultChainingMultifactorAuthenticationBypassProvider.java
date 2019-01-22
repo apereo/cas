@@ -7,6 +7,7 @@ import org.apereo.cas.services.RegisteredService;
 
 import lombok.Getter;
 import lombok.val;
+import org.apereo.inspektr.audit.annotation.Audit;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -25,6 +26,9 @@ public class DefaultChainingMultifactorAuthenticationBypassProvider implements C
 
     private final List<MultifactorAuthenticationProviderBypass> multifactorAuthenticationProviderBypassEvaluators = new ArrayList<>();
 
+    @Audit(action = "MFA_BYPASS",
+        actionResolverName = "MFA_BYPASS_ACTION_RESOLVER",
+        resourceResolverName = "MFA_BYPASS_RESOURCE_RESOLVER")
     @Override
     public boolean shouldMultifactorAuthenticationProviderExecute(final Authentication authentication,
                                                                   final RegisteredService registeredService,
