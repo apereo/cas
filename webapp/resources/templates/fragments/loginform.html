@@ -90,7 +90,7 @@
                             </p>
                         </section>
 
-                        <section class="row" th:if="${recaptchaSiteKey != null AND recaptchaInvisible != null AND recaptchaSiteKey AND !recaptchaInvisible}">
+                        <section class="row" th:if="${recaptchaSiteKey != null AND recaptchaInvisible != null AND recaptchaSiteKey != null AND !recaptchaInvisible}">
                             <div class="g-recaptcha" th:attr="data-sitekey=${recaptchaSiteKey}"/>
                         </section>
 
@@ -98,7 +98,7 @@
                         <input type="hidden" name="_eventId" value="submit"/>
                         <input type="hidden" name="geolocation"/>
                         <input class="btn btn-block btn-submit"
-                               th:unless="${recaptchaSiteKey != null AND recaptchaInvisible != null AND recaptchaSiteKey AND recaptchaInvisible}"
+                               th:unless="${recaptchaSiteKey != null AND recaptchaInvisible != null AND recaptchaSiteKey != null AND recaptchaInvisible}"
                                name="submit"
                                accesskey="l"
                                th:value="#{screen.welcome.button.login}"
@@ -107,7 +107,7 @@
                                value="Login3"
                         />
                         <button class="btn btn-block btn-submit g-recaptcha"
-                                th:if="${recaptchaSiteKey != null AND recaptchaInvisible != null AND recaptchaSiteKey AND recaptchaInvisible}"
+                                th:if="${recaptchaSiteKey != null AND recaptchaInvisible != null AND recaptchaSiteKey != null AND recaptchaInvisible}"
                                 th:attr="data-sitekey=${recaptchaSiteKey}, data-badge=${recaptchaPosition}"
                                 data-callback="onSubmit"
                                 name="submitBtn"
