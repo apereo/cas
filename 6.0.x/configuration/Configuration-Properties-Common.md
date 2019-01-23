@@ -805,7 +805,7 @@ The following bypass options apply equally to multifactor authentication provide
 # ${configurationKey}.bypass.httpRequestRemoteAddress=127.+|example.*
 # ${configurationKey}.bypass.httpRequestHeaders=header-X-.+|header-Y-.+
 
-# ${configurationKey}.groovy.location=file:/etc/cas/config/mfa-bypass.groovy
+# ${configurationKey}.bypass.groovy.location=file:/etc/cas/config/mfa-bypass.groovy
 ```
 
 If multifactor authentication bypass is determined via REST, 
