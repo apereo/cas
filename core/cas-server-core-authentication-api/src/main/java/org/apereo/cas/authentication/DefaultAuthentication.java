@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 
 import java.time.ZonedDateTime;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -59,7 +60,7 @@ public class DefaultAuthentication implements Authentication {
     /**
      * Map of handler name to handler authentication failure cause.
      */
-    private Map<String, Throwable> failures;
+    private Map<String, Throwable> failures = new LinkedHashMap<>();
 
 
     /**
@@ -81,7 +82,7 @@ public class DefaultAuthentication implements Authentication {
         this.attributes = attributes;
         this.successes = successes;
         this.credentials = null;
-        this.failures = null;
+        this.failures = new LinkedHashMap<>();
     }
 
     /**
