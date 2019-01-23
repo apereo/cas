@@ -63,7 +63,7 @@ public class DefaultAuthentication implements Authentication {
     /**
      * Map of handler name to handler authentication failure cause.
      */
-    private Map<String, Throwable> failures;
+    private Map<String, Throwable> failures = new LinkedHashMap<>();
 
     public DefaultAuthentication(
         final @NonNull ZonedDateTime date,
