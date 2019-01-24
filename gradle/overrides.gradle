@@ -29,7 +29,7 @@ ext["logbackVersion"] = "1.3.0-alpha4"
 ext["caffeinVersion"] = "2.6.2"
 ext["couchbaseVersion"] = "2.7.2"
 
-ext["mysqlVersion"] = "8.0.13"
+ext["mysqlVersion"] = "8.0.14"
 ext["postgresqlVersion"] = "42.2.5"
 ext["mariaDbVersion"] = "2.3.0"
 ext["jtdsVersion"] = "1.3.1"
