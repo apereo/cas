@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.yubikey.dao;
 
 import org.apereo.cas.adaptors.yubikey.BaseYubiKeyAccountRegistryTests;
+import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
@@ -93,6 +94,10 @@ public class CouchDbYubiKeyAccountRegistryTests extends BaseYubiKeyAccountRegist
     @Autowired
     @Qualifier("couchDbYubiKeyAccountRepository")
     private YubiKeyAccountCouchDbRepository couchDbRepository;
+
+    public YubiKeyAccountRegistry getYubiKeyAccountRegistry() {
+        return yubiKeyAccountRegistry;
+    }
 
     @BeforeEach
     public void setUp() {

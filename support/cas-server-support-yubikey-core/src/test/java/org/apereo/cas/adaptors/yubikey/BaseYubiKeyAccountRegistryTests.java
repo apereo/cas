@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Timur Duehr
  * @since 6.0.0
  */
-public class BaseYubiKeyAccountRegistryTests {
+public abstract class BaseYubiKeyAccountRegistryTests {
 
     private static final String OTP = "cccccccvlidcnlednilgctgcvcjtivrjidfbdgrefcvi";
     private static final String BAD_TOKEN = "123456";
@@ -23,7 +23,7 @@ public class BaseYubiKeyAccountRegistryTests {
 
     @Autowired
     @Qualifier("yubiKeyAccountRegistry")
-    private YubiKeyAccountRegistry yubiKeyAccountRegistry;
+    protected YubiKeyAccountRegistry yubiKeyAccountRegistry;
 
     @Test
     public void verifyAccountNotRegistered() {
