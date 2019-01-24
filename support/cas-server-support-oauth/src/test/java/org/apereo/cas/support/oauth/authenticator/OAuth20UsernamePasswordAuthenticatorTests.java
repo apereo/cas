@@ -5,6 +5,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.util.HttpUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
@@ -23,9 +24,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class OAuth20UsernamePasswordAuthenticatorTests extends BaseOAuth20AuthenticatorTests {
     protected OAuth20UsernamePasswordAuthenticator authenticator;
 
-    @Override
-    public void initialize() {
-        super.initialize();
+    @BeforeEach
+    public void instanceInitialize() {
         authenticator = new OAuth20UsernamePasswordAuthenticator(authenticationSystemSupport, servicesManager, serviceFactory);
     }
 
