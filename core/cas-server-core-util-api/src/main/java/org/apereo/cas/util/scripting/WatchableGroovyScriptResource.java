@@ -17,7 +17,7 @@ import org.springframework.core.io.Resource;
  */
 @Slf4j
 @Getter
-public class WatchableGroovyScriptResource {
+public class WatchableGroovyScriptResource implements AutoCloseable {
     private transient FileWatcherService watcherService;
     private transient GroovyObject groovyScript;
     private final transient Resource resource;
@@ -100,5 +100,10 @@ public class WatchableGroovyScriptResource {
             return ScriptingUtils.executeGroovyScript(this.groovyScript, methodName, args, clazz, failOnError);
         }
         return null;
+    }
+
+    @Override
+    public void close() {
+        this.watcherService.close();
     }
 }

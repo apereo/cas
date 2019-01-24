@@ -1,10 +1,9 @@
 package org.apereo.cas.util.io;
 
-import org.apereo.cas.util.scripting.ScriptingUtils;
+import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
 
 /**
@@ -13,14 +12,21 @@ import org.springframework.core.io.Resource;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Getter
-@RequiredArgsConstructor
 @Slf4j
-public class GroovySmsSender implements SmsSender {
-    private final transient Resource groovyResource;
+public class GroovySmsSender implements SmsSender, DisposableBean {
+    private final transient WatchableGroovyScriptResource watchableScript;
+
+    public GroovySmsSender(final Resource groovyResource) {
+        this.watchableScript = new WatchableGroovyScriptResource(groovyResource);
+    }
 
     @Override
     public boolean send(final String from, final String to, final String message) {
-        return ScriptingUtils.executeGroovyScript(this.groovyResource, new Object[]{from, to, message, LOGGER}, Boolean.class, true);
+        return watchableScript.execute(new Object[]{from, to, message, LOGGER}, Boolean.class);
+    }
+
+    @Override
+    public void destroy() {
+        this.watchableScript.close();
     }
 }

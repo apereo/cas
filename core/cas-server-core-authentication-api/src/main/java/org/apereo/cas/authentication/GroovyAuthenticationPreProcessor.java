@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
 
 /**
@@ -17,7 +18,7 @@ import org.springframework.core.io.Resource;
 @Getter
 @Setter
 @Slf4j
-public class GroovyAuthenticationPreProcessor implements AuthenticationPreProcessor {
+public class GroovyAuthenticationPreProcessor implements AuthenticationPreProcessor, DisposableBean {
     private final transient WatchableGroovyScriptResource watchableScript;
     private int order;
 
@@ -35,5 +36,10 @@ public class GroovyAuthenticationPreProcessor implements AuthenticationPreProces
     public boolean supports(final Credential credential) {
         val args = new Object[]{credential, LOGGER};
         return watchableScript.execute("supports", Boolean.class, args);
+    }
+
+    @Override
+    public void destroy() {
+        this.watchableScript.close();
     }
 }
