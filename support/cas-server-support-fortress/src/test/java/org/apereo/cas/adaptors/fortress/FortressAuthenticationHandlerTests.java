@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import javax.security.auth.login.FailedLoginException;
@@ -23,6 +22,7 @@ import java.io.StringWriter;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link FortressAuthenticationHandler}.
@@ -47,7 +47,7 @@ public class FortressAuthenticationHandlerTests {
 
     @Test
     public void verifyUnauthorizedUserLoginIncorrect() throws Exception {
-        Mockito.when(accessManager.createSession(ArgumentMatchers.any(User.class), ArgumentMatchers.anyBoolean()))
+        when(accessManager.createSession(ArgumentMatchers.any(User.class), ArgumentMatchers.anyBoolean()))
             .thenThrow(new PasswordException(GlobalErrIds.USER_PW_INVLD, "error message"));
         assertThrows(FailedLoginException.class,
             () -> fortressAuthenticationHandler.authenticateUsernamePasswordInternal(
@@ -59,7 +59,7 @@ public class FortressAuthenticationHandlerTests {
         val sessionId = UUID.randomUUID();
         val session = new Session(new User(CoreAuthenticationTestUtils.CONST_USERNAME), sessionId.toString());
         session.setAuthenticated(true);
-        Mockito.when(accessManager.createSession(ArgumentMatchers.any(User.class), ArgumentMatchers.anyBoolean())).thenReturn(session);
+        when(accessManager.createSession(ArgumentMatchers.any(User.class), ArgumentMatchers.anyBoolean())).thenReturn(session);
         try {
             val handlerResult = fortressAuthenticationHandler.authenticateUsernamePasswordInternal(
                 CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), null);

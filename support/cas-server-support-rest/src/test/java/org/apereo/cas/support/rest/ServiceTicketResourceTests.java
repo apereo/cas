@@ -72,8 +72,8 @@ public class ServiceTicketResourceTests {
     @BeforeEach
     public void initialize() {
         val mgmr = mock(AuthenticationManager.class);
-        when(mgmr.authenticate(any(AuthenticationTransaction.class))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
-        when(ticketSupport.getAuthenticationFrom(anyString())).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
+        lenient().when(mgmr.authenticate(any(AuthenticationTransaction.class))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
+        lenient().when(ticketSupport.getAuthenticationFrom(anyString())).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
 
         val publisher = mock(ApplicationEventPublisher.class);
 
@@ -170,8 +170,8 @@ public class ServiceTicketResourceTests {
 
     private void configureCasMockToCreateValidST() {
         val st = mock(ServiceTicket.class);
-        when(st.getId()).thenReturn("ST-1");
-        when(this.casMock.grantServiceTicket(anyString(), any(Service.class), any(AuthenticationResult.class))).thenReturn(st);
+        lenient().when(st.getId()).thenReturn("ST-1");
+        lenient().when(this.casMock.grantServiceTicket(anyString(), any(Service.class), any(AuthenticationResult.class))).thenReturn(st);
     }
 
     private void configureCasMockSTCreationToThrowAuthenticationException() {

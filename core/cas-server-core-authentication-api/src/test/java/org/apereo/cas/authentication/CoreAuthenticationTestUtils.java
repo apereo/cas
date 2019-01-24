@@ -79,8 +79,8 @@ public class CoreAuthenticationTestUtils {
 
     public static Service getService(final String id) {
         val svc = mock(Service.class);
-        when(svc.getId()).thenReturn(id);
-        when(svc.matches(any(Service.class))).thenReturn(true);
+        lenient().when(svc.getId()).thenReturn(id);
+        lenient().when(svc.matches(any(Service.class))).thenReturn(true);
         return svc;
     }
 
@@ -94,9 +94,9 @@ public class CoreAuthenticationTestUtils {
 
     public static WebApplicationService getWebApplicationService(final String id) {
         val svc = mock(WebApplicationService.class);
-        when(svc.getId()).thenReturn(id);
-        when(svc.matches(any(WebApplicationService.class))).thenReturn(true);
-        when(svc.getOriginalUrl()).thenReturn(id);
+        lenient().when(svc.getId()).thenReturn(id);
+        lenient().when(svc.matches(any(WebApplicationService.class))).thenReturn(true);
+        lenient().when(svc.getOriginalUrl()).thenReturn(id);
         return svc;
     }
 

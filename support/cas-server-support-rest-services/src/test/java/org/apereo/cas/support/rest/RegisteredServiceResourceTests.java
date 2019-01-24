@@ -83,8 +83,8 @@ public class RegisteredServiceResourceTests {
 
     private RegisteredServiceResource getRegisteredServiceResource(final String attrName, final String attrValue) {
         val mgmr = mock(AuthenticationManager.class);
-        when(mgmr.authenticate(argThat(new AuthenticationCredentialMatcher("test")))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
-        when(mgmr.authenticate(argThat(new AuthenticationCredentialMatcher("testfail")))).thenThrow(AuthenticationException.class);
+        lenient().when(mgmr.authenticate(argThat(new AuthenticationCredentialMatcher("test")))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
+        lenient().when(mgmr.authenticate(argThat(new AuthenticationCredentialMatcher("testfail")))).thenThrow(AuthenticationException.class);
 
         val publisher = mock(ApplicationEventPublisher.class);
         return new RegisteredServiceResource(new DefaultAuthenticationSystemSupport(

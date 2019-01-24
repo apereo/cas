@@ -67,8 +67,8 @@ public class TicketGrantingTicketResourceTests {
     public void initialize() {
         val publisher = mock(ApplicationEventPublisher.class);
         val manager = mock(AuthenticationManager.class);
-        when(manager.authenticate(any(AuthenticationTransaction.class))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
-        when(ticketSupport.getAuthenticationFrom(anyString())).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
+        lenient().when(manager.authenticate(any(AuthenticationTransaction.class))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
+        lenient().when(ticketSupport.getAuthenticationFrom(anyString())).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
 
         this.ticketGrantingTicketResourceUnderTest = new TicketGrantingTicketResource(
             new DefaultAuthenticationSystemSupport(new DefaultAuthenticationTransactionManager(publisher, manager),
@@ -207,6 +207,6 @@ public class TicketGrantingTicketResourceTests {
     }
 
     private void configureCasMockTGTCreationToThrow(final Exception e) {
-        when(this.casMock.createTicketGrantingTicket(any(AuthenticationResult.class))).thenThrow(e);
+        lenient().when(this.casMock.createTicketGrantingTicket(any(AuthenticationResult.class))).thenThrow(e);
     }
 }
