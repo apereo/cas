@@ -6,6 +6,7 @@ import org.apereo.cas.util.spring.ApplicationContextProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
 import org.springframework.security.crypto.password.AbstractPasswordEncoder;
 
@@ -17,7 +18,7 @@ import org.springframework.security.crypto.password.AbstractPasswordEncoder;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class GroovyPasswordEncoder extends AbstractPasswordEncoder {
+public class GroovyPasswordEncoder extends AbstractPasswordEncoder implements DisposableBean {
 
     private final transient WatchableGroovyScriptResource watchableScript;
 
@@ -29,5 +30,10 @@ public class GroovyPasswordEncoder extends AbstractPasswordEncoder {
     protected byte[] encode(final CharSequence rawPassword, final byte[] salt) {
         val args = new Object[]{rawPassword, salt, LOGGER, ApplicationContextProvider.getApplicationContext()};
         return watchableScript.execute(args, byte[].class);
+    }
+
+    @Override
+    public void destroy() {
+        this.watchableScript.close();
     }
 }
