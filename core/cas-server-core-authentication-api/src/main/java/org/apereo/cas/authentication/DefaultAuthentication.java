@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,12 +44,12 @@ public class DefaultAuthentication implements Authentication {
     /**
      * Authentication messages and warnings.
      */
-    private List<MessageDescriptor> warnings;
+    private List<MessageDescriptor> warnings = new ArrayList<>();
 
     /**
      * List of metadata about credentials presented at authentication.
      */
-    private List<CredentialMetaData> credentials;
+    private List<CredentialMetaData> credentials = new ArrayList<>();
 
     /**
      * Authentication metadata attributes.
