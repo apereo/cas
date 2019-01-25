@@ -46,10 +46,16 @@ if (!Boolean.getBoolean("skipSonarqube")) {
     apply plugin: "org.sonarqube"
 }
 
+configurations {
+    codacy
+}
+
 buildscript {
     repositories {
         mavenLocal()
         jcenter()
+        maven { url "https://jitpack.io" }
+        maven { url "http://dl.bintray.com/typesafe/maven-releases" }
         maven { url "https://maven.eveoh.nl/content/repositories/releases" }
         maven { url "https://plugins.gradle.org/m2/" }
         maven { url "https://repo.spring.io/plugins-release" }
@@ -57,6 +63,7 @@ buildscript {
     }
 
     dependencies {
+        classpath 'com.github.codacy:codacy-coverage-reporter:-SNAPSHOT'
         classpath "com.gradle:build-scan-plugin:2.1"
         classpath "gradle.plugin.com.ewerk.gradle.plugins:jaxb2-plugin:1.0.9"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
@@ -89,7 +96,7 @@ dependencyCheck {
      */
     failBuildOnCVSS = 8
     skipTestGroups = true
-    skipConfigurations = ['jacocoAgent', 'jacocoAnt', 'optional', 'provided', 'providedCompile', 'providedRuntime',
+    skipConfigurations = ['codacy', 'jacocoAgent', 'jacocoAnt', 'optional', 'provided', 'providedCompile', 'providedRuntime',
                           'signatures', 'spotbugs','spotbugsPlugins', 'checkstyle', 'errorprone', 'errorproneJavac',
                           'annotationProcessor', 'archives', 'developmentOnly', 'compileOnly',
                           'tests', 'testRuntimeOnly', 'testRuntimeClasspath', 'testRuntime', 'testImplementation',
@@ -529,4 +536,16 @@ task signingKey(description: "Display CAS signing key id") {
     doLast {
         println "Signing key: " + project.findProperty("signing.keyId")
     }
+}
+
+task sendCoverageToCodacy(type: JavaExec, dependsOn: jacocoRootReport) {
+    main = "com.codacy.CodacyCoverageReporter"
+    classpath = configurations.codacy
+    args = [
+            "report",
+            "-l",
+            "Java",
+            "-r",
+            jacocoRootReport.reports.xml.destination
+    ]
 }
