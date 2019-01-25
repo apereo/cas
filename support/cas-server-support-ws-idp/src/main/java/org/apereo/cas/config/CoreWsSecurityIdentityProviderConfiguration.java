@@ -42,6 +42,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 
+import java.util.HashSet;
+
 /**
  * This is {@link CoreWsSecurityIdentityProviderConfiguration}.
  *
@@ -150,7 +152,7 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
         @Qualifier("securityTokenServiceClientBuilder") final SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder) {
         return new DefaultRelyingPartyTokenProducer(securityTokenServiceClientBuilder,
             securityTokenServiceCredentialCipherExecutor,
-            casProperties.getAuthn().getWsfedIdp().getSts().getCustomClaims());
+            new HashSet<>(casProperties.getAuthn().getWsfedIdp().getSts().getCustomClaims()));
     }
 
     @Bean

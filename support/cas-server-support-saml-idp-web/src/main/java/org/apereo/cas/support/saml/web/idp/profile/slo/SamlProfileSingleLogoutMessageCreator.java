@@ -26,8 +26,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.opensaml.core.xml.XMLObject;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.soap.common.SOAPObjectBuilder;
+import org.opensaml.soap.soap11.Body;
+import org.opensaml.soap.soap11.Envelope;
 
 /**
  * This is {@link SamlProfileSingleLogoutMessageCreator}.
@@ -60,6 +66,10 @@ public class SamlProfileSingleLogoutMessageCreator extends AbstractSaml20ObjectB
      */
     protected final SamlIdPObjectSigner samlObjectSigner;
 
+    private final transient SOAPObjectBuilder<Envelope> envelopeBuilder;
+    private final transient SOAPObjectBuilder<Body> bodyBuilder;
+
+    @SuppressWarnings("unchecked")
     public SamlProfileSingleLogoutMessageCreator(final OpenSamlConfigBean configBean,
                                                  final ServicesManager servicesManager,
                                                  final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
@@ -70,6 +80,9 @@ public class SamlProfileSingleLogoutMessageCreator extends AbstractSaml20ObjectB
         this.samlRegisteredServiceCachingMetadataResolver = samlRegisteredServiceCachingMetadataResolver;
         this.samlIdPProperties = samlIdPProperties;
         this.samlObjectSigner = samlObjectSigner;
+        val builderFactory = XMLObjectProviderRegistrySupport.getBuilderFactory();
+        this.envelopeBuilder = (SOAPObjectBuilder<Envelope>) builderFactory.getBuilder(Envelope.DEFAULT_ELEMENT_NAME);
+        this.bodyBuilder = (SOAPObjectBuilder<Body>) builderFactory.getBuilder(Body.DEFAULT_ELEMENT_NAME);
     }
 
     @Override
@@ -96,20 +109,34 @@ public class SamlProfileSingleLogoutMessageCreator extends AbstractSaml20ObjectB
             request.getTicketId(),
             nameId);
 
+        val binding = request.getProperties().get(SamlIdPSingleLogoutServiceLogoutUrlBuilder.PROPERTY_NAME_SINGLE_LOGOUT_BINDING);
         if (samlIdPProperties.getLogout().isForceSignedLogoutRequests()) {
             val serviceId = request.getService().getId();
             val adaptorRes = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver, samlService, serviceId);
             val adaptor = adaptorRes.orElseThrow(() -> new IllegalArgumentException("Unable to find metadata for saml service " + serviceId));
             val httpRequest = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
             val httpResponse = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
-            val binding = request.getProperties().get(SamlIdPSingleLogoutServiceLogoutUrlBuilder.PROPERTY_NAME_SINGLE_LOGOUT_BINDING);
             samlObjectSigner.encode(samlLogoutRequest, samlService, adaptor, httpResponse, httpRequest, binding, samlLogoutRequest);
         }
 
+        if (SAMLConstants.SAML2_SOAP11_BINDING_URI.equalsIgnoreCase(binding)) {
+            val envelope = envelopeBuilder.buildObject();
+            val body = bodyBuilder.buildObject();
+            envelope.setBody(body);
+            body.getUnknownXMLObjects().add(samlLogoutRequest);
+
+            return buildSingleLogoutMessage(samlLogoutRequest, envelope);
+
+        }
+
+        return buildSingleLogoutMessage(samlLogoutRequest, samlLogoutRequest);
+    }
+
+    private SingleLogoutMessage buildSingleLogoutMessage(final LogoutRequest logoutRequest, final XMLObject message) {
         val builder = SingleLogoutMessage.<LogoutRequest>builder();
         return builder
-            .message(samlLogoutRequest)
-            .payload(SamlUtils.transformSamlObject(this.configBean, samlLogoutRequest).toString())
+            .message(logoutRequest)
+            .payload(SamlUtils.transformSamlObject(this.configBean, message).toString())
             .build();
     }
 }

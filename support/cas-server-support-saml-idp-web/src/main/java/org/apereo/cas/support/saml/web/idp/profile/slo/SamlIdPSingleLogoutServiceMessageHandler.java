@@ -72,41 +72,48 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
 
     @Override
     protected boolean sendMessageToEndpoint(final LogoutHttpMessage msg, final SingleLogoutRequest request, final SingleLogoutMessage logoutMessage) {
-        HttpResponse response = null;
-        try {
-            val binding = request.getProperties().get(SamlIdPSingleLogoutServiceLogoutUrlBuilder.PROPERTY_NAME_SINGLE_LOGOUT_BINDING);
-            val logoutRequest = (LogoutRequest) logoutMessage.getMessage();
+        val binding = request.getProperties().get(SamlIdPSingleLogoutServiceLogoutUrlBuilder.PROPERTY_NAME_SINGLE_LOGOUT_BINDING);
 
-            LOGGER.trace("Sending logout response for binding [{}]", binding);
-            if (SAMLConstants.SAML2_REDIRECT_BINDING_URI.equalsIgnoreCase(binding)) {
-                val encoder = new SamlIdPHttpRedirectDeflateLogoutEncoder(msg.getUrl().toExternalForm(), logoutRequest);
-                encoder.doEncode();
-                val redirectUrl = encoder.getRedirectUrl();
-                LOGGER.trace("Final logout redirect URL is [{}]", redirectUrl);
-                response = HttpUtils.executeGet(redirectUrl);
-            } else {
-                val payload = SerializeSupport.nodeToString(XMLObjectSupport.marshall(logoutRequest));
-                LOGGER.trace("Logout request payload is [{}]", payload);
+        if (SAMLConstants.SAML2_SOAP11_BINDING_URI.equalsIgnoreCase(binding)) {
+            return super.sendMessageToEndpoint(msg, request, logoutMessage);
 
-                val message = EncodingUtils.encodeBase64(payload.getBytes(StandardCharsets.UTF_8), false);
-                LOGGER.trace("Logout message encoded in base64 is [{}]", message);
+        } else {
 
-                response = HttpUtils.executePost(msg.getUrl().toExternalForm(), CollectionUtils.wrap("SAMLRequest", message),
-                    CollectionUtils.wrap("Content-Type", msg.getContentType()));
+            HttpResponse response = null;
+            try {
+
+                val logoutRequest = (LogoutRequest) logoutMessage.getMessage();
+
+                LOGGER.trace("Sending logout response for binding [{}]", binding);
+                if (SAMLConstants.SAML2_REDIRECT_BINDING_URI.equalsIgnoreCase(binding)) {
+                    val encoder = new SamlIdPHttpRedirectDeflateLogoutEncoder(msg.getUrl().toExternalForm(), logoutRequest);
+                    encoder.doEncode();
+                    val redirectUrl = encoder.getRedirectUrl();
+                    LOGGER.trace("Final logout redirect URL is [{}]", redirectUrl);
+                    response = HttpUtils.executeGet(redirectUrl);
+                } else {
+                    val payload = SerializeSupport.nodeToString(XMLObjectSupport.marshall(logoutRequest));
+                    LOGGER.trace("Logout request payload is [{}]", payload);
+
+                    val message = EncodingUtils.encodeBase64(payload.getBytes(StandardCharsets.UTF_8), false);
+                    LOGGER.trace("Logout message encoded in base64 is [{}]", message);
+
+                    response = HttpUtils.executePost(msg.getUrl().toExternalForm(), CollectionUtils.wrap("SAMLRequest", message),
+                            CollectionUtils.wrap("Content-Type", msg.getContentType()));
+                }
+                if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
+                    val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                    LOGGER.trace("Received logout response as [{}]", result);
+                    return true;
+                }
+            } catch (final Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            } finally {
+                HttpUtils.close(response);
             }
-            if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
-                val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-                LOGGER.trace("Received logout response as [{}]", result);
-                return true;
-            }
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        } finally {
-            HttpUtils.close(response);
         }
 
         LOGGER.warn("No (successful) logout response received from the url [{}]", msg.getUrl().toExternalForm());
         return false;
     }
-
 }
