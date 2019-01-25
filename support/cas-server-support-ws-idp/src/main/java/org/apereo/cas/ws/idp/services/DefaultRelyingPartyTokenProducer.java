@@ -30,7 +30,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.StringWriter;
-import java.util.List;
+import java.util.Set;
 
 /**
  * This is {@link DefaultRelyingPartyTokenProducer}.
@@ -43,7 +43,7 @@ import java.util.List;
 public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPartyTokenProducer {
     private final SecurityTokenServiceClientBuilder clientBuilder;
     private final CipherExecutor<String, String> credentialCipherExecutor;
-    private final List<String> customClaims;
+    private final Set<String> customClaims;
 
     @SneakyThrows
     private static String serializeRelyingPartyToken(final Element rpToken) {
