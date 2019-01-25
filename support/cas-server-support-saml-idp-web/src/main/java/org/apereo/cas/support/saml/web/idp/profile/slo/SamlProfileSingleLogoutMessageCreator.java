@@ -124,9 +124,7 @@ public class SamlProfileSingleLogoutMessageCreator extends AbstractSaml20ObjectB
             val body = bodyBuilder.buildObject();
             envelope.setBody(body);
             body.getUnknownXMLObjects().add(samlLogoutRequest);
-
             return buildSingleLogoutMessage(samlLogoutRequest, envelope);
-
         }
 
         return buildSingleLogoutMessage(samlLogoutRequest, samlLogoutRequest);
