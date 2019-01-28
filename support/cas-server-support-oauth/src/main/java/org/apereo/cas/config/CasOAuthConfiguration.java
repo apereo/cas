@@ -567,7 +567,7 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
         final RegexRegisteredService service = new RegexRegisteredService();
         service.setId(Math.abs(RandomUtils.getNativeInstance().nextLong()));
-        service.setEvaluationOrder(0);
+        service.setEvaluationOrder(Integer.MIN_VALUE);
         service.setName(service.getClass().getSimpleName());
         service.setDescription("OAuth Authentication Callback Request URL");
         service.setServiceId(oauthCallbackService().getId());
