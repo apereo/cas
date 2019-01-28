@@ -152,7 +152,7 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
 
         final RegexRegisteredService service = new RegexRegisteredService();
         service.setId(Math.abs(RandomUtils.getNativeInstance().nextLong()));
-        service.setEvaluationOrder(0);
+        service.setEvaluationOrder(Integer.MIN_VALUE);
         service.setName(service.getClass().getSimpleName());
         service.setDescription("WS-Federation Authentication Request");
         service.setServiceId(callbackService.getId().concat(".+"));
