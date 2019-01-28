@@ -34,7 +34,7 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry {
         Result<TicketHolder> findAll();
     }
 
-    public CassandraTicketRegistry(TicketCatalog ticketCatalog, CassandraSessionFactory cassandraSessionFactory) {
+    public CassandraTicketRegistry(final TicketCatalog ticketCatalog, final CassandraSessionFactory cassandraSessionFactory) {
         this.ticketCatalog = ticketCatalog;
         MappingManager manager = new MappingManager(cassandraSessionFactory.getSession());
         entityManager = manager.mapper(TicketHolder.class);
@@ -42,7 +42,7 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Ticket getTicket(String ticketId) {
+    public Ticket getTicket(final String ticketId) {
         TicketHolder holder = entityManager.get(ticketId);
         return Optional.ofNullable(holder)
                 .map(this::deserialize)
@@ -66,7 +66,7 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public void addTicket(Ticket ticket) {
+    public void addTicket(final Ticket ticket) {
         findMetadata(ticket);
         String data = BaseTicketSerializers.serializeTicket(ticket);
         Mapper.Option ttl = getTtl(ticket);
@@ -74,13 +74,13 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Ticket updateTicket(Ticket ticket) {
+    public Ticket updateTicket(final Ticket ticket) {
         addTicket(ticket);
         return ticket;
     }
 
     @Override
-    public boolean deleteSingleTicket(String ticketId) {
+    public boolean deleteSingleTicket(final String ticketId) {
         entityManager.delete(ticketId);
         return true;
     }
@@ -92,22 +92,22 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry {
         return tickets.size();
     }
 
-    private Ticket deserialize(TicketHolder holder) {
+    private Ticket deserialize(final TicketHolder holder) {
         TicketDefinition metadata = findMetadata(holder.getId());
         return BaseTicketSerializers.deserializeTicket(holder.getData(), metadata.getImplementationClass());
     }
 
-    private TicketDefinition findMetadata(Ticket ticket) {
+    private TicketDefinition findMetadata(final Ticket ticket) {
         return findMetadata(ticket.getId());
     }
 
-    private TicketDefinition findMetadata(String id) {
+    private TicketDefinition findMetadata(final String id) {
         return Optional.ofNullable(ticketCatalog.find(id)).orElseThrow(() -> new IllegalStateException(
                 "Ticket catalog has no metadata for " + id.replaceAll("-.*", "") + " tickets"
         ));
     }
 
-    private Mapper.Option getTtl(Ticket ticket) {
+    private Mapper.Option getTtl(final Ticket ticket) {
         ExpirationPolicy expirationPolicy = ticket.getExpirationPolicy();
         return Mapper.Option.ttl(Math.toIntExact(expirationPolicy.getTimeToIdle()));
     }

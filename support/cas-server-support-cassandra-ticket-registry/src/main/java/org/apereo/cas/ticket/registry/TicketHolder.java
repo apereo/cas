@@ -15,7 +15,7 @@ public class TicketHolder {
     private String data;
 
     @JsonCreator
-    public TicketHolder(@JsonProperty("id") String id, @JsonProperty("data") String data) {
+    public TicketHolder(@JsonProperty("id") final String id, @JsonProperty("data") final String data) {
         this.id = id;
         this.data = data;
     }
@@ -29,11 +29,11 @@ public class TicketHolder {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
-        if (o == null || !(o instanceof TicketHolder)) {
+        if (!(o instanceof TicketHolder)) {
             return false;
         }
         TicketHolder that = (TicketHolder) o;
