@@ -42,7 +42,7 @@ public enum CasLabels {
     LABEL_PENDING_DOCUMENT_PROPERTY("Pending: Document Property"),
     LABEL_DELEGATED_AUTHENTICATION_PAC4J("Delegated Authentication Pac4J", "pac4j"),
     LABEL_DELEGATED_AUTHENTICATION_WS_FED("Delegated Authentication WS-FED", "adfs"),
-    LABEL_DEPENDENCIES_MODULES("Dependencies & Modules", "gradle|dependency|bom|maven"),
+    LABEL_DEPENDENCIES_MODULES("Dependencies & Modules", "gradle|dependency|bom|maven|depencencies"),
     LABEL_DIGEST_AUTHENTICATION("Digest Authentication"),
     LABEL_DOCUMENTATION("Documentation", "docs|markdown|gh-pages"),
     LABEL_EHCACHE("EhCache"),
