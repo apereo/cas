@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.cassandra.CassandraSessionFactory;
-import org.apereo.cas.cassandra.DefaultCassandraSessionFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.CassandraTicketRegistry;
@@ -11,24 +10,19 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.datastax.driver.core.Session;
-
 @Configuration("cassandraTicketRegistryConfiguration")
 @EnableConfigurationProperties({CasConfigurationProperties.class})
 public class CassandraTicketRegistryConfiguration {
 
-    private CasConfigurationProperties casConfigurationProperties;
     private CassandraSessionFactory cassandraSessionFactory;
 
     @Autowired
-    public CassandraTicketRegistryConfiguration(CasConfigurationProperties casConfigurationProperties,
-                                                CassandraSessionFactory cassandraSessionFactory) {
-        this.casConfigurationProperties = casConfigurationProperties;
+    public CassandraTicketRegistryConfiguration(final CassandraSessionFactory cassandraSessionFactory) {
         this.cassandraSessionFactory = cassandraSessionFactory;
     }
 
     @Bean
-    public TicketRegistry ticketRegistry(TicketCatalog ticketCatalog) {
+    public TicketRegistry ticketRegistry(final TicketCatalog ticketCatalog) {
         return new CassandraTicketRegistry(ticketCatalog, cassandraSessionFactory);
     }
 
