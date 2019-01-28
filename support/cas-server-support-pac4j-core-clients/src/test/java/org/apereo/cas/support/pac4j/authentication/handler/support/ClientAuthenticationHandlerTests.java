@@ -28,7 +28,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Tests the {@link ClientAuthenticationHandler}.
+ * Tests the {@link DelegatedClientAuthenticationHandler}.
  *
  * @author Jerome Leleu
  * @since 4.1.0
@@ -43,14 +43,14 @@ public class ClientAuthenticationHandlerTests {
     public ExpectedException thrown = ExpectedException.none();
 
     private FacebookClient fbClient;
-    private ClientAuthenticationHandler handler;
+    private DelegatedClientAuthenticationHandler handler;
     private ClientCredential clientCredential;
 
     @Before
     public void initialize() {
         this.fbClient = new FacebookClient();
         val clients = new Clients(CALLBACK_URL, fbClient);
-        this.handler = new ClientAuthenticationHandler("", mock(ServicesManager.class), null, clients);
+        this.handler = new DelegatedClientAuthenticationHandler("", mock(ServicesManager.class), null, clients);
         this.handler.setTypedIdUsed(true);
 
         val credentials = new OAuth20Credentials(null);
