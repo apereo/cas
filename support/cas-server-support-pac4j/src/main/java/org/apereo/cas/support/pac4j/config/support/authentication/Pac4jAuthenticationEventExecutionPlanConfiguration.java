@@ -13,7 +13,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.pac4j.authentication.ClientAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.pac4j.authentication.DelegatedClientFactory;
-import org.apereo.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler;
+import org.apereo.cas.support.pac4j.authentication.handler.support.DelegatedClientAuthenticationHandler;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -94,7 +94,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Audit
     @ConditionalOnMissingBean(name = "clientAuthenticationHandler")
     public AuthenticationHandler clientAuthenticationHandler() {
         val pac4j = casProperties.getAuthn().getPac4j();
-        val h = new ClientAuthenticationHandler(pac4j.getName(), servicesManager.getIfAvailable(),
+        val h = new DelegatedClientAuthenticationHandler(pac4j.getName(), servicesManager.getIfAvailable(),
             clientPrincipalFactory(), builtClients());
         h.setTypedIdUsed(pac4j.isTypedIdUsed());
         h.setPrincipalAttributeId(pac4j.getPrincipalAttributeId());

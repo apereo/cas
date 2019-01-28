@@ -26,13 +26,13 @@ import java.security.GeneralSecurityException;
  * @since 3.5.0
  */
 @Slf4j
-public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHandler {
+public class DelegatedClientAuthenticationHandler extends AbstractPac4jAuthenticationHandler {
 
     private final Clients clients;
 
-    public ClientAuthenticationHandler(final String name, final ServicesManager servicesManager,
-                                       final PrincipalFactory principalFactory,
-                                       final Clients clients) {
+    public DelegatedClientAuthenticationHandler(final String name, final ServicesManager servicesManager,
+                                                final PrincipalFactory principalFactory,
+                                                final Clients clients) {
         super(name, servicesManager, principalFactory, null);
         this.clients = clients;
     }
