@@ -41,6 +41,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.core.Ordered;
 
 import java.util.HashSet;
 
@@ -177,7 +178,7 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
                 LOGGER.debug("Initializing WS Federation callback service [{}]", callbackService);
                 val service = new RegexRegisteredService();
                 service.setId(RandomUtils.getNativeInstance().nextLong());
-                service.setEvaluationOrder(Integer.MAX_VALUE);
+                service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
                 service.setName(service.getClass().getSimpleName());
                 service.setDescription("WS-Federation Authentication Request");
                 service.setServiceId(callbackService.getId().concat(".+"));
