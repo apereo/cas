@@ -103,7 +103,7 @@ public class TicketRegistryProperties implements Serializable {
     private RedisTicketRegistryProperties redis = new RedisTicketRegistryProperties();
 
     /**
-     * Cassandra registry settings
+     * Cassandra registry settings.
      */
     @NestedConfigurationProperty
     private CassandraTicketRegistryProperties cassandra = new CassandraTicketRegistryProperties();
