@@ -49,6 +49,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 
 /**
  * This is {@link SamlIdPEndpointsConfiguration}.
@@ -349,7 +350,7 @@ public class SamlIdPEndpointsConfiguration {
                 LOGGER.debug("Initializing SAML IdP callback service [{}]", callbackService);
                 val service = new RegexRegisteredService();
                 service.setId(RandomUtils.getNativeInstance().nextLong());
-                service.setEvaluationOrder(Integer.MAX_VALUE);
+                service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
                 service.setName(service.getClass().getSimpleName());
                 service.setDescription("SAML Authentication Request Callback");
                 service.setServiceId(callbackService);
