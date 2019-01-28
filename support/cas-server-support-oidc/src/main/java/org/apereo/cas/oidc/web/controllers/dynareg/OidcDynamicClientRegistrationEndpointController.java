@@ -25,6 +25,7 @@ import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.core.Ordered;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -110,7 +111,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
 
             registeredService.setClientId(clientIdGenerator.getNewString());
             registeredService.setClientSecret(clientSecretGenerator.getNewString());
-            registeredService.setEvaluationOrder(Integer.MIN_VALUE);
+            registeredService.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
             registeredService.setLogoutUrl(org.springframework.util.StringUtils.collectionToCommaDelimitedString(registrationRequest.getPostLogoutRedirectUris()));
 
             val supportedScopes = new HashSet<String>(casProperties.getAuthn().getOidc().getScopes());
