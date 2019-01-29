@@ -37,7 +37,7 @@ public class CasConfigurationModifiedEvent extends AbstractCasEvent {
     }
 
     /**
-     * Instantiates a new Cas configuration modified event.
+     * Instantiates a new CAS configuration modified event.
      *
      * @param source   the source
      * @param override the override
@@ -47,7 +47,7 @@ public class CasConfigurationModifiedEvent extends AbstractCasEvent {
     }
 
     /**
-     * Instantiates a new Cas configuration modified event.
+     * Instantiates a new CAS configuration modified event.
      *
      * @param source   the source
      * @param file     the file

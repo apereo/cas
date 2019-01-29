@@ -17,7 +17,7 @@ import java.util.Locale;
 public class CasProtocolView extends ThymeleafView {
 
     /**
-     * Instantiates a new Cas protocol view.
+     * Instantiates a new CAS protocol view.
      *
      * @param templateName       the template name
      * @param applicationContext the application context
@@ -38,7 +38,7 @@ public class CasProtocolView extends ThymeleafView {
     }
 
     /**
-     * Instantiates a new Cas protocol view.
+     * Instantiates a new CAS protocol view.
      *
      * @param templateName       the template name
      * @param applicationContext the application context

@@ -178,7 +178,7 @@ public class OAuth20Utils {
     }
 
     /**
-     * Cas oauth callback url.
+     * CAS oauth callback url.
      *
      * @param serverPrefixUrl the server prefix url
      * @return the string

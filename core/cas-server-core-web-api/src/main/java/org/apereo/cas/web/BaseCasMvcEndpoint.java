@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public abstract class BaseCasMvcEndpoint {
     /**
-     * The Cas properties.
+     * The CAS properties.
      */
     protected final CasConfigurationProperties casProperties;
 }

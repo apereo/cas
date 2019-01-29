@@ -70,7 +70,7 @@ public class CasEvent {
     private Map<String, String> properties = new HashMap<>();
 
     /**
-     * Instantiates a new Cas event.
+     * Instantiates a new CAS event.
      */
     public CasEvent() {
         this.id = System.currentTimeMillis();

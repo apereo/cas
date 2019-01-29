@@ -85,7 +85,7 @@ public class CasConfigurationServerWebApplication {
     }
 
     /**
-     * Cas configuration server web security configurer.
+     * CAS configuration server web security configurer.
      *
      * @param serverProperties the server properties
      * @return the web security configurer adapter

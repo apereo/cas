@@ -73,7 +73,7 @@ public class SamlObjectSignatureValidator {
     protected final List overrideWhiteListedAlgorithms;
 
     /**
-     * Cas settings.
+     * CAS settings.
      */
     protected final CasConfigurationProperties casProperties;
 
