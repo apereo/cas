@@ -10,7 +10,7 @@ The REST protocol allows one to model applications as users, programmatically ac
 service tickets to authenticate to other applications. This means that other applications would be able
 to use a CAS client  to accept Service Tickets rather than to rely upon another technology such as
 client SSL certificates for application-to-application authentication of requests. This is achieved
-by exposing a way to RESTfully obtain a Ticket Granting Ticket and then use that to obtain a Service Ticket.
+by exposing a way to REST-fully obtain a Ticket Granting Ticket and then use that to obtain a Service Ticket.
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>The REST endpoint may
  become a tremendously convenient target for brute force dictionary attacks on CAS server. Consider
