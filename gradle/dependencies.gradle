@@ -621,19 +621,19 @@ ext.libraries = [
                     exclude(group: "org.jboss.logging", module: "jboss-logging-annotations")
                     exclude(group: "org.javassist", module: "javassist")
                     exclude(group: "xml-apis", module: "xml-apis")
-                    exclude(group: "dom4j", module: "dom4j")
+                    exclude(group: "org.dom4j", module: "dom4j")
                     exclude(group: "com.fasterxml", module: "classmate")
                     exclude(group: "org.hibernate", module: "hibernate-validator")
                     exclude(group: "org.jboss.logging", module: "jboss-logging")
                     force = true
                 },
-                dependencies.create("dom4j:dom4j:$dom4jVersion") {
+                dependencies.create("org.dom4j:dom4j:$dom4jVersion") {
                     exclude(group: "xml-apis", module: "xml-apis")
                     force = true
                 },
                 dependencies.create("org.hibernate:hibernate-hikaricp:$hibernateVersion") {
                     exclude(group: "org.javassist", module: "javassist")
-                    exclude(group: "dom4j", module: "dom4j")
+                    exclude(group: "org.dom4j", module: "dom4j")
                     exclude(group: "xml-apis", module: "xml-apis")
                     exclude(group: "org.hibernate", module: "hibernate-validator")
                     exclude(group: "org.hibernate", module: "hibernate-core")
@@ -646,7 +646,7 @@ ext.libraries = [
                 },
                 dependencies.create("org.hibernate:hibernate-entitymanager:$hibernateVersion") {
                     exclude(group: "org.javassist", module: "javassist")
-                    exclude(group: "dom4j", module: "dom4j")
+                    exclude(group: "org.dom4j", module: "dom4j")
                     exclude(group: "xml-apis", module: "xml-apis")
                     exclude(group: "org.hibernate", module: "hibernate-validator")
                     exclude(group: "org.jboss.logging", module: "jboss-logging")
