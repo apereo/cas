@@ -96,9 +96,17 @@ public abstract class BaseTicketRegistryTests {
     @Test
     public void verifyAddTicketToCache() {
         try {
+            val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
             ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
-                CoreAuthenticationTestUtils.getAuthentication(),
+                originalAuthn,
                 new NeverExpiresExpirationPolicy()));
+            val tgt = ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+            assertNotNull(tgt);
+            val authentication = tgt.getAuthentication();
+            assertNotNull(authentication);
+            assertNotNull(authentication.getSuccesses());
+            assertNotNull(authentication.getWarnings());
+            assertNotNull(authentication.getFailures());
         } catch (final Exception e) {
             throw new AssertionError(EXCEPTION_CAUGHT_NONE_EXPECTED, e);
         }
