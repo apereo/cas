@@ -256,20 +256,20 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     /**
      * Factory method.
      *
-     * @param principal
-     * @param principalFactory
-     * @param principalAttributes
-     * @param service
-     * @param registeredService
-     * @param authentication
-     * @return AuthenticationBuilder
+     * @param principal principal.
+     * @param principalFactory principalFactory.
+     * @param principalAttributes principalAttributes.
+     * @param service service.
+     * @param registeredService registeredService.
+     * @param authentication authentication.
+     * @return AuthenticationBuilder new AuthenticationBuilder instance.
      */
-    public static AuthenticationBuilder of(Principal principal,
-                                           PrincipalFactory principalFactory,
-                                           Map<String, Object> principalAttributes,
-                                           Service service,
-                                           RegisteredService registeredService,
-                                           Authentication authentication
+    public static AuthenticationBuilder of(final Principal principal,
+                                           final PrincipalFactory principalFactory,
+                                           final Map<String, Object> principalAttributes,
+                                           final Service service,
+                                           final RegisteredService registeredService,
+                                           final Authentication authentication
                                            ) {
 
         val principalId = registeredService.getUsernameAttributeProvider().resolveUsername(principal, service, registeredService);
