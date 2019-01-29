@@ -9,7 +9,10 @@ import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.provision.ChainingDelegatedClientUserProfileProvisioner;
 import org.apereo.cas.authentication.principal.provision.DelegatedClientUserProfileProvisioner;
+import org.apereo.cas.authentication.principal.provision.GroovyDelegatedClientUserProfileProvisioner;
+import org.apereo.cas.authentication.principal.provision.RestfulDelegatedClientUserProfileProvisioner;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.pac4j.authentication.ClientAuthenticationMetaDataPopulator;
@@ -18,6 +21,7 @@ import org.apereo.cas.support.pac4j.authentication.handler.support.DelegatedClie
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.pac4j.core.client.Clients;
@@ -106,7 +110,21 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Audit
     @Bean
     @ConditionalOnMissingBean(name = "clientUserProfileProvisioner")
     public DelegatedClientUserProfileProvisioner clientUserProfileProvisioner() {
-        return DelegatedClientUserProfileProvisioner.noOp();
+        val provisioning = casProperties.getAuthn().getPac4j().getProvisioning();
+        val chain = new ChainingDelegatedClientUserProfileProvisioner();
+
+        val script = provisioning.getGroovy().getLocation();
+        if (script != null) {
+            chain.addProvisioner(new GroovyDelegatedClientUserProfileProvisioner(script));
+        }
+        if (StringUtils.isNotBlank(provisioning.getRest().getUrl())) {
+            chain.addProvisioner(new RestfulDelegatedClientUserProfileProvisioner(provisioning.getRest()));
+        }
+
+        if (chain.isEmpty()) {
+            return DelegatedClientUserProfileProvisioner.noOp();
+        }
+        return chain;
     }
 
     @ConditionalOnMissingBean(name = "pac4jAuthenticationEventExecutionPlanConfigurer")
