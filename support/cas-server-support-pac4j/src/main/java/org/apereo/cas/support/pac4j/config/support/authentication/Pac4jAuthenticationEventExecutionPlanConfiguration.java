@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.provision.DelegatedClientUserProfileProvisioner;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.pac4j.authentication.ClientAuthenticationMetaDataPopulator;
@@ -95,10 +96,17 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Audit
     public AuthenticationHandler clientAuthenticationHandler() {
         val pac4j = casProperties.getAuthn().getPac4j();
         val h = new DelegatedClientAuthenticationHandler(pac4j.getName(), servicesManager.getIfAvailable(),
-            clientPrincipalFactory(), builtClients());
+            clientPrincipalFactory(), builtClients(), clientUserProfileProvisioner());
         h.setTypedIdUsed(pac4j.isTypedIdUsed());
         h.setPrincipalAttributeId(pac4j.getPrincipalAttributeId());
         return h;
+    }
+
+    @RefreshScope
+    @Bean
+    @ConditionalOnMissingBean(name = "clientUserProfileProvisioner")
+    public DelegatedClientUserProfileProvisioner clientUserProfileProvisioner() {
+        return DelegatedClientUserProfileProvisioner.noOp();
     }
 
     @ConditionalOnMissingBean(name = "pac4jAuthenticationEventExecutionPlanConfigurer")

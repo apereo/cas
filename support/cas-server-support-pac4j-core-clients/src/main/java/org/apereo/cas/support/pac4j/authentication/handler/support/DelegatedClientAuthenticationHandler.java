@@ -4,7 +4,9 @@ import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.ClientCredential;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.provision.DelegatedClientUserProfileProvisioner;
 import org.apereo.cas.integration.pac4j.authentication.handler.support.AbstractPac4jAuthenticationHandler;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.Pac4jUtils;
@@ -15,6 +17,7 @@ import lombok.val;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.exception.HttpAction;
+import org.pac4j.core.profile.UserProfile;
 
 import java.security.GeneralSecurityException;
 
@@ -29,12 +32,14 @@ import java.security.GeneralSecurityException;
 public class DelegatedClientAuthenticationHandler extends AbstractPac4jAuthenticationHandler {
 
     private final Clients clients;
+    private final DelegatedClientUserProfileProvisioner profileProvisioner;
 
     public DelegatedClientAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                                 final PrincipalFactory principalFactory,
-                                                final Clients clients) {
+                                                final Clients clients, final DelegatedClientUserProfileProvisioner profileProvisioner) {
         super(name, servicesManager, principalFactory, null);
         this.clients = clients;
+        this.profileProvisioner = profileProvisioner;
     }
 
     @Override
@@ -68,5 +73,11 @@ public class DelegatedClientAuthenticationHandler extends AbstractPac4jAuthentic
         } catch (final HttpAction e) {
             throw new PreventedException(e);
         }
+    }
+
+    @Override
+    protected void preFinalizeAuthenticationHandlerResult(final ClientCredential credentials, final Principal principal,
+                                                          final UserProfile profile, final BaseClient client) {
+        profileProvisioner.execute(principal, profile, client);
     }
 }
