@@ -1,10 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import java.util.Collection;
-import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
 import org.apereo.cas.cassandra.CassandraSessionFactory;
 import org.apereo.cas.ticket.BaseTicketSerializers;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -19,6 +14,16 @@ import com.datastax.driver.mapping.annotations.Accessor;
 import com.datastax.driver.mapping.annotations.Query;
 import com.datastax.driver.mapping.annotations.QueryParameters;
 
+import java.util.Collection;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+/**
+ * This is {@link CassandraTicketRegistry}
+ *
+ * @since 6.1.0
+ */
 public class CassandraTicketRegistry extends AbstractTicketRegistry {
 
     private final Mapper<TicketHolder> entityManager;
@@ -36,7 +41,7 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry {
 
     public CassandraTicketRegistry(final TicketCatalog ticketCatalog, final CassandraSessionFactory cassandraSessionFactory) {
         this.ticketCatalog = ticketCatalog;
-        MappingManager manager = new MappingManager(cassandraSessionFactory.getSession());
+        var manager = new MappingManager(cassandraSessionFactory.getSession());
         entityManager = manager.mapper(TicketHolder.class);
         ticketAccessor = manager.createAccessor(TicketAccessor.class);
     }
@@ -51,7 +56,7 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
-        Ticket found = getTicket(ticketId);
+        var found = getTicket(ticketId);
         if (null == found || !predicate.test(found)) {
             return null;
         }
@@ -68,7 +73,7 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry {
     @Override
     public void addTicket(final Ticket ticket) {
         findMetadata(ticket);
-        String data = BaseTicketSerializers.serializeTicket(ticket);
+        var data = BaseTicketSerializers.serializeTicket(ticket);
         Mapper.Option ttl = getTtl(ticket);
         entityManager.save(new TicketHolder(ticket.getId(), data), ttl);
     }
@@ -93,7 +98,7 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry {
     }
 
     private Ticket deserialize(final TicketHolder holder) {
-        TicketDefinition metadata = findMetadata(holder.getId());
+        var metadata = findMetadata(holder.getId());
         return BaseTicketSerializers.deserializeTicket(holder.getData(), metadata.getImplementationClass());
     }
 
@@ -108,7 +113,7 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry {
     }
 
     private Mapper.Option getTtl(final Ticket ticket) {
-        ExpirationPolicy expirationPolicy = ticket.getExpirationPolicy();
+        var expirationPolicy = ticket.getExpirationPolicy();
         return Mapper.Option.ttl(Math.toIntExact(expirationPolicy.getTimeToIdle()));
     }
 

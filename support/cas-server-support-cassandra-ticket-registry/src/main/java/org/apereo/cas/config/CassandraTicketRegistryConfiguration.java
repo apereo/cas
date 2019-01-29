@@ -5,13 +5,19 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.CassandraTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * This is {@link CassandraTicketRegistryConfiguration}
+ *
+ * @since 6.1.0
+ */
 @Configuration("cassandraTicketRegistryConfiguration")
-@EnableConfigurationProperties({CasConfigurationProperties.class})
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CassandraTicketRegistryConfiguration {
 
     private CassandraSessionFactory cassandraSessionFactory;
