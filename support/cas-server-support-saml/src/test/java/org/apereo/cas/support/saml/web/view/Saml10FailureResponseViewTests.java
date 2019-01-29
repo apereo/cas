@@ -1,7 +1,9 @@
 package org.apereo.cas.support.saml.web.view;
 
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.support.NoOpProtocolAttributeEncoder;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
+import org.apereo.cas.support.saml.authentication.SamlResponseBuilder;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
@@ -33,10 +35,15 @@ public class Saml10FailureResponseViewTests extends AbstractOpenSamlTests {
     public void initialize() {
 
         val builder = new Saml10ObjectBuilder(this.configBean);
-        view = new Saml10FailureResponseView(null, null,
-            builder, new DefaultArgumentExtractor(new SamlServiceFactory()),
-            StandardCharsets.UTF_8.name(), 0, 30, null,
-            new DefaultAuthenticationServiceSelectionPlan(), new NoOpProtocolAttributesRenderer());
+        val samlResponseBuilder = new SamlResponseBuilder(builder, null, null, 0, 30,
+            new NoOpProtocolAttributeEncoder(), null);
+        view = new Saml10FailureResponseView(new NoOpProtocolAttributeEncoder(), null,
+            new DefaultArgumentExtractor(new SamlServiceFactory()),
+            StandardCharsets.UTF_8.name(),
+            null,
+            new DefaultAuthenticationServiceSelectionPlan(),
+            new NoOpProtocolAttributesRenderer(),
+            samlResponseBuilder);
     }
 
     @Test

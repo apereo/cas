@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
+import org.apereo.cas.support.saml.authentication.SamlResponseBuilder;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceResponseBuilder;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
 import org.apereo.cas.support.saml.web.SamlValidateController;
@@ -99,23 +100,32 @@ public class SamlConfiguration {
     @Qualifier("serviceValidationAuthorizers")
     private ObjectProvider<ServiceTicketValidationAuthorizersExecutionPlan> validationAuthorizers;
 
+    @ConditionalOnMissingBean(name = "samlResponseBuilder")
+    @RefreshScope
+    @Bean
+    public SamlResponseBuilder samlResponseBuilder() {
+        val samlCore = casProperties.getSamlCore();
+        return new SamlResponseBuilder(saml10ObjectBuilder(),
+            samlCore.getIssuer(),
+            samlCore.getAttributeNamespace(),
+            samlCore.getIssueLength(),
+            samlCore.getSkewAllowance(),
+            protocolAttributeEncoder.getIfAvailable(),
+            this.servicesManager.getIfAvailable());
+    }
+
     @ConditionalOnMissingBean(name = "casSamlServiceSuccessView")
     @RefreshScope
     @Bean
     public View casSamlServiceSuccessView() {
-        val samlCore = casProperties.getSamlCore();
         return new Saml10SuccessResponseView(protocolAttributeEncoder.getIfAvailable(),
             servicesManager.getIfAvailable(),
-            saml10ObjectBuilder(),
             argumentExtractor.getIfAvailable(),
             StandardCharsets.UTF_8.name(),
-            samlCore.getSkewAllowance(),
-            samlCore.getIssueLength(),
-            samlCore.getIssuer(),
-            samlCore.getAttributeNamespace(),
             authenticationAttributeReleasePolicy.getIfAvailable(),
             authenticationServiceSelectionPlan.getIfAvailable(),
-            new NoOpProtocolAttributesRenderer());
+            new NoOpProtocolAttributesRenderer(),
+            samlResponseBuilder());
     }
 
     @ConditionalOnMissingBean(name = "casSamlServiceFailureView")
@@ -124,16 +134,13 @@ public class SamlConfiguration {
     public View casSamlServiceFailureView() {
         return new Saml10FailureResponseView(protocolAttributeEncoder.getIfAvailable(),
             servicesManager.getIfAvailable(),
-            saml10ObjectBuilder(),
             argumentExtractor.getIfAvailable(),
             StandardCharsets.UTF_8.name(),
-            casProperties.getSamlCore().getSkewAllowance(),
-            casProperties.getSamlCore().getIssueLength(),
             authenticationAttributeReleasePolicy.getIfAvailable(),
             authenticationServiceSelectionPlan.getIfAvailable(),
-            new NoOpProtocolAttributesRenderer());
+            new NoOpProtocolAttributesRenderer(),
+            samlResponseBuilder());
     }
-
 
     @ConditionalOnMissingBean(name = "samlServiceResponseBuilder")
     @Bean

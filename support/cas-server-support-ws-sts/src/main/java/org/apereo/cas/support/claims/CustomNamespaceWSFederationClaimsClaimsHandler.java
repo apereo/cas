@@ -21,7 +21,7 @@ import java.util.List;
  */
 @Slf4j
 public class CustomNamespaceWSFederationClaimsClaimsHandler extends NonWSFederationClaimsClaimsHandler {
-    private final List<URI> supportedClaimTypes;
+    private final List<String> supportedClaimTypes;
 
     public CustomNamespaceWSFederationClaimsClaimsHandler(final String handlerRealm, final String issuer,
                                                           final List<String> namespaces) {
@@ -31,25 +31,25 @@ public class CustomNamespaceWSFederationClaimsClaimsHandler extends NonWSFederat
 
     @SneakyThrows
     @Override
-    protected URI createProcessedClaimType(final Claim requestClaim, final ClaimsParameters parameters) {
+    protected String createProcessedClaimType(final Claim requestClaim, final ClaimsParameters parameters) {
         val tokenType = parameters.getTokenRequirements().getTokenType();
         if (WSFederationConstants.WSS_SAML2_TOKEN_TYPE.equalsIgnoreCase(tokenType)) {
-            val claimType = requestClaim.getClaimType().toASCIIString();
+            val claimType = requestClaim.getClaimType();
             val idx = claimType.lastIndexOf('/');
             val claimName = claimType.substring(idx + 1).trim();
             LOGGER.debug("Converted full claim type from [{}] to [{}]", claimType, claimName);
-            return new URI(claimName);
+            return claimName;
         }
         return requestClaim.getClaimType();
     }
 
     @Override
-    public List<URI> getSupportedClaimTypes() {
+    public List<String> getSupportedClaimTypes() {
         return this.supportedClaimTypes;
     }
 
     @RequiredArgsConstructor
-    private static class CustomNamespaceWSFederationClaimsList extends ArrayList<URI> {
+    private static class CustomNamespaceWSFederationClaimsList extends ArrayList<String> {
         private static final long serialVersionUID = 8368878016992806802L;
         private final List<String> namespaces;
 

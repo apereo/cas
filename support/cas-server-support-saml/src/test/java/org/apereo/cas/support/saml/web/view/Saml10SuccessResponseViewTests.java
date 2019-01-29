@@ -8,12 +8,14 @@ import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
+import org.apereo.cas.authentication.support.NoOpProtocolAttributeEncoder;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
+import org.apereo.cas.support.saml.authentication.SamlResponseBuilder;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
 import org.apereo.cas.validation.DefaultAssertionBuilder;
@@ -61,16 +63,18 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         val mgmr = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class), new HashSet<>());
         mgmr.load();
 
-        this.response = new Saml10SuccessResponseView(new DefaultCasProtocolAttributeEncoder(mgmr, CipherExecutor.noOpOfStringToString()),
+        val protocolAttributeEncoder = new DefaultCasProtocolAttributeEncoder(mgmr, CipherExecutor.noOpOfStringToString());
+        val builder = new Saml10ObjectBuilder(configBean);
+        val samlResponseBuilder = new SamlResponseBuilder(builder, "testIssuer", "whatever", 1000, 30,
+            new NoOpProtocolAttributeEncoder(), mgmr);
+        this.response = new Saml10SuccessResponseView(protocolAttributeEncoder,
             mgmr,
-            new Saml10ObjectBuilder(configBean),
             new DefaultArgumentExtractor(new SamlServiceFactory()),
-            StandardCharsets.UTF_8.name(), 1000, 30,
-            "testIssuer",
-            "whatever",
+            StandardCharsets.UTF_8.name(),
             new DefaultAuthenticationAttributeReleasePolicy("attribute"),
             new DefaultAuthenticationServiceSelectionPlan(),
-            new NoOpProtocolAttributesRenderer());
+            new NoOpProtocolAttributesRenderer(),
+            samlResponseBuilder);
     }
 
     @Test
