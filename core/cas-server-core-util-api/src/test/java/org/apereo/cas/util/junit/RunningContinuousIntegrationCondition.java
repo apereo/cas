@@ -7,6 +7,7 @@ import lombok.val;
  *
  * @author Misagh Moayyed
  * @since 5.3.0
+ * @deprecated Not needed with Junit5
  */
 @Deprecated
 public class RunningContinuousIntegrationCondition implements IgnoreCondition {

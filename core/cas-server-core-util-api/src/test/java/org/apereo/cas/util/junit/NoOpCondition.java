@@ -5,6 +5,7 @@ package org.apereo.cas.util.junit;
  *
  * @author Misagh Moayyed
  * @since 6.0.0
+ * @deprecated Not needed with Junit5
  */
 @Deprecated
 public class NoOpCondition implements IgnoreCondition {

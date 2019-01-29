@@ -13,6 +13,7 @@ import java.lang.reflect.Modifier;
  *
  * @author Misagh Moayyed
  * @since 5.3.0
+ * @deprecated Not needed with Junit5
  */
 @Deprecated
 public class ConditionalIgnoreRule implements TestRule {
