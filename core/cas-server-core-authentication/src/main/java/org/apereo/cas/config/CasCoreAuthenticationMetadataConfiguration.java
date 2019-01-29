@@ -57,7 +57,7 @@ public class CasCoreAuthenticationMetadataConfiguration {
                     crypto.getSigning().getKeySize(),
                     crypto.getEncryption().getKeySize());
             }
-            LOGGER.warn("Cas is configured to capture and cache credentials via Clearpass yet crypto operations for the cached password are "
+            LOGGER.warn("CAS is configured to capture and cache credentials via Clearpass yet crypto operations for the cached password are "
                 + "turned off. Consider enabling the crypto configuration in CAS settings that allow the system to sign & encrypt the captured credential.");
         }
         return CipherExecutor.noOp();
@@ -79,7 +79,7 @@ public class CasCoreAuthenticationMetadataConfiguration {
 
             val cp = casProperties.getClearpass();
             if (cp.isCacheCredential()) {
-                LOGGER.warn("Cas is configured to capture and cache credentials via Clearpass. Sharing the user credential with other applications "
+                LOGGER.warn("CAS is configured to capture and cache credentials via Clearpass. Sharing the user credential with other applications "
                     + "is generally NOT recommended, may lead to security vulnerabilities and MUST only be used as a last resort .");
                 plan.registerAuthenticationMetadataPopulator(new CacheCredentialsMetaDataPopulator(cacheCredentialsCipherExecutor()));
             }

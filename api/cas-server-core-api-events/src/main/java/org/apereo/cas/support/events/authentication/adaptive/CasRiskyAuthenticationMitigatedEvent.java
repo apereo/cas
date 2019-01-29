@@ -24,7 +24,7 @@ public class CasRiskyAuthenticationMitigatedEvent extends AbstractCasEvent {
     private final Object response;
 
     /**
-     * Instantiates a new Cas risky authentication mitigated event.
+     * Instantiates a new CAS risky authentication mitigated event.
      *
      * @param source         the source
      * @param authentication the authentication

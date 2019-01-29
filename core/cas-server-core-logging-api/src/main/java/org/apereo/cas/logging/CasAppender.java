@@ -27,7 +27,7 @@ public class CasAppender extends AbstractAppender {
     private final AppenderRef appenderRef;
 
     /**
-     * Instantiates a new Cas appender.
+     * Instantiates a new CAS appender.
      *
      * @param name        the name
      * @param config      the config

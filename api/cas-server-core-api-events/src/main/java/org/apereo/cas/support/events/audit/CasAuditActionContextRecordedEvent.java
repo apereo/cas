@@ -19,7 +19,7 @@ public class CasAuditActionContextRecordedEvent extends AbstractCasEvent {
     private final AuditActionContext auditActionContext;
 
     /**
-     * Instantiates a new Cas audit action context recorded event.
+     * Instantiates a new CAS audit action context recorded event.
      *
      * @param source             the source
      * @param auditActionContext the audit action context

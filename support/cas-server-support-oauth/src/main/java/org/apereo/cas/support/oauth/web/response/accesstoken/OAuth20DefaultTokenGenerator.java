@@ -63,7 +63,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
     protected final TicketRegistry ticketRegistry;
 
     /**
-     * Cas configuration settings.
+     * CAS configuration settings.
      */
     protected final CasConfigurationProperties casProperties;
 
