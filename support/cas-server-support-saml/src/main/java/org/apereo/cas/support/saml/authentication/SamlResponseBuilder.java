@@ -41,6 +41,13 @@ public class SamlResponseBuilder {
     private final ProtocolAttributeEncoder protocolAttributeEncoder;
     private final ServicesManager servicesManager;
 
+    /**
+     * Create response.
+     *
+     * @param serviceId the service id
+     * @param service   the service
+     * @return the response
+     */
     public Response createResponse(final String serviceId, final WebApplicationService service) {
         return this.samlObjectBuilder.newResponse(
             this.samlObjectBuilder.generateSecureRandomId(),
