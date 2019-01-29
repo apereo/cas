@@ -44,9 +44,9 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 
 import lombok.val;
-import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.ArgumentMatcher;
 import org.springframework.context.ApplicationEventPublisher;
@@ -137,7 +137,7 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
         return new WebApplicationServiceFactory().createService(request);
     }
 
-    @Before
+    @BeforeEach
     public void prepareNewCAS() {
         this.authentication = mock(Authentication.class);
         when(this.authentication.getAuthenticationDate()).thenReturn(ZonedDateTime.now(ZoneOffset.UTC));
