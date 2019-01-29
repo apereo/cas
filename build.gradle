@@ -349,13 +349,25 @@ subprojects {
         }
     }
 
+
     if (!Boolean.getBoolean("skipCheckstyle")) {
         checkstyle {
-            configFile new File(rootDir, "style/checkstyle-rules.xml")
-            configProperties = ["checkstyle.suppressions.file": new File(rootDir, "style/checkstyle-suppressions.xml")]
+            configProperties = [
+                    "checkstyle.suppressions.file": new File(rootDir, "style/checkstyle-suppressions.xml"),
+                    "checkstyle.importcontrol.file": new File(rootDir, "style/import-control.xml")]
             ignoreFailures false
             showViolations true
             toolVersion "${checkstyleVersion}"
+        }
+        tasks.withType(Checkstyle) {
+            doFirst {
+                def useJunit5 = project.ext.properties.get("useJunit5", false)
+                if (useJunit5) {
+                    it.configFile new File(rootDir, "style/checkstyle-rules-junit5.xml")
+                } else {
+                    it.configFile new File(rootDir, "style/checkstyle-rules.xml")
+                }
+            }
         }
     }
 

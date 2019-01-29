@@ -1,5 +1,8 @@
 
 description = "Apereo CAS Core Utility APIs"
+ext {
+    useJunit5 = true
+}
 dependencies {
     implementation libraries.jose4j
 }
