@@ -347,7 +347,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             return;
         }
 
-        LOGGER.debug("Attempting to generate SAML attribute [{}] with value(s) [{}]", attributeName, attributeValue);
+        LOGGER.trace("Attempting to generate SAML attribute [{}] with value(s) [{}]", attributeName, attributeValue);
         if (attributeValue instanceof Collection<?>) {
             val c = (Collection<?>) attributeValue;
             LOGGER.debug("Generating multi-valued SAML attribute [{}] with values [{}]", attributeName, c);

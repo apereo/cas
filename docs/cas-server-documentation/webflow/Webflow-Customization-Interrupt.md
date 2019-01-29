@@ -112,7 +112,7 @@ The following parameters are passed to the script:
 | Parameter             | Description
 |------------------------------------------------------------------------------------------------------------------------
 | `uid`                 | Authenticated principal id.
-| `attributes`          | A map of type `Map<String, Objec>` that contains both principal and authentication attributes. 
+| `attributes`          | A map of type `Map<String, Object>` that contains both principal and authentication attributes. 
 | `service`             | The identifier (i.e. URL) of the requesting application.
 | `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
 

@@ -36,7 +36,15 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-## Sample Request
+### Administrative Endpoints
+
+The following endpoints are provided by CAS:
+ 
+| Endpoint          | Description
+|-------------------|---------------------------------------------------------------------------------------------------
+| `samlValidate`    | Obtain a SAML 1.1 validation payload by supplying a `username`, `password` and `service` as parameters.
+
+### Sample Request
 
 ```xml
 POST /cas/samlValidate?ticket=
@@ -58,7 +66,7 @@ Content-Type: text/xml
 </SOAP-ENV:Envelope>
 ```
 
-## Sample Response
+### Sample Response
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>

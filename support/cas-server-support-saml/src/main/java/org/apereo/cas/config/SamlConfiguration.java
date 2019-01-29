@@ -4,7 +4,10 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -12,6 +15,7 @@ import org.apereo.cas.support.saml.authentication.SamlResponseBuilder;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceResponseBuilder;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
 import org.apereo.cas.support.saml.web.SamlValidateController;
+import org.apereo.cas.support.saml.web.SamlValidateEndpoint;
 import org.apereo.cas.support.saml.web.view.Saml10FailureResponseView;
 import org.apereo.cas.support.saml.web.view.Saml10SuccessResponseView;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
@@ -26,6 +30,7 @@ import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -53,6 +58,10 @@ public class SamlConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    @Qualifier("webApplicationServiceFactory")
+    private ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory;
+
+    @Autowired
     @Qualifier("casAttributeEncoder")
     private ObjectProvider<ProtocolAttributeEncoder> protocolAttributeEncoder;
 
@@ -70,7 +79,7 @@ public class SamlConfiguration {
 
     @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")
-    private ObjectProvider<OpenSamlConfigBean> configBean;
+    private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -151,7 +160,7 @@ public class SamlConfiguration {
     @ConditionalOnMissingBean(name = "saml10ObjectBuilder")
     @Bean
     public Saml10ObjectBuilder saml10ObjectBuilder() {
-        return new Saml10ObjectBuilder(this.configBean.getIfAvailable());
+        return new Saml10ObjectBuilder(this.openSamlConfigBean.getIfAvailable());
     }
 
     @Bean
@@ -169,5 +178,16 @@ public class SamlConfiguration {
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
             validationAuthorizers.getIfAvailable(),
             casProperties.getSso().isRenewAuthnEnabled());
+    }
+
+    @Bean
+    @ConditionalOnEnabledEndpoint
+    public SamlValidateEndpoint samlValidateEndpoint() {
+        return new SamlValidateEndpoint(casProperties, servicesManager.getIfAvailable(),
+            authenticationSystemSupport.getIfAvailable(),
+            webApplicationServiceFactory.getIfAvailable(),
+            PrincipalFactoryUtils.newPrincipalFactory(),
+            samlResponseBuilder(),
+            openSamlConfigBean.getIfAvailable());
     }
 }
