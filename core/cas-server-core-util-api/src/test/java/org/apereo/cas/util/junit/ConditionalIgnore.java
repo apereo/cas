@@ -13,6 +13,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
+@Deprecated
 public @interface ConditionalIgnore {
     /**
      * Condition class.

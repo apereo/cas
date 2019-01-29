@@ -7,6 +7,7 @@ package org.apereo.cas.util.junit;
  * @since 5.3.0
  */
 @FunctionalInterface
+@Deprecated
 public interface IgnoreCondition {
     /**
      * Is satisfied.

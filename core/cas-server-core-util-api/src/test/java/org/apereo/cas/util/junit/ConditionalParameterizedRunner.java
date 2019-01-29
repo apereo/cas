@@ -15,6 +15,7 @@ import org.junit.runners.ParentRunner;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Deprecated
 public class ConditionalParameterizedRunner extends Parameterized {
     public ConditionalParameterizedRunner(final Class<?> klass) throws Throwable {
         super(klass);

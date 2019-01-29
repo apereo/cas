@@ -6,6 +6,7 @@ package org.apereo.cas.util.junit;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Deprecated
 public class RunningStandaloneCondition extends RunningContinuousIntegrationCondition {
     @Override
     public Boolean isSatisfied() {

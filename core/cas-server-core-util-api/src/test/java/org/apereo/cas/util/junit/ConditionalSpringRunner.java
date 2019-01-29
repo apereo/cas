@@ -15,6 +15,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Deprecated
 public class ConditionalSpringRunner extends SpringJUnit4ClassRunner {
     /**
      * Construct a new {@code SpringJUnit4ClassRunner}.

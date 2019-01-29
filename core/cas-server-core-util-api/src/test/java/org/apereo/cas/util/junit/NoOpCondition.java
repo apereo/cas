@@ -6,6 +6,7 @@ package org.apereo.cas.util.junit;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+@Deprecated
 public class NoOpCondition implements IgnoreCondition {
     @Override
     public Boolean isSatisfied() {

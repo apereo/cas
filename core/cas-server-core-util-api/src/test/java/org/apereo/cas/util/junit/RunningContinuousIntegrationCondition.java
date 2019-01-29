@@ -8,6 +8,7 @@ import lombok.val;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Deprecated
 public class RunningContinuousIntegrationCondition implements IgnoreCondition {
     @Override
     public Boolean isSatisfied() {
