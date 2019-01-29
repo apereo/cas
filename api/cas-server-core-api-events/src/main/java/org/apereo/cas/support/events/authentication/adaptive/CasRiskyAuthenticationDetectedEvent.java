@@ -24,7 +24,7 @@ public class CasRiskyAuthenticationDetectedEvent extends AbstractCasEvent {
     private final Object score;
 
     /**
-     * Instantiates a new Cas risky authentication detected event.
+     * Instantiates a new CAS risky authentication detected event.
      *
      * @param source         the source
      * @param authentication the authentication
