@@ -31,7 +31,7 @@ public class CasConfigurationMetadataRepository {
     }
 
     /**
-     * Instantiates a new Cas configuration metadata repository.
+     * Instantiates a new CAS configuration metadata repository.
      * Scans the context looking for spring configuration metadata
      * resources and then loads them all into a repository instance.
      *

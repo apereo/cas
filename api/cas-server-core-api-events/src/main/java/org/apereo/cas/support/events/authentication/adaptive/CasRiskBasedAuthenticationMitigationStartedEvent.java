@@ -24,7 +24,7 @@ public class CasRiskBasedAuthenticationMitigationStartedEvent extends AbstractCa
     private final Object score;
 
     /**
-     * Instantiates a new Cas risk based authentication mitigation started event.
+     * Instantiates a new CAS risk based authentication mitigation started event.
      *
      * @param source         the source
      * @param authentication the authentication
