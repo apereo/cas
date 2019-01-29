@@ -59,6 +59,15 @@ public class WatchableGroovyScriptResource implements AutoCloseable {
     /**
      * Execute.
      *
+     * @param args the args
+     */
+    public void execute(final Object[] args) {
+        execute(args, Void.class, true);
+    }
+
+    /**
+     * Execute.
+     *
      * @param <T>         the type parameter
      * @param args        the args
      * @param clazz       the clazz
