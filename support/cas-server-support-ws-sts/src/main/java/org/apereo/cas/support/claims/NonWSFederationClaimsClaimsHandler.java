@@ -9,7 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.rt.security.claims.Claim;
 import org.apache.cxf.sts.claims.ClaimsParameters;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,21 +26,20 @@ public class NonWSFederationClaimsClaimsHandler extends WrappingSecurityTokenSer
 
     @SneakyThrows
     @Override
-    protected URI createProcessedClaimType(final Claim requestClaim, final ClaimsParameters parameters) {
+    protected String createProcessedClaimType(final Claim requestClaim, final ClaimsParameters parameters) {
         val tokenType = parameters.getTokenRequirements().getTokenType();
         if (WSFederationConstants.WSS_SAML2_TOKEN_TYPE.equalsIgnoreCase(tokenType)) {
-            val value = StringUtils.remove(requestClaim.getClaimType().toASCIIString(), WSFederationConstants.HTTP_SCHEMAS_APEREO_CAS);
-            return new URI(value);
+            return StringUtils.remove(requestClaim.getClaimType(), WSFederationConstants.HTTP_SCHEMAS_APEREO_CAS);
         }
         return requestClaim.getClaimType();
     }
 
     @Override
-    public List<URI> getSupportedClaimTypes() {
+    public List<String> getSupportedClaimTypes() {
         return new NonWSFederationClaimsList();
     }
 
-    private static class NonWSFederationClaimsList extends ArrayList<URI> {
+    private static class NonWSFederationClaimsList extends ArrayList<String> {
         @Override
         public boolean contains(final Object o) {
             return o.toString().startsWith(WSFederationConstants.HTTP_SCHEMAS_APEREO_CAS);

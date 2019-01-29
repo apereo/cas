@@ -15,8 +15,6 @@ import org.apache.cxf.sts.claims.ProcessedClaim;
 import org.apache.cxf.sts.claims.ProcessedClaimCollection;
 import org.apache.cxf.sts.token.realm.RealmSupport;
 
-import javax.ws.rs.core.UriBuilder;
-import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,9 +34,9 @@ public class WrappingSecurityTokenServiceClaimsHandler implements ClaimsHandler,
     private final String issuer;
 
     @Override
-    public List<URI> getSupportedClaimTypes() {
+    public List<String> getSupportedClaimTypes() {
         return WSFederationClaims.ALL_CLAIMS.stream()
-            .map(c -> UriBuilder.fromUri(c.getUri()).build())
+            .map(WSFederationClaims::getUri)
             .collect(Collectors.toList());
     }
 
@@ -84,7 +82,7 @@ public class WrappingSecurityTokenServiceClaimsHandler implements ClaimsHandler,
      * @param parameters   the parameters
      * @return the uri
      */
-    protected URI createProcessedClaimType(final Claim requestClaim, final ClaimsParameters parameters) {
+    protected String createProcessedClaimType(final Claim requestClaim, final ClaimsParameters parameters) {
         return requestClaim.getClaimType();
     }
 
