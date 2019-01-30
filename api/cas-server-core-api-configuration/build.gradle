@@ -1,4 +1,7 @@
 description = "Apereo CAS Core Configuration"
+ext {
+    useJunit5 = true
+}
 
 dependencies {
 
