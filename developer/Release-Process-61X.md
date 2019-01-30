@@ -17,7 +17,7 @@ current project members *vouch* for you.
 
 You will need to [generate your own PGP signatures](http://blog.sonatype.com/2010/01/how-to-generate-pgp-signatures-with-maven/) to sign the release artifacts prior to uploading them to a central repository. In order to create OpenPGP signatures, you will need to generate a key pair. You need to provide the build with your key information, which means three things:
 
-- The public key ID (The last 8 symbols of the keyId. You can use `gpg -K to get it`).
+- The public key ID (The last 8 symbols of the keyId. You can use `gpg -K` to get it
 - The absolute path to the secret key ring file containing your private key. Since gpg 2.1, you need to export the keys with command:
 
 ```bash
