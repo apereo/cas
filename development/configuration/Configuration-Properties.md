@@ -3005,6 +3005,19 @@ See below for other identity providers such as CAS, SAML2 and more.
 The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under `${configurationKey}.cookie`.
 
+### Provisioning
+
+Provision and create established user profiles to identity stores.
+
+#### Groovy
+
+```properties
+# cas.authn.pac4j.provisioning.groovy.location=file:/etc/cas/config/Provisioner.groovy
+```
+
+#### REST
+
+RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.authn.pac4j.provisioning.rest`.
 
 ### Google
 
@@ -4172,7 +4185,7 @@ The signing and encryption keys [are both JWKs](Configuration-Properties-Common.
 
 #### Spring Webflow Client-Side Session
 
-The encryption key must be randomly-generated string of size f`16`. The signing key [is a JWK](Configuration-Properties-Common.html#signing--encryption) of size `512`.
+The encryption key must be randomly-generated string of size `16`. The signing key [is a JWK](Configuration-Properties-Common.html#signing--encryption) of size `512`.
 
 Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.webflow`.
 
