@@ -1,15 +1,15 @@
 package org.apereo.cas.authentication.principal.cache;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Handles tests for {@link CachingPrincipalAttributesRepository}.
@@ -30,7 +30,8 @@ public class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPr
     }
 
     @Test
-    public void verifySerializeACachingPrincipalAttributesRepositoryToJson() throws IOException {
+    @SneakyThrows
+    public void verifySerializeACachingPrincipalAttributesRepositoryToJson() {
         val repositoryWritten = getPrincipalAttributesRepository(TimeUnit.MILLISECONDS.toString(), 1);
         MAPPER.writeValue(JSON_FILE, repositoryWritten);
         val repositoryRead = MAPPER.readValue(JSON_FILE, CachingPrincipalAttributesRepository.class);
