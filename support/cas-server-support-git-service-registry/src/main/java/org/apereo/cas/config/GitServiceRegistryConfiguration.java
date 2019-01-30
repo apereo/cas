@@ -55,13 +55,15 @@ public class GitServiceRegistryConfiguration {
 
     @Bean
     public ServiceRegistry gitServiceRegistry() {
+        val registry = casProperties.getServiceRegistry().getGit();
         return new GitServiceRegistry(eventPublisher,
             gitRepositoryInstance(),
             CollectionUtils.wrapList(
                 new RegisteredServiceJsonSerializer(),
                 new RegisteredServiceYamlSerializer()
             ),
-            resourceNamingStrategy.getIfAvailable()
+            resourceNamingStrategy.getIfAvailable(),
+            registry.isPushChanges()
         );
     }
 

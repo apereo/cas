@@ -3667,6 +3667,7 @@ Works with git repository to fetch and manage service registry definitions.
 # cas.serviceRegistry.git.username=
 # cas.serviceRegistry.git.password=
 # cas.serviceRegistry.git.cloneDirectory=file:/tmp/cas-service-registry
+# cas.serviceRegistry.git.pushChanges=false
 ```
 
 To learn more about this topic, [please review this guide](../services/Git-Service-Management.html).

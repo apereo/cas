@@ -43,11 +43,16 @@ public class GitServiceRegistryProperties implements Serializable {
      * Username used to access or push to the repository.
      */
     private String username;
+
     /**
      * Password used to access or push to the repository.
      */
     private String password;
 
+    /**
+     * Decide whether changes should be pushed back into the remote repository.
+     */
+    private boolean pushChanges;
     /**
      * Directory into which the repository would be cloned.
      */
