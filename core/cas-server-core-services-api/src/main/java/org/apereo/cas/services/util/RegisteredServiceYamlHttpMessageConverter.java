@@ -4,6 +4,7 @@ import org.apereo.cas.services.RegisteredService;
 
 import lombok.val;
 import org.apache.commons.lang3.NotImplementedException;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -29,7 +30,7 @@ public class RegisteredServiceYamlHttpMessageConverter<T> extends AbstractHttpMe
 
     @Override
     protected boolean supports(final Class<?> clazz) {
-        return true;
+        return Collection.class.isAssignableFrom(clazz);
     }
 
     @Override
