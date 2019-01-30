@@ -2,6 +2,9 @@ description = "Apereo CAS Core Test Categories. Used for tests requiring a serve
 
 apply plugin: "groovy"
 
+ext {
+    useJunit5 = true
+}
 dependencies {
 
 }

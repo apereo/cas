@@ -1,4 +1,7 @@
 description = "Apereo CAS Core Webflow APIs"
+ext {
+    useJunit5 = true
+}
 dependencies {
     
     

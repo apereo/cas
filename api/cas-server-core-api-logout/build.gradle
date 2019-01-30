@@ -1,5 +1,8 @@
 
 description = "Apereo CAS Core Logout APIs"
+ext {
+    useJunit5 = true
+}
 dependencies {
     api project(":api:cas-server-core-api-services")
     api project(":api:cas-server-core-api-authentication")
