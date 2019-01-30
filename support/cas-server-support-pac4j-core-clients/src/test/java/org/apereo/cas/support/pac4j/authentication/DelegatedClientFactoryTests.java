@@ -102,6 +102,7 @@ public class DelegatedClientFactoryTests {
 
         val oidc3 = new Pac4jOidcClientProperties();
         configureIdentifiableClient(oidc3.getAzure());
+        oidc3.getAzure().setTenant("contoso.onmicrosoft.com");
         oidc3.getAzure().setLogoutUrl("https://example.logout");
         props.getOidc().add(oidc3);
 

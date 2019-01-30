@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.security.CasWebSecurityConfigurerAdapter;
+import org.apereo.cas.web.security.CasWebSecurityExpressionHandler;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -32,14 +33,22 @@ public class CasWebAppSecurityConfiguration implements WebMvcConfigurer {
     private SecurityProperties securityProperties;
 
     @Bean
+    @ConditionalOnMissingBean(name = "casWebSecurityExpressionHandler")
+    public CasWebSecurityExpressionHandler casWebSecurityExpressionHandler() {
+        return new CasWebSecurityExpressionHandler();
+    }
+
+    @Bean
     @ConditionalOnMissingBean(name = "casWebSecurityConfigurerAdapter")
     public WebSecurityConfigurerAdapter casWebSecurityConfigurerAdapter() {
-        return new CasWebSecurityConfigurerAdapter(casProperties, securityProperties);
+        return new CasWebSecurityConfigurerAdapter(casProperties, securityProperties, casWebSecurityExpressionHandler());
     }
 
     @Override
     public void addViewControllers(final ViewControllerRegistry registry) {
-        registry.addViewController(CasWebSecurityConfigurerAdapter.ENDPOINT_URL_ADMIN_FORM_LOGIN).setViewName(CasWebflowConstants.VIEW_ID_ENDPOINT_ADMIN_LOGIN_VIEW);
+        registry.addViewController(CasWebSecurityConfigurerAdapter.ENDPOINT_URL_ADMIN_FORM_LOGIN)
+            .setViewName(CasWebflowConstants.VIEW_ID_ENDPOINT_ADMIN_LOGIN_VIEW);
         registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
     }
+
 }
