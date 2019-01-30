@@ -4,7 +4,6 @@ import org.apereo.cas.services.RegisteredService;
 
 import lombok.val;
 import org.apache.commons.lang3.NotImplementedException;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
