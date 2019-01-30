@@ -38,6 +38,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
 
     private final CasConfigurationProperties casProperties;
     private final SecurityProperties securityProperties;
+    private final CasWebSecurityExpressionHandler casWebSecurityExpressionHandler;
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
@@ -49,7 +50,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
             .requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null)
             .requiresSecure();
 
-        val requests = http.authorizeRequests();
+        val requests = http.authorizeRequests().expressionHandler(casWebSecurityExpressionHandler);
         configureEndpointAccessToDenyUndefined(http, requests);
         configureEndpointAccessForStaticResources(requests);
 
