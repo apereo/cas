@@ -10,9 +10,11 @@ import java.lang.annotation.Target;
  *
  * @author Misagh Moayyed
  * @since 5.3.0
+ * @deprecated Not needed with Junit5
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
+@Deprecated
 public @interface ConditionalIgnore {
     /**
      * Condition class.
