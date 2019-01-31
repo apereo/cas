@@ -808,7 +808,7 @@ and their results are cached and merged.
 # cas.authn.attributeRepository.expirationTime=30
 # cas.authn.attributeRepository.expirationTimeUnit=MINUTES
 # cas.authn.attributeRepository.maximumCacheSize=10000
-# cas.authn.attributeRepository.merger=REPLACE|ADD|MERGE
+# cas.authn.attributeRepository.merger=REPLACE|ADD|MULTIVALUED
 ```
 
 <div class="alert alert-info"><strong>Remember This</strong><p>Note that in certain cases,
@@ -3667,6 +3667,7 @@ Works with git repository to fetch and manage service registry definitions.
 # cas.serviceRegistry.git.username=
 # cas.serviceRegistry.git.password=
 # cas.serviceRegistry.git.cloneDirectory=file:/tmp/cas-service-registry
+# cas.serviceRegistry.git.pushChanges=false
 ```
 
 To learn more about this topic, [please review this guide](../services/Git-Service-Management.html).
