@@ -8,12 +8,12 @@ import org.apereo.cas.util.CollectionUtils;
 import com.google.common.collect.ArrayListMultimap;
 import lombok.Setter;
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.HashMap;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**

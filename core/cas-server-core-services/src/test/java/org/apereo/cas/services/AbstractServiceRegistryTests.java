@@ -5,7 +5,6 @@ import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.services.support.RegisteredServiceMappedRegexAttributeFilter;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 
 import com.google.common.collect.ArrayListMultimap;
 import lombok.Getter;
@@ -15,14 +14,9 @@ import lombok.val;
 import org.apache.commons.lang3.RandomUtils;
 import org.joda.time.DateTimeUtils;
 import org.jooq.lambda.Unchecked;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.net.URI;
 import java.time.LocalDate;
@@ -37,7 +31,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.IntStream;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Abstracted service registry tests for all implementations.
@@ -50,30 +44,18 @@ import static org.junit.Assert.*;
 public abstract class AbstractServiceRegistryTests {
     public static final int LOAD_SIZE = 1;
 
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
-
     private final Class<? extends RegisteredService> registeredServiceClass;
 
     private ServiceRegistry serviceRegistry;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.serviceRegistry = getNewServiceRegistry();
         clearServiceRegistry();
         initializeServiceRegistry();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         clearServiceRegistry();
         tearDownServiceRegistry();
@@ -89,8 +71,8 @@ public abstract class AbstractServiceRegistryTests {
 
     @Test
     public void verifyEmptyRegistry() {
-        assertEquals("Loaded too many", 0, serviceRegistry.load().size());
-        assertEquals("Counted too many", 0, serviceRegistry.size());
+        assertEquals(0, serviceRegistry.load().size(), "Loaded too many");
+        assertEquals(0, serviceRegistry.size(), "Counted too many");
     }
 
     @Test

@@ -1,13 +1,11 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.category.FileSystemCategory;
-
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomUtils;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.core.io.ClassPathResource;
@@ -15,13 +13,15 @@ import org.springframework.core.io.ClassPathResource;
 import java.util.Collection;
 import java.util.Collections;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * This is {@link AbstractResourceBasedServiceRegistryTests}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Category(FileSystemCategory.class)
+@Tag("FileSystem")
 @RunWith(Parameterized.class)
 public abstract class AbstractResourceBasedServiceRegistryTests extends AbstractServiceRegistryTests {
     public static final ClassPathResource RESOURCE = new ClassPathResource("services");
@@ -48,8 +48,7 @@ public abstract class AbstractResourceBasedServiceRegistryTests extends Abstract
     public void verifyServiceWithInvalidFileName() {
         val r = buildRegisteredServiceInstance(RandomUtils.nextInt());
         r.setName("hell/o@world:*");
-        this.thrown.expect(IllegalArgumentException.class);
-        this.dao.save(r);
+        assertThrows(IllegalArgumentException.class, () -> this.dao.save(r));
     }
 
     @Override
