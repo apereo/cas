@@ -1499,11 +1499,6 @@ ext.libraries = [
                     exclude(module: "commons-io")
                     force = true
                 },
-                dependencies.create("com.unboundid:unboundid-ldapsdk:$unboundidVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "commons-cli", module: "commons-cli")
-                    force = true
-                },
                 dependencies.create("org.mockito:mockito-core:$mockitoVersion") {
                     exclude(group: "org.hamcrest", module: "hamcrest-core")
                     exclude(group: "org.objenesis", module: "objenesis")
@@ -1615,6 +1610,11 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-cli", module: "commons-cli")
                     exclude(group: "com.unboundid", module: "unboundid-ldapsdk")
+                    force = true
+                },
+                dependencies.create("com.unboundid:unboundid-ldapsdk:$unboundidVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-cli", module: "commons-cli")
                     force = true
                 }
         ],
