@@ -56,6 +56,8 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
 
     private String principalIdAttribute;
 
+    private int order;
+
     /**
      * Post load, after having loaded the bean via JPA, etc.
      */

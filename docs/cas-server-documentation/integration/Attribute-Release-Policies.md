@@ -351,6 +351,7 @@ The order of policy invocation is the same as the definition order defined for t
   "id" : 300,
   "attributeReleasePolicy": {
     "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "mergingPolicy": "replace",
     "policies": [ "java.util.ArrayList",
       [
           {"@class": "..."},
@@ -360,6 +361,14 @@ The order of policy invocation is the same as the definition order defined for t
   }
 }
 ```
+
+The following merging policies are supported:
+
+| Policy          | Description   
+|-----------------|------------------------------------------------------------------
+| `replace`       | Attributes are merged such that attributes from the source always replace principal attributes.
+| `add`           | Attributes are merged such that attributes from the source that don't already exist for the principal are produced.
+| `multivalued`   | Attributes with the same name are merged into multi-valued attributes.
 
 ## Attribute Value Filters
 
