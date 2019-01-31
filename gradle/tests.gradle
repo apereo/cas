@@ -3,7 +3,6 @@ if (hasTestsOfCategory(project, "Cassandra")){
         enabled = shouldTest(project, "Cassandra")
         useJUnitPlatform {
             includeTags "org.apereo.cas.category.CassandraCategory", "Cassandra"
-            includeEngines 'junit-jupiter', 'junit-vintage'
         }
     }
 }
@@ -13,7 +12,6 @@ if (hasTestsOfCategory(project, "CosmosDb")) {
         enabled = shouldTest(project, "CosmosDb")
         useJUnitPlatform {
             includeTags "org.apereo.cas.category.CosmosDbCategory", "CosmosDb"
-            includeEngines 'junit-jupiter', 'junit-vintage'
         }
     }
 }
@@ -23,7 +21,6 @@ if (hasTestsOfCategory(project, "AmazonWebServicesS3")) {
         enabled = shouldTest(project, "AmazonWebServicesS3")
         useJUnitPlatform {
             includeTags "org.apereo.cas.category.AmazonWebServicesS3Category", "AmazonWebServicesS3"
-            includeEngines 'junit-jupiter', 'junit-vintage'
         }
     }
 }
@@ -33,7 +30,6 @@ if (hasTestsOfCategory(project, "Radius")) {
         enabled = shouldTest(project, "Radius")
         useJUnitPlatform {
             includeTags "org.apereo.cas.category.RadiusCategory", "Radius"
-            includeEngines 'junit-jupiter', 'junit-vintage'
         }
     }
 }
@@ -43,7 +39,6 @@ if (hasTestsOfCategory(project, "Couchbase")) {
         enabled = shouldTest(project, "Couchbase")
         useJUnitPlatform {
             includeTags "org.apereo.cas.category.CouchbaseCategory", "Couchbase"
-            includeEngines 'junit-jupiter', 'junit-vintage'
         }
     }
 }
@@ -53,7 +48,6 @@ if (hasTestsOfCategory(project, "CouchDb")) {
         enabled = shouldTest(project, "CouchDb")
         useJUnitPlatform {
             includeTags "org.apereo.cas.category.CouchDbCategory", "CouchDb"
-            includeEngines 'junit-jupiter', 'junit-vintage'
         }
     }
 }
@@ -63,7 +57,6 @@ if (hasTestsOfCategory(project, "MySQL")) {
         enabled = shouldTest(project, "MySQL")
         useJUnitPlatform {
             includeTags "org.apereo.cas.category.MySQLCategory", "MySQL"
-            includeEngines 'junit-jupiter', 'junit-vintage'
         }
     }
 }
@@ -73,7 +66,6 @@ if (hasTestsOfCategory(project, "Postgres")) {
         enabled = shouldTest(project, "Postgres")
         useJUnitPlatform {
             includeTags "org.apereo.cas.category.PostgresCategory", "Postgres"
-            includeEngines 'junit-jupiter', 'junit-vintage'
         }
     }
 }
@@ -83,7 +75,6 @@ if (hasTestsOfCategory(project, "MsSqlServer")) {
         enabled = shouldTest(project, "MsSqlServer")
         useJUnitPlatform {
             includeTags "org.apereo.cas.category.MsSqlServerCategory", "MsSqlServer"
-            includeEngines 'junit-jupiter', 'junit-vintage'
         }
     }
 }
@@ -93,7 +84,6 @@ if (hasTestsOfCategory(project, "MariaDb")) {
         enabled = shouldTest(project, "MariaDb")
         useJUnitPlatform {
             includeTags "org.apereo.cas.category.MariaDbCategory", "MariaDb"
-            includeEngines 'junit-jupiter', 'junit-vintage'
         }
     }
 }
@@ -103,7 +93,6 @@ if (hasTestsOfCategory(project, "DynamoDb")) {
         enabled = shouldTest(project, "DynamoDb")
         useJUnitPlatform {
             includeTags "org.apereo.cas.category.DynamoDbCategory", "DynamoDb"
-            includeEngines 'junit-jupiter', 'junit-vintage'
         }
     }
 }
@@ -113,7 +102,6 @@ if (hasTestsOfCategory(project, "FileSystem")) {
         enabled = shouldTest(project, "FileSystem")
         useJUnitPlatform {
             includeTags "org.apereo.cas.category.FileSystemCategory", "FileSystem"
-            includeEngines 'junit-jupiter', 'junit-vintage'
         }
     }
 }
@@ -123,7 +111,6 @@ if (hasTestsOfCategory(project, "Ignite")) {
         enabled = shouldTest(project, "Ignite")
         useJUnitPlatform {
             includeTags "org.apereo.cas.category.IgniteCategory", "Ignite"
-            includeEngines 'junit-jupiter', 'junit-vintage'
         }
         def list = []
         list.add("--add-exports")
@@ -139,7 +126,6 @@ if (hasTestsOfCategory(project, "InfluxDb")) {
         enabled = shouldTest(project, "InfluxDb")
         useJUnitPlatform {
             includeTags "org.apereo.cas.category.InfluxDbCategory", "InfluxDb"
-            includeEngines 'junit-jupiter', 'junit-vintage'
         }
     }
 }
@@ -149,7 +135,6 @@ if (hasTestsOfCategory(project, "Ldap")) {
         enabled = shouldTest(project, "Ldap")
         useJUnitPlatform {
             includeTags "org.apereo.cas.category.LdapCategory", "Ldap"
-            includeEngines 'junit-jupiter', 'junit-vintage'
         }
     }
 }
@@ -159,7 +144,6 @@ if (hasTestsOfCategory(project, "Mail")) {
         enabled = shouldTest(project, "Mail")
         useJUnitPlatform {
             includeTags "org.apereo.cas.category.MailCategory", "Mail"
-            includeEngines 'junit-jupiter', 'junit-vintage'
         }
     }
 }
@@ -169,7 +153,6 @@ if (hasTestsOfCategory(project, "RestfulApi")) {
         enabled = shouldTest(project, "RestfulApi")
         useJUnitPlatform {
             includeTags "org.apereo.cas.category.RestfulApiCategory", "RestfulApi"
-            includeEngines 'junit-jupiter', 'junit-vintage'
         }
     }
 }
@@ -179,7 +162,6 @@ if (hasTestsOfCategory(project, "Memcached")) {
         enabled = shouldTest(project, "Memcached")
         useJUnitPlatform {
             includeTags "org.apereo.cas.category.MemcachedCategory", "Memcached"
-            includeEngines 'junit-jupiter', 'junit-vintage'
         }
     }
 }
@@ -189,7 +171,6 @@ if (hasTestsOfCategory(project, "MongoDb")) {
         enabled = shouldTest(project, "MongoDb")
         useJUnitPlatform {
             includeTags "org.apereo.cas.category.MongoDbCategory", "MongoDb"
-            includeEngines 'junit-jupiter', 'junit-vintage'
         }
     }
 }
@@ -199,7 +180,6 @@ if (hasTestsOfCategory(project, "Redis")) {
         enabled = shouldTest(project, "Redis")
         useJUnitPlatform {
             includeTags "org.apereo.cas.category.RedisCategory", "Redis"
-            includeEngines 'junit-jupiter', 'junit-vintage'
         }
     }
 }
@@ -207,27 +187,26 @@ if (hasTestsOfCategory(project, "Redis")) {
 test {
     include "**/*Tests.*"
     useJUnitPlatform {
-        excludeTags "org.apereo.cas.category.CassandraCategory",
-                "org.apereo.cas.category.CosmosDbCategory",
-                "org.apereo.cas.category.CouchbaseCategory",
-                "org.apereo.cas.category.DynamoDbCategory",
-                "org.apereo.cas.category.FileSystemCategory",
-                "org.apereo.cas.category.IgniteCategory",
-                "org.apereo.cas.category.InfluxDbCategory",
-                "org.apereo.cas.category.CouchDbCategory",
-                "org.apereo.cas.category.LdapCategory",
-                "org.apereo.cas.category.MailCategory",
-                "org.apereo.cas.category.MariaDbCategory",
-                "org.apereo.cas.category.MemcachedCategory",
-                "org.apereo.cas.category.MongoDbCategory",
-                "org.apereo.cas.category.MsSqlServerCategory",
-                "org.apereo.cas.category.MySQLCategory",
-                "org.apereo.cas.category.PostgresCategory",
-                "org.apereo.cas.category.RedisCategory",
-                "org.apereo.cas.category.RadiusCategory",
-                "org.apereo.cas.category.AmazonWebServicesS3Category",
-                "org.apereo.cas.category.RestfulApiCategory"
-        includeEngines 'junit-jupiter', 'junit-vintage'
+        excludeTags "org.apereo.cas.category.CassandraCategory", "Cassandra",
+                "org.apereo.cas.category.CosmosDbCategory", "CosmosDb",
+                "org.apereo.cas.category.CouchbaseCategory", "Couchbase",
+                "org.apereo.cas.category.DynamoDbCategory", "DynamoDb",
+                "org.apereo.cas.category.FileSystemCategory", "FileSystem",
+                "org.apereo.cas.category.IgniteCategory", "Ignite",
+                "org.apereo.cas.category.InfluxDbCategory", "Influx",
+                "org.apereo.cas.category.CouchDbCategory", "CouchDb",
+                "org.apereo.cas.category.LdapCategory", "Ldap",
+                "org.apereo.cas.category.MailCategory", "Mail",
+                "org.apereo.cas.category.MariaDbCategory", "MariaDb",
+                "org.apereo.cas.category.MemcachedCategory", "Memcached",
+                "org.apereo.cas.category.MongoDbCategory", "MongoDb",
+                "org.apereo.cas.category.MsSqlServerCategory", "MsSqlServer",
+                "org.apereo.cas.category.MySQLCategory", "MySQL",
+                "org.apereo.cas.category.PostgresCategory", "Postgres",
+                "org.apereo.cas.category.RedisCategory", "Redis",
+                "org.apereo.cas.category.RadiusCategory", "Radius",
+                "org.apereo.cas.category.AmazonWebServicesS3Category", "AmazonWebServicesS3",
+                "org.apereo.cas.category.RestfulApiCategory", "RestfulApi"
     }
     enabled = "SIMPLE".equalsIgnoreCase(rootProject.testCategoryType) && !Boolean.getBoolean("skipTests")
 }
@@ -242,6 +221,15 @@ tasks.withType(Test) {
         maxParallelForks = project.ext.properties.get("maxParallelForksForTests", 2)
         if(maxParallelForks != 2) {
             println "Maximum number of parallel forks is set to ${maxParallelForks}"
+        }
+
+        def useJunit5 = project.ext.properties.get("useJunit5", false)
+        it.options {
+            if (useJunit5) {
+                it.includeEngines "junit-jupiter"
+            } else {
+                it.includeEngines "junit-vintage"
+            }
         }
     }
 
