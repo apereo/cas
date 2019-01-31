@@ -1,5 +1,6 @@
 description = "Apereo CAS JDBC Audit Support"
 ext {
+    useJunit5 = true
     maxParallelForksForTests = 1
 }
 dependencies {

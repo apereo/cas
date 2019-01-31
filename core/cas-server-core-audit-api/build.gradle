@@ -1,4 +1,7 @@
 description = "Apereo CAS Core Audit API"
+ext {
+    useJunit5 = true
+}
 dependencies {
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-events")
