@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.springframework.core.Ordered;
 
@@ -82,6 +83,7 @@ public interface RegisteredServiceAttributeReleasePolicy extends Serializable, O
      *
      * @return the name
      */
+    @JsonIgnore
     default String getName() {
         return getClass().getSimpleName();
     }
