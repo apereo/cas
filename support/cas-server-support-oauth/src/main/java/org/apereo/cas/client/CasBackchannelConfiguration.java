@@ -22,6 +22,6 @@ public class CasBackchannelConfiguration extends CasConfiguration {
 
     @Override
     public TicketValidator retrieveTicketValidator(final WebContext context) {
-        return super.retrieveTicketValidator(context);
+        return new CasBackchannelTicketValidator(cas);
     }
 }
