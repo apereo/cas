@@ -3,12 +3,12 @@ package org.apereo.cas.audit.spi;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.Date;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link BaseAuditConfigurationTests}.
