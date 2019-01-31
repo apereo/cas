@@ -1,4 +1,7 @@
 description = "Apereo CAS Cookie Management Core"
+ext {
+    useJunit5 = true
+}
 dependencies {
     implementation libraries.thymeleaf
     
