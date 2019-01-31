@@ -70,6 +70,7 @@ By default, no merging strategy takes place, which means the principal attribute
 attributes from the source are always returned. But any of the following merging strategies may be a suitable option:
 
 #### Merge
+
 Attributes with the same name are merged into multi-valued lists.
 
 For example:

@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.services.ChainingAttributeReleasePolicyTests;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicyTests;
 import org.apereo.cas.services.GroovyScriptAttributeReleasePolicyTests;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyTests;
@@ -27,7 +28,8 @@ import org.junit.runners.Suite;
     ReturnMappedAttributeReleasePolicyTests.class,
     ReturnRestfulAttributeReleasePolicyTests.class,
     ScriptedRegisteredServiceAttributeReleasePolicyTests.class,
-    ReturnAllowedAttributeReleasePolicyTests.class
+    ReturnAllowedAttributeReleasePolicyTests.class,
+    ChainingAttributeReleasePolicyTests.class
 })
 public class AllAuthenticationAttributesTestsSuite {
 }

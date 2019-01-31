@@ -808,7 +808,7 @@ and their results are cached and merged.
 # cas.authn.attributeRepository.expirationTime=30
 # cas.authn.attributeRepository.expirationTimeUnit=MINUTES
 # cas.authn.attributeRepository.maximumCacheSize=10000
-# cas.authn.attributeRepository.merger=REPLACE|ADD|MERGE
+# cas.authn.attributeRepository.merger=REPLACE|ADD|MULTIVALUED
 ```
 
 <div class="alert alert-info"><strong>Remember This</strong><p>Note that in certain cases,
