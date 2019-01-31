@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.client.CasBackchannelConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.oauth.OAuthAccessTokenProperties;
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
@@ -180,7 +181,9 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
 
     @Bean
     public Config oauthSecConfig() {
-        final CasConfiguration cfg = new CasConfiguration(casProperties.getServer().getLoginUrl());
+        final CasConfiguration cfg = new CasBackchannelConfiguration(
+            casProperties.getServer().getLoginUrl(),
+            centralAuthenticationService);
         final CasClient oauthCasClient = new CasClient(cfg);
         oauthCasClient.setRedirectActionBuilder(webContext -> oauthCasClientRedirectActionBuilder().build(oauthCasClient, webContext));
         oauthCasClient.setName(Authenticators.CAS_OAUTH_CLIENT);
