@@ -24,6 +24,7 @@ import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.authenticator.OAuth20ClientAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuth20UserAuthenticator;
+import org.apereo.cas.support.oauth.profile.ClientIdAwareProfileManager;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
@@ -201,6 +202,7 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
         final Config config = new Config(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()),
             oauthCasClient, basicAuthClient, directFormClient, userFormClient);
         config.setSessionStore(new J2ESessionStore());
+        config.setProfileManagerFactory(ClientIdAwareProfileManager::new);
         return config;
     }
 
