@@ -2,16 +2,12 @@ package org.apereo.cas.configuration.support;
 
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link CasConfigurationJasyptCipherExecutorTests}.
@@ -20,12 +16,6 @@ import static org.junit.Assert.*;
  * @since 5.2.0
  */
 public class CasConfigurationJasyptCipherExecutorTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     static {
         System.setProperty(CasConfigurationJasyptCipherExecutor.JasyptEncryptionParameters.PASSWORD.getPropertyName(), "P@$$w0rd");
     }
@@ -35,7 +25,7 @@ public class CasConfigurationJasyptCipherExecutorTests {
 
     private CasConfigurationJasyptCipherExecutor jasypt;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         this.jasypt = new CasConfigurationJasyptCipherExecutor(this.environment);
     }
