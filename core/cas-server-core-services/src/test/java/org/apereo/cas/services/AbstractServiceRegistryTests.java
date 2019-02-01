@@ -93,7 +93,7 @@ public abstract class AbstractServiceRegistryTests {
     @MethodSource(GET_PARAMETERS)
     public void verifySave(final Class<? extends RegisteredService> registeredServiceClass) {
         val svc = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
-        assertEquals(serviceRegistry.save(svc).getServiceId(), svc.getServiceId());
+        assertEquals(serviceRegistry.save(svc).getServiceId(), svc.getServiceId(), registeredServiceClass.getName());
     }
 
     @ParameterizedTest
@@ -103,7 +103,7 @@ public abstract class AbstractServiceRegistryTests {
             val svc = buildRegisteredServiceInstance(i, registeredServiceClass);
             this.serviceRegistry.save(svc);
             val svc2 = this.serviceRegistry.findServiceByExactServiceName(svc.getName());
-            assertNotNull(svc2);
+            assertNotNull(svc2, registeredServiceClass.getName());
             this.serviceRegistry.delete(svc2);
         }
         assertTrue(this.serviceRegistry.load().isEmpty());
@@ -120,12 +120,12 @@ public abstract class AbstractServiceRegistryTests {
     public void verifySavingServices(final Class<? extends RegisteredService> registeredServiceClass) {
         this.serviceRegistry.save(buildRegisteredServiceInstance(100, registeredServiceClass));
         val services = this.serviceRegistry.load();
-        assertEquals(1, services.size());
-        assertEquals(1, serviceRegistry.size());
+        assertEquals(1, services.size(), registeredServiceClass.getName());
+        assertEquals(1, serviceRegistry.size(), registeredServiceClass.getName());
         this.serviceRegistry.save(buildRegisteredServiceInstance(101, registeredServiceClass));
         val services2 = this.serviceRegistry.load();
-        assertEquals(2, services2.size());
-        assertEquals(2, serviceRegistry.size());
+        assertEquals(2, services2.size(), registeredServiceClass.getName());
+        assertEquals(2, serviceRegistry.size(), registeredServiceClass.getName());
     }
 
     @ParameterizedTest
@@ -135,7 +135,7 @@ public abstract class AbstractServiceRegistryTests {
         val services = this.serviceRegistry.load();
         assertFalse(services.isEmpty());
         val rs = (AbstractRegisteredService) this.serviceRegistry.findServiceById(services.stream().findFirst().orElse(null).getId());
-        assertNotNull(rs);
+        assertNotNull(rs, registeredServiceClass.getName());
         rs.setEvaluationOrder(9999);
         rs.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
         rs.setName("Another Test Service");
@@ -143,7 +143,7 @@ public abstract class AbstractServiceRegistryTests {
         rs.setServiceId("https://hello.world");
         rs.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("https"));
         rs.setAttributeReleasePolicy(new ReturnAllowedAttributeReleasePolicy());
-        assertNotNull(this.serviceRegistry.save(rs));
+        assertNotNull(this.serviceRegistry.save(rs), registeredServiceClass.getName());
 
         val rs3 = this.serviceRegistry.findServiceById(rs.getId());
         assertEquals(rs3.getName(), rs.getName());
@@ -201,10 +201,10 @@ public abstract class AbstractServiceRegistryTests {
         r.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(false, expirationDate));
         val r2 = this.serviceRegistry.save(r);
         val svc = this.serviceRegistry.findServiceByExactServiceName(r2.getName());
-        assertNotNull(svc);
+        assertNotNull(svc, "1: " + registeredServiceClass.getName());
         DateTimeUtils.setCurrentMillisFixed(System.currentTimeMillis() + 2000);
         val svc2 = this.serviceRegistry.findServiceByExactServiceName(r2.getName());
-        assertNotNull(svc2);
+        assertNotNull(svc2, "2: " + registeredServiceClass.getName());
     }
 
     @ParameterizedTest
