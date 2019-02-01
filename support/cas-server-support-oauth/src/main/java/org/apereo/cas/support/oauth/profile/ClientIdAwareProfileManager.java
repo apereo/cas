@@ -36,7 +36,7 @@ public class ClientIdAwareProfileManager<U extends CommonProfile> extends Profil
     protected LinkedHashMap<String, U> retrieveAll(final boolean readFromSession) {
         return super.retrieveAll(readFromSession).entrySet().stream().filter(
             it -> it.getValue()
-                .getAttribute(SESSION_CLIENT_ID)
+                .getAuthenticationAttribute(SESSION_CLIENT_ID)
                 .equals(context.getRequestParameter(REQUEST_CLIENT_ID)))
             .collect(Collectors.toMap(
                 Map.Entry::getKey,
@@ -49,7 +49,7 @@ public class ClientIdAwareProfileManager<U extends CommonProfile> extends Profil
 
     @Override
     public void save(final boolean saveInSession, final U profile, final boolean multiProfile) {
-        profile.addAttribute(SESSION_CLIENT_ID, context.getRequestParameter(REQUEST_CLIENT_ID));
+        profile.addAuthenticationAttribute(SESSION_CLIENT_ID, context.getRequestParameter(REQUEST_CLIENT_ID));
         super.save(saveInSession, profile, multiProfile);
     }
 }
