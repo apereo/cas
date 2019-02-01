@@ -1,23 +1,19 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.category.CouchbaseCategory;
 import org.apereo.cas.config.CouchbaseServiceRegistryConfiguration;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import lombok.SneakyThrows;
-import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
-
-import java.util.Collection;
-import java.util.Collections;
 
 /**
  * This is {@link CouchbaseServiceRegistryTests}.
@@ -34,23 +30,15 @@ import java.util.Collections;
         "cas.serviceRegistry.couchbase.password=password",
         "cas.serviceRegistry.couchbase.bucket=testbucket"
     })
-@Category(CouchbaseCategory.class)
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
-@RunWith(Parameterized.class)
+@Tag("Couchbase")
+@EnabledIfContinuousIntegration
+@ResourceLock("couchbase")
+@Execution(ExecutionMode.SAME_THREAD)
 public class CouchbaseServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired
     @Qualifier("couchbaseServiceRegistry")
     private ServiceRegistry serviceRegistry;
-
-    public CouchbaseServiceRegistryTests(final Class<? extends RegisteredService> registeredServiceClass) {
-        super(registeredServiceClass);
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() {
-        return Collections.singletonList(RegexRegisteredService.class);
-    }
 
     @Override
     public ServiceRegistry getNewServiceRegistry() {
