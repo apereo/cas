@@ -84,7 +84,7 @@ import java.util.Collection;
 })
 @DirtiesContext
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 27017)
-public class MongoDbTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
+public class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
     @Qualifier("ticketRegistry")

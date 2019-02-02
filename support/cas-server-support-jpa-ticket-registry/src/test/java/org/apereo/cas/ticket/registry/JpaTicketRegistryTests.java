@@ -71,7 +71,7 @@ import java.util.Collections;
 })
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @Transactional(transactionManager = "ticketTransactionManager", isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-public class JpaTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
+public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
     @Qualifier("ticketRegistry")

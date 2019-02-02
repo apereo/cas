@@ -48,7 +48,7 @@ import java.util.Collection;
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
-public class RedisServerTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
+public class RedisServerTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
     @Qualifier("ticketRegistry")

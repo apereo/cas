@@ -4,7 +4,7 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,7 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test case to test the DefaultTicketRegistry based on test cases to test all
@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class
 })
-public class DefaultTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
+public class DefaultTicketRegistryTests extends BaseTicketRegistryTests {
 
     public DefaultTicketRegistryTests(final boolean useEncryption) {
         super(useEncryption);

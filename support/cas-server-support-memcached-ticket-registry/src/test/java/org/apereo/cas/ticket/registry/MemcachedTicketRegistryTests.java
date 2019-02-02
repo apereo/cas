@@ -60,7 +60,7 @@ import static org.junit.Assert.*;
 })
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 @Category(MemcachedCategory.class)
-public class MemcachedTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
+public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry registry;

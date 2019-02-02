@@ -71,7 +71,7 @@ import java.util.Collection;
         "cas.ticket.registry.couchDb.password=password"
     })
 @Category(CouchDbCategory.class)
-public class CouchDbTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
+public class CouchDbTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
     @Qualifier("ticketRegistry")
