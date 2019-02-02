@@ -42,9 +42,9 @@ public class CookieUtils {
     }
 
     /**
-     * Gets cookie from request.
+     * Gets cookie from request or empty.
      *
-     * @param cookieName the cookie name
+     * @param cookieName the cookie name in case insensitive mode
      * @param request    the request
      * @return the cookie from request
      */
