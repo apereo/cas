@@ -49,6 +49,6 @@ currentChangeSetAffectsDependencies() {
 }
 
 currentChangeSetAffectsSnapshots() {
-    currentChangeSetContains "\.(java|groovy|yml|properties|xml|json)"
+    currentChangeSetContains "\.(java|groovy|yml|properties|xml|json|gradle)"
     return `(expr "$?" + 0)`
 }
