@@ -76,6 +76,13 @@ public class SSOSamlPostProfileHandlerEndpoint extends BaseCasActuatorEndpoint {
         this.saml20ObjectBuilder = saml20ObjectBuilder;
     }
 
+    /**
+     * Produce response entity.
+     *
+     * @param request  the request
+     * @param response the response
+     * @return the response entity
+     */
     @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
     @ResponseBody
     public ResponseEntity<Object> produce(final HttpServletRequest request, final HttpServletResponse response) {
