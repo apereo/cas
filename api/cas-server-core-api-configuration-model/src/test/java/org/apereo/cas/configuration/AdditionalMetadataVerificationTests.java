@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
@@ -28,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0
  */
 @SpringBootTest(classes = AopAutoConfiguration.class)
-@Slf4j
 public class AdditionalMetadataVerificationTests {
 
     @Autowired
@@ -39,11 +37,14 @@ public class AdditionalMetadataVerificationTests {
      * Spring boot {@link org.springframework.boot.context.properties.migrator.PropertiesMigrationListener}
      * will prevent startup if property names aren't valid.
      * It may be that some replacement properties need array syntax but none should contain [0].
+     *
      * @throws IOException if additional property file is missing
      */
     @Test
     public void verifyMetaData() throws IOException {
-        val additionalMetadataJsonFile = resourceLoader.getResource("META-INF/additional-spring-configuration-metadata.json");
+        val resource = CasConfigurationProperties.class.getClassLoader().getResource("META-INF/additional-spring-configuration-metadata.json");
+        assertNotNull(resource);
+        val additionalMetadataJsonFile = resourceLoader.getResource(resource.toString());
         val additionalProps = getProperties(additionalMetadataJsonFile);
         for (val prop : additionalProps) {
             try {
@@ -62,7 +63,7 @@ public class AdditionalMetadataVerificationTests {
         }
     }
 
-    private Set<ConfigurationMetadataProperty> getProperties(final Resource jsonFile) throws IOException {
+    private static Set<ConfigurationMetadataProperty> getProperties(final Resource jsonFile) throws IOException {
         val mapper = new ObjectMapper().findAndRegisterModules();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
