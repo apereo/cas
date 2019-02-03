@@ -81,7 +81,8 @@ public class SamlProfileSamlSoap11FaultResponseBuilder extends SamlProfileSamlSo
         val header = newSoapObject(Header.class);
         envelope.setHeader(header);
         envelope.setBody(body);
-        encodeFinalResponse(request, response, service, adaptor, envelope, binding, authnRequest, casAssertion);
+        encodeFinalResponse(request, response, service, adaptor, envelope,
+            binding, authnRequest, casAssertion, messageContext);
         return envelope;
     }
 }

@@ -50,5 +50,8 @@ public interface SamlProtocolConstants {
      */
     String PARAMETER_ENTITY_ID = "entityId";
 
-
+    /**
+     * Indicate whether the response should be encoded.
+     */
+    String PARAMETER_ENCODE_RESPONSE = "encodeSamlResponse";
 }

@@ -167,7 +167,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @ConditionalOnEnabledEndpoint
     public GoogleAuthenticatorTokenCredentialRepositoryEndpoint googleAuthenticatorTokenCredentialRepositoryEndpoint() {
-        return new GoogleAuthenticatorTokenCredentialRepositoryEndpoint(googleAuthenticatorAccountRegistry());
+        return new GoogleAuthenticatorTokenCredentialRepositoryEndpoint(casProperties, googleAuthenticatorAccountRegistry());
     }
 
     @ConditionalOnMissingBean(name = "googleAuthenticatorAccountCipherExecutor")

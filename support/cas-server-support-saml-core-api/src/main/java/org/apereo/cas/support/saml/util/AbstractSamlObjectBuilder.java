@@ -78,7 +78,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * The Config bean.
      */
     @Getter
-    protected final OpenSamlConfigBean configBean;
+    protected final OpenSamlConfigBean openSamlConfigBean;
 
     /**
      * Sign SAML response.

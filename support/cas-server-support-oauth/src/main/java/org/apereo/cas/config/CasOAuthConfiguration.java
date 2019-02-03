@@ -759,6 +759,6 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @Bean
     @ConditionalOnEnabledEndpoint
     public OAuth20TokenManagementEndpoint oAuth20TokenManagementEndpoint() {
-        return new OAuth20TokenManagementEndpoint(ticketRegistry.getIfAvailable());
+        return new OAuth20TokenManagementEndpoint(casProperties, ticketRegistry.getIfAvailable());
     }
 }

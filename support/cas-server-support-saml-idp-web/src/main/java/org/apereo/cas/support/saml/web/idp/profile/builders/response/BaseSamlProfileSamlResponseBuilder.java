@@ -14,10 +14,12 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSig
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.velocity.app.VelocityEngine;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.messaging.context.ScratchContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Issuer;
@@ -84,20 +86,22 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
             casAssertion, service, adaptor, binding, messageContext);
         val finalResponse = buildResponse(assertion, casAssertion, authnRequest,
             service, adaptor, request, response, binding, messageContext);
-        return encodeFinalResponse(request, response, service, adaptor, finalResponse, binding, authnRequest, casAssertion);
+        return encodeFinalResponse(request, response, service, adaptor, finalResponse,
+            binding, authnRequest, casAssertion, messageContext);
     }
 
     /**
      * Encode final response.
      *
-     * @param request       the request
-     * @param response      the response
-     * @param service       the service
-     * @param adaptor       the adaptor
-     * @param finalResponse the final response
-     * @param binding       the binding
-     * @param authnRequest  the authn request
-     * @param assertion     the assertion
+     * @param request        the request
+     * @param response       the response
+     * @param service        the service
+     * @param adaptor        the adaptor
+     * @param finalResponse  the final response
+     * @param binding        the binding
+     * @param authnRequest   the authn request
+     * @param assertion      the assertion
+     * @param messageContext the message context
      * @return the response
      */
     protected T encodeFinalResponse(final HttpServletRequest request,
@@ -107,10 +111,18 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
                                     final T finalResponse,
                                     final String binding,
                                     final RequestAbstractType authnRequest,
-                                    final Object assertion) {
-        val relayState = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
-        LOGGER.trace("RelayState is [{}]", relayState);
-        return encode(service, finalResponse, response, request, adaptor, relayState, binding, authnRequest, assertion);
+                                    final Object assertion,
+                                    final MessageContext messageContext) {
+
+        val scratch = messageContext.getSubcontext(ScratchContext.class, true);
+        val encodeResponse = (Boolean) scratch.getMap().getOrDefault(SamlProtocolConstants.PARAMETER_ENCODE_RESPONSE, Boolean.TRUE);
+
+        if (encodeResponse) {
+            val relayState = request != null ? request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE) : StringUtils.EMPTY;
+            LOGGER.trace("RelayState is [{}]", relayState);
+            return encode(service, finalResponse, response, request, adaptor, relayState, binding, authnRequest, assertion);
+        }
+        return finalResponse;
     }
 
     /**

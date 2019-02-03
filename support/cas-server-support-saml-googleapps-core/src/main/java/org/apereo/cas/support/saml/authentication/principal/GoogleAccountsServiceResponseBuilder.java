@@ -130,7 +130,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
 
         response.getAssertions().add(assertion);
 
-        val result = SamlUtils.transformSamlObject(this.samlObjectBuilder.getConfigBean(), response, true).toString();
+        val result = SamlUtils.transformSamlObject(this.samlObjectBuilder.getOpenSamlConfigBean(), response, true).toString();
         LOGGER.debug("Generated Google SAML response: [{}]", result);
         return result;
     }

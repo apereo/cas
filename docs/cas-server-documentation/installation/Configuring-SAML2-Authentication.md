@@ -109,6 +109,14 @@ your CAS overlay to be able to resolve dependencies:
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#saml-idp).
 
+### Administrative Endpoints
+
+The following endpoints are provided by CAS:
+ 
+| Endpoint          | Description
+|-------------------|-------------------------------------------------------------------------------------------------------
+| `samlPostProfileResponse` | Obtain a SAML2 response payload by supplying a `username`, `password` and `entityId` as parameters.
+
 ### SAML Services
 
 SAML relying parties and services must be registered within the CAS service registry similar to the following example:

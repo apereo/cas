@@ -1,6 +1,8 @@
 package org.apereo.cas.consent;
 
-import lombok.RequiredArgsConstructor;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.web.BaseCasActuatorEndpoint;
+
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
@@ -21,10 +23,17 @@ import java.util.Map;
  */
 @Slf4j
 @Endpoint(id = "attributeConsent", enableByDefault = false)
-@RequiredArgsConstructor
-public class AttributeConsentReportEndpoint {
+public class AttributeConsentReportEndpoint extends BaseCasActuatorEndpoint {
     private final ConsentRepository consentRepository;
     private final ConsentEngine consentEngine;
+
+    public AttributeConsentReportEndpoint(final CasConfigurationProperties casProperties,
+                                          final ConsentRepository consentRepository,
+                                          final ConsentEngine consentEngine) {
+        super(casProperties);
+        this.consentRepository = consentRepository;
+        this.consentEngine = consentEngine;
+    }
 
     /**
      * Consent decisions collection.

@@ -69,7 +69,6 @@ public class SamlProfileSingleLogoutMessageCreator extends AbstractSaml20ObjectB
     private final transient SOAPObjectBuilder<Envelope> envelopeBuilder;
     private final transient SOAPObjectBuilder<Body> bodyBuilder;
 
-    @SuppressWarnings("unchecked")
     public SamlProfileSingleLogoutMessageCreator(final OpenSamlConfigBean configBean,
                                                  final ServicesManager servicesManager,
                                                  final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
@@ -134,7 +133,7 @@ public class SamlProfileSingleLogoutMessageCreator extends AbstractSaml20ObjectB
         val builder = SingleLogoutMessage.<LogoutRequest>builder();
         return builder
             .message(logoutRequest)
-            .payload(SamlUtils.transformSamlObject(this.configBean, message).toString())
+            .payload(SamlUtils.transformSamlObject(this.openSamlConfigBean, message).toString())
             .build();
     }
 }

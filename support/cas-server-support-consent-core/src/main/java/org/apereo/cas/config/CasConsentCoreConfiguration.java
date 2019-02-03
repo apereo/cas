@@ -111,6 +111,6 @@ public class CasConsentCoreConfiguration implements AuditTrailRecordResolutionPl
     @Bean
     @ConditionalOnEnabledEndpoint
     public AttributeConsentReportEndpoint attributeConsentReportEndpoint() {
-        return new AttributeConsentReportEndpoint(consentRepository(), consentEngine());
+        return new AttributeConsentReportEndpoint(casProperties, consentRepository(), consentEngine());
     }
 }

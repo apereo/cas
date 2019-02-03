@@ -1,12 +1,13 @@
 package org.apereo.cas.token;
 
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.token.cipher.RegisteredServiceTokenTicketCipherExecutor;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -26,11 +27,18 @@ import java.security.spec.RSAPublicKeySpec;
  * @since 6.1.0
  */
 @Slf4j
-@RequiredArgsConstructor
 @Endpoint(id = "jwtTicketSigningPublicKey", enableByDefault = false)
-public class JWTTokenCipherSigningPublicKeyEndpoint {
+public class JWTTokenCipherSigningPublicKeyEndpoint extends BaseCasActuatorEndpoint {
     private final CipherExecutor tokenCipherExecutor;
     private final ServicesManager servicesManager;
+
+    public JWTTokenCipherSigningPublicKeyEndpoint(final CasConfigurationProperties casProperties,
+                                                  final CipherExecutor tokenCipherExecutor,
+                                                  final ServicesManager servicesManager) {
+        super(casProperties);
+        this.tokenCipherExecutor = tokenCipherExecutor;
+        this.servicesManager = servicesManager;
+    }
 
     /**
      * Fetch public key.

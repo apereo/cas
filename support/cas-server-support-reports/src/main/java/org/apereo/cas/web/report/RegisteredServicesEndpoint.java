@@ -3,7 +3,7 @@ package org.apereo.cas.web.report;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.web.BaseCasMvcEndpoint;
+import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -21,7 +21,7 @@ import java.util.Collection;
  * @since 5.2.0
  */
 @Endpoint(id = "registeredServices", enableByDefault = false)
-public class RegisteredServicesEndpoint extends BaseCasMvcEndpoint {
+public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
     private final ServicesManager servicesManager;
 
     /**

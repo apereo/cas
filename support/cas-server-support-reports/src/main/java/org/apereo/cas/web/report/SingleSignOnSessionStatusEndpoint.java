@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@RestControllerEndpoint(id = "sso")
+@RestControllerEndpoint(id = "sso", enableByDefault = false)
 @RequiredArgsConstructor
 @Slf4j
 public class SingleSignOnSessionStatusEndpoint {

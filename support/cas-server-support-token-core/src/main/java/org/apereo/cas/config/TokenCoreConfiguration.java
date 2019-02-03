@@ -97,6 +97,6 @@ public class TokenCoreConfiguration {
     @Bean
     @ConditionalOnEnabledEndpoint
     public JWTTokenCipherSigningPublicKeyEndpoint jwtTokenCipherSigningPublicKeyEndpoint() {
-        return new JWTTokenCipherSigningPublicKeyEndpoint(tokenCipherExecutor(), this.servicesManager.getIfAvailable());
+        return new JWTTokenCipherSigningPublicKeyEndpoint(casProperties, tokenCipherExecutor(), this.servicesManager.getIfAvailable());
     }
 }

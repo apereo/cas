@@ -206,7 +206,6 @@ public class OAuth20IntrospectionEndpointController extends BaseOAuth20Controlle
         if (isAuthenticationFailure) {
             headers.add(HttpHeaders.WWW_AUTHENTICATE, "Basic");
         }
-        @SuppressWarnings("unchecked")
         val result = (ResponseEntity<OAuth20IntrospectionAccessTokenResponse>) new ResponseEntity(value, headers, HttpStatus.UNAUTHORIZED);
         return result;
     }
@@ -221,7 +220,6 @@ public class OAuth20IntrospectionEndpointController extends BaseOAuth20Controlle
         val map = new LinkedMultiValueMap<String, String>(1);
         map.add(OAuth20Constants.ERROR, code);
         val value = OAuth20Utils.toJson(map);
-        @SuppressWarnings("unchecked")
         val result = (ResponseEntity<OAuth20IntrospectionAccessTokenResponse>) new ResponseEntity(value, HttpStatus.BAD_REQUEST);
         return result;
     }

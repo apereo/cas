@@ -122,7 +122,6 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
      * @return tickets
      */
     @Override
-    @SuppressWarnings("unchecked")
     public Stream<? extends Ticket> getTicketsStream() {
         return this.ticketCatalog.findAll()
             .stream()

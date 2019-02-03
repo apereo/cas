@@ -81,7 +81,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
                                                final HttpServletRequest request) throws SamlException {
         val assertion = Assertion.class.cast(casAssertion);
         val authenticationMethod = this.authnContextClassRefBuilder.build(assertion, authnRequest, adaptor, service);
-        var id = CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET);
+        var id = request != null ? CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET) : StringUtils.EMPTY;
         if (StringUtils.isBlank(id)) {
             LOGGER.warn("Unable to locate service ticket as the session index; Generating random identifier instead...");
             id = '_' + String.valueOf(RandomUtils.getNativeInstance().nextLong());
