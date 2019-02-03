@@ -1,9 +1,11 @@
 package org.apereo.cas.support.events.web;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
+import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
-import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 
@@ -16,10 +18,16 @@ import java.util.Collection;
  * @since 5.3.0
  */
 
-@RequiredArgsConstructor
+@Slf4j
 @Endpoint(id = "events", enableByDefault = false)
-public class CasEventsReportEndpoint {
+public class CasEventsReportEndpoint extends BaseCasActuatorEndpoint {
     private final CasEventRepository eventRepository;
+
+    public CasEventsReportEndpoint(final CasConfigurationProperties casProperties,
+                                   final CasEventRepository eventRepository) {
+        super(casProperties);
+        this.eventRepository = eventRepository;
+    }
 
     /**
      * Collect CAS events.

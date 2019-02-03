@@ -11,7 +11,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.DefaultAssertionBuilder;
-import org.apereo.cas.web.BaseCasMvcEndpoint;
+import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import lombok.val;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -27,7 +27,7 @@ import java.util.Map;
  * @since 5.0.0
  */
 @Endpoint(id = "releaseAttributes", enableByDefault = false)
-public class CasReleaseAttributesReportEndpoint extends BaseCasMvcEndpoint {
+public class CasReleaseAttributesReportEndpoint extends BaseCasActuatorEndpoint {
     private final ServicesManager servicesManager;
     private final AuthenticationSystemSupport authenticationSystemSupport;
     private final ServiceFactory<WebApplicationService> serviceFactory;

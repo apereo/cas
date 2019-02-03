@@ -10,7 +10,7 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.web.BaseCasMvcEndpoint;
+import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -39,7 +39,7 @@ import java.util.stream.StreamSupport;
  */
 @Slf4j
 @Endpoint(id = "samlIdPRegisteredServiceMetadataCache", enableByDefault = false)
-public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasMvcEndpoint {
+public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasActuatorEndpoint {
     private final SamlRegisteredServiceCachingMetadataResolver cachingMetadataResolver;
     private final ServicesManager servicesManager;
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;

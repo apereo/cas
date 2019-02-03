@@ -50,7 +50,6 @@ public class Assertions {
      * @param <T> Type of exception to be expected.
      * @return Exception thrown in assertion process.
      */
-    @SuppressWarnings("unchecked")
     public static <T extends Throwable> T assertThrowsOrNot(final T expected, final Executable executable) {
         if (expected == null) {
             assertDoesNotThrow(executable);
@@ -67,7 +66,6 @@ public class Assertions {
      * @param <T> Type of exception to be expected.
      * @return Exception thrown in assertion process.
      */
-    @SuppressWarnings("unchecked")
     public static <T extends Throwable> T assertThrowsOrNot(final T expected, final Executable executable, final String message) {
         if (expected == null) {
             assertDoesNotThrow(executable, message);
@@ -84,7 +82,6 @@ public class Assertions {
      * @param <T> Type of exception to be expected.
      * @return Exception thrown in assertion process.
      */
-    @SuppressWarnings("unchecked")
     public static <T extends Throwable> T assertThrowsOrNot(final T expected, final Executable executable,
                                                        final Supplier<String> messageSupplier) {
         if (expected == null) {

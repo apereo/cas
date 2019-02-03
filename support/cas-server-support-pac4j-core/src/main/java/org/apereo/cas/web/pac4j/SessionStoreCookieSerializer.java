@@ -19,7 +19,6 @@ public class SessionStoreCookieSerializer extends AbstractJacksonBackedStringSer
         super(new MinimalPrettyPrinter());
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected Class<Map<String, Object>> getTypeToSerialize() {
         return (Class<Map<String, Object>>) (Class<?>) Map.class;

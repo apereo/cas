@@ -4,7 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.io.TemporaryFileSystemResource;
-import org.apereo.cas.web.BaseCasMvcEndpoint;
+import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import lombok.val;
 import org.jooq.lambda.Unchecked;
@@ -30,7 +30,7 @@ import java.util.HashMap;
  * @since 6.0.0
  */
 @Endpoint(id = "exportRegisteredServices", enableByDefault = false)
-public class ExportRegisteredServicesEndpoint extends BaseCasMvcEndpoint {
+public class ExportRegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
     private final ServicesManager servicesManager;
 
     /**

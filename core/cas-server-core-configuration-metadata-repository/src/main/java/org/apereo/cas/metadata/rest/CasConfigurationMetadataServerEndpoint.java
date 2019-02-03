@@ -1,10 +1,11 @@
 package org.apereo.cas.metadata.rest;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.RelaxedPropertyNames;
 import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 import org.apereo.cas.util.RegexUtils;
+import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
-import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -26,9 +27,14 @@ import java.util.stream.StreamSupport;
  * @since 5.2.0
  */
 @Endpoint(id = "configurationMetadata", enableByDefault = false)
-@RequiredArgsConstructor
-public class CasConfigurationMetadataServerEndpoint {
+public class CasConfigurationMetadataServerEndpoint extends BaseCasActuatorEndpoint {
     private final CasConfigurationMetadataRepository repository;
+
+    public CasConfigurationMetadataServerEndpoint(final CasConfigurationProperties casProperties,
+                                                  final CasConfigurationMetadataRepository repository) {
+        super(casProperties);
+        this.repository = repository;
+    }
 
     /**
      * Find all properties.
