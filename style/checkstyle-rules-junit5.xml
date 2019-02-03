@@ -568,7 +568,8 @@
             <property name="separateLineBetweenGroups" value="false"/>
         </module>
         <module name="ImportControl">
-            <property name="file" value="${checkstyle.importcontrol.file}"/>
+            <property name="file" value="${checkstyle.importcontrol.file.junit5}"/>
+            <property name="severity" value="error"/>
         </module>
     </module>
 
