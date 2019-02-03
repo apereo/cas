@@ -146,7 +146,7 @@ layout: null
     *   [Environments](/$version/services/Configuring-Service-Environments.html)
     *   [Replication](/$version/services/Configuring-Service-Replication.html)
     *   [Storage](#persistencesvcreg)
-        *   [InMemory XML](/$version/services/InMemory-Service-Management.html)
+        *   [InMemory](/$version/services/InMemory-Service-Management.html)
         *   [JSON](/$version/services/JSON-Service-Management.html)
         *   [YAML](/$version/services/YAML-Service-Management.html)
         *   [Git](/$version/services/Git-Service-Management.html)
