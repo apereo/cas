@@ -84,7 +84,7 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
         val envelope = newSoapObject(Envelope.class);
         envelope.setHeader(header);
         envelope.setBody(body);
-        SamlUtils.logSamlObject(this.configBean, envelope);
+        SamlUtils.logSamlObject(this.openSamlConfigBean, envelope);
         return envelope;
     }
 

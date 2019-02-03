@@ -43,9 +43,7 @@ public class AdditionalMetadataVerificationTests {
      */
     @Test
     public void verifyMetaData() throws IOException {
-        val additionalMetadataJsonFile = resourceLoader.getResource(
-            CasConfigurationProperties.class.getClassLoader().getResource("META-INF/additional-spring-configuration-metadata.json").toString()
-        );
+        val additionalMetadataJsonFile = resourceLoader.getResource("META-INF/additional-spring-configuration-metadata.json");
         val additionalProps = getProperties(additionalMetadataJsonFile);
         for (val prop : additionalProps) {
             try {
@@ -64,7 +62,6 @@ public class AdditionalMetadataVerificationTests {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private Set<ConfigurationMetadataProperty> getProperties(final Resource jsonFile) throws IOException {
         val mapper = new ObjectMapper().findAndRegisterModules();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
