@@ -6,14 +6,14 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredService;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**

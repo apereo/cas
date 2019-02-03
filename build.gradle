@@ -354,7 +354,8 @@ subprojects {
         checkstyle {
             configProperties = [
                     "checkstyle.suppressions.file": new File(rootDir, "style/checkstyle-suppressions.xml"),
-                    "checkstyle.importcontrol.file": new File(rootDir, "style/import-control.xml")]
+                    "checkstyle.importcontrol.file": new File(rootDir, "style/import-control.xml"),
+                    "checkstyle.importcontrol.file.junit5": new File(rootDir, "style/import-control-junit5.xml")]
             ignoreFailures false
             showViolations true
             toolVersion "${checkstyleVersion}"
