@@ -6,7 +6,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.ISOStandardDateFormat;
-import org.apereo.cas.web.BaseCasMvcEndpoint;
+import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import lombok.Getter;
 import lombok.ToString;
@@ -36,7 +36,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @ToString
 @Getter
 @Endpoint(id = "ssoSessions", enableByDefault = false)
-public class SingleSignOnSessionsEndpoint extends BaseCasMvcEndpoint {
+public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
 
     private static final String STATUS = "status";
 

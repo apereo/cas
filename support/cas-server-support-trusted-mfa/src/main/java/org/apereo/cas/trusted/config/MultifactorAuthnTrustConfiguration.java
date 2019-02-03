@@ -127,8 +127,7 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
     @Bean
     @ConditionalOnEnabledEndpoint
     public MultifactorTrustedDevicesReportEndpoint mfaTrustedDevicesReportEndpoint() {
-        return new MultifactorTrustedDevicesReportEndpoint(mfaTrustEngine(),
-            casProperties.getAuthn().getMfa().getTrusted());
+        return new MultifactorTrustedDevicesReportEndpoint(casProperties, mfaTrustEngine());
     }
 
 }

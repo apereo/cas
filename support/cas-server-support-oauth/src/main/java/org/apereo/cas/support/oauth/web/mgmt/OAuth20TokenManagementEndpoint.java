@@ -1,11 +1,12 @@
 package org.apereo.cas.support.oauth.web.mgmt;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
@@ -24,13 +25,18 @@ import java.util.stream.Collectors;
  * @since 6.0.0
  */
 @Endpoint(id = "oauthTokens", enableByDefault = false)
-@RequiredArgsConstructor
 @Slf4j
-public class OAuth20TokenManagementEndpoint {
+public class OAuth20TokenManagementEndpoint extends BaseCasActuatorEndpoint {
     /**
      * The Ticket registry.
      */
     private final TicketRegistry ticketRegistry;
+
+    public OAuth20TokenManagementEndpoint(final CasConfigurationProperties casProperties,
+                                          final TicketRegistry ticketRegistry) {
+        super(casProperties);
+        this.ticketRegistry = ticketRegistry;
+    }
 
     /**
      * Gets access tokens.

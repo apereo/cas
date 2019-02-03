@@ -176,7 +176,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @ConditionalOnEnabledEndpoint
     public YubiKeyAccountRegistryEndpoint yubiKeyAccountRegistryEndpoint() {
-        return new YubiKeyAccountRegistryEndpoint(yubiKeyAccountRegistry());
+        return new YubiKeyAccountRegistryEndpoint(casProperties, yubiKeyAccountRegistry());
     }
 
     @Bean
