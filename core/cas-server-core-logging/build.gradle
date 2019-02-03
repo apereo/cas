@@ -1,4 +1,7 @@
 description = "Apereo CAS Core Logging"
+ext {
+    useJunit5 = true
+}
 dependencies {
     implementation project(":core:cas-server-core-logging-api")
     
