@@ -44,7 +44,7 @@ public class CasWebAppSecurityConfiguration implements WebMvcConfigurer {
     @ConditionalOnMissingBean(name = "casWebSecurityConfigurerAdapter")
     public WebSecurityConfigurerAdapter casWebSecurityConfigurerAdapter() {
         return new CasWebSecurityConfigurerAdapter(casProperties, securityProperties,
-            casWebSecurityExpressionHandler(), webEndpointProperties, pathMappedEndpoints.getIfAvailable());
+            webEndpointProperties, pathMappedEndpoints.getIfAvailable());
     }
 
     @Override
