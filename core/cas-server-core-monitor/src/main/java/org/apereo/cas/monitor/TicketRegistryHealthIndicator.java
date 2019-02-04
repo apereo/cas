@@ -16,7 +16,7 @@ import org.springframework.boot.actuate.health.Health;
  * @since 3.5.0
  */
 @RequiredArgsConstructor
-public class SessionMonitor extends AbstractHealthIndicator {
+public class TicketRegistryHealthIndicator extends AbstractHealthIndicator {
 
     /**
      * Ticket registry instance that exposes state info.
