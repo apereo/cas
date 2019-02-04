@@ -49,7 +49,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Unit test for {@link SessionMonitor} class that involves
+ * Unit test for {@link TicketRegistryHealthIndicator} class that involves
  * {@link JpaTicketRegistry}.
  *
  * @author Marvin S. Addison
@@ -107,7 +107,7 @@ public class SessionHealthIndicatorJpaTests {
     public void verifyObserveOkJpaTicketRegistry() {
         addTicketsToRegistry(jpaRegistry, 5, 5);
         assertEquals(30, jpaRegistry.getTickets().size());
-        val monitor = new SessionMonitor(jpaRegistry, -1, -1);
+        val monitor = new TicketRegistryHealthIndicator(jpaRegistry, -1, -1);
         val status = monitor.health();
         assertEquals(Status.UP, status.getStatus());
     }

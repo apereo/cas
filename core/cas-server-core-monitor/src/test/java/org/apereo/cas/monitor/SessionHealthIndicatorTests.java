@@ -22,7 +22,7 @@ import java.util.stream.IntStream;
 import static org.junit.Assert.*;
 
 /**
- * Unit test for {@link SessionMonitor} class.
+ * Unit test for {@link TicketRegistryHealthIndicator} class.
  *
  * @author Marvin S. Addison
  * @since 3.5.0
@@ -62,7 +62,7 @@ public class SessionHealthIndicatorTests {
     @Test
     public void verifyObserveOk() {
         addTicketsToRegistry(this.defaultRegistry, 5, 10);
-        val monitor = new SessionMonitor(defaultRegistry, -1, -1);
+        val monitor = new TicketRegistryHealthIndicator(defaultRegistry, -1, -1);
         val status = monitor.health();
         assertEquals(Status.UP, status.getStatus());
     }
@@ -70,7 +70,7 @@ public class SessionHealthIndicatorTests {
     @Test
     public void verifyObserveWarnSessionsExceeded() {
         addTicketsToRegistry(this.defaultRegistry, 10, 1);
-        val monitor = new SessionMonitor(defaultRegistry, 0, 5);
+        val monitor = new TicketRegistryHealthIndicator(defaultRegistry, 0, 5);
         val status = monitor.health();
         assertEquals("WARN", status.getStatus().getCode());
     }
@@ -78,7 +78,7 @@ public class SessionHealthIndicatorTests {
     @Test
     public void verifyObserveWarnServiceTicketsExceeded() {
         addTicketsToRegistry(this.defaultRegistry, 1, 10);
-        val monitor = new SessionMonitor(defaultRegistry, 5, 0);
+        val monitor = new TicketRegistryHealthIndicator(defaultRegistry, 5, 0);
         val status = monitor.health();
         assertEquals("WARN", status.getStatus().getCode());
     }
