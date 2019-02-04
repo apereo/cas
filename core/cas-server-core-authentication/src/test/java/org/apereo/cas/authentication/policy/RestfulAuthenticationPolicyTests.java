@@ -92,19 +92,19 @@ public class RestfulAuthenticationPolicyTests {
     @Test
     public void verifyPolicyFailsWithStatusCodes() {
         assertAll(() -> {
-            verifyPolicyFails(FailedLoginException.class, HttpStatus.UNAUTHORIZED);
-            verifyPolicyFails(AccountLockedException.class, HttpStatus.LOCKED);
-            verifyPolicyFails(AccountDisabledException.class, HttpStatus.METHOD_NOT_ALLOWED);
-            verifyPolicyFails(AccountDisabledException.class, HttpStatus.FORBIDDEN);
-            verifyPolicyFails(AccountNotFoundException.class, HttpStatus.NOT_FOUND);
-            verifyPolicyFails(AccountExpiredException.class, HttpStatus.PRECONDITION_FAILED);
-            verifyPolicyFails(AccountPasswordMustChangeException.class, HttpStatus.PRECONDITION_REQUIRED);
-            verifyPolicyFails(FailedLoginException.class, HttpStatus.INTERNAL_SERVER_ERROR);
+            assertPolicyFails(FailedLoginException.class, HttpStatus.UNAUTHORIZED);
+            assertPolicyFails(AccountLockedException.class, HttpStatus.LOCKED);
+            assertPolicyFails(AccountDisabledException.class, HttpStatus.METHOD_NOT_ALLOWED);
+            assertPolicyFails(AccountDisabledException.class, HttpStatus.FORBIDDEN);
+            assertPolicyFails(AccountNotFoundException.class, HttpStatus.NOT_FOUND);
+            assertPolicyFails(AccountExpiredException.class, HttpStatus.PRECONDITION_FAILED);
+            assertPolicyFails(AccountPasswordMustChangeException.class, HttpStatus.PRECONDITION_REQUIRED);
+            assertPolicyFails(FailedLoginException.class, HttpStatus.INTERNAL_SERVER_ERROR);
         });
     }
 
 
-    private void verifyPolicyFails(final Class<? extends Throwable> exceptionClass, final HttpStatus status) {
+    private void assertPolicyFails(final Class<? extends Throwable> exceptionClass, final HttpStatus status) {
         val restTemplate = new RestTemplate();
         val mockServer = newServer(restTemplate);
         val policy = newPolicy(restTemplate);
