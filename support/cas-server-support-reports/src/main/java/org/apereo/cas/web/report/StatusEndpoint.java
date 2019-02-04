@@ -5,6 +5,7 @@ import org.apereo.cas.util.CasVersion;
 import org.apereo.cas.util.InetAddressUtils;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -23,6 +24,7 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.5
  */
+@Slf4j
 @Endpoint(id = "status", enableByDefault = false)
 public class StatusEndpoint extends BaseCasActuatorEndpoint {
     private final HealthEndpoint healthEndpoint;
@@ -40,17 +42,25 @@ public class StatusEndpoint extends BaseCasActuatorEndpoint {
     @ReadOperation
     public Map<String, Object> handle() {
         val model = new LinkedHashMap<String, Object>();
-        val health = this.healthEndpoint.health();
-        val status = health.getStatus();
-
-        if (status.equals(Status.DOWN) || status.equals(Status.OUT_OF_SERVICE)) {
-            model.put("status", HttpStatus.SERVICE_UNAVAILABLE.value());
-            model.put("description", HttpStatus.SERVICE_UNAVAILABLE.name());
-        } else {
+        if (healthEndpoint == null) {
             model.put("status", HttpStatus.OK.value());
             model.put("description", HttpStatus.OK.name());
+            LOGGER.warn("Health endpoint is undefined/disabled. No health indicators may be consulted to query for health data "
+                + "and the status results are always going to be [{}]", model);
+        } else {
+
+            val health = this.healthEndpoint.health();
+            val status = health.getStatus();
+
+            if (status.equals(Status.DOWN) || status.equals(Status.OUT_OF_SERVICE)) {
+                model.put("status", HttpStatus.SERVICE_UNAVAILABLE.value());
+                model.put("description", HttpStatus.SERVICE_UNAVAILABLE.name());
+            } else {
+                model.put("status", HttpStatus.OK.value());
+                model.put("description", HttpStatus.OK.name());
+            }
+            model.put("health", status.getCode());
         }
-        model.put("health", status.getCode());
         model.put("host", StringUtils.isBlank(casProperties.getHost().getName())
             ? InetAddressUtils.getCasServerHostName()
             : casProperties.getHost().getName());

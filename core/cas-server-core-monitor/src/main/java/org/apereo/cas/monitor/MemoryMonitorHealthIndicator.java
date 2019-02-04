@@ -12,7 +12,7 @@ import org.springframework.boot.actuate.health.Health;
  * @since 3.5.0
  */
 @RequiredArgsConstructor
-public class MemoryMonitor extends AbstractHealthIndicator {
+public class MemoryMonitorHealthIndicator extends AbstractHealthIndicator {
 
     private static final int PERCENTAGE_VALUE = 100;
 
