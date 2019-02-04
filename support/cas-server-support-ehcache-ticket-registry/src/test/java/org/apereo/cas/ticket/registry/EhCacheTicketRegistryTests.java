@@ -24,17 +24,12 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import lombok.SneakyThrows;
 import lombok.val;
 import net.sf.ehcache.distribution.CacheReplicator;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.Arrays;
-import java.util.Collection;
 
 import static org.mockito.Mockito.*;
 
@@ -44,7 +39,6 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@RunWith(Parameterized.class)
 @SpringBootTest(classes = {
     EhCacheTicketRegistryTests.EhcacheTicketRegistryTestConfiguration.class,
     EhcacheTicketRegistryConfiguration.class,
@@ -74,15 +68,6 @@ public class EhCacheTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
-
-    public EhCacheTicketRegistryTests(final boolean useEncryption) {
-        super(useEncryption);
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() {
-        return Arrays.asList(false, true);
-    }
 
     @Override
     public TicketRegistry getNewTicketRegistry() {
