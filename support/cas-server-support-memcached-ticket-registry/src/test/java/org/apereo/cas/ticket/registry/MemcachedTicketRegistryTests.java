@@ -18,8 +18,8 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import lombok.val;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -67,7 +67,7 @@ public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
         return false;
     }
 
-    @Test
+    @RepeatedTest(2)
     public void verifyOAuthCodeIsAddedToMemcached() {
         val factory = new DefaultOAuthCodeFactory(new NeverExpiresExpirationPolicy());
         val code = factory.create(RegisteredServiceTestUtils.getService(), CoreAuthenticationTestUtils.getAuthentication(),
