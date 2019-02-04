@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -24,15 +25,18 @@ public class ActuatorEndpointProperties implements Serializable {
     /**
      * Required user roles.
      */
-    private List<String> requiredRoles;
+    private List<String> requiredRoles = new ArrayList<>();
+
     /**
      * Required user authorities.
      */
-    private List<String> requiredAuthorities;
+    private List<String> requiredAuthorities = new ArrayList<>();
+
     /**
      * Required ip addresses.
      */
-    private List<String> requiredIpAddresses;
+    private List<String> requiredIpAddresses = new ArrayList<>();
+
     /**
      * Define the security access level of the endpoint.
      */
