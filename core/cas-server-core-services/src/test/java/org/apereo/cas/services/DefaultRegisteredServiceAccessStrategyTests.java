@@ -165,6 +165,22 @@ public class DefaultRegisteredServiceAccessStrategyTests {
         assertFalse(authz.doPrincipalAttributesAllowServiceAccess(TEST, pAttrs));
     }
 
+    /**
+     * It is important that the non-matching attribute is not the first one, due to the
+     * use of anyMatch and allMatch in the access strategy.
+     */
+    @Test
+    public void checkAuthzPrincipalWithAttrRequirementsWrongValue() {
+        val reqAttrs = getRequiredAttributes();
+        reqAttrs.put(GIVEN_NAME, Collections.singleton("not present"));
+
+        val authz = new DefaultRegisteredServiceAccessStrategy();
+        authz.setRequireAllAttributes(true);
+        authz.setRequiredAttributes(reqAttrs);
+
+        assertFalse(authz.doPrincipalAttributesAllowServiceAccess(TEST, getPrincipalAttributes()));
+    }
+
     @Test
     public void checkAuthzPrincipalWithAttrValueCaseSensitiveComparison() {
         val authz = new DefaultRegisteredServiceAccessStrategy();

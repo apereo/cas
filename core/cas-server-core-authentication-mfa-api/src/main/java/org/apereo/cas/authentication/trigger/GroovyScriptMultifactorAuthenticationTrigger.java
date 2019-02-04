@@ -17,6 +17,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,7 +32,7 @@ import java.util.Optional;
 @Getter
 @Setter
 @Slf4j
-public class GroovyScriptMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger {
+public class GroovyScriptMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger, DisposableBean {
     private final CasConfigurationProperties casProperties;
     private final WatchableGroovyScriptResource watchableScript;
 
@@ -85,5 +86,10 @@ public class GroovyScriptMultifactorAuthenticationTrigger implements Multifactor
             LOGGER.error(e.getMessage(), e);
         }
         return Optional.empty();
+    }
+
+    @Override
+    public void destroy() {
+        this.watchableScript.close();
     }
 }

@@ -62,8 +62,9 @@ public class SamlProfileAttributeQueryResponseBuilder extends SamlProfileSamlSoa
         val envelope = newSoapObject(Envelope.class);
         envelope.setHeader(header);
         envelope.setBody(body);
-        SamlUtils.logSamlObject(this.configBean, envelope);
+        SamlUtils.logSamlObject(this.openSamlConfigBean, envelope);
 
-        return encodeFinalResponse(request, response, service, adaptor, envelope, binding, authnRequest, casAssertion);
+        return encodeFinalResponse(request, response, service, adaptor, envelope,
+            binding, authnRequest, casAssertion, messageContext);
     }
 }

@@ -1,17 +1,22 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link ChainingAttributeReleasePolicy}.
@@ -22,16 +27,28 @@ import java.util.Map;
 @ToString
 @Setter
 @Getter
+@Slf4j
 public class ChainingAttributeReleasePolicy implements RegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = 3795054936775326709L;
 
     private List<RegisteredServiceAttributeReleasePolicy> policies = new ArrayList<>();
 
+    private String mergingPolicy = "replace";
+
+    private int order;
+
     @Override
     public Map<String, Object> getAttributes(final Principal p, final Service selectedService, final RegisteredService service) {
+        AnnotationAwareOrderComparator.sortIfNecessary(policies);
+
+        val merger = CoreAuthenticationUtils.getAttributeMerger(mergingPolicy);
         val attributes = new HashMap<String, Object>();
-        policies.forEach(policy -> attributes.putAll(policy.getAttributes(p, selectedService, service)));
+        policies.forEach(policy -> {
+            LOGGER.trace("Fetching attributes from policy [{}] for principal [{}]", policy.getName(), p.getId());
+            val policyAttributes = (Map) policy.getAttributes(p, selectedService, service);
+            merger.mergeAttributes((Map) attributes, policyAttributes);
+        });
         return attributes;
     }
 
@@ -42,6 +59,15 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
      */
     public void addPolicy(final RegisteredServiceAttributeReleasePolicy policy) {
         this.policies.add(policy);
+    }
+
+    /**
+     * Add policies.
+     *
+     * @param policies the policies
+     */
+    public void addPolicies(final RegisteredServiceAttributeReleasePolicy... policies) {
+        this.policies.addAll(Arrays.stream(policies).collect(Collectors.toList()));
     }
 
     /**

@@ -1,6 +1,10 @@
 package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.category.MailCategory;
+import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
+import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.ticket.TransientSessionTicketFactory;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
@@ -15,6 +19,8 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
+
+import java.io.Serializable;
 
 import static org.junit.Assert.*;
 
@@ -39,15 +45,20 @@ public class VerifyPasswordResetRequestActionTests extends BasePasswordManagemen
             request.setLocalAddr("1.2.3.4");
             request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
             ClientInfoHolder.setClientInfo(new ClientInfo(request));
-
             val token = passwordManagementService.createToken("casuser");
-            request.addParameter(SendPasswordResetInstructionsAction.PARAMETER_NAME_TOKEN, token);
+            val transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
+            val serverPrefix = casProperties.getServer().getPrefix();
+            val service = webApplicationServiceFactory.createService(serverPrefix);
+            val properties = CollectionUtils.<String, Serializable>wrap(PasswordManagementWebflowUtils.FLOWSCOPE_PARAMETER_NAME_TOKEN, token);
+            val ticket = transientFactory.create(service, properties);
+            this.ticketRegistry.addTicket(ticket);
+            request.addParameter(PasswordManagementWebflowUtils.REQUEST_PARAMETER_NAME_PASSWORD_RESET_TOKEN, ticket.getId());
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals("success", verifyPasswordResetRequestAction.execute(context).getId());
 
-            assertTrue(context.getFlowScope().contains("questionsEnabled"));
-            assertTrue(context.getFlowScope().contains("username"));
-            assertTrue(context.getFlowScope().contains("token"));
+            assertTrue(PasswordManagementWebflowUtils.isPasswordResetSecurityQuestionsEnabled(context));
+            assertNotNull(PasswordManagementWebflowUtils.getPasswordResetUsername(context));
+            assertNotNull(PasswordManagementWebflowUtils.getPasswordResetToken(context));
         } catch (final Exception e) {
             throw new AssertionError(e.getMessage(), e);
         }

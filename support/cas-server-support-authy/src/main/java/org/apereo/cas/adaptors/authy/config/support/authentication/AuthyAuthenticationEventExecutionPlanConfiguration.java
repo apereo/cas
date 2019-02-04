@@ -9,8 +9,7 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
-import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
+import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -49,6 +48,10 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
 
+    @Autowired
+    @Qualifier("authyBypassEvaluator")
+    private ObjectProvider<MultifactorAuthenticationProviderBypass> authyBypassEvaluator;
+
     @RefreshScope
     @Bean
     public AuthyClientInstance authyClientInstance() {
@@ -82,17 +85,12 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     public MultifactorAuthenticationProvider authyAuthenticatorMultifactorAuthenticationProvider() {
         val p = new AuthyMultifactorAuthenticationProvider();
-        p.setBypassEvaluator(authyBypassEvaluator());
-        p.setFailureMode(casProperties.getAuthn().getMfa().getAuthy().getFailureMode());
-        p.setOrder(casProperties.getAuthn().getMfa().getAuthy().getRank());
-        p.setId(casProperties.getAuthn().getMfa().getAuthy().getId());
+        p.setBypassEvaluator(authyBypassEvaluator.getIfAvailable());
+        val authy = casProperties.getAuthn().getMfa().getAuthy();
+        p.setFailureMode(authy.getFailureMode());
+        p.setOrder(authy.getRank());
+        p.setId(authy.getId());
         return p;
-    }
-
-    @Bean
-    @RefreshScope
-    public MultifactorAuthenticationProviderBypass authyBypassEvaluator() {
-        return MultifactorAuthenticationUtils.newMultifactorAuthenticationProviderBypass(casProperties.getAuthn().getMfa().getAuthy().getBypass());
     }
 
     @Bean

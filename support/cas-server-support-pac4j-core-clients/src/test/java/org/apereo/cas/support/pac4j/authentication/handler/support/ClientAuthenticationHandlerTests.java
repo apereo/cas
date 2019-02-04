@@ -2,6 +2,8 @@ package org.apereo.cas.support.pac4j.authentication.handler.support;
 
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.ClientCredential;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.provision.DelegatedClientUserProfileProvisioner;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
@@ -28,7 +30,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Tests the {@link ClientAuthenticationHandler}.
+ * Tests the {@link DelegatedClientAuthenticationHandler}.
  *
  * @author Jerome Leleu
  * @since 4.1.0
@@ -43,14 +45,16 @@ public class ClientAuthenticationHandlerTests {
     public ExpectedException thrown = ExpectedException.none();
 
     private FacebookClient fbClient;
-    private ClientAuthenticationHandler handler;
+    private DelegatedClientAuthenticationHandler handler;
     private ClientCredential clientCredential;
 
     @Before
     public void initialize() {
         this.fbClient = new FacebookClient();
         val clients = new Clients(CALLBACK_URL, fbClient);
-        this.handler = new ClientAuthenticationHandler("", mock(ServicesManager.class), null, clients);
+        this.handler = new DelegatedClientAuthenticationHandler("",
+            mock(ServicesManager.class), PrincipalFactoryUtils.newPrincipalFactory(), clients,
+            DelegatedClientUserProfileProvisioner.noOp());
         this.handler.setTypedIdUsed(true);
 
         val credentials = new OAuth20Credentials(null);

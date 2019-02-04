@@ -67,7 +67,7 @@ public class SamlProfileArtifactResponseBuilder extends SamlProfileSamlSoap11Res
         artifactResponse.setID(ticket.getId());
         artifactResponse.setStatus(newStatus(StatusCode.SUCCESS, "Success"));
 
-        val samlResponse = SamlUtils.transformSamlObject(configBean, ticket.getObject(), SAMLObject.class);
+        val samlResponse = SamlUtils.transformSamlObject(openSamlConfigBean, ticket.getObject(), SAMLObject.class);
         artifactResponse.setMessage(samlResponse);
 
         val header = newSoapObject(Header.class);
@@ -78,7 +78,7 @@ public class SamlProfileArtifactResponseBuilder extends SamlProfileSamlSoap11Res
         val envelope = newSoapObject(Envelope.class);
         envelope.setHeader(header);
         envelope.setBody(body);
-        SamlUtils.logSamlObject(this.configBean, envelope);
+        SamlUtils.logSamlObject(this.openSamlConfigBean, envelope);
         return envelope;
     }
 }

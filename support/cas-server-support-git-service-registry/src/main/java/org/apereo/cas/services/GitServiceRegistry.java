@@ -43,15 +43,18 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
     private final GitRepository gitRepository;
     private final Collection<StringSerializer<RegisteredService>> registeredServiceSerializers;
     private final RegisteredServiceResourceNamingStrategy resourceNamingStrategy;
+    private final boolean pushChanges;
 
     public GitServiceRegistry(final ApplicationEventPublisher eventPublisher,
                               final GitRepository gitRepository,
                               final Collection<StringSerializer<RegisteredService>> registeredServiceSerializers,
-                              final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) {
+                              final RegisteredServiceResourceNamingStrategy resourceNamingStrategy,
+                              final boolean pushChanges) {
         super(eventPublisher);
         this.gitRepository = gitRepository;
         this.registeredServiceSerializers = registeredServiceSerializers;
         this.resourceNamingStrategy = resourceNamingStrategy;
+        this.pushChanges = pushChanges;
     }
 
     @Override
@@ -71,7 +74,9 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
             });
 
         this.gitRepository.commitAll(message);
-        this.gitRepository.push();
+        if (this.pushChanges) {
+            this.gitRepository.push();
+        }
         load();
         return registeredService;
     }
@@ -84,7 +89,9 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
             val message = "Deleted registered service " + registeredService.getName();
             FileUtils.forceDelete(file.get());
             this.gitRepository.commitAll(message);
-            this.gitRepository.push();
+            if (this.pushChanges) {
+                this.gitRepository.push();
+            }
             load();
             return true;
         }

@@ -1,11 +1,11 @@
 package org.apereo.cas.trusted.web;
 
-import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
-import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -22,12 +22,15 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RequiredArgsConstructor
 @Endpoint(id = "multifactorTrustedDevices", enableByDefault = false)
-public class MultifactorTrustedDevicesReportEndpoint {
+public class MultifactorTrustedDevicesReportEndpoint extends BaseCasActuatorEndpoint {
     private final MultifactorAuthenticationTrustStorage mfaTrustEngine;
 
-    private final TrustedDevicesMultifactorProperties properties;
+    public MultifactorTrustedDevicesReportEndpoint(final CasConfigurationProperties casProperties,
+                                                   final MultifactorAuthenticationTrustStorage mfaTrustEngine) {
+        super(casProperties);
+        this.mfaTrustEngine = mfaTrustEngine;
+    }
 
     /**
      * Devices registered and trusted.
@@ -36,10 +39,16 @@ public class MultifactorTrustedDevicesReportEndpoint {
      */
     @ReadOperation
     public Set<? extends MultifactorAuthenticationTrustRecord> devices() {
+        val onOrAfter = expireRecordsByDate();
+        return this.mfaTrustEngine.get(onOrAfter);
+    }
+
+    private LocalDateTime expireRecordsByDate() {
+        val properties = casProperties.getAuthn().getMfa().getTrusted();
         val unit = DateTimeUtils.toChronoUnit(properties.getTimeUnit());
         val onOrAfter = LocalDateTime.now().minus(properties.getExpiration(), unit);
         this.mfaTrustEngine.expire(onOrAfter);
-        return this.mfaTrustEngine.get(onOrAfter);
+        return onOrAfter;
     }
 
     /**
@@ -50,9 +59,7 @@ public class MultifactorTrustedDevicesReportEndpoint {
      */
     @ReadOperation
     public Set<? extends MultifactorAuthenticationTrustRecord> devicesForUser(@Selector final String username) {
-        val unit = DateTimeUtils.toChronoUnit(properties.getTimeUnit());
-        val onOrAfter = LocalDateTime.now().minus(properties.getExpiration(), unit);
-        this.mfaTrustEngine.expire(onOrAfter);
+        val onOrAfter = expireRecordsByDate();
         return this.mfaTrustEngine.get(username, onOrAfter);
     }
 

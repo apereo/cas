@@ -134,6 +134,7 @@ The following events are tracked and recorded in the audit log:
 | `AUTHENTICATION_EVENT`                | `TRIGGERED`
 | `EVALUATE_RISKY_AUTHENTICATION`       | N/A
 | `MITIGATE_RISKY_AUTHENTICATION`       | N/A
+| `MFA_BYPASS`                          | N/A
 | `SAVE_SERVICE`                        | `SUCCESS`, `FAILURE`
 | `SAVE_CONSENT`                        | `SUCCESS`, `FAILURE`
 | `CHANGE_PASSWORD`                     | `SUCCESS`, `FAILURE`

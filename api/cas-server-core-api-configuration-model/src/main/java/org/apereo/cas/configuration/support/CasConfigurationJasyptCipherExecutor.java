@@ -31,7 +31,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
     private final StandardPBEStringEncryptor jasyptInstance;
 
     /**
-     * Instantiates a new Cas configuration jasypt cipher executor.
+     * Instantiates a new CAS configuration jasypt cipher executor.
      *
      * @param environment the environment
      */

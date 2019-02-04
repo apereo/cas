@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!DOCTYPE import-control PUBLIC "-//Checkstyle//DTD ImportControl Configuration 1.4//EN" "https://checkstyle.org/dtds/import_control_1_4.dtd">
+<import-control pkg="org" strategyOnMismatch="allowed">
+
+    <disallow pkg="org.junit.jupiter"/>
+    <disallow pkg="org.junit.platform"/>
+    <subpackage name="apereo.cas.util.junit">
+        <allow pkg="org.junit.jupiter"/>
+        <allow pkg="org.junit.platform"/>
+    </subpackage>
+</import-control>

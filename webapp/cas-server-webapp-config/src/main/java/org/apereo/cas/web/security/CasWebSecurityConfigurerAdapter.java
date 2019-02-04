@@ -8,11 +8,14 @@ import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.web.security.authentication.MonitorEndpointLdapAuthenticationProvider;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
+import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.security.authentication.jaas.JaasAuthenticationProvider;
@@ -30,6 +33,7 @@ import java.util.stream.Collectors;
  * @since 6.0.0
  */
 @RequiredArgsConstructor
+@Slf4j
 public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
     /**
      * Endpoint url used for admin-level form-login of endpoints.
@@ -38,9 +42,13 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
 
     private final CasConfigurationProperties casProperties;
     private final SecurityProperties securityProperties;
+    private final CasWebSecurityExpressionHandler casWebSecurityExpressionHandler;
+    private final WebEndpointProperties webEndpointProperties;
+    private final PathMappedEndpoints pathMappedEndpoints;
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
+
         http.csrf().disable()
             .headers().disable()
             .logout()
@@ -49,15 +57,14 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
             .requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null)
             .requiresSecure();
 
-        val requests = http.authorizeRequests();
-        configureEndpointAccessToDenyUndefined(http, requests);
-        configureEndpointAccessForStaticResources(requests);
-
+        val requests = http.authorizeRequests().expressionHandler(casWebSecurityExpressionHandler);
         val endpoints = casProperties.getMonitor().getEndpoints().getEndpoint();
         endpoints.forEach(Unchecked.biConsumer((k, v) -> {
             val endpoint = EndpointRequest.to(k);
             v.getAccess().forEach(Unchecked.consumer(access -> configureEndpointAccess(http, requests, access, v, endpoint)));
         }));
+        configureEndpointAccessToDenyUndefined(http, requests);
+        configureEndpointAccessForStaticResources(requests);
     }
 
     @Override
@@ -80,6 +87,30 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
         if (!auth.isConfigured()) {
             super.configure(auth);
         }
+    }
+
+    /**
+     * Configure endpoint access to deny undefined.
+     *
+     * @param http     the http
+     * @param requests the requests
+     */
+    protected void configureEndpointAccessToDenyUndefined(final HttpSecurity http,
+                                                          final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests) {
+        val endpoints = casProperties.getMonitor().getEndpoints().getEndpoint().keySet();
+        val endpointDefaults = casProperties.getMonitor().getEndpoints().getDefaultEndpointProperties();
+        pathMappedEndpoints.forEach(endpoint -> {
+            val rootPath = endpoint.getRootPath();
+            if (endpoints.contains(rootPath)) {
+                LOGGER.trace("Endpoint security is defined for endpoint [{}]", rootPath);
+            } else {
+                val defaultAccessRules = endpointDefaults.getAccess();
+                LOGGER.debug("Endpoint security is NOT defined for endpoint [{}]. Using default security rules [{}]", rootPath, defaultAccessRules);
+                val endpointRequest = EndpointRequest.to(rootPath).excludingLinks();
+                defaultAccessRules.forEach(Unchecked.consumer(access ->
+                    configureEndpointAccess(http, requests, access, endpointDefaults, endpointRequest)));
+            }
+        });
     }
 
     /**
@@ -127,22 +158,6 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
         auth.authenticationProvider(p);
     }
 
-
-    /**
-     * Configure endpoint access to deny undefined.
-     *
-     * @param http     the http
-     * @param requests the requests
-     */
-    protected void configureEndpointAccessToDenyUndefined(final HttpSecurity http,
-                                                          final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests) {
-        val endpoints = casProperties.getMonitor().getEndpoints().getEndpoint().keySet();
-        val configuredEndpoints = endpoints.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
-
-        val endpointDefaults = casProperties.getMonitor().getEndpoints().getDefaultEndpointProperties();
-        endpointDefaults.getAccess().forEach(Unchecked.consumer(access ->
-            configureEndpointAccess(http, requests, access, endpointDefaults, EndpointRequest.toAnyEndpoint().excluding(configuredEndpoints).excludingLinks())));
-    }
 
     /**
      * Configure endpoint access for static resources.

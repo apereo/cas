@@ -3,7 +3,7 @@ package org.apereo.cas.web.report;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CasVersion;
 import org.apereo.cas.util.InetAddressUtils;
-import org.apereo.cas.web.BaseCasMvcEndpoint;
+import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -23,8 +23,8 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.5
  */
-@Endpoint(id = "status")
-public class StatusEndpoint extends BaseCasMvcEndpoint {
+@Endpoint(id = "status", enableByDefault = false)
+public class StatusEndpoint extends BaseCasActuatorEndpoint {
     private final HealthEndpoint healthEndpoint;
 
     public StatusEndpoint(final CasConfigurationProperties casProperties, final HealthEndpoint healthEndpoint) {

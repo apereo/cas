@@ -118,6 +118,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -745,7 +746,7 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
             public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
                 val service = new RegexRegisteredService();
                 service.setId(RandomUtils.getNativeInstance().nextLong());
-                service.setEvaluationOrder(Integer.MAX_VALUE);
+                service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
                 service.setName(service.getClass().getSimpleName());
                 service.setDescription("OAuth Authentication Callback Request URL");
                 service.setServiceId(oauthCallbackService().getId());
@@ -758,6 +759,6 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @Bean
     @ConditionalOnEnabledEndpoint
     public OAuth20TokenManagementEndpoint oAuth20TokenManagementEndpoint() {
-        return new OAuth20TokenManagementEndpoint(ticketRegistry.getIfAvailable());
+        return new OAuth20TokenManagementEndpoint(casProperties, ticketRegistry.getIfAvailable());
     }
 }

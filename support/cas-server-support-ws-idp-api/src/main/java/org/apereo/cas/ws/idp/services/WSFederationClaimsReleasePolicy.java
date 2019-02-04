@@ -30,9 +30,6 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
 
     private Map<String, String> allowedAttributes;
 
-    /**
-     * Instantiates a new Return allowed attribute release policy.
-     */
     public WSFederationClaimsReleasePolicy() {
         this(new HashMap<>());
     }
@@ -58,7 +55,7 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
             LOGGER.debug("Evaluating claimName [{}] mapped to attribute name [{}]", claim.getUri(), attributeName);
             val value = resolvedAttributes.get(attributeName);
             if (value != null) {
-                LOGGER.debug("Adding claimName [{}] to the collection of released attributes", claim.getUri());
+                LOGGER.debug("Adding claim name [{}] to the collection of released attributes", claim.getUri());
                 attributesToRelease.put(claim.getUri(), value);
             }
         });

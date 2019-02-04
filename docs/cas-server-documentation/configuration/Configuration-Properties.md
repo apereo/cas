@@ -808,7 +808,7 @@ and their results are cached and merged.
 # cas.authn.attributeRepository.expirationTime=30
 # cas.authn.attributeRepository.expirationTimeUnit=MINUTES
 # cas.authn.attributeRepository.maximumCacheSize=10000
-# cas.authn.attributeRepository.merger=REPLACE|ADD|MERGE
+# cas.authn.attributeRepository.merger=REPLACE|ADD|MULTIVALUED
 ```
 
 <div class="alert alert-info"><strong>Remember This</strong><p>Note that in certain cases,
@@ -2781,6 +2781,7 @@ A given attribute that is to be encoded in the final SAML response may contain a
 # cas.authn.samlIdp.metadata.failFast=true
 # cas.authn.samlIdp.metadata.privateKeyAlgName=RSA
 # cas.authn.samlIdp.metadata.requireValidMetadata=true
+# cas.authn.samlIdp.metadata.forceMetadataRefresh=true
 
 # cas.authn.samlIdp.metadata.basicAuthnUsername=
 # cas.authn.samlIdp.metadata.basicAuthnPassword=
@@ -3004,6 +3005,19 @@ See below for other identity providers such as CAS, SAML2 and more.
 The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under `${configurationKey}.cookie`.
 
+### Provisioning
+
+Provision and create established user profiles to identity stores.
+
+#### Groovy
+
+```properties
+# cas.authn.pac4j.provisioning.groovy.location=file:/etc/cas/config/Provisioner.groovy
+```
+
+#### REST
+
+RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.authn.pac4j.provisioning.rest`.
 
 ### Google
 
@@ -3653,6 +3667,7 @@ Works with git repository to fetch and manage service registry definitions.
 # cas.serviceRegistry.git.username=
 # cas.serviceRegistry.git.password=
 # cas.serviceRegistry.git.cloneDirectory=file:/tmp/cas-service-registry
+# cas.serviceRegistry.git.pushChanges=false
 ```
 
 To learn more about this topic, [please review this guide](../services/Git-Service-Management.html).
@@ -4171,7 +4186,7 @@ The signing and encryption keys [are both JWKs](Configuration-Properties-Common.
 
 #### Spring Webflow Client-Side Session
 
-The encryption key must be randomly-generated string of size f`16`. The signing key [is a JWK](Configuration-Properties-Common.html#signing--encryption) of size `512`.
+The encryption key must be randomly-generated string of size `16`. The signing key [is a JWK](Configuration-Properties-Common.html#signing--encryption) of size `512`.
 
 Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.webflow`.
 

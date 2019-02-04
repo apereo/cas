@@ -349,13 +349,26 @@ subprojects {
         }
     }
 
+
     if (!Boolean.getBoolean("skipCheckstyle")) {
         checkstyle {
-            configFile new File(rootDir, "style/checkstyle-rules.xml")
-            configProperties = ["checkstyle.suppressions.file": new File(rootDir, "style/checkstyle-suppressions.xml")]
+            configProperties = [
+                    "checkstyle.suppressions.file": new File(rootDir, "style/checkstyle-suppressions.xml"),
+                    "checkstyle.importcontrol.file": new File(rootDir, "style/import-control.xml"),
+                    "checkstyle.importcontrol.file.junit5": new File(rootDir, "style/import-control-junit5.xml")]
             ignoreFailures false
             showViolations true
             toolVersion "${checkstyleVersion}"
+        }
+        tasks.withType(Checkstyle) {
+            doFirst {
+                def useJunit5 = project.ext.properties.get("useJunit5", false)
+                if (useJunit5) {
+                    it.configFile new File(rootDir, "style/checkstyle-rules-junit5.xml")
+                } else {
+                    it.configFile new File(rootDir, "style/checkstyle-rules.xml")
+                }
+            }
         }
     }
 
@@ -528,5 +541,12 @@ task casVersion(description: "Display current CAS version") {
 task signingKey(description: "Display CAS signing key id") {
     doLast {
         println "Signing key: " + project.findProperty("signing.keyId")
+    }
+}
+
+task verifyRequiredJavaVersion {
+    // println "Checking current Java version ${JavaVersion.current()} for required Java version ${project.targetCompatibility}"
+    if (!JavaVersion.current().name.equalsIgnoreCase("${project.targetCompatibility}")) {
+        throw new GradleException("Current Java version ${JavaVersion.current()} does not match required Java version ${project.targetCompatibility}")
     }
 }
