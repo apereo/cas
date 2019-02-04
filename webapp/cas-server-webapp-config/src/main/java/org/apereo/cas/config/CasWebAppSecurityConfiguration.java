@@ -4,7 +4,10 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.security.CasWebSecurityConfigurerAdapter;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
+import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -31,10 +34,17 @@ public class CasWebAppSecurityConfiguration implements WebMvcConfigurer {
     @Autowired
     private SecurityProperties securityProperties;
 
+    @Autowired
+    private WebEndpointProperties webEndpointProperties;
+
+    @Autowired
+    private ObjectProvider<PathMappedEndpoints> pathMappedEndpoints;
+
     @Bean
     @ConditionalOnMissingBean(name = "casWebSecurityConfigurerAdapter")
     public WebSecurityConfigurerAdapter casWebSecurityConfigurerAdapter() {
-        return new CasWebSecurityConfigurerAdapter(casProperties, securityProperties);
+        return new CasWebSecurityConfigurerAdapter(casProperties, securityProperties,
+            casWebSecurityExpressionHandler(), webEndpointProperties, pathMappedEndpoints.getIfAvailable());
     }
 
     @Override
