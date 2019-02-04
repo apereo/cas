@@ -1,5 +1,8 @@
 description = "Apereo CAS Central Configuration"
 
+ext {
+    useJunit5 = true
+}
 dependencies {
     implementation libraries.jasypt
     implementation libraries.bouncycastle
