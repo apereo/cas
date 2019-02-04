@@ -1,6 +1,7 @@
 description = "Apereo CAS Ignite Integration"
 
 ext {
+    useJunit5 = true
     maxParallelForksForTests = 1
 }
 

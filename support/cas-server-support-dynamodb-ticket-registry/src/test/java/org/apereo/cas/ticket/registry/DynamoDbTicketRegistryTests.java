@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.category.DynamoDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -21,26 +20,23 @@ import org.apereo.cas.config.DynamoDbTicketRegistryConfiguration;
 import org.apereo.cas.config.DynamoDbTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 /**
- * This is {@link AbstractDynamoDbTicketRegistryTests}.
+ * This is {@link DynamoDbTicketRegistryTests}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Category(DynamoDbCategory.class)
+@Tag("DynamoDb")
 @SpringBootTest(classes = {
     DynamoDbTicketRegistryConfiguration.class,
     DynamoDbTicketRegistryTicketCatalogConfiguration.class,
@@ -65,27 +61,17 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
     RefreshAutoConfiguration.class
 })
 @TestPropertySource(locations = "classpath:/dynamodb-ticketregistry.properties")
-public abstract class AbstractDynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
-
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
+@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 8000)
+public class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     static {
         System.setProperty("aws.accessKeyId", "AKIAIPPIGGUNIO74C63Z");
         System.setProperty("aws.secretKey", "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");
     }
 
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
-
-    public AbstractDynamoDbTicketRegistryTests(final boolean useEncryption) {
-        super(useEncryption);
-    }
 
     @Override
     public TicketRegistry getNewTicketRegistry() {

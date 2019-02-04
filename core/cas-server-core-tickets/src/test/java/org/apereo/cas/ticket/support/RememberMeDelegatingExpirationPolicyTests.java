@@ -13,14 +13,14 @@ import org.apereo.cas.util.CollectionUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests for RememberMeDelegatingExpirationPolicy.
@@ -43,7 +43,7 @@ public class RememberMeDelegatingExpirationPolicyTests {
 
     private RememberMeDelegatingExpirationPolicy expirationPolicy;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         val rememberMe = new MultiTimeUseOrTimeoutExpirationPolicy(1, REMEMBER_ME_TTL);
         expirationPolicy = new RememberMeDelegatingExpirationPolicy(rememberMe);
