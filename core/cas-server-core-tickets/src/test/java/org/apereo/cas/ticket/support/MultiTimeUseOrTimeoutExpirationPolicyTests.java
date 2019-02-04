@@ -9,14 +9,14 @@ import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.stream.IntStream;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Scott Battaglia
@@ -37,7 +37,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests {
 
     private TicketGrantingTicket ticket;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         this.expirationPolicy = new MultiTimeUseOrTimeoutExpirationPolicy(NUMBER_OF_USES, TIMEOUT_SECONDS);
         this.ticket = new TicketGrantingTicketImpl("test", CoreAuthenticationTestUtils.getAuthentication(), this.expirationPolicy);
