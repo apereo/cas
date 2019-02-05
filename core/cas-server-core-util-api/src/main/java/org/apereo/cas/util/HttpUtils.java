@@ -7,6 +7,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
@@ -16,13 +17,21 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicHttpResponse;
+import org.apache.http.message.BasicStatusLine;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -156,7 +165,7 @@ public class HttpUtils {
      * @param response the response to close
      */
     public static void close(final HttpResponse response) {
-        if (response != null) {
+        if (response instanceof CloseableHttpResponse) {
             val closeableHttpResponse = (CloseableHttpResponse) response;
             try {
                 closeableHttpResponse.close();
@@ -303,7 +312,7 @@ public class HttpUtils {
      * @param url               the url
      * @param basicAuthUsername the basic auth username
      * @param basicAuthPassword the basic auth password
-     * @param entity        the json entity
+     * @param entity            the json entity
      * @return the http response
      */
     public static HttpResponse executePost(final String url,
@@ -434,5 +443,50 @@ public class HttpUtils {
             acceptHeaders.set(org.springframework.http.HttpHeaders.AUTHORIZATION, "Basic " + basic);
         }
         return acceptHeaders;
+    }
+
+    /**
+     * A java native approach to obtaining data over a GET request
+     * via basic authn. Used to avoid Apache HttpClient in cases
+     * where the built-in URI builder for the client messes up encoding
+     * of urls, etc.
+     *
+     * @param url               the url
+     * @param basicAuthUser     the basic auth user
+     * @param basicAuthPassword the basic auth password
+     * @param headers           the headers
+     * @return the response.
+     */
+    public static HttpResponse getViaBasicAuth(final String url, final String basicAuthUser, final String basicAuthPassword,
+                                               final Map<String, Object> headers) {
+        try {
+            val serverUrl = new URL(url);
+            val urlConnection = (HttpURLConnection) serverUrl.openConnection();
+            urlConnection.setRequestMethod("GET");
+
+            val authHeaders = createBasicAuthHeaders(basicAuthUser, basicAuthPassword);
+            urlConnection.addRequestProperty(org.springframework.http.HttpHeaders.AUTHORIZATION,
+                authHeaders.getFirst(org.springframework.http.HttpHeaders.AUTHORIZATION));
+
+            headers.forEach((k, v) -> {
+                val values = CollectionUtils.toCollection(v);
+                values.forEach(value -> urlConnection.addRequestProperty(k, value.toString()));
+            });
+            
+            val writer = new StringWriter();
+            try (val httpResponseReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()))) {
+                var lineRead = StringUtils.EMPTY;
+                while ((lineRead = httpResponseReader.readLine()) != null) {
+                    writer.write(lineRead);
+                }
+            }
+            val response = new BasicHttpResponse(new BasicStatusLine(HttpVersion.HTTP_1_1,
+                urlConnection.getResponseCode(), urlConnection.getResponseMessage()));
+            response.setEntity(new StringEntity(writer.toString(), StandardCharsets.UTF_8));
+            return response;
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
     }
 }
