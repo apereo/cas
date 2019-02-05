@@ -5,6 +5,6 @@ install {
     enabled = false
 }
 
-uploadArchives {
+publish {
     enabled = false
 }

@@ -5,20 +5,27 @@ defaultTasks "clean", "build"
 
 ext {
     srcTagMap = new ConcurrentHashMap<File, Set<String>>()
-    publishSnapshots = Boolean.getBoolean("publishSnapshots")
-    publishReleases = Boolean.getBoolean("publishReleases")
+    
     sonatypeUsername = System.getProperty("sonatypeUsername")
     sonatypePassword = System.getProperty("sonatypePassword")
+    
+    publishSnapshots = Boolean.getBoolean("publishSnapshots")
+    publishReleases = Boolean.getBoolean("publishReleases")
+    
+    if ((publishSnapshots || publishReleases) && sonatypeUsername == null || sonatypePassword == null) {
+        throw new GradleException("No credentials are configured to publish releases or snapshots")
+    }
+    
     testCategoryType = System.getProperty("testCategoryType")
     skipBootifulArtifact = System.getProperty("skipBootifulArtifact")
     skipErrorProneCompiler = System.getProperty("skipErrorProneCompiler")
+    
     forceBom = Boolean.getBoolean("forceBom")
+    
     enableRemoteDebugging = Boolean.getBoolean("enableRemoteDebugging")
     remoteDebuggingSuspend = Boolean.getBoolean("remoteDebuggingSuspend") ? "y" : "n"
 
     continuousIntegrationBuild = Boolean.getBoolean("CI") || Boolean.getBoolean("TRAVIS") || Boolean.getBoolean("CONTINUOUS_INTEGRATION")
-
-    publishingRelease = publishReleases && rootProject.sonatypeUsername != null && rootProject.sonatypePassword != null
     /*
         Open the project git repository in the current directory.
         Get commit id of HEAD.
@@ -31,7 +38,7 @@ ext {
 }
 
 def isArtifactSigningRequired = {
-    return (publishReleases && sonatypeUsername != null && sonatypePassword != null)
+    return publishReleases
 }
 
 apply from: rootProject.file("gradle/overrides.gradle")
@@ -122,7 +129,7 @@ dependencyCheck {
 allprojects {
     apply plugin: "idea"
     apply plugin: "eclipse"
-    apply plugin: "maven"
+    apply plugin: "maven-publish"
     apply plugin: "signing"
     apply plugin: "jacoco"
     apply plugin: "java"
@@ -160,14 +167,8 @@ allprojects {
         }
     }
 
-    signArchives.enabled = rootProject.publishingRelease || rootProject.publishSnapshots
-
-    /*
-        Do NOT publish test dependencies into the final POM.
-    */
-    conf2ScopeMappings.mappings.remove(configurations.findByName("testCompileOnly"))
-    conf2ScopeMappings.mappings.remove(configurations.findByName("testRuntimeOnly"))
-
+    signArchives.enabled = rootProject.publishReleases || rootProject.publishSnapshots
+    
     repositories {
         mavenLocal()
         mavenCentral()
@@ -247,7 +248,7 @@ subprojects {
     configurations.all {
         resolutionStrategy {
             if (!Boolean.getBoolean("skipVersionConflict")) {
-                failOnVersionConflict()
+               failOnVersionConflict()
             }
             preferProjectModules()
             cacheDynamicVersionsFor 1, "days"
@@ -284,7 +285,6 @@ subprojects {
         main {
             java {
                 srcDirs = ["${projectDir}/src/main/java", "${projectDir}/src/main/groovy"]
-
             }
             resources {
                 srcDirs = ["${projectDir}/src/main/resources"]
