@@ -1,12 +1,11 @@
 package org.apereo.cas.web.view;
 
-import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.MockWebServer;
 
 import lombok.val;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.thymeleaf.IEngineConfiguration;
@@ -14,7 +13,7 @@ import org.thymeleaf.IEngineConfiguration;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -23,7 +22,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Category(RestfulApiCategory.class)
+@Tag("RestfulApi")
 public class RestfulUrlTemplateResolverTests {
     @Test
     public void verifyAction() {
