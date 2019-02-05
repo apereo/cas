@@ -86,7 +86,7 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
                 MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER, "mfa-dummy"));
         val result = v.validate(authentication,
             "mfa-dummy", MultifactorAuthenticationTestUtils.getRegisteredService());
-        assertTrue(result.getKey());
+        assertFalse(result.getKey());
     }
 
     @Test
