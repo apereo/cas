@@ -1,4 +1,7 @@
 description = "Apereo CAS Ehcache Integration"
+ext {
+    useJunit5 = true
+}
 dependencies {
     implementation libraries.ehcache
     implementation project(":core:cas-server-core-configuration-api")
