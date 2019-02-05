@@ -22,8 +22,7 @@ import org.apereo.cas.ticket.support.TimeoutExpirationPolicyTests;
 import org.apereo.cas.util.DefaultUniqueTicketIdGeneratorTests;
 import org.apereo.cas.util.TicketEncryptionDecryptionTests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -31,8 +30,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@SelectClasses({
     InvalidTicketExceptionTests.class,
     ServiceTicketImplTests.class,
     TicketGrantingTicketImplTests.class,

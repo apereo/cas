@@ -1,4 +1,7 @@
 description = "Apereo CAS Core Tickets"
+ext {
+    useJunit5 = true
+}
 dependencies {
     api project(":api:cas-server-core-api-ticket")
     api project(":api:cas-server-core-api-logout")

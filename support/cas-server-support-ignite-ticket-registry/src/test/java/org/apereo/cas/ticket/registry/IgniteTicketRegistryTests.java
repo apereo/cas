@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.category.IgniteCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -21,26 +20,22 @@ import org.apereo.cas.config.IgniteTicketRegistryConfiguration;
 import org.apereo.cas.config.IgniteTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 /**
- * This is {@link AbstractIgniteTicketRegistryTests}.
+ * Unit test for {@link IgniteTicketRegistry}.
  *
- * @author Misagh Moayyed
- * @since 5.3.0
+ * @author Scott Battaglia
+ * @author Timur Duehr timur.duehr@nccgroup.trust
+ * @since 3.0.0
  */
-@Category(IgniteCategory.class)
+@Tag("Ignite")
 @SpringBootTest(classes = {
     IgniteTicketRegistryConfiguration.class,
     CasCoreTicketsConfiguration.class,
@@ -71,24 +66,10 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
     "cas.ticket.registry.ignite.ticketsCache.cacheMode=REPLICATED",
     "cas.ticket.registry.ignite.igniteAddress[0]=localhost:47500"
 })
-public abstract class AbstractIgniteTicketRegistryTests extends BaseTicketRegistryTests {
-
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
-
+public class IgniteTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
-
-    public AbstractIgniteTicketRegistryTests(final boolean useEncryption) {
-        super(useEncryption);
-    }
 
     @Override
     protected TicketRegistry getNewTicketRegistry() {

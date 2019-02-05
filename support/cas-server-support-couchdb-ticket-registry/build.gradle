@@ -1,4 +1,7 @@
 description = "Apereo CAS CouchDB Ticket Registry"
+ext {
+    useJunit5 = true
+}
 dependencies {
     api libraries.ektorp
 
