@@ -3,9 +3,9 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Scott Battaglia
@@ -36,9 +36,9 @@ public class UsernamePasswordCredentialTests {
     @Test
     public void verifyEquals() {
         assertNotEquals(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(), null);
-        assertFalse(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword().equals(
-            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
-        assertTrue(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword().equals(
-            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword()));
+        assertNotEquals(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(),
+            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+        assertEquals(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(),
+            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword());
     }
 }
