@@ -3,16 +3,16 @@ package org.apereo.cas.authentication;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import java.io.File;
-import java.io.IOException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test for JSON Serialization
@@ -26,7 +26,7 @@ public class DefaultAuthenticationTests {
 
     private ObjectMapper mapper;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         mapper = Jackson2ObjectMapperBuilder.json()
             .featuresToDisable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
@@ -36,7 +36,8 @@ public class DefaultAuthenticationTests {
     }
 
     @Test
-    public void verifySerializeADefaultAuthenticationToJson() throws IOException {
+    @SneakyThrows
+    public void verifySerializeADefaultAuthenticationToJson() {
         val serviceWritten = CoreAuthenticationTestUtils.getAuthentication();
         mapper.writeValue(JSON_FILE, serviceWritten);
         val serviceRead = mapper.readValue(JSON_FILE, Authentication.class);

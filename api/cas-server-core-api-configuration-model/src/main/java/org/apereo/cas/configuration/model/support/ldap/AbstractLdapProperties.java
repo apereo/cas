@@ -140,7 +140,7 @@ public abstract class AbstractLdapProperties implements Serializable {
      * that provides the LDAP implementation without modifying any code. By default the JNDI provider is used, though
      * it may be swapped out for {@code org.ldaptive.provider.unboundid.UnboundIDProvider}.
      */
-    private String providerClass;
+    private String providerClass = "org.ldaptive.provider.unboundid.UnboundIDProvider";
     /**
      * Whether search/query results are allowed to match on multiple DNs,
      * or whether a single unique DN is expected for the result.
