@@ -146,7 +146,12 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
         createTicketGrantingTicketCheckAction(flow);
     }
 
-    private void createTicketGrantingTicketCheckAction(final Flow flow) {
+    /**
+     * Create ticket granting ticket check action.
+     *
+     * @param flow the flow
+     */
+    protected void createTicketGrantingTicketCheckAction(final Flow flow) {
         final ActionState action = createActionState(flow, CasWebflowConstants.STATE_ID_TICKET_GRANTING_TICKET_CHECK,
             CasWebflowConstants.ACTION_ID_TICKET_GRANTING_TICKET_CHECK);
         createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_TGT_NOT_EXISTS, CasWebflowConstants.STATE_ID_GATEWAY_REQUEST_CHECK);
@@ -154,7 +159,12 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
         createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_TGT_VALID, CasWebflowConstants.STATE_ID_HAS_SERVICE_CHECK);
     }
 
-    private void createInitialAuthenticationRequestValidationCheckAction(final Flow flow) {
+    /**
+     * Create initial authentication request validation check action.
+     *
+     * @param flow the flow
+     */
+    protected void createInitialAuthenticationRequestValidationCheckAction(final Flow flow) {
         final ActionState action = createActionState(flow, CasWebflowConstants.STATE_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK,
             CasWebflowConstants.ACTION_ID_INITIAL_AUTHN_REQUEST_VALIDATION);
         createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, CasWebflowConstants.STATE_ID_HANDLE_AUTHN_FAILURE);
@@ -174,13 +184,23 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
         createStateDefaultTransition(terminateSession, CasWebflowConstants.STATE_ID_GATEWAY_REQUEST_CHECK);
     }
 
-    private void createSendTicketGrantingTicketAction(final Flow flow) {
+    /**
+     * Create send ticket granting ticket action.
+     *
+     * @param flow the flow
+     */
+    protected void createSendTicketGrantingTicketAction(final Flow flow) {
         final ActionState action = createActionState(flow, CasWebflowConstants.STATE_ID_SEND_TICKET_GRANTING_TICKET,
             CasWebflowConstants.ACTION_ID_SEND_TICKET_GRANTING_TICKET);
         createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_SERVICE_CHECK);
     }
 
-    private void createCreateTicketGrantingTicketAction(final Flow flow) {
+    /**
+     * Create create ticket granting ticket action.
+     *
+     * @param flow the flow
+     */
+    protected void createCreateTicketGrantingTicketAction(final Flow flow) {
         final ActionState action = createActionState(flow, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET,
             CasWebflowConstants.ACTION_ID_CREATE_TICKET_GRANTING_TICKET);
         createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_SEND_TICKET_GRANTING_TICKET);
@@ -245,7 +265,7 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
      *
      * @param flow the flow
      */
-    private void createServiceAuthorizationCheckAction(final Flow flow) {
+    protected void createServiceAuthorizationCheckAction(final Flow flow) {
         final ActionState serviceAuthorizationCheck = createActionState(flow,
             CasWebflowConstants.STATE_ID_SERVICE_AUTHZ_CHECK, "serviceAuthorizationCheck");
         createStateDefaultTransition(serviceAuthorizationCheck, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
@@ -332,7 +352,7 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
      *
      * @param flow the flow
      */
-    private void createServiceErrorEndState(final Flow flow) {
+    protected void createServiceErrorEndState(final Flow flow) {
         createEndState(flow, CasWebflowConstants.STATE_ID_VIEW_SERVICE_ERROR, CasWebflowConstants.VIEW_ID_SERVICE_ERROR);
     }
 
@@ -341,7 +361,7 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
      *
      * @param flow the flow
      */
-    private void createGenericLoginSuccessEndState(final Flow flow) {
+    protected void createGenericLoginSuccessEndState(final Flow flow) {
         final EndState state = createEndState(flow, CasWebflowConstants.STATE_ID_VIEW_GENERIC_LOGIN_SUCCESS, CasWebflowConstants.VIEW_ID_GENERIC_SUCCESS);
         state.getEntryActionList().add(createEvaluateAction("genericSuccessViewAction"));
     }
