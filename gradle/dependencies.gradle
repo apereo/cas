@@ -625,10 +625,14 @@ ext.libraries = [
                     exclude(group: "com.fasterxml", module: "classmate")
                     exclude(group: "org.hibernate", module: "hibernate-validator")
                     exclude(group: "org.jboss.logging", module: "jboss-logging")
+                    exclude(group: "net.bytebuddy", module: "byte-buddy")
                     force = true
                 },
                 dependencies.create("org.dom4j:dom4j:$dom4jVersion") {
                     exclude(group: "xml-apis", module: "xml-apis")
+                    force = true
+                },
+                dependencies.create("net.bytebuddy:byte-buddy:$bytebuddyVersion") {
                     force = true
                 },
                 dependencies.create("org.hibernate:hibernate-hikaricp:$hibernateVersion") {
@@ -1512,6 +1516,7 @@ ext.libraries = [
                     exclude(group: "org.hamcrest", module: "hamcrest-core")
                     exclude(group: "org.objenesis", module: "objenesis")
                     exclude(group: "junit", module: "junit")
+                    exclude(group: "net.bytebuddy", module: "byte-buddy")
                     force = true
                 },
                 dependencies.create("org.mockito:mockito-junit-jupiter:$mockitoVersion") {
