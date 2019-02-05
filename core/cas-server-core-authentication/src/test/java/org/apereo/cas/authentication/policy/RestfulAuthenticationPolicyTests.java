@@ -3,7 +3,6 @@ package org.apereo.cas.authentication.policy;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
-import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -13,13 +12,11 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 
-import org.hamcrest.CustomMatcher;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
+import lombok.SneakyThrows;
+import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -27,8 +24,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
@@ -36,10 +31,11 @@ import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
-
+import java.security.GeneralSecurityException;
 import java.util.LinkedHashSet;
 
-import static org.junit.Assert.*;
+import static org.apereo.cas.util.junit.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
 
@@ -61,34 +57,30 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
     CasCoreTicketCatalogConfiguration.class
 })
 @DirtiesContext
-@Category(RestfulApiCategory.class)
+@Tag("RestfulApi")
 public class RestfulAuthenticationPolicyTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
     private static final String URI = "http://rest.endpoint.com";
 
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
-    private final RestTemplate restTemplate = new RestTemplate();
-
-    private MockRestServiceServer mockServer;
-
-    private RestfulAuthenticationPolicy policy;
-
-    @Before
+    @BeforeEach
     public void initialize() {
         MockitoAnnotations.initMocks(this);
-        mockServer = MockRestServiceServer.createServer(restTemplate);
-        policy = new RestfulAuthenticationPolicy(this.restTemplate, URI);
+    }
+
+    private RestfulAuthenticationPolicy newPolicy(final RestTemplate restTemplate) {
+        return new RestfulAuthenticationPolicy(restTemplate, URI);
+    }
+
+    private MockRestServiceServer newServer(final RestTemplate restTemplate) {
+        return MockRestServiceServer.createServer(restTemplate);
     }
 
     @Test
-    public void verifyPolicyGood() throws Exception {
+    @SneakyThrows
+    public void verifyPolicyGood() {
+        val restTemplate = new RestTemplate();
+        val mockServer = newServer(restTemplate);
+        val policy = newPolicy(restTemplate);
+
         mockServer.expect(requestTo(URI))
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
             .andExpect(method(HttpMethod.POST))
@@ -98,31 +90,32 @@ public class RestfulAuthenticationPolicyTests {
     }
 
     @Test
-    public void verifyPolicyFailsWithStatusCodes() throws Exception {
-        verifyPolicyFails(FailedLoginException.class, HttpStatus.UNAUTHORIZED);
-        verifyPolicyFails(AccountLockedException.class, HttpStatus.LOCKED);
-        verifyPolicyFails(AccountDisabledException.class, HttpStatus.METHOD_NOT_ALLOWED);
-        verifyPolicyFails(AccountDisabledException.class, HttpStatus.FORBIDDEN);
-        verifyPolicyFails(AccountNotFoundException.class, HttpStatus.NOT_FOUND);
-        verifyPolicyFails(AccountExpiredException.class, HttpStatus.PRECONDITION_FAILED);
-        verifyPolicyFails(AccountPasswordMustChangeException.class, HttpStatus.PRECONDITION_REQUIRED);
-        verifyPolicyFails(FailedLoginException.class, HttpStatus.INTERNAL_SERVER_ERROR);
+    public void verifyPolicyFailsWithStatusCodes() {
+        assertAll(() -> {
+            assertPolicyFails(FailedLoginException.class, HttpStatus.UNAUTHORIZED);
+            assertPolicyFails(AccountLockedException.class, HttpStatus.LOCKED);
+            assertPolicyFails(AccountDisabledException.class, HttpStatus.METHOD_NOT_ALLOWED);
+            assertPolicyFails(AccountDisabledException.class, HttpStatus.FORBIDDEN);
+            assertPolicyFails(AccountNotFoundException.class, HttpStatus.NOT_FOUND);
+            assertPolicyFails(AccountExpiredException.class, HttpStatus.PRECONDITION_FAILED);
+            assertPolicyFails(AccountPasswordMustChangeException.class, HttpStatus.PRECONDITION_REQUIRED);
+            assertPolicyFails(FailedLoginException.class, HttpStatus.INTERNAL_SERVER_ERROR);
+        });
     }
 
 
-    private void verifyPolicyFails(final Class exceptionClass, final HttpStatus status) throws Exception {
-        thrown.expectCause(new CustomMatcher<>("policy") {
-            @Override
-            public boolean matches(final Object o) {
-                return o.getClass().equals(exceptionClass);
-            }
-        });
+    private void assertPolicyFails(final Class<? extends Throwable> exceptionClass, final HttpStatus status) {
+        val restTemplate = new RestTemplate();
+        val mockServer = newServer(restTemplate);
+        val policy = newPolicy(restTemplate);
 
         mockServer.expect(requestTo(URI))
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
             .andExpect(method(HttpMethod.POST))
             .andRespond(withStatus(status));
-        assertTrue(policy.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"), new LinkedHashSet<>()));
+
+        assertThrowsWithRootCause(GeneralSecurityException.class, exceptionClass,
+            () -> assertTrue(policy.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"), new LinkedHashSet<>())));
         mockServer.verify();
     }
 }

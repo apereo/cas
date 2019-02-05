@@ -5,11 +5,12 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 
+import lombok.SneakyThrows;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributes;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -38,7 +39,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
     private Map<String, List<Object>> attributes;
     private Principal principal;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         attributes = new HashMap<>();
         attributes.put("a1", Arrays.asList("v1", "v2", "v3"));
@@ -66,7 +67,8 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
     protected abstract AbstractPrincipalAttributesRepository getPrincipalAttributesRepository(String unit, long duration);
 
     @Test
-    public void checkExpiredCachedAttributes() throws Exception {
+    @SneakyThrows
+    public void checkExpiredCachedAttributes() {
         assertEquals(1, this.principal.getAttributes().size());
         try (val repository = getPrincipalAttributesRepository(TimeUnit.MILLISECONDS.name(), 100)) {
             assertEquals(repository.getAttributes(this.principal).size(), this.attributes.size());
@@ -79,7 +81,8 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
     }
 
     @Test
-    public void ensureCachedAttributesWithUpdate() throws Exception {
+    @SneakyThrows
+    public void ensureCachedAttributesWithUpdate() {
         try (val repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5)) {
             assertEquals(repository.getAttributes(this.principal).size(), this.attributes.size());
             assertTrue(repository.getAttributes(this.principal).containsKey(MAIL));
@@ -90,7 +93,8 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
     }
 
     @Test
-    public void verifyMergingStrategyWithNoncollidingAttributeAdder() throws Exception {
+    @SneakyThrows
+    public void verifyMergingStrategyWithNoncollidingAttributeAdder() {
         try (val repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5)) {
             repository.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.ADD);
             assertTrue(repository.getAttributes(this.principal).containsKey(MAIL));
@@ -99,7 +103,8 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
     }
 
     @Test
-    public void verifyMergingStrategyWithReplacingAttributeAdder() throws Exception {
+    @SneakyThrows
+    public void verifyMergingStrategyWithReplacingAttributeAdder() {
         try (val repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5)) {
             repository.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.REPLACE);
             assertTrue(repository.getAttributes(this.principal).containsKey(MAIL));
@@ -108,7 +113,8 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
     }
 
     @Test
-    public void verifyMergingStrategyWithMultivaluedAttributeMerger() throws Exception {
+    @SneakyThrows
+    public void verifyMergingStrategyWithMultivaluedAttributeMerger() {
         try (val repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5)) {
             repository.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.MULTIVALUED);
 
