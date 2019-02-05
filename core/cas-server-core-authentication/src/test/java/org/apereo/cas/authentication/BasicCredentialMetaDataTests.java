@@ -4,14 +4,14 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.IOException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Scott Battaglia
@@ -23,7 +23,8 @@ public class BasicCredentialMetaDataTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     @Test
-    public void verifySerializeABasicCredentialMetaDataToJson() throws IOException {
+    @SneakyThrows
+    public void verifySerializeABasicCredentialMetaDataToJson() {
         val credentialMetaDataWritten = new BasicCredentialMetaData(new UsernamePasswordCredential());
         MAPPER.writeValue(JSON_FILE, credentialMetaDataWritten);
         val credentialMetaDataRead = MAPPER.readValue(JSON_FILE, BasicCredentialMetaData.class);

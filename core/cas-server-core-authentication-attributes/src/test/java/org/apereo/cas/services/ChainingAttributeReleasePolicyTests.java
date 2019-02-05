@@ -4,10 +4,10 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link ChainingAttributeReleasePolicyTests}.
@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
 public class ChainingAttributeReleasePolicyTests {
     private ChainingAttributeReleasePolicy chain;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         configureChainingReleasePolicy(0, 0);
     }

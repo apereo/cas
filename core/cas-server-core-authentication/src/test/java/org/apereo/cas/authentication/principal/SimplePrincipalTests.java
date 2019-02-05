@@ -1,15 +1,15 @@
 package org.apereo.cas.authentication.principal;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Misagh Moayyed
@@ -22,7 +22,8 @@ public class SimplePrincipalTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     @Test
-    public void verifySerializeACompletePrincipalToJson() throws IOException {
+    @SneakyThrows
+    public void verifySerializeACompletePrincipalToJson() {
         val attributes = new HashMap<String, Object>();
         attributes.put("attribute", "value");
         val principalWritten = new SimplePrincipal("id", attributes);
@@ -32,7 +33,8 @@ public class SimplePrincipalTests {
     }
 
     @Test
-    public void verifySerializeAPrincipalWithEmptyAttributesToJson() throws IOException {
+    @SneakyThrows
+    public void verifySerializeAPrincipalWithEmptyAttributesToJson() {
         val principalWritten = new SimplePrincipal("id", new HashMap<>(0));
         MAPPER.writeValue(JSON_FILE, principalWritten);
         val principalRead = MAPPER.readValue(JSON_FILE, SimplePrincipal.class);

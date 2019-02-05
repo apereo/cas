@@ -6,13 +6,13 @@ import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolv
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -41,6 +41,7 @@ public class ChainingPrincipalResolverTests {
         assertTrue(resolver.supports(credential));
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void examineResolve() {
         val principalOut = principalFactory.createPrincipal("output");
@@ -62,7 +63,9 @@ public class ChainingPrincipalResolverTests {
             Optional.of(principalOut),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
         assertEquals("output", principal.getId());
-        assertEquals("final@example.com", CollectionUtils.firstElement(principal.getAttributes().get("mail")).get());
+        val mail = CollectionUtils.firstElement(principal.getAttributes().get("mail"));
+        assertTrue(mail.isPresent());
+        assertEquals("final@example.com", mail.get());
     }
 
 }
