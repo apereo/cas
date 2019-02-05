@@ -1,4 +1,7 @@
 description = "Apereo CAS Core Webflow"
+ext {
+    useJunit5 = true
+}
 dependencies {
 
     implementation libraries.bouncycastle
@@ -31,5 +34,3 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-mfa-api", configuration: "tests")
 }
-
-
