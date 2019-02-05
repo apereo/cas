@@ -10,7 +10,7 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.binding.message.DefaultMessageResolver;
 import org.springframework.binding.message.MessageContext;
@@ -22,7 +22,7 @@ import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
