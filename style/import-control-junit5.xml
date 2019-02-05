@@ -6,4 +6,8 @@
     <allow pkg="org.junit.platform"/>
     <disallow pkg="org.junit" exact-match="true"/>
     <disallow pkg="org\.junit\.runners?" regex="true"/>
+    <subpackage name="apereo.cas.util.junit">
+        <allow pkg="org.junit" exact-match="true"/>
+        <allow pkg="org\.junit\.runners?" regex="true"/>
+    </subpackage>
 </import-control>
