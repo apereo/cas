@@ -3,12 +3,12 @@ package org.apereo.cas.aup;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 /**
@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
 })
 public class JdbcAcceptableUsagePolicyRepositoryTests extends BaseJdbcAcceptableUsagePolicyRepositoryTests {
 
-    @Before
+    @BeforeEach
     public void initialize() throws Exception {
         try (val c = this.acceptableUsagePolicyDataSource.getConnection()) {
             try (val s = c.createStatement()) {
@@ -34,7 +34,7 @@ public class JdbcAcceptableUsagePolicyRepositoryTests extends BaseJdbcAcceptable
         }
     }
     
-    @After
+    @AfterEach
     public void cleanup() throws Exception {
         try (val c = this.acceptableUsagePolicyDataSource.getConnection()) {
             try (val s = c.createStatement()) {
