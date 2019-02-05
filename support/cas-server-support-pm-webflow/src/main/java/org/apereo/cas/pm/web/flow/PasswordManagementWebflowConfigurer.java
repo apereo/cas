@@ -128,7 +128,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
             final String originalTargetState = initializeLoginFormState.getTransition(CasWebflowConstants.STATE_ID_SUCCESS).getTargetStateId();
             final SubflowState pswdResetSubFlowState = createSubflowState(flow, CasWebflowConstants.STATE_ID_PASSWORD_RESET_SUBFLOW, FLOW_ID_PASSWORD_RESET);
 
-            getTransitionableState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT).getEntryActionList()
+            getTransitionableState(flow, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET).getEntryActionList()
                 .add(createEvaluateAction("flowScope." + DO_CHANGE_PASSWORD_PARAMETER
                     + " = requestParameters." + DO_CHANGE_PASSWORD_PARAMETER + " != null"));
 
@@ -155,11 +155,11 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
                 CasWebflowConstants.STATE_ID_CHECK_DO_CHANGE_PASSWORD,
                 "flowScope." + DO_CHANGE_PASSWORD_PARAMETER + " == true",
                 CasWebflowConstants.VIEW_ID_MUST_CHANGE_PASSWORD,
-                getTransitionableState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT)
+                getTransitionableState(flow, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET)
                     .getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId())
                 .getEntryActionList().add(createEvaluateAction("flowScope.pswdChangePostLogin=true"));
 
-            createTransitionForState(getTransitionableState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT),
+            createTransitionForState(getTransitionableState(flow, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET),
                 CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_CHECK_DO_CHANGE_PASSWORD, true);
 
             createDecisionState(flow,
