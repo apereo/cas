@@ -474,7 +474,7 @@ public class HttpUtils {
             });
             
             val writer = new StringWriter();
-            try (val httpResponseReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()))) {
+            try (val httpResponseReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), StandardCharsets.UTF_8))) {
                 var lineRead = StringUtils.EMPTY;
                 while ((lineRead = httpResponseReader.readLine()) != null) {
                     writer.write(lineRead);
