@@ -1,7 +1,0 @@
-install {
-    enabled = false
-}
-
-publish {
-    enabled = false
-}
