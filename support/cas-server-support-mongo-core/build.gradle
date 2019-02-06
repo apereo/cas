@@ -1,4 +1,7 @@
 description = "Apereo CAS MongoDb Core Support"
+ext {
+    useJunit5 = true
+}
 dependencies {
     implementation libraries.mongo
     

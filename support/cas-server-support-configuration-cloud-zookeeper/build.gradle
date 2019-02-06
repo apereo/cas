@@ -1,4 +1,7 @@
 description = "Apereo CAS Configuration - Apache Zookeeper"
+ext {
+    useJunit5 = true
+}
 dependencies {
     implementation libraries.springcloudzookeeper
     implementation libraries.zookeeper
