@@ -11,16 +11,13 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -30,16 +27,13 @@ import static org.mockito.Mockito.*;
  * @since 3.5.0
  */
 public class ServiceAuthorizationCheckTests {
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     private final WebApplicationService authorizedService = mock(WebApplicationService.class);
     private final WebApplicationService unauthorizedService = mock(WebApplicationService.class);
     private final WebApplicationService undefinedService = mock(WebApplicationService.class);
     private final ServicesManager servicesManager = mock(ServicesManager.class);
     private ServiceAuthorizationCheckAction serviceAuthorizationCheck;
 
-    @Before
+    @BeforeEach
     public void setUpMocks() {
         val authorizedRegisteredService = new RegexRegisteredService();
         val unauthorizedRegisteredService = new RegexRegisteredService();
@@ -52,7 +46,7 @@ public class ServiceAuthorizationCheckTests {
         when(this.servicesManager.findServiceBy(this.authorizedService)).thenReturn(authorizedRegisteredService);
         when(this.servicesManager.findServiceBy(this.unauthorizedService)).thenReturn(unauthorizedRegisteredService);
         when(this.servicesManager.findServiceBy(this.undefinedService)).thenReturn(null);
-        when(this.servicesManager.getAllServices()).thenReturn((Collection) list);
+        when(this.servicesManager.getAllServices()).thenReturn(list);
 
         this.serviceAuthorizationCheck = new ServiceAuthorizationCheckAction(this.servicesManager,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
@@ -78,11 +72,7 @@ public class ServiceAuthorizationCheckTests {
         val mockRequestContext = new MockRequestContext();
         WebUtils.putServiceIntoFlowScope(mockRequestContext, unauthorizedService);
 
-        this.thrown.expect(UnauthorizedServiceException.class);
-
-
-        this.serviceAuthorizationCheck.doExecute(mockRequestContext);
-        fail("Should have thrown UnauthorizedServiceException");
+        assertThrows(UnauthorizedServiceException.class, () -> this.serviceAuthorizationCheck.doExecute(mockRequestContext));
     }
 
     @Test
@@ -90,10 +80,6 @@ public class ServiceAuthorizationCheckTests {
         val mockRequestContext = new MockRequestContext();
         WebUtils.putServiceIntoFlowScope(mockRequestContext, undefinedService);
 
-        this.thrown.expect(UnauthorizedServiceException.class);
-
-
-        this.serviceAuthorizationCheck.doExecute(mockRequestContext);
-        throw new AssertionError("Should have thrown UnauthorizedServiceException");
+        assertThrows(UnauthorizedServiceException.class, () -> this.serviceAuthorizationCheck.doExecute(mockRequestContext));
     }
 }
