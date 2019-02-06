@@ -24,9 +24,7 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.monitor.config.HazelcastMonitorConfiguration;
 
 import lombok.val;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.health.HealthIndicator;
@@ -34,13 +32,11 @@ import org.springframework.boot.actuate.health.Status;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
+import java.util.Arrays;
 import java.util.Map;
 
-import static org.hamcrest.Matchers.isOneOf;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link HazelcastHealthIndicatorTests}.
@@ -76,12 +72,6 @@ import static org.junit.Assert.*;
 })
 @TestPropertySource(properties = {"cas.ticket.registry.hazelcast.cluster.instanceName=testlocalmonitor"})
 public class HazelcastHealthIndicatorTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     @Autowired
     @Qualifier("hazelcastHealthIndicator")
     private HealthIndicator hazelcastHealthIndicator;
@@ -89,7 +79,9 @@ public class HazelcastHealthIndicatorTests {
     @Test
     public void verifyMonitor() {
         val health = hazelcastHealthIndicator.health();
-        assertThat(health.getStatus(), isOneOf(Status.UP, Status.OUT_OF_SERVICE));
+        val status = health.getStatus();
+        assertTrue(Arrays.asList(Status.UP, Status.OUT_OF_SERVICE).contains(status),
+            "Status should be UP or OUT_OF_SERVICE but was" + status);
 
         val details = health.getDetails();
         details.values().stream()
