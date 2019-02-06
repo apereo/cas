@@ -1,5 +1,7 @@
 description = "Apereo CAS CouchDB Support Core"
-
+ext {
+    useJunit5 = true
+}
 dependencies {
     api libraries.ektorp
     api project(":api:cas-server-core-api-configuration-model")

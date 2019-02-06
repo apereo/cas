@@ -1,4 +1,7 @@
 description = "Apereo CAS SAML Identity Provider Core"
+ext {
+    useJunit5 = true
+}
 dependencies {
     implementation libraries.shibidpjavasupport
     
