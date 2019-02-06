@@ -89,3 +89,14 @@ int findAvailableTcpPort(List<Integer> portRange) {
     }
     return -1
 }
+
+publishing {
+    publications {
+        mavenWeb(MavenPublication) {
+            from components.web
+            pom.withXml {
+                createPomRepositories(asNode())
+            }
+        }
+    }
+}
