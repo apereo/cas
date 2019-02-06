@@ -24,17 +24,6 @@ sourceSets {
 apply from: rootProject.file("gradle/springboot.gradle")
 apply from: rootProject.file("gradle/node.gradle")
 
-publishing {
-    publications {
-        mavenWeb(MavenPublication) {
-            from components.web
-            pom.withXml {
-               createPomRepositories(asNode()) 
-            }
-        }
-    }
-}
-
 dependencies {
     implementation project(":core:cas-server-core")
     implementation project(":core:cas-server-core-audit")
