@@ -18,6 +18,18 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishReleases && !rootP
     }
 
     if (plugins.hasPlugin("war")) {
+        
+        publishing {
+            publications {
+                mavenWeb(MavenPublication) {
+                    from components.web
+                    pom.withXml {
+                        createPomRepositories(asNode())
+                    }
+                }
+            }
+        }
+        
         javadoc {
             enabled false
         }
@@ -88,15 +100,4 @@ int findAvailableTcpPort(List<Integer> portRange) {
         }
     }
     return -1
-}
-
-publishing {
-    publications {
-        mavenWeb(MavenPublication) {
-            from components.web
-            pom.withXml {
-                createPomRepositories(asNode())
-            }
-        }
-    }
 }
