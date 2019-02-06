@@ -1,4 +1,7 @@
 description = "Apereo CAS Consent JDBC Support"
+ext {
+    useJunit5 = true
+}
 dependencies {
     implementation project(":core:cas-server-core-web-api")
     implementation project(":support:cas-server-support-consent-api")
