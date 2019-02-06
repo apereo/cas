@@ -1,5 +1,7 @@
 description = "Apereo CAS Duo Security Core MFA"
-
+ext {
+    useJunit5 = true
+}
 dependencies {
     api project(":api:cas-server-core-api-authentication")
     

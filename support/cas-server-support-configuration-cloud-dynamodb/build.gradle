@@ -1,4 +1,7 @@
 description = "Apereo CAS Configuration - DynamoDb"
+ext {
+    useJunit5 = true
+}
 dependencies {
     implementation libraries.awsjavadynamodb
     implementation project(":support:cas-server-support-aws")

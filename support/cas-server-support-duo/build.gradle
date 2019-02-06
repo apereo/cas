@@ -1,5 +1,7 @@
 description = "Apereo CAS DuoSecurity Support"
-
+ext {
+    useJunit5 = true
+}
 dependencies {
 
     implementation libraries.spring
