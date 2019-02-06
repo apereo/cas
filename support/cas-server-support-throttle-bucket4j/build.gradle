@@ -1,4 +1,7 @@
 description = "Apereo CAS Bucket4j Authentication Throttling"
+ext {
+    useJunit5 = true
+}
 dependencies {
     api project(":api:cas-server-core-api-audit")
     api project(":api:cas-server-core-api-throttle")

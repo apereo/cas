@@ -1,4 +1,7 @@
 description = "Apereo CAS Configuration - Cloud Bus AMQP"
+ext {
+    useJunit5 = true
+}
 dependencies {
     implementation libraries.springcloudbusamqp
     implementation libraries.springintegrationamqp

@@ -1,5 +1,7 @@
 description = "Apereo CAS Sentry Monitoring and Tracking Support"
-
+ext {
+    useJunit5 = true
+}
 dependencies {
     implementation libraries.sentry
 }
