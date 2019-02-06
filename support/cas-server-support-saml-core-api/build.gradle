@@ -1,4 +1,7 @@
 description = "Apereo CAS SAML Core Functionality"
+ext {
+    useJunit5 = true
+}
 dependencies {
     api libraries.opensaml
     api libraries.bouncycastle

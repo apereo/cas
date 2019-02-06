@@ -1,4 +1,7 @@
 description = "Apereo CAS Authentication handler wrapping pac4j"
+ext {
+    useJunit5 = true
+}
 dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-web-api")

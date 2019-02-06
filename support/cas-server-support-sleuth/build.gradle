@@ -1,4 +1,7 @@
 description = "Apereo CAS Spring Cloud Sleuth Support"
+ext {
+    useJunit5 = true
+}
 dependencies {
     implementation libraries.springcloudsleuth
     implementation project(":core:cas-server-core-web-api")

@@ -1,4 +1,7 @@
 description = "Apereo CAS Web Application Spring Webflow Actions"
+ext {
+    useJunit5 = true
+}
 dependencies {
     api project(":api:cas-server-core-api-webflow")
 

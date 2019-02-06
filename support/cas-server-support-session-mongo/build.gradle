@@ -1,4 +1,7 @@
 description = "Apereo CAS Web Application Mongo Session Management"
+ext {
+    useJunit5 = true
+}
 dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     implementation libraries.springsession

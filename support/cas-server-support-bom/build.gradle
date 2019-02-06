@@ -1,5 +1,8 @@
 description = "Apereo CAS ‌‌Bill of Material"
 
+ext {
+    useJunit5 = true
+}
 publishing {
     publications {
         mavenJava(MavenPublication) {

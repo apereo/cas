@@ -1,4 +1,7 @@
 description = "Apereo CAS Spring Cloud Eureka Client"
+ext {
+    useJunit5 = true
+}
 dependencies {
     implementation libraries.eurekaclient
     implementation libraries.ribbon
