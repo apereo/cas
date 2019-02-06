@@ -15,8 +15,7 @@ import java.util.concurrent.ExecutorService;
  */
 @Slf4j
 public class JdbcDataSourceHealthIndicator extends AbstractPoolHealthIndicator {
-
-
+    
     private final JdbcTemplate jdbcTemplate;
     private final String validationQuery;
 
