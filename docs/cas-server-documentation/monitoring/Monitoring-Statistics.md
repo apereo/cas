@@ -38,6 +38,10 @@ Note that by default the only endpoints exposed over the web are <code>info</cod
 Other endpoints need to be explicitly enabled and then exposed over the web in CAS settings in order to allow access.
 </p></div>
 
+Note that certain CAS features present actuator endpoints of their own, and such endpoints only become active
+once the feature is turned on and made available to CAS at runtime. For more information, refer to the specific
+documentation page for the feature in question to learn more about administrative endpoints, etc.
+
 Actuator endpoints provided by Spring Boot can also be visually managed and monitored
  via the [Spring Boot Administration Server](Configuring-Monitoring-Administration.html).
 <div class="alert alert-info"><strong>Obtaining Health Info</strong><p>Note that <code>/status</code> endpoint is kept mostly 

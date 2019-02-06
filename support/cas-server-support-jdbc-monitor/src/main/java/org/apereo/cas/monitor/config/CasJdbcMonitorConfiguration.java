@@ -8,6 +8,7 @@ import org.apereo.cas.monitor.JdbcDataSourceHealthIndicator;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -42,6 +43,7 @@ public class CasJdbcMonitorConfiguration {
     @Autowired
     @Bean
     @RefreshScope
+    @ConditionalOnEnabledHealthIndicator("dataSourceHealthIndicator")
     public HealthIndicator dataSourceHealthIndicator(@Qualifier("pooledJdbcMonitorExecutorService") final ExecutorService executor) {
         val jdbc = casProperties.getMonitor().getJdbc();
         return new JdbcDataSourceHealthIndicator(Beans.newDuration(jdbc.getMaxWait()).toMillis(),

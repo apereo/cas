@@ -6,7 +6,6 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -37,7 +36,6 @@ public abstract class AbstractPrincipalAttributeAcceptableUsagePolicyRepository 
 
     @Override
     public Pair<Boolean, Principal> verify(final RequestContext requestContext, final Credential credential) {
-        @NonNull
         val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
 
         if (isUsagePolicyAcceptedBy(principal)) {

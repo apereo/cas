@@ -14,7 +14,6 @@ import org.apereo.cas.web.support.WebUtils;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -63,7 +62,6 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
         val otp = Integer.parseInt(tokenCredential.getToken());
         LOGGER.trace("Received OTP [{}]", otp);
 
-        @NonNull
         val authentication = WebUtils.getInProgressAuthentication();
         val uid = authentication.getPrincipal().getId();
 

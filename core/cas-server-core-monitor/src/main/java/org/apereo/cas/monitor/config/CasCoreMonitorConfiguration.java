@@ -10,6 +10,7 @@ import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -36,6 +37,7 @@ public class CasCoreMonitorConfiguration {
 
     @ConditionalOnMissingBean(name = "memoryHealthIndicator")
     @Bean
+    @ConditionalOnEnabledHealthIndicator("memoryHealthIndicator")
     public HealthIndicator memoryHealthIndicator() {
         val freeMemThreshold = casProperties.getMonitor().getFreeMemThreshold();
         if (freeMemThreshold > 0) {
@@ -47,6 +49,7 @@ public class CasCoreMonitorConfiguration {
 
     @ConditionalOnMissingBean(name = "sessionHealthIndicator")
     @Bean
+    @ConditionalOnEnabledHealthIndicator("sessionHealthIndicator")
     public HealthIndicator sessionHealthIndicator() {
         val warnSt = casProperties.getMonitor().getSt().getWarn();
         val warnTgt = casProperties.getMonitor().getTgt().getWarn();

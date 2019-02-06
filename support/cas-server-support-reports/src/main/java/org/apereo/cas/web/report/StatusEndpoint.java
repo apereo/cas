@@ -61,9 +61,10 @@ public class StatusEndpoint extends BaseCasActuatorEndpoint {
             }
             model.put("health", status.getCode());
         }
-        model.put("host", StringUtils.isBlank(casProperties.getHost().getName())
+        val hostname = casProperties.getHost().getName();
+        model.put("host", StringUtils.isBlank(hostname)
             ? InetAddressUtils.getCasServerHostName()
-            : casProperties.getHost().getName());
+            : hostname);
         model.put("server", casProperties.getServer().getName());
         model.put("version", CasVersion.asString());
         return model;

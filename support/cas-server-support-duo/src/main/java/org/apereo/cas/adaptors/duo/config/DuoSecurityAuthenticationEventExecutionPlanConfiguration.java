@@ -33,6 +33,7 @@ import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -172,6 +173,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
     }
 
     @Bean
+    @ConditionalOnEnabledHealthIndicator("duoSecurityHealthIndicator")
     public HealthIndicator duoSecurityHealthIndicator() {
         return new DuoSecurityHealthIndicator();
     }

@@ -16,7 +16,6 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBui
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
 
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -154,7 +153,6 @@ public class SSOSamlProfileCallbackHandlerController extends AbstractSamlProfile
 
         val entityId = facade.getEntityId();
         LOGGER.debug("Checking metadata for [{}] to see if binding [{}] is supported", entityId, binding);
-        @NonNull
         val svc = facade.getAssertionConsumerService(binding);
         LOGGER.debug("Binding [{}] is supported by [{}]", svc.getBinding(), entityId);
         return binding;

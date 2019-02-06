@@ -63,7 +63,6 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
         val credentials = convertToPac4jCredentials((I) credential);
         LOGGER.debug("credentials: [{}]", credentials);
         try {
-            @NonNull
             val authenticator = getAuthenticator(credential);
             if (authenticator instanceof InitializableObject) {
                 ((InitializableObject) authenticator).init();

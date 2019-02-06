@@ -11,7 +11,6 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEnc
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.BaseSamlProfileSamlResponseBuilder;
 
-import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -71,7 +70,6 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
                                      final MessageContext messageContext) throws SamlException {
 
         LOGGER.debug("Locating the assertion consumer service url for binding [{}]", binding);
-        @NonNull
         val acs = adaptor.getAssertionConsumerService(binding);
         LOGGER.debug("Located assertion consumer service url [{}]", acs);
         val ecpResponse = newEcpResponse(acs.getLocation());

@@ -637,7 +637,7 @@ To determine whether an endpoint is available, the calculation order for all end
 2. If undefined, the global endpoint security is consulted from CAS settings.
 3. If undefined, the default built-in setting for the endpoint in CAS is consulted, which is typically `false` by default.
 
-All available endpoint ids [should be listed here](../monitoring/Monitoring-Statistics.html).
+A number of available endpoint ids [should be listed here](../monitoring/Monitoring-Statistics.html).
 
 Endpoints may also be mapped to custom arbitrary endpoints. For example, to remap the `health` endpoint to `healthcheck`, 
 specify the following settings:
@@ -645,6 +645,8 @@ specify the following settings:
 ```properties
 # management.endpoints.web.path-mapping.health=healthcheck
 ```
+
+### Health Endpoints
 
 The `health` endpoint may also be configured to show details using `management.endpoint.health.show-details` via the following conditions:
 
@@ -657,6 +659,29 @@ The `health` endpoint may also be configured to show details using `management.e
 ```properties
 # management.endpoint.health.show-details=never
 ```
+
+The results and details of the `health` endpoints are produced by a number of health indicator components that may monitor different systems, such as LDAP connection
+pools, database connections, etc. Such health indicators are turned off by default and may individually be controlled and turned on via the following settings:
+
+```properties
+# management.health.<name>.enabled=true
+# management.health.defaults.enabled=false 
+```
+
+The following health indicator names are available, given the presence of the appropriate CAS feature:
+
+| Health Indicator          | Description
+|----------------------|------------------------------------------------------------------------------------------
+| `memoryHealthIndicator`   | Reports back on the health status of CAS JVM memory usage, etc.
+| `sessionHealthIndicator`   | Reports back on the health status of CAS tickets and SSO session usage.
+| `duoSecurityHealthIndicator`   | Reports back on the health status of Duo Security APIs.
+| `ehcacheHealthIndicator`   | Reports back on the health status of Ehcache caches.
+| `hazelcastHealthIndicator`   | Reports back on the health status of Hazelcast caches.
+| `dataSourceHealthIndicator`   | Reports back on the health status of JDBC connections.
+| `pooledLdapConnectionFactoryHealthIndicator`   | Reports back on the health status of LDAP connection pools.
+| `memcachedHealthIndicator`   | Reports back on the health status of Memcached connections.
+| `mongoHealthIndicator`   | Reports back on the health status of MongoDb connections.
+| `samlRegisteredServiceMetadataHealthIndicator`   | Reports back on the health status of SAML2 service provider metadata sources.
 
 ### Endpoint Security
 

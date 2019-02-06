@@ -9,6 +9,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -34,6 +35,7 @@ public class HazelcastMonitorConfiguration implements DisposableBean {
 
     @Bean
     @RefreshScope
+    @ConditionalOnEnabledHealthIndicator("hazelcastHealthIndicator")
     public HealthIndicator hazelcastHealthIndicator() {
         val warn = casProperties.getMonitor().getWarn();
         return new HazelcastHealthIndicator(
