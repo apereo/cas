@@ -5,7 +5,7 @@ import org.apereo.cas.consent.ConsentReminderOptions;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -14,7 +14,7 @@ import org.springframework.webflow.test.MockRequestContext;
 
 import java.time.temporal.ChronoUnit;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link ConfirmConsentActionTests}.
