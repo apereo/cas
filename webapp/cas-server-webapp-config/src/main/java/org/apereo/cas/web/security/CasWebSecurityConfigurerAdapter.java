@@ -105,7 +105,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
                 LOGGER.trace("Endpoint security is defined for endpoint [{}]", rootPath);
             } else {
                 val defaultAccessRules = endpointDefaults.getAccess();
-                LOGGER.debug("Endpoint security is NOT defined for endpoint [{}]. Using default security rules [{}]", rootPath, defaultAccessRules);
+                LOGGER.debug("Endpoint security is NOT defined for endpoint [{}]. Using default security rules [{}]", rootPath, endpointDefaults);
                 val endpointRequest = EndpointRequest.to(rootPath).excludingLinks();
                 defaultAccessRules.forEach(Unchecked.consumer(access ->
                     configureEndpointAccess(http, requests, access, endpointDefaults, endpointRequest)));

@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import java.util.stream.Stream;
 @RequiresModule(name = "cas-server-support-reports", automated = true)
 @Getter
 @Setter
+@ToString
 public class ActuatorEndpointProperties implements Serializable {
     private static final long serialVersionUID = -2463521198550485506L;
     /**
