@@ -17,6 +17,7 @@ import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.OAuth20ClientIdAwareProfileManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
@@ -219,6 +220,7 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
         val config = new Config(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()),
             oauthCasClient, basicAuthClient, pkceAuthnClient, directFormClient, userFormClient);
         config.setSessionStore(new J2ESessionStore());
+        config.setProfileManagerFactory(OAuth20ClientIdAwareProfileManager::new);
         return config;
     }
 
