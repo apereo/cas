@@ -14,7 +14,6 @@ import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 
 import com.google.common.collect.Sets;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -155,7 +154,6 @@ public class SamlIdPObjectSigner {
     protected <T extends SAMLObject> void prepareSecurityParametersContext(final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                                            final MessageContext<T> outboundContext,
                                                                            final SamlRegisteredService service) {
-        @NonNull
         val secParametersContext = outboundContext.getSubcontext(SecurityParametersContext.class, true);
         val roleDesc = adaptor.getSsoDescriptor();
         val signingParameters = buildSignatureSigningParameters(roleDesc, service);
@@ -200,7 +198,6 @@ public class SamlIdPObjectSigner {
         criteria.add(new RoleDescriptorCriterion(descriptor));
         val resolver = new SAMLMetadataSignatureSigningParametersResolver();
         LOGGER.trace("Resolving signature signing parameters for [{}]", descriptor.getElementQName().getLocalPart());
-        @NonNull
         val params = resolver.resolveSingle(criteria);
         LOGGER.trace("Created signature signing parameters."
                 + "\nSignature algorithm: [{}]"
