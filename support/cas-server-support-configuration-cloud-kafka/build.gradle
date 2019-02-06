@@ -1,4 +1,7 @@
 description = "Apereo CAS Configuration - Cloud Bus Kafka"
+ext {
+    useJunit5 = true
+}
 dependencies {
     implementation libraries.zookeeper
     implementation libraries.springcloudbuskafka
