@@ -1,5 +1,7 @@
 description = "Apereo CAS Couchbase Support Core"
-
+ext {
+    useJunit5 = true
+}
 repositories {
     maven { url "https://files.couchbase.com/maven2" }
     jcenter()

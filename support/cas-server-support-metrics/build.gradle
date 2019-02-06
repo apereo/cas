@@ -1,4 +1,7 @@
 description = "Apereo CAS Metrics Support"
+ext {
+    useJunit5 = true
+}
 dependencies {
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-authentication-api")
