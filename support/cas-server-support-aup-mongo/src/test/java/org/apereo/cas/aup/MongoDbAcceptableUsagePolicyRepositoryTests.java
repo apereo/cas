@@ -1,12 +1,10 @@
 package org.apereo.cas.aup;
 
-import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.CasAcceptableUsagePolicyMongoDbConfiguration;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import lombok.Getter;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
@@ -18,9 +16,9 @@ import org.springframework.test.context.TestPropertySource;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Category(MongoDbCategory.class)
+@Tag("MongoDb")
 @Import(CasAcceptableUsagePolicyMongoDbConfiguration.class)
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
+@EnabledIfContinuousIntegration
 @TestPropertySource(properties = {
     "cas.acceptableUsagePolicy.mongo.host=localhost",
     "cas.acceptableUsagePolicy.mongo.port=27017",
