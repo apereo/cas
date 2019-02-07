@@ -138,6 +138,12 @@ public class SamlRegisteredService extends RegexRegisteredService {
     @Column(name = "attribute_value")
     private Map<String, String> attributeFriendlyNames = new TreeMap<>();
 
+    @ElementCollection
+    @CollectionTable(name = "SamlRegisteredService_AttributeValueTypes")
+    @MapKeyColumn(name = "attribute_name")
+    @Column(name = "attribute_type")
+    private Map<String, String> attributeValueTypes = new TreeMap<>();
+
     @Lob
     @Column(name = "encryptable_attrs", length = Integer.MAX_VALUE)
     private HashSet<String> encryptableAttributes = new HashSet<>();
