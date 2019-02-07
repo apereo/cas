@@ -1,4 +1,7 @@
 description = 'Apereo CAS Amazon Web Services Cognito Authentication'
+ext {
+    useJunit5 = true
+}
 dependencies {
     api project(":api:cas-server-core-api")
     
