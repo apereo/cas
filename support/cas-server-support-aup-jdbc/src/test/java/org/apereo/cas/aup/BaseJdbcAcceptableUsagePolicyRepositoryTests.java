@@ -18,7 +18,6 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 import javax.sql.DataSource;
-
 import java.util.Map;
 
 /**
