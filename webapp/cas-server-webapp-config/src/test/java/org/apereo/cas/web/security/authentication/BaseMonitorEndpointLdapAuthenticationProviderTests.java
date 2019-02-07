@@ -13,6 +13,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -35,6 +37,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
     "cas.monitor.endpoints.ldap.bindDn=cn=Directory Manager",
     "cas.monitor.endpoints.ldap.bindCredential=password"
 })
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class BaseMonitorEndpointLdapAuthenticationProviderTests {
     private static final int LDAP_PORT = 10389;
