@@ -36,22 +36,23 @@ public class SamlRegisteredServiceMetadataHealthIndicator extends AbstractHealth
 
         samlServices.stream()
             .map(SamlRegisteredService.class::cast)
-            .forEach(service -> availableResolvers
-                .stream()
-                .filter(Objects::nonNull)
-                .forEach(r -> {
-                    LOGGER.debug("Evaluating whether metadata resolver [{}] is available for service [{}]", r.getName(), service.getName());
-                    val available = r.isAvailable(service);
-                    val map = new HashMap<String, Object>();
-                    map.put("name", service.getName());
-                    map.put("id", service.getId());
-                    map.put("metadataLocation", service.getMetadataLocation());
-                    map.put("serviceId", service.getServiceId());
-                    map.put("availability", BooleanUtils.toStringYesNo(available));
-                    builder.withDetail(service.getName(), map);
-                    if (!available) {
-                        builder.down();
-                    }
-                }));
+            .forEach(service -> {
+                val map = new HashMap<String, Object>();
+                map.put("name", service.getName());
+                map.put("id", service.getId());
+                map.put("metadataLocation", service.getMetadataLocation());
+                map.put("serviceId", service.getServiceId());
+                val available = availableResolvers.stream()
+                    .filter(Objects::nonNull)
+                    .peek(r -> LOGGER.debug("Checking if metadata resolver [{}] is available for service [{}]",
+                             r.getName(), service.getName()))
+                    .anyMatch(r -> r.isAvailable(service)); // only need 1 valid resolver for metadata to be 'available'
+                map.put("availability", BooleanUtils.toStringYesNo(available));
+                builder.withDetail(service.getName(), map);
+                if (!available) {
+                    LOGGER.debug("No metadata resolver is available for service [{}]", service.getName());
+                    builder.down();
+                }              
+            });
     }
 }
