@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.config;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -68,6 +69,10 @@ public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowEx
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
     private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
+
+    @Autowired
+    @Qualifier("centralAuthenticationService")
+    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
     @Autowired
     @Qualifier("registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer")
@@ -165,7 +170,8 @@ public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowEx
             authenticationSystemSupport.getIfAvailable(),
             casProperties.getLocale().getParamName(),
             casProperties.getTheme().getParamName(),
-            authenticationRequestServiceSelectionStrategies.getIfAvailable());
+            authenticationRequestServiceSelectionStrategies.getIfAvailable(),
+            centralAuthenticationService.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "delegatedAuthenticationWebflowConfigurer")
