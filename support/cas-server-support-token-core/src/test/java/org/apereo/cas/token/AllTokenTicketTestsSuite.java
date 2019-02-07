@@ -1,6 +1,6 @@
 package org.apereo.cas.token;
 
-import org.apereo.cas.token.cipher.TokenTicketCipherExecutorTests;
+import org.apereo.cas.token.cipher.JwtTicketCipherExecutorTests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -13,7 +13,7 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-    TokenTicketCipherExecutorTests.class,
+    JwtTicketCipherExecutorTests.class,
     JWTTokenTicketBuilderTests.class,
     JWTTokenTicketBuilderWithoutCryptoTests.class,
     JWTTokenTicketBuilderWithoutEncryptionTests.class

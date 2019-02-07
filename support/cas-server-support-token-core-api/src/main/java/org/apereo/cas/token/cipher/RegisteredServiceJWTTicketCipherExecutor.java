@@ -12,14 +12,14 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Optional;
 
 /**
- * This is {@link RegisteredServiceTokenTicketCipherExecutor}.
+ * This is {@link RegisteredServiceJWTTicketCipherExecutor}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
  */
 @Slf4j
 @NoArgsConstructor
-public class RegisteredServiceTokenTicketCipherExecutor extends TokenTicketCipherExecutor implements RegisteredServiceCipherExecutor {
+public class RegisteredServiceJWTTicketCipherExecutor extends JWTTicketCipherExecutor implements RegisteredServiceCipherExecutor {
 
     @Override
     public String decode(final String data, final Optional<RegisteredService> service) {
@@ -63,10 +63,10 @@ public class RegisteredServiceTokenTicketCipherExecutor extends TokenTicketCiphe
      * @param registeredService the registered service
      * @return the token ticket cipher executor for service
      */
-    public TokenTicketCipherExecutor getTokenTicketCipherExecutorForService(final RegisteredService registeredService) {
+    public JWTTicketCipherExecutor getTokenTicketCipherExecutorForService(final RegisteredService registeredService) {
         val encryptionKey = getEncryptionKey(registeredService).get();
         val signingKey = getSigningKey(registeredService).get();
-        return new TokenTicketCipherExecutor(encryptionKey, signingKey,
+        return new JWTTicketCipherExecutor(encryptionKey, signingKey,
             StringUtils.isNotBlank(encryptionKey), StringUtils.isNotBlank(signingKey), 0, 0);
     }
 
