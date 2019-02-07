@@ -1,3 +1,165 @@
+ext.createPom = { pom, project ->
+
+    pom.url = "$projectUrl"
+    pom.inceptionYear = project.projectInceptionYear
+    pom.name = project.name
+    pom.description = project.name
+
+    pom.organization {
+        name = "Apereo Foundation"
+        url = "https://www.apereo.org"
+    }
+
+    pom.issueManagement {
+        system = project.projectIssueSystem
+        url = project.projectIssueUrl
+    }
+
+    pom.scm {
+        url = project.projectScmUrl
+        connection = project.projectScmUrl
+        developerConnection = project.projectScmUrl
+    }
+
+    pom.licenses {
+        license {
+            name = project.projectLicenseName
+            url = project.projectLicenseUrl
+            distribution = project.projectLicenseDistribution
+        }
+    }
+
+    pom.developers {
+        developer {
+            id = "leleuj"
+            name = "Jérôme Leleu"
+        }
+        developer {
+            id = "tduehr"
+            name = "Timur Duehr"
+        }
+        developer {
+            id = "mindblender"
+            name = "Jeff Sittler"
+        }
+        developer {
+            id = "apetro"
+            name = "Andrew Petro"
+        }
+        developer {
+            id = "wgthom"
+            name = "William G. Thompson"
+        }
+        developer {
+            id = "serac"
+            name = "Marvin S. Addison"
+        }
+        developer {
+            id = "battags"
+            name = "Scott Battaglia"
+        }
+        developer {
+            id = "mmoayyed"
+            name = "Misagh Moayyed"
+        }
+        developer {
+            id = "robertoschwald"
+            name = "Robert Oschwald"
+        }
+        developer {
+            id = "frett"
+            name = "Daniel Frett"
+        }
+        developer {
+            id = "dima767"
+            name = "Dmitriy Kopylenko"
+        }
+        developer {
+            id = "tsschmidt"
+            name = "Travis Schmidt"
+        }
+    }
+
+    pom.contributors {
+        contributor {
+            name = "Adam Rybicki"
+            email = "arybicki@unicon.net"
+        }
+        contributor {
+            name = "Andrew Tillinghast"
+            email = "atilling@conncoll.edu"
+        }
+        contributor {
+            name = "Arnaud Lesueur"
+            email = "arnaud.lesueur@gmail.com"
+        }
+        contributor {
+            name = "Drew Mazurek"
+            email = "dmazurek@unicon.net"
+        }
+        contributor {
+            name = "Eric Dalquist"
+            email = "eric.dalquist@doit.wisc.edu"
+        }
+        contributor {
+            name = "Eric Pierce"
+            email = "epierce@usf.edu"
+        }
+        contributor {
+            name = "Frederic Esnault"
+            email = "esnault.frederic@gmail.com"
+        }
+        contributor {
+            name = "Howard Gilbert"
+            email = "Howard.Gilbert@yale.edu"
+        }
+        contributor {
+            name = "Jan Van der Velpen"
+            email = "velpi@industria.be"
+        }
+        contributor {
+            name = "John Martin"
+            email = "jmartin@unicon.net"
+        }
+        contributor {
+            name = "MarcAntoine Garrigue"
+            email = "marc.antoine.garrigue@gmail.com"
+        }
+        contributor {
+            name = "Mihir Patel"
+            email = "exploremihir@gmail.com"
+        }
+        contributor {
+            name = "Fredrik Jönsson"
+            email = "fjo@kth.se"
+        }
+    }
+
+    pom.mailingLists {
+        mailingList {
+            name = "cas-user"
+            subscribe = "https://groups.google.com/a/apereo.org/forum/#!forum/cas-user"
+            unsubscribe = "https://groups.google.com/a/apereo.org/forum/#!forum/cas-user"
+            post = "cas-user@apereo.org"
+            archive = "https://groups.google.com/a/apereo.org/forum/#!forum/cas-user"
+        }
+        mailingList {
+            name = "cas-dev"
+            subscribe = "https://groups.google.com/a/apereo.org/forum/#!forum/cas-dev"
+            unsubscribe = "https://groups.google.com/a/apereo.org/forum/#!forum/cas-dev"
+            post = "cas-dev@apereo.org"
+            archive = "https://groups.google.com/a/apereo.org/forum/#!forum/cas-dev"
+        }
+        mailingList {
+            name = "cas-announce"
+            subscribe = "https://groups.google.com/a/apereo.org/forum/#!forum/cas-announce"
+            unsubscribe = "https://groups.google.com/a/apereo.org/forum/#!forum/cas-announce"
+            post = "cas-announce@apereo.org"
+            archive = "https://groups.google.com/a/apereo.org/forum/#!forum/cas-announce"
+        }
+    }
+}
+
 ext.createPomRepositories = { node ->
     def repositories = node.appendNode("repositories")
 
@@ -60,164 +222,7 @@ publishing {
             from components.java
 
             pom {
-                url = "$projectUrl"
-                inceptionYear = project.projectInceptionYear
-                name = project.name
-                description = project.name
-
-                organization {
-                    name = "Apereo Foundation"
-                    url = "https://www.apereo.org"
-                }
-
-                issueManagement {
-                    system = project.projectIssueSystem
-                    url = project.projectIssueUrl
-                }
-
-                scm {
-                    url = project.projectScmUrl
-                    connection = project.projectScmUrl
-                    developerConnection = project.projectScmUrl
-                }
-
-                licenses {
-                    license {
-                        name = project.projectLicenseName
-                        url = project.projectLicenseUrl
-                        distribution = project.projectLicenseDistribution
-                    }
-                }
-
-                developers {
-                    developer {
-                        id = "leleuj"
-                        name = "Jérôme Leleu"
-                    }
-                    developer {
-                        id = "tduehr"
-                        name = "Timur Duehr"
-                    }
-                    developer {
-                        id = "mindblender"
-                        name = "Jeff Sittler"
-                    }
-                    developer {
-                        id = "apetro"
-                        name = "Andrew Petro"
-                    }
-                    developer {
-                        id = "wgthom"
-                        name = "William G. Thompson"
-                    }
-                    developer {
-                        id = "serac"
-                        name = "Marvin S. Addison"
-                    }
-                    developer {
-                        id = "battags"
-                        name = "Scott Battaglia"
-                    }
-                    developer {
-                        id = "mmoayyed"
-                        name = "Misagh Moayyed"
-                    }
-                    developer {
-                        id = "robertoschwald"
-                        name = "Robert Oschwald"
-                    }
-                    developer {
-                        id = "frett"
-                        name = "Daniel Frett"
-                    }
-                    developer {
-                        id = "dima767"
-                        name = "Dmitriy Kopylenko"
-                    }
-                    developer {
-                        id = "tsschmidt"
-                        name = "Travis Schmidt"
-                    }
-                }
-
-                contributors {
-                    contributor {
-                        name = "Adam Rybicki"
-                        email = "arybicki@unicon.net"
-                    }
-                    contributor {
-                        name = "Andrew Tillinghast"
-                        email = "atilling@conncoll.edu"
-                    }
-                    contributor {
-                        name = "Arnaud Lesueur"
-                        email = "arnaud.lesueur@gmail.com"
-                    }
-                    contributor {
-                        name = "Drew Mazurek"
-                        email = "dmazurek@unicon.net"
-                    }
-                    contributor {
-                        name = "Eric Dalquist"
-                        email = "eric.dalquist@doit.wisc.edu"
-                    }
-                    contributor {
-                        name = "Eric Pierce"
-                        email = "epierce@usf.edu"
-                    }
-                    contributor {
-                        name = "Frederic Esnault"
-                        email = "esnault.frederic@gmail.com"
-                    }
-                    contributor {
-                        name = "Howard Gilbert"
-                        email = "Howard.Gilbert@yale.edu"
-                    }
-                    contributor {
-                        name = "Jan Van der Velpen"
-                        email = "velpi@industria.be"
-                    }
-                    contributor {
-                        name = "John Martin"
-                        email = "jmartin@unicon.net"
-                    }
-                    contributor {
-                        name = "MarcAntoine Garrigue"
-                        email = "marc.antoine.garrigue@gmail.com"
-                    }
-                    contributor {
-                        name = "Mihir Patel"
-                        email = "exploremihir@gmail.com"
-                    }
-                    contributor {
-                        name = "Fredrik Jönsson"
-                        email = "fjo@kth.se"
-                    }
-                }
-
-                mailingLists {
-                    mailingList {
-                        name = "cas-user"
-                        subscribe = "https://groups.google.com/a/apereo.org/forum/#!forum/cas-user"
-                        unsubscribe = "https://groups.google.com/a/apereo.org/forum/#!forum/cas-user"
-                        post = "cas-user@apereo.org"
-                        archive = "https://groups.google.com/a/apereo.org/forum/#!forum/cas-user"
-                    }
-                    mailingList {
-                        name = "cas-dev"
-                        subscribe = "https://groups.google.com/a/apereo.org/forum/#!forum/cas-dev"
-                        unsubscribe = "https://groups.google.com/a/apereo.org/forum/#!forum/cas-dev"
-                        post = "cas-dev@apereo.org"
-                        archive = "https://groups.google.com/a/apereo.org/forum/#!forum/cas-dev"
-                    }
-                    mailingList {
-                        name = "cas-announce"
-                        subscribe = "https://groups.google.com/a/apereo.org/forum/#!forum/cas-announce"
-                        unsubscribe = "https://groups.google.com/a/apereo.org/forum/#!forum/cas-announce"
-                        post = "cas-announce@apereo.org"
-                        archive = "https://groups.google.com/a/apereo.org/forum/#!forum/cas-announce"
-                    }
-                }
+                createPom(it, project)
             }
 
             pom.withXml {
