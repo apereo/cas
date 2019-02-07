@@ -1,6 +1,6 @@
 package org.apereo.cas.support.oauth.profile;
 
-import com.github.scribejava.core.model.OAuthConstants;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.profile.CommonProfile;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class ClientIdAwareProfileManager<U extends CommonProfile> extends ProfileManager<U> {
 
     private static final String SESSION_CLIENT_ID = "oauthClientId";
-    private static final String REQUEST_CLIENT_ID = OAuthConstants.CLIENT_ID;
+    private static final String REQUEST_CLIENT_ID = OAuth20Constants.CLIENT_ID;
 
     public ClientIdAwareProfileManager(final WebContext context, final SessionStore sessionStore) {
         super(context, sessionStore);
