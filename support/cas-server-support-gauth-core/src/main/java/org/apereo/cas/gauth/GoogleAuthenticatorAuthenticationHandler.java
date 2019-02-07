@@ -63,7 +63,6 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
         val otp = Integer.parseInt(tokenCredential.getToken());
         LOGGER.trace("Received OTP [{}]", otp);
 
-        @NonNull
         val authentication = WebUtils.getInProgressAuthentication();
         val uid = authentication.getPrincipal().getId();
 

@@ -39,7 +39,6 @@ public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPos
         val tokenCredential = (CasSimpleMultifactorTokenCredential) credential;
         LOGGER.debug("Received token [{}]", tokenCredential.getId());
 
-        @NonNull
         val authentication = WebUtils.getInProgressAuthentication();
         val uid = authentication.getPrincipal().getId();
 

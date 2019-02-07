@@ -71,7 +71,6 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
                                      final MessageContext messageContext) throws SamlException {
 
         LOGGER.debug("Locating the assertion consumer service url for binding [{}]", binding);
-        @NonNull
         val acs = adaptor.getAssertionConsumerService(binding);
         LOGGER.debug("Located assertion consumer service url [{}]", acs);
         val ecpResponse = newEcpResponse(acs.getLocation());

@@ -70,7 +70,6 @@ public class JdbcAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
         if (StringUtils.isBlank(properties.getJdbc().getPrincipalIdAttribute())) {
             return credential.getId();
         }
-        @NonNull
         val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
         val pIdAttribName = properties.getJdbc().getPrincipalIdAttribute();
         if (!principal.getAttributes().containsKey(pIdAttribName)) {

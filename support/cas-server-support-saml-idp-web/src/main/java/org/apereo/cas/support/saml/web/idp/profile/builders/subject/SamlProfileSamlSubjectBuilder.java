@@ -75,7 +75,6 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
         val assertion = Assertion.class.cast(casAssertion);
         val validFromDate = ZonedDateTime.ofInstant(assertion.getValidFromDate().toInstant(), ZoneOffset.UTC);
         LOGGER.debug("Locating the assertion consumer service url for binding [{}]", binding);
-        @NonNull
         val acs = SamlIdPUtils.determineEndpointForRequest(authnRequest, adaptor, binding);
         val location = StringUtils.isBlank(acs.getResponseLocation()) ? acs.getLocation() : acs.getResponseLocation();
         if (StringUtils.isBlank(location)) {

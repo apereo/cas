@@ -44,7 +44,6 @@ public class DefaultSSOSamlHttpRequestExtractor implements SSOSamlHttpRequestExt
 
         val messageContext = decoder.getMessageContext();
         LOGGER.trace("Locating SAML object from message context...");
-        @NonNull
         val object = (SignableSAMLObject) messageContext.getMessage();
         if (!clazz.isAssignableFrom(object.getClass())) {
             throw new ClassCastException("SAML object [" + object.getClass().getName() + " type does not match " + clazz);

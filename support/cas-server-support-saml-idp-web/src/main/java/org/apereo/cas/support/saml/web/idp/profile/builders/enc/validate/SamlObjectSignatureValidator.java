@@ -215,7 +215,6 @@ public class SamlObjectSignatureValidator {
         validator.validate(signature);
         LOGGER.debug("Successfully validated profile signature for [{}].", profileRequest.getIssuer());
 
-        @NonNull
         val credentials = getSigningCredential(roleDescriptorResolver, profileRequest);
         if (credentials.isEmpty()) {
             throw new SamlException("Signing credentials for validation could not be resolved based on the provided signature");

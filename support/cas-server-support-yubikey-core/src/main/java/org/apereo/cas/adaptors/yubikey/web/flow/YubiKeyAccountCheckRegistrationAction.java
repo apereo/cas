@@ -23,7 +23,6 @@ public class YubiKeyAccountCheckRegistrationAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        @NonNull
         val authentication = WebUtils.getAuthentication(requestContext);
 
         val uid = authentication.getPrincipal().getId();

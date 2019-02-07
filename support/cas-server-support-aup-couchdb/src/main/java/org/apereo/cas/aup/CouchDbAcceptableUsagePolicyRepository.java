@@ -37,7 +37,6 @@ public class CouchDbAcceptableUsagePolicyRepository extends AbstractPrincipalAtt
 
     @Override
     public Pair<Boolean, Principal> verify(final RequestContext requestContext, final Credential credential) {
-        @NonNull
         val principal = WebUtils.getPrincipalFromRequestContext(requestContext, this.ticketRegistrySupport);
 
         if (principal != null) {

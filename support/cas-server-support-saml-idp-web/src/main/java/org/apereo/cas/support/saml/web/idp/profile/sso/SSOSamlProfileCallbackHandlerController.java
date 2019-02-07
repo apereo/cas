@@ -154,7 +154,6 @@ public class SSOSamlProfileCallbackHandlerController extends AbstractSamlProfile
 
         val entityId = facade.getEntityId();
         LOGGER.debug("Checking metadata for [{}] to see if binding [{}] is supported", entityId, binding);
-        @NonNull
         val svc = facade.getAssertionConsumerService(binding);
         LOGGER.debug("Binding [{}] is supported by [{}]", svc.getBinding(), entityId);
         return binding;
