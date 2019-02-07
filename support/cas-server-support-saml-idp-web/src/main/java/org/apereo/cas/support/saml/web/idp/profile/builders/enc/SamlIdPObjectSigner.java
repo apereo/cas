@@ -199,13 +199,19 @@ public class SamlIdPObjectSigner {
         val resolver = new SAMLMetadataSignatureSigningParametersResolver();
         LOGGER.trace("Resolving signature signing parameters for [{}]", descriptor.getElementQName().getLocalPart());
         val params = resolver.resolveSingle(criteria);
-        LOGGER.trace("Created signature signing parameters."
-                + "\nSignature algorithm: [{}]"
-                + "\nSignature canonicalization algorithm: [{}]"
-                + "\nSignature reference digest methods: [{}]",
-            params.getSignatureAlgorithm(),
-            params.getSignatureCanonicalizationAlgorithm(),
-            params.getSignatureReferenceDigestMethod());
+        if (params != null) {
+            LOGGER.trace("Created signature signing parameters."
+                            + "\nSignature algorithm: [{}]"
+                            + "\nSignature canonicalization algorithm: [{}]"
+                            + "\nSignature reference digest methods: [{}]",
+                    params.getSignatureAlgorithm(),
+                    params.getSignatureCanonicalizationAlgorithm(),
+                    params.getSignatureReferenceDigestMethod());
+        } else {
+            LOGGER.warn("Unable to resolve SignatureSigningParameters, response signing will fail."
+                    + " Make sure domain names in IDP metadata URLs and certificates match CAS domain name",
+                    criteria);
+        }
         return params;
     }
 
