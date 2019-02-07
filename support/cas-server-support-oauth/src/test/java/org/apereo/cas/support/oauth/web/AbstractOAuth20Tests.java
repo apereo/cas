@@ -58,16 +58,14 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.SchedulingUtils;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpStatus;
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.pac4j.core.context.HttpConstants;
 import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.InitializingBean;
@@ -86,8 +84,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.nio.charset.StandardCharsets;
@@ -100,7 +96,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link AbstractOAuth20Tests}.
@@ -149,9 +145,6 @@ import static org.junit.Assert.*;
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public abstract class AbstractOAuth20Tests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
     public static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     public static final String CONTEXT = OAuth20Constants.BASE_OAUTH20_URL + '/';
@@ -171,12 +164,6 @@ public abstract class AbstractOAuth20Tests {
     public static final String GOOD_USERNAME = "test";
     public static final String GOOD_PASSWORD = "test";
     public static final int DELTA = 2;
-
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     @Qualifier("accessTokenController")
@@ -299,14 +286,16 @@ public abstract class AbstractOAuth20Tests {
         servicesManager.load();
     }
 
+    @SneakyThrows
     protected Pair<String, String> internalVerifyClientOK(final OAuthRegisteredService service,
-                                                          final boolean refreshToken) throws Exception {
+                                                          final boolean refreshToken) {
         return internalVerifyClientOK(service, refreshToken, null);
     }
 
+    @SneakyThrows
     protected Pair<String, String> internalVerifyClientOK(final OAuthRegisteredService service,
                                                           final boolean refreshToken,
-                                                          final String scopes) throws Exception {
+                                                          final String scopes) {
 
         val principal = createPrincipal();
         val code = addCode(principal, service);
@@ -354,7 +343,8 @@ public abstract class AbstractOAuth20Tests {
         return Pair.of(accessTokenId, refreshTokenId);
     }
 
-    protected Pair<AccessToken, RefreshToken> internalVerifyRefreshTokenOk(final OAuthRegisteredService service) throws Exception {
+    @SneakyThrows
+    protected Pair<AccessToken, RefreshToken> internalVerifyRefreshTokenOk(final OAuthRegisteredService service) {
         val principal = createPrincipal();
         val refreshToken = addRefreshToken(principal, service);
         return internalVerifyRefreshTokenOk(service, refreshToken, principal);
