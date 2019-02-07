@@ -1,7 +1,5 @@
 import org.apache.tools.ant.taskdefs.condition.Os
 
-apply from: rootProject.file("gradle/publishwebapp.gradle")
-
 if (project.ext.forceBootifulArtifact || (!rootProject.publishReleases && !rootProject.publishSnapshots && !rootProject.skipBootifulArtifact)) {
     logger.info "Applying Spring Boot plugin to bootify web application artifact for project $project.name..."
 
