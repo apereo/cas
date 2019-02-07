@@ -4,17 +4,17 @@ import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
 
 
 /**
- * This is {@link TokenTicketCipherExecutor}.
+ * This is {@link JWTTicketCipherExecutor}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class TokenTicketCipherExecutor extends BaseStringCipherExecutor {
-    public TokenTicketCipherExecutor() {
+public class JWTTicketCipherExecutor extends BaseStringCipherExecutor {
+    public JWTTicketCipherExecutor() {
         this(null, null, null, false, false, 0, 0);
     }
 
-    public TokenTicketCipherExecutor(final String secretKeyEncryption,
+    public JWTTicketCipherExecutor(final String secretKeyEncryption,
                                      final String secretKeySigning,
                                      final String alg,
                                      final boolean encryptionEnabled,
@@ -25,7 +25,7 @@ public class TokenTicketCipherExecutor extends BaseStringCipherExecutor {
     }
 
 
-    public TokenTicketCipherExecutor(final String secretKeyEncryption,
+    public JWTTicketCipherExecutor(final String secretKeyEncryption,
                                      final String secretKeySigning,
                                      final String alg,
                                      final boolean encryptionEnabled,
@@ -34,7 +34,7 @@ public class TokenTicketCipherExecutor extends BaseStringCipherExecutor {
         this(secretKeyEncryption, secretKeySigning, alg, encryptionEnabled, true, signingKeySize, encryptionKeySize);
     }
 
-    public TokenTicketCipherExecutor(final String secretKeyEncryption,
+    public JWTTicketCipherExecutor(final String secretKeyEncryption,
                                      final String secretKeySigning,
                                      final boolean encryptionEnabled,
                                      final int signingKeySize,
@@ -42,7 +42,7 @@ public class TokenTicketCipherExecutor extends BaseStringCipherExecutor {
         super(secretKeyEncryption, secretKeySigning, encryptionEnabled, signingKeySize, encryptionKeySize);
     }
 
-    public TokenTicketCipherExecutor(final String secretKeyEncryption,
+    public JWTTicketCipherExecutor(final String secretKeyEncryption,
                                      final String secretKeySigning,
                                      final boolean encryptionEnabled,
                                      final boolean signingEnabled,

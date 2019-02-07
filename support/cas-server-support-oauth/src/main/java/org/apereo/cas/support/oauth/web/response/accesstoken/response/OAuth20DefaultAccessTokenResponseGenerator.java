@@ -2,9 +2,14 @@ package org.apereo.cas.support.oauth.web.response.accesstoken.response;
 
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.token.JWTBuilder;
+import org.apereo.cas.util.DateTimeUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.web.servlet.ModelAndView;
@@ -12,6 +17,7 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.time.ZonedDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -21,8 +27,12 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
+@RequiredArgsConstructor
 public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20AccessTokenResponseGenerator {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+
+    private final JWTBuilder jwtBuilder;
 
     @Audit(action = "OAUTH2_ACCESS_TOKEN_RESPONSE",
         actionResolverName = "OAUTH2_ACCESS_TOKEN_RESPONSE_ACTION_RESOLVER",
@@ -90,7 +100,8 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
      * @param result   the result
      * @return the model and view
      */
-    protected ModelAndView generateResponseForAccessToken(final HttpServletRequest request, final HttpServletResponse response,
+    protected ModelAndView generateResponseForAccessToken(final HttpServletRequest request,
+                                                          final HttpServletResponse response,
                                                           final OAuth20AccessTokenResponseResult result) {
         val model = getAccessTokenResponseModel(request, response, result);
         return new ModelAndView(new MappingJackson2JsonView(MAPPER), model);
@@ -104,18 +115,43 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
      * @param result   the result
      * @return the access token response model
      */
-    protected Map getAccessTokenResponseModel(final HttpServletRequest request,
-                                              final HttpServletResponse response,
-                                              final OAuth20AccessTokenResponseResult result) {
+    protected Map<String, Object> getAccessTokenResponseModel(final HttpServletRequest request,
+                                                              final HttpServletResponse response,
+                                                              final OAuth20AccessTokenResponseResult result) {
         val model = new LinkedHashMap<String, Object>();
         val generatedToken = result.getGeneratedToken();
         generatedToken.getAccessToken().ifPresent(t -> {
-            model.put(OAuth20Constants.ACCESS_TOKEN, t.getId());
+            model.put(OAuth20Constants.ACCESS_TOKEN, encodeAccessToken(t, result));
             model.put(OAuth20Constants.SCOPE, t.getScopes());
         });
         generatedToken.getRefreshToken().ifPresent(t -> model.put(OAuth20Constants.REFRESH_TOKEN, t.getId()));
         model.put(OAuth20Constants.TOKEN_TYPE, OAuth20Constants.TOKEN_TYPE_BEARER);
         model.put(OAuth20Constants.EXPIRES_IN, result.getAccessTokenTimeout());
         return model;
+    }
+
+    /**
+     * Encode access token string.
+     *
+     * @param accessToken the access token
+     * @param result      the result
+     * @return the string
+     */
+    protected String encodeAccessToken(final AccessToken accessToken,
+                                       final OAuth20AccessTokenResponseResult result) {
+        if (result.getRegisteredService().isGenerateJwtAccessToken()) {
+            val dt = ZonedDateTime.now().plusSeconds(accessToken.getExpirationPolicy().getTimeToLive());
+            val builder = JWTBuilder.JwtRequest.builder();
+            val authentication = accessToken.getAuthentication();
+            val request = builder.serviceAudience(result.getService().getId())
+                .issueDate(DateTimeUtils.dateOf(authentication.getAuthenticationDate()))
+                .jwtId(accessToken.getId())
+                .subject(authentication.getPrincipal().getId())
+                .validUntilDate(DateTimeUtils.dateOf(dt))
+                .attributes(authentication.getAttributes())
+                .build();
+            return jwtBuilder.build(request);
+        }
+        return accessToken.getId();
     }
 }

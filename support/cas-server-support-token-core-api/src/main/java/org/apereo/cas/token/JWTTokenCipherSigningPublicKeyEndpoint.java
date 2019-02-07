@@ -4,7 +4,7 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.token.cipher.RegisteredServiceTokenTicketCipherExecutor;
+import org.apereo.cas.token.cipher.RegisteredServiceJWTTicketCipherExecutor;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
@@ -55,7 +55,7 @@ public class JWTTokenCipherSigningPublicKeyEndpoint extends BaseCasActuatorEndpo
         if (StringUtils.isNotBlank(service)) {
             val registeredService = this.servicesManager.findServiceBy(service);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
-            val serviceCipher = new RegisteredServiceTokenTicketCipherExecutor();
+            val serviceCipher = new RegisteredServiceJWTTicketCipherExecutor();
             if (serviceCipher.supports(registeredService)) {
                 val cipher = serviceCipher.getTokenTicketCipherExecutorForService(registeredService);
                 if (cipher.isEnabled()) {

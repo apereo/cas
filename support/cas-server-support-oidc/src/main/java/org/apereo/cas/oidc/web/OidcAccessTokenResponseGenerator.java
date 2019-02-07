@@ -5,8 +5,8 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20DefaultAccessTokenResponseGenerator;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
+import org.apereo.cas.token.JWTBuilder;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -20,13 +20,18 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RequiredArgsConstructor
 @Slf4j
 public class OidcAccessTokenResponseGenerator extends OAuth20DefaultAccessTokenResponseGenerator {
     private final IdTokenGeneratorService idTokenGenerator;
 
+    public OidcAccessTokenResponseGenerator(final IdTokenGeneratorService idTokenGenerator,
+                                            final JWTBuilder jwtBuilder) {
+        super(jwtBuilder);
+        this.idTokenGenerator = idTokenGenerator;
+    }
+
     @Override
-    protected Map getAccessTokenResponseModel(final HttpServletRequest request, final HttpServletResponse response, final OAuth20AccessTokenResponseResult result) {
+    protected Map<String, Object> getAccessTokenResponseModel(final HttpServletRequest request, final HttpServletResponse response, final OAuth20AccessTokenResponseResult result) {
         val model = super.getAccessTokenResponseModel(request, response, result);
         val accessToken = result.getGeneratedToken().getAccessToken();
         accessToken.ifPresent(token -> {

@@ -44,6 +44,9 @@ public class OAuthRegisteredService extends RegexRegisteredService {
     @Column
     private boolean generateRefreshToken;
 
+    @Column
+    private boolean generateJwtAccessToken;
+
     @Lob
     @Column(name = "supported_grants", length = Integer.MAX_VALUE)
     private HashSet<String> supportedGrantTypes = new HashSet<>();

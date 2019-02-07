@@ -74,6 +74,7 @@ import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.token.JWTBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.apereo.cas.util.serialization.StringSerializer;
@@ -130,6 +131,10 @@ import java.util.stream.Collectors;
 @Configuration("oidcConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionPlanConfigurer {
+
+    @Autowired
+    @Qualifier("accessTokenJwtBuilder")
+    private ObjectProvider<JWTBuilder> accessTokenJwtBuilder;
 
     @Autowired
     @Qualifier("accessTokenGrantAuditableRequestExtractor")
@@ -327,7 +332,7 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
     @Bean
     @RefreshScope
     public OAuth20AccessTokenResponseGenerator oidcAccessTokenResponseGenerator() {
-        return new OidcAccessTokenResponseGenerator(oidcIdTokenGenerator());
+        return new OidcAccessTokenResponseGenerator(oidcIdTokenGenerator(), accessTokenJwtBuilder.getIfAvailable());
     }
 
     @Bean
