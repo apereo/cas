@@ -7,6 +7,8 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.pac4j.DelegatedSessionCookieManager;
 import org.apereo.cas.web.view.DynamicHtmlView;
+
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.client.util.URIBuilder;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
@@ -64,8 +66,15 @@ public class DelegatedClientNavigationController {
      */
     @GetMapping(ENDPOINT_REDIRECT)
     public View redirectToProvider(final HttpServletRequest request, final HttpServletResponse response) {
-        final String clientName = request.getParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER);
+        String clientName = request.getParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER);
+        if (StringUtils.isBlank(clientName)) {
+            clientName = (String) request.getAttribute(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER);
+        }
+
         try {
+            if (StringUtils.isBlank(clientName)) {
+                throw new UnauthorizedServiceException("No client name parameter is provided in the incoming request");
+            }
             final IndirectClient client = (IndirectClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
             final J2EContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
             final Ticket ticket = delegatedClientWebflowManager.store(webContext, client);

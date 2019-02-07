@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.audit.AuditableExecutionResult;
@@ -15,6 +16,8 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.pac4j.logout.RequestSloException;
+import org.apereo.cas.ticket.AbstractTicketException;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.DelegatedClientNavigationController;
@@ -116,6 +119,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
 
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
+    private final CentralAuthenticationService centralAuthenticationService;
+
     public DelegatedClientAuthenticationAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
                                                final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
                                                final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
@@ -127,7 +132,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                                                final AuthenticationSystemSupport authenticationSystemSupport,
                                                final String localeParamName,
                                                final String themeParamName,
-                                               final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies) {
+                                               final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
+                                               final CentralAuthenticationService centralAuthenticationService) {
         super(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
         this.clients = clients;
         this.servicesManager = servicesManager;
@@ -138,12 +144,18 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         this.localeParamName = localeParamName;
         this.themeParamName = themeParamName;
         this.authenticationRequestServiceSelectionStrategies = authenticationRequestServiceSelectionStrategies;
+        this.centralAuthenticationService = centralAuthenticationService;
     }
 
     @Override
     public Event doExecute(final RequestContext context) {
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
+
+        if (singleSignOnSessionExists(context)) {
+            LOGGER.debug("An existing single sign-on session already exists. Skipping delegation and routing back to CAS authentication flow");
+            return super.doExecute(context);
+        }
 
         final String clientName = request.getParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER);
         LOGGER.debug("Delegated authentication is handled by client name [{}]", clientName);
@@ -155,7 +167,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         final J2EContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
         if (StringUtils.isNotBlank(clientName)) {
             final Service service;
-            if (logoutEndpoint == null) {
+            if (StringUtils.isBlank(logoutEndpoint)) {
                 service = restoreAuthenticationRequestInContext(context, webContext, clientName);
             } else {
                 service = null;
@@ -176,7 +188,9 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             final ClientCredential clientCredential = new ClientCredential(credentials, client.getName());
             WebUtils.putCredential(context, clientCredential);
             WebUtils.putService(context, service);
-            WebUtils.putRegisteredService(context, servicesManager.findServiceBy(service));
+            final Service resolvedService = authenticationRequestServiceSelectionStrategies.resolveService(service);
+            final RegisteredService registeredService = servicesManager.findServiceBy(resolvedService);
+            WebUtils.putRegisteredService(context, registeredService);
             return super.doExecute(context);
         }
 
@@ -192,8 +206,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
      * Handle the thrown exception.
      *
      * @param webContext the web context
-     * @param client the authentication client
-     * @param e the thrown exception
+     * @param client     the authentication client
+     * @param e          the thrown exception
      * @return the event to trigger
      */
     protected Event handleException(final J2EContext webContext, final BaseClient<Credentials, CommonProfile> client, final Exception e) {
@@ -237,7 +251,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
      * @param context The current webflow context
      */
     protected void prepareForLoginPage(final RequestContext context) {
-        final Service currentService = WebUtils.getService(context);
+        final WebApplicationService currentService = WebUtils.getService(context);
         final WebApplicationService service = authenticationRequestServiceSelectionStrategies.resolveService(currentService, WebApplicationService.class);
 
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
@@ -251,7 +265,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             .map(IndirectClient.class::cast)
             .forEach(client -> {
                 try {
-                    final Optional<ProviderLoginPageConfiguration> provider = buildProviderConfiguration(client, webContext, service);
+                    final Optional<ProviderLoginPageConfiguration> provider = buildProviderConfiguration(client, webContext, currentService);
                     provider.ifPresent(urls::add);
                 } catch (final Exception e) {
                     LOGGER.error("Cannot process client [{}]", client, e);
@@ -408,12 +422,30 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         try {
             delegatedSessionCookieManager.restore(webContext);
             final BaseClient<Credentials, CommonProfile> client = (BaseClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
-            final Service service = delegatedClientWebflowManager.retrieve(requestContext, webContext, client);
-            return service;
+            return delegatedClientWebflowManager.retrieve(requestContext, webContext, client);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
         throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Service unauthorized");
+    }
+
+    private boolean singleSignOnSessionExists(final RequestContext requestContext) {
+        final String tgtId = WebUtils.getTicketGrantingTicketId(requestContext);
+        if (StringUtils.isBlank(tgtId)) {
+            LOGGER.trace("No ticket-granting ticket could be located in the webflow context");
+            return false;
+        }
+        try {
+            final Ticket ticket = this.centralAuthenticationService.getTicket(tgtId, Ticket.class);
+            if (ticket != null && !ticket.isExpired()) {
+                LOGGER.trace("Located a valid ticket-granting ticket, honoring existing single sign-on session");
+                return true;
+            }
+        } catch (final AbstractTicketException e) {
+            LOGGER.trace("Could not retrieve ticket id [{}] from registry.", e.getMessage());
+        }
+        LOGGER.trace("Ticket-granting ticket found in the webflow context is invalid or has expired");
+        return false;
     }
 
     /**

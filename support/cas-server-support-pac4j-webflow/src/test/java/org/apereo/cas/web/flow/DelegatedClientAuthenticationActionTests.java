@@ -207,7 +207,7 @@ public class DelegatedClientAuthenticationActionTests {
         assertTrue(credential.getId().startsWith(ClientCredential.NOT_YET_AUTHENTICATED));
     }
 
-    private ServicesManager getServicesManagerWith(final Service service, final BaseClient client) {
+    private static ServicesManager getServicesManagerWith(final Service service, final BaseClient client) {
         final ServicesManager mgr = mock(ServicesManager.class);
         final AbstractRegisteredService regSvc = service != null ? RegisteredServiceTestUtils.getRegisteredService(service.getId()) : null;
 
@@ -268,7 +268,8 @@ public class DelegatedClientAuthenticationActionTests {
             support,
             LocaleChangeInterceptor.DEFAULT_PARAM_NAME,
             ThemeChangeInterceptor.DEFAULT_PARAM_NAME,
-            new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
+            new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
+            mock(CentralAuthenticationService.class));
 
     }
 }
