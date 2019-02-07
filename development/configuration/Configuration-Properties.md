@@ -646,7 +646,7 @@ specify the following settings:
 # management.endpoints.web.path-mapping.health=healthcheck
 ```
 
-### Health Endpoints
+### Health Endpoint
 
 The `health` endpoint may also be configured to show details using `management.endpoint.health.show-details` via the following conditions:
 
