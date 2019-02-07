@@ -125,8 +125,7 @@ public class JsonResourceAuthenticationHandlerTests {
     @Test
     public void verifyDisabledAccount() {
         assertThrows(AccountDisabledException.class,
-            () -> { handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casdisabled", "Mellon"));
-        });
+            () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casdisabled", "Mellon")));
     }
 
     @Test
