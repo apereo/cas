@@ -2,7 +2,7 @@ package org.apereo.cas.token;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
-import org.apereo.cas.token.cipher.RegisteredServiceTokenTicketCipherExecutor;
+import org.apereo.cas.token.cipher.RegisteredServiceJWTTicketCipherExecutor;
 
 import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.val;
@@ -38,7 +38,7 @@ public class JWTTokenTicketBuilderTests extends BaseJWTTokenTicketBuilderTests {
         assertNull(result);
 
         val registeredService = servicesManager.findServiceBy(service);
-        val cipher = new RegisteredServiceTokenTicketCipherExecutor();
+        val cipher = new RegisteredServiceJWTTicketCipherExecutor();
         assertTrue(cipher.supports(registeredService));
         val decoded = cipher.decode(jwt, Optional.of(registeredService));
         val claims = JWTClaimsSet.parse(decoded);
