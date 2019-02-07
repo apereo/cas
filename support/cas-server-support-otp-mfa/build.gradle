@@ -1,4 +1,7 @@
 description = "Apereo CAS Multifactor Authentication OTP Support"
+ext {
+    useJunit5 = true
+}
 dependencies {
     api libraries.googleauth
 

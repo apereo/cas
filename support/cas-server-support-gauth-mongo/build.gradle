@@ -1,4 +1,7 @@
 description = "Apereo CAS Google Authenticator Mongo"
+ext {
+    useJunit5 = true
+}
 dependencies {
     implementation project(":support:cas-server-support-gauth")
     implementation project(":support:cas-server-support-gauth-core")
