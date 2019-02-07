@@ -11,22 +11,18 @@ import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ApplicationContext;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import javax.annotation.PostConstruct;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -37,13 +33,8 @@ import static org.mockito.Mockito.*;
  */
 @Getter
 public abstract class BaseOneTimeTokenCredentialRepositoryTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
     public static final String CASUSER = "casusergauth";
     public static final String PLAIN_SECRET = "plain_secret";
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     private IGoogleAuthenticator google;
 
@@ -56,7 +47,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         return accountHashMap.computeIfAbsent(Pair.of(testName, username), pair -> getRegistry(pair.getLeft()).create(pair.getRight()));
     }
 
-    @Before
+    @BeforeEach
     public void initialize() {
         val bldr = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
         this.google = new GoogleAuthenticator(bldr.build());
@@ -74,7 +65,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         val repo = getRegistry("verifySaveAndUpdate");
         repo.save(acct.getUsername(), acct.getSecretKey(), acct.getValidationCode(), acct.getScratchCodes());
         var s = repo.get(acct.getUsername());
-        assertNotNull("Account not found", s);
+        assertNotNull(s, "Account not found");
         assertNotNull(s.getRegistrationDate());
         assertEquals(acct.getValidationCode(), s.getValidationCode());
         assertEquals(acct.getSecretKey(), s.getSecretKey());
@@ -94,7 +85,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         val acct2 = getAccount("verifyGet", CASUSER);
         repo.save(acct2.getUsername(), acct2.getSecretKey(), acct2.getValidationCode(), acct2.getScratchCodes());
         val acct3 = repo.get(CASUSER);
-        assertNotNull("Account not found", acct3);
+        assertNotNull(acct3, "Account not found");
         assertEquals(acct2.getUsername(), acct3.getUsername());
         assertEquals(acct2.getValidationCode(), acct3.getValidationCode());
         assertEquals(acct2.getSecretKey(), acct3.getSecretKey());
@@ -120,7 +111,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
 
     public OneTimeTokenCredentialRepository getRegistry(final String testName) {
         return getRegistry();
-    };
+    }
 
     public abstract OneTimeTokenCredentialRepository getRegistry();
 
