@@ -23,6 +23,9 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishReleases && !rootP
             publications {
                 mavenWeb(MavenPublication) {
                     from components.web
+                    pom {
+                        createPom(it, project)
+                    }
                     pom.withXml {
                         createPomRepositories(asNode())
                     }
