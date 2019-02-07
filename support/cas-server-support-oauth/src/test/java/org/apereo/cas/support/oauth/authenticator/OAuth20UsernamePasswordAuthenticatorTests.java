@@ -26,7 +26,7 @@ public class OAuth20UsernamePasswordAuthenticatorTests extends BaseOAuth20Authen
     protected OAuth20UsernamePasswordAuthenticator authenticator;
 
     @BeforeEach
-    public void initialize() {
+    public void init() {
         authenticator = new OAuth20UsernamePasswordAuthenticator(authenticationSystemSupport, servicesManager, serviceFactory);
     }
 

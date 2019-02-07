@@ -10,6 +10,7 @@ import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.EncodingUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
@@ -31,9 +32,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20AuthenticatorTests {
     protected OAuth20ProofKeyCodeExchangeAuthenticator authenticator;
 
-    @Override
-    public void initialize() {
-        super.initialize();
+    @BeforeEach
+    public void init() {
         authenticator = new OAuth20ProofKeyCodeExchangeAuthenticator(servicesManager, serviceFactory,
             new RegisteredServiceAccessStrategyAuditableEnforcer(), ticketRegistry);
     }
