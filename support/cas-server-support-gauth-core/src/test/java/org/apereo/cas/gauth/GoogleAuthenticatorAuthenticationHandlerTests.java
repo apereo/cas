@@ -16,17 +16,13 @@ import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import com.warrenstrange.googleauth.ICredentialRepository;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
+import lombok.SneakyThrows;
 import lombok.val;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
@@ -37,7 +33,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -47,20 +43,11 @@ import static org.mockito.Mockito.*;
  * @since 6.0.0
  */
 public class GoogleAuthenticatorAuthenticationHandlerTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     private IGoogleAuthenticator googleAuthenticator;
     private GoogleAuthenticatorAuthenticationHandler handler;
     private GoogleAuthenticatorKey googleAuthenticatorAccount;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         val servicesManager = mock(ServicesManager.class);
         val bldr = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
@@ -90,24 +77,23 @@ public class GoogleAuthenticatorAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyAuthnAccountNotFound() throws Exception {
+    public void verifyAuthnAccountNotFound() {
         val credential = getGoogleAuthenticatorTokenCredential();
-        thrown.expect(AccountNotFoundException.class);
-        handler.authenticate(credential);
+        assertThrows(AccountNotFoundException.class, () -> handler.authenticate(credential));
     }
 
     @Test
-    public void verifyAuthnFailsTokenNotFound() throws Exception {
+    public void verifyAuthnFailsTokenNotFound() {
         val credential = getGoogleAuthenticatorTokenCredential();
         handler.getTokenRepository().store(new OneTimeToken(Integer.valueOf(credential.getToken()), "casuser"));
         handler.getCredentialRepository().save("casuser", googleAuthenticatorAccount.getKey(),
             googleAuthenticatorAccount.getVerificationCode(), googleAuthenticatorAccount.getScratchCodes());
-        thrown.expect(AccountExpiredException.class);
-        handler.authenticate(credential);
+        assertThrows(AccountExpiredException.class, () -> handler.authenticate(credential));
     }
 
     @Test
-    public void verifyAuthnTokenFound() throws Exception {
+    @SneakyThrows
+    public void verifyAuthnTokenFound() {
         val credential = getGoogleAuthenticatorTokenCredential();
         handler.getCredentialRepository().save("casuser", googleAuthenticatorAccount.getKey(),
             googleAuthenticatorAccount.getVerificationCode(), googleAuthenticatorAccount.getScratchCodes());
@@ -117,7 +103,8 @@ public class GoogleAuthenticatorAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyAuthnTokenScratchCode() throws Exception {
+    @SneakyThrows
+    public void verifyAuthnTokenScratchCode() {
         val credential = getGoogleAuthenticatorTokenCredential();
         handler.getCredentialRepository().save("casuser", googleAuthenticatorAccount.getKey(),
             googleAuthenticatorAccount.getVerificationCode(), googleAuthenticatorAccount.getScratchCodes());
