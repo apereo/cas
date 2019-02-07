@@ -1,7 +1,6 @@
 package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
@@ -9,8 +8,8 @@ import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepositor
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.val;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -25,11 +24,9 @@ import org.springframework.web.client.RestTemplate;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withNoContent;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
 
 /**
  * This is {@link RestGoogleAuthenticatorTokenCredentialRepositoryTests}.
@@ -44,7 +41,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 }, properties = {
     "cas.authn.mfa.gauth.rest.endpointUrl=http://example.com"
 })
-@Category(RestfulApiCategory.class)
+@Tag("RestfulApi")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Getter
 public class RestGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
@@ -72,7 +69,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseO
     @Override
     public void verifyGet() throws Exception {
         val repository = (RestGoogleAuthenticatorTokenCredentialRepository) getRegistry("verifyGet");
-        assertNotNull("Repository is null", repository);
+        assertNotNull(repository, "Repository is null");
 
         val mockServer = MockRestServiceServer.createServer(repository.getRestTemplate());
         mockServer.expect(requestTo("http://example.com"))
@@ -91,7 +88,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseO
     @Override
     public void verifyGetWithDecodedSecret() throws Exception {
         val repository = (RestGoogleAuthenticatorTokenCredentialRepository) getRegistry("verifyGetWithDecodedSecret");
-        assertNotNull("Repository is null", repository);
+        assertNotNull(repository, "Repository is null");
 
         val acct = getAccount("verifyGetWithDecodedSecret", CASUSER).clone();
         acct.setSecretKey(PLAIN_SECRET);
@@ -110,7 +107,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseO
     @Override
     public void verifySaveAndUpdate() throws Exception {
         val repository = (RestGoogleAuthenticatorTokenCredentialRepository) getRegistry("verifySaveAndUpdate");
-        assertNotNull("Repository is null", repository);
+        assertNotNull(repository, "Repository is null");
         val acct = getAccount("verifySaveAndUpdate", CASUSER).clone();
 
         val mockServer = MockRestServiceServer.createServer(repository.getRestTemplate());
