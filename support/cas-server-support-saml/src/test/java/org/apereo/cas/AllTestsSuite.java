@@ -10,8 +10,7 @@ import org.apereo.cas.support.saml.web.support.WebUtilTests;
 import org.apereo.cas.support.saml.web.view.Saml10FailureResponseViewTests;
 import org.apereo.cas.support.saml.web.view.Saml10SuccessResponseViewTests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * Test suite to run all SAML tests.
@@ -19,8 +18,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@SelectClasses({
     SamlServiceTests.class,
     SamlAuthenticationMetaDataPopulatorTests.class,
     SamlAuthenticationRequestTests.class,
