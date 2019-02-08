@@ -12,8 +12,7 @@ import org.apereo.cas.uma.web.controllers.resource.UmaDeleteResourceSetRegistrat
 import org.apereo.cas.uma.web.controllers.resource.UmaFindResourceSetRegistrationEndpointControllerTests;
 import org.apereo.cas.uma.web.controllers.resource.UmaUpdateResourceSetRegistrationEndpointControllerTests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * This is {@link UmaTestsSuite}.
@@ -21,8 +20,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@SelectClasses({
     UmaPermissionRegistrationEndpointControllerTests.class,
     UmaCreateResourceSetRegistrationEndpointControllerTests.class,
     UmaDeleteResourceSetRegistrationEndpointControllerTests.class,

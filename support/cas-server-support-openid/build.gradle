@@ -1,4 +1,7 @@
 description = "Apereo CAS OpenId Server Support"
+ext {
+    useJunit5 = true
+}
 dependencies { 
     implementation libraries.openid4java
     
