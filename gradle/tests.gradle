@@ -193,7 +193,7 @@ test {
                 "org.apereo.cas.category.DynamoDbCategory", "DynamoDb",
                 "org.apereo.cas.category.FileSystemCategory", "FileSystem",
                 "org.apereo.cas.category.IgniteCategory", "Ignite",
-                "org.apereo.cas.category.InfluxDbCategory", "Influx",
+                "org.apereo.cas.category.InfluxDbCategory", "InfluxDb",
                 "org.apereo.cas.category.CouchDbCategory", "CouchDb",
                 "org.apereo.cas.category.LdapCategory", "Ldap",
                 "org.apereo.cas.category.MailCategory", "Mail",
