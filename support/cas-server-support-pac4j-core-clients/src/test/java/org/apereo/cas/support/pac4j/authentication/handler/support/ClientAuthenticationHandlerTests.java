@@ -7,10 +7,8 @@ import org.apereo.cas.authentication.principal.provision.DelegatedClientUserProf
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.pac4j.core.client.Clients;
 import org.pac4j.oauth.client.FacebookClient;
 import org.pac4j.oauth.credentials.OAuth20Credentials;
@@ -26,7 +24,7 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -41,14 +39,11 @@ public class ClientAuthenticationHandlerTests {
     private static final String CALLBACK_URL = "http://localhost:8080/callback";
     private static final String ID = "123456789";
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     private FacebookClient fbClient;
     private DelegatedClientAuthenticationHandler handler;
     private ClientCredential clientCredential;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         this.fbClient = new FacebookClient();
         val clients = new Clients(CALLBACK_URL, fbClient);
@@ -88,8 +83,9 @@ public class ClientAuthenticationHandlerTests {
 
     @Test
     public void verifyNoProfile() throws GeneralSecurityException, PreventedException {
-        this.thrown.expect(FailedLoginException.class);
-        this.fbClient.setProfileCreator((oAuth20Credentials, webContext) -> null);
-        this.handler.authenticate(this.clientCredential);
+        assertThrows(FailedLoginException.class, () -> {
+            this.fbClient.setProfileCreator((oAuth20Credentials, webContext) -> null);
+            this.handler.authenticate(this.clientCredential);
+        });
     }
 }
