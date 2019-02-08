@@ -6,7 +6,6 @@ import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 
 import com.google.common.collect.Sets;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;

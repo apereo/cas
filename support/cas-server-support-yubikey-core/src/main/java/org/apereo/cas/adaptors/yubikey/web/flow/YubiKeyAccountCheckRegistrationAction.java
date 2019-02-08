@@ -3,7 +3,6 @@ package org.apereo.cas.adaptors.yubikey.web.flow;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.webflow.action.AbstractAction;

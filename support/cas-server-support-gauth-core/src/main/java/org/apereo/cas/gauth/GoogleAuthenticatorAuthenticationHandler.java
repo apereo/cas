@@ -14,7 +14,6 @@ import org.apereo.cas.web.support.WebUtils;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
