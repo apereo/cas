@@ -15,25 +15,28 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 public class BlockingRadiusServerTests extends AbstractRadiusServerTests {
+
+    public static final String XYZ = "xyz";
+
     @Test
     public void verifyBadSecret() throws Exception {
         assertThrows(TimeoutException.class,
-            () -> new BlockingRadiusServer(RadiusProtocol.MSCHAPv2, new RadiusClientFactory(ACCOUNTING_PORT, AUTHENTICATION_PORT, 1, INET_ADDRESS, "xyz"))
-                .authenticate("xyz", "xyz"));
+            () -> new BlockingRadiusServer(RadiusProtocol.MSCHAPv2, new RadiusClientFactory(ACCOUNTING_PORT, AUTHENTICATION_PORT, 1, INET_ADDRESS, XYZ))
+                .authenticate(XYZ, XYZ));
     }
 
     @Test
     public void verifyBadPorts() {
         assertThrows(TimeoutException.class,
-            () -> new BlockingRadiusServer(RadiusProtocol.MSCHAPv2, new RadiusClientFactory(1234, 4567, 1, INET_ADDRESS, "xyz"))
-            .authenticate("xyz", "xyz"));
+            () -> new BlockingRadiusServer(RadiusProtocol.MSCHAPv2, new RadiusClientFactory(1234, 4567, 1, INET_ADDRESS, XYZ))
+            .authenticate(XYZ, XYZ));
     }
 
     @Test
     public void verifyBadAddress() {
         assertThrows(TimeoutException.class,
             () -> new BlockingRadiusServer(RadiusProtocol.MSCHAPv2, new RadiusClientFactory(1234, 4567, 1, "131.211.138.166", "1234"))
-                .authenticate("xyz", "xyz"));
+                .authenticate(XYZ, XYZ));
     }
 
     @Override
