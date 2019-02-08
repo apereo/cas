@@ -8,8 +8,7 @@ import org.apereo.cas.support.openid.web.mvc.SmartOpenIdControllerTests;
 import org.apereo.cas.support.openid.web.support.DefaultOpenIdUserNameExtractorTests;
 import org.apereo.cas.support.openid.web.support.OpenIdPostUrlHandlerMappingTests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * The {@link AllTestsSuite} is responsible for
@@ -19,8 +18,7 @@ import org.junit.runners.Suite;
  * @since 4.2.0
  */
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@SelectClasses({
     OpenIdPostUrlHandlerMappingTests.class,
     DefaultOpenIdUserNameExtractorTests.class,
     SmartOpenIdControllerTests.class,
