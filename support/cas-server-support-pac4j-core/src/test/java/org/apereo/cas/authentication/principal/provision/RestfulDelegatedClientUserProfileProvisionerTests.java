@@ -1,16 +1,13 @@
 package org.apereo.cas.authentication.principal.provision;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.configuration.support.RestEndpointProperties;
 import org.apereo.cas.util.MockWebServer;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.profile.CommonProfile;
@@ -25,11 +22,8 @@ import java.nio.charset.StandardCharsets;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Category(RestfulApiCategory.class)
+@Tag("RestfulApi")
 public class RestfulDelegatedClientUserProfileProvisionerTests {
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Test
     public void verifyAllowedOperation() {
         val commonProfile = new CommonProfile();
