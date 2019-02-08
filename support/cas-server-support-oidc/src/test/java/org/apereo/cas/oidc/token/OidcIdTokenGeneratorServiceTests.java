@@ -11,15 +11,13 @@ import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -29,9 +27,6 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Test
     public void verifyTokenGeneration() {
         val request = new MockHttpServletRequest();
@@ -63,12 +58,13 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
 
     @Test
     public void verifyTokenGenerationFailsWithoutProfile() {
-        thrown.expect(IllegalArgumentException.class);
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        val accessToken = mock(AccessToken.class);
-        oidcIdTokenGenerator.generate(request, response, accessToken, 30,
-            OAuth20ResponseTypes.CODE,
-            OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, "clientid"));
+        assertThrows(IllegalArgumentException.class, () -> {
+            val request = new MockHttpServletRequest();
+            val response = new MockHttpServletResponse();
+            val accessToken = mock(AccessToken.class);
+            oidcIdTokenGenerator.generate(request, response, accessToken, 30,
+                OAuth20ResponseTypes.CODE,
+                OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, "clientid"));
+        });
     }
 }
