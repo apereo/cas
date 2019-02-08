@@ -28,7 +28,7 @@ public class OAuth20RefreshTokenTests extends AbstractOAuth20Tests {
         val service = addRegisteredService();
         service.setGenerateRefreshToken(true);
 
-        val result = internalVerifyClientOK(service, true);
+        val result = assertClientOK(service, true);
 
         val at = this.ticketRegistry.getTicket(result.getKey(), AccessToken.class);
         assertNotNull(at);
@@ -41,7 +41,7 @@ public class OAuth20RefreshTokenTests extends AbstractOAuth20Tests {
         val rt = this.ticketRegistry.getTicket(result.getRight(), RefreshToken.class);
         assertNotNull(rt);
 
-        val result2 = internalVerifyRefreshTokenOk(service, rt, createPrincipal());
+        val result2 = assertRefreshTokenOk(service, rt, createPrincipal());
         assertNotNull(result2.getKey());
     }
 

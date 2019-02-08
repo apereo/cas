@@ -287,15 +287,15 @@ public abstract class AbstractOAuth20Tests {
     }
 
     @SneakyThrows
-    protected Pair<String, String> internalVerifyClientOK(final OAuthRegisteredService service,
-                                                          final boolean refreshToken) {
-        return internalVerifyClientOK(service, refreshToken, null);
+    protected Pair<String, String> assertClientOK(final OAuthRegisteredService service,
+                                                  final boolean refreshToken) {
+        return assertClientOK(service, refreshToken, null);
     }
 
     @SneakyThrows
-    protected Pair<String, String> internalVerifyClientOK(final OAuthRegisteredService service,
-                                                          final boolean refreshToken,
-                                                          final String scopes) {
+    protected Pair<String, String> assertClientOK(final OAuthRegisteredService service,
+                                                  final boolean refreshToken,
+                                                  final String scopes) {
 
         val principal = createPrincipal();
         val code = addCode(principal, service);
@@ -344,14 +344,14 @@ public abstract class AbstractOAuth20Tests {
     }
 
     @SneakyThrows
-    protected Pair<AccessToken, RefreshToken> internalVerifyRefreshTokenOk(final OAuthRegisteredService service) {
+    protected Pair<AccessToken, RefreshToken> assertRefreshTokenOk(final OAuthRegisteredService service) {
         val principal = createPrincipal();
         val refreshToken = addRefreshToken(principal, service);
-        return internalVerifyRefreshTokenOk(service, refreshToken, principal);
+        return assertRefreshTokenOk(service, refreshToken, principal);
     }
 
-    protected Pair<AccessToken, RefreshToken> internalVerifyRefreshTokenOk(final OAuthRegisteredService service,
-                                                                           final RefreshToken refreshToken, final Principal principal) throws Exception {
+    protected Pair<AccessToken, RefreshToken> assertRefreshTokenOk(final OAuthRegisteredService service,
+                                                                   final RefreshToken refreshToken, final Principal principal) throws Exception {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase());
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
