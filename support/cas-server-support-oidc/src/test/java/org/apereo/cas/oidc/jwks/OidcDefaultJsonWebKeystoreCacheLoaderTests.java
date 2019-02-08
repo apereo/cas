@@ -2,9 +2,9 @@ package org.apereo.cas.oidc.jwks;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link OidcDefaultJsonWebKeystoreCacheLoaderTests}.
