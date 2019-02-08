@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.category.CouchDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -24,13 +23,12 @@ import org.apereo.cas.couchdb.core.ProfileCouchDbRepository;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.Getter;
+import lombok.SneakyThrows;
 import lombok.val;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.pac4j.couch.profile.CouchProfile;
 import org.pac4j.couch.profile.service.CouchProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,14 +38,10 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.security.GeneralSecurityException;
-
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link CouchDbAuthenticationHandlerTests}.
@@ -87,14 +81,8 @@ import static org.junit.Assert.*;
     "cas.authn.couchdb.password=password",
     "cas.authn.pac4j.typedIdUsed=false"
 })
-@Category(CouchDbCategory.class)
+@Tag("CouchDb")
 public class CouchDbAuthenticationHandlerTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     @Autowired
     @Qualifier("authenticationCouchDbFactory")
     private CouchDbConnectorFactory couchDbFactory;
@@ -115,7 +103,7 @@ public class CouchDbAuthenticationHandlerTests {
     @Qualifier("couchDbAuthenticatorProfileService")
     private CouchProfileService profileService;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
         couchDbRepository.initStandardDesignDocument();
@@ -126,13 +114,14 @@ public class CouchDbAuthenticationHandlerTests {
         profileService.create(profile, "p1");
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         couchDbFactory.getCouchDbInstance().deleteDatabase(couchDbFactory.getCouchDbConnector().getDatabaseName());
     }
 
     @Test
-    public void verifyAuthentication() throws GeneralSecurityException, PreventedException {
+    @SneakyThrows
+    public void verifyAuthentication() {
         val result = this.authenticationHandler.authenticate(CoreAuthenticationTestUtils
             .getCredentialsWithDifferentUsernameAndPassword("u1", "p1"));
         assertEquals("u1", result.getPrincipal().getId());
