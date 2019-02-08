@@ -1,4 +1,7 @@
 description = "Apereo CAS CouchDb Authentication Support"
+ext {
+    useJunit5 = true
+}
 dependencies {
     implementation project(":support:cas-server-support-pac4j-core")
     implementation project(":support:cas-server-support-couchdb-core")

@@ -1,4 +1,7 @@
 description = "Apereo CAS JDBC Support"
+ext {
+    useJunit5 = true
+}
 dependencies {
 
     implementation project(":core:cas-server-core-authentication-api")

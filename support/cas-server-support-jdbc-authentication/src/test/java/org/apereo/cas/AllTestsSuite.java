@@ -7,8 +7,7 @@ import org.apereo.cas.adaptors.jdbc.QueryDatabaseAuthenticationHandlerPostgresTe
 import org.apereo.cas.adaptors.jdbc.QueryDatabaseAuthenticationHandlerTests;
 import org.apereo.cas.adaptors.jdbc.SearchModeSearchDatabaseAuthenticationHandlerTests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * The {@link AllTestsSuite} is responsible for
@@ -17,8 +16,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@SelectClasses({
     QueryAndEncodeDatabaseAuthenticationHandlerTests.class,
     QueryDatabaseAuthenticationHandlerTests.class,
     QueryDatabaseAuthenticationHandlerPostgresTests.class,

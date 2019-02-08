@@ -1,5 +1,7 @@
 description = "Apereo CAS SPNEGO Webflow Support"
-
+ext {
+    useJunit5 = true
+}
 dependencies {
     api project(":api:cas-server-core-api-webflow")
     

@@ -4,7 +4,7 @@ import org.apereo.cas.support.wsfederation.authentication.principal.WsFederation
 
 import lombok.Setter;
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opensaml.security.credential.Credential;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -14,7 +14,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test cases for {@link WsFederationHelper}.
@@ -37,7 +37,7 @@ public class WsFederationHelperTests extends AbstractWsFederationTests {
         val wresult = testTokens.get(GOOD_TOKEN);
         val result =
             wsFederationHelper.buildAndVerifyAssertion(wsFederationHelper.getRequestSecurityTokenFromResult(wresult), wsFederationConfigurations);
-        assertNotNull("testParseTokenString() - Not null", result);
+        assertNotNull(result, "testParseTokenString() - Not null");
     }
 
     @Test

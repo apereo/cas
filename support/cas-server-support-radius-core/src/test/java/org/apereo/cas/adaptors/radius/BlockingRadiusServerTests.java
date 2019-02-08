@@ -2,11 +2,10 @@ package org.apereo.cas.adaptors.radius;
 
 import org.apereo.cas.adaptors.radius.server.BlockingRadiusServer;
 
-import lombok.val;
 import net.jradius.exception.TimeoutException;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link BlockingRadiusServerTests}.
@@ -17,34 +16,27 @@ import org.junit.rules.ExpectedException;
  */
 public class BlockingRadiusServerTests extends AbstractRadiusServerTests {
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
+    public static final String XYZ = "xyz";
 
     @Test
     public void verifyBadSecret() throws Exception {
-        thrown.expect(TimeoutException.class);
-        val server = new BlockingRadiusServer(RadiusProtocol.MSCHAPv2,
-            new RadiusClientFactory(ACCOUNTING_PORT, AUTHENTICATION_PORT, 1,
-                INET_ADDRESS, "xyz"));
-        server.authenticate("xyz", "xyz");
+        assertThrows(TimeoutException.class,
+            () -> new BlockingRadiusServer(RadiusProtocol.MSCHAPv2, new RadiusClientFactory(ACCOUNTING_PORT, AUTHENTICATION_PORT, 1, INET_ADDRESS, XYZ))
+                .authenticate(XYZ, XYZ));
     }
 
     @Test
-    public void verifyBadPorts() throws Exception {
-        thrown.expect(TimeoutException.class);
-        val server = new BlockingRadiusServer(RadiusProtocol.MSCHAPv2,
-            new RadiusClientFactory(1234, 4567, 1,
-                INET_ADDRESS, "xyz"));
-        server.authenticate("xyz", "xyz");
+    public void verifyBadPorts() {
+        assertThrows(TimeoutException.class,
+            () -> new BlockingRadiusServer(RadiusProtocol.MSCHAPv2, new RadiusClientFactory(1234, 4567, 1, INET_ADDRESS, XYZ))
+            .authenticate(XYZ, XYZ));
     }
 
     @Test
-    public void verifyBadAddress() throws Exception {
-        thrown.expect(TimeoutException.class);
-        val server = new BlockingRadiusServer(RadiusProtocol.MSCHAPv2,
-            new RadiusClientFactory(1234, 4567, 1,
-                "131.211.138.166", "1234"));
-        server.authenticate("xyz", "xyz");
+    public void verifyBadAddress() {
+        assertThrows(TimeoutException.class,
+            () -> new BlockingRadiusServer(RadiusProtocol.MSCHAPv2, new RadiusClientFactory(1234, 4567, 1, "131.211.138.166", "1234"))
+                .authenticate(XYZ, XYZ));
     }
 
     @Override

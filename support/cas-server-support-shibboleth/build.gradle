@@ -1,5 +1,7 @@
 description = "Apereo CAS Shibboleth IdP/SP Extensions"
-
+ext {
+    useJunit5 = true
+}
 dependencies {
 
     implementation project(":core:cas-server-core-util-api")
