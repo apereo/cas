@@ -221,7 +221,8 @@ public abstract class AbstractSamlProfileHandlerController {
                                           final Map<String, Object> attributesToCombine) {
         final Map attributes = registeredService.getAttributeReleasePolicy()
             .getAttributes(authentication.getPrincipal(), service, registeredService);
-        final AttributePrincipal principal = new AttributePrincipalImpl(authentication.getPrincipal().getId(), attributes);
+        final AttributePrincipal principal = new AttributePrincipalImpl(registeredService.getUsernameAttributeProvider().resolveUsername(authentication.getPrincipal(), 
+                                                                                                                         service, registeredService), attributes);
         final Map authnAttrs = new LinkedHashMap(authentication.getAttributes());
         authnAttrs.putAll(attributesToCombine);
         return new AssertionImpl(principal, DateTimeUtils.dateOf(authentication.getAuthenticationDate()),
