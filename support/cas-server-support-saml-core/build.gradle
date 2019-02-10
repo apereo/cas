@@ -1,4 +1,7 @@
 description = "Apereo CAS SAML Core/Common Functionality"
+ext {
+    useJunit5 = true
+}
 dependencies {
     implementation libraries.shibidpjavasupport
     

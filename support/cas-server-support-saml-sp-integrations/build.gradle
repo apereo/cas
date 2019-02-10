@@ -1,4 +1,7 @@
 description = "Apereo CAS SAML SP Integrations"
+ext {
+    useJunit5 = true
+}
 dependencies {
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-authentication-attributes")
