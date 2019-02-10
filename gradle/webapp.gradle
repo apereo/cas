@@ -3,7 +3,6 @@ description = "Apereo CAS Web Application"
 apply plugin: "war"
 
 project.ext["mainClassName"] = "org.apereo.cas.web.CasWebApplication"
-
 sourceSets {
     main {
         resources {
