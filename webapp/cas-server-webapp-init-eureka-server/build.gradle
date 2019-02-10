@@ -1,5 +1,8 @@
 description = "Apereo CAS Spring Cloud Eureka Service Discovery Server API"
 
+ext {
+    useJunit5 = true
+}
 dependencies {
     implementation libraries.springcloudeurekaserver
     implementation libraries.eurekaclient
