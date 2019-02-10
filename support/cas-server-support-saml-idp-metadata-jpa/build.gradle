@@ -1,4 +1,7 @@
 description = "Apereo CAS SAML Metadata Support via JDBC"
+ext {
+    useJunit5 = true
+}
 dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-webflow")
