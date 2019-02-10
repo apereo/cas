@@ -6,12 +6,12 @@ import org.apereo.cas.authentication.DefaultAuthenticationTransaction;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Scott Battaglia
@@ -21,7 +21,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
 
     private SamlAuthenticationMetaDataPopulator populator;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         this.populator = new SamlAuthenticationMetaDataPopulator();
     }
