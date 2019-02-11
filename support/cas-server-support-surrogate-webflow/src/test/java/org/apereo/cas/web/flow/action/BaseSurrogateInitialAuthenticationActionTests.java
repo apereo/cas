@@ -30,14 +30,10 @@ import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 /**
  * This is {@link BaseSurrogateInitialAuthenticationActionTests}.
@@ -75,13 +71,7 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
 })
 @TestPropertySource(properties = {"cas.authn.surrogate.simple.surrogates.casuser=cassurrogate"})
-public abstract class BaseSurrogateInitialAuthenticationActionTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
+public class BaseSurrogateInitialAuthenticationActionTests {
     @TestConfiguration
     public static class TestAuthenticationConfiguration implements AuthenticationEventExecutionPlanConfigurer {
         @Override
