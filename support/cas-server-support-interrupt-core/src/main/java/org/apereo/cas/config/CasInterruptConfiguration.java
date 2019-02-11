@@ -63,6 +63,5 @@ public class CasInterruptConfiguration implements InterruptInquiryExecutionPlanC
         if (StringUtils.isNotBlank(ip.getRest().getUrl())) {
             plan.registerInterruptInquirer(new RestEndpointInterruptInquirer(ip.getRest()));
         }
-        plan.registerInterruptInquirer((authentication, registeredService, service, credential, requestContext) -> new InterruptResponse());
     }
 }
