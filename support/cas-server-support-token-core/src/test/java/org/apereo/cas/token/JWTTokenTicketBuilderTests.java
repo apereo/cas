@@ -6,11 +6,11 @@ import org.apereo.cas.token.cipher.RegisteredServiceTokenTicketCipherExecutor;
 
 import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link JWTTokenTicketBuilderTests}.
