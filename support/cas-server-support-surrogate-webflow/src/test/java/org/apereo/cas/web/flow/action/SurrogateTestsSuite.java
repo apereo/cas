@@ -1,7 +1,6 @@
 package org.apereo.cas.web.flow.action;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * This is {@link SurrogateTestsSuite}.
@@ -9,8 +8,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@SelectClasses({
     SurrogateInitialAuthenticationActionTests.class,
     SurrogateSelectionActionTests.class,
     SurrogateAuthorizationActionTests.class,
