@@ -1,5 +1,7 @@
-
 description = "Apereo CAS U2F Support"
+ext {
+    useJunit5 = true
+}
 dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-authentication-mfa-api")
