@@ -101,7 +101,6 @@ import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import lombok.val;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.pac4j.cas.client.CasClient;
-import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.session.J2ESessionStore;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
