@@ -10,9 +10,7 @@ import org.apereo.cas.web.flow.SurrogateWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -25,7 +23,7 @@ import org.springframework.webflow.test.MockRequestContext;
 import java.util.LinkedHashMap;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -35,10 +33,6 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 public class LoadSurrogatesListActionTests extends BaseSurrogateInitialAuthenticationActionTests {
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Autowired
     @Qualifier("loadSurrogatesListAction")
     private Action loadSurrogatesListAction;
