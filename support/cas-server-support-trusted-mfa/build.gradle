@@ -1,4 +1,7 @@
 description = "Apereo CAS Trusted MFA Browser/Device Support"
+ext {
+    useJunit5 = true
+}
 dependencies {
     api project(":api:cas-server-core-api-audit")
 
