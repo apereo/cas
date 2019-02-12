@@ -331,11 +331,11 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
     protected RegisteredService getRegisteredServiceFromFile(final File file) {
         val fileName = file.getName();
         if (fileName.startsWith(".")) {
-            LOGGER.debug("[{}] starts with ., ignoring", fileName);
+            LOGGER.trace("[{}] starts with ., ignoring", fileName);
             return null;
         }
         if (Arrays.stream(getExtensions()).noneMatch(fileName::endsWith)) {
-            LOGGER.debug("[{}] doesn't end with valid extension, ignoring", fileName);
+            LOGGER.trace("[{}] doesn't end with valid extension, ignoring", fileName);
             return null;
         }
         val matcher = this.serviceFileNamePattern.matcher(fileName);
