@@ -24,7 +24,6 @@ import static org.mockito.Mockito.*;
  */
 @Setter
 public class AbstractRegisteredServiceTests {
-
     private static final long ID = 1000;
 
     private static final String SERVICE_ID = "test";
@@ -93,7 +92,7 @@ public class AbstractRegisteredServiceTests {
         assertEquals(SSO_ENABLED, this.r.getAccessStrategy().isServiceAccessAllowedForSso());
         assertEquals(THEME, this.r.getTheme());
         assertNotNull(this.r);
-        assertFalse(this.r.equals(new Object()));
+        assertNotEquals(this.r, new Object());
         assertEquals(this.r, this.r);
     }
 
@@ -166,8 +165,8 @@ public class AbstractRegisteredServiceTests {
 
     @Test
     public void verifyServiceEquality() {
-        val svc1 = RegisteredServiceTestUtils.getRegisteredService(SERVICEID);
-        val svc2 = RegisteredServiceTestUtils.getRegisteredService(SERVICEID);
+        val svc1 = RegisteredServiceTestUtils.getRegisteredService(SERVICEID, false);
+        val svc2 = RegisteredServiceTestUtils.getRegisteredService(SERVICEID, false);
         assertEquals(svc1, svc2);
     }
 
