@@ -209,8 +209,7 @@ public class SamlIdPObjectSigner {
                     params.getSignatureReferenceDigestMethod());
         } else {
             LOGGER.warn("Unable to resolve SignatureSigningParameters, response signing will fail."
-                    + " Make sure domain names in IDP metadata URLs and certificates match CAS domain name",
-                    criteria);
+                    + " Make sure domain names in IDP metadata URLs and certificates match CAS domain name");
         }
         return params;
     }
