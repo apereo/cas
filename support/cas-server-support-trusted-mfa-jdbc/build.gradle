@@ -1,4 +1,7 @@
 description = "Apereo CAS Trusted MFA Browser/Device JDBC Support"
+ext {
+    useJunit5 = true
+}
 dependencies {
     implementation project(":support:cas-server-support-trusted-mfa")
     implementation project(":support:cas-server-support-jpa-util")
