@@ -51,9 +51,8 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
 
     @Test
     public void verifyBadCredentialsOnTicketGrantingTicketCreation() {
-        val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(),
-            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword());
-        assertThrows(AuthenticationException.class, () -> getCentralAuthenticationService().createTicketGrantingTicket(ctx));
+        assertThrows(AuthenticationException.class, () -> CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(),
+                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword()));
     }
 
     @Test
@@ -116,9 +115,7 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(),
             getService("TestServiceAttributeForAuthzFails"));
 
-        val ticketId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
-        assertThrows(PrincipalException.class,
-            () -> getCentralAuthenticationService().grantServiceTicket(ticketId.getId(), getService("TestServiceAttributeForAuthzFails"), ctx));
+        assertThrows(PrincipalException.class, () -> getCentralAuthenticationService().createTicketGrantingTicket(ctx));
     }
 
     @Test
@@ -222,13 +219,7 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
     @Test
     public void verifyValidateServiceTicketWithInvalidService() {
         val service = getService("badtestservice");
-        val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), service);
-
-        val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
-
-        val serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), service, ctx);
-
-        assertThrows(UnauthorizedServiceException.class, () -> getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(), service));
+        assertThrows(UnauthorizedServiceException.class, () -> CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), service));
     }
 
     @Test
