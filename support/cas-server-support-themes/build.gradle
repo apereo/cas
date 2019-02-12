@@ -1,4 +1,7 @@
 description = "Apereo CAS Web Application Themes Support"
+ext {
+    useJunit5 = true
+}
 dependencies {
     compileOnly libraries.thymeleaf
 

@@ -5,14 +5,14 @@ import org.apereo.cas.util.HttpRequestUtils;
 
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link UserAgentDeviceFingerprintComponentExtractorTests}.
