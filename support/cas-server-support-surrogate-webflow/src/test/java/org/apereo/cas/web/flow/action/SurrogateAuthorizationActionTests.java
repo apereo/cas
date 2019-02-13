@@ -9,9 +9,7 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.SneakyThrows;
 import lombok.val;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -22,9 +20,8 @@ import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.LinkedHashMap;
-import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -34,10 +31,6 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 public class SurrogateAuthorizationActionTests extends BaseSurrogateInitialAuthenticationActionTests {
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Autowired
     @Qualifier("surrogateAuthorizationCheck")
     private Action surrogateAuthorizationCheck;
@@ -70,7 +63,7 @@ public class SurrogateAuthorizationActionTests extends BaseSurrogateInitialAuthe
         attributes.put(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, true);
         attributes.putAll(CoreAuthenticationTestUtils.getAttributeRepository().getBackingMap());
 
-        val p = CoreAuthenticationTestUtils.getPrincipal("casuser", (Map) attributes);
+        val p = CoreAuthenticationTestUtils.getPrincipal("casuser", attributes);
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(p), context);
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         val strategy = new SurrogateRegisteredServiceAccessStrategy();
@@ -80,7 +73,6 @@ public class SurrogateAuthorizationActionTests extends BaseSurrogateInitialAuthe
         WebUtils.putRegisteredService(context, registeredService);
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        thrown.expect(PrincipalException.class);
-        surrogateAuthorizationCheck.execute(context);
+        assertThrows(PrincipalException.class, () -> surrogateAuthorizationCheck.execute(context));
     }
 }

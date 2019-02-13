@@ -1,4 +1,7 @@
 description = "Apereo CAS WS-Federation Support"
+ext {
+    useJunit5 = true
+}
 dependencies {
     implementation libraries.opensaml
     implementation libraries.shibidpjavasupport

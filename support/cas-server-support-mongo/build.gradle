@@ -1,4 +1,7 @@
 description = "Apereo CAS Mongo Authentication Support"
+ext {
+    useJunit5 = true
+}
 dependencies {
     implementation project(":support:cas-server-support-pac4j-core")
     implementation project(":core:cas-server-core-authentication-api")

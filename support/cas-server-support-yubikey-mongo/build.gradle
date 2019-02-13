@@ -1,5 +1,7 @@
-
 description = "Apereo CAS YubiKey MongoDb Support"
+ext {
+    useJunit5 = true
+}
 dependencies {
     implementation libraries.mongo
     implementation libraries.yubicoapi

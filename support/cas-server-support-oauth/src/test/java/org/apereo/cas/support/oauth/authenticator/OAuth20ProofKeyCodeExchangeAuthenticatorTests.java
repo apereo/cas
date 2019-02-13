@@ -10,7 +10,8 @@ import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.EncodingUtils;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.exception.CredentialsException;
@@ -20,7 +21,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link OAuth20ProofKeyCodeExchangeAuthenticatorTests}.
@@ -31,9 +32,8 @@ import static org.junit.Assert.*;
 public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20AuthenticatorTests {
     protected OAuth20ProofKeyCodeExchangeAuthenticator authenticator;
 
-    @Override
-    public void initialize() {
-        super.initialize();
+    @BeforeEach
+    public void init() {
         authenticator = new OAuth20ProofKeyCodeExchangeAuthenticator(servicesManager, serviceFactory,
             new RegisteredServiceAccessStrategyAuditableEnforcer(), ticketRegistry);
     }
@@ -77,7 +77,6 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
         ticketRegistry.addTicket(ticket);
         request.addParameter(OAuth20Constants.CODE, ticket.getId());
         val ctx = new J2EContext(request, new MockHttpServletResponse());
-        thrown.expect(CredentialsException.class);
-        authenticator.validate(credentials, ctx);
+        assertThrows(CredentialsException.class, () -> authenticator.validate(credentials, ctx));
     }
 }

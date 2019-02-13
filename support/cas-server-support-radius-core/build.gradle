@@ -1,5 +1,7 @@
 description = "Apereo CAS RADIUS Support"
-
+ext {
+    useJunit5 = true
+}
 dependencies {
     api libraries.jradius
     implementation libraries.bouncycastle

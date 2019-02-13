@@ -1,5 +1,7 @@
-
 description = "Apereo CAS YubiKey Support"
+ext {
+    useJunit5 = true
+}
 dependencies {
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-webflow")

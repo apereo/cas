@@ -9,11 +9,10 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -23,10 +22,6 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 public class DelegatedAuthenticationServiceTicketValidationAuthorizerTests {
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Test
     public void verifyAction() {
         val servicesManager = mock(ServicesManager.class);
@@ -37,12 +32,12 @@ public class DelegatedAuthenticationServiceTicketValidationAuthorizerTests {
 
         when(servicesManager.findServiceBy(any(Service.class))).thenReturn(registeredService);
         val assertion = mock(Assertion.class);
-        val principal = CoreAuthenticationTestUtils.getPrincipal("casuser", CollectionUtils.wrap(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME, "CasClient"));
+        val principal = CoreAuthenticationTestUtils
+            .getPrincipal("casuser", CollectionUtils.wrap(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME, "CasClient"));
         when(assertion.getPrimaryAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication(principal, principal.getAttributes()));
 
         val az = new DelegatedAuthenticationServiceTicketValidationAuthorizer(servicesManager,
             new RegisteredServiceDelegatedAuthenticationPolicyAuditableEnforcer());
-        thrown.expect(UnauthorizedServiceException.class);
-        az.authorize(new MockHttpServletRequest(), CoreAuthenticationTestUtils.getService(), assertion);
+        assertThrows(UnauthorizedServiceException.class, () -> az.authorize(new MockHttpServletRequest(), CoreAuthenticationTestUtils.getService(), assertion));
     }
 }

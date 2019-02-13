@@ -5,6 +5,8 @@ ext {
     useJunit5 = true
 }
 
+sourceSets.test.resources.srcDirs += sourceSets.main.resources.srcDirs
+
 dependencies {
     implementation libraries.jasypt
     implementation libraries.bouncycastle

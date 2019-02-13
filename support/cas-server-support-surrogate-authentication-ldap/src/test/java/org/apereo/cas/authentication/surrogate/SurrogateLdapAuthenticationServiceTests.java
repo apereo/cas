@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication.surrogate;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
-import org.apereo.cas.category.LdapCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -25,8 +24,7 @@ import org.apereo.cas.config.SurrogateLdapAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
@@ -36,8 +34,8 @@ import lombok.Cleanup;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.val;
-import org.junit.BeforeClass;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -51,7 +49,7 @@ import org.springframework.test.context.TestPropertySource;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Category(LdapCategory.class)
+@Tag("Ldap")
 @SpringBootTest(classes = {
     SurrogateLdapAuthenticationConfiguration.class,
     SurrogateAuthenticationConfiguration.class,
@@ -82,7 +80,6 @@ import org.springframework.test.context.TestPropertySource;
     CasThemesConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
 })
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 @TestPropertySource(properties = {
     "cas.authn.surrogate.ldap.ldapUrl=ldap://localhost:10389",
     "cas.authn.surrogate.ldap.useSsl=false",
@@ -95,6 +92,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.surrogate.ldap.memberAttributeValueRegex=\\\\w+@example.org"
     })
 @Getter
+@EnabledIfContinuousIntegration
 public class SurrogateLdapAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
 
     private static final int LDAP_PORT = 10389;
@@ -103,7 +101,7 @@ public class SurrogateLdapAuthenticationServiceTests extends BaseSurrogateAuthen
     @Qualifier("surrogateAuthenticationService")
     private SurrogateAuthenticationService service;
 
-    @BeforeClass
+    @BeforeAll
     @SneakyThrows
     public static void bootstrap() {
         @Cleanup

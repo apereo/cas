@@ -1,4 +1,7 @@
 description = "Apereo CAS SAML Server MDUI Core"
+ext {
+    useJunit5 = true
+}
 dependencies {
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-util-api")
