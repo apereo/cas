@@ -78,7 +78,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class,
     CasCookieConfiguration.class,
     RefreshAutoConfiguration.class,
-    CasCoreServicesConfiguration.class})
+    CasCoreServicesConfiguration.class
+})
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @TestPropertySource(properties = "cas.sso.allowMissingServiceParameter=false")
 public class InitialFlowSetupActionSsoTests {
