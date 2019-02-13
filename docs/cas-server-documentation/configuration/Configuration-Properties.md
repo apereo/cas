@@ -3240,6 +3240,15 @@ To learn more about this topic, [please review this guide](../installation/OAuth
 # cas.authn.oauth.userProfileViewType=NESTED|FLAT
 ```
 
+### OAuth2 JWT Access Tokens
+
+```properties
+# cas.authn.oauth.accessToken.crypto.encryptionEnabled=true
+# cas.authn.oauth.accessToken.crypto.signingEnabled=true
+```
+
+The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.oauth.accessToken`.
+
 ### OAuth2 UMA
 
 To learn more about this topic, [please review this guide](../installation/OAuth-OpenId-Authentication.html).

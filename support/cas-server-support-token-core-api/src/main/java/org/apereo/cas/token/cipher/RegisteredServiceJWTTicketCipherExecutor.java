@@ -77,8 +77,9 @@ public class RegisteredServiceJWTTicketCipherExecutor extends JWTTicketCipherExe
      * @return the signing key
      */
     public Optional<String> getSigningKey(final RegisteredService registeredService) {
-        if (RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_SIGNING_KEY.isAssignedTo(registeredService)) {
-            val signingKey = RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_SIGNING_KEY.getPropertyValue(registeredService).getValue();
+        val property = getSigningKeyRegisteredServiceProperty();
+        if (property.isAssignedTo(registeredService)) {
+            val signingKey = property.getPropertyValue(registeredService).getValue();
             return Optional.of(signingKey);
         }
         return Optional.empty();
@@ -91,10 +92,29 @@ public class RegisteredServiceJWTTicketCipherExecutor extends JWTTicketCipherExe
      * @return the encryption key
      */
     public Optional<String> getEncryptionKey(final RegisteredService registeredService) {
-        if (RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_ENCRYPTION_KEY.isAssignedTo(registeredService)) {
-            val key = RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_ENCRYPTION_KEY.getPropertyValue(registeredService).getValue();
+        val property = getEncryptionKeyRegisteredServiceProperty();
+        if (property.isAssignedTo(registeredService)) {
+            val key = property.getPropertyValue(registeredService).getValue();
             return Optional.of(key);
         }
         return Optional.empty();
+    }
+
+    /**
+     * Gets signing key registered service property.
+     *
+     * @return the signing key registered service property
+     */
+    protected RegisteredServiceProperties getSigningKeyRegisteredServiceProperty() {
+        return RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_SIGNING_KEY;
+    }
+
+    /**
+     * Gets encryption key registered service property.
+     *
+     * @return the encryption key registered service property
+     */
+    protected RegisteredServiceProperties getEncryptionKeyRegisteredServiceProperty() {
+        return RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_ENCRYPTION_KEY;
     }
 }

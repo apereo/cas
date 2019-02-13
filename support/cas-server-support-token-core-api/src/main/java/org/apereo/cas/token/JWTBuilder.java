@@ -2,8 +2,8 @@ package org.apereo.cas.token;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
+import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.token.cipher.RegisteredServiceJWTTicketCipherExecutor;
 
 import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jose.PlainHeader;
@@ -17,6 +17,7 @@ import lombok.val;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -33,8 +34,9 @@ import java.util.Optional;
 @Getter
 public class JWTBuilder {
     private final String casSeverPrefix;
-    private final CipherExecutor<String, String> defaultTokenCipherExecutor;
+    private final CipherExecutor<Serializable, String> defaultTokenCipherExecutor;
     private final ServicesManager servicesManager;
+    private final RegisteredServiceCipherExecutor registeredServiceCipherExecutor;
 
     /**
      * Build JWT.
@@ -65,10 +67,9 @@ public class JWTBuilder {
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
 
         LOGGER.trace("Locating service specific signing and encryption keys for [{}] in service registry", serviceAudience);
-        val serviceCipher = new RegisteredServiceJWTTicketCipherExecutor();
-        if (serviceCipher.supports(registeredService)) {
+        if (registeredServiceCipherExecutor.supports(registeredService)) {
             LOGGER.trace("Encoding JWT based on keys provided by service [{}]", registeredService.getServiceId());
-            return serviceCipher.encode(jwtJson, Optional.of(registeredService));
+            return registeredServiceCipherExecutor.encode(jwtJson, Optional.of(registeredService));
         }
 
         if (defaultTokenCipherExecutor.isEnabled()) {

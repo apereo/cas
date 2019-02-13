@@ -9,6 +9,7 @@ import org.apereo.cas.token.JWTTokenCipherSigningPublicKeyEndpoint;
 import org.apereo.cas.token.JWTTokenTicketBuilder;
 import org.apereo.cas.token.TokenTicketBuilder;
 import org.apereo.cas.token.cipher.JWTTicketCipherExecutor;
+import org.apereo.cas.token.cipher.RegisteredServiceJWTTicketCipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -100,7 +101,8 @@ public class TokenCoreConfiguration {
         return new JWTBuilder(
             casProperties.getServer().getPrefix(),
             tokenCipherExecutor(),
-            servicesManager.getIfAvailable());
+            servicesManager.getIfAvailable(),
+            new RegisteredServiceJWTTicketCipherExecutor());
     }
 
     @Bean

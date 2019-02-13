@@ -100,13 +100,13 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         if (this.encryptionEnabled) {
             configureEncryptionParameters(secretKeyEncryption, contentEncryptionAlgorithmIdentifier);
         } else {
-            LOGGER.warn("Encryption is not enabled for [{}]. The cipher [{}] will only attempt to produce signed objects",
+            LOGGER.info("Encryption is not enabled for [{}]. The cipher [{}] will only attempt to produce signed objects",
                 getName(), getClass().getSimpleName());
         }
         if (this.signingEnabled) {
             configureSigningParameters(secretKeySigning);
         } else {
-            LOGGER.warn("Signing is not enabled for [{}]. The cipher [{}] will attempt to produce plain objects", getName(), getClass().getSimpleName());
+            LOGGER.info("Signing is not enabled for [{}]. The cipher [{}] will attempt to produce plain objects", getName(), getClass().getSimpleName());
         }
     }
 

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.oauth;
 
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.model.core.util.EncryptionOptionalSigningOptionalJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -38,4 +39,9 @@ public class OAuthAccessTokenProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private EncryptionOptionalSigningOptionalJwtCryptographyProperties crypto = new EncryptionOptionalSigningOptionalJwtCryptographyProperties();
+
+    public OAuthAccessTokenProperties() {
+        crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
+        crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
+    }
 }

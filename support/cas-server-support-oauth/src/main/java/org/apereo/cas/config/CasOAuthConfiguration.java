@@ -69,6 +69,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRefr
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20DefaultAccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenCipherExecutor;
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.RegisteredServiceJWTAccessTokenCipherExecutor;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationCodeAuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ClientCredentialsResponseBuilder;
@@ -193,7 +194,8 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     public JWTBuilder accessTokenJwtBuilder() {
         return new JWTBuilder(casProperties.getServer().getPrefix(),
             defaultAccessTokenJwtCipherExecutor(),
-            servicesManager.getIfAvailable());
+            servicesManager.getIfAvailable(),
+            new RegisteredServiceJWTAccessTokenCipherExecutor());
     }
 
     @ConditionalOnMissingBean(name = "oauthCasClientRedirectActionBuilder")
@@ -286,7 +288,7 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @RefreshScope
     @ConditionalOnMissingBean(name = "defaultAccessTokenFactory")
     public AccessTokenFactory defaultAccessTokenFactory() {
-        return new DefaultAccessTokenFactory(accessTokenIdGenerator(), accessTokenExpirationPolicy());
+        return new DefaultAccessTokenFactory(accessTokenIdGenerator(), accessTokenExpirationPolicy(), accessTokenJwtBuilder());
     }
 
     @Bean

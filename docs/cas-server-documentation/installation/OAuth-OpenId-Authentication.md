@@ -183,6 +183,35 @@ The expiration policy for OAuth tokens is controlled by CAS settings and propert
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#oauth2).
 
+## JWT Access Tokens
+
+By default, OAuth access tokens are created as opaque identifiers. There is also the option to generate JWTs as access tokens on a per-service basis:
+        
+```json
+{
+    "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
+    "clientId": "clientid",
+    "clientSecret": "clientSecret",
+    "serviceId" : "^(https|imaps)://<redirect-uri>.*",
+    "name" : "OAuthService",
+    "id" : 100,
+    "generateJwtAccessToken": true,
+    "properties" : {
+      "@class" : "java.util.HashMap",
+      "accessTokenAsJwtSigningKey" : {
+         "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+         "values" : [ "java.util.HashSet", [ "..." ] ]
+      },
+      "accessTokenAsJwtEncryptionKey" : {
+           "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+           "values" : [ "java.util.HashSet", [ "..." ] ]
+      }
+    }
+}
+```
+
+Signing and encryption keys may also be defined on a per-service basis, or globally via CAS settings. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#oauth2).
+
 ## OAuth User Profile Structure
 
 The requested user profile may be rendered and consumed by the application using the following options.
