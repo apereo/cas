@@ -1,4 +1,7 @@
 description = "Apereo CAS Server OpenID Connect Support Services"
+ext {
+    useJunit5 = true
+}
 dependencies {
     api project(":api:cas-server-core-api-throttle")
     

@@ -1,4 +1,7 @@
 description = "Apereo CAS Events Consumer CouchDb"
+ext {
+    useJunit5 = true
+}
 dependencies {
     implementation project(":core:cas-server-core-events")
     implementation project(":core:cas-server-core-util-api")

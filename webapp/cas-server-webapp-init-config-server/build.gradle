@@ -1,5 +1,8 @@
 description = "Apereo CAS Spring Cloud Configuration Server API"
 
+ext {
+    useJunit5 = true
+}
 dependencies {
     implementation libraries.springsecurityweb
     implementation libraries.springsecurityconfig

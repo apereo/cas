@@ -1,10 +1,9 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
-import org.apereo.cas.category.MySQLCategory;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -14,7 +13,8 @@ import org.springframework.test.context.TestPropertySource;
  * @since 6.0.0
  */
 @TestPropertySource(locations = "classpath:samlidp-mysql.properties")
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 3306)
-@Category(MySQLCategory.class)
+@EnabledIfPortOpen(port = 3305)
+@EnabledIfContinuousIntegration
+@Tag("MySQL")
 public class MySQLJpaSamlIdPMetadataGeneratorTests extends JpaSamlIdPMetadataGeneratorTests {
 }

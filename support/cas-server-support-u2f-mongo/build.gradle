@@ -1,4 +1,7 @@
 description = "Apereo CAS U2F FIDO MongoDb Support"
+ext {
+    useJunit5 = true
+}
 dependencies {
     implementation libraries.yubicoapi
     implementation libraries.u2flibserver

@@ -17,8 +17,8 @@ import org.apereo.cas.util.CompressionUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
@@ -31,7 +31,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.regex.Pattern;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -79,7 +79,7 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
         return (GoogleAccountsService) factory.createService(request);
     }
 
-    @Before
+    @BeforeEach
     public void initialize() {
         this.googleAccountsService = getGoogleAccountsService();
     }

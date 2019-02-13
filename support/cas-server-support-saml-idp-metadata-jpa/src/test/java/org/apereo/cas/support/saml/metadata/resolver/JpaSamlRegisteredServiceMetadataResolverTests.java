@@ -6,13 +6,13 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
 
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link JpaSamlRegisteredServiceMetadataResolverTests}.
