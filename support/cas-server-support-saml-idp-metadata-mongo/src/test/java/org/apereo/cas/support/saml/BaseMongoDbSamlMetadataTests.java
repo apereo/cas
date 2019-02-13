@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml;
 
-import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -32,14 +31,11 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -47,8 +43,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 /**
  * This is {@link BaseMongoDbSamlMetadataTests}.
@@ -56,7 +50,7 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Category(MongoDbCategory.class)
+@Tag("MongoDb")
 @SpringBootTest(classes = {
     SamlIdPMongoDbRegisteredServiceMetadataConfiguration.class,
     SamlIdPMongoDbIdPMetadataConfiguration.class,
@@ -94,15 +88,6 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
     CasCoreUtilConfiguration.class})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class BaseMongoDbSamlMetadataTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
-
     @Autowired
     protected CasConfigurationProperties casProperties;
 

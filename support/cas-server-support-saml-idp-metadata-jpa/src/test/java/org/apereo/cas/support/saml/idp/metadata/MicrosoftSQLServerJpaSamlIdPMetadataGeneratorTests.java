@@ -1,10 +1,9 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
-import org.apereo.cas.category.MsSqlServerCategory;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -14,7 +13,8 @@ import org.springframework.test.context.TestPropertySource;
  * @since 6.0.0
  */
 @TestPropertySource(locations = "classpath:samlidp-mssql.properties")
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 1433)
-@Category(MsSqlServerCategory.class)
+@EnabledIfPortOpen(port = 1433)
+@EnabledIfContinuousIntegration
+@Tag("MsSqlServer")
 public class MicrosoftSQLServerJpaSamlIdPMetadataGeneratorTests extends JpaSamlIdPMetadataGeneratorTests {
 }
