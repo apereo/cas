@@ -37,6 +37,6 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 ## REST Decorators
 
-RESTful login decorators allow one to inject data into the webflow context by reaching out to an external REST API. If the endpoint responds back with a `200` status code, CAS would parse the response body into a JSON object and will stuff the result into the webflow's `flowScope` container under the key `decoration`. Please remember that data stuff into the webflow **MUST** be serializable and if you intend to pass along complex objects types and fancy data structures, you need to make sure they can safely and ultimately transform into a simple `byte[]`.
+RESTful login decorators allow one to inject data into the webflow context by reaching out to an external REST API. If the endpoint responds back with a `200` status code, CAS would parse the response body into a JSON object and will stuff the result into the webflow's `flowScope` container under the key `decoration`. Please remember that data stuffed into the webflow **MUST** be serializable and if you intend to pass along complex objects types and fancy data structures, you need to make sure they can safely and ultimately transform into a simple `byte[]`.
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#spring-webflow-login-decorations).
