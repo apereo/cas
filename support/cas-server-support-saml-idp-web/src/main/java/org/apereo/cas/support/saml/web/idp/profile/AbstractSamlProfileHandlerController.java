@@ -211,8 +211,9 @@ public abstract class AbstractSamlProfileHandlerController {
                                           final RegisteredService registeredService,
                                           final Map<String, Object> attributesToCombine) {
         val attributes = registeredService.getAttributeReleasePolicy().getAttributes(authentication.getPrincipal(), service, registeredService);
-        val principal = new AttributePrincipalImpl(authentication.getPrincipal().getId(), attributes);
-        val authnAttrs = new LinkedHashMap(authentication.getAttributes());
+        val principalId = registeredService.getUsernameAttributeProvider().resolveUsername(authentication.getPrincipal(), service, registeredService);
+        val principal = new AttributePrincipalImpl(principalId, attributes);
+        val authnAttrs = new LinkedHashMap<>(authentication.getAttributes());
         authnAttrs.putAll(attributesToCombine);
         return new AssertionImpl(principal, DateTimeUtils.dateOf(authentication.getAuthenticationDate()),
             null, DateTimeUtils.dateOf(authentication.getAuthenticationDate()),
@@ -492,8 +493,7 @@ public abstract class AbstractSamlProfileHandlerController {
         val registeredService = verifySamlRegisteredService(issuer);
 
         LOGGER.debug("Located SAML metadata for [{}]", registeredService.getServiceId());
-        val adaptor =
-            getSamlMetadataFacadeFor(registeredService, request);
+        val adaptor = getSamlMetadataFacadeFor(registeredService, request);
 
         if (adaptor.isEmpty()) {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE,

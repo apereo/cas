@@ -49,6 +49,7 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20DeviceUserCodeApprovalEndpointController;
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
@@ -181,6 +182,10 @@ public abstract class AbstractOAuth20Tests {
     @Autowired
     @Qualifier("accessTokenController")
     protected OAuth20AccessTokenEndpointController controller;
+
+    @Autowired
+    @Qualifier("accessTokenResponseGenerator")
+    protected OAuth20AccessTokenResponseGenerator accessTokenResponseGenerator;
 
     @Autowired
     @Qualifier("deviceUserCodeApprovalEndpointController")
