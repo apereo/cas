@@ -52,7 +52,7 @@ public class RestEndpointInterruptInquirerTests {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
             .writeValueAsString(response);
-        this.webServer = new MockWebServer(8888,
+        this.webServer = new MockWebServer(8889,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE);
         this.webServer.start();
@@ -61,7 +61,7 @@ public class RestEndpointInterruptInquirerTests {
     @Test
     public void verifyResponseCanBeFoundFromRest() {
         val restProps = new InterruptProperties.Rest();
-        restProps.setUrl("http://localhost:8888");
+        restProps.setUrl("http://localhost:8889");
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(),
