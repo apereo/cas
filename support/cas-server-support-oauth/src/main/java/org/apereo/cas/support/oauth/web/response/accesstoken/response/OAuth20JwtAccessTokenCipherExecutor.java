@@ -9,6 +9,10 @@ import org.apereo.cas.token.cipher.JWTTicketCipherExecutor;
  * @since 6.1.0
  */
 public class OAuth20JwtAccessTokenCipherExecutor extends JWTTicketCipherExecutor {
+    public OAuth20JwtAccessTokenCipherExecutor() {
+        super();
+    }
+
     public OAuth20JwtAccessTokenCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
                                                final String alg, final boolean encryptionEnabled,
                                                final boolean signingEnabled, final int signingKeySize,
