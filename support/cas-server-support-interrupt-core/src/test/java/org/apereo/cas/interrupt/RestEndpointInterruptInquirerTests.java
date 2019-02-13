@@ -1,7 +1,6 @@
 package org.apereo.cas.interrupt;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.configuration.model.support.interrupt.InterruptProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
@@ -11,9 +10,10 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -24,7 +24,7 @@ import org.springframework.webflow.test.MockRequestContext;
 
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link RestEndpointInterruptInquirerTests}.
@@ -32,11 +32,11 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Category(RestfulApiCategory.class)
+@Tag("RestfulApi")
 public class RestEndpointInterruptInquirerTests {
     private MockWebServer webServer;
 
-    @Before
+    @BeforeEach
     @SneakyThrows
     public void initialize() {
         val response = new InterruptResponse();
@@ -52,16 +52,21 @@ public class RestEndpointInterruptInquirerTests {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
             .writeValueAsString(response);
-        this.webServer = new MockWebServer(8889,
+        this.webServer = new MockWebServer(8888,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE);
         this.webServer.start();
     }
 
+    @AfterEach
+    public void stop() {
+        webServer.stop();
+    }
+
     @Test
     public void verifyResponseCanBeFoundFromRest() {
         val restProps = new InterruptProperties.Rest();
-        restProps.setUrl("http://localhost:8889");
+        restProps.setUrl("http://localhost:8888");
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(),
