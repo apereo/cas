@@ -1,5 +1,7 @@
 description = "Apereo CAS RADIUS Support"
-
+ext {
+    useJunit5 = true
+}
 dependencies {
     api project(":api:cas-server-core-api-audit")
     api project(":api:cas-server-core-api")

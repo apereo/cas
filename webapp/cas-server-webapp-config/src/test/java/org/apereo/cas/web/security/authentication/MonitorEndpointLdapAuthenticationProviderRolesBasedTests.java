@@ -1,10 +1,9 @@
 package org.apereo.cas.web.security.authentication;
 
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -12,7 +11,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link MonitorEndpointLdapAuthenticationProviderRolesBasedTests}.
@@ -26,7 +25,7 @@ import static org.junit.Assert.*;
     "cas.monitor.endpoints.ldap.ldapAuthz.baseDn=ou=people,dc=example,dc=org",
     "cas.monitor.endpoints.ldap.ldapAuthz.rolePrefix=ROLE_"
 })
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
+@EnabledIfContinuousIntegration
 public class MonitorEndpointLdapAuthenticationProviderRolesBasedTests extends BaseMonitorEndpointLdapAuthenticationProviderTests {
 
     @Test
@@ -43,8 +42,7 @@ public class MonitorEndpointLdapAuthenticationProviderRolesBasedTests extends Ba
         val securityProperties = new SecurityProperties();
         securityProperties.getUser().setRoles(Collections.singletonList("SOME_BAD_ROLE"));
         val provider = new MonitorEndpointLdapAuthenticationProvider(casProperties.getMonitor().getEndpoints().getLdap(), securityProperties);
-        thrown.expect(BadCredentialsException.class);
-        provider.authenticate(new UsernamePasswordAuthenticationToken("authzcas", "123456"));
+        assertThrows(BadCredentialsException.class, () -> provider.authenticate(new UsernamePasswordAuthenticationToken("authzcas", "123456")));
     }
 
     @Test
@@ -52,8 +50,7 @@ public class MonitorEndpointLdapAuthenticationProviderRolesBasedTests extends Ba
         val securityProperties = new SecurityProperties();
         securityProperties.getUser().setRoles(Collections.singletonList("SOME_BAD_ROLE"));
         val provider = new MonitorEndpointLdapAuthenticationProvider(casProperties.getMonitor().getEndpoints().getLdap(), securityProperties);
-        thrown.expect(BadCredentialsException.class);
-        provider.authenticate(new UsernamePasswordAuthenticationToken("UNKNOWN_USER", "123456"));
+        assertThrows(BadCredentialsException.class, () -> provider.authenticate(new UsernamePasswordAuthenticationToken("UNKNOWN_USER", "123456")));
     }
 
     @Test
@@ -61,8 +58,7 @@ public class MonitorEndpointLdapAuthenticationProviderRolesBasedTests extends Ba
         val securityProperties = new SecurityProperties();
         securityProperties.getUser().setRoles(Collections.singletonList("SOME_BAD_ROLE"));
         val provider = new MonitorEndpointLdapAuthenticationProvider(casProperties.getMonitor().getEndpoints().getLdap(), securityProperties);
-        thrown.expect(BadCredentialsException.class);
-        provider.authenticate(new UsernamePasswordAuthenticationToken("authzcas", "BAD_PASSWORD"));
+        assertThrows(BadCredentialsException.class, () -> provider.authenticate(new UsernamePasswordAuthenticationToken("authzcas", "BAD_PASSWORD")));
     }
 
 }
