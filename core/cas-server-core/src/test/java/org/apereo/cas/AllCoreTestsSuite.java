@@ -1,7 +1,6 @@
 package org.apereo.cas;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * The {@link AllCoreTestsSuite} is responsible for
@@ -10,8 +9,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@SelectClasses({
     DefaultCentralAuthenticationServiceTests.class,
     DefaultCentralAuthenticationServiceMockitoTests.class,
     DefaultCasAttributeEncoderTests.class,

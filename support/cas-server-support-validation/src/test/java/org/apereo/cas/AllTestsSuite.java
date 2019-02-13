@@ -9,8 +9,7 @@ import org.apereo.cas.web.view.attributes.AttributeValuesPerLineProtocolAttribut
 import org.apereo.cas.web.view.attributes.DefaultCas30ProtocolAttributesRendererTests;
 import org.apereo.cas.web.view.attributes.InlinedCas30ProtocolAttributesRendererTests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * The {@link AllTestsSuite} is responsible for
@@ -19,8 +18,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@SelectClasses({
     Cas10ResponseViewTests.class,
     Cas20ResponseViewTests.class,
     Cas30ResponseViewTests.class,
