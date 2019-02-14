@@ -1,4 +1,7 @@
 description = "Apereo CAS REST JWT Tickets Implementation"
+ext {
+    useJunit5 = true
+}
 dependencies {
     implementation libraries.casclient
     
