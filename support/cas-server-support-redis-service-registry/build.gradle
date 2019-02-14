@@ -1,4 +1,7 @@
 description = "Apereo CAS Redis Service Registry Support"
+ext {
+    useJunit5 = true
+}
 dependencies {
     api project(":api:cas-server-core-api-services")
 
@@ -18,6 +21,8 @@ dependencies {
     testImplementation project(":support:cas-server-support-oauth-core")
     testImplementation project(":support:cas-server-support-oauth-services")
     testImplementation project(":support:cas-server-support-saml-idp-core")
+    testImplementation project(":support:cas-server-support-oidc-services")
+    testImplementation project(":support:cas-server-support-ws-idp-api")
 
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
