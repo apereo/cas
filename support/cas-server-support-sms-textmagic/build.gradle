@@ -1,4 +1,7 @@
 description = "Apereo CAS TextMagic SMS Support"
+ext {
+    useJunit5 = true
+}
 dependencies {
 
     implementation project(":core:cas-server-core-web-api")

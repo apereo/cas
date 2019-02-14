@@ -2,12 +2,11 @@ package org.apereo.cas.support.x509.rest;
 
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 
+import lombok.Cleanup;
 import lombok.val;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.LinkedMultiValueMap;
 
@@ -15,7 +14,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for {@link X509RestMultipartBodyCredentialFactory}.
@@ -23,17 +22,15 @@ import static org.junit.Assert.*;
  * @author Dmytro Fedonin
  * @since 5.1.0
  */
-@RunWith(MockitoJUnitRunner.Silent.class)
+@ExtendWith(MockitoExtension.class)
 public class X509RestMultipartBodyCredentialFactoryTests {
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     private final X509RestMultipartBodyCredentialFactory factory = new X509RestMultipartBodyCredentialFactory();
 
     @Test
     public void createX509Credential() throws IOException {
         val requestBody = new LinkedMultiValueMap<String, String>();
+        @Cleanup
         val scan = new Scanner(new ClassPathResource("ldap-crl.crt").getFile(), StandardCharsets.UTF_8.name());
         val certStr = scan.useDelimiter("\\Z").next();
         scan.close();

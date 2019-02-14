@@ -21,12 +21,12 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.http.MediaType;
@@ -36,7 +36,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import javax.security.auth.login.LoginException;
 import java.util.HashMap;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -47,7 +47,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author Dmitriy Kopylenko
  * @since 4.0.0
  */
-@RunWith(MockitoJUnitRunner.Silent.class)
+@ExtendWith(MockitoExtension.class)
 public class ServiceTicketResourceTests {
 
     private static final String TICKETS_RESOURCE_URL = "/cas/v1/tickets";
@@ -69,11 +69,11 @@ public class ServiceTicketResourceTests {
 
     private MockMvc mockMvc;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         val mgmr = mock(AuthenticationManager.class);
-        when(mgmr.authenticate(any(AuthenticationTransaction.class))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
-        when(ticketSupport.getAuthenticationFrom(anyString())).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
+        lenient().when(mgmr.authenticate(any(AuthenticationTransaction.class))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
+        lenient().when(ticketSupport.getAuthenticationFrom(anyString())).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
 
         val publisher = mock(ApplicationEventPublisher.class);
 
@@ -170,8 +170,8 @@ public class ServiceTicketResourceTests {
 
     private void configureCasMockToCreateValidST() {
         val st = mock(ServiceTicket.class);
-        when(st.getId()).thenReturn("ST-1");
-        when(this.casMock.grantServiceTicket(anyString(), any(Service.class), any(AuthenticationResult.class))).thenReturn(st);
+        lenient().when(st.getId()).thenReturn("ST-1");
+        lenient().when(this.casMock.grantServiceTicket(anyString(), any(Service.class), any(AuthenticationResult.class))).thenReturn(st);
     }
 
     private void configureCasMockSTCreationToThrowAuthenticationException() {

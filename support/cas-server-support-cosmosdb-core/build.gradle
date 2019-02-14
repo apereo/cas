@@ -1,5 +1,7 @@
 description = "Apereo CAS Cosmos DB Support Core"
-
+ext {
+    useJunit5 = true
+}
 dependencies {
     api libraries.cosmosdb
     implementation project(":core:cas-server-core-util-api")
