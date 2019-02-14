@@ -1,4 +1,7 @@
 description = "Apereo CAS Notification/Interrupt Webflow"
+ext {
+    useJunit5 = true
+}
 dependencies {
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api-authentication")

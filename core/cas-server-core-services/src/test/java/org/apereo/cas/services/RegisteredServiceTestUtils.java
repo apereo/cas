@@ -90,6 +90,10 @@ public class RegisteredServiceTestUtils {
     }
 
     public static Map<String, Set<String>> getTestAttributes() {
+        return getTestAttributes("CASUser");
+    }
+
+    public static Map<String, Set<String>> getTestAttributes(final String username) {
         val attributes = new HashMap<String, Set<String>>();
         Set<String> attributeValues = new HashSet<>();
         attributeValues.add("uid");
@@ -97,7 +101,7 @@ public class RegisteredServiceTestUtils {
         attributes.put("uid", attributeValues);
 
         attributeValues = new HashSet<>();
-        attributeValues.add("CASUser");
+        attributeValues.add(username);
 
         attributes.put("givenName", attributeValues);
 

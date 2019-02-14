@@ -1,4 +1,7 @@
 description = "Apereo CAS Graphical User Authentication Support"
+ext {
+    useJunit5 = true
+}
 dependencies {
     implementation libraries.ldaptive
     
