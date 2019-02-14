@@ -1,10 +1,9 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.category.PostgresCategory;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -14,10 +13,8 @@ import org.springframework.test.context.TestPropertySource;
  * @since 6.0.0
  */
 @TestPropertySource(locations = "classpath:svcregpostgres.properties")
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 5432)
-@Category(PostgresCategory.class)
+@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 5432)
+@Tag("Postgres")
 public class JpaServiceRegistryPostgresTests extends JpaServiceRegistryTests {
-    public JpaServiceRegistryPostgresTests(final Class<? extends RegisteredService> registeredServiceClass) {
-        super(registeredServiceClass);
-    }
 }

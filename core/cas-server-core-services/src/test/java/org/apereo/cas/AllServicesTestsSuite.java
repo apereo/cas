@@ -36,8 +36,7 @@ import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilterTest
 import org.apereo.cas.services.support.RegisteredServiceScriptedAttributeFilterTests;
 import org.apereo.cas.util.services.DefaultRegisteredServiceJsonSerializerTests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * This is {@link AllServicesTestsSuite}.
@@ -45,8 +44,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@SelectClasses({
     HttpBasedServiceCredentialsAuthenticationHandlerTests.class,
     HttpBasedServiceCredentialTests.class,
     AnonymousRegisteredServiceUsernameAttributeProviderTests.class,

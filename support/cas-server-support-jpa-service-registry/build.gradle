@@ -1,6 +1,7 @@
 description = "Apereo CAS JPA Service Registry Support"
 ext {
     maxParallelForksForTests = 1
+    useJunit5 = true
 }
 
 dependencies {

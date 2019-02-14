@@ -1,4 +1,7 @@
 description = "Apereo CAS Azure Cosmos DB Service Registry"
+ext {
+    useJunit5 = true
+}
 dependencies {
     api project(":api:cas-server-core-api-services")
     
@@ -9,6 +12,12 @@ dependencies {
     implementation project(":support:cas-server-support-cosmosdb-core")
 
     testImplementation project(":core:cas-server-core-services")
+    
+    testImplementation project(":support:cas-server-support-oauth-services")
+    testImplementation project(":support:cas-server-support-saml-idp-core")
+    testImplementation project(":support:cas-server-support-oidc-services")
+    testImplementation project(":support:cas-server-support-ws-idp-api")
+    
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util", configuration: "tests")
 }
