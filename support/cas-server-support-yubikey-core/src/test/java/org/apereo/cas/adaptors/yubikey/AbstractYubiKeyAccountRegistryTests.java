@@ -1,8 +1,6 @@
 package org.apereo.cas.adaptors.yubikey;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -10,42 +8,40 @@ import org.springframework.context.annotation.Bean;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link BaseYubiKeyAccountRegistryTests}.
+ * This is {@link AbstractYubiKeyAccountRegistryTests}.
  *
  * @author Timur Duehr
  * @since 6.0.0
  */
-public class BaseYubiKeyAccountRegistryTests {
+public abstract class AbstractYubiKeyAccountRegistryTests {
     private static final String OTP = "cccccccvlidcnlednilgctgcvcjtivrjidfbdgrefcvi";
     private static final String BAD_TOKEN = "123456";
     private static final String CASUSER = "casuser";
 
-    @Autowired
-    @Qualifier("yubiKeyAccountRegistry")
-    private YubiKeyAccountRegistry yubiKeyAccountRegistry;
+    public abstract YubiKeyAccountRegistry getYubiKeyAccountRegistry();
 
     @Test
     public void verifyAccountNotRegistered() {
-        assertFalse(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("missing-user"));
+        assertFalse(getYubiKeyAccountRegistry().isYubiKeyRegisteredFor("missing-user"));
     }
 
     @Test
     public void verifyAccountNotRegisteredWithBadToken() {
-        assertFalse(yubiKeyAccountRegistry.registerAccountFor(CASUSER, BAD_TOKEN));
-        assertFalse(yubiKeyAccountRegistry.isYubiKeyRegisteredFor(CASUSER));
+        assertFalse(getYubiKeyAccountRegistry().registerAccountFor(CASUSER, BAD_TOKEN));
+        assertFalse(getYubiKeyAccountRegistry().isYubiKeyRegisteredFor(CASUSER));
     }
 
     @Test
     public void verifyAccountRegistered() {
-        assertTrue(yubiKeyAccountRegistry.registerAccountFor(CASUSER, OTP));
-        assertTrue(yubiKeyAccountRegistry.isYubiKeyRegisteredFor(CASUSER));
-        assertEquals(1, yubiKeyAccountRegistry.getAccounts().size());
+        assertTrue(getYubiKeyAccountRegistry().registerAccountFor(CASUSER, OTP));
+        assertTrue(getYubiKeyAccountRegistry().isYubiKeyRegisteredFor(CASUSER));
+        assertEquals(1, getYubiKeyAccountRegistry().getAccounts().size());
     }
 
     @Test
     public void verifyEncryptedAccount() {
-        assertTrue(yubiKeyAccountRegistry.registerAccountFor("encrypteduser", OTP));
-        assertTrue(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("encrypteduser", yubiKeyAccountRegistry.getAccountValidator().getTokenPublicId(OTP)));
+        assertTrue(getYubiKeyAccountRegistry().registerAccountFor("encrypteduser", OTP));
+        assertTrue(getYubiKeyAccountRegistry().isYubiKeyRegisteredFor("encrypteduser", getYubiKeyAccountRegistry().getAccountValidator().getTokenPublicId(OTP)));
     }
 
 
