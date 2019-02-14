@@ -1,4 +1,7 @@
 description = "Apereo CAS Hazelcast Discovery AWS Support"
+ext {
+    useJunit5 = true
+}
 dependencies {
     implementation libraries.hazelcast
     implementation libraries.hazelcastaws
