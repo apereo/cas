@@ -1,7 +1,4 @@
 description = "Apereo CAS Configuration - AWS S3 Objects"
-ext {
-    useJunit5 = true
-}
 dependencies {
     implementation libraries.awss3
     implementation project(":support:cas-server-support-aws")

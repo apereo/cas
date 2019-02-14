@@ -5,9 +5,6 @@ apply from: rootProject.file("gradle/springboot.gradle")
 
 description = "Apereo CAS Spring Cloud Configuration Web Application Server"
 
-ext {
-    useJunit5 = true
-}
 publishing {
     publications {
         mavenWeb(MavenPublication) {
