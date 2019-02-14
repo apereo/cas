@@ -5,11 +5,9 @@ import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.io.SmsSender;
 
 import lombok.val;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,12 +15,10 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link ClickatellSmsSenderTests}.
@@ -39,19 +35,13 @@ import static org.junit.Assert.*;
     "cas.smsProvider.clickatell.token=DEMO_TOKEN"
 })
 public class ClickatellSmsSenderTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     @Autowired
     @Qualifier("smsSender")
     private SmsSender smsSender;
 
     private MockWebServer webServer;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         val data = "{\n"
             + "\"messages\": [\n"
@@ -76,7 +66,7 @@ public class ClickatellSmsSenderTests {
         this.webServer.start();
     }
 
-    @After
+    @AfterEach
     public void cleanup() {
         this.webServer.stop();
     }
