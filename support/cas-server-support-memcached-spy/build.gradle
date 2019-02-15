@@ -1,7 +1,4 @@
 description = "Apereo CAS Memcached Support via Memcached"
-ext {
-    useJunit5 = true
-}
 dependencies {
     api libraries.memcached
 }

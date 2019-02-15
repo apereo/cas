@@ -1,7 +1,4 @@
 description = "Apereo CAS Notification/Interrupt Core Implementations"
-ext {
-    useJunit5 = true
-}
 dependencies {
     implementation project(":support:cas-server-support-interrupt-api")
     implementation project(":core:cas-server-core-authentication-api")

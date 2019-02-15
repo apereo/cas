@@ -1,7 +1,4 @@
 description = "Apereo CAS REST Implementation"
-ext {
-    useJunit5 = true
-}
 dependencies {
     api project(":api:cas-server-core-api-throttle")
     api project(":api:cas-server-core-api")
