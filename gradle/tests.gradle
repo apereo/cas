@@ -219,15 +219,6 @@ tasks.withType(Test) {
         if(maxParallelForks != 2) {
             println "Maximum number of parallel forks is set to ${maxParallelForks}"
         }
-
-        def useJunit5 = project.ext.properties.get("useJunit5", false)
-        it.options {
-            if (useJunit5) {
-                it.includeEngines "junit-jupiter"
-            } else {
-                it.includeEngines "junit-vintage"
-            }
-        }
     }
 
     failFast = true

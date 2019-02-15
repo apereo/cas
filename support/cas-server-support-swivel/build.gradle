@@ -1,7 +1,4 @@
 description = "Apereo CAS Swivel Support"
-ext {
-    useJunit5 = true
-}
 /*
  * The Swivel client library is not available in a central repository.
  */

@@ -1,7 +1,4 @@
 description = "Apereo CAS Hazelcast Discovery Docker Swarm Support"
-ext {
-    useJunit5 = true
-}
 dependencies {
     implementation libraries.hazelcast
     implementation libraries.hazelcastswarm
