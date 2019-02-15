@@ -1,8 +1,5 @@
 description = "Apereo CAS Redis Ticket Registry"
 
-ext {
-    useJunit5 = true
-}
 dependencies {
     implementation libraries.springbootredis
 

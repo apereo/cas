@@ -32,6 +32,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
 
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,6 +95,11 @@ public class JpaTicketRegistryCleanerTests {
     @Autowired
     @Qualifier("ticketRegistryCleaner")
     private TicketRegistryCleaner ticketRegistryCleaner;
+
+    @BeforeEach
+    public void cleanup() {
+        ticketRegistry.deleteAll();
+    }
 
     @Test
     public void verifyOperation() {

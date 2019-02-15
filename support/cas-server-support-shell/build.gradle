@@ -4,11 +4,6 @@ project.ext["forceBootifulArtifact"] = true
 apply from: rootProject.file("gradle/springboot.gradle")
 
 description = "Apereo CAS Shell Support via Spring Shell"
-
-ext {
-    useJunit5 = true
-}
-
 dependencies {
     implementation project(":api:cas-server-core-api-services")
 
