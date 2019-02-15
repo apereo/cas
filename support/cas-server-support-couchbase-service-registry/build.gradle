@@ -2,7 +2,6 @@ description = "Apereo CAS Couchbase Service Registry"
 
 ext {
     maxParallelForksForTests = 1
-    useJunit5 = true
 }
 
 dependencies {

@@ -1,7 +1,4 @@
 description = "Apereo CAS Hazelcast Discovery JClouds Support"
-ext {
-    useJunit5 = true
-}
 dependencies {
     implementation libraries.hazelcast
     implementation libraries.jclouds

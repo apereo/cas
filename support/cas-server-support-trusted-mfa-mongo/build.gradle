@@ -1,7 +1,4 @@
 description = "Apereo CAS Trusted MFA Browser/Device Mongo Support"
-ext {
-    useJunit5 = true
-}
 dependencies {
     implementation project(":support:cas-server-support-trusted-mfa")
     implementation project(":core:cas-server-core-util-api")

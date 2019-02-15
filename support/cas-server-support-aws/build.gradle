@@ -1,7 +1,4 @@
 description = 'Apereo CAS Amazon Web Services Support'
-ext {
-    useJunit5 = true
-}
 dependencies {
     api project(":api:cas-server-core-api")
     implementation project(":core:cas-server-core-authentication-api")
