@@ -1,7 +1,4 @@
 description = "Apereo CAS Hazelcast Integration"
-ext {
-    useJunit5 = true
-}
 dependencies {
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-tickets")

@@ -1,7 +1,4 @@
 description = "Apereo CAS Core Events - Spring Cloud Configuration Bus Events"
-ext {
-    useJunit5 = true
-}
 dependencies {
     provided project(":core:cas-server-core-events")
     provided project(":core:cas-server-core-configuration")

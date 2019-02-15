@@ -1,7 +1,4 @@
 description = "Apereo CAS Core Web"
-ext {
-    useJunit5 = true
-}
 dependencies {
     api project(":api:cas-server-core-api-web")
     api project(":api:cas-server-core-api-ticket")

@@ -1,7 +1,4 @@
 description = "Apereo CAS Spring Boot Admin Web Application Initializer"
-ext {
-    useJunit5 = true
-}
 dependencies {
     api libraries.springbootadminserver
     

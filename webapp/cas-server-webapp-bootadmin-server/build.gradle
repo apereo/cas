@@ -2,10 +2,6 @@ apply plugin: "war"
 
 project.ext["mainClassName"] = "org.apereo.cas.CasSpringBootAdminServerWebApplication"
 apply from: rootProject.file("gradle/springboot.gradle")
-ext {
-    useJunit5 = true
-}
-
 description = "Apereo CAS Spring Boot Admin Server"
 
 publishing {

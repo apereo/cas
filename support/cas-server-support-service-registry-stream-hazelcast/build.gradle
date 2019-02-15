@@ -1,7 +1,4 @@
 description = "Apereo CAS Service Registry Streaming Support with Hazelcast"
-ext {
-    useJunit5 = true
-}
 dependencies {
     implementation libraries.hazelcast
     implementation project(":core:cas-server-core-services")

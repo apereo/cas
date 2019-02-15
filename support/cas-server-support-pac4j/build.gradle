@@ -1,7 +1,4 @@
 description = "Apereo CAS Delegated Authentication Support Using Pac4J"
-ext {
-    useJunit5 = true
-}
 dependencies {
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-audit")

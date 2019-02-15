@@ -1,7 +1,4 @@
 description = "Apereo CAS Consent API"
-ext {
-    useJunit5 = true
-}
 dependencies {
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-authentication-api")

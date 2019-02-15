@@ -1,7 +1,4 @@
 description = "Apereo CAS Consent LDAP Support"
-ext {
-    useJunit5 = true
-}
 dependencies {
     implementation libraries.ldaptive
     

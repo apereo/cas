@@ -2,9 +2,6 @@ description = 'Apereo CAS SOAP Authentication'
 
 apply plugin: "com.ewerk.gradle.plugins.jaxb2"
 
-ext {
-    useJunit5 = true
-}
 dependencies {
     api project(":api:cas-server-core-api")
     

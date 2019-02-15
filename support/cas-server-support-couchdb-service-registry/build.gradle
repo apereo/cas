@@ -1,7 +1,6 @@
 description = "Apereo CAS CouchDB Service Registry"
 
 ext {
-    useJunit5 = true
     maxParallelForksForTests = 1
 }
 

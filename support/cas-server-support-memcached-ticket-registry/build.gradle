@@ -1,7 +1,4 @@
 description = "Apereo CAS Memcached Integration"
-ext {
-    useJunit5 = true
-}
 dependencies {
     implementation libraries.kryo
 

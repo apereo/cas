@@ -355,21 +355,11 @@ subprojects {
         checkstyle {
             configProperties = [
                     "checkstyle.suppressions.file": new File(rootDir, "style/checkstyle-suppressions.xml"),
-                    "checkstyle.importcontrol.file": new File(rootDir, "style/import-control.xml"),
-                    "checkstyle.importcontrol.file.junit5": new File(rootDir, "style/import-control-junit5.xml")]
+                    "checkstyle.importcontrol.file": new File(rootDir, "style/import-control.xml")]
+            configFile = new File(rootDir, "style/checkstyle-rules.xml")
             ignoreFailures false
             showViolations true
             toolVersion "${checkstyleVersion}"
-        }
-        tasks.withType(Checkstyle) {
-            doFirst {
-                def useJunit5 = project.ext.properties.get("useJunit5", false)
-                if (useJunit5) {
-                    it.configFile new File(rootDir, "style/checkstyle-rules-junit5.xml")
-                } else {
-                    it.configFile new File(rootDir, "style/checkstyle-rules.xml")
-                }
-            }
         }
     }
 
@@ -440,12 +430,6 @@ subprojects {
         testImplementation libraries.groovy
         testImplementation libraries.log4j
         compileOnly libraries.findbugsannotations
-    }
-
-    if (project.name != 'cas-server-core-api-test-category') {
-        dependencies {
-            testImplementation project(path: ":api:cas-server-core-api-test-category", configuration: "tests")
-        }
     }
 }
 
