@@ -73,6 +73,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
 
         assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON_VALUE, mockResponse.getContentType());
+        assertNotNull(entity.getBody());
         assertTrue(entity.getBody().contains(OAuth20Constants.MISSING_ACCESS_TOKEN));
     }
 
@@ -86,6 +87,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
 
         assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON_VALUE, mockResponse.getContentType());
+        assertNotNull(entity.getBody());
         assertTrue(entity.getBody().contains(OAuth20Constants.EXPIRED_ACCESS_TOKEN));
     }
 
@@ -106,6 +108,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         val entity = oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON_VALUE, mockResponse.getContentType());
+        assertNotNull(entity.getBody());
         assertTrue(entity.getBody().contains(OAuth20Constants.EXPIRED_ACCESS_TOKEN));
     }
 

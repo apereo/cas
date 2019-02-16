@@ -21,6 +21,8 @@ import org.apereo.cas.oidc.claims.mapping.DefaultOidcAttributeToScopeClaimMapper
 import org.apereo.cas.oidc.claims.mapping.OidcAttributeToScopeClaimMapper;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettingsFactory;
+import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryService;
+import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerUserInfoRepository;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequest;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequestSerializer;
 import org.apereo.cas.oidc.jwks.OidcDefaultJsonWebKeystoreCacheLoader;
@@ -467,7 +469,8 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
     @Autowired
     @RefreshScope
     @Bean
-    public OidcWellKnownEndpointController oidcWellKnownController(@Qualifier("oidcServerDiscoverySettingsFactory") final OidcServerDiscoverySettings discoverySettings) {
+    public OidcWellKnownEndpointController oidcWellKnownController(@Qualifier("oidcServerDiscoverySettingsFactory")
+                                                                   final OidcServerDiscoverySettings discoverySettings) {
         return new OidcWellKnownEndpointController(servicesManager.getIfAvailable(),
             ticketRegistry.getIfAvailable(),
             defaultAccessTokenFactory.getIfAvailable(),
@@ -476,7 +479,14 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
             discoverySettings,
             profileScopeToAttributesFilter(),
             casProperties,
-            ticketGrantingTicketCookieGenerator.getIfAvailable());
+            ticketGrantingTicketCookieGenerator.getIfAvailable(),
+            new OidcWebFingerDiscoveryService(oidcWebFingerUserInfoRepository(), discoverySettings));
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name="oidcWebFingerUserInfoRepository")
+    public OidcWebFingerUserInfoRepository oidcWebFingerUserInfoRepository() {
+        return null;
     }
 
     @RefreshScope
