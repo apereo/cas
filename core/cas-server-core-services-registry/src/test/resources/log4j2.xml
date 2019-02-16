@@ -4,8 +4,8 @@
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}" />
         </Console>
-        <RollingFile name="file" fileName="build/couchdbservice.log" append="true"
-                     filePattern="events-%d{yyyy-MM-dd-HH}-%i.log.gz">
+        <RollingFile name="file" fileName="build/core-services-registry.log" append="true"
+                     filePattern="core-services-registry-%d{yyyy-MM-dd-HH}-%i.log.gz">
             <PatternLayout pattern="%highlight{%d %p [%c] - %m%n}" />
             <Policies>
                 <OnStartupTriggeringPolicy />
@@ -15,13 +15,7 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="error">
-            <AppenderRef ref="console"/>
-        </Logger>
-        <Logger name="org.apereo.cas.couchdb.services" level="off">
-            <AppenderRef ref="console"/>
-        </Logger>
-        <Logger name="org.apereo.cas.services" level="off">
+        <Logger name="org.apereo.cas.services" level="trace" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
         <Root level="off">

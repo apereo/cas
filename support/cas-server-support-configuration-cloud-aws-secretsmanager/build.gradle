@@ -1,7 +1,4 @@
 description = "Apereo CAS Configuration - AWS Secrets Manager"
-ext {
-    useJunit5 = true
-}
 dependencies {
     implementation libraries.awssecretsmanager
     implementation project(":support:cas-server-support-aws")

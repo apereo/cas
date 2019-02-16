@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.yubikey.dao;
 
-import org.apereo.cas.adaptors.yubikey.BaseYubiKeyAccountRegistryTests;
+import org.apereo.cas.adaptors.yubikey.AbstractYubiKeyAccountRegistryTests;
+import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
@@ -26,6 +27,7 @@ import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
+import lombok.Getter;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.CouchDbInstance;
 import org.junit.jupiter.api.AfterEach;
@@ -49,7 +51,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     classes = {
         CouchDbYubiKeyConfiguration.class,
         CasCouchDbCoreConfiguration.class,
-        BaseYubiKeyAccountRegistryTests.YubiKeyAccountRegistryTestConfiguration.class,
+        AbstractYubiKeyAccountRegistryTests.YubiKeyAccountRegistryTestConfiguration.class,
         YubiKeyAuthenticationEventExecutionPlanConfiguration.class,
         YubiKeyConfiguration.class,
         CasCoreServicesConfiguration.class,
@@ -80,8 +82,13 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
         "cas.authn.mfa.yubikey.couchDb.username=cas",
         "cas.authn.mfa.yubikey.couchdb.password=password"
     })
+@Getter
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CouchDbYubiKeyAccountRegistryTests extends BaseYubiKeyAccountRegistryTests {
+public class CouchDbYubiKeyAccountRegistryTests extends AbstractYubiKeyAccountRegistryTests {
+    @Autowired
+    @Qualifier("yubiKeyAccountRegistry")
+    private YubiKeyAccountRegistry yubiKeyAccountRegistry;
+
     @Autowired
     @Qualifier("yubikeyCouchDbConnector")
     private CouchDbConnector couchDbConnector;

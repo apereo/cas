@@ -134,7 +134,7 @@
                       value="java.io,
                       java.net,
                       java.lang.Math,
-                      org.junit.Assert,
+                      org.junit.jupiter.api.Assertions,
                       org.mockito.Mockito,
                       org.mockito.Matchers,
                       org.springframework.test.web.servlet.request.MockMvcRequestBuilders,
@@ -678,18 +678,6 @@
         <property name="severity" value="error"/>
         <property name="format" value="public\s+(abstract\s+)*class\s+.+Test\s*\{"/>
         <property name="message" value="Name of the test class MUST end in 'Tests'"/>
-    </module>
-    <module name="RegexpSingleline">
-        <metadata name="net.sf.eclipsecs.core.comment" value="Use @Rule instead of expect an exception"/>
-        <property name="severity" value="error"/>
-        <property name="format" value="@Test\(expect"/>
-        <property name="message" value="Use @Rule ExpectedException instead of expecting an exception"/>
-    </module>
-    <module name="RegexpSingleline">
-        <metadata name="net.sf.eclipsecs.core.comment" value="Use @Rule instead of expect an exception"/>
-        <property name="severity" value="error"/>
-        <property name="format" value="@RunWith\((Conditional)?SpringRunner\.class\)"/>
-        <property name="message" value="Use Spring @Rule and @ClassRule instead of the Spring test runner."/>
     </module>
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Use Collections.singleton instead"/>

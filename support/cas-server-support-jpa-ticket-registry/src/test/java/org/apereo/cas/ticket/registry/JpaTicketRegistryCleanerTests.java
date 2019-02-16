@@ -32,7 +32,9 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
 
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -80,6 +82,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @Transactional(transactionManager = "ticketTransactionManager", isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+@ResourceLock("jpa-tickets")
 public class JpaTicketRegistryCleanerTests {
     @Autowired
     @Qualifier("defaultTicketFactory")
@@ -92,6 +95,11 @@ public class JpaTicketRegistryCleanerTests {
     @Autowired
     @Qualifier("ticketRegistryCleaner")
     private TicketRegistryCleaner ticketRegistryCleaner;
+
+    @BeforeEach
+    public void cleanup() {
+        ticketRegistry.deleteAll();
+    }
 
     @Test
     public void verifyOperation() {

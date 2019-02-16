@@ -2,7 +2,6 @@ package org.apereo.cas.impl.account;
 
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
-import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -29,11 +28,10 @@ import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import lombok.val;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,12 +39,10 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link RestfulPasswordlessUserAccountStoreTests}.
@@ -82,22 +78,17 @@ import static org.junit.Assert.*;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
 })
 @TestPropertySource(properties = "cas.authn.passwordless.accounts.rest.url=http://localhost:9291")
-@Category(RestfulApiCategory.class)
+@Tag("RestfulApi")
 public class RestfulPasswordlessUserAccountStoreTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     @Qualifier("passwordlessUserAccountStore")
     private PasswordlessUserAccountStore passwordlessUserAccountStore;
 
     @Test
-    public void verifyAction() throws Exception {
+    @SneakyThrows
+    public void verifyAction() {
         val u = new PasswordlessUserAccount("casuser", "casuser@example.org", "123-456-7890", "CAS");
         val data = MAPPER.writeValueAsString(u);
         try (val webServer = new MockWebServer(9291,

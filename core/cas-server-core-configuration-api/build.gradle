@@ -1,8 +1,4 @@
 description = "Apereo CAS Core Configuration API"
-
-ext {
-    useJunit5 = true
-}
 dependencies {
     implementation libraries.bouncycastle
     implementation libraries.jasypt
