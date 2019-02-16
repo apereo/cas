@@ -1,7 +1,4 @@
 description = "Apereo CAS X.509 Client Certificate Support"
-ext {
-    useJunit5 = true
-}
 dependencies {
     api project(":api:cas-server-core-api-util")
     

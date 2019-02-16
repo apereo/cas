@@ -1,7 +1,4 @@
 description = "Apereo CAS Surrogate Authentication JDBC Support"
-ext {
-    useJunit5 = true
-}
 dependencies {
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
     
