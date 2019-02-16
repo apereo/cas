@@ -13,7 +13,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
-import org.apereo.cas.ticket.IdTokenSigningAndEncryptionService;
+import org.apereo.cas.ticket.OidcTokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
@@ -41,7 +41,7 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public class OidcLogoutEndpointController extends BaseOAuth20Controller {
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
-    private final IdTokenSigningAndEncryptionService idTokenSigningAndEncryptionService;
+    private final OidcTokenSigningAndEncryptionService idTokenSigningAndEncryptionService;
     private final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
 
     public OidcLogoutEndpointController(final ServicesManager servicesManager, final TicketRegistry ticketRegistry,
@@ -52,7 +52,7 @@ public class OidcLogoutEndpointController extends BaseOAuth20Controller {
                                         final CasConfigurationProperties casProperties,
                                         final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
                                         final AuditableExecution registeredServiceAccessStrategyEnforcer,
-                                        final IdTokenSigningAndEncryptionService idTokenSigningAndEncryptionService,
+                                        final OidcTokenSigningAndEncryptionService idTokenSigningAndEncryptionService,
                                         final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder) {
         super(servicesManager, ticketRegistry, accessTokenFactory, principalFactory, webApplicationServiceServiceFactory,
             scopeToAttributesFilter, casProperties, ticketGrantingTicketCookieGenerator);

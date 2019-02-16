@@ -33,7 +33,7 @@ public abstract class BaseIdTokenGeneratorService implements IdTokenGeneratorSer
     /**
      * The Signing service.
      */
-    protected final IdTokenSigningAndEncryptionService signingService;
+    protected final OidcTokenSigningAndEncryptionService signingService;
     /**
      * The Services manager.
      */

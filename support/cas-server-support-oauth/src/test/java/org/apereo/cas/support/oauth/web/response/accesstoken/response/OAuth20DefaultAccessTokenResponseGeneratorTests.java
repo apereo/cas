@@ -10,7 +10,6 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.AbstractOAuth20Tests;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.DefaultAccessTokenFactory;
 import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.token.JWTBuilder;
@@ -31,7 +30,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link OAuth20DefaultAccessTokenResponseGeneratorTests}.
@@ -53,7 +51,7 @@ public class OAuth20DefaultAccessTokenResponseGeneratorTests extends AbstractOAu
     @Test
     public void verifyAccessTokenAsDefault() throws Exception {
         val registeredService = getRegisteredService("example", "secret", new LinkedHashSet<>());
-        registeredService.setGenerateJwtAccessToken(false);
+        registeredService.setJwtAccessToken(false);
         servicesManager.save(registeredService);
 
         val mv = getModelAndView(registeredService);
@@ -70,7 +68,7 @@ public class OAuth20DefaultAccessTokenResponseGeneratorTests extends AbstractOAu
     @Test
     public void verifyAccessTokenAsJwt() throws Exception {
         val registeredService = getRegisteredService("example", "secret", new LinkedHashSet<>());
-        registeredService.setGenerateJwtAccessToken(true);
+        registeredService.setJwtAccessToken(true);
         servicesManager.save(registeredService);
 
         val mv = getModelAndView(registeredService);
@@ -84,8 +82,8 @@ public class OAuth20DefaultAccessTokenResponseGeneratorTests extends AbstractOAu
     @Test
     public void verifyAccessTokenAsJwtPerService() throws Exception {
         val registeredService = getRegisteredService("example", "secret", new LinkedHashSet<>());
-        registeredService.setGenerateJwtAccessToken(true);
-        
+        registeredService.setJwtAccessToken(true);
+
         val signingKey = new DefaultRegisteredServiceProperty();
         signingKey.addValue("pR3Vizkn5FSY5xCg84cIS4m-b6jomamZD68C8ash-TlNmgGPcoLgbgquxHPoi24tRmGpqHgM4mEykctcQzZ-Xg");
         registeredService.getProperties().put(
@@ -120,7 +118,7 @@ public class OAuth20DefaultAccessTokenResponseGeneratorTests extends AbstractOAu
             RegisteredServiceTestUtils.getAuthentication("casuser"),
             new MockTicketGrantingTicket("casuser"),
             new ArrayList<>());
-        
+
         val genBuilder = OAuth20TokenGeneratedResult.builder();
         val generatedToken = genBuilder.registeredService(registeredService)
             .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
