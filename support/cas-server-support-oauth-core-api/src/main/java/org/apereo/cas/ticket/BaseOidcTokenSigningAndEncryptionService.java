@@ -81,9 +81,9 @@ public abstract class BaseOidcTokenSigningAndEncryptionService implements OidcTo
      * @param jsonWebKey the json web key
      * @return the json web signature
      */
-    protected JsonWebSignature configureJsonWebSignatureForIdTokenSigning(final OAuthRegisteredService svc,
-                                                                          final JsonWebSignature jws,
-                                                                          final PublicJsonWebKey jsonWebKey) {
+    protected JsonWebSignature configureJsonWebSignatureForTokenSigning(final OAuthRegisteredService svc,
+                                                                        final JsonWebSignature jws,
+                                                                        final PublicJsonWebKey jsonWebKey) {
         LOGGER.debug("Service [{}] is set to sign id tokens", svc);
         jws.setKey(jsonWebKey.getPrivateKey());
         jws.setAlgorithmConstraints(AlgorithmConstraints.DISALLOW_NONE);
