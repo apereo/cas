@@ -84,6 +84,7 @@ public abstract class AbstractServiceRegistryTests {
      */
     protected abstract ServiceRegistry getNewServiceRegistry();
 
+    @Test
     public void verifyEmptyRegistry() {
         assertEquals(0, serviceRegistry.load().size(), "Loaded too many");
         assertEquals(0, serviceRegistry.size(), "Counted too many");

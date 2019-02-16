@@ -1,7 +1,6 @@
 package org.apereo.cas.support.events.dao;
 
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
-import org.apereo.cas.util.DateTimeUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -23,9 +22,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,24 +70,6 @@ public class CasEvent {
      */
     public CasEvent() {
         this.id = System.currentTimeMillis();
-    }
-
-    /**
-     * Gets creation time. Attempts to parse the value
-     * as a {@link ZonedDateTime}. Otherwise, assumes a
-     * {@link LocalDateTime} and converts it based on system's
-     * default zone.
-     *
-     * @return the creation time
-     */
-    @JsonIgnore
-    public ZonedDateTime getCreationZonedDateTime() {
-        val dt = DateTimeUtils.zonedDateTimeOf(this.creationTime);
-        if (dt != null) {
-            return dt;
-        }
-        val lt = DateTimeUtils.localDateTimeOf(this.creationTime);
-        return DateTimeUtils.zonedDateTimeOf(lt.atZone(ZoneId.systemDefault()));
     }
 
     /**
