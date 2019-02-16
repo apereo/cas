@@ -220,7 +220,8 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
         val config = new Config(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()),
             oauthCasClient, basicAuthClient, pkceAuthnClient, directFormClient, userFormClient);
         config.setSessionStore(new J2ESessionStore());
-        config.setProfileManagerFactory(OAuth20ClientIdAwareProfileManager::new);
+        config.setProfileManagerFactory(webContext ->
+            new OAuth20ClientIdAwareProfileManager(webContext, config.getSessionStore(), servicesManager.getIfAvailable()));
         return config;
     }
 
