@@ -21,6 +21,7 @@ dependencies {
     
     testImplementation project(":core:cas-server-core-authentication-api")
     testImplementation project(":support:cas-server-support-oauth-core")
+    testImplementation project(":support:cas-server-support-oauth-core-api")
     testImplementation project(":support:cas-server-support-oauth-services")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":support:cas-server-support-saml-idp-core")
