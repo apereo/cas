@@ -21,7 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 
 /**
- * This is {@link BaseIdTokenSigningAndEncryptionService}.
+ * This is {@link BaseOidcTokenSigningAndEncryptionService}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
@@ -29,7 +29,7 @@ import java.security.Key;
 @Slf4j
 @RequiredArgsConstructor
 @Getter
-public abstract class BaseIdTokenSigningAndEncryptionService implements IdTokenSigningAndEncryptionService {
+public abstract class BaseOidcTokenSigningAndEncryptionService implements OidcTokenSigningAndEncryptionService {
     private final String issuer;
 
     /**
@@ -100,7 +100,7 @@ public abstract class BaseIdTokenSigningAndEncryptionService implements IdTokenS
     @Override
     @SneakyThrows
     public JwtClaims validate(final String token) {
-        val jsonWebKey = getSigningKey();
+        val jsonWebKey = getJsonWebKeySigningKey();
         if (jsonWebKey.getPublicKey() == null) {
             throw new IllegalArgumentException("JSON web key used to validate the id token signature has no associated public key");
         }
@@ -128,6 +128,6 @@ public abstract class BaseIdTokenSigningAndEncryptionService implements IdTokenS
      *
      * @return the signing key
      */
-    protected abstract PublicJsonWebKey getSigningKey();
+    protected abstract PublicJsonWebKey getJsonWebKeySigningKey();
 
 }

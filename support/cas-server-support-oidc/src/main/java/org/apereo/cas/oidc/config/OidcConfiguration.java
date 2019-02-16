@@ -31,6 +31,7 @@ import org.apereo.cas.oidc.profile.OidcRegisteredServicePreProcessorEventListene
 import org.apereo.cas.oidc.profile.OidcUserProfileDataCreator;
 import org.apereo.cas.oidc.token.OidcIdTokenGeneratorService;
 import org.apereo.cas.oidc.token.OidcIdTokenSigningAndEncryptionService;
+import org.apereo.cas.oidc.token.OidcRegisteredServiceJWTAccessTokenCipherExecutor;
 import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupport;
 import org.apereo.cas.oidc.web.OidcAccessTokenResponseGenerator;
 import org.apereo.cas.oidc.web.OidcCallbackAuthorizeViewResolver;
@@ -52,6 +53,7 @@ import org.apereo.cas.oidc.web.flow.OidcMultifactorAuthenticationTrigger;
 import org.apereo.cas.oidc.web.flow.OidcRegisteredServiceUIAction;
 import org.apereo.cas.oidc.web.flow.OidcWebflowConfigurer;
 import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
@@ -69,7 +71,7 @@ import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolv
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
-import org.apereo.cas.ticket.IdTokenSigningAndEncryptionService;
+import org.apereo.cas.ticket.OidcTokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -557,7 +559,7 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
     }
 
     @Bean
-    public IdTokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService() {
+    public OidcTokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService() {
         val oidc = casProperties.getAuthn().getOidc();
         return new OidcIdTokenSigningAndEncryptionService(oidcDefaultJsonWebKeystoreCache(),
             oidcServiceJsonWebKeystoreCache(),
@@ -638,6 +640,14 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
     public OAuth20AuthorizationResponseBuilder oidcImplicitIdTokenCallbackUrlBuilder() {
         return new OidcImplicitIdTokenAuthorizationResponseBuilder(oidcIdTokenGenerator(), oauthTokenGenerator.getIfAvailable(),
             accessTokenExpirationPolicy.getIfAvailable(), grantingTicketExpirationPolicy.getIfAvailable());
+    }
+
+    @Bean
+    public RegisteredServiceCipherExecutor oauthRegisteredServiceJwtAccessTokenCipherExecutor() {
+        val oidc = casProperties.getAuthn().getOidc();
+        return new OidcRegisteredServiceJWTAccessTokenCipherExecutor(oidcDefaultJsonWebKeystoreCache(),
+            oidcServiceJsonWebKeystoreCache(),
+            oidc.getIssuer());
     }
 
     @Override

@@ -1,7 +1,11 @@
 package org.apereo.cas.support.oauth;
 
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
+
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.profile.CommonProfile;
@@ -23,23 +27,21 @@ import java.util.stream.Collectors;
 public class OAuth20ClientIdAwareProfileManager<U extends CommonProfile> extends ProfileManager<U> {
 
     private static final String SESSION_CLIENT_ID = "oauthClientId";
-    private static final String REQUEST_CLIENT_ID = OAuth20Constants.CLIENT_ID;
 
-    public OAuth20ClientIdAwareProfileManager(final WebContext context, final SessionStore sessionStore) {
+    private final ServicesManager servicesManager;
+
+    public OAuth20ClientIdAwareProfileManager(final WebContext context, final SessionStore sessionStore, final ServicesManager servicesManager) {
         super(context, sessionStore);
-    }
-
-    public OAuth20ClientIdAwareProfileManager(final WebContext context) {
-        super(context);
+        this.servicesManager = servicesManager;
     }
 
     @Override
     protected LinkedHashMap<String, U> retrieveAll(final boolean readFromSession) {
         val profiles = super.retrieveAll(readFromSession).entrySet();
-        return profiles.stream().filter(
-            it -> it.getValue()
-                .getAuthenticationAttribute(SESSION_CLIENT_ID)
-                .equals(context.getRequestParameter(REQUEST_CLIENT_ID)))
+        val clientId = getClientIdFromRequest();
+        val results = profiles
+            .stream()
+            .filter(it -> it.getValue().getAuthenticationAttribute(SESSION_CLIENT_ID).equals(clientId))
             .collect(Collectors.toMap(
                 Map.Entry::getKey,
                 Map.Entry::getValue,
@@ -47,11 +49,24 @@ public class OAuth20ClientIdAwareProfileManager<U extends CommonProfile> extends
                     throw new IllegalStateException("Duplicate key");
                 },
                 LinkedHashMap::new));
+        LOGGER.trace("Fetched profiles for this session are [{}]", results);
+        return results;
     }
 
     @Override
     public void save(final boolean saveInSession, final U profile, final boolean multiProfile) {
-        profile.addAuthenticationAttribute(SESSION_CLIENT_ID, context.getRequestParameter(REQUEST_CLIENT_ID));
+        val clientId = getClientIdFromRequest();
+        profile.addAuthenticationAttribute(SESSION_CLIENT_ID, clientId);
         super.save(saveInSession, profile, multiProfile);
+    }
+
+    private String getClientIdFromRequest() {
+        var clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID);
+        if (StringUtils.isBlank(clientId)) {
+            val redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI);
+            val svc = OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(this.servicesManager, redirectUri);
+            clientId = svc.getClientId();
+        }
+        return clientId;
     }
 }

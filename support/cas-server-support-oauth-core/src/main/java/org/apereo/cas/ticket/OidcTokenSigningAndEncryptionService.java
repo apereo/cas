@@ -6,12 +6,12 @@ import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jwt.JwtClaims;
 
 /**
- * This is {@link IdTokenSigningAndEncryptionService}.
+ * This is {@link OidcTokenSigningAndEncryptionService}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-public interface IdTokenSigningAndEncryptionService {
+public interface OidcTokenSigningAndEncryptionService {
     /**
      * Sign id token.
      *
