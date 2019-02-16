@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
@@ -84,6 +83,8 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
@@ -202,7 +203,8 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
         final Config config = new Config(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()),
             oauthCasClient, basicAuthClient, directFormClient, userFormClient);
         config.setSessionStore(new J2ESessionStore());
-        config.setProfileManagerFactory(ClientIdAwareProfileManager::new);
+        config.setProfileManagerFactory(webContext ->
+            new ClientIdAwareProfileManager(webContext, config.getSessionStore(), servicesManager));
         return config;
     }
 
@@ -219,7 +221,6 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
         return new OAuth20CallbackAuthorizeViewResolver() {
         };
     }
-
 
 
     @Bean
