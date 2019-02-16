@@ -729,9 +729,9 @@ The following options related to Redis support in CAS apply equally to a number 
 # ${configurationKey}.redis.pool.testWhileIdle=false
 
 # ${configurationKey}.redis.sentinel.master=mymaster
-# ${configurationKey}.redis.sentinel.nodes[0]=localhost:26377
-# ${configurationKey}.redis.sentinel.nodes[1]=localhost:26378
-# ${configurationKey}.redis.sentinel.nodes[2]=localhost:26379
+# ${configurationKey}.redis.sentinel.node[0]=localhost:26377
+# ${configurationKey}.redis.sentinel.node[1]=localhost:26378
+# ${configurationKey}.redis.sentinel.node[2]=localhost:26379
 ```
 
 ## DDL Configuration
