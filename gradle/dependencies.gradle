@@ -674,6 +674,7 @@ ext.libraries = [
                 },
                 dependencies.create("org.glassfish.web:el-impl:2.2") {
                     exclude(group: "javax.el", module: "javax.el-api")
+                    exclude(group: "javax.el", module: "el-api")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 }
