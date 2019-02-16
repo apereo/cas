@@ -1,7 +1,7 @@
 package org.apereo.cas.uma.ticket.rpt;
 
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.ticket.BaseIdTokenSigningAndEncryptionService;
+import org.apereo.cas.ticket.BaseOidcTokenSigningAndEncryptionService;
 import org.apereo.cas.util.ResourceUtils;
 
 import lombok.SneakyThrows;
@@ -23,7 +23,7 @@ import java.nio.charset.StandardCharsets;
  * @since 6.0.0
  */
 @Slf4j
-public class UmaRequestingPartyTokenSigningService extends BaseIdTokenSigningAndEncryptionService {
+public class UmaRequestingPartyTokenSigningService extends BaseOidcTokenSigningAndEncryptionService {
     private final RsaJsonWebKey jsonWebKey;
 
     @SneakyThrows
@@ -55,7 +55,7 @@ public class UmaRequestingPartyTokenSigningService extends BaseIdTokenSigningAnd
     }
 
     @Override
-    protected PublicJsonWebKey getSigningKey() {
+    protected PublicJsonWebKey getJsonWebKeySigningKey() {
         return jsonWebKey;
     }
 }
