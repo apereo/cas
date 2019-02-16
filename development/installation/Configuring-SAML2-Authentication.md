@@ -153,6 +153,7 @@ The following fields are available for SAML services:
 | `metadataCriteriaRemoveRolelessEntityDescriptors` | Controls whether to keep entity descriptors that contain no roles. Default is `true`.
 | `attributeNameFormats` | Map that defines attribute name formats for a given attribute name to be encoded in the SAML response.
 | `attributeFriendlyNames` | Map that defines attribute friendly names for a given attribute name to be encoded in the SAML response.
+| `attributeValueTypes` | Map that defines the type of attribute values for a given attribute name.
 | `nameIdQualifier` | If defined, will overwrite the `NameQualifier` attribute of the produced subject's name id.
 | `issuerEntityId` | If defined, will override the issue value with the given identity provider entity id. This may be useful in cases where CAS needs to maintain multiple identity provider entity ids.
 | `assertionAudiences` | Comma-separated list of audience urls to include in the assertion, in the addition to the entity id.
@@ -244,6 +245,45 @@ specially if the original attribute is *mapped* to a different name.
   "attributeFriendlyNames": {
     "@class": "java.util.HashMap",
     "urn:oid:2.5.4.42": "friendly-name-to-use"
+  }
+}
+```
+
+### Attribute Value Types
+
+By default, attribute value blocks that are created in the final SAML2 response do not carry any type information in the encoded XML.
+You can, if necessary, enforce a particular type for an attribute value per the requirements of the SAML2 service provider, if any.
+An example of an attribute that is encoded with specific type information would be:
+
+```xml
+<saml2:Attribute FriendlyName="givenName" Name="givenName" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+    <saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string">HelloWorld</saml2:AttributeValue>
+</saml2:Attribute>
+```
+
+The following attribute value types are supported:
+
+| Type                              | Description
+|-----------------------------------|-----------------------------------------------------------------
+| `XSString`                        | Mark the attribute value type as `string`
+| `XSURI`                           | Mark the attribute value type as `uri`
+| `XSBoolean`                       | Mark the attribute value type as `boolean`
+| `XSInteger`                       | Mark the attribute value type as `integer`
+| `XSDateTime`                      | Mark the attribute value type as `datetime`
+| `XSBase64Binary`                  | Mark the attribute value type as `base64Binary`
+
+...where the types for each attribute would be defined as such:
+ 
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "the-entity-id-of-the-sp",
+  "name": "SAML Service",
+  "metadataLocation" : "../../sp-metadata.xml",
+  "id": 100001,
+  "attributeValueTypes": {
+    "@class": "java.util.HashMap",
+    "<attribute-name>": "<attribute-value-type>"
   }
 }
 ```
