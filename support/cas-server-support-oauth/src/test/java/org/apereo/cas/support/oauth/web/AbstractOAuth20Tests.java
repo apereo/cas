@@ -399,7 +399,7 @@ public abstract class AbstractOAuth20Tests {
 
         @Bean
         public List inMemoryRegisteredServices() {
-            val svc = RegisteredServiceTestUtils.getRegisteredService("^(https?|imaps?)://.*");
+            val svc = RegisteredServiceTestUtils.getRegisteredService("^(https?|imaps?)://.*", OAuthRegisteredService.class);
             svc.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
             return CollectionUtils.wrapList(svc);
         }
