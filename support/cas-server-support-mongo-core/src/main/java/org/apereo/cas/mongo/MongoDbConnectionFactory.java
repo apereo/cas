@@ -30,7 +30,6 @@ import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
-import org.springframework.data.mongodb.core.convert.CustomConversions;
 import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
@@ -94,7 +93,7 @@ public class MongoDbConnectionFactory {
         converters.add(new BaseConverters.ZonedDateTimeToStringConverter());
         converters.add(new BaseConverters.StringToZonedDateTimeConverter());
 
-        this.customConversions = new CustomConversions(converters);
+        this.customConversions = new MongoCustomConversions(converters);
     }
 
     /**

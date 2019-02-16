@@ -32,6 +32,9 @@ public class OidcRegisteredServiceJWTAccessTokenCipherExecutor extends Registere
      */
     protected final LoadingCache<OidcRegisteredService, Optional<RsaJsonWebKey>> serviceJsonWebKeystoreCache;
 
+    /**
+     * OIDC issuer.
+     */
     protected final String issuer;
 
     @Override

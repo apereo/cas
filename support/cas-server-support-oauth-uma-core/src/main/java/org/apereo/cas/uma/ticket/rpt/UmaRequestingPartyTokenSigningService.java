@@ -49,7 +49,7 @@ public class UmaRequestingPartyTokenSigningService extends BaseOidcTokenSigningA
         LOGGER.debug("Generated claims to put into token are [{}]", claims.toJson());
         val jws = createJsonWebSignature(claims);
         if (jsonWebKey != null) {
-            configureJsonWebSignatureForIdTokenSigning(svc, jws, jsonWebKey);
+            configureJsonWebSignatureForTokenSigning(svc, jws, jsonWebKey);
         }
         return jws.getCompactSerialization();
     }

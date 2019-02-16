@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.RsaJsonWebKey;
+import org.jose4j.jws.JsonWebSignature;
 
 import java.util.Optional;
 
@@ -33,5 +34,34 @@ public class OidcIdTokenSigningAndEncryptionService extends BaseOidcJsonWebKeyTo
             return super.getJsonWebKeySigningAlgorithm(service);
         }
         return svc.getIdTokenSigningAlg();
+    }
+
+    @Override
+    protected String encryptToken(final OidcRegisteredService svc, final JsonWebSignature jws, final String innerJwt) {
+        val jsonWebKey = getJsonWebKeyForEncryption(svc);
+        return encryptIdToken(svc.getIdTokenEncryptionAlg(), svc.getIdTokenEncryptionEncoding(),
+            jws.getKeyIdHeaderValue(), jsonWebKey.getPublicKey(), innerJwt);
+    }
+
+    /**
+     * Should sign token for service?
+     *
+     * @param svc the svc
+     * @return the boolean
+     */
+    @Override
+    protected boolean shouldSignTokenFor(final OidcRegisteredService svc) {
+        return svc.isSignIdToken();
+    }
+
+    /**
+     * Should encrypt token for service?
+     *
+     * @param svc the svc
+     * @return the boolean
+     */
+    @Override
+    protected boolean shouldEncryptTokenFor(final OidcRegisteredService svc) {
+        return svc.isEncryptIdToken() && StringUtils.isNotBlank(svc.getIdTokenEncryptionAlg()) && StringUtils.isNotBlank(svc.getIdTokenEncryptionEncoding());
     }
 }
