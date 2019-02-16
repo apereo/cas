@@ -53,8 +53,8 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
                               final TicketGrantingTicket ticketGrantingTicket, final Collection<String> scopes) {
         var accessTokenId = this.accessTokenIdGenerator.getNewTicketId(AccessToken.PREFIX);
 
-        val registeredService = this.jwtBuilder.getServicesManager().findServiceBy(service, OAuthRegisteredService.class);
-        if (registeredService != null && registeredService.isGenerateJwtAccessToken()) {
+        val registeredService = (OAuthRegisteredService) this.jwtBuilder.getServicesManager().findServiceBy(service);
+        if (registeredService != null && registeredService.isJwtAccessToken()) {
             val dt = ZonedDateTime.now().plusSeconds(this.expirationPolicy.getTimeToLive());
             val builder = JWTBuilder.JwtRequest.builder();
             val request = builder.serviceAudience(service.getId())

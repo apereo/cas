@@ -15,6 +15,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
@@ -193,9 +194,15 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @Bean
     public JWTBuilder accessTokenJwtBuilder() {
         return new JWTBuilder(casProperties.getServer().getPrefix(),
-            defaultAccessTokenJwtCipherExecutor(),
+            oauthAccessTokenJwtCipherExecutor(),
             servicesManager.getIfAvailable(),
-            new RegisteredServiceJWTAccessTokenCipherExecutor());
+            oauthRegisteredServiceJwtAccessTokenCipherExecutor());
+    }
+
+    @ConditionalOnMissingBean(name = "oauthRegisteredServiceJwtAccessTokenCipherExecutor")
+    @Bean
+    public RegisteredServiceCipherExecutor oauthRegisteredServiceJwtAccessTokenCipherExecutor() {
+        return new RegisteredServiceJWTAccessTokenCipherExecutor();
     }
 
     @ConditionalOnMissingBean(name = "oauthCasClientRedirectActionBuilder")
@@ -237,7 +244,8 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
         val config = new Config(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()),
             oauthCasClient, basicAuthClient, pkceAuthnClient, directFormClient, userFormClient);
         config.setSessionStore(new J2ESessionStore());
-        config.setProfileManagerFactory(OAuth20ClientIdAwareProfileManager::new);
+        config.setProfileManagerFactory(webContext ->
+            new OAuth20ClientIdAwareProfileManager(webContext, config.getSessionStore(), servicesManager.getIfAvailable()));
         return config;
     }
 
@@ -782,9 +790,8 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     }
 
     @Bean
-    @RefreshScope
-    @ConditionalOnMissingBean(name = "defaultAccessTokenJwtCipherExecutor")
-    public CipherExecutor defaultAccessTokenJwtCipherExecutor() {
+    @ConditionalOnMissingBean(name = "oauthAccessTokenJwtCipherExecutor")
+    public CipherExecutor oauthAccessTokenJwtCipherExecutor() {
         val crypto = casProperties.getAuthn().getOauth().getAccessToken().getCrypto();
 
         val enabled = FunctionUtils.doIf(
