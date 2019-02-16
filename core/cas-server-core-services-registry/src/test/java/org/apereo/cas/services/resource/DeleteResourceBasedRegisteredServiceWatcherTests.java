@@ -56,4 +56,24 @@ public class DeleteResourceBasedRegisteredServiceWatcherTests {
         assertTrue(result.get());
         assertEquals(0, registry.size());
     }
+
+    @Test
+    public void verifyTempFilesIgnored() throws Exception {
+        val result = new AtomicBoolean(false);
+        val registry = new AbstractResourceBasedServiceRegistry(new ClassPathResource("services"),
+                Collections.singletonList(new RegisteredServiceJsonSerializer()), o -> result.set(o.getClass().equals(CasRegisteredServiceDeletedEvent.class))) {
+            @Override
+            protected String[] getExtensions() {
+                return new String[]{"json"};
+            }
+        };
+        var results = registry.load();
+        assertFalse(results.isEmpty());
+        val watcher = new DeleteResourceBasedRegisteredServiceWatcher(registry);
+        watcher.accept(new File(".Sample-1.json"));
+        assertFalse(result.get());
+        watcher.accept(new File("Sample-1.json.swp"));
+        assertFalse(result.get());
+        assertEquals(1, registry.size());
+    }
 }
