@@ -1,7 +1,4 @@
 description = "Apereo CAS Core Configuration Metadata Repository"
-ext {
-    useJunit5 = true
-}
 dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-util-api")

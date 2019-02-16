@@ -4,11 +4,9 @@ import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCred
 import org.apereo.cas.web.extractcert.RequestHeaderX509CertificateExtractor;
 
 import lombok.val;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.util.LinkedMultiValueMap;
@@ -17,7 +15,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for {@link X509RestMultipartBodyCredentialFactory}.
@@ -25,14 +23,12 @@ import static org.junit.Assert.*;
  * @author Dmytro Fedonin
  * @since 5.1.0
  */
-@RunWith(MockitoJUnitRunner.Silent.class)
+@ExtendWith(MockitoExtension.class)
 public class X509RestHttpRequestHeaderCredentialFactoryTests {
     private static final String HEADER = "ssl_client_cert";
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
-    private final X509RestHttpRequestHeaderCredentialFactory factory = new X509RestHttpRequestHeaderCredentialFactory(new RequestHeaderX509CertificateExtractor(HEADER));
+    private final X509RestHttpRequestHeaderCredentialFactory factory =
+        new X509RestHttpRequestHeaderCredentialFactory(new RequestHeaderX509CertificateExtractor(HEADER));
 
     @Test
     public void createX509Credential() throws IOException {

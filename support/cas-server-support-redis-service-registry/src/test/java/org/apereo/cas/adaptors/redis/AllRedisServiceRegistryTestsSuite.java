@@ -3,8 +3,7 @@ package org.apereo.cas.adaptors.redis;
 import org.apereo.cas.adaptors.redis.services.RedisEmbeddedServiceRegistryTests;
 import org.apereo.cas.adaptors.redis.services.RedisServerServiceRegistryTests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * This is {@link AllRedisServiceRegistryTestsSuite}.
@@ -12,8 +11,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@SelectClasses({
     RedisEmbeddedServiceRegistryTests.class,
     RedisServerServiceRegistryTests.class
 })
