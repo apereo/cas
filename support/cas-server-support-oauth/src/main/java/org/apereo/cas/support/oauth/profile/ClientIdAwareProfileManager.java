@@ -68,7 +68,7 @@ public class ClientIdAwareProfileManager<U extends CommonProfile> extends Profil
         if (StringUtils.isBlank(clientId)) {
             final String redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI);
             final OAuthRegisteredService svc = OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(this.servicesManager, redirectUri);
-            clientId = svc.getClientId();
+            clientId = svc != null ? svc.getClientId() : StringUtils.EMPTY;
         }
         return clientId;
     }
