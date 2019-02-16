@@ -1,3 +1,0 @@
-ext {
-    useJunit5 = true
-}

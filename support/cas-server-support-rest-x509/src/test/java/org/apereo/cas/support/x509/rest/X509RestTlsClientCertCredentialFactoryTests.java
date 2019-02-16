@@ -3,21 +3,17 @@ package org.apereo.cas.support.x509.rest;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.util.crypto.CertUtils;
 
+import lombok.SneakyThrows;
 import lombok.val;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.util.LinkedMultiValueMap;
 
 import java.io.FileInputStream;
-import java.io.IOException;
-
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for {@link X509RestTlsClientCertCredentialFactory}.
@@ -27,16 +23,13 @@ import static org.junit.Assert.*;
  * @since 6.0.0
  */
 public class X509RestTlsClientCertCredentialFactoryTests {
-
     private static final String REQUEST_ATTRIBUTE_X509_CERTIFICATE = "javax.servlet.request.X509Certificate";
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     private final X509RestTlsClientCertCredentialFactory factory = new X509RestTlsClientCertCredentialFactory();
 
     @Test
-    public void createX509Credential() throws IOException, CertificateException {
+    @SneakyThrows
+    public void createX509Credential() {
         val request = new MockHttpServletRequest();
 
         try (val inStream = new FileInputStream(new ClassPathResource("ldap-crl.crt").getFile())) {

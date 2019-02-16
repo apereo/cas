@@ -4,15 +4,14 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 
+import lombok.SneakyThrows;
 import lombok.val;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.security.auth.login.FailedLoginException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Scott Battaglia
@@ -20,12 +19,9 @@ import static org.junit.Assert.*;
  */
 public class HttpBasedServiceCredentialsAuthenticationHandlerTests {
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     private HttpBasedServiceCredentialsAuthenticationHandler authenticationHandler;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         this.authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler("", null, null, null, new SimpleHttpClientFactoryBean().getObject());
     }
@@ -42,36 +38,36 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyAcceptsProperCertificateCredentials() throws Exception {
+    @SneakyThrows
+    public void verifyAcceptsProperCertificateCredentials() {
         assertNotNull(this.authenticationHandler.authenticate(RegisteredServiceTestUtils.getHttpBasedServiceCredentials()));
     }
 
     @Test
-    public void verifyRejectsInProperCertificateCredentials() throws Exception {
-        this.thrown.expect(FailedLoginException.class);
-
-
-        this.authenticationHandler.authenticate(RegisteredServiceTestUtils.getHttpBasedServiceCredentials("https://clearinghouse.ja-sig.org"));
+    public void verifyRejectsInProperCertificateCredentials() {
+        assertThrows(FailedLoginException.class, () -> this.authenticationHandler.authenticate(RegisteredServiceTestUtils.getHttpBasedServiceCredentials(
+            "https://clearinghouse.ja-sig.org")));
     }
 
     @Test
-    public void verifyAcceptsNonHttpsCredentials() throws Exception {
+    @SneakyThrows
+    public void verifyAcceptsNonHttpsCredentials() {
         assertNotNull(this.authenticationHandler.authenticate(RegisteredServiceTestUtils.getHttpBasedServiceCredentials("http://www.google.com")));
     }
 
     @Test
-    public void verifyNoAcceptableStatusCode() throws Exception {
-        this.thrown.expect(FailedLoginException.class);
-        this.authenticationHandler.authenticate(RegisteredServiceTestUtils.getHttpBasedServiceCredentials("https://clue.acs.rutgers.edu"));
+    public void verifyNoAcceptableStatusCode() {
+        assertThrows(FailedLoginException.class,
+            () -> this.authenticationHandler.authenticate(RegisteredServiceTestUtils.getHttpBasedServiceCredentials("https://clue.acs.rutgers.edu")));
     }
 
     @Test
-    public void verifyNoAcceptableStatusCodeButOneSet() throws Exception {
+    public void verifyNoAcceptableStatusCodeButOneSet() {
         val clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setAcceptableCodes(CollectionUtils.wrapList(900));
         val httpClient = clientFactory.getObject();
         this.authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler("", null, null, null, httpClient);
-        this.thrown.expect(FailedLoginException.class);
-        this.authenticationHandler.authenticate(RegisteredServiceTestUtils.getHttpBasedServiceCredentials("https://www.ja-sig.org"));
+        assertThrows(FailedLoginException.class,
+            () -> this.authenticationHandler.authenticate(RegisteredServiceTestUtils.getHttpBasedServiceCredentials("https://www.ja-sig.org")));
     }
 }

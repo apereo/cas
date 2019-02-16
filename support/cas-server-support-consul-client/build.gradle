@@ -1,7 +1,4 @@
 description = "Apereo CAS Spring Cloud Consul Client"
-ext {
-    useJunit5 = true
-}
 dependencies {
     implementation libraries.ribbon
     implementation libraries.springcloudconsul

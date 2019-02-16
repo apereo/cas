@@ -1,7 +1,4 @@
 description = "Apereo CAS Surrogate Authentication LDAP Support"
-ext {
-    useJunit5 = true
-}
 dependencies {
     implementation libraries.ldaptive
     

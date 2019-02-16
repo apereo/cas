@@ -41,7 +41,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Dmitriy Kopylenko

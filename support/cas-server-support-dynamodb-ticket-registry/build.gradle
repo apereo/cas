@@ -1,7 +1,6 @@
 description = "Apereo CAS DynamoDb Ticket Registry"
 
 ext {
-    useJunit5 = true
     maxParallelForksForTests = 1
 }
 

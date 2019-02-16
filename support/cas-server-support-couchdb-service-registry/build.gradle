@@ -8,8 +8,6 @@ dependencies {
     api project(":api:cas-server-core-api-services")
 
     api libraries.ektorp
-
-    
     
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-util-api")
@@ -18,6 +16,10 @@ dependencies {
     implementation project(":support:cas-server-support-couchdb-core")
 
     testImplementation project(":core:cas-server-core-services")
+    testImplementation project(":support:cas-server-support-oauth-services")
+    testImplementation project(":support:cas-server-support-saml-idp-core")
+    testImplementation project(":support:cas-server-support-oidc-services")
+    testImplementation project(":support:cas-server-support-ws-idp-api")
     
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util", configuration: "tests")

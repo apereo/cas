@@ -1,7 +1,4 @@
 description = "Apereo CAS AUP LDAP Support"
-ext {
-    useJunit5 = true
-}
 dependencies {
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-ticket")

@@ -25,6 +25,7 @@ import org.apereo.cas.util.SchedulingUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -89,6 +90,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @DirtiesContext
 @Slf4j
+@ResourceLock("jpa-tickets")
 public class JpaLockingStrategyTests {
     /**
      * Number of clients contending for lock in concurrent test.

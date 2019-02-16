@@ -1,7 +1,6 @@
 description = "Apereo CAS Apache Cassandra Authentication Support"
 
 ext {
-    useJunit5 = true
     maxParallelForksForTests = 1
 }
 

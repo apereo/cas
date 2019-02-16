@@ -1,7 +1,4 @@
 description = "Apereo CAS SAML Identity Provider Metadata Resolution Via REST"
-ext {
-    useJunit5 = true
-}
 dependencies {
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-web-api")

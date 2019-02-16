@@ -3,14 +3,14 @@ package org.apereo.cas.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * The {@link TimeBasedRegisteredServiceAccessStrategyTests} is responsible for

@@ -49,7 +49,7 @@ public class RegexRegisteredService extends AbstractRegisteredService {
         if (this.servicePattern == null) {
             this.servicePattern = RegexUtils.createPattern(this.serviceId);
         }
-        return StringUtils.isBlank(serviceId) ? false : this.servicePattern.matcher(serviceId).matches();
+        return !StringUtils.isBlank(serviceId) && this.servicePattern.matcher(serviceId).matches();
     }
 
     @Override
@@ -62,5 +62,4 @@ public class RegexRegisteredService extends AbstractRegisteredService {
     public String getFriendlyName() {
         return "CAS Client";
     }
-
 }

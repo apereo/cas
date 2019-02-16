@@ -4,12 +4,7 @@ import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrat
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 
 import lombok.SneakyThrows;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.springframework.context.ApplicationEventPublisher;
-
-import java.util.Collection;
-import java.util.Collections;
 
 import static org.mockito.Mockito.*;
 
@@ -19,25 +14,15 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RunWith(Parameterized.class)
 public class YamlServiceRegistryTests extends AbstractResourceBasedServiceRegistryTests {
-
-    public YamlServiceRegistryTests(final Class<? extends RegisteredService> registeredServiceClass) {
-        super(registeredServiceClass);
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() {
-        return Collections.singletonList(RegexRegisteredService.class);
-    }
 
     @Override
     @SneakyThrows
     public ServiceRegistry getNewServiceRegistry() {
-        this.dao = new YamlServiceRegistry(RESOURCE, false,
+        dao = new YamlServiceRegistry(RESOURCE, false,
             mock(ApplicationEventPublisher.class),
             new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy());
-        return this.dao;
+        return dao;
     }
 }

@@ -27,4 +27,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-authentication-attributes")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-logout-api")
+    testImplementation project(":support:cas-server-support-oidc-services")
+    testImplementation project(":support:cas-server-support-ws-idp-api")
 }

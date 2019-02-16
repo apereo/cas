@@ -1,8 +1,5 @@
 description = "Apereo CAS Web Application via Apache Tomcat"
 
-ext {
-    useJunit5 = true
-}
 dependencies {
     api libraries.springboottomcat
     

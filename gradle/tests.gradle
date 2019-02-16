@@ -185,7 +185,6 @@ if (hasTestsOfCategory(project, "Redis")) {
 }
 
 test {
-    include "**/*Tests.*"
     useJUnitPlatform {
         excludeTags "org.apereo.cas.category.CassandraCategory", "Cassandra",
                 "org.apereo.cas.category.CosmosDbCategory", "CosmosDb",
@@ -212,8 +211,6 @@ test {
 }
 
 tasks.withType(Test) {
-    exclude "**/Abstract*.*", "**/Base*.*", "**/*Suite.*"
-    include "**/*Tests.*"
     scanForTestClasses = false
     ignoreFailures = Boolean.getBoolean("ignoreTestFailures")
 
@@ -221,15 +218,6 @@ tasks.withType(Test) {
         maxParallelForks = project.ext.properties.get("maxParallelForksForTests", 2)
         if(maxParallelForks != 2) {
             println "Maximum number of parallel forks is set to ${maxParallelForks}"
-        }
-
-        def useJunit5 = project.ext.properties.get("useJunit5", false)
-        it.options {
-            if (useJunit5) {
-                it.includeEngines "junit-jupiter"
-            } else {
-                it.includeEngines "junit-vintage"
-            }
         }
     }
 
