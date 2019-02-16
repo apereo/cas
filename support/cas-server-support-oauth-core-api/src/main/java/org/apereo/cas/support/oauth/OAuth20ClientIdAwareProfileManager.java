@@ -65,7 +65,7 @@ public class OAuth20ClientIdAwareProfileManager<U extends CommonProfile> extends
         if (StringUtils.isBlank(clientId)) {
             val redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI);
             val svc = OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(this.servicesManager, redirectUri);
-            clientId = svc.getClientId();
+            clientId = svc != null ? svc.getClientId() : StringUtils.EMPTY;
         }
         return clientId;
     }
