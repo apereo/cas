@@ -263,14 +263,15 @@ An example of an attribute that is encoded with specific type information would 
 
 The following attribute value types are supported:
 
-| Type                              | Description
-|-----------------------------------|-----------------------------------------------------------------
-| `XSString`                        | Mark the attribute value type as `string`
-| `XSURI`                           | Mark the attribute value type as `uri`
-| `XSBoolean`                       | Mark the attribute value type as `boolean`
-| `XSInteger`                       | Mark the attribute value type as `integer`
-| `XSDateTime`                      | Mark the attribute value type as `datetime`
-| `XSBase64Binary`                  | Mark the attribute value type as `base64Binary`
+| Type              | Description
+|-------------------|---------------------------------------------------------------------------------------
+| `XSString`        | Mark the attribute value type as `string`.
+| `XSURI`           | Mark the attribute value type as `uri`.
+| `XSBoolean`       | Mark the attribute value type as `boolean`.
+| `XSInteger`       | Mark the attribute value type as `integer`.
+| `XSDateTime`      | Mark the attribute value type as `datetime` .
+| `XSBase64Binary`  | Mark the attribute value type as `base64Binary`.
+| `XSObject`        | Skip the attribute value type and serialize the value as a complex XML object/POJO.
 
 ...where the types for each attribute would be defined as such:
  

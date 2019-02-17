@@ -1403,26 +1403,26 @@ ext.libraries = [
                 }
         ],
         jackson                 : [
-                dependencies.create("com.fasterxml.jackson.core:jackson-databind:$jacksonDatabindVersion") {
+                dependencies.create("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion") {
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     force = true
                 },
-                dependencies.create("com.fasterxml.jackson.datatype:jackson-datatype-guava:$jacksonDatabindVersion") {
+                dependencies.create("com.fasterxml.jackson.datatype:jackson-datatype-guava:$jacksonVersion") {
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     force = true
                 },
-                dependencies.create("com.fasterxml.jackson.core:jackson-annotations:$jacksonDatabindVersion") {
+                dependencies.create("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion") {
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     force = true
                 },
-                dependencies.create("com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:$jacksonDatabindVersion") {
+                dependencies.create("com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:$jacksonVersion") {
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     force = true
                 },
-                dependencies.create("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonDatabindVersion") {
+                dependencies.create("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion") {
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     force = true
@@ -1430,10 +1430,16 @@ ext.libraries = [
                 dependencies.create("org.hjson:hjson:$hjsonVersion") {
                     force = true
                 },
-                dependencies.create("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonDatabindVersion") {
+                dependencies.create("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion") {
                     exclude(group: "org.yaml", module: "snakeyaml")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    force = true
+                },
+                dependencies.create("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion") {
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     force = true
                 }
         ],
