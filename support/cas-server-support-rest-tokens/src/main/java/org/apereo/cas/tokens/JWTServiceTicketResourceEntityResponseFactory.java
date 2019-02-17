@@ -8,7 +8,7 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.token.JWTTokenTicketBuilder;
+import org.apereo.cas.token.TokenTicketBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -25,14 +25,14 @@ public class JWTServiceTicketResourceEntityResponseFactory extends CasProtocolSe
     /**
      * The ticket builder that produces tokens.
      */
-    private final JWTTokenTicketBuilder tokenTicketBuilder;
+    private final TokenTicketBuilder tokenTicketBuilder;
 
     private final TicketRegistrySupport ticketRegistrySupport;
 
     private final ServicesManager servicesManager;
 
     public JWTServiceTicketResourceEntityResponseFactory(final CentralAuthenticationService centralAuthenticationService,
-                                                         final JWTTokenTicketBuilder tokenTicketBuilder,
+                                                         final TokenTicketBuilder tokenTicketBuilder,
                                                          final TicketRegistrySupport ticketRegistrySupport,
                                                          final ServicesManager servicesManager) {
         super(centralAuthenticationService);

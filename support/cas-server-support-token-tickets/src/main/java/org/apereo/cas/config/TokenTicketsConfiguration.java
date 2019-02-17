@@ -3,7 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.token.JWTTokenTicketBuilder;
+import org.apereo.cas.token.TokenTicketBuilder;
 import org.apereo.cas.token.authentication.principal.TokenWebApplicationServiceResponseBuilder;
 
 import org.springframework.beans.factory.ObjectProvider;
@@ -29,7 +29,7 @@ public class TokenTicketsConfiguration {
 
     @Autowired
     @Qualifier("tokenTicketBuilder")
-    private ObjectProvider<JWTTokenTicketBuilder> tokenTicketBuilder;
+    private ObjectProvider<TokenTicketBuilder> tokenTicketBuilder;
 
     @Bean
     public ResponseBuilder webApplicationServiceResponseBuilder() {
