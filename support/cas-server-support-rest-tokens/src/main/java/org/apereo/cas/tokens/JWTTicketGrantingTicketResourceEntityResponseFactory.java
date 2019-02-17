@@ -3,8 +3,8 @@ package org.apereo.cas.tokens;
 import org.apereo.cas.rest.factory.DefaultTicketGrantingTicketResourceEntityResponseFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.token.JWTTokenTicketBuilder;
 import org.apereo.cas.token.TokenConstants;
+import org.apereo.cas.token.TokenTicketBuilder;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 @RequiredArgsConstructor
 public class JWTTicketGrantingTicketResourceEntityResponseFactory extends DefaultTicketGrantingTicketResourceEntityResponseFactory {
     private final ServicesManager servicesManager;
-    private final JWTTokenTicketBuilder tokenTicketBuilder;
+    private final TokenTicketBuilder tokenTicketBuilder;
 
     @Override
     public ResponseEntity<String> build(final TicketGrantingTicket ticketGrantingTicket, final HttpServletRequest request) throws Exception {
