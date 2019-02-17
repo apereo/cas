@@ -30,6 +30,12 @@ public class JacksonXmlSerializer {
         return new XmlMapper().setDefaultUseWrapper(true);
     }
 
+    /**
+     * Write value as string.
+     *
+     * @param value the value
+     * @return the string
+     */
     @SneakyThrows
     public String writeValueAsString(final Object value) {
         return mapper.writeValueAsString(value);
