@@ -16,7 +16,7 @@ ext["springBootTomcatVersion"] = "9.0.16"
 ext["springSessionVersion"] = "2.1.4.RELEASE"
 ext["springSessionMongoVersion"] = "2.1.1.RELEASE"
 
-ext["jacksonDatabindVersion"] = "2.9.8"
+ext["jacksonVersion"] = "2.9.8"
 ext["thymeleafVersion"] = "3.0.11.RELEASE"
 ext["thymeleafDialectVersion"] = "2.3.0"
 ext["hsqlVersion"] = "2.4.1"
@@ -43,7 +43,7 @@ ext["hibernate.version"] = ext["hibernateVersion"]
 ext["tomcat.version"] = ext["springBootTomcatVersion"]
 ext["infinispan.version"] = ext["infinispanVersion"]
 ext["spring.version"] = ext["springVersion"]
-ext["jackson.version"] = ext["jacksonDatabindVersion"]
+ext["jackson.version"] = ext["jacksonVersion"]
 ext["thymeleaf.version"] = ext["thymeleafVersion"]
 ext["thymeleaf-layout-dialect.version"] = ext["thymeleafDialectVersion"]
 ext["spring-session.version"] = ext["springSessionVersion"]
