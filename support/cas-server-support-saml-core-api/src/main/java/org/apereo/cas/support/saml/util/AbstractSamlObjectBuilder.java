@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.util;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.gen.HexRandomStringGenerator;
+import org.apereo.cas.util.serialization.JacksonXmlSerializer;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
@@ -11,6 +12,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.xerces.xs.XSObject;
 import org.jdom.Document;
 import org.jdom.input.DOMBuilder;
 import org.jdom.input.SAXBuilder;
@@ -360,6 +362,14 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             val builder = new XSBase64BinaryBuilder();
             val attrValueObj = builder.buildObject(elementName, XSBase64Binary.TYPE_NAME);
             attrValueObj.setValue(value.toString());
+            return attrValueObj;
+        }
+
+        if (XSObject.class.getSimpleName().equalsIgnoreCase(valueType)) {
+            val mapper = new JacksonXmlSerializer();
+            val builder = new XSAnyBuilder();
+            val attrValueObj = builder.buildObject(elementName);
+            attrValueObj.setTextContent(mapper.writeValueAsString(value));
             return attrValueObj;
         }
 
