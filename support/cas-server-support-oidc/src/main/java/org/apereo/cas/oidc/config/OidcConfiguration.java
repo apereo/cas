@@ -23,6 +23,9 @@ import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettingsFactory;
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryService;
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerUserInfoRepository;
+import org.apereo.cas.oidc.discovery.webfinger.userinfo.OidcEchoingWebFingerUserInfoRepository;
+import org.apereo.cas.oidc.discovery.webfinger.userinfo.OidcGroovyWebFingerUserInfoRepository;
+import org.apereo.cas.oidc.discovery.webfinger.userinfo.OidcRestfulWebFingerUserInfoRepository;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequest;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequestSerializer;
 import org.apereo.cas.oidc.jwks.OidcDefaultJsonWebKeystoreCacheLoader;
@@ -93,6 +96,7 @@ import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.RsaJsonWebKey;
@@ -134,6 +138,7 @@ import java.util.stream.Collectors;
  */
 @Configuration("oidcConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionPlanConfigurer {
 
     @Autowired
@@ -469,8 +474,7 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
     @Autowired
     @RefreshScope
     @Bean
-    public OidcWellKnownEndpointController oidcWellKnownController(@Qualifier("oidcServerDiscoverySettingsFactory")
-                                                                   final OidcServerDiscoverySettings discoverySettings) {
+    public OidcWellKnownEndpointController oidcWellKnownController(@Qualifier("oidcServerDiscoverySettingsFactory") final OidcServerDiscoverySettings discoverySettings) {
         return new OidcWellKnownEndpointController(servicesManager.getIfAvailable(),
             ticketRegistry.getIfAvailable(),
             defaultAccessTokenFactory.getIfAvailable(),
@@ -484,9 +488,23 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
     }
 
     @Bean
-    @ConditionalOnMissingBean(name="oidcWebFingerUserInfoRepository")
+    @ConditionalOnMissingBean(name = "oidcWebFingerUserInfoRepository")
     public OidcWebFingerUserInfoRepository oidcWebFingerUserInfoRepository() {
-        return null;
+        val userInfo = casProperties.getAuthn().getOidc().getWebfinger().getUserInfo();
+
+        if (userInfo.getGroovy().getLocation() != null) {
+            return new OidcGroovyWebFingerUserInfoRepository(userInfo.getGroovy().getLocation());
+        }
+
+        if (StringUtils.isNotBlank(userInfo.getRest().getUrl())) {
+            return new OidcRestfulWebFingerUserInfoRepository(userInfo.getRest());
+        }
+
+        LOGGER.warn("Using [{}] to locate webfinger resources, which is NOT appropriate for production purposes, "
+            + "as it will always echo back the given username/email address and is only useful for testing/demo purposes. "
+            + "Consider choosing and configuring a different repository implementation for locating and fetching user information "
+            + "for webfinger resources, etc.", OidcEchoingWebFingerUserInfoRepository.class.getSimpleName());
+        return new OidcEchoingWebFingerUserInfoRepository();
     }
 
     @RefreshScope

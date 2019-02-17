@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
@@ -115,4 +116,10 @@ public class OidcProperties implements Serializable {
      * List of client authentication methods supported by token endpoint.
      */
     private List<String> tokenEndpointAuthMethodsSupported = Stream.of("client_secret_basic", "client_secret_post").collect(Collectors.toList());
+
+    /**
+     * OIDC webfinger protocol settings.
+     */
+    @NestedConfigurationProperty
+    private OidcWebFingerProperties webfinger = new OidcWebFingerProperties();
 }

@@ -1,6 +1,9 @@
 package org.apereo.cas;
 
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettingsFactoryTests;
+import org.apereo.cas.oidc.discovery.webfinger.OidcEchoingWebFingerUserInfoRepositoryTests;
+import org.apereo.cas.oidc.discovery.webfinger.OidcGroovyWebFingerUserInfoRepositoryTests;
+import org.apereo.cas.oidc.discovery.webfinger.OidcRestfulWebFingerUserInfoRepositoryTests;
 import org.apereo.cas.oidc.jwks.OidcDefaultJsonWebKeystoreCacheLoaderTests;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorServiceTests;
 import org.apereo.cas.oidc.jwks.OidcServiceJsonWebKeystoreCacheLoaderTests;
@@ -31,7 +34,10 @@ import org.junit.platform.suite.api.SelectClasses;
     OidcServerDiscoverySettingsFactoryTests.class,
     OidcRegisteredServiceUIActionTests.class,
     OidcServiceJsonWebKeystoreCacheLoaderTests.class,
-    OidcAuthorizationRequestSupportTests.class
+    OidcAuthorizationRequestSupportTests.class,
+    OidcEchoingWebFingerUserInfoRepositoryTests.class,
+    OidcGroovyWebFingerUserInfoRepositoryTests.class,
+    OidcRestfulWebFingerUserInfoRepositoryTests.class
 })
 public class OidcTestsSuite {
 }

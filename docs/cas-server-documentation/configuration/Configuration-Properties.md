@@ -2986,7 +2986,11 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
 # cas.authn.oidc.grantTypesSupported=authorization_code,password,client_credentials,refresh_token
 # cas.authn.oidc.idTokenSigningAlgValuesSupported=none,RS256
 # cas.authn.oidc.tokenEndpointAuthMethodsSupported=client_secret_basic,client_secret_post
+```
 
+### OpenID Connect Scopes & Claims
+
+```properties
 # Define custom scopes and claims
 # cas.authn.oidc.userDefinedScopes.scope1=cn,givenName,photos,customAttribute
 # cas.authn.oidc.userDefinedScopes.scope2=cn,givenName,photos,customAttribute2
@@ -2995,6 +2999,19 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
 # cas.authn.oidc.claimsMap.given_name=custom-given-name
 # cas.authn.oidc.claimsMap.preferred_username=global-user-attribute
 ```
+
+### OpenID Connect WebFinger
+
+#### WebFinger UserInfo via Groovy
+
+```properties
+# cas.authn.oidc.webfinger.userInfo.groovy.location=classpath:/webfinger.groovy
+```
+
+#### WebFinger UserInfo via REST
+
+RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
+under the configuration key `cas.authn.oidc.webfinger.userInfo.rest`.
 
 ## Pac4j Delegated AuthN
 
