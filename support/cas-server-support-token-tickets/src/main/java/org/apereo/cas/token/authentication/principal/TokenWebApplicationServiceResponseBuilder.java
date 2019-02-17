@@ -10,6 +10,7 @@ import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.token.JWTTokenTicketBuilder;
+import org.apereo.cas.token.TokenTicketBuilder;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -27,10 +28,10 @@ import java.util.Map;
 public class TokenWebApplicationServiceResponseBuilder extends WebApplicationServiceResponseBuilder {
     private static final long serialVersionUID = -2863268279032438778L;
 
-    private final transient JWTTokenTicketBuilder tokenTicketBuilder;
+    private final transient TokenTicketBuilder tokenTicketBuilder;
 
     public TokenWebApplicationServiceResponseBuilder(final ServicesManager servicesManager,
-                                                     final JWTTokenTicketBuilder tokenTicketBuilder) {
+                                                     final TokenTicketBuilder tokenTicketBuilder) {
         super(servicesManager);
         this.tokenTicketBuilder = tokenTicketBuilder;
     }
