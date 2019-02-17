@@ -34,8 +34,6 @@ if [ $retVal != 0 ]; then
     exit $retVal
 fi
 
-
-
 gradleBuild="$gradleBuild testPostgres jacocoRootReport -x test -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
