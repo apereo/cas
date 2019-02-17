@@ -7,7 +7,7 @@ import org.apereo.cas.rest.plan.ServiceTicketResourceEntityResponseFactoryConfig
 import org.apereo.cas.rest.plan.ServiceTicketResourceEntityResponseFactoryPlan;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.token.JWTTokenTicketBuilder;
+import org.apereo.cas.token.TokenTicketBuilder;
 import org.apereo.cas.tokens.JWTServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.tokens.JWTTicketGrantingTicketResourceEntityResponseFactory;
 
@@ -33,7 +33,7 @@ public class CasRestTokensConfiguration implements ServiceTicketResourceEntityRe
 
     @Autowired
     @Qualifier("tokenTicketBuilder")
-    private ObjectProvider<JWTTokenTicketBuilder> tokenTicketBuilder;
+    private ObjectProvider<TokenTicketBuilder> tokenTicketBuilder;
 
     @Autowired
     @Qualifier("servicesManager")
