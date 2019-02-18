@@ -1,6 +1,8 @@
 description = "Apereo CAS Core Configuration Model"
 def skipConfigurationMetadata = Boolean.getBoolean("skipNestedConfigMetadataGen")
 
+sourceSets.test.resources.srcDirs += sourceSets.main.resources.srcDirs
+
 dependencies {
     implementation libraries.jasypt
     implementation libraries.bouncycastle

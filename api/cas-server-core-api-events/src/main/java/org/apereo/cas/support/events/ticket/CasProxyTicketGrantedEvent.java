@@ -25,7 +25,7 @@ public class CasProxyTicketGrantedEvent extends AbstractCasEvent {
     private final ProxyTicket proxyTicket;
 
     /**
-     * Instantiates a new Cas proxy ticket granted event.
+     * Instantiates a new CAS proxy ticket granted event.
      *
      * @param source              the source
      * @param proxyGrantingTicket the ticket granting ticket

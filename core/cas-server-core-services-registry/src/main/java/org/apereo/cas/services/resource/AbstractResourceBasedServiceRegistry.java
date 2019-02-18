@@ -33,6 +33,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -257,6 +258,11 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             LOGGER.debug("[{}] starts with ., ignoring", fileName);
             return new ArrayList<>(0);
         }
+        if (Arrays.stream(getExtensions()).noneMatch(fileName::endsWith)) {
+            LOGGER.debug("[{}] doesn't end with valid extension, ignoring", fileName);
+            return new ArrayList<>(0);
+        }
+
         if (!RegexUtils.matches(this.serviceFileNamePattern, fileName)) {
             LOGGER.warn("[{}] does not match the recommended pattern [{}]. "
                     + "While CAS tries to be forgiving as much as possible, it's recommended "
@@ -323,7 +329,16 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
      * @return the registered service from file
      */
     protected RegisteredService getRegisteredServiceFromFile(final File file) {
-        val matcher = this.serviceFileNamePattern.matcher(file.getName());
+        val fileName = file.getName();
+        if (fileName.startsWith(".")) {
+            LOGGER.trace("[{}] starts with ., ignoring", fileName);
+            return null;
+        }
+        if (Arrays.stream(getExtensions()).noneMatch(fileName::endsWith)) {
+            LOGGER.trace("[{}] doesn't end with valid extension, ignoring", fileName);
+            return null;
+        }
+        val matcher = this.serviceFileNamePattern.matcher(fileName);
         if (matcher.find()) {
             val serviceId = matcher.group(2);
             if (NumberUtils.isCreatable(serviceId)) {

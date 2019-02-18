@@ -4,6 +4,7 @@ import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
 
 import java.util.Set;
@@ -15,7 +16,7 @@ import java.util.Set;
  * @since 5.2.0
  */
 @Slf4j
-public class GroovyConsentRepository extends BaseConsentRepository {
+public class GroovyConsentRepository extends BaseConsentRepository implements DisposableBean {
     private static final long serialVersionUID = 3482998768083902246L;
 
     private final transient WatchableGroovyScriptResource watchableScript;
@@ -44,5 +45,10 @@ public class GroovyConsentRepository extends BaseConsentRepository {
 
     private Set<ConsentDecision> readDecisionsFromGroovyResource() {
         return watchableScript.execute("read", Set.class, getConsentDecisions(), LOGGER);
+    }
+
+    @Override
+    public void destroy() {
+        this.watchableScript.close();
     }
 }

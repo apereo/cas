@@ -23,7 +23,7 @@ public class CasProxyGrantingTicketCreatedEvent extends AbstractCasEvent {
     private final TicketGrantingTicket ticketGrantingTicket;
 
     /**
-     * Instantiates a new Cas sso session established event.
+     * Instantiates a new CAS sso session established event.
      *
      * @param source               the source
      * @param ticketGrantingTicket the ticket granting ticket

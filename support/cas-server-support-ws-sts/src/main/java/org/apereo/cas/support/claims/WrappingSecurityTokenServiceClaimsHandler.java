@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.cxf.rt.security.claims.Claim;
 import org.apache.cxf.rt.security.claims.ClaimCollection;
 import org.apache.cxf.sts.claims.ClaimsHandler;
 import org.apache.cxf.sts.claims.ClaimsParameters;
@@ -14,8 +15,6 @@ import org.apache.cxf.sts.claims.ProcessedClaim;
 import org.apache.cxf.sts.claims.ProcessedClaimCollection;
 import org.apache.cxf.sts.token.realm.RealmSupport;
 
-import javax.ws.rs.core.UriBuilder;
-import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,9 +34,9 @@ public class WrappingSecurityTokenServiceClaimsHandler implements ClaimsHandler,
     private final String issuer;
 
     @Override
-    public List<URI> getSupportedClaimTypes() {
+    public List<String> getSupportedClaimTypes() {
         return WSFederationClaims.ALL_CLAIMS.stream()
-            .map(c -> UriBuilder.fromUri(c.getUri()).build())
+            .map(WSFederationClaims::getUri)
             .collect(Collectors.toList());
     }
 
@@ -56,15 +55,35 @@ public class WrappingSecurityTokenServiceClaimsHandler implements ClaimsHandler,
             return new ProcessedClaimCollection();
         }
         val claimCollection = new ProcessedClaimCollection();
-        claims.stream().map(requestClaim -> {
-            val claim = new ProcessedClaim();
-            claim.setClaimType(requestClaim.getClaimType());
-            claim.setIssuer(this.issuer);
-            claim.setOriginalIssuer(this.issuer);
-            claim.setValues(requestClaim.getValues());
-            return claim;
-        }).forEach(claimCollection::add);
+        claims.stream().map(c -> createProcessedClaim(c, parameters)).forEach(claimCollection::add);
         return claimCollection;
+    }
+
+    /**
+     * Create processed claim processed claim.
+     *
+     * @param requestClaim the request claim
+     * @param parameters   the parameters
+     * @return the processed claim
+     */
+    protected ProcessedClaim createProcessedClaim(final Claim requestClaim, final ClaimsParameters parameters) {
+        val claim = new ProcessedClaim();
+        claim.setClaimType(createProcessedClaimType(requestClaim, parameters));
+        claim.setIssuer(this.issuer);
+        claim.setOriginalIssuer(this.issuer);
+        claim.setValues(requestClaim.getValues());
+        return claim;
+    }
+
+    /**
+     * Create processed claim type uri.
+     *
+     * @param requestClaim the request claim
+     * @param parameters   the parameters
+     * @return the uri
+     */
+    protected String createProcessedClaimType(final Claim requestClaim, final ClaimsParameters parameters) {
+        return requestClaim.getClaimType();
     }
 
     @Override

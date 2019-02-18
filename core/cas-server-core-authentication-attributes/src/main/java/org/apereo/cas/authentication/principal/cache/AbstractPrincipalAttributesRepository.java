@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal.cache;
 
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
 import org.apereo.cas.util.CollectionUtils;
@@ -14,9 +15,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.merger.IAttributeMerger;
-import org.apereo.services.persondir.support.merger.MultivaluedAttributeMerger;
-import org.apereo.services.persondir.support.merger.NoncollidingAttributeAdder;
-import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
 
 import java.io.Closeable;
 import java.util.HashMap;
@@ -68,6 +66,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      * are ignored and the source is always consulted.
      */
     protected MergingStrategy mergingStrategy;
+
     private transient IPersonAttributeDao attributeRepository;
 
     /**
@@ -249,16 +248,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
          */
         public IAttributeMerger getAttributeMerger() {
             val name = this.name().toUpperCase();
-            switch (name.toUpperCase()) {
-                case "REPLACE":
-                    return new ReplacingAttributeAdder();
-                case "ADD":
-                    return new NoncollidingAttributeAdder();
-                case "MULTIVALUED":
-                    return new MultivaluedAttributeMerger();
-                default:
-                    return null;
-            }
+            return CoreAuthenticationUtils.getAttributeMerger(name);
         }
     }
 

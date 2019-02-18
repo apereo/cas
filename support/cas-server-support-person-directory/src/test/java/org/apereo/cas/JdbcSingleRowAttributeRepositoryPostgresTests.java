@@ -1,18 +1,17 @@
 package org.apereo.cas;
 
-import org.apereo.cas.category.PostgresCategory;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.SneakyThrows;
 import lombok.val;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
 import java.sql.Statement;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link JdbcSingleRowAttributeRepositoryPostgresTests}.
@@ -33,8 +32,9 @@ import static org.junit.Assert.*;
     "cas.authn.attributeRepository.jdbc[0].url=jdbc:postgresql://localhost:5432/postgres",
     "cas.authn.attributeRepository.jdbc[0].dialect=org.hibernate.dialect.PostgreSQL95Dialect"
 })
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 5432)
-@Category(PostgresCategory.class)
+@EnabledIfPortOpen(port = 5432)
+@EnabledIfContinuousIntegration
+@Tag("Postgres")
 public class JdbcSingleRowAttributeRepositoryPostgresTests extends JdbcSingleRowAttributeRepositoryTests {
 
     @Test
@@ -44,7 +44,7 @@ public class JdbcSingleRowAttributeRepositoryPostgresTests extends JdbcSingleRow
         assertNotNull(person);
         assertNotNull(person.getAttributes());
         assertFalse(person.getAttributes().isEmpty());
-        assertTrue(person.getAttributeValue("uid").equals("casuser"));
+        assertEquals("casuser", person.getAttributeValue("uid"));
         assertFalse(person.getAttributeValues("locations").isEmpty());
     }
 

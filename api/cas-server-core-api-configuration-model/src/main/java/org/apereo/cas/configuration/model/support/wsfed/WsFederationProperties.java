@@ -7,6 +7,8 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is {@link WsFederationProperties}.
@@ -95,6 +97,12 @@ public class WsFederationProperties implements Serializable {
          * Realm definition settings that define this CAS server.
          */
         private RealmDefinition realm = new RealmDefinition();
+
+        /**
+         * Collection of fully-qualified claims prefixed with the appropriate
+         * namespace that are expected to be released via attribute release policy.
+         */
+        private List<String> customClaims = new ArrayList<>();
 
         @Getter
         @Setter

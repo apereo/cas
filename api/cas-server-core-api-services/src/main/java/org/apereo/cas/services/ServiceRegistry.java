@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
+import java.util.function.Predicate;
 
 /**
  * Registry of all RegisteredServices.
@@ -76,6 +77,20 @@ public interface ServiceRegistry {
         return load()
             .stream()
             .filter(r -> r.getName().equals(name))
+            .findFirst()
+            .orElse(null);
+    }
+
+    /**
+     * Find service predicate registered service.
+     *
+     * @param predicate the predicate
+     * @return the registered service
+     */
+    default RegisteredService findServicePredicate(final Predicate<RegisteredService> predicate) {
+        return load()
+            .stream()
+            .filter(predicate)
             .findFirst()
             .orElse(null);
     }

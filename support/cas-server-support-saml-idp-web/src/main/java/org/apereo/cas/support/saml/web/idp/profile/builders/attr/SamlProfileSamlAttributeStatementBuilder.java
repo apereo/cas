@@ -67,9 +67,11 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
         val resp = samlIdPProperties.getResponse();
         val nameFormats = new HashMap<String, String>(resp.configureAttributeNameFormats());
         nameFormats.putAll(service.getAttributeNameFormats());
+        val attrBuilder = new SamlProfileSamlRegisteredServiceAttributeBuilder(service, adaptor, messageContext, samlObjectEncrypter);
         return newAttributeStatement(encodedAttrs, service.getAttributeFriendlyNames(),
+            service.getAttributeValueTypes(),
             nameFormats,
             resp.getDefaultAttributeNameFormat(),
-            new SamlProfileSamlRegisteredServiceAttributeBuilder(service, adaptor, messageContext, samlObjectEncrypter));
+            attrBuilder);
     }
 }

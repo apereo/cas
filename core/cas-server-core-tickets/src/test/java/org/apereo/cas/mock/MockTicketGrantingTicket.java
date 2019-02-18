@@ -68,7 +68,11 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     }
 
     public MockTicketGrantingTicket(final String principal) {
-        this(principal, CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("uid", "password"), new HashMap());
+        this(principal, new HashMap());
+    }
+
+    public MockTicketGrantingTicket(final String principal, final Map attributes) {
+        this(principal, CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("uid", "password"), attributes);
     }
 
     @Override

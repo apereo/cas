@@ -102,12 +102,12 @@ Clients and relying parties can be registered with CAS as such:
 
 Service definitions may be managed by the [service management](../services/Service-Management.html) facility.
 
-### Claims
+### Standard Claims
 
-The following claims are supported by CAS for release:
+The following standard claims are supported by CAS for release:
 
 | Claim                           | Description
-|---------------------------------|-----------------------------------------------------------------------------------------
+|---------------------------------|-----------------------------------------------------------------------------------
 | `EMAIL_ADDRESS_2005`            | `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress`
 | `EMAIL_ADDRESS`                 | `http://schemas.xmlsoap.org/claims/EmailAddress`
 | `GIVEN_NAME`                    | `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname`
@@ -139,6 +139,8 @@ that should be already available. The configuration looks as such:
   "@class" : "org.apereo.cas.ws.idp.services.WSFederationRegisteredService",
   "serviceId" : "https://wsfed.example.org/.+",
   "realm" : "urn:wsfed:example:org:sampleapplication",
+  "name" : "WSFED",
+  "id" : 1,
   "attributeReleasePolicy" : {
     "@class" : "org.apereo.cas.ws.idp.services.WSFederationClaimsReleasePolicy",
     "allowedAttributes" : {
@@ -151,6 +153,52 @@ that should be already available. The configuration looks as such:
 
 The above snippet allows CAS to release the claim `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname` whose value
 is identified by the value of the `givenName` attribute that is already retrieved for the authenticated principal.
+
+### Custom Claims
+
+You may also decide to release non-standard claims as part of a custom namespace. For example, the below snippet allows CAS to release the claim `https://github.com/apereo/cas/employeeNumber` whose value is identified by the value of the `personSecurityId` attribute that is already retrieved for the authenticated principal.
+
+```json
+{
+  "@class" : "org.apereo.cas.ws.idp.services.WSFederationRegisteredService",
+  "serviceId" : "https://wsfed.example.org/.+",
+  "realm" : "urn:wsfed:example:org:sampleapplication",
+  "name" : "WSFED",
+  "id" : 1,
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.ws.idp.services.CustomNamespaceWSFederationClaimsReleasePolicy",
+    "namespace": "https://github.com/apereo/cas",
+    "allowedAttributes" : {
+      "@class" : "java.util.TreeMap",
+      "employeeNumber" : "personSecurityId"
+    }
+  }
+}
+```
+
+## Token Types
+
+The following token types are supported by CAS:
+
+| Type                           
+|----------------------------------------------------------------------------
+| `http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV1.1`
+| `http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV2.0`
+| `urn:ietf:params:oauth:token-type:jwt`
+| `http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512/sct`
+
+Token type may be configured on a per-service basis:
+
+```json
+{
+  "@class" : "org.apereo.cas.ws.idp.services.WSFederationRegisteredService",
+  "serviceId" : "https://wsfed.example.org/.+",
+  "realm" : "urn:wsfed:example:org:sampleapplication",
+  "name" : "WSFED",
+  "id" : 1,
+  "tokenType": "http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV1.1"
+}
+```
 
 ## Configuration
 

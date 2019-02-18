@@ -28,7 +28,7 @@ See [this guide](Webflow-Customization-Sessions.html) for more info.
 Most CAS modules, when declared as a dependency, attempt to autoconfigure the CAS webflow to suit their needs.
 This practically means that the CAS adopter would no longer have to manually massage the CAS webflow configuration,
 and the module automatically takes care of all required changes. While this is the default behavior, it is possible that
-you may want to manually handle all such changes. For doing so, you will need to disable the CAS autoconfiguration
+you may want to manually handle all such changes. For doing so, you will need to disable the CAS auto-configuration
 of the webflow.
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#spring-webflow).

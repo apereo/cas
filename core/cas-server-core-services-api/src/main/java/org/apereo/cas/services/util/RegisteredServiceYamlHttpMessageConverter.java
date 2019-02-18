@@ -29,7 +29,7 @@ public class RegisteredServiceYamlHttpMessageConverter<T> extends AbstractHttpMe
 
     @Override
     protected boolean supports(final Class<?> clazz) {
-        return true;
+        return Collection.class.isAssignableFrom(clazz);
     }
 
     @Override

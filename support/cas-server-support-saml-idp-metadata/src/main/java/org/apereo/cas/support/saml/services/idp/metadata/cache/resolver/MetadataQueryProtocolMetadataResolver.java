@@ -42,11 +42,11 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
     @Override
     protected HttpResponse fetchMetadata(final String metadataLocation) {
         val metadata = samlIdPProperties.getMetadata();
-        val headers = new LinkedHashMap();
+        val headers = new LinkedHashMap<String, Object>();
         headers.put("Content-Type", metadata.getSupportedContentTypes());
         headers.put("Accept", "*/*");
-        return HttpUtils.executeGet(metadataLocation, metadata.getBasicAuthnUsername(),
-            samlIdPProperties.getMetadata().getBasicAuthnPassword(), new LinkedHashMap<>(), headers);
+        return HttpUtils.getViaBasicAuth(metadataLocation, metadata.getBasicAuthnUsername(),
+            samlIdPProperties.getMetadata().getBasicAuthnPassword(), headers);
     }
 
     /**

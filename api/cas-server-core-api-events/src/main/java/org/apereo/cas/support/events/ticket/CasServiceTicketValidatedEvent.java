@@ -25,7 +25,7 @@ public class CasServiceTicketValidatedEvent extends AbstractCasEvent {
     private final ServiceTicket serviceTicket;
 
     /**
-     * Instantiates a new Cas service ticket validated event.
+     * Instantiates a new CAS service ticket validated event.
      *
      * @param source        the source
      * @param serviceTicket the service ticket

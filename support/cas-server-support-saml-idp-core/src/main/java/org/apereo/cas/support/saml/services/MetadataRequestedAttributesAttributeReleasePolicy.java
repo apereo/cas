@@ -38,7 +38,8 @@ public class MetadataRequestedAttributesAttributeReleasePolicy extends BaseSamlR
 
     @Override
     protected Map<String, Object> getAttributesForSamlRegisteredService(final Map<String, Object> attributes,
-                                                                        final SamlRegisteredService service, final ApplicationContext applicationContext,
+                                                                        final SamlRegisteredService service,
+                                                                        final ApplicationContext applicationContext,
                                                                         final SamlRegisteredServiceCachingMetadataResolver resolver,
                                                                         final SamlRegisteredServiceServiceProviderMetadataFacade facade,
                                                                         final EntityDescriptor entityDescriptor) {

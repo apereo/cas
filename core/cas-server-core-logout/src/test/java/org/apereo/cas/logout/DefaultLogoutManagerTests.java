@@ -20,15 +20,15 @@ import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
 
 import lombok.SneakyThrows;
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.net.URL;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -77,7 +77,7 @@ public class DefaultLogoutManagerTests {
         return (AbstractWebApplicationService) new WebApplicationServiceFactory().createService(request);
     }
 
-    @Before
+    @BeforeEach
     public void initialize() {
         tgt = new MockTicketGrantingTicket("casuser");
 

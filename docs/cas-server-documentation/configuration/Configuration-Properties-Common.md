@@ -729,9 +729,9 @@ The following options related to Redis support in CAS apply equally to a number 
 # ${configurationKey}.redis.pool.testWhileIdle=false
 
 # ${configurationKey}.redis.sentinel.master=mymaster
-# ${configurationKey}.redis.sentinel.nodes[0]=localhost:26377
-# ${configurationKey}.redis.sentinel.nodes[1]=localhost:26378
-# ${configurationKey}.redis.sentinel.nodes[2]=localhost:26379
+# ${configurationKey}.redis.sentinel.node[0]=localhost:26377
+# ${configurationKey}.redis.sentinel.node[1]=localhost:26378
+# ${configurationKey}.redis.sentinel.node[2]=localhost:26379
 ```
 
 ## DDL Configuration
@@ -811,8 +811,6 @@ All configurable multifactor authentication providers have these base properties
 The following bypass options apply equally to multifactor authentication providers given the provider's *configuration key*:
 
 ```properties
-# ${configurationKey}.bypass.type=DEFAULT|GROOVY|REST
-
 # ${configurationKey}.bypass.principalAttributeName=bypass|skip
 # ${configurationKey}.bypass.principalAttributeValue=true|enabled.+
 
@@ -827,7 +825,7 @@ The following bypass options apply equally to multifactor authentication provide
 # ${configurationKey}.bypass.httpRequestRemoteAddress=127.+|example.*
 # ${configurationKey}.bypass.httpRequestHeaders=header-X-.+|header-Y-.+
 
-# ${configurationKey}.groovy.location=file:/etc/cas/config/mfa-bypass.groovy
+# ${configurationKey}.bypass.groovy.location=file:/etc/cas/config/mfa-bypass.groovy
 ```
 
 If multifactor authentication bypass is determined via REST, 
@@ -1039,6 +1037,8 @@ to an external OpenID Connect provider such as Azure AD, given the provider's *c
 # ${configurationKey}.scope=
 # ${configurationKey}.useNonce=
 # ${configurationKey}.preferredJwsAlgorithm=
+# ${configurationKey}.responseMode=
+# ${configurationKey}.responseType=
 # ${configurationKey}.customParams.param1=value1
 ```
 

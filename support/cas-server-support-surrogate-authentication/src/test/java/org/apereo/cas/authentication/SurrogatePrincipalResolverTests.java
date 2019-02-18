@@ -3,16 +3,11 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 
 import lombok.val;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
+import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link SurrogatePrincipalResolverTests}.
@@ -21,15 +16,6 @@ import static org.junit.Assert.*;
  * @since 5.2.0
  */
 public class SurrogatePrincipalResolverTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Test
     public void verifyResolverDefault() {
         val resolver = new SurrogatePrincipalResolver(CoreAuthenticationTestUtils.getAttributeRepository());
@@ -52,8 +38,7 @@ public class SurrogatePrincipalResolverTests {
     public void verifyResolverSurrogateWithoutPrincipal() {
         val resolver = new SurrogatePrincipalResolver(CoreAuthenticationTestUtils.getAttributeRepository(), "cn");
         val credential = new SurrogateUsernamePasswordCredential();
-        thrown.expect(IllegalArgumentException.class);
-        resolver.resolve(credential);
+        assertThrows(IllegalArgumentException.class, () -> resolver.resolve(credential));
     }
 
     @Test

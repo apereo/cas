@@ -9,10 +9,8 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.expression.support.LiteralExpression;
@@ -26,7 +24,7 @@ import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
 import org.springframework.webflow.test.MockRequestContext;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link TimedMultifactorAuthenticationPolicyEventResolverTests}.
@@ -42,22 +40,17 @@ import static org.junit.Assert.*;
 })
 public class TimedMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Autowired
     @Qualifier("timedAuthenticationPolicyWebflowEventResolver")
     protected CasWebflowEventResolver resolver;
 
     private MockRequestContext context;
 
-    private MockHttpServletRequest request;
-
-    @Before
+    @BeforeEach
     public void initialize() {
         this.context = new MockRequestContext();
 
-        request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("195.88.151.11");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");

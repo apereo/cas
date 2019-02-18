@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import org.springframework.test.context.TestPropertySource;
 
@@ -20,6 +19,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.ldap[0].principalAttributeList=description,cn",
     "cas.authn.ldap[0].enhanceWithEntryResolver=false"
     })
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
+@EnabledIfContinuousIntegration
 public class DirectLdapAuthenticationHandlerTests extends BaseLdapAuthenticationHandlerTests {
 }
