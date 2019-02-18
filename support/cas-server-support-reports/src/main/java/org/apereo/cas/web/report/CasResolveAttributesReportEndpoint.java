@@ -3,7 +3,7 @@ package org.apereo.cas.web.report;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.web.BaseCasMvcEndpoint;
+import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import lombok.val;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -20,7 +20,7 @@ import java.util.Map;
  * @since 5.0.0
  */
 @Endpoint(id = "resolveAttributes", enableByDefault = false)
-public class CasResolveAttributesReportEndpoint extends BaseCasMvcEndpoint {
+public class CasResolveAttributesReportEndpoint extends BaseCasActuatorEndpoint {
     private final PrincipalResolver defaultPrincipalResolver;
 
     public CasResolveAttributesReportEndpoint(final CasConfigurationProperties casProperties,

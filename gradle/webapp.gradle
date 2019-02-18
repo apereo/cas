@@ -3,7 +3,6 @@ description = "Apereo CAS Web Application"
 apply plugin: "war"
 
 project.ext["mainClassName"] = "org.apereo.cas.web.CasWebApplication"
-
 sourceSets {
     main {
         resources {
@@ -17,6 +16,20 @@ sourceSets {
     bootRun {
         resources {
             srcDirs new File("/etc/cas/templates"), new File(project(":webapp").getProjectDir(), "resources")
+        }
+    }
+}
+
+publishing {
+    publications {
+        mavenWeb(MavenPublication) {
+            from components.web
+            pom {
+                createPom(it, project)
+            }
+            pom.withXml {
+                createPomRepositories(asNode())
+            }
         }
     }
 }
@@ -50,12 +63,12 @@ dependencies {
     implementation project(":support:cas-server-support-reports")
     implementation project(":support:cas-server-support-throttle")
     implementation project(":support:cas-server-support-validation")
-
+    
     implementation project(":webapp:cas-server-webapp-config")
     implementation project(":webapp:cas-server-webapp-init")
-    
+
     implementation libraries.springcloudconfigclient
-    
+
     developmentOnly libraries.springbootdevtools
     runtimeOnly libraries.webjars
 }
@@ -63,7 +76,7 @@ dependencies {
 /**
  * Share the resources directory outside the content root of the project
  * for all webapp projects in a dynamic fashion, and do it only when the taskGraph is ready.
- * 
+ *
  * This allows the IDE, specially Intellij IDEA, to ignore the resources
  * directory for webapp projects, allowing it to be shared across modules.
  * While the directory isn't recognizes as a "resources" directory by the IDE,
@@ -71,10 +84,10 @@ dependencies {
  * Note that bootRun also includes the same directory for resources, allowing
  * for automatic updates to static resources, etc.
  */
-gradle.taskGraph.whenReady {taskGraph ->
+gradle.taskGraph.whenReady { taskGraph ->
     def resourcesDir = "${project.projectDir}/../resources"
     logger.info("Adding resources directory ${resourcesDir} to project ${project.name}")
-    
+
     sourceSets {
         main {
             resources {
@@ -82,5 +95,4 @@ gradle.taskGraph.whenReady {taskGraph ->
             }
         }
     }
-    
 }

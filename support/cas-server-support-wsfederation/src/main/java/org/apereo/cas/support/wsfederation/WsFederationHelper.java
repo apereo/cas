@@ -10,7 +10,6 @@ import org.apereo.cas.support.wsfederation.authentication.principal.WsFederation
 import org.apereo.cas.util.function.FunctionUtils;
 
 import com.google.common.base.Predicates;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -289,7 +288,7 @@ public class WsFederationHelper {
             },
             () -> securityTokenFromAssertion);
 
-        @NonNull val securityToken = func.apply(securityTokenFromAssertion);
+        val securityToken = func.apply(securityTokenFromAssertion);
         return securityToken;
     }
 

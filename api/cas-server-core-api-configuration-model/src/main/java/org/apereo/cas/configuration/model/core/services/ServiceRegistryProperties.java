@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.support.couchbase.serviceregistry.Couc
 import org.apereo.cas.configuration.model.support.couchdb.serviceregistry.CouchDbServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
+import org.apereo.cas.configuration.model.support.git.GitServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.jpa.serviceregistry.JpaServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.mongo.serviceregistry.MongoDbServiceRegistryProperties;
@@ -40,6 +41,11 @@ public class ServiceRegistryProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private CosmosDbServiceRegistryProperties cosmosDb = new CosmosDbServiceRegistryProperties();
+    /**
+     * Properties pertaining to Git-based service registry.
+     */
+    @NestedConfigurationProperty
+    private GitServiceRegistryProperties git = new GitServiceRegistryProperties();
     /**
      * Properties pertaining to Cosmos DB service registry.
      */

@@ -75,18 +75,6 @@ public class DefaultMultifactorAuthenticationContextValidator implements Multifa
             LOGGER.debug("Requested authentication context [{}] is satisfied since device is already trusted", requestedContext);
             return Pair.of(Boolean.TRUE, requestedProvider);
         }
-        if (attributes.containsKey(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA)
-            && attributes.containsKey(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER)) {
-            val isBypass = Boolean.class.cast(CollectionUtils.firstElement(attributes.get(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA)).get());
-            val bypassedId = CollectionUtils.firstElement(attributes.get(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER)).get().toString();
-            LOGGER.trace("Found multifactor authentication bypass attributes for provider [{}]", bypassedId);
-            if (isBypass && StringUtils.equals(bypassedId, requestedContext)) {
-                LOGGER.debug("Requested authentication context [{}] is satisfied given mfa was bypassed for the authentication attempt [{}]", requestedContext, bypassedId);
-                return Pair.of(Boolean.TRUE, requestedProvider);
-            }
-            LOGGER.debug("Either multifactor authentication was not bypassed or the requested context [{}] does not match the bypassed provider [{}]",
-                requestedProvider, bypassedId);
-        }
         val satisfiedProviders = getSatisfiedAuthenticationProviders(authentication, providerMap.values());
         if (satisfiedProviders != null && !satisfiedProviders.isEmpty()) {
             val providers = satisfiedProviders.toArray(MultifactorAuthenticationProvider[]::new);
@@ -116,7 +104,7 @@ public class DefaultMultifactorAuthenticationContextValidator implements Multifa
             return null;
         }
         return providers.stream()
-                        .filter(p -> contexts.contains(p.getId()))
-                        .collect(Collectors.toCollection(LinkedHashSet::new));
+            .filter(p -> contexts.contains(p.getId()))
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }

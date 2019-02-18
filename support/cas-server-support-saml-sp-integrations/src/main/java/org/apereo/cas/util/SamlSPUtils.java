@@ -21,6 +21,7 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.filter.impl.PredicateFilter;
 import org.opensaml.saml.metadata.resolver.impl.AbstractBatchMetadataResolver;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
+import org.springframework.core.Ordered;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +57,7 @@ public class SamlSPUtils {
         val service = new SamlRegisteredService();
         service.setName(sp.getName());
         service.setDescription(sp.getDescription());
-        service.setEvaluationOrder(Integer.MIN_VALUE);
+        service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
         service.setMetadataLocation(sp.getMetadata());
         val attributesToRelease = new ArrayList<String>(sp.getAttributes());
         if (StringUtils.isNotBlank(sp.getNameIdAttribute())) {

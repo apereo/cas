@@ -5,6 +5,7 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.thymeleaf.IEngineConfiguration;
@@ -21,6 +22,7 @@ import java.util.Map;
  */
 @RequiredArgsConstructor
 @Getter
+@Slf4j
 public class ThemeFileTemplateResolver extends FileTemplateResolver {
     /**
      * CAS settings.
@@ -34,6 +36,7 @@ public class ThemeFileTemplateResolver extends FileTemplateResolver {
         val themeName = getCurrentTheme();
         if (StringUtils.isNotBlank(themeName)) {
             val themeTemplate = String.format(resourceName, themeName);
+            LOGGER.trace("Computing template resource [{}]...", themeTemplate);
             return super.computeTemplateResource(configuration, ownerTemplate, template, themeTemplate, characterEncoding, templateResolutionAttributes);
         }
         return super.computeTemplateResource(configuration, ownerTemplate, template, resourceName, characterEncoding, templateResolutionAttributes);
@@ -48,9 +51,11 @@ public class ThemeFileTemplateResolver extends FileTemplateResolver {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
         if (request != null) {
             val session = request.getSession(false);
+            val paramName = casProperties.getTheme().getParamName();
             if (session != null) {
-                return (String) session.getAttribute(casProperties.getTheme().getParamName());
+                return (String) session.getAttribute(paramName);
             }
+            return (String) request.getAttribute(paramName);
         }
         return null;
     }

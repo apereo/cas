@@ -10,16 +10,15 @@ import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 
+import lombok.SneakyThrows;
 import lombok.val;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.security.auth.login.FailedLoginException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Scott Battaglia
@@ -29,9 +28,6 @@ public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdT
 
     private static final String TGT_ID = "test";
     private static final String USERNAME = "test";
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @Autowired
     @Qualifier("openIdCredentialsAuthenticationHandler")
@@ -48,7 +44,8 @@ public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdT
     }
 
     @Test
-    public void verifyTGTWithSameId() throws Exception {
+    @SneakyThrows
+    public void verifyTGTWithSameId() {
         val c = new OpenIdCredential(TGT_ID, USERNAME);
         val t = getTicketGrantingTicket();
         this.ticketRegistry.addTicket(t);
@@ -57,26 +54,22 @@ public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdT
     }
 
     @Test
-    public void verifyTGTThatIsExpired() throws Exception {
+    public void verifyTGTThatIsExpired() {
         val c = new OpenIdCredential(TGT_ID, USERNAME);
         val t = getTicketGrantingTicket();
         this.ticketRegistry.addTicket(t);
         t.markTicketExpired();
         this.ticketRegistry.updateTicket(t);
-        this.thrown.expect(FailedLoginException.class);
-        this.openIdCredentialsAuthenticationHandler.authenticate(c);
+        assertThrows(FailedLoginException.class, () -> this.openIdCredentialsAuthenticationHandler.authenticate(c));
     }
 
     @Test
-    public void verifyTGTWithDifferentId() throws Exception {
+    public void verifyTGTWithDifferentId() {
         val c = new OpenIdCredential(TGT_ID, "test1");
         val t = getTicketGrantingTicket();
         this.ticketRegistry.addTicket(t);
 
-        this.thrown.expect(FailedLoginException.class);
-
-
-        this.openIdCredentialsAuthenticationHandler.authenticate(c);
+        assertThrows(FailedLoginException.class, () -> this.openIdCredentialsAuthenticationHandler.authenticate(c));
     }
 
     private static TicketGrantingTicket getTicketGrantingTicket() {

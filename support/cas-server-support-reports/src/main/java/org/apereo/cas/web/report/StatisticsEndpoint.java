@@ -3,7 +3,7 @@ package org.apereo.cas.web.report;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.ServiceTicket;
-import org.apereo.cas.web.BaseCasMvcEndpoint;
+import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 3.3.5
  */
 @Endpoint(id = "statistics", enableByDefault = false)
-public class StatisticsEndpoint extends BaseCasMvcEndpoint {
+public class StatisticsEndpoint extends BaseCasActuatorEndpoint {
     private final ZonedDateTime upTimeStartDate = ZonedDateTime.now(ZoneOffset.UTC);
 
     private final CentralAuthenticationService centralAuthenticationService;

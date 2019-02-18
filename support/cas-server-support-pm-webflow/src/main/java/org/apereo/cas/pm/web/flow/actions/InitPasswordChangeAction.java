@@ -1,6 +1,7 @@
 package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.webflow.action.AbstractAction;
@@ -19,7 +20,7 @@ public class InitPasswordChangeAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        requestContext.getFlowScope().put("policyPattern", casProperties.getAuthn().getPm().getPolicyPattern());
+        PasswordManagementWebflowUtils.putPasswordResetPasswordPolicyPattern(requestContext, casProperties.getAuthn().getPm().getPolicyPattern());
         return null;
     }
 }

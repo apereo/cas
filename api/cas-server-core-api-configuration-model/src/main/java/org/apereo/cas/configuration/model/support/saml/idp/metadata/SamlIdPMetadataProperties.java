@@ -39,6 +39,13 @@ public class SamlIdPMetadataProperties implements Serializable {
     private boolean requireValidMetadata = true;
 
     /**
+     * Forcefully download and fetch metadata files
+     * form URL sources and disregard any cached copies
+     * of the metadata.
+     */
+    private boolean forceMetadataRefresh = true;
+
+    /**
      * How long should metadata be cached in minutes.
      */
     private long cacheExpirationMinutes = TimeUnit.DAYS.toMinutes(1);

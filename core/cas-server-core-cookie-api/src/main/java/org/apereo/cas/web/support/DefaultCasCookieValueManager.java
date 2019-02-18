@@ -15,7 +15,7 @@ import java.io.Serializable;
 import java.util.stream.Stream;
 
 /**
- * The {@link DefaultCasCookieValueManager} is responsible creating
+ * The {@link DefaultCasCookieValueManager} is responsible for creating
  * the CAS SSO cookie and encrypting and signing its value.
  *
  * @author Misagh Moayyed

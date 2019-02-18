@@ -41,13 +41,14 @@ import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 
+import lombok.Data;
 import lombok.val;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.jasig.cas.client.authentication.AttributePrincipalImpl;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.AssertionImpl;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Rule;
+import org.junit.jupiter.api.BeforeAll;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
@@ -61,8 +62,9 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 import static org.mockito.Mockito.*;
 
@@ -109,13 +111,7 @@ import static org.mockito.Mockito.*;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class BaseSamlIdPConfigurationTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
     protected static FileSystemResource METADATA_DIRECTORY;
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     @Qualifier("casSamlIdPMetadataResolver")
@@ -160,14 +156,19 @@ public abstract class BaseSamlIdPConfigurationTests {
     @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
     protected SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         METADATA_DIRECTORY = new FileSystemResource("src/test/resources/metadata");
     }
 
     protected static Assertion getAssertion() {
-        val casuser = new AttributePrincipalImpl("casuser", CoreAuthenticationTestUtils.getAttributes());
-        return new AssertionImpl(casuser, CoreAuthenticationTestUtils.getAttributes());
+        val attributes = new LinkedHashMap<>(CoreAuthenticationTestUtils.getAttributes());
+        val permissions = new ArrayList<>();
+        permissions.add(new PermissionSamlAttributeValue("admin", "cas-admins", "super-cas"));
+        permissions.add(new PermissionSamlAttributeValue("designer", "cas-designers", "cas-ux"));
+        attributes.put("permissions", permissions);
+        val casuser = new AttributePrincipalImpl("casuser", attributes);
+        return new AssertionImpl(casuser, attributes);
     }
 
     protected static AuthnRequest getAuthnRequestFor(final SamlRegisteredService service) {
@@ -208,6 +209,22 @@ public abstract class BaseSamlIdPConfigurationTests {
         @Bean
         public SamlIdPMetadataLocator samlIdPMetadataLocator() {
             return new FileSystemSamlIdPMetadataLocator(METADATA_DIRECTORY);
+        }
+    }
+
+    @Data
+    public static class PermissionSamlAttributeValue {
+        private final String type;
+        private final String group;
+        private final String user;
+
+        @Override
+        public String toString() {
+            return new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
+                .append("user", user)
+                .append("group", group)
+                .append("type", type)
+                .build();
         }
     }
 }

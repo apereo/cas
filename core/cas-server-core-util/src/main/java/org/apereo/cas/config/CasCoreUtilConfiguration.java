@@ -23,7 +23,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Role;
@@ -59,7 +59,7 @@ public class CasCoreUtilConfiguration implements InitializingBean {
     private ObjectProvider<JavaMailSender> mailSender;
 
     @Autowired
-    private ApplicationContext applicationContext;
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -111,19 +111,24 @@ public class CasCoreUtilConfiguration implements InitializingBean {
         if (StringUtils.isNotBlank(rest.getUrl())) {
             return new RestfulSmsSender(rest);
         }
-        return new SmsSender() {
-        };
+        return SmsSender.noOp();
     }
 
+    /**
+     * It's important to invoke the {@link #applicationContextProvider()}
+     * method here forcefully and not rely on the {@link #applicationContext}.
+     * Certain tests in the CAS context require access to the application context
+     * from the the {@link #applicationContextProvider()}.
+     */
     @Override
     @SuppressFBWarnings("NIR_NEEDLESS_INSTANCE_RETRIEVAL")
     public void afterPropertiesSet() {
-        val ctx = applicationContextProvider().getConfigurableApplicationContext();
+        val appContext = applicationContextProvider().getConfigurableApplicationContext();
         val conversionService = new DefaultFormattingConversionService(true);
-        conversionService.setEmbeddedValueResolver(new CasEmbeddedValueResolver(ctx));
-        ctx.getEnvironment().setConversionService(conversionService);
-        if (ctx.getParent() != null) {
-            var env = (ConfigurableEnvironment) ctx.getParent().getEnvironment();
+        conversionService.setEmbeddedValueResolver(new CasEmbeddedValueResolver(appContext));
+        appContext.getEnvironment().setConversionService(conversionService);
+        if (appContext.getParent() != null) {
+            var env = (ConfigurableEnvironment) appContext.getParent().getEnvironment();
             env.setConversionService(conversionService);
         }
         val registry = (ConverterRegistry) DefaultConversionService.getSharedInstance();

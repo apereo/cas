@@ -65,7 +65,9 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
 
     @Override
     protected void doInitialize() {
-        casProperties.getAuthn().getMfa().getDuo().forEach(duo -> {
+        val duoConfig = casProperties.getAuthn().getMfa().getDuo();
+
+        duoConfig.forEach(duo -> {
             val duoFlowRegistry = buildDuoFlowRegistry(duo);
             applicationContext.getAutowireCapableBeanFactory().initializeBean(duoFlowRegistry, duo.getId());
             val cfg = (ConfigurableListableBeanFactory) applicationContext.getAutowireCapableBeanFactory();
@@ -73,7 +75,7 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
             registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), duo.getId(), duoFlowRegistry, duo.getId());
         });
 
-        casProperties.getAuthn().getMfa().getDuo()
+        duoConfig
             .stream()
             .filter(DuoSecurityMultifactorProperties::isTrustedDeviceEnabled)
             .forEach(duo -> {
@@ -83,7 +85,7 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
                     val registry = applicationContext.getBean(id, FlowDefinitionRegistry.class);
                     registerMultifactorTrustedAuthentication(registry);
                 } catch (final Exception e) {
-                    LOGGER.error("Failed to register multifactor trusted authentication for " + id, e);
+                    LOGGER.error("Failed to register multifactor trusted authentication for [{}]", id, e);
                 }
             });
     }

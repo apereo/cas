@@ -1,10 +1,9 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.category.MariaDbCategory;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -14,10 +13,8 @@ import org.springframework.test.context.TestPropertySource;
  * @since 6.0.0
  */
 @TestPropertySource(locations = "classpath:svcregmariadb.properties")
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 3306)
-@Category(MariaDbCategory.class)
+@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 3306)
+@Tag("MariaDb")
 public class JpaServiceRegistryMariaDbTests extends JpaServiceRegistryTests {
-    public JpaServiceRegistryMariaDbTests(final Class<? extends RegisteredService> registeredServiceClass) {
-        super(registeredServiceClass);
-    }
 }

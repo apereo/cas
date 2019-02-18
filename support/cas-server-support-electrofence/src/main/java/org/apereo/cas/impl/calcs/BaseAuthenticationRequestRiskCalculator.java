@@ -36,7 +36,7 @@ public abstract class BaseAuthenticationRequestRiskCalculator implements Authent
     protected final CasEventRepository casEventRepository;
 
     /**
-     * Cas settings.
+     * CAS settings.
      */
     protected final CasConfigurationProperties casProperties;
 

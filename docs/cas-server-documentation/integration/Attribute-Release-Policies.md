@@ -169,15 +169,12 @@ release `affiliation` and `group` to the web application configured.
 }
 ```
 
-
-
 ### Return MultiMapped
 
 The same policy may allow attribute definitions to be renamed and remapped to multiple attribute names, 
 with duplicate attributes values mapped to different names.
 
 For example, the following configuration will recognize the resolved attribute `eduPersonAffiliation` and will then release `affiliation` and `personAffiliation` whose values stem from the original `eduPersonAffiliation` attribute while `groupMembership` is released as `group`. In other words, the `eduPersonAffiliation` attribute is released twice under two different names each sharing the same value.
-
 
 ```json
 {
@@ -354,6 +351,7 @@ The order of policy invocation is the same as the definition order defined for t
   "id" : 300,
   "attributeReleasePolicy": {
     "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "mergingPolicy": "replace",
     "policies": [ "java.util.ArrayList",
       [
           {"@class": "..."},
@@ -363,6 +361,14 @@ The order of policy invocation is the same as the definition order defined for t
   }
 }
 ```
+
+The following merging policies are supported:
+
+| Policy          | Description   
+|-----------------|------------------------------------------------------------------
+| `replace`       | Attributes are merged such that attributes from the source always replace principal attributes.
+| `add`           | Attributes are merged such that attributes from the source that don't already exist for the principal are produced.
+| `multivalued`   | Attributes with the same name are merged into multi-valued attributes.
 
 ## Attribute Value Filters
 

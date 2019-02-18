@@ -9,6 +9,10 @@ dependencies {
 
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-authentication-attributes")
+    testImplementation project(":support:cas-server-support-oauth-services")
+    testImplementation project(":support:cas-server-support-saml-idp-core")
+    testImplementation project(":support:cas-server-support-oidc-services")
+    testImplementation project(":support:cas-server-support-ws-idp-api")
 
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util", configuration: "tests")

@@ -2,11 +2,11 @@ package org.apereo.cas.support.pac4j.config;
 
 import com.github.scribejava.core.model.OAuth1RequestToken;
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is Pac4jJacksonTests.
@@ -28,10 +28,10 @@ public class Pac4jJacksonTests {
         session.put(key, requestToken);
         val serialisedSession = sessionStoreCookieSerializer.toString(session);
 
-        assertThat(session).isNotEmpty();
+        assertFalse(session.isEmpty(), "Session should not be empty:" + session);
 
         val deserialisedSession = sessionStoreCookieSerializer.from(serialisedSession);
 
-        assertThat(deserialisedSession).isEqualTo(session);
+        assertEquals(session, deserialisedSession);
     }
 }

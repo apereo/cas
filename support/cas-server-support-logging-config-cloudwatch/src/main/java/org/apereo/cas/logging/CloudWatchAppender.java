@@ -18,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.core.Layout;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.Property;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
 import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
 import org.apache.logging.log4j.core.config.plugins.PluginElement;
@@ -71,7 +72,7 @@ public class CloudWatchAppender extends AbstractAppender {
                               final String credentialSecretKey,
                               final String awsLogRegionName,
                               final Layout<Serializable> layout) {
-        super(name, null, layout == null ? PatternLayout.createDefaultLayout() : layout, false);
+        super(name, null, layout == null ? PatternLayout.createDefaultLayout() : layout, false, Property.EMPTY_ARRAY);
         try {
             var flushPeriod = AWS_LOG_STREAM_FLUSH_PERIOD_IN_SECONDS;
             if (awsLogStreamFlushPeriodInSeconds != null) {

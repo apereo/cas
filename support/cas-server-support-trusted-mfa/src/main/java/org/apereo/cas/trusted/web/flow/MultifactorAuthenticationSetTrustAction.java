@@ -38,29 +38,28 @@ public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
             LOGGER.error("Could not determine authentication from the request context");
             return error();
         }
-
         AuthenticationCredentialsThreadLocalBinder.bindCurrent(c);
 
         val principal = c.getPrincipal().getId();
-        if (!MultifactorAuthenticationTrustUtils.isMultifactorAuthenticationTrustedInScope(requestContext)) {
-            LOGGER.debug("Attempt to store trusted authentication record for [{}]", principal);
-            val record = MultifactorAuthenticationTrustRecord.newInstance(principal,
-                MultifactorAuthenticationTrustUtils.generateGeography(),
-                deviceFingerprintStrategy.determineFingerprint(principal, requestContext, true));
-
-            if (requestContext.getRequestParameters().contains(PARAM_NAME_DEVICE_NAME)) {
-                val deviceName = requestContext.getRequestParameters().get(PARAM_NAME_DEVICE_NAME);
-                if (StringUtils.isNotBlank(deviceName)) {
-                    record.setName(deviceName);
-                }
+        val deviceName = requestContext.getRequestParameters().get(PARAM_NAME_DEVICE_NAME, StringUtils.EMPTY);
+        val providedDeviceName = StringUtils.isNotBlank(deviceName);
+        if (providedDeviceName) {
+            if (!MultifactorAuthenticationTrustUtils.isMultifactorAuthenticationTrustedInScope(requestContext)) {
+                LOGGER.debug("Attempt to store trusted authentication record for [{}] as device [{}]", principal, deviceName);
+                val record = MultifactorAuthenticationTrustRecord.newInstance(principal,
+                    MultifactorAuthenticationTrustUtils.generateGeography(),
+                    deviceFingerprintStrategy.determineFingerprint(principal, requestContext, true));
+                record.setName(deviceName);
+                storage.set(record);
+                LOGGER.debug("Saved trusted authentication record for [{}] under [{}]", principal, record.getName());
             }
-            storage.set(record);
-            LOGGER.debug("Saved trusted authentication record for [{}] under [{}]", principal, record.getName());
+            LOGGER.debug("Trusted authentication session exists for [{}]", principal);
+            MultifactorAuthenticationTrustUtils.trackTrustedMultifactorAuthenticationAttribute(
+                c,
+                trustedProperties.getAuthenticationContextAttribute());
+        } else {
+            LOGGER.debug("No device name is provided. Trusted authentication record is not stored and tracked for the session");
         }
-        LOGGER.debug("Trusted authentication session exists for [{}]", principal);
-        MultifactorAuthenticationTrustUtils.trackTrustedMultifactorAuthenticationAttribute(
-            c,
-            trustedProperties.getAuthenticationContextAttribute());
         return success();
     }
 }

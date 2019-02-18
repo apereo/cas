@@ -40,6 +40,13 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
     private String principalAttributeId;
 
     /**
+     * Handle provisioning ops when establishing profiles
+     * from external identity providers.
+     */
+    @NestedConfigurationProperty
+    private Pac4jDelegatedAuthenticationProvisioningProperties provisioning = new Pac4jDelegatedAuthenticationProvisioningProperties();
+
+    /**
      * Settings that deal with having Facebook as an external delegated-to authentication provider.
      */
     private Facebook facebook = new Facebook();

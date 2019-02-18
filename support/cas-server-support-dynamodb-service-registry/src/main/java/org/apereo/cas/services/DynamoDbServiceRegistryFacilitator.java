@@ -1,7 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbServiceRegistryProperties;
-import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
 
@@ -46,7 +46,7 @@ import java.util.stream.Collectors;
 @Getter
 public class DynamoDbServiceRegistryFacilitator {
 
-    private final StringSerializer<RegisteredService> jsonSerializer = new DefaultRegisteredServiceJsonSerializer();
+    private final StringSerializer<RegisteredService> jsonSerializer = new RegisteredServiceJsonSerializer();
     private final DynamoDbServiceRegistryProperties dynamoDbProperties;
     private final AmazonDynamoDB amazonDynamoDBClient;
 

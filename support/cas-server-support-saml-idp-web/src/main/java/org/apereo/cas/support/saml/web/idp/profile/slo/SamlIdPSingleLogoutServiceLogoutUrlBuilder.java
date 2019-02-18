@@ -90,6 +90,10 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLog
         if (sloService != null) {
             return finalizeSingleLogoutUrl(sloService, samlRegisteredService);
         }
+        sloService = adaptor.getSingleLogoutService(SAMLConstants.SAML2_SOAP11_BINDING_URI);
+        if (sloService != null) {
+            return finalizeSingleLogoutUrl(sloService, samlRegisteredService);
+        }
         LOGGER.warn("Cannot find SLO service in metadata for entity id [{}]", entityID);
         return null;
     }

@@ -9,9 +9,10 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Immutable authentication event whose attributes may not change after creation.
@@ -43,17 +44,17 @@ public class DefaultAuthentication implements Authentication {
     /**
      * Authentication messages and warnings.
      */
-    private List<MessageDescriptor> warnings;
+    private List<MessageDescriptor> warnings = new ArrayList<>();
 
     /**
      * List of metadata about credentials presented at authentication.
      */
-    private List<CredentialMetaData> credentials;
+    private List<CredentialMetaData> credentials = new ArrayList<>();
 
     /**
      * Authentication metadata attributes.
      */
-    private Map<String, Object> attributes = new ConcurrentHashMap<>();
+    private Map<String, Object> attributes = new LinkedHashMap<>();
 
     /**
      * Map of handler name to handler authentication success event.
@@ -63,7 +64,7 @@ public class DefaultAuthentication implements Authentication {
     /**
      * Map of handler name to handler authentication failure cause.
      */
-    private Map<String, Throwable> failures;
+    private Map<String, Throwable> failures = new LinkedHashMap<>();
 
     public DefaultAuthentication(
         final @NonNull ZonedDateTime date,
@@ -78,7 +79,7 @@ public class DefaultAuthentication implements Authentication {
         this.successes = successes;
         this.warnings = warnings;
         this.credentials = null;
-        this.failures = null;
+        this.failures = new LinkedHashMap<>();
     }
 
     public DefaultAuthentication(

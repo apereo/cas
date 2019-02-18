@@ -72,11 +72,15 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
 
     @Override
     protected boolean sendMessageToEndpoint(final LogoutHttpMessage msg, final SingleLogoutRequest request, final SingleLogoutMessage logoutMessage) {
+        val binding = request.getProperties().get(SamlIdPSingleLogoutServiceLogoutUrlBuilder.PROPERTY_NAME_SINGLE_LOGOUT_BINDING);
+
+        if (SAMLConstants.SAML2_SOAP11_BINDING_URI.equalsIgnoreCase(binding)) {
+            return super.sendMessageToEndpoint(msg, request, logoutMessage);
+        }
+
         HttpResponse response = null;
         try {
-            val binding = request.getProperties().get(SamlIdPSingleLogoutServiceLogoutUrlBuilder.PROPERTY_NAME_SINGLE_LOGOUT_BINDING);
             val logoutRequest = (LogoutRequest) logoutMessage.getMessage();
-
             LOGGER.trace("Sending logout response for binding [{}]", binding);
             if (SAMLConstants.SAML2_REDIRECT_BINDING_URI.equalsIgnoreCase(binding)) {
                 val encoder = new SamlIdPHttpRedirectDeflateLogoutEncoder(msg.getUrl().toExternalForm(), logoutRequest);
@@ -104,9 +108,7 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
         } finally {
             HttpUtils.close(response);
         }
-
         LOGGER.warn("No (successful) logout response received from the url [{}]", msg.getUrl().toExternalForm());
         return false;
     }
-
 }

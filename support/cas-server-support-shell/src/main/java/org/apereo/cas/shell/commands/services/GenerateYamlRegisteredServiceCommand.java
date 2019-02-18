@@ -1,6 +1,6 @@
 package org.apereo.cas.shell.commands.services;
 
-import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
 
 import lombok.extern.slf4j.Slf4j;
@@ -51,7 +51,7 @@ public class GenerateYamlRegisteredServiceCommand {
 
     private static void generate(final File filePath, final File result) {
         try {
-            val validator = new DefaultRegisteredServiceJsonSerializer();
+            val validator = new RegisteredServiceJsonSerializer();
             if (filePath.isFile() && filePath.exists() && filePath.canRead() && filePath.length() > 0) {
                 val svc = validator.from(filePath);
                 LOGGER.info("Service [{}] is valid at [{}].", svc.getName(), filePath.getCanonicalPath());

@@ -4,8 +4,10 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -19,20 +21,24 @@ import java.util.stream.Stream;
 @RequiresModule(name = "cas-server-support-reports", automated = true)
 @Getter
 @Setter
+@ToString
 public class ActuatorEndpointProperties implements Serializable {
     private static final long serialVersionUID = -2463521198550485506L;
     /**
      * Required user roles.
      */
-    private List<String> requiredRoles;
+    private List<String> requiredRoles = new ArrayList<>();
+
     /**
      * Required user authorities.
      */
-    private List<String> requiredAuthorities;
+    private List<String> requiredAuthorities = new ArrayList<>();
+
     /**
      * Required ip addresses.
      */
-    private List<String> requiredIpAddresses;
+    private List<String> requiredIpAddresses = new ArrayList<>();
+
     /**
      * Define the security access level of the endpoint.
      */

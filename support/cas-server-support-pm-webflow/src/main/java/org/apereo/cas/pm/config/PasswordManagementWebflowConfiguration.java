@@ -1,5 +1,7 @@
 package org.apereo.cas.pm.config;
 
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordValidationService;
@@ -12,6 +14,8 @@ import org.apereo.cas.pm.web.flow.actions.SendForgotUsernameInstructionsAction;
 import org.apereo.cas.pm.web.flow.actions.SendPasswordResetInstructionsAction;
 import org.apereo.cas.pm.web.flow.actions.VerifyPasswordResetRequestAction;
 import org.apereo.cas.pm.web.flow.actions.VerifySecurityQuestionsAction;
+import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
@@ -55,6 +59,10 @@ public class PasswordManagementWebflowConfiguration implements CasWebflowExecuti
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    @Qualifier("ticketRegistry")
+    private ObjectProvider<TicketRegistry> ticketRegistry;
+
+    @Autowired
     @Qualifier("communicationsManager")
     private ObjectProvider<CommunicationsManager> communicationsManager;
 
@@ -70,12 +78,20 @@ public class PasswordManagementWebflowConfiguration implements CasWebflowExecuti
     private ObjectProvider<FlowExecutor> loginFlowExecutor;
 
     @Autowired
+    @Qualifier("defaultTicketFactory")
+    private ObjectProvider<TicketFactory> ticketFactory;
+
+    @Autowired
     @Qualifier("passwordValidationService")
     private ObjectProvider<PasswordValidationService> passwordValidationService;
 
     @Autowired
     @Qualifier("passwordChangeService")
     private ObjectProvider<PasswordManagementService> passwordManagementService;
+
+    @Autowired
+    @Qualifier("webApplicationServiceFactory")
+    private ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory;
 
     @RefreshScope
     @Bean
@@ -116,7 +132,9 @@ public class PasswordManagementWebflowConfiguration implements CasWebflowExecuti
     @Bean
     @RefreshScope
     public Action sendPasswordResetInstructionsAction() {
-        return new SendPasswordResetInstructionsAction(casProperties, communicationsManager.getIfAvailable(), passwordManagementService.getIfAvailable());
+        return new SendPasswordResetInstructionsAction(casProperties, communicationsManager.getIfAvailable(),
+            passwordManagementService.getIfAvailable(), ticketRegistry.getIfAvailable(),
+            ticketFactory.getIfAvailable(), webApplicationServiceFactory.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "sendForgotUsernameInstructionsAction")
@@ -130,7 +148,8 @@ public class PasswordManagementWebflowConfiguration implements CasWebflowExecuti
     @Bean
     @RefreshScope
     public Action verifyPasswordResetRequestAction() {
-        return new VerifyPasswordResetRequestAction(casProperties, passwordManagementService.getIfAvailable());
+        return new VerifyPasswordResetRequestAction(casProperties,
+            passwordManagementService.getIfAvailable(), ticketRegistry.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "handlePasswordExpirationWarningMessagesAction")

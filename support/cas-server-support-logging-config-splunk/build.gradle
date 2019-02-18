@@ -1,5 +1,4 @@
 description = "Apereo CAS Core Logging Splunk Support"
-
 dependencies {
     api project(":api:cas-server-core-api-ticket")
 

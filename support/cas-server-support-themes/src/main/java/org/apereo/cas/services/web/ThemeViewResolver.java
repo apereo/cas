@@ -40,6 +40,7 @@ public class ThemeViewResolver extends AbstractCachingViewResolver {
 
     @Override
     protected View loadView(final String viewName, final Locale locale) throws Exception {
+        LOGGER.trace("Attempting to resolve view [{}] via locale [{}]", viewName, locale);
         val view = delegate.resolveViewName(viewName, locale);
         if (view instanceof AbstractThymeleafView) {
             val thymeleafView = (AbstractThymeleafView) view;
@@ -64,6 +65,7 @@ public class ThemeViewResolver extends AbstractCachingViewResolver {
      */
     @Getter
     @Setter
+    @Slf4j
     public static class Factory implements ThemeViewResolverFactory, ApplicationContextAware {
 
         private final ViewResolver delegate;
@@ -82,6 +84,7 @@ public class ThemeViewResolver extends AbstractCachingViewResolver {
 
         @Override
         public ThemeViewResolver create(final String theme) {
+            LOGGER.trace("Creating theme view resolver based on theme [{}]", theme);
             val resolver = new ThemeViewResolver(delegate, thymeleafProperties, casProperties, theme);
             resolver.setApplicationContext(applicationContext);
             resolver.setCache(thymeleafProperties.isCache());

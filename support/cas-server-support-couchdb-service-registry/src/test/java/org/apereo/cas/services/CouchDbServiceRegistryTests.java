@@ -1,12 +1,11 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.category.CouchDbCategory;
 import org.apereo.cas.config.CasCouchDbCoreConfiguration;
 import org.apereo.cas.config.CouchDbServiceRegistryConfiguration;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.services.RegisteredServiceCouchDbRepository;
 
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,7 +26,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
         "cas.serviceRegistry.couchDb.username=cas",
         "cas.serviceRegistry.couchDb.password=password"
     })
-@Category(CouchDbCategory.class)
+@Tag("CouchDb")
 public class CouchDbServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired
@@ -41,10 +40,6 @@ public class CouchDbServiceRegistryTests extends AbstractServiceRegistryTests {
     @Autowired
     @Qualifier("serviceRegistryCouchDbRepository")
     private RegisteredServiceCouchDbRepository registeredServiceRepository;
-
-    public CouchDbServiceRegistryTests() {
-        super(RegexRegisteredService.class);
-    }
 
     @Override
     public ServiceRegistry getNewServiceRegistry() {

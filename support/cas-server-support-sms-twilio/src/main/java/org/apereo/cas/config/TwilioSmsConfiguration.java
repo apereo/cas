@@ -20,6 +20,7 @@ import org.springframework.util.Assert;
 @Configuration("twilioSmsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class TwilioSmsConfiguration {
+
     @Autowired
     private CasConfigurationProperties casProperties;
 

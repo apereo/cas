@@ -7,7 +7,7 @@ import org.apereo.cas.services.CouchbaseServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
-import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +48,7 @@ public class CouchbaseServiceRegistryConfiguration {
     @Bean
     @RefreshScope
     public ServiceRegistry couchbaseServiceRegistry() {
-        return new CouchbaseServiceRegistry(eventPublisher, serviceRegistryCouchbaseClientFactory(), new DefaultRegisteredServiceJsonSerializer());
+        return new CouchbaseServiceRegistry(eventPublisher, serviceRegistryCouchbaseClientFactory(), new RegisteredServiceJsonSerializer());
     }
 
     @Bean

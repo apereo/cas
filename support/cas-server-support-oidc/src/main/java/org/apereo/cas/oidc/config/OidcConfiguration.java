@@ -21,6 +21,11 @@ import org.apereo.cas.oidc.claims.mapping.DefaultOidcAttributeToScopeClaimMapper
 import org.apereo.cas.oidc.claims.mapping.OidcAttributeToScopeClaimMapper;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettingsFactory;
+import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryService;
+import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerUserInfoRepository;
+import org.apereo.cas.oidc.discovery.webfinger.userinfo.OidcEchoingWebFingerUserInfoRepository;
+import org.apereo.cas.oidc.discovery.webfinger.userinfo.OidcGroovyWebFingerUserInfoRepository;
+import org.apereo.cas.oidc.discovery.webfinger.userinfo.OidcRestfulWebFingerUserInfoRepository;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequest;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequestSerializer;
 import org.apereo.cas.oidc.jwks.OidcDefaultJsonWebKeystoreCacheLoader;
@@ -31,6 +36,7 @@ import org.apereo.cas.oidc.profile.OidcRegisteredServicePreProcessorEventListene
 import org.apereo.cas.oidc.profile.OidcUserProfileDataCreator;
 import org.apereo.cas.oidc.token.OidcIdTokenGeneratorService;
 import org.apereo.cas.oidc.token.OidcIdTokenSigningAndEncryptionService;
+import org.apereo.cas.oidc.token.OidcRegisteredServiceJWTAccessTokenCipherExecutor;
 import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupport;
 import org.apereo.cas.oidc.web.OidcAccessTokenResponseGenerator;
 import org.apereo.cas.oidc.web.OidcCallbackAuthorizeViewResolver;
@@ -52,6 +58,7 @@ import org.apereo.cas.oidc.web.flow.OidcMultifactorAuthenticationTrigger;
 import org.apereo.cas.oidc.web.flow.OidcRegisteredServiceUIAction;
 import org.apereo.cas.oidc.web.flow.OidcWebflowConfigurer;
 import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
@@ -69,11 +76,12 @@ import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolv
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
-import org.apereo.cas.ticket.IdTokenSigningAndEncryptionService;
+import org.apereo.cas.ticket.OidcTokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.token.JWTBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.apereo.cas.util.serialization.StringSerializer;
@@ -88,6 +96,7 @@ import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.RsaJsonWebKey;
@@ -129,7 +138,12 @@ import java.util.stream.Collectors;
  */
 @Configuration("oidcConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionPlanConfigurer {
+
+    @Autowired
+    @Qualifier("accessTokenJwtBuilder")
+    private ObjectProvider<JWTBuilder> accessTokenJwtBuilder;
 
     @Autowired
     @Qualifier("accessTokenGrantAuditableRequestExtractor")
@@ -327,7 +341,7 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
     @Bean
     @RefreshScope
     public OAuth20AccessTokenResponseGenerator oidcAccessTokenResponseGenerator() {
-        return new OidcAccessTokenResponseGenerator(oidcIdTokenGenerator());
+        return new OidcAccessTokenResponseGenerator(oidcIdTokenGenerator(), accessTokenJwtBuilder.getIfAvailable());
     }
 
     @Bean
@@ -469,7 +483,28 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
             discoverySettings,
             profileScopeToAttributesFilter(),
             casProperties,
-            ticketGrantingTicketCookieGenerator.getIfAvailable());
+            ticketGrantingTicketCookieGenerator.getIfAvailable(),
+            new OidcWebFingerDiscoveryService(oidcWebFingerUserInfoRepository(), discoverySettings));
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "oidcWebFingerUserInfoRepository")
+    public OidcWebFingerUserInfoRepository oidcWebFingerUserInfoRepository() {
+        val userInfo = casProperties.getAuthn().getOidc().getWebfinger().getUserInfo();
+
+        if (userInfo.getGroovy().getLocation() != null) {
+            return new OidcGroovyWebFingerUserInfoRepository(userInfo.getGroovy().getLocation());
+        }
+
+        if (StringUtils.isNotBlank(userInfo.getRest().getUrl())) {
+            return new OidcRestfulWebFingerUserInfoRepository(userInfo.getRest());
+        }
+
+        LOGGER.warn("Using [{}] to locate webfinger resources, which is NOT appropriate for production purposes, "
+            + "as it will always echo back the given username/email address and is only useful for testing/demo purposes. "
+            + "Consider choosing and configuring a different repository implementation for locating and fetching user information "
+            + "for webfinger resources, etc.", OidcEchoingWebFingerUserInfoRepository.class.getSimpleName());
+        return new OidcEchoingWebFingerUserInfoRepository();
     }
 
     @RefreshScope
@@ -552,7 +587,7 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
     }
 
     @Bean
-    public IdTokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService() {
+    public OidcTokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService() {
         val oidc = casProperties.getAuthn().getOidc();
         return new OidcIdTokenSigningAndEncryptionService(oidcDefaultJsonWebKeystoreCache(),
             oidcServiceJsonWebKeystoreCache(),
@@ -633,6 +668,14 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
     public OAuth20AuthorizationResponseBuilder oidcImplicitIdTokenCallbackUrlBuilder() {
         return new OidcImplicitIdTokenAuthorizationResponseBuilder(oidcIdTokenGenerator(), oauthTokenGenerator.getIfAvailable(),
             accessTokenExpirationPolicy.getIfAvailable(), grantingTicketExpirationPolicy.getIfAvailable());
+    }
+
+    @Bean
+    public RegisteredServiceCipherExecutor oauthRegisteredServiceJwtAccessTokenCipherExecutor() {
+        val oidc = casProperties.getAuthn().getOidc();
+        return new OidcRegisteredServiceJWTAccessTokenCipherExecutor(oidcDefaultJsonWebKeystoreCache(),
+            oidcServiceJsonWebKeystoreCache(),
+            oidc.getIssuer());
     }
 
     @Override

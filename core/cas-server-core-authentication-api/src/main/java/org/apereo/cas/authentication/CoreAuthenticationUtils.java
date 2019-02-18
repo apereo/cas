@@ -19,7 +19,11 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apereo.services.persondir.support.merger.BaseAdditiveAttributeMerger;
+import org.apereo.services.persondir.support.merger.IAttributeMerger;
 import org.apereo.services.persondir.support.merger.MultivaluedAttributeMerger;
+import org.apereo.services.persondir.support.merger.NoncollidingAttributeAdder;
+import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.springframework.core.io.DefaultResourceLoader;
 
@@ -46,6 +50,34 @@ import java.util.stream.Collectors;
 @Slf4j
 @UtilityClass
 public class CoreAuthenticationUtils {
+
+    /**
+     * Gets attribute merger.
+     *
+     * @param mergingPolicy the merging policy
+     * @return the attribute merger
+     */
+    public static IAttributeMerger getAttributeMerger(final String mergingPolicy) {
+        switch (mergingPolicy.toLowerCase()) {
+            case "multivalued":
+            case "multi_valued":
+                return new MultivaluedAttributeMerger();
+            case "add":
+                return new NoncollidingAttributeAdder();
+            case "replace":
+            case "overwrite":
+            case "override":
+                return new ReplacingAttributeAdder();
+            default:
+                return new BaseAdditiveAttributeMerger() {
+                    @Override
+                    protected Map<String, List<Object>> mergePersonAttributes(final Map<String, List<Object>> toModify,
+                                                                              final Map<String, List<Object>> toConsider) {
+                        return toModify;
+                    }
+                };
+        }
+    }
 
     /**
      * Is remember me authentication?

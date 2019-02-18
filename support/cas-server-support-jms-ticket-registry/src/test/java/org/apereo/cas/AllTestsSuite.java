@@ -6,8 +6,7 @@ import org.apereo.cas.ticket.registry.queue.DeleteTicketMessageQueueCommandTests
 import org.apereo.cas.ticket.registry.queue.DeleteTicketsMessageQueueCommandTests;
 import org.apereo.cas.ticket.registry.queue.UpdateTicketMessageQueueCommandTests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -15,8 +14,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@SelectClasses({
     AddTicketMessageQueueCommandTests.class,
     DeleteTicketsMessageQueueCommandTests.class,
     DeleteTicketMessageQueueCommandTests.class,

@@ -5,7 +5,6 @@ import org.apereo.cas.interrupt.DefaultInterruptInquiryExecutionPlan;
 import org.apereo.cas.interrupt.GroovyScriptInterruptInquirer;
 import org.apereo.cas.interrupt.InterruptInquiryExecutionPlan;
 import org.apereo.cas.interrupt.InterruptInquiryExecutionPlanConfigurer;
-import org.apereo.cas.interrupt.InterruptResponse;
 import org.apereo.cas.interrupt.JsonResourceInterruptInquirer;
 import org.apereo.cas.interrupt.RegexAttributeInterruptInquirer;
 import org.apereo.cas.interrupt.RestEndpointInterruptInquirer;
@@ -63,6 +62,5 @@ public class CasInterruptConfiguration implements InterruptInquiryExecutionPlanC
         if (StringUtils.isNotBlank(ip.getRest().getUrl())) {
             plan.registerInterruptInquirer(new RestEndpointInterruptInquirer(ip.getRest()));
         }
-        plan.registerInterruptInquirer((authentication, registeredService, service, credential, requestContext) -> new InterruptResponse());
     }
 }
