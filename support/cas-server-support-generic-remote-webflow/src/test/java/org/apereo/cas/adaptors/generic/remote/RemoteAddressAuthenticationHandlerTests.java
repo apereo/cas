@@ -26,18 +26,15 @@ import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
+import lombok.SneakyThrows;
 import lombok.val;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link RemoteAddressAuthenticationHandlerTests}.
@@ -73,18 +70,13 @@ import static org.junit.Assert.*;
 },
     properties = "cas.authn.remoteAddress.ipAddressRange=192.168.1.0/255.255.255.0")
 public class RemoteAddressAuthenticationHandlerTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     @Autowired
     @Qualifier("remoteAddressAuthenticationHandler")
     private AuthenticationHandler remoteAddressAuthenticationHandler;
 
     @Test
-    public void verifyAccount() throws Exception {
+    @SneakyThrows
+    public void verifyAccount() {
         val c = new RemoteAddressCredential("192.168.1.7");
         val result = remoteAddressAuthenticationHandler.authenticate(c);
         assertNotNull(result);

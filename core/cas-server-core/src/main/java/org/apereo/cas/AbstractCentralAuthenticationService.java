@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 /**
  * An abstract implementation of the {@link CentralAuthenticationService} that provides access to
  * the needed scaffolding and services that are necessary to CAS, such as ticket registry, service registry, etc.
- * The intention here is to allow extensions to easily benefit these already-configured components
+ * The intention here is to allow extensions to easily benefit from these already-configured components
  * without having to to duplicate them again.
  *
  * @author Misagh Moayyed

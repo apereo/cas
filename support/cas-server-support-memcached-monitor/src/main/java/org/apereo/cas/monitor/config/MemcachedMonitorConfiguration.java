@@ -14,7 +14,9 @@ import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.actuate.health.HealthIndicator;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,12 +39,15 @@ public class MemcachedMonitorConfiguration {
     private ObjectProvider<ComponentSerializationPlan> componentSerializationPlan;
 
     @Bean
+    @ConditionalOnMissingBean(name = "memcachedMonitorTranscoder")
     public Transcoder memcachedMonitorTranscoder() {
         val memcached = casProperties.getMonitor().getMemcached();
         return MemcachedUtils.newTranscoder(memcached, componentSerializationPlan.getIfAvailable().getRegisteredClasses());
     }
 
     @Bean
+    @ConditionalOnEnabledHealthIndicator("memcachedHealthIndicator")
+    @ConditionalOnMissingBean(name = "memcachedHealthIndicator")
     public HealthIndicator memcachedHealthIndicator() {
         val warn = casProperties.getMonitor().getWarn();
         return new MemcachedHealthIndicator(memcachedHealthClientPool(),

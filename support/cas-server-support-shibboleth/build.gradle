@@ -1,5 +1,4 @@
 description = "Apereo CAS Shibboleth IdP/SP Extensions"
-
 dependencies {
 
     implementation project(":core:cas-server-core-util-api")

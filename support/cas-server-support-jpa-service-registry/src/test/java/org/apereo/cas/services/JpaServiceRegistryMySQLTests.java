@@ -1,10 +1,9 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.category.MySQLCategory;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -14,10 +13,8 @@ import org.springframework.test.context.TestPropertySource;
  * @since 6.0.0
  */
 @TestPropertySource(locations = "classpath:svcregmysql.properties")
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 3306)
-@Category(MySQLCategory.class)
+@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 3306)
+@Tag("MySQL")
 public class JpaServiceRegistryMySQLTests extends JpaServiceRegistryTests {
-    public JpaServiceRegistryMySQLTests(final Class<? extends RegisteredService> registeredServiceClass) {
-        super(registeredServiceClass);
-    }
 }

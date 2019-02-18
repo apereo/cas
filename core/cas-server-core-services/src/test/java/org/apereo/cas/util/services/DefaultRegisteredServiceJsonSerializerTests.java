@@ -1,11 +1,11 @@
 package org.apereo.cas.util.services;
 
-import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link DefaultRegisteredServiceJsonSerializerTests}.
@@ -17,7 +17,7 @@ public class DefaultRegisteredServiceJsonSerializerTests {
 
     @Test
     public void checkNullability() {
-        val zer = new DefaultRegisteredServiceJsonSerializer();
+        val zer = new RegisteredServiceJsonSerializer();
         val json = "    {\n"
             + "        \"@class\" : \"org.apereo.cas.services.RegexRegisteredService\",\n"
             + "            \"serviceId\" : \"^https://xyz.*\",\n"

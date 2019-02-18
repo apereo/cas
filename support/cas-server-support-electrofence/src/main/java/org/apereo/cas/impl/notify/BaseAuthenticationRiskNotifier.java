@@ -22,7 +22,7 @@ import lombok.Setter;
 public abstract class BaseAuthenticationRiskNotifier implements AuthenticationRiskNotifier {
 
     /**
-     * Cas properties.
+     * CAS properties.
      */
     protected final CasConfigurationProperties casProperties;
 

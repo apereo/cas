@@ -3,7 +3,10 @@ package org.apereo.cas;
 import org.apereo.cas.support.saml.SamlAttributeEncoderTests;
 import org.apereo.cas.support.saml.SamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.GroovySamlRegisteredServiceAttributeReleasePolicyTests;
+import org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicyTests;
+import org.apereo.cas.support.saml.services.MetadataRequestedAttributesAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.PatternMatchingEntityIdAttributeReleasePolicyTests;
+import org.apereo.cas.support.saml.services.RefedsRSAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredServiceJpaMicrosoftSqlServerTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredServiceJpaPostgresTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredServiceJpaTests;
@@ -16,8 +19,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignat
 import org.apereo.cas.support.saml.web.idp.profile.builders.nameid.SamlProfileSamlNameIdBuilderTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSaml2ResponseBuilderTests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * Test suite to run all SAML tests.
@@ -25,8 +27,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@SelectClasses({
     SamlRegisteredServiceTests.class,
     SamlIdPConfigurationTests.class,
     SamlAttributeEncoderTests.class,
@@ -40,6 +41,9 @@ import org.junit.runners.Suite;
     GroovySamlRegisteredServiceAttributeReleasePolicyTests.class,
     SamlRegisteredServiceJpaPostgresTests.class,
     SamlIdPUtilsTests.class,
+    InCommonRSAttributeReleasePolicyTests.class,
+    RefedsRSAttributeReleasePolicyTests.class,
+    MetadataRequestedAttributesAttributeReleasePolicyTests.class,
     SamlObjectSignatureValidatorTests.class,
     SamlProfileSaml2ResponseBuilderTests.class
 })

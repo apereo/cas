@@ -79,6 +79,9 @@ public class SamlRegisteredService extends RegexRegisteredService {
     private String signingCredentialFingerprint;
 
     @Column
+    private String issuerEntityId;
+
+    @Column
     private boolean signAssertions;
 
     @Column(name = "skipGenAssertionNameId")
@@ -134,6 +137,12 @@ public class SamlRegisteredService extends RegexRegisteredService {
     @MapKeyColumn(name = "attribute_name")
     @Column(name = "attribute_value")
     private Map<String, String> attributeFriendlyNames = new TreeMap<>();
+
+    @ElementCollection
+    @CollectionTable(name = "SamlRegisteredService_AttributeValueTypes")
+    @MapKeyColumn(name = "attribute_name")
+    @Column(name = "attribute_type")
+    private Map<String, String> attributeValueTypes = new TreeMap<>();
 
     @Lob
     @Column(name = "encryptable_attrs", length = Integer.MAX_VALUE)

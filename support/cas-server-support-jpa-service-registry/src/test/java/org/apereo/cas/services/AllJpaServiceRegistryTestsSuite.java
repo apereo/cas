@@ -1,7 +1,6 @@
 package org.apereo.cas.services;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * This is {@link AllJpaServiceRegistryTestsSuite}.
@@ -9,8 +8,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@SelectClasses({
     JpaServiceRegistryTests.class,
     JpaServiceRegistryMySQLTests.class,
     JpaServiceRegistryMicrosoftSqlServerTests.class,

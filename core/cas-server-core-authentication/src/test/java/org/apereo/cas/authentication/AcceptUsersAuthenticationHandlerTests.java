@@ -4,10 +4,9 @@ import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 
+import lombok.SneakyThrows;
 import lombok.val;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
@@ -16,7 +15,7 @@ import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Scott Battaglia
@@ -25,9 +24,6 @@ import static org.junit.Assert.*;
 public class AcceptUsersAuthenticationHandlerTests {
     private static final String SCOTT = "scott";
     private static final String RUTGERS = "rutgers";
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     private final AcceptUsersAuthenticationHandler authenticationHandler;
 
@@ -42,7 +38,8 @@ public class AcceptUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifySupportsSpecialCharacters() throws Exception {
+    @SneakyThrows
+    public void verifySupportsSpecialCharacters() {
         val c = new UsernamePasswordCredential();
         c.setUsername("brian");
         c.setPassword("t�st");
@@ -70,7 +67,8 @@ public class AcceptUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyAuthenticatesUserInMap() throws Exception {
+    @SneakyThrows
+    public void verifyAuthenticatesUserInMap() {
         val c = new UsernamePasswordCredential();
 
         c.setUsername(SCOTT);
@@ -84,52 +82,42 @@ public class AcceptUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyFailsUserNotInMap() throws Exception {
+    public void verifyFailsUserNotInMap() {
         val c = new UsernamePasswordCredential();
 
         c.setUsername("fds");
         c.setPassword(RUTGERS);
 
-        this.thrown.expect(AccountNotFoundException.class);
-
-
-        this.authenticationHandler.authenticate(c);
+        assertThrows(AccountNotFoundException.class, () -> this.authenticationHandler.authenticate(c));
     }
 
     @Test
-    public void verifyFailsNullUserName() throws Exception {
+    public void verifyFailsNullUserName() {
         val c = new UsernamePasswordCredential();
 
         c.setUsername(null);
         c.setPassword("user");
 
-        this.thrown.expect(AccountNotFoundException.class);
-        this.authenticationHandler.authenticate(c);
+        assertThrows(AccountNotFoundException.class, () -> this.authenticationHandler.authenticate(c));
     }
 
     @Test
-    public void verifyFailsNullUserNameAndPassword() throws Exception {
+    public void verifyFailsNullUserNameAndPassword() {
         val c = new UsernamePasswordCredential();
 
         c.setUsername(null);
         c.setPassword(null);
 
-        this.thrown.expect(AccountNotFoundException.class);
-
-
-        this.authenticationHandler.authenticate(c);
+        assertThrows(AccountNotFoundException.class, () -> this.authenticationHandler.authenticate(c));
     }
 
     @Test
-    public void verifyFailsNullPassword() throws Exception {
+    public void verifyFailsNullPassword() {
         val c = new UsernamePasswordCredential();
 
         c.setUsername(SCOTT);
         c.setPassword(null);
 
-        this.thrown.expect(FailedLoginException.class);
-
-
-        this.authenticationHandler.authenticate(c);
+        assertThrows(FailedLoginException.class, () -> this.authenticationHandler.authenticate(c));
     }
 }

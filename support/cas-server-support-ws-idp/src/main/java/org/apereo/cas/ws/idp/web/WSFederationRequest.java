@@ -69,6 +69,7 @@ public class WSFederationRequest {
         val code = request.getParameter(WSFederationConstants.CODE);
         val wa = request.getParameter(WSFederationConstants.WA);
         val wauth = StringUtils.defaultIfBlank(request.getParameter(WSFederationConstants.WAUTH), "default");
-        return new WSFederationRequest(wtrealm, wreply, wctx, wfresh, whr, wresult, relayState, samlResponse, state, code, wa, wauth, wreq);
+        return new WSFederationRequest(wtrealm, wreply, wctx, wfresh, whr, wresult,
+            relayState, samlResponse, state, code, wa, wauth, wreq);
     }
 }

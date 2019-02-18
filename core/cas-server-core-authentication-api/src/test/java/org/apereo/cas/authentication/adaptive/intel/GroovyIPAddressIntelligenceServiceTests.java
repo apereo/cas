@@ -3,11 +3,11 @@ package org.apereo.cas.authentication.adaptive.intel;
 import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.test.MockRequestContext;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link GroovyIPAddressIntelligenceServiceTests}.

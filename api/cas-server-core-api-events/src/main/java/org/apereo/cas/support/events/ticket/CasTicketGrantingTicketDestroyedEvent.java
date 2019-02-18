@@ -23,7 +23,7 @@ public class CasTicketGrantingTicketDestroyedEvent extends AbstractCasEvent {
     private final TicketGrantingTicket ticketGrantingTicket;
 
     /**
-     * Instantiates a new Cas sso session destroyed event.
+     * Instantiates a new CAS sso session destroyed event.
      *
      * @param source the source
      * @param ticket the ticket

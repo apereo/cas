@@ -23,7 +23,7 @@ public class CasRiskBasedAuthenticationEvaluationStartedEvent extends AbstractCa
     private final RegisteredService service;
 
     /**
-     * Instantiates a new Cas risk based authentication evaluation started event.
+     * Instantiates a new CAS risk based authentication evaluation started event.
      *
      * @param source         the source
      * @param authentication the authentication
