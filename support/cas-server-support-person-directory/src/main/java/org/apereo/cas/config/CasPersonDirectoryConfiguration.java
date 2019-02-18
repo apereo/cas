@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.resolvers.InternalGroovyScriptDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.JdbcPrincipalAttributesProperties;
@@ -29,10 +30,6 @@ import org.apereo.services.persondir.support.jdbc.AbstractJdbcPersonAttributeDao
 import org.apereo.services.persondir.support.jdbc.MultiRowJdbcPersonAttributeDao;
 import org.apereo.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao;
 import org.apereo.services.persondir.support.ldap.LdaptivePersonAttributeDao;
-import org.apereo.services.persondir.support.merger.IAttributeMerger;
-import org.apereo.services.persondir.support.merger.MultivaluedAttributeMerger;
-import org.apereo.services.persondir.support.merger.NoncollidingAttributeAdder;
-import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -337,7 +334,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
         val mergingDao = new MergingPersonAttributeDaoImpl();
         val merger = StringUtils.defaultIfBlank(casProperties.getAuthn().getAttributeRepository().getMerger(), "replace").trim();
         LOGGER.trace("Configured merging strategy for attribute sources is [{}]", merger);
-        mergingDao.setMerger(getAttributeMerger(merger));
+        mergingDao.setMerger(CoreAuthenticationUtils.getAttributeMerger(merger));
 
         val list = attributeRepositories();
         mergingDao.setPersonAttributeDaos(list);
@@ -350,18 +347,5 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
 
         return mergingDao;
     }
-
-    private static IAttributeMerger getAttributeMerger(final String merger) {
-        switch (merger.toLowerCase()) {
-            case "merge":
-                return new MultivaluedAttributeMerger();
-            case "add":
-                return new NoncollidingAttributeAdder();
-            case "replace":
-            default:
-                return new ReplacingAttributeAdder();
-        }
-    }
-
 }
 

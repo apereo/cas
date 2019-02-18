@@ -88,7 +88,12 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
         val id = '_' + String.valueOf(RandomUtils.getNativeInstance().nextLong());
         val samlResponse = newResponse(id, ZonedDateTime.now(ZoneOffset.UTC), authnRequest.getID(), null);
         samlResponse.setVersion(SAMLVersion.VERSION_20);
-        samlResponse.setIssuer(buildEntityIssuer());
+
+        if (StringUtils.isBlank(service.getIssuerEntityId())) {
+            samlResponse.setIssuer(buildSamlResponseIssuer(casProperties.getAuthn().getSamlIdp().getEntityId()));
+        } else {
+            samlResponse.setIssuer(buildSamlResponseIssuer(service.getIssuerEntityId()));
+        }
 
         val acs = SamlIdPUtils.determineEndpointForRequest(authnRequest, adaptor, binding);
         val location = StringUtils.isBlank(acs.getResponseLocation()) ? acs.getLocation() : acs.getResponseLocation();
@@ -111,12 +116,12 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
         val status = newStatus(StatusCode.SUCCESS, null);
         samlResponse.setStatus(status);
 
-        SamlUtils.logSamlObject(this.configBean, samlResponse);
+        SamlUtils.logSamlObject(this.openSamlConfigBean, samlResponse);
 
         if (service.isSignResponses()) {
             LOGGER.debug("SAML entity id [{}] indicates that SAML responses should be signed", adaptor.getEntityId());
             val samlResponseSigned = this.samlObjectSigner.encode(samlResponse, service, adaptor, response, request, binding, authnRequest);
-            SamlUtils.logSamlObject(configBean, samlResponseSigned);
+            SamlUtils.logSamlObject(openSamlConfigBean, samlResponseSigned);
             return samlResponseSigned;
         }
 
@@ -133,9 +138,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
                               final String binding,
                               final RequestAbstractType authnRequest,
                               final Object assertion) throws SamlException {
-
         LOGGER.trace("Constructing encoder based on binding [{}] for [{}]", binding, adaptor.getEntityId());
-
         if (binding.equalsIgnoreCase(SAMLConstants.SAML2_ARTIFACT_BINDING_URI)) {
             val encoder = new SamlResponseArtifactEncoder(this.velocityEngineFactory,
                 adaptor, httpRequest, httpResponse, authnRequest,

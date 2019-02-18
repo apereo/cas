@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
@@ -61,7 +62,34 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
         credentials.setTypedIdUsed(isTypedIdUsed);
         val principal = this.principalFactory.createPrincipal(id, new LinkedHashMap<>(profile.getAttributes()));
         LOGGER.debug("Constructed authenticated principal [{}] based on user profile [{}]", principal, profile);
+        return finalizeAuthenticationHandlerResult(credentials, principal, profile, client);
+    }
+
+    /**
+     * Finalize authentication handler result.
+     *
+     * @param credentials the credentials
+     * @param principal   the principal
+     * @param profile     the profile
+     * @param client      the client
+     * @return the authentication handler execution result
+     */
+    protected AuthenticationHandlerExecutionResult finalizeAuthenticationHandlerResult(final ClientCredential credentials, final Principal principal,
+                                                                                       final UserProfile profile, final BaseClient client) {
+        preFinalizeAuthenticationHandlerResult(credentials, principal, profile, client);
         return createHandlerResult(credentials, principal, new ArrayList<>(0));
+    }
+
+    /**
+     * Pre finalize authentication handler result.
+     *
+     * @param credentials the credentials
+     * @param principal   the principal
+     * @param profile     the profile
+     * @param client      the client
+     */
+    protected void preFinalizeAuthenticationHandlerResult(final ClientCredential credentials, final Principal principal,
+                                                          final UserProfile profile, final BaseClient client) {
     }
 
     /**

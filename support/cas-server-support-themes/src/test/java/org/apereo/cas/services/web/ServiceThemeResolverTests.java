@@ -20,9 +20,7 @@ import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.util.HttpRequestUtils;
 
 import lombok.val;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
@@ -30,21 +28,20 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
  * @author Scott Battaglia
  * @since 3.1
  */
-@SpringBootTest(classes = {CasThemesConfiguration.class,
+@SpringBootTest(classes = {
+    CasThemesConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
@@ -58,17 +55,12 @@ import static org.mockito.Mockito.*;
     CasCoreConfiguration.class,
     CasCoreUtilConfiguration.class,
     ThymeleafAutoConfiguration.class,
-    RefreshAutoConfiguration.class})
+    RefreshAutoConfiguration.class
+})
 @TestPropertySource(properties = "cas.theme.defaultThemeName=test")
 public class ServiceThemeResolverTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
     private static final String MOZILLA = "Mozilla";
     private static final String DEFAULT_THEME_NAME = "test";
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     @Qualifier("servicesManager")
@@ -90,7 +82,7 @@ public class ServiceThemeResolverTests {
 
         val request = new MockHttpServletRequest();
         val ctx = mock(RequestContext.class);
-        val scope = new LocalAttributeMap();
+        val scope = new LocalAttributeMap<Object>();
         scope.put(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.getService(r.getServiceId()));
         when(ctx.getFlowScope()).thenReturn(scope);
         RequestContextHolder.setRequestContext(ctx);

@@ -1,12 +1,11 @@
 package org.apereo.cas.consent;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningStandaloneCondition;
+import org.apereo.cas.util.junit.DisabledIfContinuousIntegration;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.SneakyThrows;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
 
@@ -23,12 +22,13 @@ import org.springframework.test.context.TestPropertySource;
     "cas.consent.ldap.searchFilter=cn={0}",
     "cas.consent.ldap.consentAttributeName=description"
 })
-@ConditionalIgnore(condition = RunningStandaloneCondition.class)
+@DisabledIfContinuousIntegration
 public class LdapEmbeddedConsentRepositoryTests extends BaseLdapConsentRepositoryTests {
     private static final int LDAP_PORT = 1387;
 
-    @BeforeClass
-    public static void bootstrap() throws Exception {
+    @BeforeAll
+    @SneakyThrows
+    public static void bootstrap() {
         LdapIntegrationTestsOperations.initDirectoryServer(LDAP_PORT);
         LdapIntegrationTestsOperations.getLdapDirectory(LDAP_PORT).populateEntries(
             new ClassPathResource("ldif/ldap-consent.ldif").getInputStream());

@@ -8,8 +8,7 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
-import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
+import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -48,6 +47,10 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
     @Qualifier("u2fDeviceRepository")
     private ObjectProvider<U2FDeviceRepository> u2fDeviceRepository;
 
+    @Autowired
+    @Qualifier("u2fBypassEvaluator")
+    private ObjectProvider<MultifactorAuthenticationProviderBypass> u2fBypassEvaluator;
+
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "u2fAuthenticationMetaDataPopulator")
@@ -58,13 +61,6 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
             u2fAuthenticationHandler(),
             u2fMultifactorAuthenticationProvider().getId()
         );
-    }
-
-    @Bean
-    @RefreshScope
-    @ConditionalOnMissingBean(name = "u2fBypassEvaluator")
-    public MultifactorAuthenticationProviderBypass u2fBypassEvaluator() {
-        return MultifactorAuthenticationUtils.newMultifactorAuthenticationProviderBypass(casProperties.getAuthn().getMfa().getU2f().getBypass());
     }
 
     @ConditionalOnMissingBean(name = "u2fPrincipalFactory")
@@ -88,7 +84,7 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
     public MultifactorAuthenticationProvider u2fMultifactorAuthenticationProvider() {
         val u2f = casProperties.getAuthn().getMfa().getU2f();
         val p = new U2FMultifactorAuthenticationProvider();
-        p.setBypassEvaluator(u2fBypassEvaluator());
+        p.setBypassEvaluator(u2fBypassEvaluator.getIfAvailable());
         p.setFailureMode(u2f.getFailureMode());
         p.setOrder(u2f.getRank());
         p.setId(u2f.getId());

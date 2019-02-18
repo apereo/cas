@@ -18,6 +18,7 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishReleases && !rootP
     }
 
     if (plugins.hasPlugin("war")) {
+        
         javadoc {
             enabled false
         }

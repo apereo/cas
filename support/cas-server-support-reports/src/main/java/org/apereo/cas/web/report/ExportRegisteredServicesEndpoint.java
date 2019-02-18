@@ -2,9 +2,9 @@ package org.apereo.cas.web.report;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.io.TemporaryFileSystemResource;
-import org.apereo.cas.web.BaseCasMvcEndpoint;
+import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import lombok.val;
 import org.jooq.lambda.Unchecked;
@@ -30,7 +30,7 @@ import java.util.HashMap;
  * @since 6.0.0
  */
 @Endpoint(id = "exportRegisteredServices", enableByDefault = false)
-public class ExportRegisteredServicesEndpoint extends BaseCasMvcEndpoint {
+public class ExportRegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
     private final ServicesManager servicesManager;
 
     /**
@@ -61,7 +61,7 @@ public class ExportRegisteredServicesEndpoint extends BaseCasMvcEndpoint {
         env.put("create", "true");
         env.put("encoding", StandardCharsets.UTF_8.name());
         try (val zipfs = FileSystems.newFileSystem(URI.create("jar:" + file.toURI().toString()), env)) {
-            val serializer = new DefaultRegisteredServiceJsonSerializer();
+            val serializer = new RegisteredServiceJsonSerializer();
             val services = this.servicesManager.load();
             services.forEach(Unchecked.consumer(service -> {
                 val fileName = String.format("%s-%s", service.getName(), service.getId());

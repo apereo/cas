@@ -17,7 +17,11 @@ public class DefaultWebApplicationResponseBuilderLocator implements ResponseBuil
     private final List<ResponseBuilder> builders;
 
     @Override
-    public ResponseBuilder locate(final WebApplicationService service) {
-        return builders.stream().filter(r -> r.supports(service)).findFirst().orElse(null);
+    public ResponseBuilder<WebApplicationService> locate(final WebApplicationService service) {
+        return builders
+            .stream()
+            .filter(r -> r.supports(service))
+            .findFirst()
+            .orElse(null);
     }
 }

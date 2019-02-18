@@ -3,7 +3,9 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.springframework.core.Ordered;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -15,9 +17,8 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@FunctionalInterface
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public interface RegisteredServiceAttributeReleasePolicy extends Serializable {
+public interface RegisteredServiceAttributeReleasePolicy extends Serializable, Ordered {
 
     /**
      * Is authorized to release authentication attributes boolean.
@@ -75,5 +76,15 @@ public interface RegisteredServiceAttributeReleasePolicy extends Serializable {
     default Map<String, Object> getConsentableAttributes(final Principal p, final Service selectedService,
                                                          final RegisteredService service) {
         return getAttributes(p, selectedService, service);
+    }
+
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
+    @JsonIgnore
+    default String getName() {
+        return getClass().getSimpleName();
     }
 }

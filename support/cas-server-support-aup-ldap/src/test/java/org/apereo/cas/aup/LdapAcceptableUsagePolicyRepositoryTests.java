@@ -1,10 +1,8 @@
 package org.apereo.cas.aup;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
-import org.apereo.cas.category.LdapCategory;
 import org.apereo.cas.config.CasAcceptableUsagePolicyLdapConfiguration;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.Cleanup;
@@ -13,8 +11,8 @@ import lombok.SneakyThrows;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.junit.BeforeClass;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
@@ -28,9 +26,9 @@ import org.springframework.test.context.TestPropertySource;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Category(LdapCategory.class)
+@Tag("Ldap")
 @Import(CasAcceptableUsagePolicyLdapConfiguration.class)
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
+@EnabledIfContinuousIntegration
 @TestPropertySource(properties = {
     "cas.acceptableUsagePolicy.ldap.ldapUrl=ldap://localhost:10389",
     "cas.acceptableUsagePolicy.ldap.useSsl=false",
@@ -49,7 +47,7 @@ public class LdapAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsag
     @Qualifier("acceptableUsagePolicyRepository")
     protected AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
 
-    @BeforeClass
+    @BeforeAll
     @SneakyThrows
     public static void bootstrap() {
         ClientInfoHolder.setClientInfo(new ClientInfo(new MockHttpServletRequest()));

@@ -43,6 +43,9 @@ Each interrupt strategy is ultimately tasked to produce a response that contains
 | `autoRedirect`             | `true/false` to indicate whether CAS should auto-redirect to the first provided link.
 | `autoRedirectAfterSeconds` | Indicate whether CAS should auto-redirect after the configured number of seconds. The default is `-1`, meaning delayed redirect functionality should not be executed.
 
+<div class="alert alert-info"><strong>Can We SSO Into Links?</strong><p>
+The collection of <code>links</code> are just simple links and are not tied in any way to the CAS authentication sequence, meaning they do not activate a state, transition or view in that sequence to trigger CAS into generating tickets, executing certain actions, etc. Any link in this collection is exactly that; just a link. If a link points to applications that are integrated with CAS, accessing those applications via the link will prompt the user for credentials again specially if single sign-on isn't already established. Remember that interrupt notifications typically execute after the authentication step and before any single sign-on session is created.</p></div>
+
 ## Interrupt Strategies
 
 Interrupt queries can be executed via the following ways:
@@ -109,7 +112,7 @@ The following parameters are passed to the script:
 | Parameter             | Description
 |------------------------------------------------------------------------------------------------------------------------
 | `uid`                 | Authenticated principal id.
-| `attributes`          | A map of type `Map<String, Objec>` that contains both principal and authentication attributes. 
+| `attributes`          | A map of type `Map<String, Object>` that contains both principal and authentication attributes. 
 | `service`             | The identifier (i.e. URL) of the requesting application.
 | `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
 

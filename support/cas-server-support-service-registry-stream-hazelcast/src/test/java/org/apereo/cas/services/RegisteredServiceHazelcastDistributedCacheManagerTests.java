@@ -12,11 +12,11 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import lombok.val;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link RegisteredServiceHazelcastDistributedCacheManagerTests}.
@@ -28,7 +28,7 @@ public class RegisteredServiceHazelcastDistributedCacheManagerTests {
     private HazelcastInstance hz;
     private RegisteredServiceHazelcastDistributedCacheManager mgr;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         val factory = new HazelcastConfigurationFactory();
         val properties = new BaseHazelcastProperties();
@@ -38,7 +38,7 @@ public class RegisteredServiceHazelcastDistributedCacheManagerTests {
         mgr = new RegisteredServiceHazelcastDistributedCacheManager(this.hz);
     }
 
-    @After
+    @AfterEach
     public void shutdown() {
         this.hz.shutdown();
     }
@@ -51,7 +51,7 @@ public class RegisteredServiceHazelcastDistributedCacheManagerTests {
         assertNull(obj);
         assertFalse(mgr.contains(registeredService));
 
-        val cache = new DistributedCacheObject(registeredService);
+        val cache = new DistributedCacheObject<RegisteredService>(registeredService);
         mgr.set(registeredService, cache);
         assertFalse(mgr.getAll().isEmpty());
         obj = mgr.get(registeredService);

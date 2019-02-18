@@ -1,5 +1,4 @@
 description = "Apereo CAS Swivel Core Support"
-
 dependencies {
     api project(":api:cas-server-core-api-util")
     

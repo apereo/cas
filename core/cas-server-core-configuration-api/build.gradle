@@ -1,5 +1,4 @@
 description = "Apereo CAS Core Configuration API"
-
 dependencies {
     implementation libraries.bouncycastle
     implementation libraries.jasypt

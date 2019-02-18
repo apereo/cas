@@ -6,7 +6,9 @@ import org.apereo.cas.monitor.MongoDbHealthIndicator;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.actuate.health.HealthIndicator;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -28,19 +30,21 @@ public class MongoDbMonitoringConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "mongoHealthIndicatorTemplate")
     public MongoTemplate mongoHealthIndicatorTemplate() {
         val factory = new MongoDbConnectionFactory();
         val mongoProps = casProperties.getMonitor().getMongo();
         return factory.buildMongoTemplate(mongoProps);
     }
 
-
-
     @Bean
     @RefreshScope
+    @ConditionalOnEnabledHealthIndicator("mongoHealthIndicator")
+    @ConditionalOnMissingBean(name = "mongoHealthIndicator")
     public HealthIndicator mongoHealthIndicator() {
+        val warn = casProperties.getMonitor().getWarn();
         return new MongoDbHealthIndicator(mongoHealthIndicatorTemplate(),
-            casProperties.getMonitor().getWarn().getEvictionThreshold(),
-            casProperties.getMonitor().getWarn().getThreshold());
+            warn.getEvictionThreshold(),
+            warn.getThreshold());
     }
 }

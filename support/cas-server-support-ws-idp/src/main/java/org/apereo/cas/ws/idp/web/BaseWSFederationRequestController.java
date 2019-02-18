@@ -63,7 +63,7 @@ public abstract class BaseWSFederationRequestController {
     protected final Service callbackService;
 
     /**
-     * The Cas properties.
+     * The CAS properties.
      */
     protected final CasConfigurationProperties casProperties;
 

@@ -167,5 +167,4 @@ public interface ServicesManager {
     default Collection<String> getDomains() {
         return Stream.of("default").collect(Collectors.toList());
     }
-
 }

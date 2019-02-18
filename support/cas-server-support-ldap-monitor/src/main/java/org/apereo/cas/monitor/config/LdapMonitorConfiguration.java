@@ -9,6 +9,7 @@ import lombok.val;
 import org.ldaptive.pool.SearchValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -39,6 +40,7 @@ public class LdapMonitorConfiguration {
 
     @Autowired
     @Bean
+    @ConditionalOnEnabledHealthIndicator("pooledLdapConnectionFactoryHealthIndicator")
     public HealthIndicator pooledLdapConnectionFactoryHealthIndicator(@Qualifier("pooledConnectionFactoryMonitorExecutorService") final ExecutorService executor) {
         val ldap = casProperties.getMonitor().getLdap();
         val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);

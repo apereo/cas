@@ -33,6 +33,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This is {@link DelegatedClientWebflowManager}.
@@ -65,17 +66,12 @@ public class DelegatedClientWebflowManager {
      * @return the ticket
      */
     public Ticket store(final J2EContext webContext, final BaseClient client) {
-        val properties = new HashMap<String, Serializable>();
+        val properties = buildTicketProperties(webContext);
 
         val originalService = argumentExtractor.extractService(webContext.getRequest());
         val service = authenticationRequestServiceSelectionStrategies.resolveService(originalService);
         properties.put(CasProtocolConstants.PARAMETER_SERVICE, originalService);
         properties.put(CasProtocolConstants.PARAMETER_TARGET_SERVICE, service);
-
-        properties.put(this.themeParamName, StringUtils.defaultString(webContext.getRequestParameter(this.themeParamName)));
-        properties.put(this.localParamName, StringUtils.defaultString(webContext.getRequestParameter(this.localParamName)));
-        properties.put(CasProtocolConstants.PARAMETER_METHOD,
-            StringUtils.defaultString(webContext.getRequestParameter(CasProtocolConstants.PARAMETER_METHOD)));
 
         val transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
         val ticket = transientFactory.create(originalService, properties);
@@ -112,6 +108,23 @@ public class DelegatedClientWebflowManager {
     }
 
     /**
+     * Build the ticket properties.
+     *
+     * @param webContext the web context
+     * @return the ticket properties
+     */
+    protected Map<String, Serializable> buildTicketProperties(final J2EContext webContext) {
+        val properties = new HashMap<String, Serializable>();
+
+        properties.put(this.themeParamName, StringUtils.defaultString(webContext.getRequestParameter(this.themeParamName)));
+        properties.put(this.localParamName, StringUtils.defaultString(webContext.getRequestParameter(this.localParamName)));
+        properties.put(CasProtocolConstants.PARAMETER_METHOD,
+                StringUtils.defaultString(webContext.getRequestParameter(CasProtocolConstants.PARAMETER_METHOD)));
+
+        return properties;
+    }
+
+    /**
      * Retrieve service.
      *
      * @param requestContext the request context
@@ -129,7 +142,15 @@ public class DelegatedClientWebflowManager {
 
     }
 
-    private Service restoreDelegatedAuthenticationRequest(final RequestContext requestContext, final WebContext webContext,
+    /**
+     * Restore the information saved in the ticket and return the service.
+     *
+     * @param requestContext the request context
+     * @param webContext     the web context
+     * @param ticket         the ticket
+     * @return the service
+     */
+    protected Service restoreDelegatedAuthenticationRequest(final RequestContext requestContext, final WebContext webContext,
                                                           final TransientSessionTicket ticket) {
         val service = ticket.getService();
         LOGGER.debug("Restoring requested service [{}] back in the authentication flow", service);

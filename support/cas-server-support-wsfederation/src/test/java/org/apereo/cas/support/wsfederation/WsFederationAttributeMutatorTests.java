@@ -3,14 +3,14 @@ package org.apereo.cas.support.wsfederation;
 import org.apereo.cas.support.wsfederation.attributes.WsFederationAttributeMutator;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test cases for {@link WsFederationAttributeMutator}.

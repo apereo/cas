@@ -1,6 +1,4 @@
 description = "Apereo CAS SPNEGO/NTLM Support"
-
-
 dependencies {
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-authentication-api")

@@ -8,8 +8,9 @@ import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingSt
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.ClassPathResource;
 
@@ -19,6 +20,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -33,7 +36,7 @@ public class GrouperRegisteredServiceAccessStrategyTests {
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");
 
-    @BeforeClass
+    @BeforeAll
     public static void prepTests() throws Exception {
         FileUtils.cleanDirectory(RESOURCE.getFile());
     }
@@ -53,21 +56,20 @@ public class GrouperRegisteredServiceAccessStrategyTests {
             mock(ApplicationEventPublisher.class),
             new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy());
-        dao.save(service);
-        dao.load();
+        val saved = dao.save(service);
+        assertEquals(service, saved);
+        assertFalse(dao.load().isEmpty());
     }
 
     @Test
+    @Disabled
     public void checkGrouperAttributes() {
         val resource = new ClassPathResource("grouper.client.properties");
-        if (resource.exists()) {
-            val strategy = new GrouperRegisteredServiceAccessStrategy();
-            val requiredAttributes = new HashMap<String, Set<String>>();
-            requiredAttributes.put("memberOf", Collections.singleton("admin"));
-            strategy.setRequiredAttributes(requiredAttributes);
-            strategy.doPrincipalAttributesAllowServiceAccess("banderson", (Map) RegisteredServiceTestUtils.getTestAttributes());
-        } else {
-            LOGGER.info("[{}] is not configured. Skipping tests", resource.getFilename());
-        }
+        assumeTrue(resource.exists(), String.format("[%s] is not configured. Skipping tests", resource.getFilename()));
+        val strategy = new GrouperRegisteredServiceAccessStrategy();
+        val requiredAttributes = new HashMap<String, Set<String>>();
+        requiredAttributes.put("memberOf", Collections.singleton("admin"));
+        strategy.setRequiredAttributes(requiredAttributes);
+        assertTrue(strategy.doPrincipalAttributesAllowServiceAccess("banderson", (Map) RegisteredServiceTestUtils.getTestAttributes("banderson")));
     }
 }

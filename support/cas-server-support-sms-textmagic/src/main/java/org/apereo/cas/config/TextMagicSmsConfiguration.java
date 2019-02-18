@@ -29,7 +29,6 @@ public class TextMagicSmsConfiguration {
     @Qualifier("noRedirectHttpClient")
     private ObjectProvider<HttpClient> httpClient;
 
-
     @Bean
     public SmsSender smsSender() {
         val textMagic = casProperties.getSmsProvider().getTextMagic();

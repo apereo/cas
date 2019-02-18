@@ -11,15 +11,15 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -34,7 +34,7 @@ public class OAuth20PasswordGrantTypeTokenRequestValidatorTests {
     private OAuthRegisteredService nonSupportingService;
     private OAuthRegisteredService promiscuousService;
 
-    @Before
+    @BeforeEach
     public void before() {
         val service = RegisteredServiceTestUtils.getService();
 

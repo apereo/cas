@@ -45,7 +45,7 @@ public abstract class BaseUmaEndpointController {
     protected final ResourceSetRepository umaResourceSetRepository;
 
     /**
-     * The Cas properties.
+     * The CAS properties.
      */
     protected final CasConfigurationProperties casProperties;
 

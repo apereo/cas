@@ -1,11 +1,11 @@
 package org.apereo.cas.validation;
 
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Scott Battaglia
@@ -15,7 +15,7 @@ public class Cas20WithoutProxyingValidationSpecificationTests {
 
     private Cas20WithoutProxyingValidationSpecification validationSpecification;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         this.validationSpecification = new Cas20WithoutProxyingValidationSpecification();
     }

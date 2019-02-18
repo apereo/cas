@@ -2,7 +2,7 @@ package org.apereo.cas.web.report;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.web.BaseCasMvcEndpoint;
+import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -36,7 +36,7 @@ import java.util.stream.StreamSupport;
  */
 @Slf4j
 @Endpoint(id = "springWebflow", enableByDefault = false)
-public class SpringWebflowEndpoint extends BaseCasMvcEndpoint {
+public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
 
     private final ApplicationContext applicationContext;
 

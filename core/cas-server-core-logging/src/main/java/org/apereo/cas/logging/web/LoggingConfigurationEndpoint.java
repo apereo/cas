@@ -2,7 +2,7 @@ package org.apereo.cas.logging.web;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.web.BaseCasMvcEndpoint;
+import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -49,7 +49,7 @@ import java.util.Set;
 @Slf4j
 @Endpoint(id = "loggingConfig", enableByDefault = false)
 @Getter
-public class LoggingConfigurationEndpoint extends BaseCasMvcEndpoint implements InitializingBean {
+public class LoggingConfigurationEndpoint extends BaseCasActuatorEndpoint implements InitializingBean {
 
     private static final String LOGGER_NAME_ROOT = "root";
     private static final String FILE_PARAM = "file";

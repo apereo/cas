@@ -1,5 +1,4 @@
 description = "Apereo CAS Core Configuration"
-
 dependencies {
 
     implementation libraries.jasypt

@@ -3,14 +3,14 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.credential.OneTimePasswordCredential;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.IOException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Misagh Moayyed
@@ -22,7 +22,8 @@ public class OneTimePasswordCredentialTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     @Test
-    public void verifySerializeAnOneTimePasswordCredentialToJson() throws IOException {
+    @SneakyThrows
+    public void verifySerializeAnOneTimePasswordCredentialToJson() {
         val credentialWritten = new OneTimePasswordCredential("id", "password");
         MAPPER.writeValue(JSON_FILE, credentialWritten);
         val credentialRead = MAPPER.readValue(JSON_FILE, OneTimePasswordCredential.class);

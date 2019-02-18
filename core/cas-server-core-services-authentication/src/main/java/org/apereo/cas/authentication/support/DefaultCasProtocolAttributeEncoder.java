@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.support;
 
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
@@ -16,7 +17,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -67,7 +67,7 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
 
         val attrs = attributes.keySet().stream()
             .filter(getSanitizingAttributeNamePredicate())
-            .map(s -> Pair.of(EncodingUtils.hexEncode(s.getBytes(StandardCharsets.UTF_8)), attributes.get(s)))
+            .map(s -> Pair.of(ProtocolAttributeEncoder.encodeAttribute(s), attributes.get(s)))
             .collect(Collectors.toSet());
 
         if (!attrs.isEmpty()) {

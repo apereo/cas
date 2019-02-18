@@ -1,17 +1,18 @@
 package org.apereo.cas.web.security.authentication;
 
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link MonitorEndpointLdapAuthenticationProviderGroupsBasedTests}.
@@ -27,15 +28,15 @@ import static org.junit.Assert.*;
     "cas.monitor.endpoints.ldap.ldapAuthz.groupAttribute=roomNumber",
     "cas.monitor.endpoints.ldap.ldapAuthz.groupPrefix=ROLE_"
 })
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
+@EnabledIfContinuousIntegration
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
 public class MonitorEndpointLdapAuthenticationProviderGroupsBasedTests extends BaseMonitorEndpointLdapAuthenticationProviderTests {
 
     @Test
     public void verifyAuthorizedByGroup() {
         val securityProperties = new SecurityProperties();
         securityProperties.getUser().setRoles(Collections.singletonList("ROLE_888"));
-        val provider = new MonitorEndpointLdapAuthenticationProvider(casProperties.getMonitor().getEndpoints().getLdap(), securityProperties);
-        val token = provider.authenticate(new UsernamePasswordAuthenticationToken("authzcas", "123456"));
-        assertNotNull(token);
+        assertNotNull(new MonitorEndpointLdapAuthenticationProvider(casProperties.getMonitor().getEndpoints().getLdap(), securityProperties)
+                .authenticate(new UsernamePasswordAuthenticationToken("authzcas", "123456")));
     }
 }

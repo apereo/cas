@@ -37,8 +37,11 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
 
     private String groovyScript;
 
-    private static Object getGroovyAttributeValue(final Principal principal, final String script) {
-        val args = CollectionUtils.wrap("attributes", principal.getAttributes(), "id", principal.getId(), "logger", LOGGER);
+    private static Object getGroovyAttributeValue(final Principal principal, final Service service, final String script) {
+        val args = CollectionUtils.wrap("attributes", principal.getAttributes(),
+            "id", principal.getId(),
+            "service", service,
+            "logger", LOGGER);
         return ScriptingUtils.executeGroovyShellScript(script, (Map) args, Object.class);
     }
 
@@ -61,7 +64,7 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
             LOGGER.debug("Found groovy script to execute");
             val resourceFrom = ResourceUtils.getResourceFrom(scriptFile);
             val script = IOUtils.toString(resourceFrom.getInputStream(), StandardCharsets.UTF_8);
-            val result = getGroovyAttributeValue(principal, script);
+            val result = getGroovyAttributeValue(principal, service, script);
             if (result != null) {
                 LOGGER.debug("Found username [{}] from script [{}]", result, scriptFile);
                 return result.toString();
@@ -76,7 +79,7 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
     private String resolveUsernameFromInlineGroovyScript(final Principal principal, final Service service, final String script) {
         try {
             LOGGER.debug("Found groovy script to execute [{}]", this.groovyScript);
-            val result = getGroovyAttributeValue(principal, script);
+            val result = getGroovyAttributeValue(principal, service, script);
             if (result != null) {
                 LOGGER.debug("Found username [{}] from script [{}]", result, this.groovyScript);
                 return result.toString();

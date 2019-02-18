@@ -161,6 +161,7 @@ Groovy scripts whether inlined or external will receive and have access to the f
 
 - `id`: The existing identifier for the authenticated principal.
 - `attributes`: A map of attributes currently resolved for the principal.
+- `service`: The service object that is matched by the registered service definition.
 - `logger`: A logger object, able to provide `logger.info(...)` operations, etc.
 
 

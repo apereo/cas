@@ -54,7 +54,6 @@ public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
         }
 
         LOGGER.debug("Trusted authentication records found for [{}] that matches the current device fingerprint", principal);
-
         MultifactorAuthenticationTrustUtils.setMultifactorAuthenticationTrustedInScope(requestContext);
         MultifactorAuthenticationTrustUtils.trackTrustedMultifactorAuthenticationAttribute(
             c,

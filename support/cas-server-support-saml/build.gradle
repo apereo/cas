@@ -1,11 +1,12 @@
 description = "Apereo CAS SAML Server and Validation Support"
-
 dependencies {
     implementation libraries.opensaml
     implementation libraries.shibidpjavasupport
     
     implementation project(":support:cas-server-support-saml-core")
     implementation project(":support:cas-server-support-saml-core-api")
+    implementation project(":support:cas-server-support-validation")
+    
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-tickets-api")
@@ -13,8 +14,8 @@ dependencies {
     implementation project(":core:cas-server-core-services-registry")
     implementation project(":core:cas-server-core-authentication-attributes")
     implementation project(":core:cas-server-core-services-authentication")
-    implementation project(":support:cas-server-support-validation")
     implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-validation-api")
     implementation project(":core:cas-server-core-configuration-api")
 
     compileOnly project(":core:cas-server-core-rest")

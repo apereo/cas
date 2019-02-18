@@ -53,6 +53,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
     private final CasConfigurationProperties casProperties;
 
     private final ResourceLoader resourceLoader;
+    
     /**
      * This sets a flag on the request called "isMobile" and also
      * provides the custom flag called browserType which can be mapped into the theme.
@@ -174,7 +175,9 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
     }
 
     private String rememberThemeName(final HttpServletRequest request, final String themeName) {
-        request.setAttribute(casProperties.getTheme().getParamName(), themeName);
+        val attributeName = casProperties.getTheme().getParamName();
+        LOGGER.trace("Storing theme [{}] as a request attribute under [{}]", themeName, attributeName);
+        request.setAttribute(attributeName, themeName);
         return themeName;
     }
 

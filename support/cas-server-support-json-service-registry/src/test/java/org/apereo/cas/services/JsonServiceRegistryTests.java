@@ -2,21 +2,15 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
-import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 
 import lombok.SneakyThrows;
 import lombok.val;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.ClassPathResource;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -25,47 +19,40 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@RunWith(Parameterized.class)
 public class JsonServiceRegistryTests extends AbstractResourceBasedServiceRegistryTests {
-    public JsonServiceRegistryTests(final Class<? extends RegisteredService> registeredServiceClass) {
-        super(registeredServiceClass);
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() {
-        return Collections.singletonList(RegexRegisteredService.class);
-    }
-
     @SneakyThrows
     @Override
     public ServiceRegistry getNewServiceRegistry() {
-        this.dao = new JsonServiceRegistry(RESOURCE, true,
+        dao = new JsonServiceRegistry(RESOURCE, true,
             mock(ApplicationEventPublisher.class),
             new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy());
-        return this.dao;
+        return dao;
     }
 
     @Test
-    public void verifyLegacyServiceDefinition() throws Exception {
+    @SneakyThrows
+    public void verifyLegacyServiceDefinition() {
         val resource = new ClassPathResource("Legacy-10000003.json");
-        val serializer = new DefaultRegisteredServiceJsonSerializer();
+        val serializer = new RegisteredServiceJsonSerializer();
         val service = serializer.from(resource.getInputStream());
         assertNotNull(service);
     }
 
     @Test
-    public void verifyMultifactorNotSetFailureMode() throws Exception {
+    @SneakyThrows
+    public void verifyMultifactorNotSetFailureMode() {
         val resource = new ClassPathResource("MFA-FailureMode-1.json");
-        val serializer = new DefaultRegisteredServiceJsonSerializer();
+        val serializer = new RegisteredServiceJsonSerializer();
         val service = serializer.from(resource.getInputStream());
         assertNotNull(service);
     }
 
     @Test
-    public void verifyExistingDefinitionForCompatibility2() throws IOException {
+    @SneakyThrows
+    public void verifyExistingDefinitionForCompatibility2() {
         val resource = new ClassPathResource("returnMappedAttributeReleasePolicyTest2.json");
-        val serializer = new DefaultRegisteredServiceJsonSerializer();
+        val serializer = new RegisteredServiceJsonSerializer();
         val service = serializer.from(resource.getInputStream());
         assertNotNull(service);
         assertNotNull(service.getAttributeReleasePolicy());
@@ -75,9 +62,10 @@ public class JsonServiceRegistryTests extends AbstractResourceBasedServiceRegist
     }
 
     @Test
-    public void verifyExistingDefinitionForCompatibility1() throws IOException {
+    @SneakyThrows
+    public void verifyExistingDefinitionForCompatibility1() {
         val resource = new ClassPathResource("returnMappedAttributeReleasePolicyTest1.json");
-        val serializer = new DefaultRegisteredServiceJsonSerializer();
+        val serializer = new RegisteredServiceJsonSerializer();
         val service = serializer.from(resource.getInputStream());
         assertNotNull(service);
         assertNotNull(service.getAttributeReleasePolicy());

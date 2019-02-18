@@ -30,6 +30,7 @@ public class GroovyScriptMultifactorAuthenticationProviderSelector implements Mu
                                                      final RegisteredService service, final Principal principal) {
         val args = new Object[]{service, principal, providers, LOGGER};
         val provider = ScriptingUtils.executeGroovyScript(groovyScript, args, String.class, true);
+        LOGGER.debug("Invoking Groovy script with service=[{}], principal=[{}], providers=[{}] and default logger", service, principal, providers);
         if (StringUtils.isBlank(provider)) {
             throw new IllegalArgumentException("Multifactor provider selection via Groovy cannot use blank");
         }

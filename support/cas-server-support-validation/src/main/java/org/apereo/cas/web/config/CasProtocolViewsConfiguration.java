@@ -39,7 +39,7 @@ public class CasProtocolViewsConfiguration {
     private ThymeleafProperties thymeleafProperties;
 
     /**
-     * The Cas protocol views.
+     * The CAS protocol views.
      */
     @Configuration("CasProtocolViews")
     public class CasProtocolViews {

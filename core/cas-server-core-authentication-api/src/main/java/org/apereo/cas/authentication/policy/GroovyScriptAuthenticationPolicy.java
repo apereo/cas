@@ -42,6 +42,7 @@ public class GroovyScriptAuthenticationPolicy implements AuthenticationPolicy {
     private Optional<Exception> getScriptExecutionResult(final Authentication auth, final Matcher matcherInline) {
         if (matcherInline.find()) {
             val args = CollectionUtils.wrap("principal", auth.getPrincipal(), "logger", LOGGER);
+            LOGGER.debug("Invoking Groovy script with principal=[{}], and default logger", auth.getPrincipal());
             val inlineScript = matcherInline.group(1);
             return ScriptingUtils.executeGroovyShellScript(inlineScript, args, Optional.class);
         }

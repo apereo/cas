@@ -24,9 +24,8 @@ import org.apereo.cas.util.SchedulingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -39,8 +38,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.SharedEntityManagerCreator;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -59,7 +56,7 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for {@link JpaLockingStrategy}.
@@ -93,17 +90,12 @@ import static org.junit.Assert.*;
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @DirtiesContext
 @Slf4j
+@ResourceLock("jpa-tickets")
 public class JpaLockingStrategyTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
     /**
      * Number of clients contending for lock in concurrent test.
      */
     private static final int CONCURRENT_SIZE = 13;
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     @Qualifier("ticketTransactionManager")
@@ -129,7 +121,7 @@ public class JpaLockingStrategyTests {
                 throw new RuntimeException(e.getMessage(), e);
             }
         }).count();
-        assertTrue("Lock count should be <= 1 but was " + lockCount, lockCount <= 1);
+        assertTrue(lockCount <= 1, "Lock count should be <= 1 but was " + lockCount);
         
         val releaseCount = executor.invokeAll(lockers).stream().filter(result -> {
             try {
@@ -138,7 +130,7 @@ public class JpaLockingStrategyTests {
                 throw new RuntimeException(e.getMessage(), e);
             }
         }).count();
-        assertTrue("Release count should be <= 1 but was " + releaseCount, releaseCount <= 1);
+        assertTrue(releaseCount <= 1, "Release count should be <= 1 but was " + releaseCount);
     }
 
     /**

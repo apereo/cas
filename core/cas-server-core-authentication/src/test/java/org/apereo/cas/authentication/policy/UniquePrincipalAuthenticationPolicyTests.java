@@ -13,22 +13,18 @@ import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 
+import lombok.SneakyThrows;
 import lombok.val;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.util.LinkedHashSet;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link UniquePrincipalAuthenticationPolicyTests}.
@@ -48,28 +44,21 @@ import static org.junit.Assert.*;
 })
 @DirtiesContext
 public class UniquePrincipalAuthenticationPolicyTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
 
     @Test
-    public void verifyPolicyIsGoodUserNotFound() throws Exception {
+    @SneakyThrows
+    public void verifyPolicyIsGoodUserNotFound() {
         this.ticketRegistry.deleteAll();
         val p = new UniquePrincipalAuthenticationPolicy(this.ticketRegistry);
         assertTrue(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"), new LinkedHashSet<>()));
     }
 
     @Test
-    public void verifyPolicyFailsUserFoundOnce() throws Exception {
+    @SneakyThrows
+    public void verifyPolicyFailsUserFoundOnce() {
         this.ticketRegistry.deleteAll();
         this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TGT-1", CoreAuthenticationTestUtils.getAuthentication("casuser"),
             new NeverExpiresExpirationPolicy()));

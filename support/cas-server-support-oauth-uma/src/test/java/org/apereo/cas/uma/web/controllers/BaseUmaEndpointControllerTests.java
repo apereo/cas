@@ -41,7 +41,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link BaseUmaEndpointControllerTests}.
@@ -111,7 +111,7 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
     private Triple<HttpServletRequest, HttpServletResponse, String> authenticateUmaRequestWithScope(
         final String scope, final SecurityInterceptor interceptor) throws Exception {
         val service = addRegisteredService();
-        val pair = internalVerifyClientOK(service, false, scope);
+        val pair = assertClientOK(service, false, scope);
         assertNotNull(pair.getKey());
         val accessToken = pair.getKey();
 

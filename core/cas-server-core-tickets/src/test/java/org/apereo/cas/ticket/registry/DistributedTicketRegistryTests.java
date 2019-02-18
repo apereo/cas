@@ -12,15 +12,15 @@ import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 
 import lombok.Setter;
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Scott Battaglia
@@ -37,7 +37,7 @@ public class DistributedTicketRegistryTests {
 
     private boolean wasTicketUpdated;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         this.ticketRegistry = new TestDistributedTicketRegistry(this);
         this.wasTicketUpdated = false;

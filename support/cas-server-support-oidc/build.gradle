@@ -8,7 +8,10 @@ dependencies {
     implementation project(":support:cas-server-support-throttle")
     implementation project(":support:cas-server-support-oauth-webflow")
     implementation project(":support:cas-server-support-oidc-core")
+    implementation project(":support:cas-server-support-oidc-core-api")
     implementation project(":support:cas-server-support-oauth-core")
+    implementation project(":support:cas-server-support-oauth-core-api")
+    implementation project(":support:cas-server-support-token-core-api")
     implementation project(":support:cas-server-support-oidc-services")
     implementation project(":support:cas-server-support-oauth-api")
     implementation project(":support:cas-server-support-oauth")
@@ -55,5 +58,6 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-mfa-api", configuration: "tests")
 }

@@ -1,121 +1,56 @@
 description = "Apereo CAS ‌‌Bill of Material"
-
-artifacts {
-    archives(file("cas-server-support-bom.md"))
-}
-
-def generateBom() {
-    def pom = pom {
-    }.whenConfigured {
-        logger.info "Creating BOM with all project dependencies"
-        
-        packaging = "pom"
-        artifactId = project.name
-
-        withXml {
-            def deps = asNode().get("dependencies")
-            asNode().remove(deps)
-
-            asNode().children().last() + {
-                delegate.description(project.description)
-                delegate.name(project.name)
-                delegate.url(project.projectUrl)
-                delegate.inceptionYear(project.projectInceptionYear)
-
-                delegate.issueManagement {
-                    delegate.system(project.projectIssueSystem)
-                    delegate.url(project.projectIssueUrl)
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact file("cas-server-support-bom.md")
+            pom {
+                url = "$projectUrl"
+                inceptionYear = project.projectInceptionYear
+                name = project.name
+                description = project.name
+                packaging = "pom"
+                issueManagement {
+                    system = project.projectIssueSystem
+                    url = project.projectIssueUrl
                 }
-
-                delegate.developers {
-                    delegate.developer {
-                        delegate.id("mmoayyed")
-                        delegate.name("Misagh Moayyed")
-                    }
-                }
-                
-                delegate.scm {
-                    delegate.url(project.projectScmUrl)
-                    delegate.connection(project.projectScmUrl)
-                    delegate.developerConnection(project.projectScmUrl)
-                }
-
-                delegate.licenses {
-                    delegate.license {
-                        delegate.name(project.projectLicenseName)
-                        delegate.url(project.projectLicenseUrl)
-                        delegate.distribution(project.projectLicenseDistribution)
+                developers {
+                    developer {
+                        id = "mmoayyed"
+                        name = "Misagh Moayyed"
                     }
                 }
             }
 
-            asNode().children().last() + {
-                delegate.dependencyManagement {
-                    delegate.dependencies {
-                        rootProject.subprojects.findAll { p -> p != project && p.tasks.asMap['install']?.enabled }.each { p ->
-                            delegate.dependency {
-                                delegate.groupId(groupId)
-                                delegate.artifactId(p.name)
-                                delegate.version(version)
-                                if (p.tasks.asMap['war']) {
-                                    delegate.type('war')
-                                }
-                            }
+            pom.withXml {
+                println "Creating BOM with all project dependencies for ${project.name}"
+
+                def dependencyManagement = asNode().appendNode("dependencyManagement")
+                def dependencies = dependencyManagement.appendNode("dependencies")
+
+
+                rootProject.subprojects.findAll { p -> p != project && p.tasks.asMap['generatePomFileForMavenJavaPublication']?.enabled }.each { p ->
+                    def dependency = dependencies.appendNode("dependency")
+                    dependency.appendNode("groupId", groupId)
+                    dependency.appendNode("artifactId", p.name)
+                    dependency.appendNode("version", version)
+                }
+
+                libraries.each {
+                    if (it.value instanceof List) {
+                        it.value.each { d ->
+                            def dependency = dependencies.appendNode("dependency")
+                            dependency.appendNode("groupId", d.group)
+                            dependency.appendNode("artifactId", d.name)
+                            dependency.appendNode("version", d.version)
                         }
-                        libraries.each {
-                            if (it.value instanceof List) {
-                                it.value.each { d ->
-                                    delegate.dependency {
-                                        delegate.groupId(d.group)
-                                        delegate.artifactId(d.name)
-                                        delegate.version(d.version)
-                                    }
-                                }
-                            } else {
-                                def d = it.value
-                                delegate.dependency {
-                                    delegate.groupId(d.group)
-                                    delegate.artifactId(d.name)
-                                    delegate.version(d.version)
-                                }
-                            }
-                        }
+                    } else {
+                        def d = it.value
+                        def dependency = dependencies.appendNode("dependency")
+                        dependency.appendNode("groupId", d.group)
+                        dependency.appendNode("artifactId", d.name)
+                        dependency.appendNode("version", d.version)
                     }
                 }
-            }
-
-        }
-    }
-}
-
-install {
-    doFirst {
-        if (publishingRelease || publishSnapshots || forceBom) {
-            repositories.mavenInstaller.pom = generateBom()
-        }
-    }
-}
-
-uploadArchives {
-    doFirst {
-        if (publishingRelease || publishSnapshots || forceBom) {
-            repositories.mavenDeployer.pom = generateBom()
-        }
-    }
-
-    repositories.mavenDeployer {
-        configuration = project.configurations.archives
-        beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-        if (publishingRelease) {
-            repository(url: "$sonatypeRepositoryUrl") {
-                authentication(userName: sonatypeUsername, password: sonatypePassword);
-            }
-        }
-
-        if (publishSnapshots) {
-            snapshotRepository(url: "$sonatypeSnapshotsRepositoryUrl") {
-                authentication(userName: sonatypeUsername, password: sonatypePassword);
             }
         }
     }

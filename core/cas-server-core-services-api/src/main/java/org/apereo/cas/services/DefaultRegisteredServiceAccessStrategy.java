@@ -281,17 +281,29 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      */
     protected boolean requiredAttributesFoundInMap(final Map<String, Object> principalAttributes, final Map<String, Set<String>> requiredAttributes) {
         val difference = requiredAttributes.keySet().stream().filter(a -> principalAttributes.keySet().contains(a)).collect(Collectors.toSet());
+        LOGGER.debug("Difference of checking required attributes: [{}]", difference);
         if (this.requireAllAttributes && difference.size() < requiredAttributes.size()) {
             return false;
         }
-        return difference.stream().anyMatch(key -> {
-            val values = requiredAttributes.get(key);
-            val availableValues = CollectionUtils.toCollection(principalAttributes.get(key));
-            val pattern = RegexUtils.concatenate(values, this.caseInsensitive);
-            if (pattern != RegexUtils.MATCH_NOTHING_PATTERN) {
-                return availableValues.stream().map(Object::toString).anyMatch(pattern.asPredicate());
-            }
-            return availableValues.stream().anyMatch(values::contains);
-        });
+        if (this.requireAllAttributes) {
+            return difference.stream().allMatch(key -> {
+                return requiredAttributeFound(key, principalAttributes, requiredAttributes);
+            });
+        } else {
+            return difference.stream().anyMatch(key -> {
+                return requiredAttributeFound(key, principalAttributes, requiredAttributes);
+            });
+        }
+    }
+    
+    private boolean requiredAttributeFound(final String attributeName, final Map<String, Object> principalAttributes, final Map<String, Set<String>> requiredAttributes) {
+        val values = requiredAttributes.get(attributeName);
+        val availableValues = CollectionUtils.toCollection(principalAttributes.get(attributeName));
+        val pattern = RegexUtils.concatenate(values, this.caseInsensitive);
+        LOGGER.debug("Checking [{}] against [{}] with pattern [{}] for attribute [{}]", values, availableValues, pattern, attributeName);
+        if (pattern != RegexUtils.MATCH_NOTHING_PATTERN) {
+            return availableValues.stream().map(Object::toString).anyMatch(pattern.asPredicate());
+        }
+        return availableValues.stream().anyMatch(values::contains);
     }
 }

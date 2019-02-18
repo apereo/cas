@@ -72,8 +72,6 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
                 return null;
             });
 
-        storage.asMap();
-
         val m = FunctionUtils.doIf(trusted.getJson().getLocation() != null,
             () -> {
                 LOGGER.debug("Storing trusted device records inside the JSON resource [{}]", trusted.getJson().getLocation());
@@ -129,8 +127,7 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
     @Bean
     @ConditionalOnEnabledEndpoint
     public MultifactorTrustedDevicesReportEndpoint mfaTrustedDevicesReportEndpoint() {
-        return new MultifactorTrustedDevicesReportEndpoint(mfaTrustEngine(),
-            casProperties.getAuthn().getMfa().getTrusted());
+        return new MultifactorTrustedDevicesReportEndpoint(casProperties, mfaTrustEngine());
     }
 
 }

@@ -3,19 +3,19 @@ package org.apereo.cas.support.saml.metadata.resolver;
 import org.apereo.cas.support.saml.BaseMongoDbSamlMetadataTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link MongoDbSamlRegisteredServiceMetadataResolverTests}.
@@ -35,7 +35,8 @@ import static org.junit.Assert.*;
     "cas.authn.samlIdp.metadata.mongo.idpMetadataCollection=saml-idp-metadata-resolver",
     "cas.authn.samlIdp.metadata.location=file:/tmp"
     })
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 27017)
+@EnabledIfPortOpen(port = 27017)
+@EnabledIfContinuousIntegration
 public class MongoDbSamlRegisteredServiceMetadataResolverTests extends BaseMongoDbSamlMetadataTests {
     @Test
     public void verifyResolver() throws IOException {

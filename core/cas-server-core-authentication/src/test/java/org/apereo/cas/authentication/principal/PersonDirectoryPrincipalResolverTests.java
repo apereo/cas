@@ -9,16 +9,14 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test cases for {@link PersonDirectoryPrincipalResolver}.
@@ -26,12 +24,10 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@SuppressWarnings("OptionalAssignedToNull")
 public class PersonDirectoryPrincipalResolverTests {
 
     private static final String ATTR_1 = "attr1";
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @Test
     public void verifyNullPrincipal() {

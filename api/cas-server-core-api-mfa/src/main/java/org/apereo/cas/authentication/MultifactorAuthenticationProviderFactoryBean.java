@@ -25,7 +25,7 @@ public interface MultifactorAuthenticationProviderFactoryBean<T extends Multifac
      * @param properties - the properties
      * @return - the provider
      */
-    T create(P properties);
+    T createProvider(P properties);
 
     /**
      * Method returns the generated bean name for the provider.

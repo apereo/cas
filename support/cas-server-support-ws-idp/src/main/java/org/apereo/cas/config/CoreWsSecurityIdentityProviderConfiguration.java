@@ -41,6 +41,9 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.core.Ordered;
+
+import java.util.HashSet;
 
 /**
  * This is {@link CoreWsSecurityIdentityProviderConfiguration}.
@@ -96,6 +99,7 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
     @Qualifier("securityTokenServiceTokenFetcher")
     private ObjectProvider<SecurityTokenServiceTokenFetcher> securityTokenServiceTokenFetcher;
 
+    @ConditionalOnMissingBean(name = "federationValidateRequestController")
     @Bean
     public WSFederationValidateRequestController federationValidateRequestController() {
         return new WSFederationValidateRequestController(servicesManager.getIfAvailable(),
@@ -143,14 +147,18 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
     @Autowired
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "wsFederationRelyingPartyTokenProducer")
     public WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer(
         @Qualifier("securityTokenServiceCredentialCipherExecutor") final CipherExecutor securityTokenServiceCredentialCipherExecutor,
         @Qualifier("securityTokenServiceClientBuilder") final SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder) {
-        return new DefaultRelyingPartyTokenProducer(securityTokenServiceClientBuilder, securityTokenServiceCredentialCipherExecutor);
+        return new DefaultRelyingPartyTokenProducer(securityTokenServiceClientBuilder,
+            securityTokenServiceCredentialCipherExecutor,
+            new HashSet<>(casProperties.getAuthn().getWsfedIdp().getSts().getCustomClaims()));
     }
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "wsFederationAuthenticationServiceSelectionStrategy")
     public AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy() {
         return new WSFederationAuthenticationServiceSelectionStrategy(webApplicationServiceFactory.getIfAvailable());
     }
@@ -170,7 +178,7 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
                 LOGGER.debug("Initializing WS Federation callback service [{}]", callbackService);
                 val service = new RegexRegisteredService();
                 service.setId(RandomUtils.getNativeInstance().nextLong());
-                service.setEvaluationOrder(Integer.MAX_VALUE);
+                service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
                 service.setName(service.getClass().getSimpleName());
                 service.setDescription("WS-Federation Authentication Request");
                 service.setServiceId(callbackService.getId().concat(".+"));

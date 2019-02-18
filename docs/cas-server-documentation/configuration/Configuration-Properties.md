@@ -637,7 +637,7 @@ To determine whether an endpoint is available, the calculation order for all end
 2. If undefined, the global endpoint security is consulted from CAS settings.
 3. If undefined, the default built-in setting for the endpoint in CAS is consulted, which is typically `false` by default.
 
-All available endpoint ids [should be listed here](../monitoring/Monitoring-Statistics.html).
+A number of available endpoint ids [should be listed here](../monitoring/Monitoring-Statistics.html).
 
 Endpoints may also be mapped to custom arbitrary endpoints. For example, to remap the `health` endpoint to `healthcheck`, 
 specify the following settings:
@@ -645,6 +645,8 @@ specify the following settings:
 ```properties
 # management.endpoints.web.path-mapping.health=healthcheck
 ```
+
+### Health Endpoint
 
 The `health` endpoint may also be configured to show details using `management.endpoint.health.show-details` via the following conditions:
 
@@ -657,6 +659,29 @@ The `health` endpoint may also be configured to show details using `management.e
 ```properties
 # management.endpoint.health.show-details=never
 ```
+
+The results and details of the `health` endpoints are produced by a number of health indicator components that may monitor different systems, such as LDAP connection
+pools, database connections, etc. Such health indicators are turned off by default and may individually be controlled and turned on via the following settings:
+
+```properties
+# management.health.<name>.enabled=true
+# management.health.defaults.enabled=false 
+```
+
+The following health indicator names are available, given the presence of the appropriate CAS feature:
+
+| Health Indicator          | Description
+|----------------------|------------------------------------------------------------------------------------------
+| `memoryHealthIndicator`   | Reports back on the health status of CAS JVM memory usage, etc.
+| `sessionHealthIndicator`   | Reports back on the health status of CAS tickets and SSO session usage.
+| `duoSecurityHealthIndicator`   | Reports back on the health status of Duo Security APIs.
+| `ehcacheHealthIndicator`   | Reports back on the health status of Ehcache caches.
+| `hazelcastHealthIndicator`   | Reports back on the health status of Hazelcast caches.
+| `dataSourceHealthIndicator`   | Reports back on the health status of JDBC connections.
+| `pooledLdapConnectionFactoryHealthIndicator`   | Reports back on the health status of LDAP connection pools.
+| `memcachedHealthIndicator`   | Reports back on the health status of Memcached connections.
+| `mongoHealthIndicator`   | Reports back on the health status of MongoDb connections.
+| `samlRegisteredServiceMetadataHealthIndicator`   | Reports back on the health status of SAML2 service provider metadata sources.
 
 ### Endpoint Security
 
@@ -808,7 +833,7 @@ and their results are cached and merged.
 # cas.authn.attributeRepository.expirationTime=30
 # cas.authn.attributeRepository.expirationTimeUnit=MINUTES
 # cas.authn.attributeRepository.maximumCacheSize=10000
-# cas.authn.attributeRepository.merger=REPLACE|ADD|MERGE
+# cas.authn.attributeRepository.merger=REPLACE|ADD|MULTIVALUED
 ```
 
 <div class="alert alert-info"><strong>Remember This</strong><p>Note that in certain cases,
@@ -2781,6 +2806,7 @@ A given attribute that is to be encoded in the final SAML response may contain a
 # cas.authn.samlIdp.metadata.failFast=true
 # cas.authn.samlIdp.metadata.privateKeyAlgName=RSA
 # cas.authn.samlIdp.metadata.requireValidMetadata=true
+# cas.authn.samlIdp.metadata.forceMetadataRefresh=true
 
 # cas.authn.samlIdp.metadata.basicAuthnUsername=
 # cas.authn.samlIdp.metadata.basicAuthnPassword=
@@ -2960,7 +2986,11 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
 # cas.authn.oidc.grantTypesSupported=authorization_code,password,client_credentials,refresh_token
 # cas.authn.oidc.idTokenSigningAlgValuesSupported=none,RS256
 # cas.authn.oidc.tokenEndpointAuthMethodsSupported=client_secret_basic,client_secret_post
+```
 
+### OpenID Connect Scopes & Claims
+
+```properties
 # Define custom scopes and claims
 # cas.authn.oidc.userDefinedScopes.scope1=cn,givenName,photos,customAttribute
 # cas.authn.oidc.userDefinedScopes.scope2=cn,givenName,photos,customAttribute2
@@ -2969,6 +2999,19 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
 # cas.authn.oidc.claimsMap.given_name=custom-given-name
 # cas.authn.oidc.claimsMap.preferred_username=global-user-attribute
 ```
+
+### OpenID Connect WebFinger
+
+#### WebFinger UserInfo via Groovy
+
+```properties
+# cas.authn.oidc.webfinger.userInfo.groovy.location=classpath:/webfinger.groovy
+```
+
+#### WebFinger UserInfo via REST
+
+RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
+under the configuration key `cas.authn.oidc.webfinger.userInfo.rest`.
 
 ## Pac4j Delegated AuthN
 
@@ -3004,6 +3047,19 @@ See below for other identity providers such as CAS, SAML2 and more.
 The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under `${configurationKey}.cookie`.
 
+### Provisioning
+
+Provision and create established user profiles to identity stores.
+
+#### Groovy
+
+```properties
+# cas.authn.pac4j.provisioning.groovy.location=file:/etc/cas/config/Provisioner.groovy
+```
+
+#### REST
+
+RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.authn.pac4j.provisioning.rest`.
 
 ### Google
 
@@ -3200,6 +3256,15 @@ To learn more about this topic, [please review this guide](../installation/OAuth
 
 # cas.authn.oauth.userProfileViewType=NESTED|FLAT
 ```
+
+### OAuth2 JWT Access Tokens
+
+```properties
+# cas.authn.oauth.accessToken.crypto.encryptionEnabled=true
+# cas.authn.oauth.accessToken.crypto.signingEnabled=true
+```
+
+The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.oauth.accessToken`.
 
 ### OAuth2 UMA
 
@@ -3641,6 +3706,22 @@ to locate YAML service definitions, decide how those resources should be found.
 ```
 
 To learn more about this topic, [please review this guide](../services/YAML-Service-Management.html).
+
+### Git Service Registry
+
+Works with git repository to fetch and manage service registry definitions.
+
+```properties
+# cas.serviceRegistry.git.repositoryUrl=https://github.com/repository
+# cas.serviceRegistry.git.branchesToClone=master
+# cas.serviceRegistry.git.activeBranch=master
+# cas.serviceRegistry.git.username=
+# cas.serviceRegistry.git.password=
+# cas.serviceRegistry.git.cloneDirectory=file:/tmp/cas-service-registry
+# cas.serviceRegistry.git.pushChanges=false
+```
+
+To learn more about this topic, [please review this guide](../services/Git-Service-Management.html).
 
 ### RESTful Service Registry
 
@@ -4156,7 +4237,7 @@ The signing and encryption keys [are both JWKs](Configuration-Properties-Common.
 
 #### Spring Webflow Client-Side Session
 
-The encryption key must be randomly-generated string of size f`16`. The signing key [is a JWK](Configuration-Properties-Common.html#signing--encryption) of size `512`.
+The encryption key must be randomly-generated string of size `16`. The signing key [is a JWK](Configuration-Properties-Common.html#signing--encryption) of size `512`.
 
 Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.webflow`.
 
@@ -4254,6 +4335,10 @@ If AUP is controlled via JDBC, decide how choices should be remembered back insi
 
 ```properties
 # cas.acceptableUsagePolicy.jdbc.tableName=usage_policies_table
+# cas.acceptableUsagePolicy.jdbc.aupColumn=
+# cas.acceptableUsagePolicy.jdbc.principalIdColumn=username
+# cas.acceptableUsagePolicy.jdbc.principalIdAttribute=
+# cas.acceptableUsagePolicy.jdbc.sqlUpdateAUP=UPDATE %s SET %s=true WHERE %s=?
 ```
 
 #### CouchDb
@@ -4283,6 +4368,7 @@ To learn more about this topic, [please review this guide](../protocol/REST-Prot
 # cas.rest.attributeValue=
 # cas.rest.headerAuth=
 # cas.rest.bodyAuth=
+# cas.rest.tlsClientAuth=
 ```
 
 ## Metrics

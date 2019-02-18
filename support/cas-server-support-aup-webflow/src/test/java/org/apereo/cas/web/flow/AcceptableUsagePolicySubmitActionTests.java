@@ -3,8 +3,9 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.web.support.WebUtils;
 
+import lombok.SneakyThrows;
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -15,7 +16,7 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link AcceptableUsagePolicySubmitActionTests}.
@@ -31,7 +32,8 @@ public class AcceptableUsagePolicySubmitActionTests extends BaseAcceptableUsageP
     private Action acceptableUsagePolicySubmitAction;
 
     @Test
-    public void verifyAction() throws Exception {
+    @SneakyThrows
+    public void verifyAction() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));

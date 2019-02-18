@@ -29,13 +29,11 @@ import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
+import lombok.SneakyThrows;
 import lombok.val;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -46,15 +44,13 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link SwivelAuthenticationHandlerTests}.
@@ -95,22 +91,13 @@ import static org.junit.Assert.*;
     "cas.authn.mfa.swivel.ignoreSslErrors=true"
 })
 public class SwivelAuthenticationHandlerTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Autowired
     @Qualifier("swivelAuthenticationHandler")
     private AuthenticationHandler swivelAuthenticationHandler;
 
     private MockWebServer webServer;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         val data = "<?xml version=\"1.0\" ?>"
             + "<SASResponse secret=\"MyAdminAgent\" version=\"3.4\">"
@@ -124,7 +111,7 @@ public class SwivelAuthenticationHandlerTests {
         this.webServer.start();
     }
 
-    @After
+    @AfterEach
     public void cleanup() {
         this.webServer.stop();
     }
@@ -136,7 +123,8 @@ public class SwivelAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyAuthn() throws Exception {
+    @SneakyThrows
+    public void verifyAuthn() {
         val c = new SwivelTokenCredential("123456");
         val context = new MockRequestContext();
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);

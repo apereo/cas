@@ -5,8 +5,7 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
-import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
+import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -68,6 +67,10 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @Qualifier("googleAuthenticatorAccountRegistry")
     private ObjectProvider<OneTimeTokenCredentialRepository> googleAuthenticatorAccountRegistry;
 
+    @Autowired
+    @Qualifier("googleAuthenticatorBypassEvaluator")
+    private ObjectProvider<MultifactorAuthenticationProviderBypass> googleAuthenticatorBypassEvaluator;
+
     @Lazy
     @Autowired
     @Qualifier("oneTimeTokenAuthenticatorTokenRepository")
@@ -108,16 +111,10 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @RefreshScope
-    public MultifactorAuthenticationProviderBypass googleBypassEvaluator() {
-        return MultifactorAuthenticationUtils.newMultifactorAuthenticationProviderBypass(casProperties.getAuthn().getMfa().getGauth().getBypass());
-    }
-
-    @Bean
-    @RefreshScope
     public MultifactorAuthenticationProvider googleAuthenticatorMultifactorAuthenticationProvider() {
         val gauth = casProperties.getAuthn().getMfa().getGauth();
         val p = new GoogleAuthenticatorMultifactorAuthenticationProvider();
-        p.setBypassEvaluator(googleBypassEvaluator());
+        p.setBypassEvaluator(googleAuthenticatorBypassEvaluator.getIfAvailable());
         p.setFailureMode(gauth.getFailureMode());
         p.setOrder(gauth.getRank());
         p.setId(gauth.getId());
@@ -170,7 +167,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @ConditionalOnEnabledEndpoint
     public GoogleAuthenticatorTokenCredentialRepositoryEndpoint googleAuthenticatorTokenCredentialRepositoryEndpoint() {
-        return new GoogleAuthenticatorTokenCredentialRepositoryEndpoint(googleAuthenticatorAccountRegistry());
+        return new GoogleAuthenticatorTokenCredentialRepositoryEndpoint(casProperties, googleAuthenticatorAccountRegistry());
     }
 
     @ConditionalOnMissingBean(name = "googleAuthenticatorAccountCipherExecutor")

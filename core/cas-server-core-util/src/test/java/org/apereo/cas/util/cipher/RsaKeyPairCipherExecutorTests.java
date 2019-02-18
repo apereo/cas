@@ -1,11 +1,11 @@
 package org.apereo.cas.util.cipher;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.security.KeyPair;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link RsaKeyPairCipherExecutorTests}.

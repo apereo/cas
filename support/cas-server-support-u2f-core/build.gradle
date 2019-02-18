@@ -1,5 +1,4 @@
 description = "Apereo CAS U2F Core Support"
-
 dependencies {
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-util")

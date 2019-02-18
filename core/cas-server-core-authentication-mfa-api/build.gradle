@@ -1,5 +1,4 @@
 description = "Apereo CAS Core Multifactor Authentication"
-
 dependencies {
     api project(":api:cas-server-core-api-services")
     api project(":api:cas-server-core-api-ticket")
@@ -9,8 +8,6 @@ dependencies {
     
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")
-    
-
 
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
 }

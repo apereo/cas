@@ -6,7 +6,7 @@ import org.apereo.cas.ticket.proxy.ProxyHandler;
 
 
 /**
- * Dummy ProxyHandler that does nothing. Useful for Cas 1.0 compliance as CAS
+ * Dummy ProxyHandler that does nothing. Useful for CAS 1.0 compliance as CAS
  * 1.0 has no proxying capabilities.
  *
  * @author Scott Battaglia

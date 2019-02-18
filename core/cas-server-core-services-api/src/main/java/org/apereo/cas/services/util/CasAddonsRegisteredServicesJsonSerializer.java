@@ -29,7 +29,7 @@ import java.util.Map;
  * @since 5.2.0
  */
 @Slf4j
-public class CasAddonsRegisteredServicesJsonSerializer extends DefaultRegisteredServiceJsonSerializer {
+public class CasAddonsRegisteredServicesJsonSerializer extends RegisteredServiceJsonSerializer {
 
     private static final long serialVersionUID = 1874802012930264278L;
 

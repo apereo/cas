@@ -145,7 +145,7 @@ public class WsFederationConfiguration implements Serializable {
     public enum WsFedPrincipalResolutionAttributesType {
 
         /**
-         * Cas ws fed principal resolution attributes type.
+         * CAS ws fed principal resolution attributes type.
          */
         CAS,
         /**
