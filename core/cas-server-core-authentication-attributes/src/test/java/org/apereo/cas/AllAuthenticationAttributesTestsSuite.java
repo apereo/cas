@@ -10,8 +10,7 @@ import org.apereo.cas.services.ReturnMappedAttributeReleasePolicyTests;
 import org.apereo.cas.services.ReturnRestfulAttributeReleasePolicyTests;
 import org.apereo.cas.services.ScriptedRegisteredServiceAttributeReleasePolicyTests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * This is {@link AllAuthenticationAttributesTestsSuite}.
@@ -19,8 +18,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@SelectClasses({
     DenyAllAttributeReleasePolicyTests.class,
     GroovyScriptAttributeReleasePolicyTests.class,
     RegisteredServiceAttributeReleasePolicyTests.class,

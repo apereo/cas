@@ -1,6 +1,7 @@
 package org.apereo.cas.support.events.dao;
 
 import org.apereo.cas.support.events.CasEventRepository;
+import org.apereo.cas.util.DateTimeUtils;
 
 import lombok.val;
 
@@ -39,7 +40,10 @@ public abstract class AbstractCasEventRepository implements CasEventRepository {
     public Collection<? extends CasEvent> getEventsOfType(final String type, final ZonedDateTime dateTime) {
         return getEventsOfType(type)
             .stream()
-            .filter(e -> e.getCreationZonedDateTime().isEqual(dateTime) || e.getCreationZonedDateTime().isAfter(dateTime))
+            .filter(e -> {
+                val dt = convertEventCreationTime(e);
+                return dt.isEqual(dt) || dt.isAfter(dt);
+            })
             .collect(Collectors.toSet());
     }
 
@@ -55,14 +59,21 @@ public abstract class AbstractCasEventRepository implements CasEventRepository {
     public Collection<? extends CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal, final ZonedDateTime dateTime) {
         return getEventsOfTypeForPrincipal(type, principal)
             .stream()
-            .filter(e -> e.getCreationZonedDateTime().isEqual(dateTime) || e.getCreationZonedDateTime().isAfter(dateTime))
+            .filter(e -> {
+                val dt = convertEventCreationTime(e);
+                return dt.isEqual(dateTime) || dt.isAfter(dateTime);
+            })
             .collect(Collectors.toSet());
     }
 
     @Override
     public Collection<? extends CasEvent> load(final ZonedDateTime dateTime) {
-        return load().stream()
-            .filter(e -> e.getCreationZonedDateTime().isEqual(dateTime) || e.getCreationZonedDateTime().isAfter(dateTime))
+        return load()
+            .stream()
+            .filter(e -> {
+                val dt = convertEventCreationTime(e);
+                return dt.isEqual(dateTime) || dt.isAfter(dateTime);
+            })
             .collect(Collectors.toSet());
     }
 
@@ -70,13 +81,23 @@ public abstract class AbstractCasEventRepository implements CasEventRepository {
     public Collection<? extends CasEvent> getEventsForPrincipal(final String id, final ZonedDateTime dateTime) {
         return getEventsForPrincipal(id)
             .stream()
-            .filter(e -> e.getCreationZonedDateTime().isEqual(dateTime) || e.getCreationZonedDateTime().isAfter(dateTime))
+            .filter(e -> {
+                val dt = convertEventCreationTime(e);
+                return dt.isEqual(dateTime) || dt.isAfter(dateTime);
+            })
             .collect(Collectors.toSet());
     }
 
     @Override
     public Collection<? extends CasEvent> getEventsForPrincipal(final String id) {
-        return load().stream().filter(e -> e.getPrincipalId().equalsIgnoreCase(id)).collect(Collectors.toSet());
+        return load()
+            .stream()
+            .filter(e -> e.getPrincipalId().equalsIgnoreCase(id))
+            .collect(Collectors.toSet());
+    }
+
+    private static ZonedDateTime convertEventCreationTime(final CasEvent event) {
+        return DateTimeUtils.convertToZonedDateTime(event.getCreationTime());
     }
 
 }

@@ -1,5 +1,4 @@
 description = "Apereo CAS DuoSecurity Support"
-
 dependencies {
     implementation libraries.duojava
     

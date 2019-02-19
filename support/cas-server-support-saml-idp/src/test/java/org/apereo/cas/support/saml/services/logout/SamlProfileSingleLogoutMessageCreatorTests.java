@@ -11,12 +11,12 @@ import org.apereo.cas.support.saml.web.idp.profile.slo.SamlProfileSingleLogoutMe
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opensaml.saml.common.xml.SAMLConstants;
 
 import java.net.URL;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link SamlProfileSingleLogoutMessageCreatorTests}.

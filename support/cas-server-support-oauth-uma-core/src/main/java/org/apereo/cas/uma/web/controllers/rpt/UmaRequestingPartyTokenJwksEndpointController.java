@@ -53,7 +53,7 @@ public class UmaRequestingPartyTokenJwksEndpointController extends BaseUmaEndpoi
      * @param response the response
      * @return redirect view
      */
-    @GetMapping(value = '/' + OAuth20Constants.BASE_OAUTH20_URL + "/" + OAuth20Constants.UMA_JWKS_URL,
+    @GetMapping(value = '/' + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.UMA_JWKS_URL,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> getKeys(final HttpServletRequest request, final HttpServletResponse response) {
         try {

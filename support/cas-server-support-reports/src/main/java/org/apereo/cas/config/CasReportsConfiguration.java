@@ -177,10 +177,12 @@ public class CasReportsConfiguration {
         private CasConfigurationProperties casProperties;
 
         @Autowired
+        private ObjectProvider<HealthEndpoint> healthEndpoint;
+
         @Bean
         @ConditionalOnEnabledEndpoint
-        public StatusEndpoint statusEndpoint(final HealthEndpoint healthEndpoint) {
-            return new StatusEndpoint(casProperties, healthEndpoint);
+        public StatusEndpoint statusEndpoint() {
+            return new StatusEndpoint(casProperties, healthEndpoint.getIfAvailable());
         }
     }
 }

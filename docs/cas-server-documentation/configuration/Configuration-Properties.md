@@ -637,7 +637,7 @@ To determine whether an endpoint is available, the calculation order for all end
 2. If undefined, the global endpoint security is consulted from CAS settings.
 3. If undefined, the default built-in setting for the endpoint in CAS is consulted, which is typically `false` by default.
 
-All available endpoint ids [should be listed here](../monitoring/Monitoring-Statistics.html).
+A number of available endpoint ids [should be listed here](../monitoring/Monitoring-Statistics.html).
 
 Endpoints may also be mapped to custom arbitrary endpoints. For example, to remap the `health` endpoint to `healthcheck`, 
 specify the following settings:
@@ -645,6 +645,8 @@ specify the following settings:
 ```properties
 # management.endpoints.web.path-mapping.health=healthcheck
 ```
+
+### Health Endpoint
 
 The `health` endpoint may also be configured to show details using `management.endpoint.health.show-details` via the following conditions:
 
@@ -657,6 +659,29 @@ The `health` endpoint may also be configured to show details using `management.e
 ```properties
 # management.endpoint.health.show-details=never
 ```
+
+The results and details of the `health` endpoints are produced by a number of health indicator components that may monitor different systems, such as LDAP connection
+pools, database connections, etc. Such health indicators are turned off by default and may individually be controlled and turned on via the following settings:
+
+```properties
+# management.health.<name>.enabled=true
+# management.health.defaults.enabled=false 
+```
+
+The following health indicator names are available, given the presence of the appropriate CAS feature:
+
+| Health Indicator          | Description
+|----------------------|------------------------------------------------------------------------------------------
+| `memoryHealthIndicator`   | Reports back on the health status of CAS JVM memory usage, etc.
+| `sessionHealthIndicator`   | Reports back on the health status of CAS tickets and SSO session usage.
+| `duoSecurityHealthIndicator`   | Reports back on the health status of Duo Security APIs.
+| `ehcacheHealthIndicator`   | Reports back on the health status of Ehcache caches.
+| `hazelcastHealthIndicator`   | Reports back on the health status of Hazelcast caches.
+| `dataSourceHealthIndicator`   | Reports back on the health status of JDBC connections.
+| `pooledLdapConnectionFactoryHealthIndicator`   | Reports back on the health status of LDAP connection pools.
+| `memcachedHealthIndicator`   | Reports back on the health status of Memcached connections.
+| `mongoHealthIndicator`   | Reports back on the health status of MongoDb connections.
+| `samlRegisteredServiceMetadataHealthIndicator`   | Reports back on the health status of SAML2 service provider metadata sources.
 
 ### Endpoint Security
 
@@ -1597,24 +1622,15 @@ To learn more about this topic, [please review this guide](../installation/Cassa
 # cas.authn.cassandra.username=
 # cas.authn.cassandra.password=
 # cas.authn.cassandra.query=SELECT * FROM %s WHERE %s = ? ALLOW FILTERING
-
-# cas.authn.cassandra.protocolVersion=V1|V2|V3|V4
-# cas.authn.cassandra.keyspace=
-# cas.authn.cassandra.contactPoints=localhost1,localhost2
-# cas.authn.cassandra.localDc=
-# cas.authn.cassandra.retryPolicy=DEFAULT_RETRY_POLICY|DOWNGRADING_CONSISTENCY_RETRY_POLICY|FALLTHROUGH_RETRY_POLICY
-# cas.authn.cassandra.compression=LZ4|SNAPPY|NONE
-# cas.authn.cassandra.consistencyLevel=ANY|ONE|TWO|THREE|QUORUM|LOCAL_QUORUM|ALL|EACH_QUORUM|LOCAL_SERIAL|SERIAL|LOCAL_ONE
-# cas.authn.cassandra.serialConsistencyLevel=ANY|ONE|TWO|THREE|QUORUM|LOCAL_QUORUM|ALL|EACH_QUORUM|LOCAL_SERIAL|SERIAL|LOCAL_ONE
-# cas.authn.cassandra.maxConnections=10
-# cas.authn.cassandra.coreConnections=1
-# cas.authn.cassandra.maxRequestsPerConnection=1024
-# cas.authn.cassandra.connectTimeoutMillis=5000
-# cas.authn.cassandra.readTimeoutMillis=5000
-# cas.authn.cassandra.port=9042
 # cas.authn.cassandra.name=
 # cas.authn.cassandra.order=
 ```
+
+Common Cassandra settings for this feature are available [here](Configuration-Properties-Common.html#cassandra-configuration) under the configuration key `cas.authn.cassandra`.
+
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.cassandra`. 
+
+Password encoding settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.cassandra`.
 
 ## Digest Authentication
 
@@ -1698,7 +1714,7 @@ Database settings for this feature are available [here](Configuration-Properties
 
 Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.jdbc.query[0]`.
 
-Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.jdbc.query[0]`.
+Password encoding settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.jdbc.query[0]`.
 
 ```properties
 # cas.authn.jdbc.query[0].credentialCriteria=
@@ -2961,7 +2977,11 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
 # cas.authn.oidc.grantTypesSupported=authorization_code,password,client_credentials,refresh_token
 # cas.authn.oidc.idTokenSigningAlgValuesSupported=none,RS256
 # cas.authn.oidc.tokenEndpointAuthMethodsSupported=client_secret_basic,client_secret_post
+```
 
+### OpenID Connect Scopes & Claims
+
+```properties
 # Define custom scopes and claims
 # cas.authn.oidc.userDefinedScopes.scope1=cn,givenName,photos,customAttribute
 # cas.authn.oidc.userDefinedScopes.scope2=cn,givenName,photos,customAttribute2
@@ -2970,6 +2990,19 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
 # cas.authn.oidc.claimsMap.given_name=custom-given-name
 # cas.authn.oidc.claimsMap.preferred_username=global-user-attribute
 ```
+
+### OpenID Connect WebFinger
+
+#### WebFinger UserInfo via Groovy
+
+```properties
+# cas.authn.oidc.webfinger.userInfo.groovy.location=classpath:/webfinger.groovy
+```
+
+#### WebFinger UserInfo via REST
+
+RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
+under the configuration key `cas.authn.oidc.webfinger.userInfo.rest`.
 
 ## Pac4j Delegated AuthN
 
@@ -3214,6 +3247,15 @@ To learn more about this topic, [please review this guide](../installation/OAuth
 
 # cas.authn.oauth.userProfileViewType=NESTED|FLAT
 ```
+
+### OAuth2 JWT Access Tokens
+
+```properties
+# cas.authn.oauth.accessToken.crypto.encryptionEnabled=true
+# cas.authn.oauth.accessToken.crypto.signingEnabled=true
+```
+
+The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.oauth.accessToken`.
 
 ### OAuth2 UMA
 
@@ -3827,6 +3869,14 @@ Common Hazelcast settings for this feature are available [here](Configuration-Pr
 ```
 
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.hazelcast`.
+
+### Cassandra Ticket Registry
+
+To learn more about this topic, [please review this guide](../ticketing/Cassandra-Ticket-Registry.html).
+
+Common Cassandra settings for this feature are available [here](Configuration-Properties-Common.html#cassandra-configuration) under the configuration key `cas.ticket.registry.cassandra`.
+
+Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.cassandra`.
 
 ### Infinispan Ticket Registry
 

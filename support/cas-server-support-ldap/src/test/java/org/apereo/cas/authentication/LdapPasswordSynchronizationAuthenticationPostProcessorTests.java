@@ -1,28 +1,20 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
-import org.apereo.cas.category.LdapCategory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import lombok.val;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.ldaptive.LdapAttribute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link LdapPasswordSynchronizationAuthenticationPostProcessorTests}.
@@ -31,7 +23,7 @@ import static org.junit.Assert.*;
  * @since 6.1.0
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
-@Category(LdapCategory.class)
+@Tag("Ldap")
 @TestPropertySource(properties = {
     "cas.authn.passwordSync.ldap[0].ldapUrl=ldap://localhost:10389",
     "cas.authn.passwordSync.ldap[0].useSsl=false",
@@ -41,20 +33,8 @@ import static org.junit.Assert.*;
     "cas.authn.passwordSync.ldap[0].bindCredential=password"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
+@EnabledIfContinuousIntegration
 public class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Autowired
     private CasConfigurationProperties casProperties;
 

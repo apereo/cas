@@ -3,7 +3,6 @@ description = "Apereo CAS Web Application"
 apply plugin: "war"
 
 project.ext["mainClassName"] = "org.apereo.cas.web.CasWebApplication"
-
 sourceSets {
     main {
         resources {
@@ -17,6 +16,20 @@ sourceSets {
     bootRun {
         resources {
             srcDirs new File("/etc/cas/templates"), new File(project(":webapp").getProjectDir(), "resources")
+        }
+    }
+}
+
+publishing {
+    publications {
+        mavenWeb(MavenPublication) {
+            from components.web
+            pom {
+                createPom(it, project)
+            }
+            pom.withXml {
+                createPomRepositories(asNode())
+            }
         }
     }
 }

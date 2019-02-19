@@ -6,6 +6,7 @@ dependencies {
     implementation libraries.pac4jcore
     
     implementation project(":core:cas-server-core-rest")
+    implementation project(":support:cas-server-support-rest-core")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":support:cas-server-support-rest")

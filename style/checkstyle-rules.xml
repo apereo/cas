@@ -128,13 +128,15 @@
         <module name="TypeName">
             <property name="severity" value="error"/>
         </module>
+
         <module name="AvoidStarImport">
             <property name="severity" value="error"/>
             <property name="excludes"
                       value="java.io,
                       java.net,
                       java.lang.Math,
-                      org.junit.Assert,
+                      org.junit.jupiter.api.Assertions,
+                      org.junit.jupiter.api.Assumptions,
                       org.mockito.Mockito,
                       org.mockito.Matchers,
                       org.springframework.test.web.servlet.request.MockMvcRequestBuilders,
@@ -656,40 +658,16 @@
         <property name="message" value="For security purposes, use 'java.security.SecureRandom' instead"/>
     </module>
     <module name="RegexpSingleline">
-        <metadata name="net.sf.eclipsecs.core.comment" value="JUnit Assert static import"/>
-        <property name="severity" value="error"/>
-        <property name="format" value="import\s+static\s+org\.junit\.Assert\.\w+"/>
-        <property name="message" value="JUnit Assert methods MUST be imported statically with a *"/>
-    </module>
-    <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Arrays.asList() method call"/>
         <property name="severity" value="error"/>
         <property name="format" value="Lists\.newArrayList\(.+"/>
         <property name="message" value="Use Arrays.asList() or Collections.singletonList() instead."/>
     </module>
     <module name="RegexpSingleline">
-        <metadata name="net.sf.eclipsecs.core.comment" value="Mockito static import"/>
-        <property name="severity" value="error"/>
-        <property name="format" value="import\s+static\s+org\.mockito\.Mockito\.\w+"/>
-        <property name="message" value="Mockito methods MUST be imported statically with a *"/>
-    </module>
-    <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Test class is named incorrectly"/>
         <property name="severity" value="error"/>
         <property name="format" value="public\s+(abstract\s+)*class\s+.+Test\s*\{"/>
         <property name="message" value="Name of the test class MUST end in 'Tests'"/>
-    </module>
-    <module name="RegexpSingleline">
-        <metadata name="net.sf.eclipsecs.core.comment" value="Use @Rule instead of expect an exception"/>
-        <property name="severity" value="error"/>
-        <property name="format" value="@Test\(expect"/>
-        <property name="message" value="Use @Rule ExpectedException instead of expecting an exception"/>
-    </module>
-    <module name="RegexpSingleline">
-        <metadata name="net.sf.eclipsecs.core.comment" value="Use @Rule instead of expect an exception"/>
-        <property name="severity" value="error"/>
-        <property name="format" value="@RunWith\((Conditional)?SpringRunner\.class\)"/>
-        <property name="message" value="Use Spring @Rule and @ClassRule instead of the Spring test runner."/>
     </module>
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Use Collections.singleton instead"/>
