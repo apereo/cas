@@ -45,7 +45,7 @@ public class UmaFindResourceSetRegistrationEndpointController extends BaseUmaEnd
      * @param response the response
      * @return the response entity
      */
-    @GetMapping(value = '/' + OAuth20Constants.BASE_OAUTH20_URL + "/" + OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL,
+    @GetMapping(value = '/' + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL,
         consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity findResourceSets(final HttpServletRequest request, final HttpServletResponse response) {
@@ -68,7 +68,7 @@ public class UmaFindResourceSetRegistrationEndpointController extends BaseUmaEnd
      * @param response the response
      * @return the response entity
      */
-    @GetMapping(value = '/' + OAuth20Constants.BASE_OAUTH20_URL + "/" + OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL + "/{id}",
+    @GetMapping(value = '/' + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL + "/{id}",
         consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity findResourceSet(@PathVariable("id") final long id, final HttpServletRequest request, final HttpServletResponse response) {

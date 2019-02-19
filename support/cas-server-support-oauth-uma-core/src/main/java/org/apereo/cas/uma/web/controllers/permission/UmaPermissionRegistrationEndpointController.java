@@ -48,7 +48,7 @@ public class UmaPermissionRegistrationEndpointController extends BaseUmaEndpoint
      * @param response the response
      * @return the permission ticket
      */
-    @PostMapping(value = '/' + OAuth20Constants.BASE_OAUTH20_URL + "/" + OAuth20Constants.UMA_PERMISSION_URL,
+    @PostMapping(value = '/' + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.UMA_PERMISSION_URL,
         consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity handle(@RequestBody final String body, final HttpServletRequest request, final HttpServletResponse response) {
