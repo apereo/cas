@@ -129,6 +129,7 @@ layout: null
         *   [CouchDb](/$version/ticketing/CouchDb-Ticket-Registry.html)
         *   [Infinispan](/$version/ticketing/Infinispan-Ticket-Registry.html)
         *   [Redis](/$version/ticketing/Redis-Ticket-Registry.html)
+        *   [Cassandra](/$version/ticketing/Cassandra-Ticket-Registry.html)
         *   [MongoDb](/$version/ticketing/MongoDb-Ticket-Registry.html)
         *   [DynamoDb](/$version/ticketing/DynamoDb-Ticket-Registry.html)
 
