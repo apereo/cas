@@ -1,10 +1,12 @@
 package org.apereo.cas.configuration.model.support.cassandra.ticketregistry;
 
+import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.cassandra.authentication.BaseCassandraProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * This is {@link CassandraTicketRegistryProperties}.
@@ -15,5 +17,10 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CassandraTicketRegistryProperties extends BaseCassandraProperties {
+    /**
+     * Crypto settings for the registry.
+     */
+    @NestedConfigurationProperty
+    private EncryptionRandomizedSigningJwtCryptographyProperties crypto = new EncryptionRandomizedSigningJwtCryptographyProperties();
 }
 

@@ -1622,24 +1622,15 @@ To learn more about this topic, [please review this guide](../installation/Cassa
 # cas.authn.cassandra.username=
 # cas.authn.cassandra.password=
 # cas.authn.cassandra.query=SELECT * FROM %s WHERE %s = ? ALLOW FILTERING
-
-# cas.authn.cassandra.protocolVersion=V1|V2|V3|V4
-# cas.authn.cassandra.keyspace=
-# cas.authn.cassandra.contactPoints=localhost1,localhost2
-# cas.authn.cassandra.localDc=
-# cas.authn.cassandra.retryPolicy=DEFAULT_RETRY_POLICY|DOWNGRADING_CONSISTENCY_RETRY_POLICY|FALLTHROUGH_RETRY_POLICY
-# cas.authn.cassandra.compression=LZ4|SNAPPY|NONE
-# cas.authn.cassandra.consistencyLevel=ANY|ONE|TWO|THREE|QUORUM|LOCAL_QUORUM|ALL|EACH_QUORUM|LOCAL_SERIAL|SERIAL|LOCAL_ONE
-# cas.authn.cassandra.serialConsistencyLevel=ANY|ONE|TWO|THREE|QUORUM|LOCAL_QUORUM|ALL|EACH_QUORUM|LOCAL_SERIAL|SERIAL|LOCAL_ONE
-# cas.authn.cassandra.maxConnections=10
-# cas.authn.cassandra.coreConnections=1
-# cas.authn.cassandra.maxRequestsPerConnection=1024
-# cas.authn.cassandra.connectTimeoutMillis=5000
-# cas.authn.cassandra.readTimeoutMillis=5000
-# cas.authn.cassandra.port=9042
 # cas.authn.cassandra.name=
 # cas.authn.cassandra.order=
 ```
+
+Common Cassandra settings for this feature are available [here](Configuration-Properties-Common.html#cassandra-configuration) under the configuration key `cas.authn.cassandra`.
+
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.cassandra`. 
+
+Password encoding settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.cassandra`.
 
 ## Digest Authentication
 
@@ -1723,7 +1714,7 @@ Database settings for this feature are available [here](Configuration-Properties
 
 Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.jdbc.query[0]`.
 
-Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.jdbc.query[0]`.
+Password encoding settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.jdbc.query[0]`.
 
 ```properties
 # cas.authn.jdbc.query[0].credentialCriteria=
@@ -3878,6 +3869,14 @@ Common Hazelcast settings for this feature are available [here](Configuration-Pr
 ```
 
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.hazelcast`.
+
+### Cassandra Ticket Registry
+
+To learn more about this topic, [please review this guide](../ticketing/Cassandra-Ticket-Registry.html).
+
+Common Cassandra settings for this feature are available [here](Configuration-Properties-Common.html#cassandra-configuration) under the configuration key `cas.ticket.registry.cassandra`.
+
+Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.cassandra`.
 
 ### Infinispan Ticket Registry
 

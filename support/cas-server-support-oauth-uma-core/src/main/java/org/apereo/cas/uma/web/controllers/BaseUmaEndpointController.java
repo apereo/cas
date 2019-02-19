@@ -104,8 +104,8 @@ public abstract class BaseUmaEndpointController {
      */
     protected String getResourceSetUriLocation(final ResourceSet saved) {
         return casProperties.getAuthn().getUma().getIssuer()
-            + OAuth20Constants.BASE_OAUTH20_URL + "/"
-            + OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL + "/"
+            + OAuth20Constants.BASE_OAUTH20_URL + '/'
+            + OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL + '/'
             + saved.getId();
     }
 }
