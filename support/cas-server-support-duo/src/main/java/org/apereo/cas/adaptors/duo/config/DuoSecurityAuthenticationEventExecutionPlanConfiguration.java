@@ -1,13 +1,14 @@
 package org.apereo.cas.adaptors.duo.config;
 
-import org.apereo.cas.adaptors.duo.DuoSecurityHealthIndicator;
+import org.apereo.cas.adaptors.duo.DuoHealthIndicator;
 import org.apereo.cas.adaptors.duo.authn.DuoAuthenticationHandler;
 import org.apereo.cas.adaptors.duo.authn.DuoCredential;
 import org.apereo.cas.adaptors.duo.authn.DuoDirectCredential;
 import org.apereo.cas.adaptors.duo.authn.DuoMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProviderFactory;
-import org.apereo.cas.adaptors.duo.web.flow.action.DetermineDuoUserAccountAction;
-import org.apereo.cas.adaptors.duo.web.flow.action.PrepareDuoWebLoginFormAction;
+import org.apereo.cas.adaptors.duo.web.DuoPingEndpoint;
+import org.apereo.cas.adaptors.duo.web.flow.action.DuoDetermineUserAccountAction;
+import org.apereo.cas.adaptors.duo.web.flow.action.DuoPrepareWebLoginFormAction;
 import org.apereo.cas.adaptors.duo.web.flow.config.DuoMultifactorWebflowConfigurer;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -33,6 +34,7 @@ import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -93,13 +95,13 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
 
     @Bean
     public Action prepareDuoWebLoginFormAction() {
-        return new PrepareDuoWebLoginFormAction();
+        return new DuoPrepareWebLoginFormAction();
     }
 
     @ConditionalOnMissingBean(name = "determineDuoUserAccountAction")
     @Bean
     public Action determineDuoUserAccountAction() {
-        return new DetermineDuoUserAccountAction();
+        return new DuoDetermineUserAccountAction();
     }
 
     @ConditionalOnMissingBean(name = "duoProviderFactory")
@@ -175,6 +177,13 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
     @Bean
     @ConditionalOnEnabledHealthIndicator("duoSecurityHealthIndicator")
     public HealthIndicator duoSecurityHealthIndicator() {
-        return new DuoSecurityHealthIndicator();
+        return new DuoHealthIndicator(applicationContext);
     }
+
+    @Bean
+    @ConditionalOnEnabledEndpoint
+    public DuoPingEndpoint duoPingEndpoint() {
+        return new DuoPingEndpoint(casProperties, applicationContext);
+    }
+
 }
