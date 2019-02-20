@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 
@@ -112,7 +113,8 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
     }
 
     @Override
-    public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attrs, final RegisteredService service) {
+    public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attrs,
+                                                     final RegisteredService registeredService, final Service selectedService) {
         val resolvedAttributes = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attrs);
         val attributesToRelease = new HashMap<String, Object>();

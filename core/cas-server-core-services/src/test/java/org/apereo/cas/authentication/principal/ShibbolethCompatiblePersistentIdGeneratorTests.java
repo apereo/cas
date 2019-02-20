@@ -34,7 +34,7 @@ public class ShibbolethCompatiblePersistentIdGeneratorTests {
     }
 
     @Test
-    public void realTestofGeneratorThatVerifiesValueReturned() {
+    public void realTestOfGeneratorThatVerifiesValueReturned() {
         val generator = new ShibbolethCompatiblePersistentIdGenerator("thisisasalt");
 
         val p = mock(Principal.class);

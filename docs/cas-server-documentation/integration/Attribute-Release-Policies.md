@@ -370,6 +370,40 @@ The following merging policies are supported:
 | `add`           | Attributes are merged such that attributes from the source that don't already exist for the principal are produced.
 | `multivalued`   | Attributes with the same name are merged into multi-valued attributes.
 
+#### Ordering Policies
+
+Note that each policy in the chain can be assigned a numeric `order` that would determine its position in the chain before execution. This
+order may be important if you have attribute release policies that should calculate a value dynamically first before passing it onto
+the next policy in the chain. 
+
+For example, the policy chain below allows CAS to generate an attribute first using the `GeneratesFancyAttributeReleasePolicy` policy
+where the attribute is next passed onto the next policy in the chain, that is `ReleaseFancyAttributeReleasePolicy`, to decide
+whether or not the attribute should be released. Note the configuration of policy `order` determines the execution sequence.
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 300,
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "policies": [ "java.util.ArrayList",
+      [
+          {
+            "@class": "org.apereo.cas.ReleaseFancyAttributeReleasePolicy",
+            "order": 1
+          },
+          {
+            "@class": "org.apereo.cas.GeneratesFancyAttributeReleasePolicy", 
+            "order": 0
+          }
+      ]
+    ]
+  }
+}
+```
+
 ## Attribute Value Filters
 
 While each policy defines what principal attributes may be allowed for a given service,

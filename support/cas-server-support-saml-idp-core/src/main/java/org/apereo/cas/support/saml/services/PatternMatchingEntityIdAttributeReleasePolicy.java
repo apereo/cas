@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.services;
 
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.RegexUtils;
@@ -34,18 +36,20 @@ public class PatternMatchingEntityIdAttributeReleasePolicy extends BaseSamlRegis
 
     @Override
     protected Map<String, Object> getAttributesForSamlRegisteredService(final Map<String, Object> attributes,
-                                                                        final SamlRegisteredService service,
+                                                                        final SamlRegisteredService registeredService,
                                                                         final ApplicationContext applicationContext,
                                                                         final SamlRegisteredServiceCachingMetadataResolver resolver,
                                                                         final SamlRegisteredServiceServiceProviderMetadataFacade facade,
-                                                                        final EntityDescriptor entityDescriptor) {
+                                                                        final EntityDescriptor entityDescriptor,
+                                                                        final Principal principal,
+                                                                        final Service selectedService) {
         val pattern = RegexUtils.createPattern(this.entityIds);
         val entityID = entityDescriptor.getEntityID();
         val matcher = pattern.matcher(entityID);
         val matched = fullMatch ? matcher.matches() : matcher.find();
         LOGGER.debug("Pattern [{}] matched against [{}]? [{}]", pattern.pattern(), entityID, BooleanUtils.toStringYesNo(matched));
         if (matched) {
-            return authorizeReleaseOfAllowedAttributes(attributes);
+            return authorizeReleaseOfAllowedAttributes(principal, attributes, registeredService, selectedService);
         }
         return new HashMap<>(0);
     }

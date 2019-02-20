@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 
@@ -42,7 +43,8 @@ public class ScriptedRegisteredServiceAttributeReleasePolicy extends AbstractReg
     }
 
     @Override
-    public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attributes, final RegisteredService service) {
+    public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attributes,
+                                                     final RegisteredService service, final Service selectedService) {
         try {
             if (StringUtils.isBlank(this.scriptFile)) {
                 return new HashMap<>(0);

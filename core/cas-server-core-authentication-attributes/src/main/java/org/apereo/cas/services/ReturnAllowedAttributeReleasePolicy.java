@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -38,17 +39,22 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
     private List<String> allowedAttributes = new ArrayList<>();
 
     @Override
-    public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attrs, final RegisteredService service) {
-        return authorizeReleaseOfAllowedAttributes(attrs);
+    public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attrs,
+                                                     final RegisteredService registeredService, final Service selectedService) {
+        return authorizeReleaseOfAllowedAttributes(principal, attrs, registeredService, selectedService);
     }
 
     /**
      * Authorize release of allowed attributes map.
      *
-     * @param attrs the attributes
+     * @param principal         the principal
+     * @param attrs             the attributes
+     * @param registeredService the registered service
+     * @param selectedService   the selected service
      * @return the map
      */
-    protected Map<String, Object> authorizeReleaseOfAllowedAttributes(final Map<String, Object> attrs) {
+    protected Map<String, Object> authorizeReleaseOfAllowedAttributes(final Principal principal, final Map<String, Object> attrs,
+                                                                      final RegisteredService registeredService, final Service selectedService) {
         val resolvedAttributes = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attrs);
         val attributesToRelease = new HashMap<String, Object>();
