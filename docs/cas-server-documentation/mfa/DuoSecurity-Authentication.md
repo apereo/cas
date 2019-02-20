@@ -37,6 +37,14 @@ You may need to add the following repositories to the WAR overlay:
 </repository>
 ```
 
+## Administrative Endpoints
+
+The following endpoints are provided by CAS:
+ 
+| Endpoint     | Description
+|--------------|--------------------------------------------------------------------------------------------------------
+| `duoPing`    | Pings the Duo Security API to check for service availability. Can accept an optional `providerId` parameter. 
+
 ## Multiple Instances
 
 CAS multifactor authentication support for Duo Security allows
