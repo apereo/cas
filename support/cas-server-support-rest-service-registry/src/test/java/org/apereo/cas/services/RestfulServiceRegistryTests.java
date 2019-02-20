@@ -57,8 +57,10 @@ public class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
         return dao;
     }
 
+
     @TestConfiguration
     public static class RestServicesTestConfiguration {
+
 
         @RestController("servicesController")
         @RequestMapping("/")
