@@ -3387,6 +3387,7 @@ To learn more about this topic, [please review this guide](../installation/Audit
 # cas.audit.alternateServerAddrHeaderName=
 # cas.audit.alternateClientAddrHeaderName=X-Forwarded-For
 # cas.audit.useServerHostAddress=false
+# cas.audit.supportedActions=AUTHENTICATION_.+,OTHER_\w+_ACTION
 ```
 
 ### Slf4j Audits
