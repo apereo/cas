@@ -56,6 +56,29 @@ needed for REFEDS Research and Scholarship service providers using the entity at
 }
 ```
 
+## Releasing `eduPersonTargetedID`
+
+If you do not have pre-calculated values for the `eduPersonTargetedID` attribute to fetch before release, 
+you can let CAS calculate the `eduPersonTargetedID` attribute dynamically at release time using the following policy:
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "entity-ids-allowed-via-regex",
+  "name": "SAML",
+  "id": 10,
+  "metadataLocation": "path/to/metadata.xml",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.support.saml.services.EduPersonTargetedIdAttributeReleasePolicy",
+    "salt": "OqmG80fEKBQt",
+    "attribute": ""
+  }
+}
+```
+
+The generated id may be based off of an existing principal attribute. If left unspecified or attribute not found, 
+the authenticated principal id is used.
+
 ## Groovy Script
 
 This policy allows a Groovy script to calculate the collection of released attributes.
