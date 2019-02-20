@@ -1,6 +1,7 @@
 package org.apereo.cas.ws.idp.services;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.ws.idp.WSFederationConstants;
@@ -42,7 +43,8 @@ public class CustomNamespaceWSFederationClaimsReleasePolicy extends AbstractRegi
     }
 
     @Override
-    public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attrs, final RegisteredService service) {
+    public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attrs,
+                                                     final RegisteredService registeredService, final Service selectedService) {
         val resolvedAttributes = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attrs);
         val attributesToRelease = Maps.<String, Object>newHashMapWithExpectedSize(resolvedAttributes.size());
