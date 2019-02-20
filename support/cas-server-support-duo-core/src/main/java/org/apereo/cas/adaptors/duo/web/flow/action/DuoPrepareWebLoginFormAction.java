@@ -14,14 +14,14 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * This is {@link PrepareDuoWebLoginFormAction}.
+ * This is {@link DuoPrepareWebLoginFormAction}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
 @Slf4j
 @RequiredArgsConstructor
-public class PrepareDuoWebLoginFormAction extends AbstractMultifactorAuthenticationAction<DuoMultifactorAuthenticationProvider> {
+public class DuoPrepareWebLoginFormAction extends AbstractMultifactorAuthenticationAction<DuoMultifactorAuthenticationProvider> {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
