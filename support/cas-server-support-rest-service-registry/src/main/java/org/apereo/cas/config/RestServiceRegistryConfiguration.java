@@ -18,6 +18,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
@@ -49,6 +50,10 @@ public class RestServiceRegistryConfiguration {
             && StringUtils.isNotBlank(registry.getBasicAuthPassword())) {
             headers.putAll(HttpUtils.createBasicAuthHeaders(registry.getBasicAuthUsername(), registry.getBasicAuthPassword()));
         }
+
+        headers.add("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+        headers.add("Accept", MediaType.APPLICATION_JSON_VALUE);
+
         return new RestfulServiceRegistry(eventPublisher, restTemplate, registry.getUrl(), headers);
     }
 

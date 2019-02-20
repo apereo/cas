@@ -18,10 +18,10 @@
         <Logger name="org.apereo" level="error">
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="org.apereo.cas.util.MockWebServer" level="trace">
+        <Logger name="org.apereo.cas.util.MockWebServer" level="warn">
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="org.apereo.cas.audit" level="debug">
+        <Logger name="org.apereo.cas.audit" level="warn">
             <AppenderRef ref="console"/>
         </Logger>
         <Root level="off">

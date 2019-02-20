@@ -159,7 +159,7 @@ public class RegisteredServiceTestUtils {
         return s;
     }
 
-    public static AbstractRegisteredService getRegisteredService(final String id, final Class<?extends RegisteredService> clazz) {
+    public static AbstractRegisteredService getRegisteredService(final String id, final Class<? extends RegisteredService> clazz) {
         return getRegisteredService(id, clazz, true);
     }
 
