@@ -979,4 +979,14 @@ public class WebUtils {
     public static void putAvailableAuthenticationHandleNames(final RequestContext context, final Collection<String> availableHandlers) {
         context.getFlowScope().put("availableAuthenticationHandlerNames", availableHandlers);
     }
+
+    /**
+     * Put acceptable usage policy status into flow scope.
+     *
+     * @param context the context
+     * @param status  the status
+     */
+    public static void putAcceptableUsagePolicyStatusIntoFlowScope(final RequestContext context, final Object status) {
+        context.getFlowScope().put("aupStatus", status);
+    }
 }

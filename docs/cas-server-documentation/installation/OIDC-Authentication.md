@@ -198,7 +198,7 @@ policies allow one to release standard claims, remap attributes to standard clai
 It is also possible to define and use *free-form* attribute release policies outside the confines of a *scope* to freely build and release claims/attributes.  
 
 For example, the following service definition will decide on relevant attribute release policies based on the semantics
-of the the scopes `profile` and `email`. There is no need to design or list individual claims as CAS will auto-configure
+of the scopes `profile` and `email`. There is no need to design or list individual claims as CAS will auto-configure
 the relevant attribute release policies:
 
 ```json
