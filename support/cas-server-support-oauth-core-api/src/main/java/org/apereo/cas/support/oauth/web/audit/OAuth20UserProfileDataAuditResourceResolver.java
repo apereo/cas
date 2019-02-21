@@ -28,10 +28,19 @@ public class OAuth20UserProfileDataAuditResourceResolver extends ReturnValueAsSt
         val profileMap = Map.class.cast(retval);
         val accessToken = AccessToken.class.cast(auditableTarget.getArgs()[0]);
 
+        var service = profileMap.get(CasProtocolConstants.PARAMETER_SERVICE);
+        if (service == null) {
+            service = accessToken.getService();
+        }
+        var clientId = profileMap.get(OAuth20Constants.CLIENT_ID);
+        if (clientId == null) {
+            clientId = accessToken.getClientId();
+        }
+
         val result = new ToStringBuilder(this, NO_CLASS_NAME_STYLE)
             .append("id", profileMap.get(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID))
-            .append("client_id", profileMap.get(OAuth20Constants.CLIENT_ID))
-            .append("service", profileMap.get(CasProtocolConstants.PARAMETER_SERVICE))
+            .append("client_id", clientId)
+            .append("service", service)
             .append("scopes", accessToken.getScopes())
             .append("attributes", profileMap.get(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES))
             .toString();
