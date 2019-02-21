@@ -4,8 +4,6 @@ dependencies {
     implementation libraries.springbootredis
 
     api project(":api:cas-server-core-api-util")
-
-    
     
     implementation project(":core:cas-server-core-logging")
     implementation project(":core:cas-server-core-tickets-api")

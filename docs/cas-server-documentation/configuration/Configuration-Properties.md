@@ -3420,6 +3420,21 @@ Store audit logs inside a MongoDb database.
 Common configuration settings for this feature are available 
 [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.audit`.
 
+```properties
+# cas.audit.mongo.asynchronous=true
+```
+
+### Redis Audits
+
+Store audit logs inside a Redis database.
+
+Common configuration settings for this feature are available 
+[here](Configuration-Properties-Common.html#redis-configuration) under the configuration key `cas.audit`.
+
+```properties
+# cas.audit.redis.asynchronous=true
+```
+
 ### CouchDb Audits
 
 Store audit logs inside a CouchDb database.
@@ -3433,6 +3448,10 @@ Store audit logs inside a Couchbase database.
 
 Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) 
 under the configuration key `cas.audit.couchbase`.
+
+```properties
+# cas.audit.couchbase.asynchronous=true
+```
 
 ### Database Audits
 
@@ -3451,6 +3470,10 @@ under the configuration key `cas.audit.jdbc`.
 
 Store audit logs inside a database. RESTful settings for this feature are 
 available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.audit.rest`.
+
+```properties
+# cas.audit.rest.asynchronous=true
+```
 
 ## Sleuth Distributed Tracing
 
