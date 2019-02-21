@@ -143,6 +143,15 @@ You may chain various attribute release policies that authorize claim release ba
 }
 ```
 
+Standard scopes that internally catalog pre-defined claims all belong to the namespace `org.apereo.cas.oidc.claims` and are described below:
+
+| Policy                                              | Description
+|-----------------------------------------------------|-----------------------------------------------------------------------------------------
+| `o.a.c.o.c.OidcProfileScopeAttributeReleasePolicy`  | Release claims mapped to the spec-predefined `profile` scope.
+| `o.a.c.o.c.OidcEmailScopeAttributeReleasePolicy`  | Release claims mapped to the spec-predefined `email` scope.
+| `o.a.c.o.c.OidcAddressScopeAttributeReleasePolicy`  | Release claims mapped to the spec-predefined `address` scope.
+| `o.a.c.o.c.OidcPhoneScopeAttributeReleasePolicy`  | Release claims mapped to the spec-predefined `phone` scope.
+ 
 ### Mapping Claims
 
 Claims associated with a scope (i.e. `given_name` for `profile`) are fixed in 
@@ -158,7 +167,21 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 ### User-Defined Scopes
 
-Note that in addition to standard system scopes, you may define your own custom scope with a number of attributes within. These such as `displayName` above, get bundled into a `custom` scope which can be used and requested by services and clients.
+Note that in addition to standard system scopes, you may define your own custom scope with a number of attributes within:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "...",
+  "clientSecret": "...",
+  "serviceId" : "...",
+  "name": "OIDC Test",
+  "id": 10,
+  "scopes" : [ "java.util.HashSet", [ "displayName", "eduPerson" ] ]
+}
+```
+ 
+These such as `displayName` above, get bundled into a `custom` scope which can be used and requested by services and clients.
 
 If you however wish to define your custom scopes as an extension of what OpenID Connect defines
 such that you may bundle attributes together, then you need to first register your `scope`,
@@ -169,9 +192,10 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 ### Releasing Claims
 
-Defined scopes for a given service definition control and construct attribute release policies internally. Such attribute release
-policies allow one to remap attributes to standard claims, or define custom claims altogether. It is also possible to define and use
-*free-form* attribute release policies outside the confines of a *scope* to freely build and release attributes.  
+Defined scopes for a given service definition control and build attribute release policies internally. Such attribute release
+policies allow one to release standard claims, remap attributes to standard claims, or define custom claims and scopes altogether. 
+
+It is also possible to define and use *free-form* attribute release policies outside the confines of a *scope* to freely build and release claims/attributes.  
 
 For example, the following service definition will decide on relevant attribute release policies based on the semantics
 of the the scopes `profile` and `email`. There is no need to design or list individual claims as CAS will auto-configure
@@ -211,6 +235,42 @@ the following example to release `userX` as a *claim*:
   }
 }
 ```
+
+It is also possible to mix *free-form* release policies with those that operate based on a scope by chaining such policies together. For example, the below policy
+allows the release of `user-x` as a claim, as well as all claims assigned and internally defined for the standard `email` scope.
+
+```json
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "serviceId": "...",
+  "name": "OIDC",
+  "id": 10,
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "policies": [
+      "java.util.ArrayList",
+      [
+        {
+          "@class": "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy",
+          "allowedAttributes": {
+            "@class": "java.util.TreeMap",
+            "user-x": "groovy { return attributes['uid'].get(0) + '-X' }"
+          },
+          "order": 0
+        },
+        {
+          "@class": "org.apereo.cas.oidc.claims.OidcEmailScopeAttributeReleasePolicy",
+          "order": 1
+        }
+      ]
+    ]
+  }
+}
+```
+
+To learn more about attribute release policies and the chain of command, please [see this guide](../integration/Attribute-Release-Policies.html).
 
 ## Authentication Context Class
 
