@@ -51,7 +51,7 @@ public class UniquePrincipalAuthenticationPolicy implements AuthenticationPolicy
         }
     }
 
-    private boolean isSamePrincipalId(final Ticket t, final Principal p) {
+    private static boolean isSamePrincipalId(final Ticket t, final Principal p) {
         return FunctionUtils.doIf(TicketGrantingTicket.class.isInstance(t) && !t.isExpired(),
             () -> {
                 val principal = TicketGrantingTicket.class.cast(t).getAuthentication().getPrincipal();
