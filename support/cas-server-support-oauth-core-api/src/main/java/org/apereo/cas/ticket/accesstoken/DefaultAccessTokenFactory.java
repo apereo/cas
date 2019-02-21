@@ -50,7 +50,8 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
 
     @Override
     public AccessToken create(final Service service, final Authentication authentication,
-                              final TicketGrantingTicket ticketGrantingTicket, final Collection<String> scopes) {
+                              final TicketGrantingTicket ticketGrantingTicket,
+                              final Collection<String> scopes, final String clientId) {
         var accessTokenId = this.accessTokenIdGenerator.getNewTicketId(AccessToken.PREFIX);
 
         val registeredService = (OAuthRegisteredService) this.jwtBuilder.getServicesManager().findServiceBy(service);
@@ -67,7 +68,7 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
             accessTokenId = jwtBuilder.build(request);
         }
         val at = new AccessTokenImpl(accessTokenId, service, authentication,
-            this.expirationPolicy, ticketGrantingTicket, scopes);
+            this.expirationPolicy, ticketGrantingTicket, scopes, clientId);
         if (ticketGrantingTicket != null) {
             ticketGrantingTicket.getDescendantTickets().add(at.getId());
         }
