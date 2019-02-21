@@ -58,7 +58,7 @@ public class DisplayBeforePasswordlessAuthenticationAction extends AbstractActio
                 user.getEmail());
         }
         if (communicationsManager.isSmsSenderDefined() && StringUtils.isNotBlank(user.getPhone())) {
-            communicationsManager.sms(passwordlessProperties.getTokens().getMail().getFrom(), user.getPhone(), token);
+            communicationsManager.sms(passwordlessProperties.getTokens().getSms().getFrom(), user.getPhone(), token);
         }
 
         passwordlessTokenRepository.deleteTokens(user.getUsername());
