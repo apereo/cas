@@ -92,7 +92,7 @@ public class SyncopeAuthenticationHandlerTests {
     }
 
     @SneakyThrows
-    private MockWebServer startMockSever(final UserTO user) {
+    private static MockWebServer startMockSever(final UserTO user) {
         val data = MAPPER.writeValueAsString(user);
         val webServer = new MockWebServer(8095,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),

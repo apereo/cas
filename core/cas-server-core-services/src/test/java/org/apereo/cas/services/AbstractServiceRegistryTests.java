@@ -554,7 +554,7 @@ public abstract class AbstractServiceRegistryTests {
      * @param randomId addition to service name for uniqueness.
      * @return new registered service object
      */
-    protected AbstractRegisteredService buildRegisteredServiceInstance(final int randomId, final Class<? extends RegisteredService> registeredServiceClass) {
+    protected static AbstractRegisteredService buildRegisteredServiceInstance(final int randomId, final Class<? extends RegisteredService> registeredServiceClass) {
         val id = String.format("^http://www.serviceid%s.org", randomId);
         val rs = RegisteredServiceTestUtils.getRegisteredService(id, registeredServiceClass);
         initializeServiceInstance(rs);
@@ -565,7 +565,7 @@ public abstract class AbstractServiceRegistryTests {
      * Method to prepare registered service for testing.
      * Implementing classes may override this if more is necessary.
      */
-    protected AbstractRegisteredService initializeServiceInstance(final AbstractRegisteredService rs) {
+    protected static AbstractRegisteredService initializeServiceInstance(final AbstractRegisteredService rs) {
         val propertyMap = new HashMap<String, RegisteredServiceProperty>();
         val property = new DefaultRegisteredServiceProperty();
         val values = new HashSet<String>();
@@ -577,7 +577,7 @@ public abstract class AbstractServiceRegistryTests {
         return rs;
     }
 
-    protected int getLoadSize() {
+    protected static int getLoadSize() {
         return LOAD_SIZE;
     }
 
