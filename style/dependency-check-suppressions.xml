@@ -4,6 +4,9 @@
         <cve>CVE-2018-8088</cve>
     </suppress>
     <suppress>
+        <cve>CVE-2019-5736</cve>
+    </suppress>
+    <suppress>
         <cve>CVE-2018-1270</cve>
     </suppress>
     <suppress>
