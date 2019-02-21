@@ -141,7 +141,7 @@ The following events are tracked and recorded in the audit log:
 | `DELETE_SERVICE`                      | `SUCCESS`, `FAILURE`
 | `SAML2_RESPONSE`                      | `CREATED`, `FAILED`
 | `SAML2_REQUEST`                       | `CREATED`, `FAILED`
-| `OAUTH2_USER_PROFILE_DATA`            | `CREATED`, `FAILED`
+| `OAUTH2_USER_PROFILE`                 | `CREATED`, `FAILED`
 | `OAUTH2_ACCESS_TOKEN_REQUEST`         | `CREATED`, `FAILED`
 | `OAUTH2_ACCESS_TOKEN_RESPONSE`        | `CREATED`, `FAILED`
 | `REST_API_TICKET_GRANTING_TICKET`     | `CREATED`, `FAILED`

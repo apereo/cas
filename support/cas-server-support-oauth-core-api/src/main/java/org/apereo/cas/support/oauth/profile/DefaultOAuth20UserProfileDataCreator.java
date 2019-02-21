@@ -40,9 +40,9 @@ public class DefaultOAuth20UserProfileDataCreator implements OAuth20UserProfileD
 
 
     @Override
-    @Audit(action = "OAUTH2_USER_PROFILE_DATA",
-        actionResolverName = "OAUTH2_USER_PROFILE_DATA_ACTION_RESOLVER",
-        resourceResolverName = "OAUTH2_USER_PROFILE_DATA_RESOURCE_RESOLVER")
+    @Audit(action = "OAUTH2_USER_PROFILE",
+        actionResolverName = "OAUTH2_USER_PROFILE_ACTION_RESOLVER",
+        resourceResolverName = "OAUTH2_USER_PROFILE_RESOURCE_RESOLVER")
     public Map<String, Object> createFrom(final AccessToken accessToken, final J2EContext context) {
         val service = accessToken.getService();
         val registeredService = this.servicesManager.findServiceBy(service);
@@ -50,6 +50,7 @@ public class DefaultOAuth20UserProfileDataCreator implements OAuth20UserProfileD
         val principal = getAccessTokenAuthenticationPrincipal(accessToken, context, registeredService);
         val map = new HashMap<String, Object>();
         map.put(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID, principal.getId());
+        map.put(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_CLIENT_ID, accessToken.getClientId());
         val attributes = principal.getAttributes();
         map.put(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES, attributes);
         finalizeProfileResponse(accessToken, map, principal);

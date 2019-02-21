@@ -184,17 +184,18 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
      */
     protected Pair<AccessToken, RefreshToken> generateAccessTokenOAuthGrantTypes(final AccessTokenRequestDataHolder holder) {
         LOGGER.debug("Creating access token for [{}]", holder.getService());
+        val clientId = holder.getRegisteredService().getClientId();
         val authn = DefaultAuthenticationBuilder
             .newInstance(holder.getAuthentication())
             .addAttribute(OAuth20Constants.GRANT_TYPE, holder.getGrantType().toString())
             .addAttribute(OAuth20Constants.SCOPE, holder.getScopes())
-            .addAttribute(OAuth20Constants.CLIENT_ID, holder.getRegisteredService().getClientId())
+            .addAttribute(OAuth20Constants.CLIENT_ID, clientId)
             .build();
 
         LOGGER.debug("Creating access token for [{}]", holder);
         val ticketGrantingTicket = holder.getTicketGrantingTicket();
         val accessToken = this.accessTokenFactory.create(holder.getService(),
-            authn, ticketGrantingTicket, holder.getScopes());
+            authn, ticketGrantingTicket, holder.getScopes(), clientId);
 
         LOGGER.debug("Created access token [{}]", accessToken);
         addTicketToRegistry(accessToken, ticketGrantingTicket);

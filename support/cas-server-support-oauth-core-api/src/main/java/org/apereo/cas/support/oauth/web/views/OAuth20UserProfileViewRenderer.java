@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.views;
 
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 
 import java.util.Map;
@@ -17,6 +18,12 @@ public interface OAuth20UserProfileViewRenderer {
      * Attribute in the model that represents the id.
      */
     String MODEL_ATTRIBUTE_ID = "id";
+
+    /**
+     * Attribute in the model that represents the client id.
+     */
+    String MODEL_ATTRIBUTE_CLIENT_ID = OAuth20Constants.CLIENT_ID;
+
     /**
      * Attribute in the model that represents collection of attributes.
      */
