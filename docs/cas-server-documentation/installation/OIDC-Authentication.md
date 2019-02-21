@@ -167,6 +167,51 @@ Such user-defined scopes are also able to override the definition of system scop
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#openid-connect).
 
+### Releasing Claims
+
+Defined scopes for a given service definition control and construct attribute release policies internally. Such attribute release
+policies allow one to remap attributes to standard claims, or define custom claims altogether. It is also possible to define and use
+*free-form* attribute release policies outside the confines of a *scope* to freely build and release attributes.  
+
+For example, the following service definition will decide on relevant attribute release policies based on the semantics
+of the the scopes `profile` and `email`. There is no need to design or list individual claims as CAS will auto-configure
+the relevant attribute release policies:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "serviceId" : "...",
+  "name": "OIDC",
+  "id": 1,
+  "scopes" : [ "java.util.HashSet",
+    [ "profile", "email" ]
+  ]
+}
+```
+
+A *scope-free* attribute release policy may just as equally apply, allowing one in 
+the following example to release `userX` as a *claim*:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "serviceId" : "...",
+  "name": "OIDC",
+  "id": 1,
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy",
+    "allowedAttributes" : {
+      "@class" : "java.util.TreeMap",
+      "userX" : "groovy { return attributes['uid'].get(0) + '-X' }"
+    }
+  }
+}
+```
+
 ## Authentication Context Class
 
 Support for authentication context class references is implemented in form of `acr_values` as part of the original 
