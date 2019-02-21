@@ -145,7 +145,7 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
     }
 
     @SneakyThrows(IOException.class)
-    protected void assertResponseWrittenEquals(final String response, final MockRequestContext context) {
+    protected static void assertResponseWrittenEquals(final String response, final MockRequestContext context) {
         val nativeResponse = (MockHttpServletResponse) context.getExternalContext().getNativeResponse();
 
         assertEquals(
