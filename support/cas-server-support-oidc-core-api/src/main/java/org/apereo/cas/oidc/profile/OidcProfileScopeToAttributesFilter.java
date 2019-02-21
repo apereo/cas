@@ -31,7 +31,7 @@ import org.reflections.util.FilterBuilder;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
@@ -55,7 +55,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                                               final Collection<BaseOidcScopeAttributeReleasePolicy> userScopes,
                                               final CasConfigurationProperties casProperties) {
         this.casProperties = casProperties;
-        this.filters = new HashMap<>();
+        this.filters = new LinkedHashMap<>();
         this.principalFactory = principalFactory;
         this.servicesManager = servicesManager;
         this.userScopes = userScopes;
@@ -72,8 +72,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                 .setUrls(ClasspathHelper.forPackage(packageName))
                 .setScanners(new SubTypesScanner(true)));
 
-        val subTypes =
-            reflections.getSubTypesOf(BaseOidcScopeAttributeReleasePolicy.class);
+        val subTypes = reflections.getSubTypesOf(BaseOidcScopeAttributeReleasePolicy.class);
         subTypes.forEach(Unchecked.consumer(t -> {
             val ex = t.getDeclaredConstructor().newInstance();
             if (oidc.getScopes().contains(ex.getScopeName())) {
@@ -120,8 +119,16 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                                                         final Service service,
                                                         final RegisteredService registeredService,
                                                         final AccessToken accessToken) {
-        val attributes = new HashMap<String, Object>();
-        scopes.stream()
+        if (scopes.isEmpty()) {
+            LOGGER.trace("No defined scopes are available to instruct attribute release policies for [{}]. "
+                    + "CAS will authorize the collection of resolved attributes [{}] for release to [{}}",
+                registeredService.getServiceId(), principal.getAttributes(), service.getId());
+            return principal.getAttributes();
+        }
+
+        val attributes = new LinkedHashMap<String, Object>();
+        scopes
+            .stream()
             .distinct()
             .filter(this.filters::containsKey)
             .forEach(s -> {
@@ -144,7 +151,8 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
         val policy = new ChainingAttributeReleasePolicy();
         val oidc = OidcRegisteredService.class.cast(service);
 
-        oidc.getScopes().forEach(s -> {
+        val definedServiceScopes = oidc.getScopes();
+        definedServiceScopes.forEach(s -> {
             LOGGER.trace("Reviewing scope [{}] for [{}]", s, service.getServiceId());
 
             try {
@@ -185,10 +193,12 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                 LOGGER.debug("[{}] appears to be a user-defined scope and does not match any of the predefined standard scopes. "
                     + "Checking [{}] against user-defined scopes provided as [{}]", s, s, userScopes);
 
-                val userPolicy = userScopes.stream()
+                val userPolicy = userScopes
+                    .stream()
                     .filter(t -> t.getScopeName().equals(s.trim()))
                     .findFirst()
                     .orElse(null);
+
                 if (userPolicy != null) {
                     LOGGER.debug("Mapped user-defined scope [{}] to attribute release policy [{}]", s, userPolicy);
                     policy.getPolicies().add(userPolicy);
@@ -202,7 +212,10 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
             policy.getPolicies().add(new OidcCustomScopeAttributeReleasePolicy(otherScopes));
         }
 
-        if (policy.getPolicies().isEmpty()) {
+        if (definedServiceScopes.isEmpty()) {
+            LOGGER.trace("Registered service [{}] does not define any scopes to control attribute release policies. "
+                + "CAS will allow the existing attribute release policies assigned to the service to operate without a scope.", service.getServiceId());
+        } else if (policy.getPolicies().isEmpty()) {
             LOGGER.trace("No attribute release policy could be determined based on given scopes. "
                 + "No claims/attributes will be released to [{}]", service.getServiceId());
             oidc.setAttributeReleasePolicy(new DenyAllAttributeReleasePolicy());
