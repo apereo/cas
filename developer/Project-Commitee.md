@@ -12,10 +12,8 @@ members MUST take place on the [mailing list](/cas/Mailing-Lists.html).
 
 The current members of the PMC are:
 
-- [Daniel Frett](https://github.com/frett)
 - [Dmitriy Kopylenko](https://github.com/dima767)
 - [Travis Schmidt](https://github.com/tsschmidt)
-- [Jeff Sittler](https://github.com/mindblender)
 - [Jérôme Leleu](https://github.com/leleuj)
 - [Hal Deadman](https://github.com/hdeadman)
 - [Timur Duehr](https://github.com/tduehr)
@@ -24,7 +22,9 @@ The current members of the PMC are:
 
 Emeritus members are:
 
+- [Daniel Frett](https://github.com/frett)
 - [Scott Battaglia](https://github.com/battags)
+- [Jeff Sittler](https://github.com/mindblender)
 - [Andrew Petro](https://github.com/apetro)
 - [Bill Thompson](https://github.com/wgthom)
 - [Robert Oschwald](https://github.com/robertoschwald)
