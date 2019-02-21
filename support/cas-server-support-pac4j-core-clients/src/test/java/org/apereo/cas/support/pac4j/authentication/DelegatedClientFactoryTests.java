@@ -105,6 +105,7 @@ public class DelegatedClientFactoryTests {
         final Pac4jOidcClientProperties oidc3 = new Pac4jOidcClientProperties();
         configureIdentifiableClient(oidc3);
         oidc3.setType("AZURE");
+        oidc3.setAzureTenantId("contoso.onmicrosoft.com");
         oidc3.setLogoutUrl("https://example.logout");
         props.getOidc().add(oidc3);
 
