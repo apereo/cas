@@ -33,10 +33,10 @@ public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<String
 
         val key = (RsaJsonWebKey) jwks.getJsonWebKeys().get(0);
         if (StringUtils.isBlank(key.getAlgorithm())) {
-            LOGGER.warn("Located JSON web key [{}] has no algorithm defined", key);
+            LOGGER.info("Located JSON web key [{}] has no algorithm defined", key);
         }
         if (StringUtils.isBlank(key.getKeyId())) {
-            LOGGER.warn("Located JSON web key [{}] has no key id defined", key);
+            LOGGER.info("Located JSON web key [{}] has no key id defined", key);
         }
 
         if (key.getPrivateKey() == null) {
