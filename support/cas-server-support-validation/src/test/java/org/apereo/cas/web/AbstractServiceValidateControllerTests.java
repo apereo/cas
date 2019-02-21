@@ -319,11 +319,11 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
     public abstract AbstractServiceValidateController getServiceValidateControllerInstance();
 
-    protected CasProtocolValidationSpecification getValidationSpecification() {
+    protected static CasProtocolValidationSpecification getValidationSpecification() {
         return new Cas20WithoutProxyingValidationSpecification();
     }
 
-    protected ProxyHandler getProxyHandler() {
+    protected static ProxyHandler getProxyHandler() {
         return new Cas20ProxyHandler(new SimpleHttpClientFactoryBean().getObject(), new DefaultUniqueTicketIdGenerator());
     }
 }

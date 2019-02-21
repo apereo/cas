@@ -20,11 +20,11 @@ import static org.apereo.cas.util.junit.Assertions.*;
  * @author Marvin S. Addison
  * @since 3.4.6
  */
-public class BaseCRLRevocationCheckerTests {
+public abstract class BaseCRLRevocationCheckerTests {
     /**
      * Test method for {@link AbstractCRLRevocationChecker#check(X509Certificate)}.
      */
-    public void checkCertificate(final AbstractCRLRevocationChecker checker, final String[] certFiles, final GeneralSecurityException expected) {
+    protected static void checkCertificate(final AbstractCRLRevocationChecker checker, final String[] certFiles, final GeneralSecurityException expected) {
         val certificates = Arrays.stream(certFiles).map(file -> CertUtils.readCertificate(new ClassPathResource(file))).collect(Collectors.toList());
 
         assertThrowsOrNot(expected, () -> {

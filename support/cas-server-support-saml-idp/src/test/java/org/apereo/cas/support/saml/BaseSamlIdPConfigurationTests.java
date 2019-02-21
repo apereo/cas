@@ -180,16 +180,16 @@ public abstract class BaseSamlIdPConfigurationTests {
         return authnRequest;
     }
 
-    protected SamlRegisteredService getSamlRegisteredServiceForTestShib() {
+    protected static SamlRegisteredService getSamlRegisteredServiceForTestShib() {
         return getSamlRegisteredServiceForTestShib(false, false, false);
     }
 
-    protected SamlRegisteredService getSamlRegisteredServiceForTestShib(final boolean signAssertion,
+    protected static SamlRegisteredService getSamlRegisteredServiceForTestShib(final boolean signAssertion,
                                                                         final boolean signResponses) {
         return getSamlRegisteredServiceForTestShib(signAssertion, signResponses, false);
     }
 
-    protected SamlRegisteredService getSamlRegisteredServiceForTestShib(final boolean signAssertion,
+    protected static SamlRegisteredService getSamlRegisteredServiceForTestShib(final boolean signAssertion,
                                                                         final boolean signResponses,
                                                                         final boolean encryptAssertions) {
         val service = new SamlRegisteredService();

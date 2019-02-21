@@ -22,7 +22,7 @@ public class WsFederationCredentialTests extends AbstractWsFederationTests {
     private static final String ISSUER = "http://adfs.example.com/adfs/services/trust";
     private static final String AUDIENCE = "urn:federation:cas";
 
-    public WsFederationCredential getCredential() {
+    public static WsFederationCredential getCredential() {
         val standardCred = new WsFederationCredential();
         standardCred.setNotBefore(ZonedDateTime.now(ZoneOffset.UTC));
         standardCred.setNotOnOrAfter(ZonedDateTime.now(ZoneOffset.UTC).plusHours(1));

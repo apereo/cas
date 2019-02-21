@@ -108,7 +108,7 @@ public class PolicyBasedAuthenticationManagerTests {
         assertEquals(2, auth.getCredentials().size());
     }
 
-    protected ServicesManager mockServicesManager() {
+    protected static ServicesManager mockServicesManager() {
         val svc = mock(ServicesManager.class);
         val reg = CoreAuthenticationTestUtils.getRegisteredService();
         when(svc.findServiceBy(any(Service.class))).thenReturn(reg);
@@ -209,7 +209,7 @@ public class PolicyBasedAuthenticationManagerTests {
         assertEquals(2, auth.getCredentials().size());
     }
 
-    private AuthenticationEventExecutionPlan getAuthenticationExecutionPlan(final Map<AuthenticationHandler, PrincipalResolver> map) {
+    private static AuthenticationEventExecutionPlan getAuthenticationExecutionPlan(final Map<AuthenticationHandler, PrincipalResolver> map) {
         val plan = new DefaultAuthenticationEventExecutionPlan();
         plan.registerAuthenticationHandlerWithPrincipalResolver(map);
         plan.registerAuthenticationHandlerResolver(new RegisteredServiceAuthenticationHandlerResolver(mockServicesManager()));

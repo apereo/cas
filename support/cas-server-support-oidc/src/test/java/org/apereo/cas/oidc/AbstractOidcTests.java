@@ -154,11 +154,11 @@ public abstract class AbstractOidcTests {
         servicesManager.save(getOidcRegisteredService());
     }
 
-    protected OidcRegisteredService getOidcRegisteredService() {
+    protected static OidcRegisteredService getOidcRegisteredService() {
         return getOidcRegisteredService(true, true);
     }
 
-    protected OidcRegisteredService getOidcRegisteredService(final boolean sign, final boolean encrypt) {
+    protected static OidcRegisteredService getOidcRegisteredService(final boolean sign, final boolean encrypt) {
         val svc = new OidcRegisteredService();
         svc.setClientId("clientid");
         svc.setName("oauth");
@@ -175,7 +175,7 @@ public abstract class AbstractOidcTests {
         return svc;
     }
 
-    protected JwtClaims getClaims() {
+    protected static JwtClaims getClaims() {
         val claims = new JwtClaims();
         claims.setJwtId(RandomStringUtils.randomAlphanumeric(16));
         claims.setIssuer("https://cas.example.org");
