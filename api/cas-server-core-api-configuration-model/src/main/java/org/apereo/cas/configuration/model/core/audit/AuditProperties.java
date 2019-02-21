@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.core.audit;
 
+import org.apereo.cas.configuration.model.support.redis.AuditRedisProperties;
+
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -85,6 +87,12 @@ public class AuditProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private AuditCouchDbProperties couchDb = new AuditCouchDbProperties();
+
+    /**
+     * Family of sub-properties pertaining to Redis-based audit destinations.
+     */
+    @NestedConfigurationProperty
+    private AuditRedisProperties redis = new AuditRedisProperties();
 
     /**
      * Family of sub-properties pertaining to rest-based audit destinations.
