@@ -52,12 +52,15 @@ Releasing authentication attributes to service providers and applications can be
 controlled to some extent. To learn more and see the relevant list of CAS properties,
 please [review this guide](../configuration/Configuration-Properties.html#authentication-attributes).
 
-
 ## Principal Attributes
 
 Principal attributes typically convey personally identifiable data about the authenticated user,
 such as address, last name, etc. Release policies are available in CAS and documented below
 to explicitly control the collection of attributes that may be authorized for release to a given application.
+
+<div class="alert alert-info"><strong>Remember</strong><p>Depending on the protocol used and the type/class of service (i.e. relying party) registered with CAS,
+additional release policies may become available that allow more fine-tuned control over attribute release, catering better to the needs of the particular
+authentication protocol at hand. Remember to verify attribute release capabilities of CAS by visiting and studies the appropriate documentation for each protocol.</p></div>
 
 ### Default
 
