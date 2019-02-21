@@ -73,6 +73,7 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
     protected TicketRegistry ticketRegistry;
 
     public abstract AcceptableUsagePolicyRepository getAcceptableUsagePolicyRepository();
+
     /**
      * Repository can update the state of the AUP acceptance without reloading the principal. Mostly for testing purposes.
      *
@@ -81,8 +82,8 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
     public boolean hasLiveUpdates() {
         return false;
     }
-    
-    protected void verifyRepositoryAction(final String actualPrincipalId, final Map<String, Object> profileAttributes) {
+
+    public void verifyRepositoryAction(final String actualPrincipalId, final Map<String, Object> profileAttributes) {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -93,10 +94,10 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(principal), context);
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
 
-        assertFalse(getAcceptableUsagePolicyRepository().verify(context, c).getLeft());
+        assertFalse(getAcceptableUsagePolicyRepository().verify(context, c).isAccepted());
         assertTrue(getAcceptableUsagePolicyRepository().submit(context, c));
         if (hasLiveUpdates()) {
-            assertTrue(getAcceptableUsagePolicyRepository().verify(context, c).getLeft());
+            assertTrue(getAcceptableUsagePolicyRepository().verify(context, c).isAccepted());
         }
     }
 }

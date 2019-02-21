@@ -4325,6 +4325,12 @@ To learn more about this topic, [please review this guide](../webflow/Webflow-Cu
 # cas.acceptableUsagePolicy.scope=GLOBAL|AUTHENTICATION
 ```
 
+#### Groovy
+
+```properties
+# cas.acceptableUsagePolicy.groovy.location=file:/etc/cas/config/aup.groovy
+```
+
 #### REST
 
 RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.acceptableUsagePolicy.rest`.

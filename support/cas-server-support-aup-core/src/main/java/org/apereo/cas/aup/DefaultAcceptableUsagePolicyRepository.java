@@ -2,7 +2,6 @@ package org.apereo.cas.aup;
 
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.support.WebUtils;
@@ -39,7 +38,7 @@ public class DefaultAcceptableUsagePolicyRepository extends AbstractPrincipalAtt
     }
 
     @Override
-    public Pair<Boolean, Principal> verify(final RequestContext requestContext, final Credential credential) {
+    public AcceptableUsagePolicyStatus verify(final RequestContext requestContext, final Credential credential) {
         val storageInfo = getKeyAndMap(requestContext, credential);
         val key = storageInfo.getLeft();
         val map = storageInfo.getRight();
@@ -49,9 +48,10 @@ public class DefaultAcceptableUsagePolicyRepository extends AbstractPrincipalAtt
         }
         val principal = authentication.getPrincipal();
         if (map.containsKey(key)) {
-            return Pair.of((Boolean) map.get(key), principal);
+            val accepted = (Boolean) map.getOrDefault(key, false);
+            return new AcceptableUsagePolicyStatus(accepted, principal);
         }
-        return Pair.of(Boolean.FALSE, principal);
+        return AcceptableUsagePolicyStatus.denied(principal);
     }
 
     @Override
