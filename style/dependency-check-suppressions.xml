@@ -31,6 +31,9 @@
         <cve>CVE-2011-2411</cve>
     </suppress>
     <suppress>
+        <cve>CVE-2019-5736</cve>
+    </suppress>
+    <suppress>
         <cve>CVE-2017-1000393</cve>
     </suppress>
     <suppress>
