@@ -52,10 +52,8 @@ public class DisplayBeforePasswordlessAuthenticationAction extends AbstractActio
 
         communicationsManager.validate();
         if (communicationsManager.isMailSenderDefined() && StringUtils.isNotBlank(user.getEmail())) {
-            communicationsManager.email(token,
-                passwordlessProperties.getTokens().getMail().getFrom(),
-                passwordlessProperties.getTokens().getMail().getSubject(),
-                user.getEmail());
+            val mail = passwordlessProperties.getTokens().getMail();
+            communicationsManager.email(token, mail.getFrom(), mail.getSubject(), user.getEmail());
         }
         if (communicationsManager.isSmsSenderDefined() && StringUtils.isNotBlank(user.getPhone())) {
             communicationsManager.sms(passwordlessProperties.getTokens().getSms().getFrom(), user.getPhone(), token);
