@@ -6,9 +6,9 @@ task outputSpotbugsReports(description: "Display Spotbugs output") {
 
 
 def printSpotbugsReportToConsole(File file) {
-    logger.debug "Reviewing file $file"
+    println "Reviewing file $file"
     if (file.exists()) {
-        logger.debug "Processing file $file"
+        println "Processing file $file"
         def slurper = new XmlSlurper().parse(file)
         def bugsFound = slurper.BugInstance.size()
         if (bugsFound > 0) {

@@ -48,7 +48,7 @@ public class DefaultAcceptableUsagePolicyRepository extends AbstractPrincipalAtt
         }
         val principal = authentication.getPrincipal();
         if (map.containsKey(key)) {
-            val accepted = (Boolean) map.getOrDefault(key, false);
+            val accepted = (boolean) map.getOrDefault(key, Boolean.FALSE);
             return new AcceptableUsagePolicyStatus(accepted, principal);
         }
         return AcceptableUsagePolicyStatus.denied(principal);
