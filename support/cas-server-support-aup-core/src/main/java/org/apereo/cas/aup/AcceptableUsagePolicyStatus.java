@@ -20,18 +20,9 @@ import java.util.stream.Collectors;
  */
 @Data
 public class AcceptableUsagePolicyStatus implements Serializable {
-    /**
-     * The Accepted.
-     */
-    private final boolean accepted;
-    /**
-     * The Principal.
-     */
-    private final Principal principal;
 
-    /**
-     * The Properties.
-     */
+    private final boolean accepted;
+    private final Principal principal;
     private final MultiValuedMap<String, Object> properties = new ArrayListValuedHashMap<>();
 
     /**
@@ -59,17 +50,22 @@ public class AcceptableUsagePolicyStatus implements Serializable {
      *
      * @param name  the name
      * @param value the value
+     * @return the property
      */
-    public void setProperty(final String name, final Object value) {
+    public AcceptableUsagePolicyStatus setProperty(final String name, final Object value) {
         this.properties.remove(name);
         addProperty(name, value);
+        return this;
     }
 
     /**
      * Clear properties.
+     *
+     * @return the acceptable usage policy status
      */
-    public void clearProperties() {
+    public AcceptableUsagePolicyStatus clearProperties() {
         this.properties.clear();
+        return this;
     }
 
     /**
@@ -77,9 +73,11 @@ public class AcceptableUsagePolicyStatus implements Serializable {
      *
      * @param name  the name
      * @param value the value
+     * @return the acceptable usage policy status
      */
-    public void addProperty(final String name, final Object value) {
+    public AcceptableUsagePolicyStatus addProperty(final String name, final Object value) {
         this.properties.put(name, value);
+        return this;
     }
 
     /**
