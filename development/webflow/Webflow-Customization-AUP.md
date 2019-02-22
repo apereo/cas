@@ -55,6 +55,51 @@ AUTHENTICATION which will result in the user having to agree to the policy durin
 The user will not have to agree to the policy when CAS grants access based on an existing ticket granting
 ticket cookie. 
 
+### Groovy
+
+Alternatively, CAS can be configured to use a Groovy script to verify status of policies and store results. The script should match the following:
+
+```groovy
+import org.apereo.cas.authentication.principal.*
+import org.apereo.cas.authentication.*
+import org.apereo.cas.util.*
+import org.apereo.cas.aup.*
+import org.springframework.webflow.execution.*
+
+def verify(Object[] args) {
+    def requestContext = args[0]
+    def credential = args[1]
+    def applicationContext = args[2]
+    def principal = args[3]
+    def logger = args[4]
+    ...
+    if (policyAccepted()) {
+        return AcceptableUsagePolicyStatus.accepted(principal)
+    }
+    return AcceptableUsagePolicyStatus.denied(principal)
+}
+
+def submit(Object[] args) {
+     def requestContext = args[0]
+     def credential = args[1]
+     def applicationContext = args[2]
+     def principal = args[3]
+     def logger = args[4]
+     ...
+     return true
+ }
+```
+
+The parameters passed are as follows:
+
+| Parameter             | Description
+|-----------------------|-----------------------------------------------------------------------
+| `requestContext`      | The object representing the Spring Webflow `RequestContext`.
+| `credential`          | The object representing the authentication `Credential`.
+| `applicationContext`  | The object representing the Spring `ApplicationContext`.
+| `principal`           | The object representing the authenticated `Principal`.
+| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+
 ### LDAP
 
 Alternatively, CAS can be configured to use LDAP as the storage mechanism. Upon accepting the policy, the result will be stored back into LDAP and
