@@ -18,6 +18,8 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @Slf4j
 public class GroovyAcceptableUsagePolicyRepository implements AcceptableUsagePolicyRepository {
+    private static final long serialVersionUID = 2773808902502739L;
+
     private final transient WatchableGroovyScriptResource watchableScript;
     private final transient ApplicationContext applicationContext;
 
