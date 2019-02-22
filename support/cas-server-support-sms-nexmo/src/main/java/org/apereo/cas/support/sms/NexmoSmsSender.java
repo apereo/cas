@@ -28,7 +28,7 @@ public class NexmoSmsSender implements SmsSender {
         val builder = new NexmoClient.Builder();
         this.nexmoClient = builder.apiKey(nexmo.getApiToken())
             .apiSecret(nexmo.getApiSecret())
-            .applicationId(nexmo.getApplicationId()).build();
+            .signatureSecret(nexmo.getSignatureSecret()).build();
     }
 
     @Override
