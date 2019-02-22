@@ -1488,11 +1488,12 @@ Send text messaging using Clickatell.
 ### Nexmo
 
 Send text messaging using Nexmo.
+Nexmo needs at least apiSecret or signatureSecret field set.
 
 ```properties
 # cas.smsProvider.nexmo.apiToken=
 # cas.smsProvider.nexmo.apiSecret=
-# cas.smsProvider.nexmo.applicationId=CAS
+# cas.smsProvider.nexmo.signatureSecret=
 ```
 
 ### Amazon SNS
