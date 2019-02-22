@@ -112,7 +112,7 @@ public class OAuth20DefaultAccessTokenResponseGeneratorTests extends AbstractOAu
         val accessToken = factory.create(service,
             RegisteredServiceTestUtils.getAuthentication("casuser"),
             new MockTicketGrantingTicket("casuser"),
-            new ArrayList<>());
+            new ArrayList<>(), null);
 
         val genBuilder = OAuth20TokenGeneratedResult.builder();
         val generatedToken = genBuilder.registeredService(registeredService)
