@@ -156,6 +156,7 @@ layout: null
         *   [JPA](/$version/services/JPA-Service-Management.html)
         *   [Redis](/$version/services/Redis-Service-Management.html)
         *   [DynamoDb](/$version/services/DynamoDb-Service-Management.html)
+        *   [Cassandra](/$version/services/Cassandra-Service-Management.html)
         *   [CosmosDb](/$version/services/CosmosDb-Service-Management.html)
         *   [Couchbase](/$version/services/Couchbase-Service-Management.html)
         *   [CouchDb](/$version/services/CouchDb-Service-Management.html)
