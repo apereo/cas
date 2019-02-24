@@ -433,6 +433,10 @@ public interface CasWebflowConstants {
      */
     String STATE_ID_MFA_PRE_AUTH = "mfaPreAuth";
 
+    /**
+     * The view state 'showAuthenticationWarningMessages'.
+     */
+    String STATE_ID_SHOW_AUTHN_WARNING_MSGS = "showAuthenticationWarningMessages";
     /*
      ****************************************
      * Views.
@@ -457,11 +461,6 @@ public interface CasWebflowConstants {
      * The view state 'error'.
      */
     String VIEW_ID_ERROR = "error";
-
-    /**
-     * The view state 'showAuthenticationWarningMessages'.
-     */
-    String VIEW_ID_SHOW_AUTHN_WARNING_MSGS = "showAuthenticationWarningMessages";
 
     /**
      * View id when MFA provider has been detected as unavailable and failureMode is closed.
@@ -610,7 +609,10 @@ public interface CasWebflowConstants {
      * Actions.
      ****************************************
      */
-
+    /**
+     * Action id 'renderLoginFormAction'.
+     */
+    String ACTION_ID_RENDER_LOGIN_FORM = "renderLoginFormAction";
     /**
      * Action id 'initialFlowSetupAction'.
      */

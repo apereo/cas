@@ -39,7 +39,8 @@
                                                 name="source"
                                                 tabindex="0"
                                                 th:field="*{source}">
-                                            <option th:each="handler : ${availableAuthenticationHandlerNames}" th:value="${handler}" th:text="${handler}">Source</option>
+                                            <option th:each="handler : ${availableAuthenticationHandlerNames}"
+                                                    th:value="${handler}" th:text="${handler}">Source</option>
                                         </select>
                                     </div>
                                 </span>
@@ -53,7 +54,7 @@
                         </section>
 
                         <section class="form-group">
-                            <label for="username" th:utext="#{screen.welcome.label.netid}">Username</label>
+                            <span th:utext="#{screen.welcome.label.netid}">Username</span>
 
                             <div th:if="${openIdLocalId}">
                                 <strong>
@@ -78,7 +79,7 @@
                         </section>
 
                         <section class="form-group">
-                            <label for="password" th:utext="#{screen.welcome.label.password}">Password</label>
+                            <span th:utext="#{screen.welcome.label.password}">Password</span>
 
                             <div>
                                 <input class="form-control required"
@@ -95,6 +96,16 @@
                                     <span th:utext="#{screen.capslock.on}"/>
                                 </p>
                             </span>
+                            </div>
+                        </section>
+
+                        <section class="form-group">
+                            <div th:each="entry: ${customLoginFormFields}">
+                                <div>
+                                    <span th:text="#{${entry.value.messageBundleKey}}">Label</span>
+                                    <input class="form-control required" type="text" name="data" th:field="*{customFields[__${entry.key}__]}">
+                                    <p/>
+                                </div>
                             </div>
                         </section>
 
@@ -158,14 +169,14 @@
 
                         <span th:if="${recaptchaVersion=='v3'}" th:remove="tag">
                             <input class="btn btn-block btn-submit"
-                                  th:if="${recaptchaSiteKey != null}"
-                                  name="submit"
-                                  th:attr="data-sitekey=${recaptchaSiteKey}"
-                                  accesskey="l"
-                                  th:value="#{screen.welcome.button.login}"
-                                  tabindex="6"
-                                  type="submit"
-                                  value="Login3"
+                                   th:if="${recaptchaSiteKey != null}"
+                                   name="submit"
+                                   th:attr="data-sitekey=${recaptchaSiteKey}"
+                                   accesskey="l"
+                                   th:value="#{screen.welcome.button.login}"
+                                   tabindex="6"
+                                   type="submit"
+                                   value="Login3"
                             />
                          </span>
                     </form>
