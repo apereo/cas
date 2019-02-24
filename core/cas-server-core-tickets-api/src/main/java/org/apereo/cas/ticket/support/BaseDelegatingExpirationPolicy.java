@@ -36,16 +36,14 @@ import java.util.Optional;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirationPolicy {
+    /**
+     * Default policy name.
+     */
+    public static final String POLICY_NAME_DEFAULT = "DEFAULT";
 
     private static final long serialVersionUID = 5927936344949518688L;
 
     private final Map<String, ExpirationPolicy> policies = new LinkedHashMap<>();
-
-    private final ExpirationPolicy defaultExpirationPolicy;
-
-    public BaseDelegatingExpirationPolicy(final ExpirationPolicy defaultExpirationPolicy) {
-        this.defaultExpirationPolicy = defaultExpirationPolicy;
-    }
 
     /**
      * Add policy.
@@ -114,19 +112,13 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
     @JsonIgnore
     @Override
     public Long getTimeToLive() {
-        if (this.defaultExpirationPolicy == null) {
-            return 0L;
-        }
-        return this.defaultExpirationPolicy.getTimeToLive();
+        return this.policies.get(POLICY_NAME_DEFAULT).getTimeToLive();
     }
 
     @JsonIgnore
     @Override
     public Long getTimeToIdle() {
-        if (this.defaultExpirationPolicy == null) {
-            return 0L;
-        }
-        return this.defaultExpirationPolicy.getTimeToIdle();
+        return this.policies.get(POLICY_NAME_DEFAULT).getTimeToIdle();
     }
 
     /**
