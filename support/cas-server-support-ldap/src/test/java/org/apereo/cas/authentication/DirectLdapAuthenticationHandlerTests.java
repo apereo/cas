@@ -13,7 +13,7 @@ import org.springframework.test.context.TestPropertySource;
  */
 @TestPropertySource(properties = {
     "cas.authn.ldap[0].type=DIRECT",
-    "cas.authn.ldap[0].ldapUrl=ldap://localhost:10389",
+    "cas.authn.ldap[0].ldapUrl=${ldap.url}",
     "cas.authn.ldap[0].useSsl=false",
     "cas.authn.ldap[0].dnFormat=cn=%s,dc=example,dc=org",
     "cas.authn.ldap[0].principalAttributeList=description,cn",

@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.LdapTest;
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import lombok.val;
@@ -25,16 +26,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @Tag("Ldap")
 @TestPropertySource(properties = {
-    "cas.authn.passwordSync.ldap[0].ldapUrl=ldap://localhost:10389",
+    "cas.authn.passwordSync.ldap[0].ldapUrl=${ldap.url}",
     "cas.authn.passwordSync.ldap[0].useSsl=false",
     "cas.authn.passwordSync.ldap[0].baseDn=dc=example,dc=org",
     "cas.authn.passwordSync.ldap[0].searchFilter=cn={user}",
-    "cas.authn.passwordSync.ldap[0].bindDn=cn=Directory Manager",
+    "cas.authn.passwordSync.ldap[0].bindDn=${ldap.bindDn}",
     "cas.authn.passwordSync.ldap[0].bindCredential=password"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnabledIfContinuousIntegration
-public class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
+public class LdapPasswordSynchronizationAuthenticationPostProcessorTests implements LdapTest {
     @Autowired
     private CasConfigurationProperties casProperties;
 

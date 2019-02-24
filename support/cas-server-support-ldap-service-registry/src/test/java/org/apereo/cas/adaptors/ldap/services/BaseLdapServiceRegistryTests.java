@@ -4,6 +4,7 @@ import org.apereo.cas.adaptors.ldap.services.config.LdapServiceRegistryConfigura
 import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
+import org.apereo.cas.util.LdapTest;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -31,12 +32,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @DirtiesContext
 @Tag("Ldap")
 @TestPropertySource(properties = {
-    "cas.serviceRegistry.ldap.ldapUrl=ldap://localhost:10389",
+    "cas.serviceRegistry.ldap.ldapUrl=${ldap.url}",
     "cas.serviceRegistry.ldap.useSsl=false",
     "cas.serviceRegistry.ldap.baseDn=dc=example,dc=org"
 })
 @SpringBootTest(classes = {LdapServiceRegistryConfiguration.class, RefreshAutoConfiguration.class})
-public abstract class BaseLdapServiceRegistryTests extends AbstractServiceRegistryTests {
+public abstract class BaseLdapServiceRegistryTests extends AbstractServiceRegistryTests implements LdapTest {
 
     @Autowired
     @Qualifier("ldapServiceRegistry")

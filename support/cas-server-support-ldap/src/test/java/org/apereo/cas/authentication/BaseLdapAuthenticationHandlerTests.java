@@ -17,6 +17,7 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.LdapAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.util.LdapTest;
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import lombok.val;
@@ -64,7 +65,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("Ldap")
 @EnabledIfContinuousIntegration
-public abstract class BaseLdapAuthenticationHandlerTests {
+public abstract class BaseLdapAuthenticationHandlerTests implements LdapTest {
     @Autowired
     @Qualifier("ldapAuthenticationHandlers")
     protected Collection<AuthenticationHandler> handler;

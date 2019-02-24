@@ -5,6 +5,7 @@ import org.apereo.cas.adaptors.x509.authentication.handler.support.AbstractX509L
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.CRLDistributionPointRevocationChecker;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.AllowRevocationPolicy;
 import org.apereo.cas.adaptors.x509.config.X509AuthenticationConfiguration;
+import org.apereo.cas.adaptors.x509.util.X509TestProperties;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -20,6 +21,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.util.LdapTest;
 import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.util.crypto.CertUtils;
 
@@ -36,7 +38,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.test.context.TestPropertySource;
 
 
 /**
@@ -63,9 +64,8 @@ import org.springframework.test.context.TestPropertySource;
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
     CasCoreServicesConfiguration.class})
-@TestPropertySource(locations = {"classpath:/x509.properties"})
 @EnableScheduling
-public class LdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests implements InitializingBean {
+public class LdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests implements InitializingBean, LdapTest, X509TestProperties {
     private static final int LDAP_PORT = 1389;
 
     @Autowired

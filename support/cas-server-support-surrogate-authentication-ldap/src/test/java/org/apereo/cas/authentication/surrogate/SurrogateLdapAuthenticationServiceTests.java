@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication.surrogate;
 
-import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -24,23 +23,18 @@ import org.apereo.cas.config.SurrogateLdapAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
+import org.apereo.cas.util.LdapTest;
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
-import com.unboundid.ldap.sdk.LDAPConnection;
-import lombok.Cleanup;
 import lombok.Getter;
-import lombok.SneakyThrows;
-import lombok.val;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -81,7 +75,7 @@ import org.springframework.test.context.TestPropertySource;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
 })
 @TestPropertySource(properties = {
-    "cas.authn.surrogate.ldap.ldapUrl=ldap://localhost:10389",
+    "cas.authn.surrogate.ldap.ldapUrl=${ldap.url}",
     "cas.authn.surrogate.ldap.useSsl=false",
     "cas.authn.surrogate.ldap.baseDn=ou=surrogates,dc=example,dc=org",
     "cas.authn.surrogate.ldap.bindDn=cn=Directory Manager",
@@ -89,33 +83,14 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.surrogate.ldap.searchFilter=cn={user}",
     "cas.authn.surrogate.ldap.surrogateSearchFilter=employeeType={surrogate}",
     "cas.authn.surrogate.ldap.memberAttributeName=mail",
-    "cas.authn.surrogate.ldap.memberAttributeValueRegex=\\\\w+@example.org"
+    "cas.authn.surrogate.ldap.memberAttributeValueRegex=\\\\w+@example.org",
+    "ldap.resource=ldif/ldap-surrogates-ou.ldif",
+    "ldap.test.dnPrefix=ou=surrogates,"
     })
 @Getter
 @EnabledIfContinuousIntegration
-public class SurrogateLdapAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
-
-    private static final int LDAP_PORT = 10389;
-
+public class SurrogateLdapAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests implements LdapTest {
     @Autowired
     @Qualifier("surrogateAuthenticationService")
     private SurrogateAuthenticationService service;
-
-    @BeforeAll
-    @SneakyThrows
-    public static void bootstrap() {
-        @Cleanup
-        val localhost = new LDAPConnection("localhost", LDAP_PORT,
-            "cn=Directory Manager", "password");
-        localhost.connect("localhost", LDAP_PORT);
-        localhost.bind("cn=Directory Manager", "password");
-        LdapIntegrationTestsOperations.populateEntries(
-            localhost,
-            new ClassPathResource("ldif/ldap-surrogates-ou.ldif").getInputStream(),
-            "dc=example,dc=org");
-        LdapIntegrationTestsOperations.populateEntries(
-            localhost,
-            new ClassPathResource("ldif/ldap-surrogate.ldif").getInputStream(),
-            "ou=surrogates,dc=example,dc=org");
-    }
 }

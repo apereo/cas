@@ -2,6 +2,8 @@ package org.apereo.cas.aup;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.config.CasAcceptableUsagePolicyLdapConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.LdapTest;
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
@@ -30,18 +32,18 @@ import org.springframework.test.context.TestPropertySource;
 @Import(CasAcceptableUsagePolicyLdapConfiguration.class)
 @EnabledIfContinuousIntegration
 @TestPropertySource(properties = {
-    "cas.acceptableUsagePolicy.ldap.ldapUrl=ldap://localhost:10389",
+    "cas.acceptableUsagePolicy.ldap.ldapUrl=${ldap.url}",
     "cas.acceptableUsagePolicy.ldap.useSsl=false",
-    "cas.acceptableUsagePolicy.ldap.baseDn=ou=people,dc=example,dc=org",
+    "cas.acceptableUsagePolicy.ldap.baseDn=${ldap.peopleDn}",
     "cas.acceptableUsagePolicy.ldap.searchFilter=cn={0}",
-    "cas.acceptableUsagePolicy.ldap.bindDn=cn=Directory Manager",
+    "cas.acceptableUsagePolicy.ldap.bindDn=${ldap.bindDn}",
     "cas.acceptableUsagePolicy.ldap.bindCredential=password",
     "cas.acceptableUsagePolicy.aupAttributeName=carLicense"
 })
 @Getter
-public class LdapAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
-
-    private static final int LDAP_PORT = 10389;
+public class LdapAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests implements LdapTest {
+    @Autowired
+    private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("acceptableUsagePolicyRepository")
@@ -52,8 +54,8 @@ public class LdapAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsag
     public static void bootstrap() {
         ClientInfoHolder.setClientInfo(new ClientInfo(new MockHttpServletRequest()));
         @Cleanup
-        val localhost = new LDAPConnection("localhost", LDAP_PORT, "cn=Directory Manager", "password");
+        val localhost = new LDAPConnection(HOST, PORT, BIND_DN, BIND_PASS);
         LdapIntegrationTestsOperations.populateEntries(localhost,
-            new ClassPathResource("ldif/ldap-aup.ldif").getInputStream(), "ou=people,dc=example,dc=org");
+            new ClassPathResource("ldif/ldap-aup.ldif").getInputStream(), PEOPLE_DN);
     }
 }

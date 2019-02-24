@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasConsentLdapConfiguration;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.util.LdapTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unboundid.ldap.sdk.LDAPConnection;
@@ -39,15 +40,15 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("Ldap")
 @Getter
-public abstract class BaseLdapConsentRepositoryTests extends BaseConsentRepositoryTests {
+public abstract class BaseLdapConsentRepositoryTests extends BaseConsentRepositoryTests implements LdapTest {
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     private static final String ATTR_NAME = "description";
     private static final String USER_CN = "casuser";
-    private static final String USER_DN = "cn=casuser,ou=people,dc=example,dc=org";
+    private static final String USER_DN = "cn=casuser,ou=people," + BASE_DN;
     private static final String USER2_CN = "casuser2";
-    private static final String USER2_DN = "cn=casuser2,ou=people,dc=example,dc=org";
+    private static final String USER2_DN = "cn=casuser2,ou=people," + BASE_DN;
     private static final Service SVC2 = RegisteredServiceTestUtils.getService2();
     private static final AbstractRegisteredService REG_SVC2 = RegisteredServiceTestUtils.getRegisteredService(SVC2.getId());
     private static final String DEF_FILTER = "(objectClass=*)";

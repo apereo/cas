@@ -13,7 +13,7 @@ import org.springframework.test.context.TestPropertySource;
  */
 @TestPropertySource(properties = {
     "cas.serviceRegistry.ldap.poolPassivator=NONE",
-    "cas.serviceRegistry.ldap.bindDn=cn=Directory Manager",
+    "cas.serviceRegistry.ldap.bindDn=${ldap.bindDn}",
     "cas.serviceRegistry.ldap.bindCredential=password",
     "cas.serviceRegistry.ldap.objectClass=account"
 })

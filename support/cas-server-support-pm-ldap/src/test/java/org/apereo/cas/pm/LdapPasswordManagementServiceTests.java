@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.LdapPasswordManagementConfiguration;
 import org.apereo.cas.pm.config.PasswordManagementConfiguration;
+import org.apereo.cas.util.LdapTest;
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
@@ -43,8 +44,18 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @DirtiesContext
 @EnabledIfContinuousIntegration
-@TestPropertySource(locations = {"classpath:/ldap-pm.properties"})
-public class LdapPasswordManagementServiceTests {
+@TestPropertySource(properties = {
+    "cas.authn.pm.ldap.ldapUrl=${ldap.url}",
+    "cas.authn.pm.ldap.bindDn=${ldap.bindDn}",
+    "cas.authn.pm.ldap.bindCredential=password",
+    "cas.authn.pm.ldap.baseDn=${ldap.peopleDn}",
+    "cas.authn.pm.ldap.searchFilter=cn={user}",
+    "cas.authn.pm.ldap.useSsl=false",
+    "cas.authn.pm.ldap.type=GENERIC",
+    "cas.authn.pm.ldap.securityQuestionsAttributes.registeredAddress=roomNumber",
+    "cas.authn.pm.ldap.securityQuestionsAttributes.postalCode=teletexTerminalIdentifier"
+})
+public class LdapPasswordManagementServiceTests implements LdapTest {
     private static final int LDAP_PORT = 10389;
 
     @Autowired
@@ -57,7 +68,7 @@ public class LdapPasswordManagementServiceTests {
         ClientInfoHolder.setClientInfo(new ClientInfo(new MockHttpServletRequest()));
 
         val localhost = new LDAPConnection("localhost", LDAP_PORT,
-            "cn=Directory Manager", "password");
+            BIND_DN, "password");
         LdapIntegrationTestsOperations.populateEntries(localhost,
             new ClassPathResource("ldif/ldap-pm.ldif").getInputStream(),
             "ou=people,dc=example,dc=org");

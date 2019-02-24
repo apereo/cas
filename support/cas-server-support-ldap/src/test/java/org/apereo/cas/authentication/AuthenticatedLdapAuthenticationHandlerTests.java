@@ -22,11 +22,11 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = {
     "cas.authn.ldap[0].type=AUTHENTICATED",
-    "cas.authn.ldap[0].ldapUrl=ldap://localhost:10389",
+    "cas.authn.ldap[0].ldapUrl=${ldap.url}",
     "cas.authn.ldap[0].useSsl=false",
     "cas.authn.ldap[0].baseDn=dc=example,dc=org",
     "cas.authn.ldap[0].searchFilter=cn={user}",
-    "cas.authn.ldap[0].bindDn=cn=Directory Manager",
+    "cas.authn.ldap[0].bindDn=${ldap.bindDn}",
     "cas.authn.ldap[0].bindCredential=password",
     "cas.authn.ldap[0].principalAttributeList=description,cn"
     })

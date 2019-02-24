@@ -18,7 +18,7 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(properties = {
     "cas.consent.ldap.ldapUrl=ldap://localhost:1387",
     "cas.consent.ldap.useSsl=false",
-    "cas.consent.ldap.baseDn=ou=people,dc=example,dc=org",
+    "cas.consent.ldap.baseDn=${ldap.peopleDn}",
     "cas.consent.ldap.searchFilter=cn={0}",
     "cas.consent.ldap.consentAttributeName=description"
 })

@@ -10,6 +10,8 @@ import org.apache.commons.io.IOUtils;
 import org.ldaptive.LdapAttribute;
 import org.springframework.core.io.ClassPathResource;
 
+import static org.apereo.cas.util.LdapTest.*;
+
 /**
  * Parent class to help with testing x509 operations that deal with LDAP.
  *
@@ -18,7 +20,7 @@ import org.springframework.core.io.ClassPathResource;
  */
 public abstract class AbstractX509LdapTests extends LdapIntegrationTestsOperations {
 
-    private static final String DN = "CN=x509,ou=people,dc=example,dc=org";
+    private static final String DN = "CN=x509," + PEOPLE_DN;
 
     @SneakyThrows
     public static void bootstrap(final int port) {

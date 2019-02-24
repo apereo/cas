@@ -1,13 +1,13 @@
 package org.apereo.cas.web.flow.client;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
+import org.apereo.cas.util.LdapTest;
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.val;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
-import org.springframework.test.context.TestPropertySource;
 
 /**
  * Test cases for {@link LdapSpnegoKnownClientSystemsFilterAction}.
@@ -15,16 +15,14 @@ import org.springframework.test.context.TestPropertySource;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@TestPropertySource(locations = {"classpath:/spnego.properties", "classpath:/spnego-ldap-ci.properties"})
 @Tag("Ldap")
 @EnabledIfContinuousIntegration
 public class LdapContinuousIntegrationSpnegoKnownClientSystemsFilterActionTests
-    extends BaseLdapSpnegoKnownClientSystemsFilterActionTests {
+    extends BaseLdapSpnegoKnownClientSystemsFilterActionTests implements LdapTest {
 
     @BeforeAll
     public static void bootstrap() throws Exception {
-        val c = new LDAPConnection("localhost", 10389,
-            "cn=Directory Manager", "password");
-        LdapIntegrationTestsOperations.populateDefaultEntries(c, "ou=people,dc=example,dc=org");
+        val c = new LDAPConnection(HOST, PORT, BIND_DN, BIND_PASS);
+        LdapIntegrationTestsOperations.populateDefaultEntries(c, BASE_DN);
     }
 }

@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolv
 import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.util.LdapTest;
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import lombok.val;
@@ -38,18 +39,18 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @TestPropertySource(properties = {
     "cas.authn.attributeRepository.ldap[0].baseDn=dc=example,dc=org",
-    "cas.authn.attributeRepository.ldap[0].ldapUrl=ldap://localhost:10389",
+    "cas.authn.attributeRepository.ldap[0].ldapUrl=${ldap.url}",
     "cas.authn.attributeRepository.ldap[0].searchFilter=cn={user}",
     "cas.authn.attributeRepository.ldap[0].useSsl=false",
     "cas.authn.attributeRepository.ldap[0].attributes.cn=cn",
     "cas.authn.attributeRepository.ldap[0].attributes.description=description",
-    "cas.authn.attributeRepository.ldap[0].bindDn=cn=Directory Manager",
-    "cas.authn.attributeRepository.ldap[0].bindCredential=password"
+    "cas.authn.attributeRepository.ldap[0].bindDn=${ldap.bindDn",
+    "cas.authn.attributeRepository.ldap[0].bindCredential=${ldap.bindPassword}"
     })
 @DirtiesContext
 @Tag("Ldap")
 @EnabledIfContinuousIntegration
-public class PersonDirectoryPrincipalResolverLdaptiveTests {
+public class PersonDirectoryPrincipalResolverLdaptiveTests implements LdapTest {
     @Autowired
     @Qualifier("attributeRepository")
     private IPersonAttributeDao attributeRepository;

@@ -2,6 +2,7 @@ package org.apereo.cas.web.security.authentication;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.LdapTest;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.SneakyThrows;
@@ -30,18 +31,16 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  */
 @Tag("Ldap")
 @TestPropertySource(properties = {
-    "cas.monitor.endpoints.ldap.ldapUrl=ldap://localhost:10389",
+    "cas.monitor.endpoints.ldap.ldapUrl=${ldap.url}",
     "cas.monitor.endpoints.ldap.useSsl=false",
-    "cas.monitor.endpoints.ldap.baseDn=ou=people,dc=example,dc=org",
+    "cas.monitor.endpoints.ldap.baseDn=${ldap.peopleDn}",
     "cas.monitor.endpoints.ldap.searchFilter=cn={user}",
     "cas.monitor.endpoints.ldap.bindDn=cn=Directory Manager",
     "cas.monitor.endpoints.ldap.bindCredential=password"
 })
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public abstract class BaseMonitorEndpointLdapAuthenticationProviderTests {
-    private static final int LDAP_PORT = 10389;
-
+public abstract class BaseMonitorEndpointLdapAuthenticationProviderTests implements LdapTest {
     @Autowired
     protected CasConfigurationProperties casProperties;
 
@@ -49,11 +48,11 @@ public abstract class BaseMonitorEndpointLdapAuthenticationProviderTests {
     @SneakyThrows
     public static void bootstrap() {
         ClientInfoHolder.setClientInfo(new ClientInfo(new MockHttpServletRequest()));
-        val localhost = new LDAPConnection("localhost", LDAP_PORT, "cn=Directory Manager", "password");
-        localhost.connect("localhost", LDAP_PORT);
-        localhost.bind("cn=Directory Manager", "password");
+        val localhost = new LDAPConnection(HOST, PORT, BIND_DN, BIND_PASS);
+        localhost.connect(HOST, PORT);
+        localhost.bind(BIND_DN, BIND_PASS);
         LdapIntegrationTestsOperations.populateEntries(localhost,
-            new ClassPathResource("ldif/ldap-authz.ldif").getInputStream(), "ou=people,dc=example,dc=org");
+            new ClassPathResource("ldif/ldap-authz.ldif").getInputStream(), "ou=people," + BASE_DN);
     }
 
     @BeforeEach
