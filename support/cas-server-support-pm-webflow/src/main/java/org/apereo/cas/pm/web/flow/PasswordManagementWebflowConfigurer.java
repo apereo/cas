@@ -84,12 +84,12 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
     }
 
     private void configurePasswordExpirationWarning(final Flow flow) {
-        val warningState = getTransitionableState(flow, CasWebflowConstants.VIEW_ID_SHOW_AUTHN_WARNING_MSGS);
+        val warningState = getTransitionableState(flow, CasWebflowConstants.STATE_ID_SHOW_AUTHN_WARNING_MSGS);
         warningState.getEntryActionList().add(createEvaluateAction("handlePasswordExpirationWarningMessagesAction"));
     }
 
     private void configurePasswordMustChangeForAuthnWarnings(final Flow flow) {
-        val warningState = getTransitionableState(flow, CasWebflowConstants.VIEW_ID_SHOW_AUTHN_WARNING_MSGS);
+        val warningState = getTransitionableState(flow, CasWebflowConstants.STATE_ID_SHOW_AUTHN_WARNING_MSGS);
         warningState.getEntryActionList().add(createEvaluateAction("flowScope.pswdChangePostLogin=true"));
         createTransitionForState(warningState, "changePassword", CasWebflowConstants.VIEW_ID_MUST_CHANGE_PASSWORD);
     }
@@ -165,7 +165,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
             createDecisionState(flow,
                 CasWebflowConstants.STATE_ID_POST_LOGIN_PASSWORD_CHANGE_CHECK,
                 "flowScope.pswdChangePostLogin == true",
-                getTransitionableState(flow, CasWebflowConstants.VIEW_ID_SHOW_AUTHN_WARNING_MSGS)
+                getTransitionableState(flow, CasWebflowConstants.STATE_ID_SHOW_AUTHN_WARNING_MSGS)
                     .getTransition(CasWebflowConstants.TRANSITION_ID_PROCEED).getTargetStateId(),
                 autoLogin ? CasWebflowConstants.STATE_ID_REAL_SUBMIT : CasWebflowConstants.STATE_ID_REDIRECT_TO_LOGIN);
 

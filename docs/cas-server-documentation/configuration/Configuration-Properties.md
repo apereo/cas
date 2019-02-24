@@ -763,6 +763,14 @@ To learn more about this topic, [please review this guide](../ux/User-Interface-
 # cas.view.templatePrefixes[0]=file:///etc/cas/templates
 ```
 
+## Custom Login Fields
+
+```properties
+# cas.view.customLoginFormFields.[field-name].messageBundleKey=
+# cas.view.customLoginFormFields.[field-name].required=true
+# cas.view.customLoginFormFields.[field-name].converter=
+```
+
 ### CAS v1
 
 ```properties
@@ -2374,8 +2382,8 @@ To learn more about this topic, [please review this guide](../mfa/Configuring-Mu
 # cas.authn.mfa.globalProviderId=mfa-duo
 
 # Activate MFA globally based on authentication metadata attributes
-# cas.authn.mfa.globalAuthenticationAttributeNameTriggers=memberOf,eduPersonPrimaryAffiliation
-# cas.authn.mfa.globalAuthenticationAttributeValueRegex=faculty|staff
+# cas.authn.mfa.globalAuthenticationAttributeNameTriggers=customAttributeName
+# cas.authn.mfa.globalAuthenticationAttributeValueRegex=customRegexValue
 
 # Activate MFA globally based on principal attributes
 # cas.authn.mfa.globalPrincipalAttributeNameTriggers=memberOf,eduPersonPrimaryAffiliation
