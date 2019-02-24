@@ -359,12 +359,6 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
             return new TimeoutExpirationPolicy(tgt.getTimeout().getMaxTimeToLiveInSeconds());
         }
 
-        if (tgt.getMaxTimeToLiveInSeconds() > 0 && tgt.getTimeToKillInSeconds() > 0) {
-            LOGGER.debug("Ticket-granting ticket expiration policy is based on hard/idle timeouts of [{}]/[{}] seconds",
-                tgt.getMaxTimeToLiveInSeconds(), tgt.getTimeToKillInSeconds());
-            return new TicketGrantingTicketExpirationPolicy(tgt.getMaxTimeToLiveInSeconds(), tgt.getTimeToKillInSeconds());
-        }
-
         if (tgt.getThrottledTimeout().getTimeInBetweenUsesInSeconds() > 0
             && tgt.getThrottledTimeout().getTimeToKillInSeconds() > 0) {
             final ThrottledUseAndTimeoutExpirationPolicy p = new ThrottledUseAndTimeoutExpirationPolicy();
@@ -379,6 +373,13 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
                 tgt.getHardTimeout().getTimeToKillInSeconds());
             return new HardTimeoutExpirationPolicy(tgt.getHardTimeout().getTimeToKillInSeconds());
         }
+        
+        if (tgt.getMaxTimeToLiveInSeconds() > 0 && tgt.getTimeToKillInSeconds() > 0) {
+            LOGGER.debug("Ticket-granting ticket expiration policy is based on hard/idle timeouts of [{}]/[{}] seconds",
+                tgt.getMaxTimeToLiveInSeconds(), tgt.getTimeToKillInSeconds());
+            return new TicketGrantingTicketExpirationPolicy(tgt.getMaxTimeToLiveInSeconds(), tgt.getTimeToKillInSeconds());
+        }
+        
         LOGGER.warn("Ticket-granting ticket expiration policy is set to ALWAYS expire tickets.");
         return new AlwaysExpiresExpirationPolicy();
     }
