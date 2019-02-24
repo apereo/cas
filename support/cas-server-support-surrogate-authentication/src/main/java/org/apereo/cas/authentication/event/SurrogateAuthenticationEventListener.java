@@ -10,6 +10,7 @@ import org.apereo.cas.util.io.CommunicationsManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.event.EventListener;
 
 /**
@@ -50,7 +51,7 @@ public class SurrogateAuthenticationEventListener {
             val sms = casProperties.getAuthn().getSurrogate().getSms();
             val smsAttribute = sms.getAttributeName();
             val to = principal.getAttributes().get(smsAttribute);
-            if (to != null) {
+            if (to != null && StringUtils.isNotBlank(sms.getText())) {
                 val text = sms.getText().concat("\n").concat(eventDetails);
                 this.communicationsManager.sms(sms.getFrom(), to.toString(), text);
             } else {

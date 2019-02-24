@@ -1406,6 +1406,7 @@ To learn more about this topic, [please review this guide](../installation/Surro
 
 ```properties
 # cas.authn.surrogate.separator=+
+# cas.authn.surrogate.tgt.timeToKillInSeconds=30
 ```
 
 Principal resolution and Person Directory settings for this feature 
