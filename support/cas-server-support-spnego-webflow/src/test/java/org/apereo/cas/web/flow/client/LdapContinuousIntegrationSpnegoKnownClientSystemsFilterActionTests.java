@@ -9,6 +9,8 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 
+import static org.apereo.cas.constants.test.Ldap.*;
+
 /**
  * Test cases for {@link LdapSpnegoKnownClientSystemsFilterAction}.
  *

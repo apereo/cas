@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
 
+import static org.apereo.cas.constants.test.Ldap.*;
+
 /**
  * Unit tests for {@link LdapConsentRepository} class.
  *
@@ -31,8 +33,6 @@ import org.springframework.test.context.TestPropertySource;
     })
 @EnabledIfContinuousIntegration
 public class LdapContinuousIntegrationConsentRepositoryTests extends BaseLdapConsentRepositoryTests implements LdapTest {
-    private static final int LDAP_PORT = 10389;
-
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -40,18 +40,14 @@ public class LdapContinuousIntegrationConsentRepositoryTests extends BaseLdapCon
     @SneakyThrows
     public static void bootstrap() {
         @Cleanup
-        val localhost = new LDAPConnection(HOST, LDAP_PORT,
-            BIND_DN, BIND_PASS);
-        LdapIntegrationTestsOperations.populateEntries(
-            localhost,
-            new ClassPathResource("ldif/ldap-consent.ldif").getInputStream(), PEOPLE_DN);
+        val localhost = new LDAPConnection(HOST, PORT, BIND_DN, BIND_PASS);
+        LdapIntegrationTestsOperations.populateEntries(localhost, new ClassPathResource("ldif/ldap-consent.ldif").getInputStream(), PEOPLE_DN);
     }
 
     @Override
     @SneakyThrows
     public LDAPConnection getConnection() {
-        return new LDAPConnection("localhost", LDAP_PORT,
-            casProperties.getConsent().getLdap().getBindDn(),
+        return new LDAPConnection("localhost", PORT, casProperties.getConsent().getLdap().getBindDn(),
             casProperties.getConsent().getLdap().getBindCredential());
     }
 }

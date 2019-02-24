@@ -22,6 +22,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 
+import static org.apereo.cas.constants.test.Ldap.*;
+
 /**
  * This is {@link LdapAcceptableUsagePolicyRepositoryTests}.
  *
@@ -43,11 +45,11 @@ import org.springframework.test.context.TestPropertySource;
 @Getter
 public class LdapAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests implements LdapTest {
     @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
     @Qualifier("acceptableUsagePolicyRepository")
     protected AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
+
+    @Autowired
+    private CasConfigurationProperties casProperties;
 
     @BeforeAll
     @SneakyThrows

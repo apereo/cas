@@ -26,6 +26,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
+import static org.apereo.cas.constants.test.Ldap.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -56,7 +57,6 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.ldap.securityQuestionsAttributes.postalCode=teletexTerminalIdentifier"
 })
 public class LdapPasswordManagementServiceTests implements LdapTest {
-    private static final int LDAP_PORT = 10389;
 
     @Autowired
     @Qualifier("passwordChangeService")
@@ -67,7 +67,7 @@ public class LdapPasswordManagementServiceTests implements LdapTest {
     public static void bootstrap() {
         ClientInfoHolder.setClientInfo(new ClientInfo(new MockHttpServletRequest()));
 
-        val localhost = new LDAPConnection("localhost", LDAP_PORT,
+        val localhost = new LDAPConnection("localhost", PORT,
             BIND_DN, "password");
         LdapIntegrationTestsOperations.populateEntries(localhost,
             new ClassPathResource("ldif/ldap-pm.ldif").getInputStream(),

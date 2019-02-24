@@ -23,6 +23,8 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import static org.apereo.cas.constants.test.Ldap.*;
+
 /**
  * This is {@link BaseMonitorEndpointLdapAuthenticationProviderTests}.
  *

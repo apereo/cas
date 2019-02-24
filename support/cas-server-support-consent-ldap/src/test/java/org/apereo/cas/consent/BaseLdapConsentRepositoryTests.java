@@ -26,6 +26,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.time.LocalDateTime;
 
+import static org.apereo.cas.constants.test.Ldap.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
