@@ -3792,6 +3792,12 @@ under the configuration key `cas.serviceRegistry.dynamoDb`.
 # cas.serviceRegistry.dynamoDb.tableName=DynamoDbCasServices
 ```
 
+### Cassandra Service Registry
+
+To learn more about this topic, [please review this guide](../services/Cassandra-Service-Management.html).
+
+Common Cassandra settings for this feature are available [here](Configuration-Properties-Common.html#cassandra-configuration) under the configuration key `cas.serviceRegistry.cassandra`.
+
 ### MongoDb Service Registry
 
 Store CAS service definitions inside a MongoDb instance. To learn more about this topic, [please review this guide](../services/MongoDb-Service-Management.html).

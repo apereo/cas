@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 # while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
 
 echo "Running Cassandra docker image..."
@@ -26,6 +25,9 @@ docker exec -it cassandra cqlsh -e "CREATE TABLE cas.users_table ( id UUID PRIMA
 
 echo "Creating Cassandra tickets table"
 docker exec -it cassandra cqlsh -e "CREATE TABLE cas.castickets ( id UUID PRIMARY KEY, data text )"
+
+echo "Creating Cassandra services table"
+docker exec -it cassandra cqlsh -e "CREATE TABLE cas.casservices ( id bigint PRIMARY KEY, data text )"
 
 echo "Creating Cassandra user record"
 docker exec -it cassandra cqlsh -e "INSERT INTO cas.users_table (id,user_attr,pwd_attr) VALUES (6ab09bec-e68e-48d9-a5f8-97e6fb4c9b47, 'casuser','Mellon') USING TTL 86400 AND TIMESTAMP 123456789;"

@@ -1,4 +1,4 @@
-package org.apereo.cas.ticket.registry;
+package org.apereo.cas.adaptors.cassandra.services;
 
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
@@ -9,13 +9,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import static org.apereo.cas.ticket.registry.CassandraTicketHolder.TABLE_NAME;
+import static org.apereo.cas.adaptors.cassandra.services.CassandraRegisteredServiceHolder.TABLE_NAME;
 
 /**
- * This is {@link CassandraTicketHolder}.
+ * This is {@link CassandraRegisteredServiceHolder}.
  *
  * @author Misagh Moayyed
- * @author doomviking
  * @since 6.1.0
  */
 @Getter
@@ -23,18 +22,17 @@ import static org.apereo.cas.ticket.registry.CassandraTicketHolder.TABLE_NAME;
 @EqualsAndHashCode
 @NoArgsConstructor
 @Table(name = TABLE_NAME, writeConsistency = "LOCAL_QUORUM", readConsistency = "ONE")
-public class CassandraTicketHolder {
-
+public class CassandraRegisteredServiceHolder {
     /**
      * Ticket table name.
      */
-    public static final String TABLE_NAME = "castickets";
+    public static final String TABLE_NAME = "casservices";
 
     /**
      * The Id.
      */
     @PartitionKey
-    private String id;
+    private long id;
 
     /**
      * The Data.
@@ -42,7 +40,7 @@ public class CassandraTicketHolder {
     private String data;
 
     @JsonCreator
-    public CassandraTicketHolder(@JsonProperty("id") final String id, @JsonProperty("data") final String data) {
+    public CassandraRegisteredServiceHolder(@JsonProperty("id") final long id, @JsonProperty("data") final String data) {
         this.id = id;
         this.data = data;
     }
