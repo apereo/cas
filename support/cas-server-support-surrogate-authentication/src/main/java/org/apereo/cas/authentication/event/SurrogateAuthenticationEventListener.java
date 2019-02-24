@@ -10,6 +10,7 @@ import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.support.events.authentication.surrogate.CasSurrogateAuthenticationFailureEvent;
 import org.apereo.cas.support.events.authentication.surrogate.CasSurrogateAuthenticationSuccessfulEvent;
 import org.apereo.cas.util.io.CommunicationsManager;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.event.EventListener;
 
 /**
@@ -50,7 +51,7 @@ public class SurrogateAuthenticationEventListener {
             final SmsProperties sms = casProperties.getAuthn().getSurrogate().getSms();
             final String smsAttribute = sms.getAttributeName();
             final Object to = principal.getAttributes().get(smsAttribute);
-            if (to != null) {
+            if (to != null && StringUtils.isNotBlank(sms.getText())) {
                 final String text = sms.getText().concat("\n").concat(eventDetails);
                 communicationsManager.sms(sms.getFrom(), to.toString(), text);
             } else {
