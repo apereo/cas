@@ -989,4 +989,14 @@ public class WebUtils {
     public static void putAcceptableUsagePolicyStatusIntoFlowScope(final RequestContext context, final Object status) {
         context.getFlowScope().put("aupStatus", status);
     }
+
+    /**
+     * Put custom login form fields.
+     *
+     * @param context               the context
+     * @param customLoginFormFields the custom login form fields
+     */
+    public static void putCustomLoginFormFields(final RequestContext context, final Map customLoginFormFields) {
+        context.getFlowScope().put("customLoginFormFields", customLoginFormFields);
+    }
 }
