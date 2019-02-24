@@ -86,7 +86,6 @@ public class SurrogateAuthenticationConfiguration {
     @Qualifier("ticketGrantingTicketExpirationPolicy")
     private ObjectProvider<ExpirationPolicy> ticketGrantingTicketExpirationPolicy;
 
-    @RefreshScope
     @Bean
     public ExpirationPolicy grantingTicketExpirationPolicy() {
         val su = casProperties.getAuthn().getSurrogate();
