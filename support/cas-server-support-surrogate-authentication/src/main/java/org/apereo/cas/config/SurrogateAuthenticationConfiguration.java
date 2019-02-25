@@ -88,11 +88,13 @@ public class SurrogateAuthenticationConfiguration {
 
     @Bean
     public ExpirationPolicy grantingTicketExpirationPolicy() {
+        val defaultPolicy = ticketGrantingTicketExpirationPolicy.getIfAvailable();
+        
         val su = casProperties.getAuthn().getSurrogate();
         val surrogatePolicy = new HardTimeoutExpirationPolicy(su.getTgt().getTimeToKillInSeconds());
-        val policy = new SurrogateSessionExpirationPolicy(surrogatePolicy);
+        val policy = new SurrogateSessionExpirationPolicy(defaultPolicy);
         policy.addPolicy(SurrogateSessionExpirationPolicy.PolicyTypes.SURROGATE, surrogatePolicy);
-        policy.addPolicy(SurrogateSessionExpirationPolicy.PolicyTypes.DEFAULT, ticketGrantingTicketExpirationPolicy.getIfAvailable());
+        policy.addPolicy(SurrogateSessionExpirationPolicy.PolicyTypes.DEFAULT, defaultPolicy);
         return policy;
     }
 
