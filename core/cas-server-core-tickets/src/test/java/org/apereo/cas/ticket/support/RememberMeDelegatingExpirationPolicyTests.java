@@ -46,9 +46,9 @@ public class RememberMeDelegatingExpirationPolicyTests {
     @BeforeEach
     public void initialize() {
         val rememberMe = new MultiTimeUseOrTimeoutExpirationPolicy(1, REMEMBER_ME_TTL);
-        expirationPolicy = new RememberMeDelegatingExpirationPolicy(rememberMe);
-        expirationPolicy.addPolicy(RememberMeDelegatingExpirationPolicy.PolicyTypes.REMEMBER_ME, rememberMe);
-        expirationPolicy.addPolicy(RememberMeDelegatingExpirationPolicy.PolicyTypes.DEFAULT,
+        expirationPolicy = new RememberMeDelegatingExpirationPolicy();
+        expirationPolicy.addPolicy(RememberMeDelegatingExpirationPolicy.POLICY_NAME_REMEMBER_ME, rememberMe);
+        expirationPolicy.addPolicy(RememberMeDelegatingExpirationPolicy.POLICY_NAME_DEFAULT,
             new MultiTimeUseOrTimeoutExpirationPolicy(5, DEFAULT_TTL));
     }
 
