@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SurrogateSessionExpirationPolicyJsonSerializerTests {
     @Test
     public void verifyOperation() {
-        val policy = new SurrogateSessionExpirationPolicy(new HardTimeoutExpirationPolicy(100));
+        val policy = new SurrogateSessionExpirationPolicy();
         val serializer = new SurrogateSessionExpirationPolicyJsonSerializer();
         val result = serializer.toString(policy);
         assertNotNull(result);
