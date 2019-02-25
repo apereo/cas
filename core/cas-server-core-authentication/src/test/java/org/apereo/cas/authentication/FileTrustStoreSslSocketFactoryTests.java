@@ -72,7 +72,7 @@ public class FileTrustStoreSslSocketFactoryTests {
         assertTrue(client.isValidEndPoint("http://wikipedia.org"));
     }
 
-    private SimpleHttpClient getSimpleHttpClient() {
+    private static SimpleHttpClient getSimpleHttpClient() {
         val clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(sslFactory());
         val client = clientFactory.getObject();

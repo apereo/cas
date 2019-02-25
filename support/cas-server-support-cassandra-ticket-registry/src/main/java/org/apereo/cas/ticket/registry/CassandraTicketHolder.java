@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import static org.apereo.cas.ticket.registry.CassandraTicketHolder.TABLE_NAME;
@@ -20,6 +21,7 @@ import static org.apereo.cas.ticket.registry.CassandraTicketHolder.TABLE_NAME;
 @Getter
 @ToString
 @EqualsAndHashCode
+@NoArgsConstructor
 @Table(name = TABLE_NAME, writeConsistency = "LOCAL_QUORUM", readConsistency = "ONE")
 public class CassandraTicketHolder {
 
@@ -32,12 +34,12 @@ public class CassandraTicketHolder {
      * The Id.
      */
     @PartitionKey
-    private final String id;
+    private String id;
 
     /**
      * The Data.
      */
-    private final String data;
+    private String data;
 
     @JsonCreator
     public CassandraTicketHolder(@JsonProperty("id") final String id, @JsonProperty("data") final String data) {

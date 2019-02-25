@@ -27,7 +27,9 @@ public class OAuth20DefaultUserProfileViewRenderer implements OAuth20UserProfile
     @Override
     public String render(final Map<String, Object> model, final AccessToken accessToken) {
         val value = getRenderedUserProfile(model);
-        LOGGER.debug("Final user profile is [{}]", JsonValue.readHjson(value).toString(Stringify.FORMATTED));
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Final user profile is [{}]", JsonValue.readHjson(value).toString(Stringify.FORMATTED));
+        }
         return value;
     }
 
@@ -48,6 +50,7 @@ public class OAuth20DefaultUserProfileViewRenderer implements OAuth20UserProfile
                 .stream()
                 .filter(k -> !k.equalsIgnoreCase(MODEL_ATTRIBUTE_ATTRIBUTES))
                 .forEach(k -> flattened.put(k, model.get(k)));
+            LOGGER.trace("Flattened user profile attributes with the final model as [{}]", model);
             return OAuth20Utils.toJson(flattened);
         }
         return OAuth20Utils.toJson(model);

@@ -79,7 +79,7 @@ public abstract class BaseOAuthExpirationPolicyTests {
     @Qualifier("defaultRefreshTokenFactory")
     protected RefreshTokenFactory defaultRefreshTokenFactory;
 
-    protected TicketGrantingTicket newTicketGrantingTicket() {
+    protected static TicketGrantingTicket newTicketGrantingTicket() {
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser");
         return new TicketGrantingTicketImpl(
             ID_GENERATOR.getNewTicketId(TicketGrantingTicket.PREFIX),
@@ -89,7 +89,7 @@ public abstract class BaseOAuthExpirationPolicyTests {
 
     protected AccessToken newAccessToken(final TicketGrantingTicket tgt) {
         val testService = CoreAuthenticationTestUtils.getService("https://service.example.com");
-        return defaultAccessTokenFactory.create(testService, tgt.getAuthentication(), tgt, new ArrayList<>());
+        return defaultAccessTokenFactory.create(testService, tgt.getAuthentication(), tgt, new ArrayList<>(), null);
     }
 
     protected RefreshToken newRefreshToken(final AccessToken at) {

@@ -1,12 +1,9 @@
 package org.apereo.cas.ticket.support;
 
 import org.apereo.cas.authentication.RememberMeCredential;
-import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.util.CollectionUtils;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -23,40 +20,25 @@ import lombok.val;
 @Slf4j
 @ToString(callSuper = true)
 public class RememberMeDelegatingExpirationPolicy extends BaseDelegatingExpirationPolicy {
-
+    /**
+     * Remember-Me policy name.
+     */
+    public static final String POLICY_NAME_REMEMBER_ME = "REMEMBER_ME";
     private static final long serialVersionUID = -2735975347698196127L;
 
-    @JsonCreator
-    public RememberMeDelegatingExpirationPolicy(@JsonProperty("policy") final ExpirationPolicy policy) {
-        super(policy);
-    }
 
     @Override
     protected String getExpirationPolicyNameFor(final TicketState ticketState) {
         val attrs = ticketState.getAuthentication().getAttributes();
         val rememberMeRes = CollectionUtils.firstElement(attrs.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME));
         if (rememberMeRes.isEmpty()) {
-            return PolicyTypes.DEFAULT.name();
+            return POLICY_NAME_DEFAULT;
         }
         val b = (Boolean) rememberMeRes.get();
         if (b.equals(Boolean.FALSE)) {
             LOGGER.trace("Ticket is not associated with a remember-me authentication.");
-            return PolicyTypes.DEFAULT.name();
+            return POLICY_NAME_DEFAULT;
         }
-        return PolicyTypes.REMEMBER_ME.name();
-    }
-
-    /**
-     * Policy types.
-     */
-    public enum PolicyTypes {
-        /**
-         * Remember me policy type.
-         */
-        REMEMBER_ME,
-        /**
-         * Default policy type.
-         */
-        DEFAULT
+        return POLICY_NAME_REMEMBER_ME;
     }
 }

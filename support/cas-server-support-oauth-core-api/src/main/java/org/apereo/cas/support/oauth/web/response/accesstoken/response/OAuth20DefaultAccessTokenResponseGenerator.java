@@ -87,8 +87,9 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
             .concat(OAuth20Constants.DEVICE_AUTHZ_URL);
         model.put(OAuth20Constants.DEVICE_VERIFICATION_URI, uri);
         model.put(OAuth20Constants.EXPIRES_IN, result.getDeviceTokenTimeout());
-        result.getGeneratedToken().getUserCode().ifPresent(c -> model.put(OAuth20Constants.DEVICE_USER_CODE, c));
-        result.getGeneratedToken().getDeviceCode().ifPresent(c -> model.put(OAuth20Constants.DEVICE_CODE, c));
+        val generatedToken = result.getGeneratedToken();
+        generatedToken.getUserCode().ifPresent(c -> model.put(OAuth20Constants.DEVICE_USER_CODE, c));
+        generatedToken.getDeviceCode().ifPresent(c -> model.put(OAuth20Constants.DEVICE_CODE, c));
         model.put(OAuth20Constants.DEVICE_INTERVAL, result.getDeviceRefreshInterval());
         return model;
     }

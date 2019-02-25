@@ -763,6 +763,14 @@ To learn more about this topic, [please review this guide](../ux/User-Interface-
 # cas.view.templatePrefixes[0]=file:///etc/cas/templates
 ```
 
+## Custom Login Fields
+
+```properties
+# cas.view.customLoginFormFields.[field-name].messageBundleKey=
+# cas.view.customLoginFormFields.[field-name].required=true
+# cas.view.customLoginFormFields.[field-name].converter=
+```
+
 ### CAS v1
 
 ```properties
@@ -1398,6 +1406,7 @@ To learn more about this topic, [please review this guide](../installation/Surro
 
 ```properties
 # cas.authn.surrogate.separator=+
+# cas.authn.surrogate.tgt.timeToKillInSeconds=30
 ```
 
 Principal resolution and Person Directory settings for this feature 
@@ -1566,11 +1575,12 @@ Send text messaging using Clickatell.
 ### Nexmo
 
 Send text messaging using Nexmo.
+Nexmo needs at least apiSecret or signatureSecret field set.
 
 ```properties
 # cas.smsProvider.nexmo.apiToken=
 # cas.smsProvider.nexmo.apiSecret=
-# cas.smsProvider.nexmo.applicationId=CAS
+# cas.smsProvider.nexmo.signatureSecret=
 ```
 
 ### Amazon SNS
@@ -2373,8 +2383,8 @@ To learn more about this topic, [please review this guide](../mfa/Configuring-Mu
 # cas.authn.mfa.globalProviderId=mfa-duo
 
 # Activate MFA globally based on authentication metadata attributes
-# cas.authn.mfa.globalAuthenticationAttributeNameTriggers=memberOf,eduPersonPrimaryAffiliation
-# cas.authn.mfa.globalAuthenticationAttributeValueRegex=faculty|staff
+# cas.authn.mfa.globalAuthenticationAttributeNameTriggers=customAttributeName
+# cas.authn.mfa.globalAuthenticationAttributeValueRegex=customRegexValue
 
 # Activate MFA globally based on principal attributes
 # cas.authn.mfa.globalPrincipalAttributeNameTriggers=memberOf,eduPersonPrimaryAffiliation
@@ -3387,6 +3397,7 @@ To learn more about this topic, [please review this guide](../installation/Audit
 # cas.audit.alternateServerAddrHeaderName=
 # cas.audit.alternateClientAddrHeaderName=X-Forwarded-For
 # cas.audit.useServerHostAddress=false
+# cas.audit.supportedActions=AUTHENTICATION_.+,OTHER_\w+_ACTION
 ```
 
 ### Slf4j Audits
@@ -3419,6 +3430,21 @@ Store audit logs inside a MongoDb database.
 Common configuration settings for this feature are available 
 [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.audit`.
 
+```properties
+# cas.audit.mongo.asynchronous=true
+```
+
+### Redis Audits
+
+Store audit logs inside a Redis database.
+
+Common configuration settings for this feature are available 
+[here](Configuration-Properties-Common.html#redis-configuration) under the configuration key `cas.audit`.
+
+```properties
+# cas.audit.redis.asynchronous=true
+```
+
 ### CouchDb Audits
 
 Store audit logs inside a CouchDb database.
@@ -3432,6 +3458,10 @@ Store audit logs inside a Couchbase database.
 
 Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) 
 under the configuration key `cas.audit.couchbase`.
+
+```properties
+# cas.audit.couchbase.asynchronous=true
+```
 
 ### Database Audits
 
@@ -3450,6 +3480,10 @@ under the configuration key `cas.audit.jdbc`.
 
 Store audit logs inside a database. RESTful settings for this feature are 
 available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.audit.rest`.
+
+```properties
+# cas.audit.rest.asynchronous=true
+```
 
 ## Sleuth Distributed Tracing
 
@@ -3757,6 +3791,12 @@ under the configuration key `cas.serviceRegistry.dynamoDb`.
 ```properties
 # cas.serviceRegistry.dynamoDb.tableName=DynamoDbCasServices
 ```
+
+### Cassandra Service Registry
+
+To learn more about this topic, [please review this guide](../services/Cassandra-Service-Management.html).
+
+Common Cassandra settings for this feature are available [here](Configuration-Properties-Common.html#cassandra-configuration) under the configuration key `cas.serviceRegistry.cassandra`.
 
 ### MongoDb Service Registry
 
@@ -4322,6 +4362,12 @@ To learn more about this topic, [please review this guide](../webflow/Webflow-Cu
 ```properties
 # cas.acceptableUsagePolicy.aupAttributeName=aupAccepted
 # cas.acceptableUsagePolicy.scope=GLOBAL|AUTHENTICATION
+```
+
+#### Groovy
+
+```properties
+# cas.acceptableUsagePolicy.groovy.location=file:/etc/cas/config/aup.groovy
 ```
 
 #### REST

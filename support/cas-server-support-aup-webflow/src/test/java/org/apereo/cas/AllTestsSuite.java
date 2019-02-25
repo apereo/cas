@@ -2,6 +2,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.aup.DefaultAcceptableUsagePolicyRepositoryTests;
+import org.apereo.cas.aup.GroovyAcceptableUsagePolicyRepositoryTests;
 import org.apereo.cas.web.flow.AcceptableUsagePolicySubmitActionTests;
 import org.apereo.cas.web.flow.AcceptableUsagePolicyVerifyActionTests;
 
@@ -16,7 +17,8 @@ import org.junit.platform.suite.api.SelectClasses;
 @SelectClasses({
     AcceptableUsagePolicySubmitActionTests.class,
     AcceptableUsagePolicyVerifyActionTests.class,
-    DefaultAcceptableUsagePolicyRepositoryTests.class
+    DefaultAcceptableUsagePolicyRepositoryTests.class,
+    GroovyAcceptableUsagePolicyRepositoryTests.class
 })
 public class AllTestsSuite {
 }
