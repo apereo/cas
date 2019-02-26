@@ -181,9 +181,9 @@ public class MultifactorAuthenticationUtils {
                                                      final Optional<RequestContext> context,
                                                      final MultifactorAuthenticationProvider provider,
                                                      final Predicate<String> predicate) {
-        if (attributeValue instanceof String) {
+        if (!(attributeValue instanceof Collection)) {
             LOGGER.debug("Attribute value [{}] is a single-valued attribute", attributeValue);
-            if (predicate.test((String) attributeValue)) {
+            if (predicate.test(attributeValue.toString())) {
                 LOGGER.debug("Attribute value predicate [{}] has matched the [{}]", predicate, attributeValue);
                 return evaluateEventForProviderInContext(principal, service, context, provider);
             }
