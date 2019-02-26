@@ -12,7 +12,7 @@ import lombok.val;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@ToString
+@ToString(callSuper = true)
 @RequiredArgsConstructor
 public abstract class RootCasException extends RuntimeException {
 
