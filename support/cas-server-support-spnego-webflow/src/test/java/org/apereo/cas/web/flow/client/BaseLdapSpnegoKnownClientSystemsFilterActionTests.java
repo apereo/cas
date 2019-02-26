@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.client;
 
+import org.apereo.cas.util.LdapTest;
 import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.web.flow.AbstractSpnegoTests;
 
@@ -26,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1
  */
 @Import(BaseLdapSpnegoKnownClientSystemsFilterActionTests.CasTestConfiguration.class)
-public abstract class BaseLdapSpnegoKnownClientSystemsFilterActionTests extends AbstractSpnegoTests {
+public abstract class BaseLdapSpnegoKnownClientSystemsFilterActionTests extends AbstractSpnegoTests implements LdapTest {
 
     @Test
     public void ensureLdapAttributeShouldDoSpnego() throws Exception {

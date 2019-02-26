@@ -26,7 +26,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
-import static org.apereo.cas.constants.test.Ldap.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -67,11 +66,9 @@ public class LdapPasswordManagementServiceTests implements LdapTest {
     public static void bootstrap() {
         ClientInfoHolder.setClientInfo(new ClientInfo(new MockHttpServletRequest()));
 
-        val localhost = new LDAPConnection("localhost", getPort(),
-            getBindDn(), "password");
+        val localhost = new LDAPConnection(HOST, PORT, BIND_DN, BIND_PASS);
         LdapIntegrationTestsOperations.populateEntries(localhost,
-            new ClassPathResource("ldif/ldap-pm.ldif").getInputStream(),
-            "ou=people,dc=example,dc=org");
+            new ClassPathResource("ldif/ldap-pm.ldif").getInputStream(), PEOPLE_DN);
     }
 
     @Test

@@ -23,8 +23,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import static org.apereo.cas.constants.test.Ldap.*;
-
 /**
  * This is {@link BaseMonitorEndpointLdapAuthenticationProviderTests}.
  *
@@ -50,11 +48,11 @@ public abstract class BaseMonitorEndpointLdapAuthenticationProviderTests impleme
     @SneakyThrows
     public static void bootstrap() {
         ClientInfoHolder.setClientInfo(new ClientInfo(new MockHttpServletRequest()));
-        val localhost = new LDAPConnection(getHost(), getPort(), getBindDn(), getBindPass());
-        localhost.connect(getHost(), getPort());
-        localhost.bind(getBindDn(), getBindPass());
+        val localhost = new LDAPConnection(HOST, PORT, BIND_DN, BIND_PASS);
+        localhost.connect(HOST, PORT);
+        localhost.bind(BIND_DN, BIND_PASS);
         LdapIntegrationTestsOperations.populateEntries(localhost,
-            new ClassPathResource("ldif/ldap-authz.ldif").getInputStream(), "ou=people," + getBaseDn());
+            new ClassPathResource("ldif/ldap-authz.ldif").getInputStream(), PEOPLE_DN);
     }
 
     @BeforeEach

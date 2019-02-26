@@ -7,8 +7,6 @@ import org.apereo.cas.util.junit.DisabledIfContinuousIntegration;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.test.context.TestPropertySource;
 
-import static org.apereo.cas.constants.test.Ldap.*;
-
 /**
  * Test cases for {@link LdapSpnegoKnownClientSystemsFilterAction}.
  *
@@ -36,6 +34,6 @@ public class LdapSpnegoKnownClientSystemsFilterActionTests extends BaseLdapSpneg
 
     @BeforeAll
     public static void bootstrap() throws Exception {
-        LdapIntegrationTestsOperations.initDirectoryServer(getPort());
+        LdapIntegrationTestsOperations.initDirectoryServer(PORT);
     }
 }

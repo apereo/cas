@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.LdapTest;
 import org.apereo.cas.util.LdapTestUtils;
 
 import lombok.SneakyThrows;
@@ -10,17 +11,15 @@ import org.apache.commons.io.IOUtils;
 import org.ldaptive.LdapAttribute;
 import org.springframework.core.io.ClassPathResource;
 
-import static org.apereo.cas.constants.test.Ldap.*;
-
 /**
  * Parent class to help with testing x509 operations that deal with LDAP.
  *
  * @author Misagh Moayyed
  * @since 4.1
  */
-public abstract class AbstractX509LdapTests extends LdapIntegrationTestsOperations {
+public abstract class AbstractX509LdapTests extends LdapIntegrationTestsOperations implements LdapTest {
 
-    private static final String DN = "CN=x509," + getPeopleDn();
+    private static final String DN = "CN=x509," + PEOPLE_DN;
 
     @SneakyThrows
     public static void bootstrap(final int port) {

@@ -10,8 +10,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
 
-import static org.apereo.cas.constants.test.Ldap.*;
-
 /**
  * This is {@link LdapTest}. Properties used for LDAP testing
  *
@@ -22,7 +20,7 @@ import static org.apereo.cas.constants.test.Ldap.*;
     "ldap.host=localhost",
     "ldap.port=10839",
     "ldap.bindDn=cn=Directory Manager",
-    "lsap.bindPassword=password",
+    "ldap.bindPassword=password",
     "ldap.managerDn=cn=Directory Manager,dc=example,dc=org",
     "ldap.managerPassword=Password",
     "ldap.baseDn=dc=example,dc=org",
@@ -31,19 +29,30 @@ import static org.apereo.cas.constants.test.Ldap.*;
     "ldap.peopleDn=ou=people,${ldap.baseDn}"
     })
 public interface LdapTest {
+    public static String HOST = "localhost";
+    public static int PORT = 10839;
+    public static String BIND_DN = "cn=Directory Manager";
+    public static String BIND_PASS = "password";
+    public static String MANAGER_PASS = "Password";
+    public static String BASE_DN = "dc=example,dc=org";
+    public static String URL = String.format("ldap:/%s:%d",HOST, PORT);
+    public static String PEOPLE_DN = "ou=people,"+ BASE_DN;
+    public static String MANAGER_DN = BIND_DN + "," + BASE_DN;
+
+
     @BeforeAll
     @SneakyThrows
     static void bootstrap() {
         @Cleanup
-        val localhost = new LDAPConnection(getHost(), getPort(), getBindDn(), getBindPass());
-        localhost.connect(getHost(), getPort());
-        localhost.bind(getBindDn(), getBindPass());
+        val localhost = new LDAPConnection(HOST, PORT, BIND_DN, BIND_PASS);
+        localhost.connect(HOST, PORT);
+        localhost.bind(BIND_DN, BIND_PASS);
         LdapIntegrationTestsOperations.populateEntries(
             localhost,
             new ClassPathResource(System.getProperty("ldap.resource")).getInputStream(),
-            getBaseDn());
+            BASE_DN);
         LdapIntegrationTestsOperations.populateEntries(localhost, new ClassPathResource(System.getProperty("ldap.test.resource")).getInputStream(),
-            System.getProperty("ldap.test.dnPrefix", "") + getBaseDn());
+            System.getProperty("ldap.test.dnPrefix", "") + BASE_DN);
     }
 
 }

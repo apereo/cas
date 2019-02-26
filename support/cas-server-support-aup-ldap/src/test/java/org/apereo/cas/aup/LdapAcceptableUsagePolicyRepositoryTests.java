@@ -22,8 +22,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 
-import static org.apereo.cas.constants.test.Ldap.*;
-
 /**
  * This is {@link LdapAcceptableUsagePolicyRepositoryTests}.
  *
@@ -56,8 +54,8 @@ public class LdapAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsag
     public static void bootstrap() {
         ClientInfoHolder.setClientInfo(new ClientInfo(new MockHttpServletRequest()));
         @Cleanup
-        val localhost = new LDAPConnection(getHost(), getPort(), getBindDn(), getBindPass());
+        val localhost = new LDAPConnection(HOST, PORT, BIND_DN, BIND_PASS);
         LdapIntegrationTestsOperations.populateEntries(localhost,
-            new ClassPathResource("ldif/ldap-aup.ldif").getInputStream(), getPeopleDn());
+            new ClassPathResource("ldif/ldap-aup.ldif").getInputStream(), PEOPLE_DN);
     }
 }
