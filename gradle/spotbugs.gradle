@@ -1,5 +1,5 @@
 task outputSpotbugsReports(description: "Display Spotbugs output") {
-    doLast {
+    doFirst {
         printSpotbugsReportToConsole(spotbugsMain.reports.xml.destination)
     }
 }
@@ -40,7 +40,11 @@ def printSpotbugsReportToConsole(File file) {
             if (!Boolean.getBoolean("ignoreFindbugsFailures")) {
                 throw new GradleException(msg)
             }
+        } else {
+            println "$file contains no bug instances"
         }
+    } else {
+        println "$file does not exist"
     }
 }
 
