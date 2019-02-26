@@ -8,11 +8,11 @@ import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
 import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.CredentialExpiredException;
@@ -32,9 +32,7 @@ import java.util.Map;
  * @since 3.0.0
  */
 @Slf4j
-public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler implements InitializingBean {
-
-
+public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
     /**
      * Default mapping of special usernames to exceptions raised when that user attempts authentication.
      */
@@ -54,13 +52,11 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
     private final Map<String, Exception> usernameErrorMap = DEFAULT_USERNAME_ERROR_MAP;
 
     public SimpleTestUsernamePasswordAuthenticationHandler() {
-        super("", null, null, null);
+        this(StringUtils.EMPTY);
     }
 
-    @Override
-    public void afterPropertiesSet() {
-        LOGGER.warn("[{}] is only to be used in a testing environment. NEVER enable this in a production environment.",
-            this.getClass().getName());
+    public SimpleTestUsernamePasswordAuthenticationHandler(final String name) {
+        super(name, null, PrincipalFactoryUtils.newPrincipalFactory(), null);
     }
 
     @Override
@@ -87,7 +83,7 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
                 exception);
         }
 
-        if (StringUtils.hasText(username) && StringUtils.hasText(password) && username.equals(password)) {
+        if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password) && username.equals(password)) {
             LOGGER.debug("User [{}] was successfully authenticated.", username);
             return new DefaultAuthenticationHandlerExecutionResult(this, new BasicCredentialMetaData(credential),
                 this.principalFactory.createPrincipal(username));
