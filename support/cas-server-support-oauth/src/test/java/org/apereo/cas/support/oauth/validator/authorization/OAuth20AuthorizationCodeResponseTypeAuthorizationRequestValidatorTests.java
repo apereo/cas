@@ -58,10 +58,10 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTe
         service.setSupportedResponseTypes(new LinkedHashSet<>());
         assertTrue(v.validate(new J2EContext(request, response)));
 
-        service.setSupportedResponseTypes(CollectionUtils.wrapHashSet(OAuth20ResponseTypes.CODE.getType()));
+        service.setSupportedResponseTypes(CollectionUtils.wrapHashSet(OAuth20ResponseTypes.CODE.name()));
         assertTrue(v.validate(new J2EContext(request, response)));
 
-        service.setSupportedResponseTypes(CollectionUtils.wrapHashSet(OAuth20ResponseTypes.TOKEN.getType()));
+        service.setSupportedResponseTypes(CollectionUtils.wrapHashSet(OAuth20ResponseTypes.TOKEN.name()));
         assertFalse(v.validate(new J2EContext(request, response)));
 
         assertTrue(v.supports(new J2EContext(request, response)));

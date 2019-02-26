@@ -220,7 +220,7 @@ public abstract class AbstractOAuth20Tests {
         registeredServiceImpl.setClientSecret(secret);
         registeredServiceImpl.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         registeredServiceImpl.setSupportedGrantTypes(
-                grantTypes.stream().map(OAuth20GrantTypes::getType).collect(Collectors.toCollection(HashSet::new)));
+                grantTypes.stream().map(OAuth20GrantTypes::name).collect(Collectors.toCollection(HashSet::new)));
         return registeredServiceImpl;
     }
 
@@ -358,7 +358,7 @@ public abstract class AbstractOAuth20Tests {
     protected Pair<AccessToken, RefreshToken> assertRefreshTokenOk(final OAuthRegisteredService service,
                                                                    final RefreshToken refreshToken, final Principal principal) throws Exception {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
-        mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase());
+        mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name());
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
         mockRequest.setParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());

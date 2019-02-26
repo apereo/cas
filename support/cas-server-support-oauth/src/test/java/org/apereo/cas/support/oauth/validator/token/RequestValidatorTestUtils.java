@@ -31,7 +31,7 @@ public class RequestValidatorTestUtils {
         registeredService.setClientSecret(clientSecret);
         registeredService.setServiceId(serviceId);
         registeredService.setSupportedGrantTypes(grantTypes.stream()
-                .map(OAuth20GrantTypes::getType)
+                .map(OAuth20GrantTypes::name)
                 .collect(Collectors.toCollection(HashSet::new)));
         return registeredService;
     }
