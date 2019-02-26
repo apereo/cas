@@ -14,8 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
 
-import static org.apereo.cas.constants.test.Ldap.*;
-
 /**
  * Unit tests for {@link LdapConsentRepository} class.
  *
@@ -41,7 +39,7 @@ public class LdapContinuousIntegrationConsentRepositoryTests extends BaseLdapCon
     public static void bootstrap() {
         @Cleanup
         val localhost = new LDAPConnection(HOST, PORT, BIND_DN, BIND_PASS);
-        LdapIntegrationTestsOperations.populateEntries(localhost, new ClassPathResource("ldif/ldap-consent.ldif").getInputStream(), PEOPLE_DN());
+        LdapIntegrationTestsOperations.populateEntries(localhost, new ClassPathResource("ldif/ldap-consent.ldif").getInputStream(), PEOPLE_DN);
     }
 
     @Override

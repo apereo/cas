@@ -29,15 +29,15 @@ import org.springframework.test.context.TestPropertySource;
     "ldap.peopleDn=ou=people,${ldap.baseDn}"
     })
 public interface LdapTest {
-    public static String HOST = "localhost";
-    public static int PORT = 10839;
-    public static String BIND_DN = "cn=Directory Manager";
-    public static String BIND_PASS = "password";
-    public static String MANAGER_PASS = "Password";
-    public static String BASE_DN = "dc=example,dc=org";
-    public static String URL = String.format("ldap:/%s:%d",HOST, PORT);
-    public static String PEOPLE_DN = "ou=people,"+ BASE_DN;
-    public static String MANAGER_DN = BIND_DN + "," + BASE_DN;
+    String HOST = "localhost";
+    int PORT = 10839;
+    String BIND_DN = "cn=Directory Manager";
+    String BIND_PASS = "password";
+    String MANAGER_PASS = "Password";
+    String BASE_DN = "dc=example,dc=org";
+    String URL = String.format("ldap:/%s:%d",HOST, PORT);
+    String PEOPLE_DN = "ou=people,"+ BASE_DN;
+    String MANAGER_DN = BIND_DN + "," + BASE_DN;
 
 
     @BeforeAll
