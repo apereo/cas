@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
@@ -26,7 +27,9 @@ import java.time.temporal.ChronoUnit;
 @ToString
 @Getter
 @Setter
-public class ConsentDecision {
+public class ConsentDecision implements Serializable {
+
+    private static final long serialVersionUID = -3240292729509593433L;
 
     @Id
     @org.springframework.data.annotation.Id
