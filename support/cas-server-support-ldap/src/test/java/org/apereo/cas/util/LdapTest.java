@@ -1,6 +1,7 @@
 package org.apereo.cas.util;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.Cleanup;
@@ -35,10 +36,9 @@ public interface LdapTest {
     String BIND_PASS = "password";
     String MANAGER_PASS = "Password";
     String BASE_DN = "dc=example,dc=org";
-    String URL = String.format("ldap:/%s:%d",HOST, PORT);
+    String URL = String.format("ldap:/%s:%d", HOST, PORT);
     String PEOPLE_DN = "ou=people,"+ BASE_DN;
     String MANAGER_DN = BIND_DN + "," + BASE_DN;
-
 
     @BeforeAll
     @SneakyThrows
@@ -51,8 +51,9 @@ public interface LdapTest {
             localhost,
             new ClassPathResource(System.getProperty("ldap.resource")).getInputStream(),
             BASE_DN);
-        LdapIntegrationTestsOperations.populateEntries(localhost, new ClassPathResource(System.getProperty("ldap.test.resource")).getInputStream(),
-            System.getProperty("ldap.test.dnPrefix", "") + BASE_DN);
+        LdapIntegrationTestsOperations.populateEntries(localhost,
+            new ClassPathResource(ApplicationContextProvider.getApplicationContext().getEnvironment().getProperty("ldap.test.resource", "")).getInputStream(),
+            ApplicationContextProvider.getApplicationContext().getEnvironment().getProperty("ldap.test.dnPrefix", "") + BASE_DN);
     }
 
 }
