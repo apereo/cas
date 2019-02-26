@@ -30,7 +30,11 @@ public enum OAuth20ResponseTypes {
     /**
      * For implicit response type.
      */
-    IDTOKEN_TOKEN("id_token token");
+    IDTOKEN_TOKEN("id_token token"),
+    /**
+     * Form implicit repsonse type that only returns id_token.
+     */
+    ID_TOKEN("id_token");
 
     private final String type;
 

@@ -248,7 +248,7 @@ public class OAuth20Utils {
         val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
         if (registeredService.getSupportedResponseTypes() != null && !registeredService.getSupportedResponseTypes().isEmpty()) {
             LOGGER.debug("Checking response type [{}] against supported response types [{}]", responseType, registeredService.getSupportedResponseTypes());
-            return registeredService.getSupportedResponseTypes().stream().anyMatch(s -> s.equalsIgnoreCase(responseType));
+            return registeredService.getSupportedResponseTypes().stream().anyMatch(s -> OAuth20ResponseTypes.valueOf(s).getType().equalsIgnoreCase(responseType));
         }
 
         LOGGER.warn("Registered service [{}] does not define any authorized/supported response types. "
@@ -268,7 +268,7 @@ public class OAuth20Utils {
                                                           final OAuthRegisteredService registeredService) {
         if (registeredService.getSupportedGrantTypes() != null && !registeredService.getSupportedGrantTypes().isEmpty()) {
             LOGGER.debug("Checking grant type [{}] against supported grant types [{}]", grantType, registeredService.getSupportedGrantTypes());
-            return registeredService.getSupportedGrantTypes().stream().anyMatch(s -> s.equalsIgnoreCase(grantType));
+            return registeredService.getSupportedGrantTypes().stream().anyMatch(s -> OAuth20GrantTypes.valueOf(s).getType().equalsIgnoreCase(grantType));
         }
 
         LOGGER.warn("Registered service [{}] does not define any authorized/supported grant types. "
