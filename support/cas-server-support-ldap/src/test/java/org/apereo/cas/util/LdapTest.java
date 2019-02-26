@@ -19,7 +19,7 @@ import org.springframework.test.context.TestPropertySource;
  */
 @TestPropertySource(properties = {
     "ldap.host=localhost",
-    "ldap.port=10839",
+    "ldap.port=10389",
     "ldap.bindDn=cn=Directory Manager",
     "ldap.bindPassword=password",
     "ldap.managerDn=cn=Directory Manager,dc=example,dc=org",
@@ -31,7 +31,7 @@ import org.springframework.test.context.TestPropertySource;
     })
 public interface LdapTest {
     String HOST = "localhost";
-    int PORT = 10839;
+    int PORT = 10389;
     String BIND_DN = "cn=Directory Manager";
     String BIND_PASS = "password";
     String MANAGER_PASS = "Password";
