@@ -40,14 +40,14 @@ public class LdapContinuousIntegrationConsentRepositoryTests extends BaseLdapCon
     @SneakyThrows
     public static void bootstrap() {
         @Cleanup
-        val localhost = new LDAPConnection(HOST, PORT, BIND_DN, BIND_PASS);
-        LdapIntegrationTestsOperations.populateEntries(localhost, new ClassPathResource("ldif/ldap-consent.ldif").getInputStream(), PEOPLE_DN);
+        val localhost = new LDAPConnection(getHost(), getPort(), getBindDn(), getBindPass());
+        LdapIntegrationTestsOperations.populateEntries(localhost, new ClassPathResource("ldif/ldap-consent.ldif").getInputStream(), getPeopleDn());
     }
 
     @Override
     @SneakyThrows
     public LDAPConnection getConnection() {
-        return new LDAPConnection("localhost", PORT, casProperties.getConsent().getLdap().getBindDn(),
+        return new LDAPConnection("localhost", getPort(), casProperties.getConsent().getLdap().getBindDn(),
             casProperties.getConsent().getLdap().getBindCredential());
     }
 }

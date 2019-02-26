@@ -56,8 +56,8 @@ public class LdapAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsag
     public static void bootstrap() {
         ClientInfoHolder.setClientInfo(new ClientInfo(new MockHttpServletRequest()));
         @Cleanup
-        val localhost = new LDAPConnection(HOST, PORT, BIND_DN, BIND_PASS);
+        val localhost = new LDAPConnection(getHost(), getPort(), getBindDn(), getBindPass());
         LdapIntegrationTestsOperations.populateEntries(localhost,
-            new ClassPathResource("ldif/ldap-aup.ldif").getInputStream(), PEOPLE_DN);
+            new ClassPathResource("ldif/ldap-aup.ldif").getInputStream(), getPeopleDn());
     }
 }

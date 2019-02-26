@@ -36,6 +36,6 @@ public class LdapSpnegoKnownClientSystemsFilterActionTests extends BaseLdapSpneg
 
     @BeforeAll
     public static void bootstrap() throws Exception {
-        LdapIntegrationTestsOperations.initDirectoryServer(PORT);
+        LdapIntegrationTestsOperations.initDirectoryServer(getPort());
     }
 }

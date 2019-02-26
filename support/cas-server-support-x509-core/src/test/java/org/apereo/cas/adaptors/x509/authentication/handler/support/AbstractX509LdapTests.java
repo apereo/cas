@@ -20,7 +20,7 @@ import static org.apereo.cas.constants.test.Ldap.*;
  */
 public abstract class AbstractX509LdapTests extends LdapIntegrationTestsOperations {
 
-    private static final String DN = "CN=x509," + PEOPLE_DN;
+    private static final String DN = "CN=x509," + getPeopleDn();
 
     @SneakyThrows
     public static void bootstrap(final int port) {

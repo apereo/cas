@@ -67,8 +67,8 @@ public class LdapPasswordManagementServiceTests implements LdapTest {
     public static void bootstrap() {
         ClientInfoHolder.setClientInfo(new ClientInfo(new MockHttpServletRequest()));
 
-        val localhost = new LDAPConnection("localhost", PORT,
-            BIND_DN, "password");
+        val localhost = new LDAPConnection("localhost", getPort(),
+            getBindDn(), "password");
         LdapIntegrationTestsOperations.populateEntries(localhost,
             new ClassPathResource("ldif/ldap-pm.ldif").getInputStream(),
             "ou=people,dc=example,dc=org");

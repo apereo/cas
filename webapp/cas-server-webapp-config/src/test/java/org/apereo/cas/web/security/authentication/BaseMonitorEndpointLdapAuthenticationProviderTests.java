@@ -50,11 +50,11 @@ public abstract class BaseMonitorEndpointLdapAuthenticationProviderTests impleme
     @SneakyThrows
     public static void bootstrap() {
         ClientInfoHolder.setClientInfo(new ClientInfo(new MockHttpServletRequest()));
-        val localhost = new LDAPConnection(HOST, PORT, BIND_DN, BIND_PASS);
-        localhost.connect(HOST, PORT);
-        localhost.bind(BIND_DN, BIND_PASS);
+        val localhost = new LDAPConnection(getHost(), getPort(), getBindDn(), getBindPass());
+        localhost.connect(getHost(), getPort());
+        localhost.bind(getBindDn(), getBindPass());
         LdapIntegrationTestsOperations.populateEntries(localhost,
-            new ClassPathResource("ldif/ldap-authz.ldif").getInputStream(), "ou=people," + BASE_DN);
+            new ClassPathResource("ldif/ldap-authz.ldif").getInputStream(), "ou=people," + getBaseDn());
     }
 
     @BeforeEach

@@ -24,7 +24,7 @@ public class LdapContinuousIntegrationSpnegoKnownClientSystemsFilterActionTests
 
     @BeforeAll
     public static void bootstrap() throws Exception {
-        val c = new LDAPConnection(HOST, PORT, BIND_DN, BIND_PASS);
-        LdapIntegrationTestsOperations.populateDefaultEntries(c, BASE_DN);
+        val c = new LDAPConnection(getHost(), getPort(), getBindDn(), getBindPass());
+        LdapIntegrationTestsOperations.populateDefaultEntries(c, getBaseDn());
     }
 }

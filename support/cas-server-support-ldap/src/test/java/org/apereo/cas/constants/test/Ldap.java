@@ -17,12 +17,34 @@ public class Ldap {
     @Autowired
     private static Environment ENV;
 
-    public static String URL = ENV.getProperty("ldap.url");
-    public static String MANAGER_DN = ENV.getProperty("ldap.managerDn");
-    public static int PORT = Integer.parseInt(ENV.getProperty("ldap.port", "0"));
-    public static String BIND_DN = ENV.getProperty("ldap.bindDn");
-    public static String PEOPLE_DN = ENV.getProperty("ldap.peopleDn");
-    public static String BIND_PASS = ENV.getProperty("ldap.bindPassword");
-    public static String BASE_DN = ENV.getProperty("ldap.baseDn");
-    public static String HOST = ENV.getProperty("ldap.host");
+    public static String getManagerDn() {
+        return ENV.getProperty("ldap.managerDn");
+    }
+
+    public static int getPort() {
+        return Integer.parseInt(ENV.getProperty("ldap.port","0"));
+    }
+
+    public static String getBindDn() {
+        return ENV.getProperty("ldap.bindDn");
+    }
+
+    public static String getPeopleDn() {
+        return ENV.getProperty("ldap.peopleDn");
+    }
+
+    public static String getBindPass() {
+        return ENV.getProperty("ldap.bindPassword");
+    }
+
+    public static String getBaseDn() {
+        return ENV.getProperty("ldap.baseDn");
+    }
+    public static String getHost() {
+        return ENV.getProperty("ldap.host");
+    }
+
+    public static String getUrl() {
+        return ENV.getProperty("ldap.url");
+    }
 }

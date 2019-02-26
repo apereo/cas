@@ -35,15 +35,15 @@ public interface LdapTest {
     @SneakyThrows
     static void bootstrap() {
         @Cleanup
-        val localhost = new LDAPConnection(HOST, PORT, BIND_DN, BIND_PASS);
-        localhost.connect(HOST, PORT);
-        localhost.bind(BIND_DN, BIND_PASS);
+        val localhost = new LDAPConnection(getHost(), getPort(), getBindDn(), getBindPass());
+        localhost.connect(getHost(), getPort());
+        localhost.bind(getBindDn(), getBindPass());
         LdapIntegrationTestsOperations.populateEntries(
             localhost,
             new ClassPathResource(System.getProperty("ldap.resource")).getInputStream(),
-            BASE_DN);
+            getBaseDn());
         LdapIntegrationTestsOperations.populateEntries(localhost, new ClassPathResource(System.getProperty("ldap.test.resource")).getInputStream(),
-            System.getProperty("ldap.test.dnPrefix", "") + BASE_DN);
+            System.getProperty("ldap.test.dnPrefix", "") + getBaseDn());
     }
 
 }
