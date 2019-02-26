@@ -25,5 +25,4 @@ public class Ldap {
     public static String BIND_PASS = ENV.getProperty("ldap.bindPassword");
     public static String BASE_DN = ENV.getProperty("ldap.baseDn");
     public static String HOST = ENV.getProperty("ldap.host");
-
 }

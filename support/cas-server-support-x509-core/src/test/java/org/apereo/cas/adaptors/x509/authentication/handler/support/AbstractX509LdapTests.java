@@ -10,7 +10,7 @@ import org.apache.commons.io.IOUtils;
 import org.ldaptive.LdapAttribute;
 import org.springframework.core.io.ClassPathResource;
 
-import static org.apereo.cas.util.LdapTest.*;
+import static org.apereo.cas.constants.test.Ldap.*;
 
 /**
  * Parent class to help with testing x509 operations that deal with LDAP.
