@@ -54,8 +54,8 @@ public class DefaultConsentEngineTests {
         assertNotNull(decision);
         val result = this.consentEngine.isConsentRequiredFor(service, consentService, authentication);
         assertNotNull(result);
-        assertTrue(result.getKey());
-        assertEquals(decision, result.getRight());
+        assertTrue(result.isRequired());
+        assertEquals(decision, result.getConsentDecision());
     }
 
     @Test
@@ -71,7 +71,7 @@ public class DefaultConsentEngineTests {
         assertNotNull(decision);
         val result = this.consentEngine.isConsentRequiredFor(service, consentService, authentication);
         assertNotNull(result);
-        assertFalse(result.getKey());
+        assertFalse(result.isRequired());
     }
 
     @Test

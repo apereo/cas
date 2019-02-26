@@ -53,6 +53,21 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
         return attributes;
     }
 
+    @Override
+    public Map<String, Object> getConsentableAttributes(final Principal principal, final Service selectedService, final RegisteredService service) {
+        AnnotationAwareOrderComparator.sortIfNecessary(policies);
+
+        val merger = CoreAuthenticationUtils.getAttributeMerger(mergingPolicy);
+        val attributes = new HashMap<String, Object>();
+        policies.forEach(policy -> {
+            LOGGER.trace("Fetching consentable attributes from policy [{}] for principal [{}]", policy.getName(), principal.getId());
+            val policyAttributes = (Map) policy.getConsentableAttributes(principal, selectedService, service);
+            merger.mergeAttributes((Map) attributes, policyAttributes);
+            LOGGER.trace("Attributes that remain, after the merge with consentable attribute policy results, are [{}}", attributes);
+        });
+        return attributes;
+    }
+
     /**
      * Add policy.
      *
