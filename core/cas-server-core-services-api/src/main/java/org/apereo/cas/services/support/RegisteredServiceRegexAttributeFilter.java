@@ -52,7 +52,7 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
      */
     @JsonCreator
     public RegisteredServiceRegexAttributeFilter(@JsonProperty("pattern") final String regex) {
-        this.compiledPattern = Pattern.compile(regex);
+        this.compiledPattern = RegexUtils.createPattern(regex);
         this.pattern = regex;
     }
 
