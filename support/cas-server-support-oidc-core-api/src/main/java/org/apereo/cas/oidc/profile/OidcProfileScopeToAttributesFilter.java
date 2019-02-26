@@ -120,10 +120,11 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                                                         final RegisteredService registeredService,
                                                         final AccessToken accessToken) {
         if (scopes.isEmpty()) {
+            val attributes = principal.getAttributes();
             LOGGER.trace("No defined scopes are available to instruct attribute release policies for [{}]. "
                     + "CAS will authorize the collection of resolved attributes [{}] for release to [{}}",
-                registeredService.getServiceId(), principal.getAttributes(), service.getId());
-            return principal.getAttributes();
+                registeredService.getServiceId(), attributes, service.getId());
+            return attributes;
         }
 
         val attributes = new LinkedHashMap<String, Object>();
