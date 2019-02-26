@@ -666,7 +666,7 @@
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Test class is named incorrectly"/>
         <property name="severity" value="error"/>
-        <property name="format" value="public\s+(abstract\s+)*class\s+.+Test\s*\{"/>
+        <property name="format" value="public\s+(abstract\s+)*class\s+\w+Test\s*\{"/>
         <property name="message" value="Name of the test class MUST end in 'Tests'"/>
     </module>
     <module name="RegexpSingleline">
