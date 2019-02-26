@@ -2,7 +2,11 @@ package org.apereo.cas.services.support;
 
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RegexUtils;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,6 +39,7 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
 
     private static final long serialVersionUID = 403015306984610128L;
 
+    @JsonIgnore
     private Pattern compiledPattern;
 
     private String pattern;
@@ -45,8 +50,9 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
      *
      * @param regex the regex
      */
-    public RegisteredServiceRegexAttributeFilter(final String regex) {
-        this.compiledPattern = Pattern.compile(regex);
+    @JsonCreator
+    public RegisteredServiceRegexAttributeFilter(@JsonProperty("pattern") final String regex) {
+        this.compiledPattern = RegexUtils.createPattern(regex);
         this.pattern = regex;
     }
 
@@ -69,41 +75,44 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
     @Override
     public Map<String, Object> filter(final Map<String, Object> givenAttributes) {
         val attributesToRelease = new HashMap<String, Object>();
-        givenAttributes.entrySet().stream().filter(entry -> {
-            val attributeName = entry.getKey();
-            val attributeValue = entry.getValue();
-            LOGGER.debug("Received attribute [{}] with value [{}]", attributeName, attributeValue);
-            return attributeValue != null;
-        }).forEach(entry -> {
-            val attributeName = entry.getKey();
-            val attributeValue = entry.getValue();
-            if (attributeValue instanceof Collection) {
-                LOGGER.trace("Attribute value [{}] is a collection", attributeValue);
-                val filteredAttributes = filterAttributes((Collection<String>) attributeValue, attributeName);
-                if (!filteredAttributes.isEmpty()) {
-                    attributesToRelease.put(attributeName, filteredAttributes);
+        givenAttributes.entrySet()
+            .stream()
+            .filter(entry -> {
+                val attributeName = entry.getKey();
+                val attributeValue = entry.getValue();
+                LOGGER.debug("Received attribute [{}] with value [{}]", attributeName, attributeValue);
+                return attributeValue != null;
+            })
+            .forEach(entry -> {
+                val attributeName = entry.getKey();
+                val attributeValue = entry.getValue();
+                if (attributeValue instanceof Collection) {
+                    LOGGER.trace("Attribute value [{}] is a collection", attributeValue);
+                    val filteredAttributes = filterAttributes((Collection<String>) attributeValue, attributeName);
+                    if (!filteredAttributes.isEmpty()) {
+                        attributesToRelease.put(attributeName, filteredAttributes);
+                    }
+                } else if (attributeValue.getClass().isArray()) {
+                    LOGGER.trace("Attribute value [{}] is an array", attributeValue);
+                    val filteredAttributes = filterAttributes(CollectionUtils.wrapList((String[]) attributeValue), attributeName);
+                    if (!filteredAttributes.isEmpty()) {
+                        attributesToRelease.put(attributeName, filteredAttributes);
+                    }
+                } else if (attributeValue instanceof Map) {
+                    LOGGER.trace("Attribute value [{}] is a map", attributeValue);
+                    val filteredAttributes = filterAttributes((Map<String, String>) attributeValue);
+                    if (!filteredAttributes.isEmpty()) {
+                        attributesToRelease.put(attributeName, filteredAttributes);
+                    }
+                } else {
+                    LOGGER.trace("Attribute value [{}] is a string", attributeValue);
+                    val attrValue = attributeValue.toString();
+                    if (patternMatchesAttributeValue(attrValue)) {
+                        logReleasedAttributeEntry(attributeName, attrValue);
+                        attributesToRelease.put(attributeName, attrValue);
+                    }
                 }
-            } else if (attributeValue.getClass().isArray()) {
-                LOGGER.trace("Attribute value [{}] is an array", attributeValue);
-                val filteredAttributes = filterAttributes(CollectionUtils.wrapList((String[]) attributeValue), attributeName);
-                if (!filteredAttributes.isEmpty()) {
-                    attributesToRelease.put(attributeName, filteredAttributes);
-                }
-            } else if (attributeValue instanceof Map) {
-                LOGGER.trace("Attribute value [{}] is a map", attributeValue);
-                val filteredAttributes = filterAttributes((Map<String, String>) attributeValue);
-                if (!filteredAttributes.isEmpty()) {
-                    attributesToRelease.put(attributeName, filteredAttributes);
-                }
-            } else {
-                LOGGER.trace("Attribute value [{}] is a string", attributeValue);
-                val attrValue = attributeValue.toString();
-                if (patternMatchesAttributeValue(attrValue)) {
-                    logReleasedAttributeEntry(attributeName, attrValue);
-                    attributesToRelease.put(attributeName, attrValue);
-                }
-            }
-        });
+            });
         LOGGER.debug("Received [{}] attributes. Filtered and released [{}]", givenAttributes.size(), attributesToRelease.size());
         return attributesToRelease;
     }

@@ -347,7 +347,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         if (XSInteger.class.getSimpleName().equalsIgnoreCase(valueType)) {
             val builder = new XSIntegerBuilder();
             val attrValueObj = builder.buildObject(elementName, XSInteger.TYPE_NAME);
-            attrValueObj.setValue(Integer.parseInt(value.toString()));
+            attrValueObj.setValue(Integer.valueOf(value.toString()));
             return attrValueObj;
         }
 
