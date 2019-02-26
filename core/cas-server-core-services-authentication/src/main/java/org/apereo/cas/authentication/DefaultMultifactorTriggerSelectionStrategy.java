@@ -164,7 +164,8 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
 
     /**
      * Has matching attribute.
-     * If there isn't any attribute names or an attribute value to match, return that there isn't a matching attribute
+     * If there isn't any attribute names or an attribute value to match, return that there isn't a matching attribute.
+     * Any non-String attribute values will be converted to a String using their toString method before attempting to match.
      *
      * @param attributes the attributes
      * @param names      the names
@@ -184,8 +185,7 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
             .filter(Objects::nonNull)
             .map(CollectionUtils::toCollection)
             .flatMap(Set::stream)
-            .filter(String.class::isInstance)
-            .map(String.class::cast)
+            .map(Object::toString)
             .anyMatch(valuePredicate);
     }
 }
