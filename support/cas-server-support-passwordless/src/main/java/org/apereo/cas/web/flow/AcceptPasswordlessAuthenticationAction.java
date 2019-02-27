@@ -59,7 +59,7 @@ public class AcceptPasswordlessAuthenticationAction extends AbstractAuthenticati
                 WebUtils.putCredential(requestContext, credential);
 
                 val token = currentToken.get();
-                val finalEvent =  super.doExecute(requestContext);
+                val finalEvent = super.doExecute(requestContext);
                 passwordlessTokenRepository.deleteToken(username, token);
 
                 return finalEvent;
