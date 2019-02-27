@@ -31,7 +31,7 @@ echo -e "Installing NPM...\n"
 ./gradlew npmInstall --stacktrace -q --no-daemon
 
 gradleBuild="$gradleBuild checkstyleMain checkstyleTest -x test -x javadoc \
-     -DskipGradleLint=true -DskipSass=true -DskipNestedConfigMetadataGen=true \
+     -DskipSass=true -DskipNestedConfigMetadataGen=true \
      -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel -DshowStandardStreams=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[rerun tasks]"* ]]; then
