@@ -1,38 +1,21 @@
 #!/bin/bash
-source ./ci/functions.sh
-
-runBuild=false
-echo "Reviewing changes that might affect the Gradle build..."
-currentChangeSetAffectsStyle
-retval=$?
-if [ "$retval" == 0 ]
-then
-    echo "Found changes that require the build to run static analysis."
-    runBuild=true
-else
-    echo "Changes do NOT affect project static analysis."
-    runBuild=false
-fi
-
-if [ "$runBuild" = false ]; then
-    exit 0
-fi
 
 prepCommand="echo 'Running command...'; "
 gradle="./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon "
+gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon -DtestCategoryType=GROOVY "
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-echo -e "Installing NPM...\n"
-./gradlew npmInstall --stacktrace -q --no-daemon
+gradleBuild="$gradleBuild testGroovy jacocoRootReport --parallel -x javadoc -x check \
+    -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true \
+    -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 
-gradleBuild="$gradleBuild checkstyleMain checkstyleTest -x test -x javadoc \
-     -DskipSass=true -DskipNestedConfigMetadataGen=true \
-     -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel -DshowStandardStreams=true "
+if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
+   gradleBuild="$gradleBuild -DshowStandardStreams=true "
+fi
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[rerun tasks]"* ]]; then
     gradleBuild="$gradleBuild --rerun-tasks "
