@@ -62,5 +62,4 @@ public interface LdapTest {
                 ApplicationContextProvider.getApplicationContext().getEnvironment().getProperty("ldap.test.dnPrefix", "") + BASE_DN);
         }
     }
-
 }
