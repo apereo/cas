@@ -6,6 +6,8 @@ import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.AssertionImpl;
 import org.jasig.cas.client.validation.TicketValidator;
 
+import lombok.val;
+
 /**
  * This is a ticket validator for pac4j client that uses CAS back channels to validate ST.
  *
