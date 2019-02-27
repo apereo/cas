@@ -1,8 +1,8 @@
-if (hasTestsOfCategory(project, "Cassandra")){
+if (hasTestsOfCategory(project, "Cassandra")) {
     task testCassandra(type: Test) {
         enabled = shouldTest(project, "Cassandra")
         useJUnitPlatform {
-            includeTags "org.apereo.cas.category.CassandraCategory", "Cassandra"
+            includeTags "Cassandra"
         }
     }
 }
@@ -11,7 +11,7 @@ if (hasTestsOfCategory(project, "CosmosDb")) {
     task testCosmosDb(type: Test) {
         enabled = shouldTest(project, "CosmosDb")
         useJUnitPlatform {
-            includeTags "org.apereo.cas.category.CosmosDbCategory", "CosmosDb"
+            includeTags "CosmosDb"
         }
     }
 }
@@ -20,7 +20,7 @@ if (hasTestsOfCategory(project, "AmazonWebServicesS3")) {
     task testAWSS3(type: Test) {
         enabled = shouldTest(project, "AmazonWebServicesS3")
         useJUnitPlatform {
-            includeTags "org.apereo.cas.category.AmazonWebServicesS3Category", "AmazonWebServicesS3"
+            includeTags "AmazonWebServicesS3"
         }
     }
 }
@@ -29,7 +29,7 @@ if (hasTestsOfCategory(project, "Radius")) {
     task testRadius(type: Test) {
         enabled = shouldTest(project, "Radius")
         useJUnitPlatform {
-            includeTags "org.apereo.cas.category.RadiusCategory", "Radius"
+            includeTags "Radius"
         }
     }
 }
@@ -38,7 +38,7 @@ if (hasTestsOfCategory(project, "Couchbase")) {
     task testCouchbase(type: Test) {
         enabled = shouldTest(project, "Couchbase")
         useJUnitPlatform {
-            includeTags "org.apereo.cas.category.CouchbaseCategory", "Couchbase"
+            includeTags "Couchbase"
         }
     }
 }
@@ -47,7 +47,7 @@ if (hasTestsOfCategory(project, "CouchDb")) {
     task testCouchDb(type: Test) {
         enabled = shouldTest(project, "CouchDb")
         useJUnitPlatform {
-            includeTags "org.apereo.cas.category.CouchDbCategory", "CouchDb"
+            includeTags "CouchDb"
         }
     }
 }
@@ -56,7 +56,7 @@ if (hasTestsOfCategory(project, "MySQL")) {
     task testMySQL(type: Test) {
         enabled = shouldTest(project, "MySQL")
         useJUnitPlatform {
-            includeTags "org.apereo.cas.category.MySQLCategory", "MySQL"
+            includeTags "MySQL"
         }
     }
 }
@@ -65,7 +65,7 @@ if (hasTestsOfCategory(project, "Postgres")) {
     task testPostgres(type: Test) {
         enabled = shouldTest(project, "Postgres")
         useJUnitPlatform {
-            includeTags "org.apereo.cas.category.PostgresCategory", "Postgres"
+            includeTags "Postgres"
         }
     }
 }
@@ -74,7 +74,7 @@ if (hasTestsOfCategory(project, "MsSqlServer")) {
     task testMsSqlServer(type: Test) {
         enabled = shouldTest(project, "MsSqlServer")
         useJUnitPlatform {
-            includeTags "org.apereo.cas.category.MsSqlServerCategory", "MsSqlServer"
+            includeTags "MsSqlServer"
         }
     }
 }
@@ -83,7 +83,7 @@ if (hasTestsOfCategory(project, "MariaDb")) {
     task testMariaDb(type: Test) {
         enabled = shouldTest(project, "MariaDb")
         useJUnitPlatform {
-            includeTags "org.apereo.cas.category.MariaDbCategory", "MariaDb"
+            includeTags "MariaDb"
         }
     }
 }
@@ -92,7 +92,7 @@ if (hasTestsOfCategory(project, "DynamoDb")) {
     task testDynamoDb(type: Test) {
         enabled = shouldTest(project, "DynamoDb")
         useJUnitPlatform {
-            includeTags "org.apereo.cas.category.DynamoDbCategory", "DynamoDb"
+            includeTags "DynamoDb"
         }
     }
 }
@@ -101,7 +101,7 @@ if (hasTestsOfCategory(project, "FileSystem")) {
     task testFileSystem(type: Test) {
         enabled = shouldTest(project, "FileSystem")
         useJUnitPlatform {
-            includeTags "org.apereo.cas.category.FileSystemCategory", "FileSystem"
+            includeTags "FileSystem"
         }
     }
 }
@@ -110,7 +110,7 @@ if (hasTestsOfCategory(project, "Ignite")) {
     task testIgnite(type: Test) {
         enabled = shouldTest(project, "Ignite")
         useJUnitPlatform {
-            includeTags "org.apereo.cas.category.IgniteCategory", "Ignite"
+            includeTags "Ignite"
         }
         def list = []
         list.add("--add-exports")
@@ -125,7 +125,7 @@ if (hasTestsOfCategory(project, "InfluxDb")) {
     task testInfluxDb(type: Test) {
         enabled = shouldTest(project, "InfluxDb")
         useJUnitPlatform {
-            includeTags "org.apereo.cas.category.InfluxDbCategory", "InfluxDb"
+            includeTags "InfluxDb"
         }
     }
 }
@@ -134,16 +134,26 @@ if (hasTestsOfCategory(project, "Ldap")) {
     task testLdap(type: Test) {
         enabled = shouldTest(project, "Ldap")
         useJUnitPlatform {
-            includeTags "org.apereo.cas.category.LdapCategory", "Ldap"
+            includeTags "Ldap"
         }
     }
 }
+
+if (hasTestsOfCategory(project, "Groovy")) {
+    task testGroovy(type: Test) {
+        enabled = shouldTest(project, "Groovy")
+        useJUnitPlatform {
+            includeTags "Groovy"
+        }
+    }
+}
+
 
 if (hasTestsOfCategory(project, "Mail")) {
     task testMail(type: Test) {
         enabled = shouldTest(project, "Mail")
         useJUnitPlatform {
-            includeTags "org.apereo.cas.category.MailCategory", "Mail"
+            includeTags "Mail"
         }
     }
 }
@@ -152,7 +162,7 @@ if (hasTestsOfCategory(project, "RestfulApi")) {
     task testRestful(type: Test) {
         enabled = shouldTest(project, "RestfulApi")
         useJUnitPlatform {
-            includeTags "org.apereo.cas.category.RestfulApiCategory", "RestfulApi"
+            includeTags "RestfulApi"
         }
     }
 }
@@ -161,7 +171,7 @@ if (hasTestsOfCategory(project, "Memcached")) {
     task testMemcached(type: Test) {
         enabled = shouldTest(project, "Memcached")
         useJUnitPlatform {
-            includeTags "org.apereo.cas.category.MemcachedCategory", "Memcached"
+            includeTags "Memcached"
         }
     }
 }
@@ -170,7 +180,7 @@ if (hasTestsOfCategory(project, "MongoDb")) {
     task testMongoDb(type: Test) {
         enabled = shouldTest(project, "MongoDb")
         useJUnitPlatform {
-            includeTags "org.apereo.cas.category.MongoDbCategory", "MongoDb"
+            includeTags "MongoDb"
         }
     }
 }
@@ -179,33 +189,18 @@ if (hasTestsOfCategory(project, "Redis")) {
     task testRedis(type: Test) {
         enabled = shouldTest(project, "Redis")
         useJUnitPlatform {
-            includeTags "org.apereo.cas.category.RedisCategory", "Redis"
+            includeTags "Redis"
         }
     }
 }
 
 test {
     useJUnitPlatform {
-        excludeTags "org.apereo.cas.category.CassandraCategory", "Cassandra",
-                "org.apereo.cas.category.CosmosDbCategory", "CosmosDb",
-                "org.apereo.cas.category.CouchbaseCategory", "Couchbase",
-                "org.apereo.cas.category.DynamoDbCategory", "DynamoDb",
-                "org.apereo.cas.category.FileSystemCategory", "FileSystem",
-                "org.apereo.cas.category.IgniteCategory", "Ignite",
-                "org.apereo.cas.category.InfluxDbCategory", "InfluxDb",
-                "org.apereo.cas.category.CouchDbCategory", "CouchDb",
-                "org.apereo.cas.category.LdapCategory", "Ldap",
-                "org.apereo.cas.category.MailCategory", "Mail",
-                "org.apereo.cas.category.MariaDbCategory", "MariaDb",
-                "org.apereo.cas.category.MemcachedCategory", "Memcached",
-                "org.apereo.cas.category.MongoDbCategory", "MongoDb",
-                "org.apereo.cas.category.MsSqlServerCategory", "MsSqlServer",
-                "org.apereo.cas.category.MySQLCategory", "MySQL",
-                "org.apereo.cas.category.PostgresCategory", "Postgres",
-                "org.apereo.cas.category.RedisCategory", "Redis",
-                "org.apereo.cas.category.RadiusCategory", "Radius",
-                "org.apereo.cas.category.AmazonWebServicesS3Category", "AmazonWebServicesS3",
-                "org.apereo.cas.category.RestfulApiCategory", "RestfulApi"
+        excludeTags "Cassandra", "CosmosDb", "Couchbase", "DynamoDb",
+                "FileSystem", "Ignite", "InfluxDb", "CouchDb",
+                "Ldap", "Mail", "MariaDb", "Memcached",
+                "MongoDb", "MsSqlServer", "MySQL", "Postgres", "Redis",
+                "Radius", "AmazonWebServicesS3", "RestfulApi", "Groovy"
     }
     enabled = "SIMPLE".equalsIgnoreCase(rootProject.testCategoryType) && !Boolean.getBoolean("skipTests")
 }
@@ -216,7 +211,7 @@ tasks.withType(Test) {
 
     doFirst {
         maxParallelForks = project.ext.properties.get("maxParallelForksForTests", 2)
-        if(maxParallelForks != 2) {
+        if (maxParallelForks != 2) {
             println "Maximum number of parallel forks is set to ${maxParallelForks}"
         }
     }
@@ -246,11 +241,7 @@ def hasTestsOfCategory(Project project, String category) {
                 src.eachFileRecurse { file ->
                     if (file ==~ /.*Tests\.\w+/) {
                         file.readLines().parallelStream().forEach() { line ->
-                            def m = line =~ /^\s*@Category\((\w+)Category\.class\)\s*$/
-                            if (m) {
-                                tags.addAll(m.collect { it[1] })
-                            }
-                            m = line =~ /^\s*@Tag\("(\w+)"\)\s*$/
+                            def m = line =~ /^\s*@Tag\("(\w+)"\)\s*$/
                             if (m) {
                                 tags.addAll(m.collect { it[1] })
                             }
