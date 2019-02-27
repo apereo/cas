@@ -2,6 +2,7 @@ package org.apereo.cas.util.io;
 
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
     MailSenderAutoConfiguration.class,
     MailSenderValidatorAutoConfiguration.class
 })
+@Tag("Groovy")
 @TestPropertySource(properties = {"cas.smsProvider.groovy.location=classpath:/GroovySmsSender.groovy"})
 public class GroovySmsSenderTests {
     @Autowired

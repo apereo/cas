@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.u2f.storage;
 import org.apereo.cas.config.U2FConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -22,6 +23,7 @@ import org.springframework.test.context.TestPropertySource;
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class
 })
+@Tag("Groovy")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @TestPropertySource(properties = "cas.authn.mfa.u2f.groovy.location=classpath:U2FDeviceRepository.groovy")
 public class U2FGroovyResourceDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {

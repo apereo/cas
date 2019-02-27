@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguratio
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResultCode;
@@ -27,6 +28,7 @@ import static org.mockito.Mockito.*;
     RefreshAutoConfiguration.class,
     CasCoreUtilConfiguration.class
 })
+@Tag("Groovy")
 public class GroovyPasswordPolicyHandlingStrategyTests {
     @Test
     public void verifyStrategySupportsDefault() {
