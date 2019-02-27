@@ -9,7 +9,10 @@ import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
+
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.*;
 
 /**
  * This is {@link LdapTest}. Properties used for LDAP testing
@@ -29,6 +32,7 @@ import org.springframework.test.context.TestPropertySource;
     "ldap.baseDn=dc=example,dc=org",
     "ldap.peopleDn=ou=people,${ldap.baseDn}"
     })
+@DirtiesContext(classMode = BEFORE_CLASS)
 public interface LdapTest {
     String HOST = "localhost";
     int PORT = 10389;
@@ -51,9 +55,12 @@ public interface LdapTest {
             localhost,
             new ClassPathResource(System.getProperty("ldap.resource")).getInputStream(),
             BASE_DN);
-        LdapIntegrationTestsOperations.populateEntries(localhost,
-            new ClassPathResource(ApplicationContextProvider.getApplicationContext().getEnvironment().getProperty("ldap.test.resource", "")).getInputStream(),
-            ApplicationContextProvider.getApplicationContext().getEnvironment().getProperty("ldap.test.dnPrefix", "") + BASE_DN);
+        val path = ApplicationContextProvider.getApplicationContext().getEnvironment().getProperty("ldap.test.resource", "");
+        if (!path.isBlank()) {
+            LdapIntegrationTestsOperations.populateEntries(localhost,
+                new ClassPathResource(path).getInputStream(),
+                ApplicationContextProvider.getApplicationContext().getEnvironment().getProperty("ldap.test.dnPrefix", "") + BASE_DN);
+        }
     }
 
 }

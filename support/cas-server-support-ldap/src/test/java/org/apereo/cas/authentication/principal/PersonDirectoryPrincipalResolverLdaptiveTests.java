@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.Arrays;
@@ -47,7 +46,6 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attributeRepository.ldap[0].bindDn=${ldap.bindDn",
     "cas.authn.attributeRepository.ldap[0].bindCredential=${ldap.bindPassword}"
     })
-@DirtiesContext
 @Tag("Ldap")
 @EnabledIfContinuousIntegration
 public class PersonDirectoryPrincipalResolverLdaptiveTests implements LdapTest {

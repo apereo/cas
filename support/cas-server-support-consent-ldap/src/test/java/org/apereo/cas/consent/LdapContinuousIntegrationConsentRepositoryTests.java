@@ -7,7 +7,10 @@ import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
+
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.*;
 
 /**
  * Unit tests for {@link LdapConsentRepository} class.
@@ -25,6 +28,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.consent.ldap.bindCredential=password",
     "ldap.test.resource=ldif/ldap-consent.ldif"
     })
+@DirtiesContext(classMode = BEFORE_CLASS)
 @EnabledIfContinuousIntegration
 public class LdapContinuousIntegrationConsentRepositoryTests extends BaseLdapConsentRepositoryTests implements LdapTest {
     @Autowired
