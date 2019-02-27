@@ -21,10 +21,9 @@ public class CasBackchannelTicketValidator implements TicketValidator {
 
     @Override
     public Assertion validate(final String ticketId, final String service) {
-        final org.apereo.cas.validation.Assertion ass = cas.validateServiceTicket(ticketId, () -> service);
-
-        return new AssertionImpl(new AttributePrincipalImpl(
-                ass.getPrimaryAuthentication().getPrincipal().getId(),
-                ass.getPrimaryAuthentication().getPrincipal().getAttributes()));
+        val assertion = cas.validateServiceTicket(ticketId, () -> service);
+        val principal = assertion.getPrimaryAuthentication().getPrincipal();
+        
+        return new AssertionImpl(new AttributePrincipalImpl(principal.getId(), principal.getAttributes()));
     }
 }
