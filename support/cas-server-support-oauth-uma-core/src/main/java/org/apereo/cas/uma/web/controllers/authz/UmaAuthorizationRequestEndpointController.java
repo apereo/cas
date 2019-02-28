@@ -91,7 +91,7 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
             if (StringUtils.isBlank(umaRequest.getGrantType())) {
                 return new ResponseEntity("Unable to accept authorization request; grant type is missing", HttpStatus.BAD_REQUEST);
             }
-            if (!umaRequest.getGrantType().equalsIgnoreCase(OAuth20GrantTypes.UMA_TICKET.getType())) {
+            if (OAuth20GrantTypes.valueByType(umaRequest.getGrantType()) != OAuth20GrantTypes.UMA_TICKET) {
                 return new ResponseEntity("Unable to accept authorization request; need grant type "
                     + OAuth20GrantTypes.UMA_TICKET.getType(), HttpStatus.BAD_REQUEST);
             }

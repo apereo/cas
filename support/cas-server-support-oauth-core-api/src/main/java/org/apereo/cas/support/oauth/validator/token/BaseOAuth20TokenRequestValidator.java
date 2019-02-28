@@ -21,6 +21,7 @@ import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.core.Ordered;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 /**
@@ -60,10 +61,8 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
      */
     private static boolean isGrantTypeSupported(final String type, final OAuth20GrantTypes... expectedTypes) {
         LOGGER.debug("Grant type received: [{}]", type);
-        for (val expectedType : expectedTypes) {
-            if (OAuth20Utils.isGrantType(type, expectedType)) {
-                return true;
-            }
+        if (Arrays.asList(expectedTypes).contains(OAuth20GrantTypes.valueByType(type))) {
+            return true;
         }
         LOGGER.error("Unsupported grant type: [{}]", type);
         return false;

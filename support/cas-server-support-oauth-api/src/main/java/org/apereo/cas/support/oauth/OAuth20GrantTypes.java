@@ -2,6 +2,8 @@ package org.apereo.cas.support.oauth;
 
 import lombok.Getter;
 
+import java.util.Arrays;
+
 /**
  * The OAuth grant types (on the access token request).
  *
@@ -40,5 +42,17 @@ public enum OAuth20GrantTypes {
 
     OAuth20GrantTypes(final String type) {
         this.type = type;
+    }
+
+    /**
+     * Returns the enum corresponding to the passed grant_type value.
+     *
+     * @param type - grant_type value
+     * @return - OAuth20GrantType enum
+     */
+    public static OAuth20GrantTypes valueByType(final String type) {
+        return Arrays.stream(OAuth20GrantTypes.values())
+                .filter(v -> v.getType().equalsIgnoreCase(type))
+                .findFirst().orElse(null);
     }
 }
