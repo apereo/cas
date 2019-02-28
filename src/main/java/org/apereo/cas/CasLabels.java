@@ -42,7 +42,7 @@ public enum CasLabels {
     LABEL_PENDING_DOCUMENT_PROPERTY("Pending: Document Property"),
     LABEL_DELEGATED_AUTHENTICATION_PAC4J("Delegated Authentication Pac4J", "pac4j"),
     LABEL_DELEGATED_AUTHENTICATION_WS_FED("Delegated Authentication WS-FED", "adfs"),
-    LABEL_DEPENDENCIES_MODULES("Dependencies & Modules", "gradle|dependency|bom|maven|depencencies"),
+    LABEL_DEPENDENCIES_MODULES("Dependencies & Modules", "gradle|dependency|bom|maven|depencencies|version|upgrade"),
     LABEL_DIGEST_AUTHENTICATION("Digest Authentication"),
     LABEL_DOCUMENTATION("Documentation", "docs|markdown|gh-pages"),
     LABEL_EHCACHE("EhCache"),
@@ -105,7 +105,7 @@ public enum CasLabels {
     LABEL_SESSION_MANAGEMENT("Session Management"),
     LABEL_SHIBBOLETH("Shibboleth", "shib"),
     LABEL_SIGNING_ENCRYPTION("Signing & Encryption", "cipher|aes|encryption|crypto|decrypt|decryption"),
-    LABEL_SPRING_BOOT("Spring Boot"),
+    LABEL_SPRING_BOOT("Spring Boot", "bean|autoconfiguration"),
     LABEL_SPRING_BOOT_ADMIN_SERVER("Spring Boot Admin Server"),
     LABEL_SPRING_CLOUD("Spring Cloud", "RefreshScope"),
     LABEL_SPRING_CLOUD_CONFIGURATION_SERVER("Spring Cloud Configuration Server"),
@@ -121,7 +121,7 @@ public enum CasLabels {
     LABEL_UNIT_INTEGRATION_TESTS("Unit/Integration Tests", "\btest\b|junit|coverage|tests|mockito|suite|\bunit test\b|junit5"),
     LABEL_USER_INTERFACE_THEMES("User Interface & Themes", "ux|thymeleaf|\bhtml\b|views|screen|page|gulp|javascript|js|sass|css"),
     LABEL_WS_FED_PROTOCOL("WS-FED Protocol", "WSSecurity"),
-    LABEL_X509("X.509", "x509|certificates|tls|\bclient authentication\b"),
+    LABEL_X509("X.509", "x509|certificates|tls|\bclient authentication\b|CRL"),
     LABEL_RECAPTCHA("reCAPTCHA");
 
     private final String title;

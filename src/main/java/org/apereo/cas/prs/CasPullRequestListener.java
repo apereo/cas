@@ -88,7 +88,7 @@ public class CasPullRequestListener implements PullRequestListener {
         var title = pr.getTitle().toLowerCase();
         Arrays.stream(CasLabels.values()).forEach(l -> {
             if (!pr.isLabeledAs(l)) {
-                if (title.contains(l.getTitle().toLowerCase())) {
+                if (title.matches('\b' + l.getTitle().toLowerCase() + '\b')) {
                     log.info("{} will be assigned the label {}", pr, l);
                     repository.labelPullRequestAs(pr, l);
                 } else if (l.getKeywords() != null && l.getKeywords().matcher(title).find()) {
