@@ -1,12 +1,12 @@
 package org.apereo.cas.persondir;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.aop.support.AopUtils;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -16,6 +16,7 @@ import java.util.List;
  * @since 5.3.0
  */
 @Slf4j
+@Getter
 public class DefaultPersonDirectoryAttributeRepositoryPlan implements PersonDirectoryAttributeRepositoryPlan {
     private final List<IPersonAttributeDao> attributeRepositories = new ArrayList<>();
 
@@ -24,10 +25,5 @@ public class DefaultPersonDirectoryAttributeRepositoryPlan implements PersonDire
         val name = AopUtils.isAopProxy(repository) ? AopUtils.getTargetClass(repository).getSimpleName() : repository.getClass().getSimpleName();
         LOGGER.debug("Registering attribute repository [{}] into the person directory plan", name);
         attributeRepositories.add(repository);
-    }
-
-    @Override
-    public Collection<IPersonAttributeDao> getAttributeRepositories() {
-        return attributeRepositories;
     }
 }

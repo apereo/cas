@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.principal.cache;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
@@ -139,27 +140,27 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
     }
 
     @Override
-    public Map<String, Object> getAttributes(final Principal p) {
-        val cachedAttributes = getPrincipalAttributes(p);
+    public Map<String, Object> getAttributes(final Principal principal, final RegisteredService registeredService) {
+        val cachedAttributes = getPrincipalAttributes(principal);
         if (cachedAttributes != null && !cachedAttributes.isEmpty()) {
-            LOGGER.debug("Found [{}] cached attributes for principal [{}] that are [{}]", cachedAttributes.size(), p.getId(), cachedAttributes);
+            LOGGER.debug("Found [{}] cached attributes for principal [{}] that are [{}]", cachedAttributes.size(), principal.getId(), cachedAttributes);
             return cachedAttributes;
         }
         if (getAttributeRepository() == null) {
-            LOGGER.debug("No attribute repository is defined for [{}]. Returning default principal attributes for [{}]", getClass().getName(), p.getId());
+            LOGGER.debug("No attribute repository is defined for [{}]. Returning default principal attributes for [{}]", getClass().getName(), principal.getId());
             return cachedAttributes;
         }
-        val sourceAttributes = retrievePersonAttributesToPrincipalAttributes(p.getId());
-        LOGGER.debug("Found [{}] attributes for principal [{}] from the attribute repository.", sourceAttributes.size(), p.getId());
-        if (this.mergingStrategy == null || this.mergingStrategy.getAttributeMerger() == null) {
+        val sourceAttributes = retrievePersonAttributesToPrincipalAttributes(principal.getId());
+        LOGGER.debug("Found [{}] attributes for principal [{}] from the attribute repository.", sourceAttributes.size(), principal.getId());
+        if (this.mergingStrategy == null) {
             LOGGER.debug("No merging strategy found, so attributes retrieved from the repository will be used instead.");
-            return convertAttributesToPrincipalAttributesAndCache(p, sourceAttributes);
+            return convertAttributesToPrincipalAttributesAndCache(principal, sourceAttributes);
         }
-        val principalAttributes = convertPrincipalAttributesToPersonAttributes(p);
+        val principalAttributes = convertPrincipalAttributesToPersonAttributes(principal);
         LOGGER.debug("Merging current principal attributes with that of the repository via strategy [{}]", this.mergingStrategy);
         try {
             val mergedAttributes = this.mergingStrategy.getAttributeMerger().mergeAttributes(principalAttributes, sourceAttributes);
-            return convertAttributesToPrincipalAttributesAndCache(p, mergedAttributes);
+            return convertAttributesToPrincipalAttributesAndCache(principal, mergedAttributes);
         } catch (final Exception e) {
             val builder = new StringBuilder();
             builder.append(e.getClass().getName().concat("-"));
@@ -168,9 +169,9 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
             }
             LOGGER.error("The merging strategy [{}] for [{}] has failed to produce principal attributes because: [{}]. "
                     + "This usually is indicative of a bug and/or configuration mismatch. CAS will skip the merging process "
-                    + "and will return the original collection of principal attributes [{}]", this.mergingStrategy, p.getId(),
+                    + "and will return the original collection of principal attributes [{}]", this.mergingStrategy, principal.getId(),
                 builder.toString(), principalAttributes);
-            return convertAttributesToPrincipalAttributesAndCache(p, principalAttributes);
+            return convertAttributesToPrincipalAttributesAndCache(principal, principalAttributes);
         }
     }
 

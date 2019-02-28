@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
+import org.apereo.cas.services.RegisteredService;
+
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.io.Serializable;
@@ -24,8 +26,9 @@ public interface PrincipalAttributesRepository extends Serializable {
     /**
      * Gets attributes for the given principal id.
      *
-     * @param p the principal whose attributes need to be retrieved.
+     * @param principal         the principal whose attributes need to be retrieved.
+     * @param registeredService the registered service
      * @return the attributes
      */
-    Map<String, Object> getAttributes(Principal p);
+    Map<String, Object> getAttributes(Principal principal, RegisteredService registeredService);
 }

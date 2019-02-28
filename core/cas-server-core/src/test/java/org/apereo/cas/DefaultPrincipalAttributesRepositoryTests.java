@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 
@@ -34,15 +35,17 @@ public class DefaultPrincipalAttributesRepositoryTests extends BaseCasCoreTests 
     @Test
     public void checkDefaultAttributes() {
         val rep = new DefaultPrincipalAttributesRepository();
-        assertEquals(3, rep.getAttributes(this.principalFactory.getIfAvailable().createPrincipal("uid")).size());
+        val principal = this.principalFactory.getIfAvailable().createPrincipal("uid");
+        assertEquals(3, rep.getAttributes(principal, CoreAuthenticationTestUtils.getRegisteredService()).size());
     }
 
     @Test
     public void checkInitialAttributes() {
         val p = this.principalFactory.getIfAvailable().createPrincipal("uid", Collections.singletonMap("mail", "final@example.com"));
         val rep = new DefaultPrincipalAttributesRepository();
-        assertEquals(1, rep.getAttributes(p).size());
-        assertTrue(rep.getAttributes(p).containsKey("mail"));
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
+        assertEquals(1, rep.getAttributes(p, registeredService).size());
+        assertTrue(rep.getAttributes(p, registeredService).containsKey("mail"));
     }
 
     @Test
