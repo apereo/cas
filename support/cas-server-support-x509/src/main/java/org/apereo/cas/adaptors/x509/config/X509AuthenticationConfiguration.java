@@ -122,9 +122,6 @@ public class X509AuthenticationConfiguration {
         return new NoOpRevocationChecker();
     }
 
-    @Bean
-    @RefreshScope
-    @ConditionalOnMissingBean(name = "resourceCrlFetcher")
     public CRLFetcher resourceCrlFetcher() {
         return new ResourceCRLFetcher();
     }
@@ -189,9 +186,6 @@ public class X509AuthenticationConfiguration {
             x509.getOrder());
     }
 
-    @Bean
-    @RefreshScope
-    @ConditionalOnMissingBean(name = "ldaptiveResourceCRLFetcher")
     public CRLFetcher ldaptiveResourceCRLFetcher() {
         val x509 = casProperties.getAuthn().getX509();
         return new LdaptiveResourceCRLFetcher(LdapUtils.newLdaptiveConnectionConfig(x509.getLdap()),
