@@ -106,7 +106,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
             principal.getId(), selectedService, registeredService.getServiceId());
         LOGGER.trace("Locating principal attributes for [{}]", principal.getId());
 
-        val principalAttributes = resolveAttributesFromPrincipalAttributeRepository(principal);
+        val principalAttributes = resolveAttributesFromPrincipalAttributeRepository(principal, registeredService);
         LOGGER.debug("Found principal attributes [{}] for [{}]", principalAttributes, principal.getId());
 
         LOGGER.trace("Calling attribute policy [{}] to process attributes for [{}]", getClass().getSimpleName(), principal.getId());
@@ -142,15 +142,16 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     /**
      * Resolve attributes from principal attribute repository.
      *
-     * @param principal the principal
+     * @param principal         the principal
+     * @param registeredService the registered service
      * @return the map
      */
-    protected Map<String, Object> resolveAttributesFromPrincipalAttributeRepository(final Principal principal) {
+    protected Map<String, Object> resolveAttributesFromPrincipalAttributeRepository(final Principal principal, final RegisteredService registeredService) {
         val repository = ObjectUtils.defaultIfNull(this.principalAttributesRepository,
             getPrincipalAttributesRepositoryFromApplicationContext());
         if (repository != null) {
             LOGGER.debug("Using principal attribute repository [{}] to retrieve attributes", repository);
-            return repository.getAttributes(principal);
+            return repository.getAttributes(principal, registeredService);
         }
         return principal.getAttributes();
     }
