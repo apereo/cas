@@ -17,6 +17,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /** 
  * This test makes sure the default X509 config loads without errors.
  * It purposely has minimal configuration and the defined crlFetcher is the default.
+ * @since 6.1
 */
 @SpringBootTest(classes = {X509AuthenticationConfiguration.class,
     RefreshAutoConfiguration.class,
@@ -60,7 +62,7 @@ public class DefaultX509ConfigTests {
      * Confirm that config was loaded by ensuring bean was autowired.
      */
     @Test
-    public void testContextLoaded() {
+    public void verifyContextLoaded() {
         assertNotNull(fetcher);
     }
 }
