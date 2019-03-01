@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.x509.config;
 
-
 import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
