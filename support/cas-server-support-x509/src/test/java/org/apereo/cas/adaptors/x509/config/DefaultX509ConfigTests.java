@@ -60,7 +60,7 @@ public class DefaultX509ConfigTests {
      * Confirm that config was loaded by ensuring bean was autowired.
      */
     @Test
-    public void testContextLoaded() {
+    public void verifyContextLoaded() {
         assertNotNull(fetcher);
     }
 }
