@@ -11,7 +11,7 @@ import org.junit.platform.suite.api.SelectClasses;
  */
 @SelectClasses({
     LdaptiveResourceCRLFetcherTests.class,
-    DefaultX509ConfigTests.class,
+    DefaultX509ConfigTests.class
 })
 public class AllTestsSuite {
 }
