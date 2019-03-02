@@ -124,13 +124,6 @@ public class X509AuthenticationConfiguration {
 
     @Bean
     @RefreshScope
-    @ConditionalOnMissingBean(name = "resourceCrlFetcher")
-    public CRLFetcher resourceCrlFetcher() {
-        return new ResourceCRLFetcher();
-    }
-
-    @Bean
-    @RefreshScope
     @ConditionalOnMissingBean(name = "resourceCrlRevocationChecker")
     public RevocationChecker resourceCrlRevocationChecker() {
         val x509 = casProperties.getAuthn().getX509();
@@ -155,10 +148,12 @@ public class X509AuthenticationConfiguration {
         val x509 = casProperties.getAuthn().getX509();
         switch (x509.getCrlFetcher().toLowerCase()) {
             case "ldap":
-                return ldaptiveResourceCRLFetcher();
+                return new LdaptiveResourceCRLFetcher(LdapUtils.newLdaptiveConnectionConfig(x509.getLdap()),
+                    LdapUtils.newLdaptiveSearchExecutor(x509.getLdap().getBaseDn(),
+                    x509.getLdap().getSearchFilter()), x509.getLdap().getCertificateAttribute());
             case "resource":
             default:
-                return resourceCrlFetcher();
+                return new ResourceCRLFetcher();
         }
     }
 
@@ -187,16 +182,6 @@ public class X509AuthenticationConfiguration {
             subjectDnPattern,
             revChecker,
             x509.getOrder());
-    }
-
-    @Bean
-    @RefreshScope
-    @ConditionalOnMissingBean(name = "ldaptiveResourceCRLFetcher")
-    public CRLFetcher ldaptiveResourceCRLFetcher() {
-        val x509 = casProperties.getAuthn().getX509();
-        return new LdaptiveResourceCRLFetcher(LdapUtils.newLdaptiveConnectionConfig(x509.getLdap()),
-            LdapUtils.newLdaptiveSearchExecutor(x509.getLdap().getBaseDn(), x509.getLdap().getSearchFilter()),
-            x509.getLdap().getCertificateAttribute());
     }
 
     @Bean
