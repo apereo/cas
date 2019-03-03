@@ -82,7 +82,7 @@ public class PasswordEncoderUtils {
                 final int hashWidth = 256;
                 return new Pbkdf2PasswordEncoder(properties.getSecret(), properties.getStrength(), hashWidth);
             case GLIBC_CRYPT:
-                boolean hasSecret = StringUtils.isNotBlank(properties.getSecret());
+                final boolean hasSecret = StringUtils.isNotBlank(properties.getSecret());
                 LOGGER.debug("Creating glibc CRYPT encoder with encoding alg [{}], strength [{}] and {}secret",
                         properties.getEncodingAlgorithm(), properties.getStrength(),
                         BooleanUtils.toString(hasSecret, StringUtils.EMPTY, "without "));
