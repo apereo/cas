@@ -40,7 +40,10 @@ public class PasswordEncoderProperties implements Serializable {
         SCRYPT, /**
          * Uses {@link org.springframework.security.crypto.password.Pbkdf2PasswordEncoder}.
          */
-        PBKDF2
+        PBKDF2, /**
+         * Uses {@link org.apereo.cas.util.crypto.GlibcCryptPasswordEncoder}.
+         */
+        GLIBC_CRYPT
     }
 
     /**
