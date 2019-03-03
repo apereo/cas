@@ -54,24 +54,30 @@ public class GlibcCryptPasswordEncoder implements PasswordEncoder {
         if ("1".equals(this.encodingAlgorithm) || "MD5".equals(this.encodingAlgorithm.toUpperCase())) {
             // MD5
             cryptSalt.append("$1$");
+            LOGGER.debug("Encoding with MD5 algorithm");
         } else if ("5".equals(this.encodingAlgorithm) || "SHA-256".equals(this.encodingAlgorithm.toUpperCase())) {
             // SHA-256
             cryptSalt.append("$5$");
             cryptSalt.append("rounds=").append(this.strength).append('$');
+            LOGGER.debug("Encoding with SHA-256 algorithm and {} rounds", this.strength);
         } else if ("6".equals(this.encodingAlgorithm) || "SHA-512".equals(this.encodingAlgorithm.toUpperCase())) {
             // SHA-512
             cryptSalt.append("$6$");
             cryptSalt.append("rounds=").append(this.strength).append('$');
+            LOGGER.debug("Encoding with SHA-512 algorithm and {} rounds", this.strength);
         } else {
             // UNIX Crypt algorithm
             cryptSalt.append(this.encodingAlgorithm);
+            LOGGER.debug("Encoding with UNIX Crypt algorithm as no indicator for another algorithm was found.");
         }
         // Add real salt
         if (StringUtils.isBlank(this.secret)) {
+            LOGGER.debug("No secret was found. Generating a salt with length {}", SALT_LENGTH);
             final Base64RandomStringGenerator keygen = new Base64RandomStringGenerator(SALT_LENGTH);
             cryptSalt.append(keygen.getNewString()).append('$');
         } else {
-            cryptSalt.append(secret).append('$');
+            LOGGER.debug("The provided secrect is used as a salt");
+            cryptSalt.append(this.secret).append('$');
         }
         return cryptSalt.toString();
     }
