@@ -75,7 +75,7 @@ Do not forget to commit all changes and push changes upstream, creating a new re
 
 ### Build 
 
-- In the project's `gradle.properties`, change the project version to the release version. (i.e. `5.0.0-RC1`). 
+- In the project's `gradle.properties`, change the project version to the release version and remove the `-SNAPSHOT`. (i.e. `5.0.0-RC1`). 
 - Ensure NPM is installed:
 
 ```bash
@@ -85,7 +85,7 @@ Do not forget to commit all changes and push changes upstream, creating a new re
 - Then build the project using the following command:
 
 ```bash
-./gradlew clean assemble install -x test -x check -DpublishReleases=true -DskipNodeModulesCleanUp=true -DskipNpmCache=true
+./gradlew clean assemble -x test -x check -DpublishReleases=true -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DsonatypeUsername=<UID> -DsonatypePassword=<PASSWORD>
 ```
 
 ### Release
@@ -93,7 +93,7 @@ Do not forget to commit all changes and push changes upstream, creating a new re
 Release the project using the following commands:
 
 ```bash
-./gradlew uploadArchives -DpublishReleases=true -DsonatypeUsername=<UID> -DsonatypePassword=<PASSWORD> -DskipNodeModulesCleanUp=true -DskipNpmCache=true
+./gradlew publish -DpublishReleases=true -DsonatypeUsername=<UID> -DsonatypePassword=<PASSWORD> -DskipNodeModulesCleanUp=true -DskipNpmCache=true
 ```
 
 ## Performing the Release
