@@ -220,6 +220,10 @@ publishing {
         
         mavenJava(MavenPublication) {
             from components.java
+            artifact tasks['sourcesJar']
+            artifact tasks['resourcesJar']
+            artifact tasks['javadocJar']
+            artifact tasks['testJar']
 
             pom {
                 createPom(it, project)
