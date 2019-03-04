@@ -21,7 +21,7 @@ You will need to [generate your own PGP signatures](http://blog.sonatype.com/201
 - The absolute path to the secret key ring file containing your private key. Since gpg 2.1, you need to export the keys with command:
 
 ```bash
-gpg --keyring secring.gpg --export-secret-keys > ~/.gnupg/secring.gpg).
+gpg --keyring secring.gpg --export-secret-keys > ~/.gnupg/secring.gpg
 ```
 
 - The passphrase used to protect your private key.
