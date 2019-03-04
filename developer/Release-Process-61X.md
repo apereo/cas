@@ -93,7 +93,7 @@ Do not forget to commit all changes and push changes upstream, creating a new re
 Release the project using the following commands:
 
 ```bash
-./gradlew publish -DpublishReleases=true -DsonatypeUsername=<UID> -DsonatypePassword=<PASSWORD> -DskipNodeModulesCleanUp=true -DskipNpmCache=true
+./gradlew publish -DpublishReleases=true -DsonatypeUsername=<UID> -DsonatypePassword=<PASSWORD> -DskipNodeModulesCleanUp=true -DskipNpmCache=true -Dorg.gradle.internal.http.socketTimeout=160000 -Dorg.gradle.internal.http.connectionTimeout=160000
 ```
 
 ## Performing the Release
