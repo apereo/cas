@@ -18,20 +18,20 @@ import org.springframework.webflow.execution.RequestContext;
 import java.util.Set;
 
 /**
- * This is {@link DuoAuthenticationWebflowEventResolver }.
+ * This is {@link DuoSecurityAuthenticationWebflowEventResolver }.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class DuoAuthenticationWebflowEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
+public class DuoSecurityAuthenticationWebflowEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
 
-    public DuoAuthenticationWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
-                                                 final CentralAuthenticationService centralAuthenticationService, final ServicesManager servicesManager,
-                                                 final TicketRegistrySupport ticketRegistrySupport, final CookieGenerator warnCookieGenerator,
-                                                 final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
-                                                 final MultifactorAuthenticationProviderSelector selector,
-                                                 final ApplicationEventPublisher eventPublisher,
-                                                 final ConfigurableApplicationContext applicationContext) {
+    public DuoSecurityAuthenticationWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
+                                                         final CentralAuthenticationService centralAuthenticationService, final ServicesManager servicesManager,
+                                                         final TicketRegistrySupport ticketRegistrySupport, final CookieGenerator warnCookieGenerator,
+                                                         final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
+                                                         final MultifactorAuthenticationProviderSelector selector,
+                                                         final ApplicationEventPublisher eventPublisher,
+                                                         final ConfigurableApplicationContext applicationContext) {
         super(authenticationSystemSupport, centralAuthenticationService,
             servicesManager, ticketRegistrySupport, warnCookieGenerator,
             authenticationSelectionStrategies, selector, eventPublisher, applicationContext);
