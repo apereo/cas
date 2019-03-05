@@ -6,10 +6,12 @@ import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.SneakyThrows;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
+import static org.apereo.cas.util.LdapTestProperties.*;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.*;
 
 /**
@@ -34,18 +36,10 @@ public class LdapContinuousIntegrationConsentRepositoryTests extends BaseLdapCon
     @Autowired
     private CasConfigurationProperties casProperties;
 
-//    @BeforeAll
-//    @SneakyThrows
-//    public static void bootstrap() {
-//        @Cleanup
-//        val localhost = new LDAPConnection(HOST, PORT, BIND_DN, BIND_PASS);
-//        LdapIntegrationTestsOperations.populateEntries(localhost, new ClassPathResource("ldif/ldap-consent.ldif").getInputStream(), PEOPLE_DN);
-//    }
-
     @Override
     @SneakyThrows
     public LDAPConnection getConnection() {
-        return new LDAPConnection(HOST, PORT, casProperties.getConsent().getLdap().getBindDn(),
-            casProperties.getConsent().getLdap().getBindCredential());
+        val ldap = casProperties.getConsent().getLdap();
+        return new LDAPConnection(host(), port(), ldap.getBindDn(), ldap.getBindCredential());
     }
 }

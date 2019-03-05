@@ -26,6 +26,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.time.LocalDateTime;
 
+import static org.apereo.cas.util.LdapTestProperties.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -46,9 +47,9 @@ public abstract class BaseLdapConsentRepositoryTests extends BaseConsentReposito
 
     private static final String ATTR_NAME = "description";
     private static final String USER_CN = "casuser";
-    private static final String USER_DN = "cn=casuser," + PEOPLE_DN;
+    private static final String USER_DN = "cn=casuser," + peopleDn();
     private static final String USER2_CN = "casuser2";
-    private static final String USER2_DN = "cn=casuser2," + PEOPLE_DN;
+    private static final String USER2_DN = "cn=casuser2," + peopleDn();
     private static final Service SVC2 = RegisteredServiceTestUtils.getService2();
     private static final AbstractRegisteredService REG_SVC2 = RegisteredServiceTestUtils.getRegisteredService(SVC2.getId());
     private static final String DEF_FILTER = "(objectClass=*)";

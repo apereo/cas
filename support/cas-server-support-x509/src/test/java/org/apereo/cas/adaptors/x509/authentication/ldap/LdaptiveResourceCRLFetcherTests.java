@@ -39,6 +39,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import static org.apereo.cas.util.LdapTestProperties.*;
+
 
 /**
  * Test cases for {@link LdaptiveResourceCRLFetcher}
@@ -66,8 +68,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
     CasCoreServicesConfiguration.class})
 @EnableScheduling
 public class LdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests implements InitializingBean, LdapTest, X509TestProperties {
-    private static final int LDAP_PORT = 1389;
-
     @Autowired
     @Qualifier("crlFetcher")
     private CRLFetcher fetcher;
@@ -76,9 +76,9 @@ public class LdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests imple
     private ApplicationContext applicationContext;
 
     @BeforeAll
-    public static void bootstrapTests() throws Exception {
-        initDirectoryServer(LDAP_PORT);
-        AbstractX509LdapTests.bootstrap(LDAP_PORT);
+    public static void bootstrapTests() {
+        initDirectoryServer(port());
+        AbstractX509LdapTests.bootstrap(port());
     }
 
     @Override

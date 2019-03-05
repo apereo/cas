@@ -37,15 +37,15 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class
 })
 @TestPropertySource(properties = {
-    "cas.authn.attributeRepository.ldap[0].baseDn=dc=example,dc=org",
+    "cas.authn.attributeRepository.ldap[0].baseDn=${ldap.baseDn}",
     "cas.authn.attributeRepository.ldap[0].ldapUrl=${ldap.url}",
     "cas.authn.attributeRepository.ldap[0].searchFilter=cn={user}",
     "cas.authn.attributeRepository.ldap[0].useSsl=false",
     "cas.authn.attributeRepository.ldap[0].attributes.cn=cn",
     "cas.authn.attributeRepository.ldap[0].attributes.description=description",
-    "cas.authn.attributeRepository.ldap[0].bindDn=${ldap.bindDn",
+    "cas.authn.attributeRepository.ldap[0].bindDn=${ldap.bindDn}",
     "cas.authn.attributeRepository.ldap[0].bindCredential=${ldap.bindPassword}"
-    })
+})
 @Tag("Ldap")
 @EnabledIfContinuousIntegration
 public class PersonDirectoryPrincipalResolverLdaptiveTests implements LdapTest {

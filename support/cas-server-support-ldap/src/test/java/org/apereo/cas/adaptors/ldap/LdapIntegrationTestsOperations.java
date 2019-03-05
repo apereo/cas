@@ -4,10 +4,10 @@ import org.apereo.cas.util.LdapTestUtils;
 import org.apereo.cas.util.ldap.uboundid.InMemoryTestLdapDirectoryServer;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
+import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.core.io.ClassPathResource;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,9 +46,9 @@ public class LdapIntegrationTestsOperations {
      * Init directory server.
      *
      * @param port the port
-     * @throws IOException the io exception
      */
-    public static void initDirectoryServer(final int port) throws IOException {
+    @SneakyThrows
+    public static void initDirectoryServer(final int port) {
         initDirectoryServer(new ClassPathResource("ldif/ldap-base.ldif").getInputStream(), port);
     }
 

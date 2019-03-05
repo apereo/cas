@@ -4,8 +4,11 @@ import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.util.LdapTest;
 import org.apereo.cas.util.junit.DisabledIfContinuousIntegration;
 
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.test.context.TestPropertySource;
+
+import static org.apereo.cas.util.LdapTestProperties.*;
 
 /**
  * Test cases for {@link LdapSpnegoKnownClientSystemsFilterAction}.
@@ -33,7 +36,8 @@ import org.springframework.test.context.TestPropertySource;
 public class LdapSpnegoKnownClientSystemsFilterActionTests extends BaseLdapSpnegoKnownClientSystemsFilterActionTests implements LdapTest {
 
     @BeforeAll
-    public static void bootstrap() throws Exception {
-        LdapIntegrationTestsOperations.initDirectoryServer(PORT);
+    @SneakyThrows
+    public static void bootstrap() {
+        LdapIntegrationTestsOperations.initDirectoryServer(port());
     }
 }

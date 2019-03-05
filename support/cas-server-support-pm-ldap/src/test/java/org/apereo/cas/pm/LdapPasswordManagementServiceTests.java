@@ -1,6 +1,5 @@
 package org.apereo.cas.pm;
 
-import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
@@ -9,8 +8,6 @@ import org.apereo.cas.pm.config.PasswordManagementConfiguration;
 import org.apereo.cas.util.LdapTest;
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
-import com.unboundid.ldap.sdk.LDAPConnection;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -21,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
@@ -62,13 +58,8 @@ public class LdapPasswordManagementServiceTests implements LdapTest {
     private PasswordManagementService passwordChangeService;
 
     @BeforeAll
-    @SneakyThrows
     public static void bootstrap() {
         ClientInfoHolder.setClientInfo(new ClientInfo(new MockHttpServletRequest()));
-
-        val localhost = new LDAPConnection(HOST, PORT, BIND_DN, BIND_PASS);
-        LdapIntegrationTestsOperations.populateEntries(localhost,
-            new ClassPathResource("ldif/ldap-pm.ldif").getInputStream(), PEOPLE_DN);
     }
 
     @Test
