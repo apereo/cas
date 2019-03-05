@@ -41,9 +41,24 @@ public class GlibcCryptPasswordEncoder implements PasswordEncoder {
 
     @Override
     public boolean matches(final CharSequence rawPassword, final String encodedPassword) {
-        final String encodedRawPassword = encode(rawPassword);
+        if (StringUtils.isBlank(encodedPassword)) {
+            LOGGER.warn("The encoded password provided for matching is null. Returning false");
+            return false;
+        }
+        final String providedSalt;
+        final int lastDollarIndex = encodedPassword.lastIndexOf('$');
+        if (lastDollarIndex == -1) {
+            // DES UnixCrypt, so first two letters are the salt
+            providedSalt = encodedPassword.substring(0, 2);
+            LOGGER.debug("Assuming DES UnixCrypt as no delimiter could be found in the encoded password provided");
+        } else {
+            // Other algorithms
+            providedSalt = encodedPassword.substring(0, lastDollarIndex);
+            LOGGER.debug("Encoded password uses algorithm [{}]", providedSalt.charAt(1));
+        }
+        final String encodedRawPassword = Crypt.crypt(rawPassword.toString(), providedSalt);
         final boolean matched = StringUtils.equals(encodedRawPassword, encodedPassword);
-        LOGGER.debug("Provided password does{}match the encoded password", BooleanUtils.toString(matched, StringUtils.EMPTY, " not "));
+        LOGGER.debug("Provided password does {}match the encoded password", BooleanUtils.toString(matched, StringUtils.EMPTY, "not "));
         return matched;
     }
 
