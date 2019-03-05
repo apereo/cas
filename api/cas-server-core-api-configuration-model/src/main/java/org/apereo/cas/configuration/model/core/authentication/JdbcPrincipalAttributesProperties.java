@@ -90,6 +90,11 @@ public class JdbcPrincipalAttributesProperties extends AbstractJpaProperties {
     private int order;
 
     /**
+     * A value can be assigned to this field to uniquely identify this resolver.
+     */
+    private String id;
+    
+    /**
      * Map of attributes to fetch from the database.
      * Attributes are defined using a key-value structure
      * where CAS allows the attribute name/key to be renamed virtually
