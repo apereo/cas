@@ -1,15 +1,16 @@
 package org.apereo.cas.adaptors.duo.config;
 
 import org.apereo.cas.adaptors.duo.DuoHealthIndicator;
-import org.apereo.cas.adaptors.duo.authn.DuoAuthenticationHandler;
 import org.apereo.cas.adaptors.duo.authn.DuoCredential;
 import org.apereo.cas.adaptors.duo.authn.DuoDirectCredential;
 import org.apereo.cas.adaptors.duo.authn.DuoMultifactorAuthenticationProvider;
+import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationHandler;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProviderFactory;
-import org.apereo.cas.adaptors.duo.web.DuoPingEndpoint;
-import org.apereo.cas.adaptors.duo.web.flow.action.DuoDetermineUserAccountAction;
-import org.apereo.cas.adaptors.duo.web.flow.action.DuoPrepareWebLoginFormAction;
-import org.apereo.cas.adaptors.duo.web.flow.config.DuoMultifactorWebflowConfigurer;
+import org.apereo.cas.adaptors.duo.web.DuoSecurityPingEndpoint;
+import org.apereo.cas.adaptors.duo.web.DuoSecurityUserAccountStatusEndpoint;
+import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityDetermineUserAccountAction;
+import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityPrepareWebLoginFormAction;
+import org.apereo.cas.adaptors.duo.web.flow.config.DuoSecurityMultifactorWebflowConfigurer;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
@@ -95,13 +96,13 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
 
     @Bean
     public Action prepareDuoWebLoginFormAction() {
-        return new DuoPrepareWebLoginFormAction();
+        return new DuoSecurityPrepareWebLoginFormAction();
     }
 
     @ConditionalOnMissingBean(name = "determineDuoUserAccountAction")
     @Bean
     public Action determineDuoUserAccountAction() {
-        return new DuoDetermineUserAccountAction();
+        return new DuoSecurityDetermineUserAccountAction();
     }
 
     @ConditionalOnMissingBean(name = "duoProviderFactory")
@@ -128,7 +129,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
             throw new BeanCreationException("No configuration/settings could be found for Duo Security. Review settings and ensure the correct syntax is used");
         }
         return duos.stream()
-            .map(d -> new DuoAuthenticationHandler(d.getId(),
+            .map(d -> new DuoSecurityAuthenticationHandler(d.getId(),
                 servicesManager.getIfAvailable(),
                 duoPrincipalFactory(),
                 duoProviderBean().getProvider(d.getId()),
@@ -141,7 +142,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer duoMultifactorWebflowConfigurer() {
         val deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
-        return new DuoMultifactorWebflowConfigurer(flowBuilderServices.getIfAvailable(),
+        return new DuoSecurityMultifactorWebflowConfigurer(flowBuilderServices.getIfAvailable(),
             loginFlowDefinitionRegistry.getIfAvailable(),
             deviceRegistrationEnabled,
             applicationContext,
@@ -182,8 +183,13 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
 
     @Bean
     @ConditionalOnEnabledEndpoint
-    public DuoPingEndpoint duoPingEndpoint() {
-        return new DuoPingEndpoint(casProperties, applicationContext);
+    public DuoSecurityPingEndpoint duoPingEndpoint() {
+        return new DuoSecurityPingEndpoint(casProperties, applicationContext);
     }
 
+    @Bean
+    @ConditionalOnEnabledEndpoint
+    public DuoSecurityUserAccountStatusEndpoint duoAccountStatusEndpoint() {
+        return new DuoSecurityUserAccountStatusEndpoint(casProperties, applicationContext);
+    }
 }

@@ -8,13 +8,13 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * This is {@link DuoAuthenticationWebflowAction}.
+ * This is {@link DuoSecurityAuthenticationWebflowAction}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @RequiredArgsConstructor
-public class DuoAuthenticationWebflowAction extends AbstractAction {
+public class DuoSecurityAuthenticationWebflowAction extends AbstractAction {
 
     private final CasWebflowEventResolver duoAuthenticationWebflowEventResolver;
 

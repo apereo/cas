@@ -15,14 +15,14 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * This is {@link DuoDetermineUserAccountAction}.
+ * This is {@link DuoSecurityDetermineUserAccountAction}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @RequiredArgsConstructor
 @Slf4j
-public class DuoDetermineUserAccountAction extends AbstractMultifactorAuthenticationAction<DuoMultifactorAuthenticationProvider> {
+public class DuoSecurityDetermineUserAccountAction extends AbstractMultifactorAuthenticationAction<DuoMultifactorAuthenticationProvider> {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
