@@ -76,7 +76,7 @@ public enum CasLabels {
     LABEL_OPENID_CONNECT_PROTOCOL("OpenID Connect Protocol", "oidc"),
     LABEL_OPENID_PROTOCOL("OpenID Protocol"),
     LABEL_PAC4J("Pac4J"),
-    LABEL_PASSWORD_ENCODING("Password Encoding"),
+    LABEL_PASSWORD_ENCODING("Password Encoding", "password encoder"),
     LABEL_PASSWORD_MANAGEMENT("Password Management", "password reset|\bpm\b"),
     LABEL_PASSWORD_POLICY("Password Policy", "lppe"),
     LABEL_PENDING("Pending"),
