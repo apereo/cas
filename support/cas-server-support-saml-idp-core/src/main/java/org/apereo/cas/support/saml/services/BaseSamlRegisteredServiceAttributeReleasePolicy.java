@@ -33,7 +33,6 @@ import java.util.Map;
 public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends ReturnAllowedAttributeReleasePolicy {
     private static final long serialVersionUID = -3301632236702329694L;
 
-
     @Override
     public Map<String, Object> getAttributesInternal(final Principal principal,
                                                      final Map<String, Object> attributes,
