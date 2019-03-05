@@ -10,6 +10,7 @@ import org.apereo.cas.persondir.DefaultPersonDirectoryAttributeRepositoryPlan;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
@@ -113,6 +114,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
                 val r = json.getLocation();
                 val dao = new JsonBackedComplexStubPersonAttributeDao(r);
                 dao.setOrder(json.getOrder());
+
                 dao.init();
                 LOGGER.debug("Configured JSON attribute sources from [{}]", r);
                 list.add(dao);
@@ -132,7 +134,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
                 val dao = new GroovyPersonAttributeDao(new InternalGroovyScriptDao(applicationContext, casProperties));
                 dao.setCaseInsensitiveUsername(groovy.isCaseInsensitive());
                 dao.setOrder(groovy.getOrder());
-
+                FunctionUtils.doIfNotNull(groovy.getId(), dao::setId);
                 LOGGER.debug("Configured Groovy attribute sources from [{}]", groovy.getLocation());
                 list.add(dao);
             });
@@ -149,6 +151,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
         if (gp.isEnabled()) {
             val dao = new GrouperPersonAttributeDao();
             dao.setOrder(gp.getOrder());
+            FunctionUtils.doIfNotNull(gp.getId(), dao::setId);
             LOGGER.debug("Configured Grouper attribute source");
             list.add(dao);
         }
@@ -163,7 +166,8 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
         val attrs = casProperties.getAuthn().getAttributeRepository().getStub().getAttributes();
         if (!attrs.isEmpty()) {
             LOGGER.info("Found and added static attributes [{}] to the list of candidate attribute repositories", attrs.keySet());
-            list.add(Beans.newStubAttributeRepository(casProperties.getAuthn().getAttributeRepository()));
+            val dao = Beans.newStubAttributeRepository(casProperties.getAuthn().getAttributeRepository());
+            list.add(dao);
         }
         return list;
     }
@@ -179,6 +183,8 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
             .filter(jdbc -> StringUtils.isNotBlank(jdbc.getSql()) && StringUtils.isNotBlank(jdbc.getUrl()))
             .forEach(jdbc -> {
                 val jdbcDao = createJdbcPersonAttributeDao(jdbc);
+                FunctionUtils.doIfNotNull(jdbcDao.getId(), jdbcDao::setId);
+
                 jdbcDao.setQueryAttributeMapping(CollectionUtils.wrap("username", jdbc.getUsername()));
                 val mapping = jdbc.getAttributes();
                 if (mapping != null && !mapping.isEmpty()) {
@@ -224,7 +230,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
             .filter(ldap -> StringUtils.isNotBlank(ldap.getBaseDn()) && StringUtils.isNotBlank(ldap.getLdapUrl()))
             .forEach(ldap -> {
                 val ldapDao = new LdaptivePersonAttributeDao();
-
+                FunctionUtils.doIfNotNull(ldap.getId(), ldapDao::setId);
                 LOGGER.debug("Configured LDAP attribute source for [{}] and baseDn [{}]", ldap.getLdapUrl(), ldap.getBaseDn());
                 ldapDao.setConnectionFactory(LdapUtils.newLdaptivePooledConnectionFactory(ldap));
                 ldapDao.setBaseDN(ldap.getBaseDn());
@@ -236,7 +242,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
                 if (ldap.getAttributes() != null && !ldap.getAttributes().isEmpty()) {
                     LOGGER.debug("Configured result attribute mapping for [{}] to be [{}]", ldap.getLdapUrl(), ldap.getAttributes());
                     ldapDao.setResultAttributeMapping(ldap.getAttributes());
-                    val attributes = ldap.getAttributes().keySet().toArray(ArrayUtils.EMPTY_STRING_ARRAY);
+                    val attributes = (String[]) ldap.getAttributes().keySet().toArray(ArrayUtils.EMPTY_STRING_ARRAY);
                     constraints.setReturningAttributes(attributes);
                 } else {
                     LOGGER.debug("Retrieving all attributes as no explicit attribute mappings are defined for [{}]", ldap.getLdapUrl());
@@ -275,6 +281,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
                 val dao = new ScriptEnginePersonAttributeDao(scriptContents, engineName);
                 dao.setCaseInsensitiveUsername(script.isCaseInsensitive());
                 dao.setOrder(script.getOrder());
+                FunctionUtils.doIfNotNull(script.getId(), dao::setId);
                 LOGGER.debug("Configured scripted attribute sources from [{}]", script.getLocation());
                 list.add(dao);
             }));
@@ -293,6 +300,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
                 val dao = new RestfulPersonAttributeDao();
                 dao.setCaseInsensitiveUsername(rest.isCaseInsensitive());
                 dao.setOrder(rest.getOrder());
+                FunctionUtils.doIfNotNull(rest.getId(), dao::setId);
                 dao.setUrl(rest.getUrl());
                 dao.setMethod(HttpMethod.resolve(rest.getMethod()).name());
 
