@@ -32,14 +32,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * This is {@link DuoMultifactorWebflowConfigurer}.
+ * This is {@link DuoSecurityMultifactorWebflowConfigurer}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @SuppressWarnings("JdkObsolete")
 @Slf4j
-public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedDeviceWebflowConfigurer {
+public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactorTrustedDeviceWebflowConfigurer {
 
     private static final String STATE_ID_VIEW_LOGIN_FORM_DUO = "viewLoginFormDuo";
     private static final String STATE_ID_FINALIZE_AUTHENTICATION = "finalizeAuthentication";
@@ -55,11 +55,11 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
 
     private static final String VIEW_ID_REDIRECT_TO_DUO_REGISTRATION = "redirectToDuoRegistration";
 
-    public DuoMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                           final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                           final boolean enableDeviceRegistration,
-                                           final ApplicationContext applicationContext,
-                                           final CasConfigurationProperties casProperties) {
+    public DuoSecurityMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
+                                                   final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                   final boolean enableDeviceRegistration,
+                                                   final ApplicationContext applicationContext,
+                                                   final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, enableDeviceRegistration, applicationContext, casProperties);
     }
 
