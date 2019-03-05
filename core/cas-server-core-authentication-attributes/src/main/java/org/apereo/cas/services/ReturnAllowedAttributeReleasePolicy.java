@@ -53,18 +53,19 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
      * @param selectedService   the selected service
      * @return the map
      */
-    protected Map<String, Object> authorizeReleaseOfAllowedAttributes(final Principal principal, final Map<String, Object> attrs,
-                                                                      final RegisteredService registeredService, final Service selectedService) {
+    protected Map<String, Object> authorizeReleaseOfAllowedAttributes(final Principal principal,
+                                                                      final Map<String, Object> attrs,
+                                                                      final RegisteredService registeredService,
+                                                                      final Service selectedService) {
         val resolvedAttributes = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attrs);
         val attributesToRelease = new HashMap<String, Object>();
         getAllowedAttributes()
             .stream()
-            .map(attr -> new Object[]{attr, resolvedAttributes.get(attr)})
-            .filter(pair -> pair[1] != null)
-            .forEach(attribute -> {
-                LOGGER.debug("Found attribute [{}] in the list of allowed attributes", attribute[0]);
-                attributesToRelease.put((String) attribute[0], attribute[1]);
+            .filter(resolvedAttributes::containsKey)
+            .forEach(attr -> {
+                LOGGER.debug("Found attribute [{}] in the list of allowed attributes", attr);
+                attributesToRelease.put(attr, resolvedAttributes.get(attr));
             });
         return attributesToRelease;
     }

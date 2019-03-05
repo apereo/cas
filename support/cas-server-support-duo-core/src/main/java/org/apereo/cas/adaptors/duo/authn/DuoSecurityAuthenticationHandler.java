@@ -22,14 +22,14 @@ import java.util.ArrayList;
  * @since 4.2
  */
 @Slf4j
-public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
+public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     private final DuoMultifactorAuthenticationProvider provider;
 
-    public DuoAuthenticationHandler(final String name, final ServicesManager servicesManager,
-                                    final PrincipalFactory principalFactory,
-                                    final DuoMultifactorAuthenticationProvider provider,
-                                    final Integer order) {
+    public DuoSecurityAuthenticationHandler(final String name, final ServicesManager servicesManager,
+                                            final PrincipalFactory principalFactory,
+                                            final DuoMultifactorAuthenticationProvider provider,
+                                            final Integer order) {
         super(name, servicesManager, principalFactory, order);
         this.provider = provider;
     }
@@ -56,9 +56,9 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
     private AuthenticationHandlerExecutionResult authenticateDuoApiCredential(final Credential credential) throws FailedLoginException {
         try {
             val duoAuthenticationService = provider.getDuoAuthenticationService();
-            val credential1 = DuoDirectCredential.class.cast(credential);
-            if (duoAuthenticationService.authenticate(credential1).getKey()) {
-                val principal = credential1.getAuthentication().getPrincipal();
+            val creds = DuoDirectCredential.class.cast(credential);
+            if (duoAuthenticationService.authenticate(creds).getKey()) {
+                val principal = creds.getAuthentication().getPrincipal();
                 LOGGER.debug("Duo has successfully authenticated [{}]", principal.getId());
                 return createHandlerResult(credential, principal, new ArrayList<>());
             }

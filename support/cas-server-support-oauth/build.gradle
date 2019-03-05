@@ -1,5 +1,6 @@
 description = "Apereo CAS Server OAuth Provider Support"
 dependencies {
+    implementation libraries.casclient
     implementation libraries.pac4jcore
     implementation libraries.nimbus
     implementation libraries.jose4j
