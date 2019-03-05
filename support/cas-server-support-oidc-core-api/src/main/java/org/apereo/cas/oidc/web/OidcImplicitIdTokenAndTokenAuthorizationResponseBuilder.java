@@ -14,6 +14,7 @@ import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.pac4j.core.context.J2EContext;
@@ -22,21 +23,21 @@ import org.springframework.web.servlet.View;
 import java.util.List;
 
 /**
- * This is {@link OidcImplicitIdTokenAuthorizationResponseBuilder}.
+ * This is {@link OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @Slf4j
-public class OidcImplicitIdTokenAuthorizationResponseBuilder extends OAuth20TokenAuthorizationResponseBuilder {
+public class OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder extends OAuth20TokenAuthorizationResponseBuilder {
 
     private final IdTokenGeneratorService idTokenGenerator;
     private final ExpirationPolicy idTokenExpirationPolicy;
 
-    public OidcImplicitIdTokenAuthorizationResponseBuilder(final IdTokenGeneratorService idTokenGenerator,
-                                                           final OAuth20TokenGenerator accessTokenGenerator,
-                                                           final ExpirationPolicy accessTokenExpirationPolicy,
-                                                           final ExpirationPolicy idTokenExpirationPolicy) {
+    public OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder(final IdTokenGeneratorService idTokenGenerator,
+                                                                   final OAuth20TokenGenerator accessTokenGenerator,
+                                                                   final ExpirationPolicy accessTokenExpirationPolicy,
+                                                                   final ExpirationPolicy idTokenExpirationPolicy) {
         super(accessTokenGenerator, accessTokenExpirationPolicy);
         this.idTokenGenerator = idTokenGenerator;
         this.idTokenExpirationPolicy = idTokenExpirationPolicy;
@@ -51,7 +52,7 @@ public class OidcImplicitIdTokenAuthorizationResponseBuilder extends OAuth20Toke
 
         val idToken = this.idTokenGenerator.generate(context.getRequest(),
             context.getResponse(), accessToken, idTokenExpirationPolicy.getTimeToLive(),
-            OAuth20ResponseTypes.ID_TOKEN, holder.getRegisteredService());
+            OAuth20ResponseTypes.IDTOKEN_TOKEN, holder.getRegisteredService());
         LOGGER.debug("Generated id token [{}]", idToken);
         params.add(new BasicNameValuePair(OidcConstants.ID_TOKEN, idToken));
         return super.buildCallbackUrlResponseType(holder, redirectUri, accessToken, params, refreshToken, context);
@@ -60,6 +61,6 @@ public class OidcImplicitIdTokenAuthorizationResponseBuilder extends OAuth20Toke
     @Override
     public boolean supports(final J2EContext context) {
         val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
-        return OAuth20Utils.isResponseType(responseType, OAuth20ResponseTypes.ID_TOKEN);
+        return OAuth20Utils.isResponseType(responseType, OAuth20ResponseTypes.IDTOKEN_TOKEN);
     }
 }
