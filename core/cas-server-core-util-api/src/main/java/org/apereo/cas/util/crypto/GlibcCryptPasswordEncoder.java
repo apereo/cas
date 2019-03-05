@@ -5,7 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.Crypt;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.util.gen.Base64RandomStringGenerator;
+import org.apereo.cas.util.gen.AbstractRandomStringGenerator;
+import org.apereo.cas.util.gen.HexRandomStringGenerator;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
@@ -22,7 +23,7 @@ public class GlibcCryptPasswordEncoder implements PasswordEncoder {
 
     private final String encodingAlgorithm;
     private final int strength;
-    private final String secret;
+    private String secret;
 
     @Override
     public String encode(final CharSequence password) {
@@ -40,7 +41,7 @@ public class GlibcCryptPasswordEncoder implements PasswordEncoder {
 
     @Override
     public boolean matches(final CharSequence rawPassword, final String encodedPassword) {
-        final String encodedRawPassword = StringUtils.isNotBlank(rawPassword) ? encode(rawPassword.toString()) : null;
+        final String encodedRawPassword = encode(rawPassword);
         final boolean matched = StringUtils.equals(encodedRawPassword, encodedPassword);
         LOGGER.debug("Provided password does{}match the encoded password", BooleanUtils.toString(matched, StringUtils.EMPTY, " not "));
         return matched;
@@ -57,28 +58,27 @@ public class GlibcCryptPasswordEncoder implements PasswordEncoder {
             LOGGER.debug("Encoding with MD5 algorithm");
         } else if ("5".equals(this.encodingAlgorithm) || "SHA-256".equals(this.encodingAlgorithm.toUpperCase())) {
             // SHA-256
-            cryptSalt.append("$5$");
-            cryptSalt.append("rounds=").append(this.strength).append('$');
+            cryptSalt.append("$5$rounds=").append(this.strength).append('$');
             LOGGER.debug("Encoding with SHA-256 algorithm and {} rounds", this.strength);
         } else if ("6".equals(this.encodingAlgorithm) || "SHA-512".equals(this.encodingAlgorithm.toUpperCase())) {
             // SHA-512
-            cryptSalt.append("$6$");
-            cryptSalt.append("rounds=").append(this.strength).append('$');
+            cryptSalt.append("$6$rounds=").append(this.strength).append('$');
             LOGGER.debug("Encoding with SHA-512 algorithm and {} rounds", this.strength);
         } else {
-            // UNIX Crypt algorithm
+            // DES UnixCrypt algorithm
             cryptSalt.append(this.encodingAlgorithm);
-            LOGGER.debug("Encoding with UNIX Crypt algorithm as no indicator for another algorithm was found.");
+            LOGGER.debug("Encoding with DES UnixCrypt algorithm as no indicator for another algorithm was found.");
         }
         // Add real salt
         if (StringUtils.isBlank(this.secret)) {
             LOGGER.debug("No secret was found. Generating a salt with length {}", SALT_LENGTH);
-            final Base64RandomStringGenerator keygen = new Base64RandomStringGenerator(SALT_LENGTH);
-            cryptSalt.append(keygen.getNewString()).append('$');
+            final AbstractRandomStringGenerator keygen = new HexRandomStringGenerator(SALT_LENGTH);
+            this.secret = keygen.getNewString();
         } else {
             LOGGER.debug("The provided secrect is used as a salt");
-            cryptSalt.append(this.secret).append('$');
         }
+        cryptSalt.append(this.secret);
+        // Done
         return cryptSalt.toString();
     }
 
