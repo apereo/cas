@@ -56,7 +56,8 @@ public class MetadataEntityAttributesAttributeReleasePolicy extends BaseSamlRegi
         LOGGER.trace("Loading entity attribute predicate filter for candidate [{}] with values [{}]", attr.getName(), attr.getValues());
         val predicate = new EntityAttributesPredicate(CollectionUtils.wrap(attr), true);
         if (predicate.apply(entityDescriptor)) {
-            LOGGER.debug("Authorizing release of allowed attributes [{}] for entity id [{}]", attributes, entityDescriptor.getEntityID());
+            LOGGER.debug("Authorizing release of allowed attributes [{}] for entity id [{}]",
+                attributes, entityDescriptor.getEntityID());
             return authorizeReleaseOfAllowedAttributes(principal, attributes, registeredService, selectedService);
         }
         LOGGER.debug("Unable to authorize attribute release for entity attribute category [{}] and value(s) [{}] to entity id [{}]",
