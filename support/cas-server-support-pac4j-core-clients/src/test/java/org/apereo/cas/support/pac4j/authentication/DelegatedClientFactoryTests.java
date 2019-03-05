@@ -9,12 +9,12 @@ import org.apereo.cas.configuration.model.support.pac4j.saml.Pac4jSamlClientProp
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.pac4j.cas.config.CasProtocol;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link DelegatedClientFactoryTests}.

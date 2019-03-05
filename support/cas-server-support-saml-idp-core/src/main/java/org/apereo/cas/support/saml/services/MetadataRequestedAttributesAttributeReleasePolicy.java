@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.services;
 
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 
@@ -38,21 +40,23 @@ public class MetadataRequestedAttributesAttributeReleasePolicy extends BaseSamlR
 
     @Override
     protected Map<String, Object> getAttributesForSamlRegisteredService(final Map<String, Object> attributes,
-                                                                        final SamlRegisteredService service,
+                                                                        final SamlRegisteredService registeredService,
                                                                         final ApplicationContext applicationContext,
                                                                         final SamlRegisteredServiceCachingMetadataResolver resolver,
                                                                         final SamlRegisteredServiceServiceProviderMetadataFacade facade,
-                                                                        final EntityDescriptor entityDescriptor) {
+                                                                        final EntityDescriptor entityDescriptor,
+                                                                        final Principal principal,
+                                                                        final Service selectedService) {
         val releaseAttributes = new HashMap<String, Object>();
         val sso = facade.getSsoDescriptor();
         if (sso != null) {
             sso.getAttributeConsumingServices().forEach(svc -> svc.getRequestAttributes().stream().filter(attr -> {
                 val name = this.useFriendlyName ? attr.getFriendlyName() : attr.getName();
-                LOGGER.debug("Checking for requested attribute [{}] in metadata for [{}]", name, service.getName());
+                LOGGER.debug("Checking for requested attribute [{}] in metadata for [{}]", name, registeredService.getName());
                 return attributes.containsKey(name);
             }).forEach(attr -> {
                 val name = this.useFriendlyName ? attr.getFriendlyName() : attr.getName();
-                LOGGER.debug("Found requested attribute [{}] in metadata for [{}]", name, service.getName());
+                LOGGER.debug("Found requested attribute [{}] in metadata for [{}]", name, registeredService.getName());
                 releaseAttributes.put(name, attributes.get(name));
             }));
         }

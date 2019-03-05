@@ -129,14 +129,10 @@ dependencyCheck {
 allprojects {
     apply plugin: "idea"
     apply plugin: "eclipse"
-    apply plugin: "signing"
     apply plugin: "jacoco"
     apply plugin: "java"
 
-    if (projectShouldBePublished(project)) {
-        apply plugin: "maven-publish"
-    }
-
+    
     project.ext["forceBootifulArtifact"] = null
 
     if (!rootProject.publishSnapshots && !Boolean.getBoolean("skipGradleLint")) {
@@ -144,18 +140,13 @@ allprojects {
         gradleLint.rules = ["dependency-parentheses", "dependency-tuple"]
     }
 
-    if (projectShouldBePublished(project)) {
-        apply from: rootProject.file("gradle/maven.gradle")
-    }
+
 
     jacoco {
         toolVersion = "$gradleJacocoVersion"
     }
 
-    signing {
-        required = isArtifactSigningRequired
-        sign configurations.archives
-    }
+    
 
     idea {
         module {
@@ -168,7 +159,6 @@ allprojects {
         }
     }
 
-    signArchives.enabled = rootProject.publishReleases || rootProject.publishSnapshots
 
     repositories {
         mavenLocal()
@@ -211,9 +201,21 @@ subprojects {
     apply plugin: "propdeps-maven"
     apply plugin: "propdeps-idea"
     apply plugin: "propdeps-eclipse"
-
+    
+    
     apply from: rootProject.file("gradle/tasks.gradle")
     apply from: rootProject.file("gradle/tests.gradle")
+
+    if (projectShouldBePublished(project)) {
+        apply plugin: "maven-publish"
+        apply plugin: "signing"
+        apply from: rootProject.file("gradle/maven.gradle")
+        signing {
+            required = isArtifactSigningRequired
+            sign publishing.publications
+        }
+        //signArchives.enabled = rootProject.publishReleases || rootProject.publishSnapshots
+    }
 
     ext.libraries = rootProject.ext.libraries
 
@@ -222,6 +224,7 @@ subprojects {
         mavenCentral()
         maven { url "https://build.shibboleth.net/nexus/content/repositories/releases" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+        maven { url "https://oss.sonatype.org/content/repositories/releases" }
         maven { url "https://repo.spring.io/plugins-release/" }
         maven { url "https://repo.spring.io/milestone/" }
         maven { url "https://repo.spring.io/snapshot/" }
@@ -355,21 +358,11 @@ subprojects {
         checkstyle {
             configProperties = [
                     "checkstyle.suppressions.file": new File(rootDir, "style/checkstyle-suppressions.xml"),
-                    "checkstyle.importcontrol.file": new File(rootDir, "style/import-control.xml"),
-                    "checkstyle.importcontrol.file.junit5": new File(rootDir, "style/import-control-junit5.xml")]
+                    "checkstyle.importcontrol.file": new File(rootDir, "style/import-control.xml")]
+            configFile = new File(rootDir, "style/checkstyle-rules.xml")
             ignoreFailures false
             showViolations true
             toolVersion "${checkstyleVersion}"
-        }
-        tasks.withType(Checkstyle) {
-            doFirst {
-                def useJunit5 = project.ext.properties.get("useJunit5", false)
-                if (useJunit5) {
-                    it.configFile new File(rootDir, "style/checkstyle-rules-junit5.xml")
-                } else {
-                    it.configFile new File(rootDir, "style/checkstyle-rules.xml")
-                }
-            }
         }
     }
 
@@ -440,12 +433,6 @@ subprojects {
         testImplementation libraries.groovy
         testImplementation libraries.log4j
         compileOnly libraries.findbugsannotations
-    }
-
-    if (project.name != 'cas-server-core-api-test-category') {
-        dependencies {
-            testImplementation project(path: ":api:cas-server-core-api-test-category", configuration: "tests")
-        }
     }
 }
 
@@ -555,5 +542,5 @@ task verifyRequiredJavaVersion {
 }
 
 boolean projectShouldBePublished(Project project) {
-    return !["api", "core", "docs", "support", "webapps", "cas-server-documentation"].contains(project.name)
+    return !["api", "core", "docs", "support", "webapp", "cas-server-documentation"].contains(project.name)
 }

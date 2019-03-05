@@ -56,6 +56,8 @@ public class InitialFlowSetupAction extends AbstractAction {
     }
 
     private void configureWebflowContextForService(final RequestContext context) {
+        WebUtils.putCustomLoginFormFields(context, casProperties.getView().getCustomLoginFormFields());
+
         val service = WebUtils.getService(this.argumentExtractors, context);
         if (service != null) {
             LOGGER.debug("Placing service in context scope: [{}]", service.getId());

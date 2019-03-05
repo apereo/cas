@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
 import org.apereo.cas.aup.DefaultAcceptableUsagePolicyRepository;
+import org.apereo.cas.aup.GroovyAcceptableUsagePolicyRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.AcceptableUsagePolicySubmitAction;
@@ -11,6 +12,7 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 
+import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -80,9 +82,14 @@ public class CasAcceptableUsagePolicyWebflowConfiguration implements CasWebflowE
     @Bean
     @RefreshScope
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
+        val groovy = casProperties.getAcceptableUsagePolicy().getGroovy();
+        if (groovy.getLocation() != null) {
+            return new GroovyAcceptableUsagePolicyRepository(groovy.getLocation(), applicationContext);
+        }
+
         return new DefaultAcceptableUsagePolicyRepository(
-                ticketRegistrySupport.getIfAvailable(),
-                casProperties.getAcceptableUsagePolicy());
+            ticketRegistrySupport.getIfAvailable(),
+            casProperties.getAcceptableUsagePolicy());
     }
 
     @ConditionalOnMissingBean(name = "casAcceptableUsagePolicyWebflowExecutionPlanConfigurer")

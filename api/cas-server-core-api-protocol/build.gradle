@@ -1,9 +1,4 @@
-
 description = "Apereo CAS Core Protocol APIs"
-
-ext {
-    useJunit5 = true
-}
 dependencies {
     
 }

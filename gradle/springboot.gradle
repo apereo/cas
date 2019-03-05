@@ -61,6 +61,21 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishReleases && !rootP
         def list = []
         list.add("-XX:TieredStopAtLevel=1")
         list.add("-Xverify:none")
+        list.add("--add-modules")
+        list.add("java.se")
+        list.add("--add-exports")
+        list.add("java.base/jdk.internal.ref=ALL-UNNAMED")
+        list.add("--add-opens")
+        list.add("java.base/java.lang=ALL-UNNAMED")
+        list.add("--add-opens")
+        list.add("java.base/java.nio=ALL-UNNAMED")
+        list.add("--add-opens")
+        list.add("java.base/sun.nio.ch=ALL-UNNAMED")
+        list.add("--add-opens")
+        list.add("java.management/sun.management=ALL-UNNAMED")
+        list.add("--add-opens")
+        list.add("jdk.management/com.sun.management.internal=ALL-UNNAMED")
+
         if (rootProject.enableRemoteDebugging) {
             def port = findAvailableTcpPort(5000..5010)
             if (port > 0) {

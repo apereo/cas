@@ -1,7 +1,6 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
-import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -24,11 +23,11 @@ import org.apereo.cas.config.CasSupportMongoDbAuditConfiguration;
 import org.apereo.cas.config.CasThrottlingConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.Getter;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,7 +40,7 @@ import org.springframework.test.context.TestPropertySource;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Category(MongoDbCategory.class)
+@Tag("MongoDb")
 @SpringBootTest(classes = {
     CasMongoDbThrottlingConfiguration.class,
     CasThrottlingConfiguration.class,
@@ -79,7 +78,8 @@ import org.springframework.test.context.TestPropertySource;
     "cas.audit.mongo.authenticationDatabaseName=admin",
     "cas.audit.mongo.asynchronous=false"})
 @Getter
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 27017)
+@EnabledIfPortOpen(port = 27017)
+@EnabledIfContinuousIntegration
 public class MongoDbThrottledSubmissionHandlerInterceptorAdapterTests extends
     BaseThrottledSubmissionHandlerInterceptorAdapterTests {
 

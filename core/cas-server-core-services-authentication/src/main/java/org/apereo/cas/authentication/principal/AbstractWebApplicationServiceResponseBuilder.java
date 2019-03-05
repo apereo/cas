@@ -30,7 +30,7 @@ public abstract class AbstractWebApplicationServiceResponseBuilder implements Re
     /**
      * Services manager instance.
      */
-    protected final ServicesManager servicesManager;
+    protected final transient ServicesManager servicesManager;
 
     private int order;
 

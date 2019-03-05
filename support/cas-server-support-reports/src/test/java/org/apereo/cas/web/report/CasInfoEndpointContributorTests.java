@@ -1,10 +1,10 @@
 package org.apereo.cas.web.report;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.actuate.info.Info;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link CasInfoEndpointContributorTests}.

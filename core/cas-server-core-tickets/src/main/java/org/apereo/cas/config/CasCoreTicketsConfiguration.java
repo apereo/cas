@@ -306,13 +306,12 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @Bean
     public ExpirationPolicy rememberMeExpirationPolicy() {
         val tgt = casProperties.getTicket().getTgt();
-        LOGGER.debug("Remember me expiration policiy is being configured based on hard timeout of [{}] seconds",
+        LOGGER.debug("Remember me expiration policy is being configured based on hard timeout of [{}] seconds",
                 tgt.getRememberMe().getTimeToKillInSeconds());
         val rememberMePolicy = new HardTimeoutExpirationPolicy(tgt.getRememberMe().getTimeToKillInSeconds());
-        val p = new RememberMeDelegatingExpirationPolicy(ticketGrantingTicketExpirationPolicy());
-        p.addPolicy(RememberMeDelegatingExpirationPolicy.PolicyTypes.REMEMBER_ME, rememberMePolicy);
-        p.addPolicy(RememberMeDelegatingExpirationPolicy.PolicyTypes.DEFAULT, ticketGrantingTicketExpirationPolicy());
-
+        val p = new RememberMeDelegatingExpirationPolicy();
+        p.addPolicy(RememberMeDelegatingExpirationPolicy.POLICY_NAME_REMEMBER_ME, rememberMePolicy);
+        p.addPolicy(RememberMeDelegatingExpirationPolicy.POLICY_NAME_DEFAULT, ticketGrantingTicketExpirationPolicy());
         return p;
     }
 
@@ -377,13 +376,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
                 tgt.getTimeout().getMaxTimeToLiveInSeconds());
             return new TimeoutExpirationPolicy(tgt.getTimeout().getMaxTimeToLiveInSeconds());
         }
-
-        if (tgt.getMaxTimeToLiveInSeconds() > 0 && tgt.getTimeToKillInSeconds() > 0) {
-            LOGGER.debug("Ticket-granting ticket expiration policy is based on hard/idle timeouts of [{}]/[{}] seconds",
-                tgt.getMaxTimeToLiveInSeconds(), tgt.getTimeToKillInSeconds());
-            return new TicketGrantingTicketExpirationPolicy(tgt.getMaxTimeToLiveInSeconds(), tgt.getTimeToKillInSeconds());
-        }
-
+        
         if (tgt.getThrottledTimeout().getTimeInBetweenUsesInSeconds() > 0
             && tgt.getThrottledTimeout().getTimeToKillInSeconds() > 0) {
             val p = new ThrottledUseAndTimeoutExpirationPolicy();
@@ -397,6 +390,12 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
             LOGGER.debug("Ticket-granting ticket expiration policy is based on a hard timeout of [{}] seconds",
                 tgt.getHardTimeout().getTimeToKillInSeconds());
             return new HardTimeoutExpirationPolicy(tgt.getHardTimeout().getTimeToKillInSeconds());
+        }
+
+        if (tgt.getMaxTimeToLiveInSeconds() > 0 && tgt.getTimeToKillInSeconds() > 0) {
+            LOGGER.debug("Ticket-granting ticket expiration policy is based on hard/idle timeouts of [{}]/[{}] seconds",
+                tgt.getMaxTimeToLiveInSeconds(), tgt.getTimeToKillInSeconds());
+            return new TicketGrantingTicketExpirationPolicy(tgt.getMaxTimeToLiveInSeconds(), tgt.getTimeToKillInSeconds());
         }
         LOGGER.warn("Ticket-granting ticket expiration policy is set to ALWAYS expire tickets.");
         return new AlwaysExpiresExpirationPolicy();
