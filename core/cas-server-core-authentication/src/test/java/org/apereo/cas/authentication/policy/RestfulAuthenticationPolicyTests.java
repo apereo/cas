@@ -66,11 +66,11 @@ public class RestfulAuthenticationPolicyTests {
         MockitoAnnotations.initMocks(this);
     }
 
-    private RestfulAuthenticationPolicy newPolicy(final RestTemplate restTemplate) {
+    private static RestfulAuthenticationPolicy newPolicy(final RestTemplate restTemplate) {
         return new RestfulAuthenticationPolicy(restTemplate, URI);
     }
 
-    private MockRestServiceServer newServer(final RestTemplate restTemplate) {
+    private static MockRestServiceServer newServer(final RestTemplate restTemplate) {
         return MockRestServiceServer.createServer(restTemplate);
     }
 
@@ -104,7 +104,7 @@ public class RestfulAuthenticationPolicyTests {
     }
 
 
-    private void assertPolicyFails(final Class<? extends Throwable> exceptionClass, final HttpStatus status) {
+    private static void assertPolicyFails(final Class<? extends Throwable> exceptionClass, final HttpStatus status) {
         val restTemplate = new RestTemplate();
         val mockServer = newServer(restTemplate);
         val policy = newPolicy(restTemplate);

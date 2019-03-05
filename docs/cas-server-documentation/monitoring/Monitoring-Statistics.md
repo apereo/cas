@@ -24,7 +24,6 @@ exposed over the endpoint `/actuator`. The following endpoints are secured and a
 | `httptrace`               | Displays HTTP trace information (by default, the last 100 HTTP request-response exchanges).
 | `mappings`                | Describes how requests are mapped and handled by CAS.
 | `scheduledtasks`          | Displays the scheduled tasks in CAS.
-| `mappings`                | Describes how requests are mapped and handled by CAS.
 | `shutdown`                | Shut down the application via a `POST`. Disabled by default.
 | `restart`                 | Restart the application via a `POST`. Disabled by default.
 | `refresh`                 | Refresh the application configuration via a `POST` to let components reload and recognize new values.

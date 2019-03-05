@@ -1,12 +1,8 @@
-
 description = "Apereo CAS Core MFA APIs"
-ext {
-    useJunit5 = true
-}
 dependencies {
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-util")
     api project(":api:cas-server-core-api-services")
-    implementation project(":core:cas-server-core-configuration-api")
+    api project(":api:cas-server-core-api-configuration-model")
 }
 

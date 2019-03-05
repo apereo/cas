@@ -47,7 +47,7 @@ public class UmaUpdateResourceSetRegistrationEndpointController extends BaseUmaE
      * @param response the response
      * @return the response entity
      */
-    @PutMapping(value = '/' + OAuth20Constants.BASE_OAUTH20_URL + "/" + OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL + "/{id}",
+    @PutMapping(value = '/' + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL + "/{id}",
         consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity updateResourceSet(@PathVariable("id") final long id, @RequestBody final String body,

@@ -1,7 +1,4 @@
 description = "Apereo CAS JDBC Driver Support"
-ext {
-    useJunit5 = true
-}
 dependencies {
     runtime ("org.hsqldb:hsqldb:$hsqlVersion") {
         force = true

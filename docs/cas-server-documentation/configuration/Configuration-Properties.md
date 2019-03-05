@@ -763,6 +763,14 @@ To learn more about this topic, [please review this guide](../ux/User-Interface-
 # cas.view.templatePrefixes[0]=file:///etc/cas/templates
 ```
 
+## Custom Login Fields
+
+```properties
+# cas.view.customLoginFormFields.[field-name].messageBundleKey=
+# cas.view.customLoginFormFields.[field-name].required=true
+# cas.view.customLoginFormFields.[field-name].converter=
+```
+
 ### CAS v1
 
 ```properties
@@ -1398,6 +1406,7 @@ To learn more about this topic, [please review this guide](../installation/Surro
 
 ```properties
 # cas.authn.surrogate.separator=+
+# cas.authn.surrogate.tgt.timeToKillInSeconds=30
 ```
 
 Principal resolution and Person Directory settings for this feature 
@@ -1566,11 +1575,12 @@ Send text messaging using Clickatell.
 ### Nexmo
 
 Send text messaging using Nexmo.
+Nexmo needs at least apiSecret or signatureSecret field set.
 
 ```properties
 # cas.smsProvider.nexmo.apiToken=
 # cas.smsProvider.nexmo.apiSecret=
-# cas.smsProvider.nexmo.applicationId=CAS
+# cas.smsProvider.nexmo.signatureSecret=
 ```
 
 ### Amazon SNS
@@ -1622,24 +1632,15 @@ To learn more about this topic, [please review this guide](../installation/Cassa
 # cas.authn.cassandra.username=
 # cas.authn.cassandra.password=
 # cas.authn.cassandra.query=SELECT * FROM %s WHERE %s = ? ALLOW FILTERING
-
-# cas.authn.cassandra.protocolVersion=V1|V2|V3|V4
-# cas.authn.cassandra.keyspace=
-# cas.authn.cassandra.contactPoints=localhost1,localhost2
-# cas.authn.cassandra.localDc=
-# cas.authn.cassandra.retryPolicy=DEFAULT_RETRY_POLICY|DOWNGRADING_CONSISTENCY_RETRY_POLICY|FALLTHROUGH_RETRY_POLICY
-# cas.authn.cassandra.compression=LZ4|SNAPPY|NONE
-# cas.authn.cassandra.consistencyLevel=ANY|ONE|TWO|THREE|QUORUM|LOCAL_QUORUM|ALL|EACH_QUORUM|LOCAL_SERIAL|SERIAL|LOCAL_ONE
-# cas.authn.cassandra.serialConsistencyLevel=ANY|ONE|TWO|THREE|QUORUM|LOCAL_QUORUM|ALL|EACH_QUORUM|LOCAL_SERIAL|SERIAL|LOCAL_ONE
-# cas.authn.cassandra.maxConnections=10
-# cas.authn.cassandra.coreConnections=1
-# cas.authn.cassandra.maxRequestsPerConnection=1024
-# cas.authn.cassandra.connectTimeoutMillis=5000
-# cas.authn.cassandra.readTimeoutMillis=5000
-# cas.authn.cassandra.port=9042
 # cas.authn.cassandra.name=
 # cas.authn.cassandra.order=
 ```
+
+Common Cassandra settings for this feature are available [here](Configuration-Properties-Common.html#cassandra-configuration) under the configuration key `cas.authn.cassandra`.
+
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.cassandra`. 
+
+Password encoding settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.cassandra`.
 
 ## Digest Authentication
 
@@ -1723,7 +1724,7 @@ Database settings for this feature are available [here](Configuration-Properties
 
 Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.jdbc.query[0]`.
 
-Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.jdbc.query[0]`.
+Password encoding settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.jdbc.query[0]`.
 
 ```properties
 # cas.authn.jdbc.query[0].credentialCriteria=
@@ -2382,8 +2383,8 @@ To learn more about this topic, [please review this guide](../mfa/Configuring-Mu
 # cas.authn.mfa.globalProviderId=mfa-duo
 
 # Activate MFA globally based on authentication metadata attributes
-# cas.authn.mfa.globalAuthenticationAttributeNameTriggers=memberOf,eduPersonPrimaryAffiliation
-# cas.authn.mfa.globalAuthenticationAttributeValueRegex=faculty|staff
+# cas.authn.mfa.globalAuthenticationAttributeNameTriggers=customAttributeName
+# cas.authn.mfa.globalAuthenticationAttributeValueRegex=customRegexValue
 
 # Activate MFA globally based on principal attributes
 # cas.authn.mfa.globalPrincipalAttributeNameTriggers=memberOf,eduPersonPrimaryAffiliation
@@ -2986,7 +2987,11 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
 # cas.authn.oidc.grantTypesSupported=authorization_code,password,client_credentials,refresh_token
 # cas.authn.oidc.idTokenSigningAlgValuesSupported=none,RS256
 # cas.authn.oidc.tokenEndpointAuthMethodsSupported=client_secret_basic,client_secret_post
+```
 
+### OpenID Connect Scopes & Claims
+
+```properties
 # Define custom scopes and claims
 # cas.authn.oidc.userDefinedScopes.scope1=cn,givenName,photos,customAttribute
 # cas.authn.oidc.userDefinedScopes.scope2=cn,givenName,photos,customAttribute2
@@ -2995,6 +3000,19 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
 # cas.authn.oidc.claimsMap.given_name=custom-given-name
 # cas.authn.oidc.claimsMap.preferred_username=global-user-attribute
 ```
+
+### OpenID Connect WebFinger
+
+#### WebFinger UserInfo via Groovy
+
+```properties
+# cas.authn.oidc.webfinger.userInfo.groovy.location=classpath:/webfinger.groovy
+```
+
+#### WebFinger UserInfo via REST
+
+RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
+under the configuration key `cas.authn.oidc.webfinger.userInfo.rest`.
 
 ## Pac4j Delegated AuthN
 
@@ -3240,6 +3258,15 @@ To learn more about this topic, [please review this guide](../installation/OAuth
 # cas.authn.oauth.userProfileViewType=NESTED|FLAT
 ```
 
+### OAuth2 JWT Access Tokens
+
+```properties
+# cas.authn.oauth.accessToken.crypto.encryptionEnabled=true
+# cas.authn.oauth.accessToken.crypto.signingEnabled=true
+```
+
+The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.oauth.accessToken`.
+
 ### OAuth2 UMA
 
 To learn more about this topic, [please review this guide](../installation/OAuth-OpenId-Authentication.html).
@@ -3370,6 +3397,7 @@ To learn more about this topic, [please review this guide](../installation/Audit
 # cas.audit.alternateServerAddrHeaderName=
 # cas.audit.alternateClientAddrHeaderName=X-Forwarded-For
 # cas.audit.useServerHostAddress=false
+# cas.audit.supportedActions=AUTHENTICATION_.+,OTHER_\w+_ACTION
 ```
 
 ### Slf4j Audits
@@ -3402,6 +3430,21 @@ Store audit logs inside a MongoDb database.
 Common configuration settings for this feature are available 
 [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.audit`.
 
+```properties
+# cas.audit.mongo.asynchronous=true
+```
+
+### Redis Audits
+
+Store audit logs inside a Redis database.
+
+Common configuration settings for this feature are available 
+[here](Configuration-Properties-Common.html#redis-configuration) under the configuration key `cas.audit`.
+
+```properties
+# cas.audit.redis.asynchronous=true
+```
+
 ### CouchDb Audits
 
 Store audit logs inside a CouchDb database.
@@ -3415,6 +3458,10 @@ Store audit logs inside a Couchbase database.
 
 Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) 
 under the configuration key `cas.audit.couchbase`.
+
+```properties
+# cas.audit.couchbase.asynchronous=true
+```
 
 ### Database Audits
 
@@ -3433,6 +3480,10 @@ under the configuration key `cas.audit.jdbc`.
 
 Store audit logs inside a database. RESTful settings for this feature are 
 available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.audit.rest`.
+
+```properties
+# cas.audit.rest.asynchronous=true
+```
 
 ## Sleuth Distributed Tracing
 
@@ -3741,6 +3792,12 @@ under the configuration key `cas.serviceRegistry.dynamoDb`.
 # cas.serviceRegistry.dynamoDb.tableName=DynamoDbCasServices
 ```
 
+### Cassandra Service Registry
+
+To learn more about this topic, [please review this guide](../services/Cassandra-Service-Management.html).
+
+Common Cassandra settings for this feature are available [here](Configuration-Properties-Common.html#cassandra-configuration) under the configuration key `cas.serviceRegistry.cassandra`.
+
 ### MongoDb Service Registry
 
 Store CAS service definitions inside a MongoDb instance. To learn more about this topic, [please review this guide](../services/MongoDb-Service-Management.html).
@@ -3852,6 +3909,14 @@ Common Hazelcast settings for this feature are available [here](Configuration-Pr
 ```
 
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.hazelcast`.
+
+### Cassandra Ticket Registry
+
+To learn more about this topic, [please review this guide](../ticketing/Cassandra-Ticket-Registry.html).
+
+Common Cassandra settings for this feature are available [here](Configuration-Properties-Common.html#cassandra-configuration) under the configuration key `cas.ticket.registry.cassandra`.
+
+Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.cassandra`.
 
 ### Infinispan Ticket Registry
 
@@ -4297,6 +4362,12 @@ To learn more about this topic, [please review this guide](../webflow/Webflow-Cu
 ```properties
 # cas.acceptableUsagePolicy.aupAttributeName=aupAccepted
 # cas.acceptableUsagePolicy.scope=GLOBAL|AUTHENTICATION
+```
+
+#### Groovy
+
+```properties
+# cas.acceptableUsagePolicy.groovy.location=file:/etc/cas/config/aup.groovy
 ```
 
 #### REST

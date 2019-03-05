@@ -16,7 +16,8 @@ import org.junit.platform.suite.api.SelectClasses;
     AuditActionContextJsonSerializerTests.class,
     ServiceResourceResolverTests.class,
     TicketAsFirstParameterResourceResolverTests.class,
-    ChainingAuditPrincipalIdProviderTests.class
+    ChainingAuditPrincipalIdProviderTests.class,
+    FilterAndDelegateAuditTrailManagerTests.class
 })
 public class CoreAuditTestsSuite {
 }

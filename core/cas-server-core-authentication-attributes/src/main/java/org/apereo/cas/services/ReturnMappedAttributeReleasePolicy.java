@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 
@@ -112,7 +113,24 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
     }
 
     @Override
-    public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attrs, final RegisteredService service) {
+    public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attrs,
+                                                     final RegisteredService registeredService, final Service selectedService) {
+        return authorizeReleaseOfAllowedAttributes(principal, attrs, registeredService, selectedService);
+    }
+
+    /**
+     * Authorize release of allowed attributes map.
+     *
+     * @param principal         the principal
+     * @param attrs             the attributes
+     * @param registeredService the registered service
+     * @param selectedService   the selected service
+     * @return the map
+     */
+    protected Map<String, Object> authorizeReleaseOfAllowedAttributes(final Principal principal,
+                                                                      final Map<String, Object> attrs,
+                                                                      final RegisteredService registeredService,
+                                                                      final Service selectedService) {
         val resolvedAttributes = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attrs);
         val attributesToRelease = new HashMap<String, Object>();
@@ -121,17 +139,17 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
          * by the original key, value and the original entry itself.
          * Then process the array to populate the map for allowed attributes
          */
-        this.allowedAttributes.forEach((attributeName, value) -> {
+        getAllowedAttributes().forEach((attributeName, value) -> {
             val mappedAttributes = CollectionUtils.wrap(value);
             LOGGER.debug("Attempting to map allowed attribute name [{}]", attributeName);
             val attributeValue = resolvedAttributes.get(attributeName);
             mappedAttributes.forEach(mapped -> {
                 val mappedAttributeName = mapped.toString();
                 LOGGER.debug("Mapping attribute [{}] to [{}] with value [{}]", attributeName, mappedAttributeName, attributeValue);
-                mapSingleAttributeDefinition(attributeName, mappedAttributeName, attributeValue, resolvedAttributes, attributesToRelease);
+                mapSingleAttributeDefinition(attributeName, mappedAttributeName,
+                    attributeValue, resolvedAttributes, attributesToRelease);
             });
         });
         return attributesToRelease;
     }
-
 }

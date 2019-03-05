@@ -79,7 +79,7 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
      * @param response the response
      * @return the response entity
      */
-    @PostMapping(value = '/' + OAuth20Constants.BASE_OAUTH20_URL + "/" + OAuth20Constants.UMA_AUTHORIZATION_REQUEST_URL,
+    @PostMapping(value = '/' + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.UMA_AUTHORIZATION_REQUEST_URL,
         consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity handleAuthorizationRequest(@RequestBody final String body,

@@ -1,10 +1,15 @@
 package org.apereo.cas.configuration.model.core.audit;
 
+import org.apereo.cas.configuration.model.support.redis.AuditRedisProperties;
+
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is {@link AuditProperties}.
@@ -84,6 +89,12 @@ public class AuditProperties implements Serializable {
     private AuditCouchDbProperties couchDb = new AuditCouchDbProperties();
 
     /**
+     * Family of sub-properties pertaining to Redis-based audit destinations.
+     */
+    @NestedConfigurationProperty
+    private AuditRedisProperties redis = new AuditRedisProperties();
+
+    /**
      * Family of sub-properties pertaining to rest-based audit destinations.
      */
     @NestedConfigurationProperty
@@ -106,4 +117,12 @@ public class AuditProperties implements Serializable {
      * or whether errors should bubble up and thrown back.
      */
     private boolean ignoreAuditFailures;
+
+    /**
+     * Indicate a list of supported audit actions that should be recognized,
+     * processed and recorded by CAS audit managers. Each supported action
+     * can be treated as a regular expression to match against built-in
+     * CAS actions.
+     */
+    private List<String> supportedActions = Stream.of("*").collect(Collectors.toList());
 }

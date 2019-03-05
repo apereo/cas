@@ -106,16 +106,17 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
     @RefreshScope
     public List<IPersonAttributeDao> jsonAttributeRepositories() {
         val list = new ArrayList<IPersonAttributeDao>();
-        casProperties.getAuthn().getAttributeRepository().getJson().forEach(Unchecked.consumer(json -> {
-            val r = json.getLocation();
-            if (r != null) {
+        casProperties.getAuthn().getAttributeRepository().getJson()
+            .stream()
+            .filter(json -> json.getLocation() != null)
+            .forEach(Unchecked.consumer(json -> {
+                val r = json.getLocation();
                 val dao = new JsonBackedComplexStubPersonAttributeDao(r);
                 dao.setOrder(json.getOrder());
                 dao.init();
                 LOGGER.debug("Configured JSON attribute sources from [{}]", r);
                 list.add(dao);
-            }
-        }));
+            }));
         return list;
     }
 
@@ -124,16 +125,17 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
     @RefreshScope
     public List<IPersonAttributeDao> groovyAttributeRepositories() {
         val list = new ArrayList<IPersonAttributeDao>();
-        casProperties.getAuthn().getAttributeRepository().getGroovy().forEach(groovy -> {
-            if (groovy.getLocation() != null) {
+        casProperties.getAuthn().getAttributeRepository().getGroovy()
+            .stream()
+            .filter(groovy -> groovy.getLocation() != null)
+            .forEach(groovy -> {
                 val dao = new GroovyPersonAttributeDao(new InternalGroovyScriptDao(applicationContext, casProperties));
                 dao.setCaseInsensitiveUsername(groovy.isCaseInsensitive());
                 dao.setOrder(groovy.getOrder());
 
                 LOGGER.debug("Configured Groovy attribute sources from [{}]", groovy.getLocation());
                 list.add(dao);
-            }
-        });
+            });
         return list;
     }
 
@@ -172,8 +174,10 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
     public List<IPersonAttributeDao> jdbcAttributeRepositories() {
         val list = new ArrayList<IPersonAttributeDao>();
         val attrs = casProperties.getAuthn().getAttributeRepository();
-        attrs.getJdbc().forEach(jdbc -> {
-            if (StringUtils.isNotBlank(jdbc.getSql()) && StringUtils.isNotBlank(jdbc.getUrl())) {
+        attrs.getJdbc()
+            .stream()
+            .filter(jdbc -> StringUtils.isNotBlank(jdbc.getSql()) && StringUtils.isNotBlank(jdbc.getUrl()))
+            .forEach(jdbc -> {
                 val jdbcDao = createJdbcPersonAttributeDao(jdbc);
                 jdbcDao.setQueryAttributeMapping(CollectionUtils.wrap("username", jdbc.getUsername()));
                 val mapping = jdbc.getAttributes();
@@ -187,8 +191,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
                 jdbcDao.setQueryType(jdbc.getQueryType());
                 jdbcDao.setOrder(jdbc.getOrder());
                 list.add(jdbcDao);
-            }
-        });
+            });
         return list;
     }
 
@@ -216,8 +219,10 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
     public List<IPersonAttributeDao> ldapAttributeRepositories() {
         val list = new ArrayList<IPersonAttributeDao>();
         val attrs = casProperties.getAuthn().getAttributeRepository();
-        attrs.getLdap().forEach(ldap -> {
-            if (StringUtils.isNotBlank(ldap.getBaseDn()) && StringUtils.isNotBlank(ldap.getLdapUrl())) {
+        attrs.getLdap()
+            .stream()
+            .filter(ldap -> StringUtils.isNotBlank(ldap.getBaseDn()) && StringUtils.isNotBlank(ldap.getLdapUrl()))
+            .forEach(ldap -> {
                 val ldapDao = new LdaptivePersonAttributeDao();
 
                 LOGGER.debug("Configured LDAP attribute source for [{}] and baseDn [{}]", ldap.getLdapUrl(), ldap.getBaseDn());
@@ -251,8 +256,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
                 ldapDao.initialize();
 
                 list.add(ldapDao);
-            }
-        });
+            });
 
         return list;
     }
@@ -282,9 +286,10 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
     @RefreshScope
     public List<IPersonAttributeDao> restfulAttributeRepositories() {
         val list = new ArrayList<IPersonAttributeDao>();
-        casProperties.getAuthn().getAttributeRepository().getRest().forEach(rest -> {
-            if (StringUtils.isNotBlank(rest.getUrl())) {
-
+        casProperties.getAuthn().getAttributeRepository().getRest()
+            .stream()
+            .filter(rest -> StringUtils.isNotBlank(rest.getUrl()))
+            .forEach(rest -> {
                 val dao = new RestfulPersonAttributeDao();
                 dao.setCaseInsensitiveUsername(rest.isCaseInsensitive());
                 dao.setOrder(rest.getOrder());
@@ -301,8 +306,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
 
                 LOGGER.debug("Configured REST attribute sources from [{}]", rest.getUrl());
                 list.add(dao);
-            }
-        });
+            });
 
         return list;
     }

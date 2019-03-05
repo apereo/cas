@@ -3,9 +3,8 @@ package org.apereo.cas.authentication.principal.provision;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 
 import lombok.val;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.profile.CommonProfile;
@@ -17,10 +16,8 @@ import org.springframework.core.io.ClassPathResource;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
+@Tag("Groovy")
 public class GroovyDelegatedClientUserProfileProvisionerTests {
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-    
     @Test
     public void verifyOperation() {
         val p = new GroovyDelegatedClientUserProfileProvisioner(new ClassPathResource("delegated-provisioner.groovy"));

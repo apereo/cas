@@ -28,7 +28,7 @@ public class EnabledIfPortOpenCondition implements ExecutionCondition {
             .orElse(ENABLED_BY_DEFAULT);
     }
 
-    private ConditionEvaluationResult enableIfOpen(final EnabledIfPortOpen annotation, final AnnotatedElement element) {
+    private static ConditionEvaluationResult enableIfOpen(final EnabledIfPortOpen annotation, final AnnotatedElement element) {
         val port = annotation.port();
         if (port <= 0) {
             throw new IllegalArgumentException("Port must be positive.");

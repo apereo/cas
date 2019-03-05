@@ -2,7 +2,6 @@ package org.apereo.cas.impl.token;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.api.PasswordlessTokenRepository;
-import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -31,10 +30,8 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,12 +39,11 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link RestfulPasswordlessTokenRepositoryTests}.
@@ -83,26 +79,20 @@ import static org.junit.Assert.*;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
 })
 @TestPropertySource(properties = "cas.authn.passwordless.tokens.rest.url=http://localhost:9293")
-@Category(RestfulApiCategory.class)
+@Tag("RestfulApi")
 public class RestfulPasswordlessTokenRepositoryTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     @Autowired
     @Qualifier("passwordlessTokenRepository")
     private PasswordlessTokenRepository passwordlessTokenRepository;
 
     @Autowired
     @Qualifier("passwordlessCipherExecutor")
-    private CipherExecutor passwordlessCipherExecutor;
+    private CipherExecutor<Serializable, String> passwordlessCipherExecutor;
 
     @Test
     public void verifyFindToken() {
         val token = passwordlessTokenRepository.createToken("casuser");
-        val data = passwordlessCipherExecutor.encode(token).toString();
+        val data = passwordlessCipherExecutor.encode(token);
         try (val webServer = new MockWebServer(9306,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
@@ -113,8 +103,6 @@ public class RestfulPasswordlessTokenRepositoryTests {
             val foundToken = passwordless.findToken("casuser");
             assertNotNull(foundToken);
             assertTrue(foundToken.isPresent());
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
     }
 
@@ -129,8 +117,6 @@ public class RestfulPasswordlessTokenRepositoryTests {
             val passwordless = new RestfulPasswordlessTokenRepository(tokens.getExpireInSeconds(), tokens.getRest(), passwordlessCipherExecutor);
 
             passwordless.saveToken("casuser", data);
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
     }
 
@@ -141,8 +127,6 @@ public class RestfulPasswordlessTokenRepositoryTests {
             webServer.start();
             passwordlessTokenRepository.deleteToken("casuser", "123456");
             passwordlessTokenRepository.deleteTokens("casuser");
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
     }
 }
