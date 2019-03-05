@@ -18,17 +18,17 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * This is {@link DuoPingEndpoint}.
+ * This is {@link DuoSecurityPingEndpoint}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
  */
 @Endpoint(id = "duoPing", enableByDefault = false)
-public class DuoPingEndpoint extends BaseCasActuatorEndpoint {
+public class DuoSecurityPingEndpoint extends BaseCasActuatorEndpoint {
     private final ApplicationContext applicationContext;
 
-    public DuoPingEndpoint(final CasConfigurationProperties casProperties,
-                           final ApplicationContext applicationContext) {
+    public DuoSecurityPingEndpoint(final CasConfigurationProperties casProperties,
+                                   final ApplicationContext applicationContext) {
         super(casProperties);
         this.applicationContext = applicationContext;
     }
