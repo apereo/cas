@@ -295,11 +295,11 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
         val tgt = casProperties.getTicket().getTgt();
         if (tgt.getRememberMe().isEnabled()) {
             val p = rememberMeExpirationPolicy();
-            LOGGER.debug("Final effective TTL of remember me expiration policy is [{}] seconds", p.getTimeToLive());
+            LOGGER.debug("Final effective time-to-live of remember-me expiration policy is [{}] seconds", p.getTimeToLive());
             return p;
         }
         val p = ticketGrantingTicketExpirationPolicy();
-        LOGGER.debug("Final effective TTL of TGT expiration policy is [{}] seconds", p.getTimeToLive());
+        LOGGER.debug("Final effective time-to-live of ticket-granting ticket expiration policy is [{}] seconds", p.getTimeToLive());
         return p;
     }
 
