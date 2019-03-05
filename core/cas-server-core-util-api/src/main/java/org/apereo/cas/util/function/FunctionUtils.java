@@ -5,6 +5,7 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.lambda.fi.util.function.CheckedFunction;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -123,6 +124,25 @@ public class FunctionUtils {
                 return falseFunction.get();
             }
         };
+    }
+
+    /**
+     * Do if not null.
+     *
+     * @param <T>          the type parameter
+     * @param input        the input
+     * @param trueFunction the true function
+     */
+    @SneakyThrows
+    public static <T> void doIfNotNull(final T input,
+                                       final Consumer<T> trueFunction) {
+        try {
+            if (input != null) {
+                trueFunction.accept(input);
+            }
+        } catch (final Throwable e) {
+            LOGGER.warn(e.getMessage(), e);
+        }
     }
 
     /**

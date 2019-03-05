@@ -31,4 +31,10 @@ public class GrouperPrincipalAttributesProperties implements Serializable {
      * Enable the attribute repository source.
      */
     private boolean enabled;
+
+
+    /**
+     * A value can be assigned to this field to uniquely identify this resolver.
+     */
+    private String id;
 }

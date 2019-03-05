@@ -6,7 +6,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -37,5 +37,10 @@ public class LdapPrincipalAttributesProperties extends AbstractLdapSearchPropert
      * from the data source and the value is the attribute name CAS should
      * use for virtual renames.
      */
-    private Map<String, String> attributes = new HashMap();
+    private Map attributes = new LinkedHashMap<String, String>();
+
+    /**
+     * A value can be assigned to this field to uniquely identify this resolver.
+     */
+    private String id;
 }

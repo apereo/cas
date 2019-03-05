@@ -30,4 +30,10 @@ public class StubPrincipalAttributesProperties implements Serializable {
      * use for virtual renames.
      */
     private Map<String, String> attributes = new HashMap();
+
+
+    /**
+     * A value can be assigned to this field to uniquely identify this resolver.
+     */
+    private String id;
 }

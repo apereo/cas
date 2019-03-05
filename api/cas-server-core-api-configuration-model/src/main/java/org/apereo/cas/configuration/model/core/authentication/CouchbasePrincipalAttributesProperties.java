@@ -31,4 +31,9 @@ public class CouchbasePrincipalAttributesProperties extends BaseCouchbasePropert
      */
     @RequiredProperty
     private String usernameAttribute = "username";
+
+    /**
+     * A value can be assigned to this field to uniquely identify this resolver.
+     */
+    private String id;
 }
