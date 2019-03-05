@@ -77,7 +77,6 @@ public class LdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests imple
 
     @BeforeAll
     public static void bootstrapTests() {
-        initDirectoryServer(port());
         AbstractX509LdapTests.bootstrap(port());
     }
 

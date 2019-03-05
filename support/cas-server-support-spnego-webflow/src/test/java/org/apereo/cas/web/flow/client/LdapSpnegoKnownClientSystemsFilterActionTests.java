@@ -1,14 +1,9 @@
 package org.apereo.cas.web.flow.client;
 
-import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.util.LdapTest;
 import org.apereo.cas.util.junit.DisabledIfContinuousIntegration;
 
-import lombok.SneakyThrows;
-import org.junit.jupiter.api.BeforeAll;
 import org.springframework.test.context.TestPropertySource;
-
-import static org.apereo.cas.util.LdapTestProperties.*;
 
 /**
  * Test cases for {@link LdapSpnegoKnownClientSystemsFilterAction}.
@@ -30,14 +25,9 @@ import static org.apereo.cas.util.LdapTestProperties.*;
     "cas.authn.spnego.ipsToCheckPattern=",
     "cas.authn.spnego.dnsTimeout=0",
     "cas.authn.spnego.hostNameClientActionStrategy=ldapSpnegoClientAction",
-    "cas.authn.spnego.spnegoAttributeName=mail"
+    "cas.authn.spnego.spnegoAttributeName=mail",
+    "ldap.initLocal=true"
     })
 @DisabledIfContinuousIntegration
 public class LdapSpnegoKnownClientSystemsFilterActionTests extends BaseLdapSpnegoKnownClientSystemsFilterActionTests implements LdapTest {
-
-    @BeforeAll
-    @SneakyThrows
-    public static void bootstrap() {
-        LdapIntegrationTestsOperations.initDirectoryServer(port());
-    }
 }

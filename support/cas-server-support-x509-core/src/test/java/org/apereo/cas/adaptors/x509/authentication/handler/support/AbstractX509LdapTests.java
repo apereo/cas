@@ -52,6 +52,4 @@ public abstract class AbstractX509LdapTests extends LdapIntegrationTestsOperatio
             }
         }
     }
-
-
 }

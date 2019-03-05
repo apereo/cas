@@ -1,11 +1,7 @@
 package org.apereo.cas.web.flow.client;
 
-import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
-import com.unboundid.ldap.sdk.LDAPConnection;
-import lombok.val;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 
 /**
@@ -18,10 +14,4 @@ import org.junit.jupiter.api.Tag;
 @EnabledIfContinuousIntegration
 public class LdapContinuousIntegrationSpnegoKnownClientSystemsFilterActionTests
     extends BaseLdapSpnegoKnownClientSystemsFilterActionTests {
-
-    @BeforeAll
-    public static void bootstrap() throws Exception {
-        val c = new LDAPConnection(HOST, PORT, BIND_DN, BIND_PASS);
-        LdapIntegrationTestsOperations.populateDefaultEntries(c, BASE_DN);
-    }
 }

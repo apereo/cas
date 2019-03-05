@@ -5,9 +5,9 @@ import org.apereo.cas.util.junit.DisabledIfContinuousIntegration;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.BeforeAll;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
+
+import static org.apereo.cas.util.LdapTestProperties.*;
 
 /**
  * Unit tests for {@link LdapConsentRepository} class.
@@ -20,23 +20,16 @@ import org.springframework.test.context.TestPropertySource;
     "cas.consent.ldap.useSsl=false",
     "cas.consent.ldap.baseDn=${ldap.peopleDn}",
     "cas.consent.ldap.searchFilter=cn={0}",
-    "cas.consent.ldap.consentAttributeName=description"
+    "cas.consent.ldap.consentAttributeName=description",
+    "ldap.test.resource=ldif/ldap-consent.ldif",
+    "ldap.initLocal=true"
+
 })
 @DisabledIfContinuousIntegration
 public class LdapEmbeddedConsentRepositoryTests extends BaseLdapConsentRepositoryTests {
-    private static final int LDAP_PORT = 1387;
-
-    @BeforeAll
-    @SneakyThrows
-    public static void bootstrap() {
-        LdapIntegrationTestsOperations.initDirectoryServer(LDAP_PORT);
-        LdapIntegrationTestsOperations.getLdapDirectory(LDAP_PORT).populateEntries(
-            new ClassPathResource("ldif/ldap-consent.ldif").getInputStream());
-    }
-
     @Override
     @SneakyThrows
     public LDAPConnection getConnection() {
-        return LdapIntegrationTestsOperations.getLdapDirectory(LDAP_PORT).getConnection();
+        return LdapIntegrationTestsOperations.getLdapDirectory(port()).getConnection();
     }
 }

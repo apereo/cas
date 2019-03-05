@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
 
+import static org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations.*;
 import static org.apereo.cas.util.LdapTestProperties.*;
 
 /**
@@ -36,14 +37,29 @@ public interface LdapTest {
     static void initializeTest() {
         val environment = getEnvironment();
         val path = environment.getProperty("ldap.test.resource", "");
+        val baseDn = environment.getProperty("ldap.test.dnPrefix", "") + baseDn();
+        if (Boolean.parseBoolean(environment.getProperty("ldap.initLocal", "false"))) {
+            initDirectoryServer(port());
+        }
         if (!path.isBlank()) {
             @Cleanup
+            val localhost = getLdapConnection();
+            LdapIntegrationTestsOperations.populateEntries(localhost,
+                new ClassPathResource(path).getInputStream(), baseDn);
+        } else {
+            LdapIntegrationTestsOperations.populateDefaultEntries(getLdapConnection(), baseDn);
+        }
+    }
+
+    @SneakyThrows
+    static LDAPConnection getLdapConnection() {
+        if (Boolean.parseBoolean(getEnvironment().getProperty("ldap.initLocal", "false"))) {
+            return getLdapDirectory(port()).getConnection();
+        } else {
             val localhost = new LDAPConnection(host(), port(), bindDn(), bindPass());
             localhost.connect(host(), port());
             localhost.bind(bindDn(), bindPass());
-            LdapIntegrationTestsOperations.populateEntries(localhost,
-                new ClassPathResource(path).getInputStream(),
-                environment.getProperty("ldap.test.dnPrefix", "") + baseDn());
+            return localhost;
         }
     }
 }
