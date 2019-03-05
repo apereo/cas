@@ -22,7 +22,7 @@ import org.springframework.webflow.execution.RequestContext;
 @Slf4j
 @RequiredArgsConstructor
 public class RedirectToServiceAction extends AbstractAction {
-    private final ResponseBuilderLocator responseBuilderLocator;
+    private final ResponseBuilderLocator<WebApplicationService> responseBuilderLocator;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {

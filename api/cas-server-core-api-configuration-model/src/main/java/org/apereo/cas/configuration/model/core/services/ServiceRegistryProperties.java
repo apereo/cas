@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.services;
 
+import org.apereo.cas.configuration.model.support.cassandra.serviceregistry.CassandraServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.cosmosdb.CosmosDbServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.couchbase.serviceregistry.CouchbaseServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.couchdb.serviceregistry.CouchDbServiceRegistryProperties;
@@ -41,6 +42,11 @@ public class ServiceRegistryProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private CosmosDbServiceRegistryProperties cosmosDb = new CosmosDbServiceRegistryProperties();
+    /**
+     * Properties pertaining to Apache Cassandra service registry.
+     */
+    @NestedConfigurationProperty
+    private CassandraServiceRegistryProperties cassandra = new CassandraServiceRegistryProperties();
     /**
      * Properties pertaining to Git-based service registry.
      */

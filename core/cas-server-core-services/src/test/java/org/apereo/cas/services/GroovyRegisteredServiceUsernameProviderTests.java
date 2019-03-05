@@ -1,9 +1,10 @@
 package org.apereo.cas.services;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link GroovyRegisteredServiceUsernameProviderTests}.
@@ -11,6 +12,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Tag("Groovy")
 public class GroovyRegisteredServiceUsernameProviderTests {
 
     @Test

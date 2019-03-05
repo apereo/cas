@@ -32,9 +32,10 @@ public class AcceptableUsagePolicyVerifyAction extends AbstractAction {
      */
     private Event verify(final RequestContext context, final Credential credential, final MessageContext messageContext) {
         val res = repository.verify(context, credential);
-        WebUtils.putPrincipal(context, res.getValue());
+        WebUtils.putPrincipal(context, res.getPrincipal());
+        WebUtils.putAcceptableUsagePolicyStatusIntoFlowScope(context, res);
         val eventFactorySupport = new EventFactorySupport();
-        return res.getKey()
+        return res.isAccepted()
             ? eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_AUP_ACCEPTED)
             : eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_AUP_MUST_ACCEPT);
     }

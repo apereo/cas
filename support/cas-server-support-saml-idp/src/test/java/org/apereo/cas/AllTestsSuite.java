@@ -2,6 +2,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.support.saml.SamlAttributeEncoderTests;
 import org.apereo.cas.support.saml.SamlIdPConfigurationTests;
+import org.apereo.cas.support.saml.services.EduPersonTargetedIdAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.GroovySamlRegisteredServiceAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.MetadataRequestedAttributesAttributeReleasePolicyTests;
@@ -19,8 +20,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignat
 import org.apereo.cas.support.saml.web.idp.profile.builders.nameid.SamlProfileSamlNameIdBuilderTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSaml2ResponseBuilderTests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * Test suite to run all SAML tests.
@@ -28,8 +28,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@SelectClasses({
     SamlRegisteredServiceTests.class,
     SamlIdPConfigurationTests.class,
     SamlAttributeEncoderTests.class,
@@ -47,6 +46,7 @@ import org.junit.runners.Suite;
     RefedsRSAttributeReleasePolicyTests.class,
     MetadataRequestedAttributesAttributeReleasePolicyTests.class,
     SamlObjectSignatureValidatorTests.class,
+    EduPersonTargetedIdAttributeReleasePolicyTests.class,
     SamlProfileSaml2ResponseBuilderTests.class
 })
 public class AllTestsSuite {

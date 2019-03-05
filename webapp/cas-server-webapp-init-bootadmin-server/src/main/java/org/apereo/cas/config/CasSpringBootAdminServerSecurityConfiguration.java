@@ -28,7 +28,7 @@ public class CasSpringBootAdminServerSecurityConfiguration extends WebSecurityCo
 
         val successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
         successHandler.setTargetUrlParameter("redirectTo");
-        successHandler.setDefaultTargetUrl(adminContextPath + "/");
+        successHandler.setDefaultTargetUrl(adminContextPath + '/');
         http.authorizeRequests()
             .antMatchers(adminContextPath + "/assets/**").permitAll()
             .antMatchers(adminContextPath + "/login").permitAll()

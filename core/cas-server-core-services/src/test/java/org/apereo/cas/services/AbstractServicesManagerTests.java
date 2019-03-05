@@ -1,15 +1,15 @@
 package org.apereo.cas.services;
 
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -33,7 +33,7 @@ public abstract class AbstractServicesManagerTests {
         listOfDefaultServices.add(r);
     }
 
-    @Before
+    @BeforeEach
     public void initialize() {
         this.serviceRegistry = getServiceRegistryInstance();
         this.servicesManager = getServicesManagerInstance();

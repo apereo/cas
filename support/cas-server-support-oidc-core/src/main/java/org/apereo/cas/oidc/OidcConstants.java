@@ -96,6 +96,10 @@ public interface OidcConstants {
      * The confirm/consent view.
      */
     String CONFIRM_VIEW = "oidcConfirmView";
+    /**
+     * Rel value for webfinger protocol.
+     */
+    String WEBFINGER_REL = "http://openid.net/specs/connect/1.0/issuer";
 
     /**
      * Dynamic client registration mode.

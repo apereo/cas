@@ -211,7 +211,24 @@ logger.info("Choosing username attribute out of attributes $attributes")
 return "newPrincipalId"
 ```
 
-## Anonymous
+## Anonymous / Transient
+
+Provides an opaque identifier for the username. 
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 500,
+  "description" : "sample",
+  "usernameAttributeProvider" : {
+    "@class" : "org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider"
+  }
+}
+```
+
+## Anonymous / Persistent
 
 Provides an opaque identifier for the username. The opaque identifier by default conforms to the requirements
 of the [eduPersonTargetedID](http://www.incommon.org/federation/attributesummary.html#eduPersonTargetedID) attribute.
@@ -244,3 +261,4 @@ perl -e 'use Digest::SHA qw(sha1_base64); \
 ```
 
 Replace `$SERVICE` (the url of the application under test), `$USER` and `$SALT` with the appropriate values for the test.
+

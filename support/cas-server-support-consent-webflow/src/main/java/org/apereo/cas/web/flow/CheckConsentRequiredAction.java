@@ -79,7 +79,7 @@ public class CheckConsentRequiredAction extends AbstractConsentAction {
     protected String isConsentRequired(final Service service, final RegisteredService registeredService,
                                        final Authentication authentication,
                                        final RequestContext requestContext) {
-        val required = this.consentEngine.isConsentRequiredFor(service, registeredService, authentication).getKey();
+        val required = this.consentEngine.isConsentRequiredFor(service, registeredService, authentication).isRequired();
         return required ? EVENT_ID_CONSENT_REQUIRED : null;
     }
 }

@@ -4,10 +4,12 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.token.JWTBuilder;
 import org.apereo.cas.token.JWTTokenCipherSigningPublicKeyEndpoint;
 import org.apereo.cas.token.JWTTokenTicketBuilder;
 import org.apereo.cas.token.TokenTicketBuilder;
-import org.apereo.cas.token.cipher.TokenTicketCipherExecutor;
+import org.apereo.cas.token.cipher.JWTTicketCipherExecutor;
+import org.apereo.cas.token.cipher.RegisteredServiceJWTTicketCipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -69,7 +71,7 @@ public class TokenCoreConfiguration {
             .get();
 
         if (enabled) {
-            return new TokenTicketCipherExecutor(crypto.getEncryption().getKey(),
+            return new JWTTicketCipherExecutor(crypto.getEncryption().getKey(),
                 crypto.getSigning().getKey(),
                 crypto.getAlg(),
                 crypto.isEncryptionEnabled(),
@@ -88,10 +90,19 @@ public class TokenCoreConfiguration {
     @ConditionalOnMissingBean(name = "tokenTicketBuilder")
     public TokenTicketBuilder tokenTicketBuilder() {
         return new JWTTokenTicketBuilder(casClientTicketValidator.getIfAvailable(),
+            grantingTicketExpirationPolicy.getIfAvailable(),
+            tokenTicketJwtBuilder());
+    }
+
+    @RefreshScope
+    @Bean
+    @ConditionalOnMissingBean(name = "tokenTicketJwtBuilder")
+    public JWTBuilder tokenTicketJwtBuilder() {
+        return new JWTBuilder(
             casProperties.getServer().getPrefix(),
             tokenCipherExecutor(),
-            grantingTicketExpirationPolicy.getIfAvailable(),
-            servicesManager.getIfAvailable());
+            servicesManager.getIfAvailable(),
+            new RegisteredServiceJWTTicketCipherExecutor());
     }
 
     @Bean

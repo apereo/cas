@@ -44,12 +44,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.env.Environment;
 import org.springframework.http.converter.AbstractHttpMessageConverter;
@@ -207,6 +209,16 @@ public class CasCoreServicesConfiguration {
 
         chainingRegistry.addServiceRegistries(plan.getServiceRegistries());
         return chainingRegistry;
+    }
+
+    /**
+     * Refresh CAS services after application has loaded.
+     *
+     * @param event the event
+     */
+    @EventListener
+    public void refreshServicesManagerWhenReady(final ApplicationReadyEvent event) {
+        servicesManager().load();
     }
 
     private Optional<List<RegisteredService>> getInMemoryRegisteredServices() {

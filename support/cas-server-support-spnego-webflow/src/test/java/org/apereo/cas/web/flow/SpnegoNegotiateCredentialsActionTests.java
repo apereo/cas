@@ -3,7 +3,7 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.support.spnego.util.SpnegoConstants;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -12,7 +12,7 @@ import org.springframework.webflow.test.MockRequestContext;
 
 import javax.servlet.http.HttpServletResponse;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link SpnegoNegotiateCredentialsActionTests}.

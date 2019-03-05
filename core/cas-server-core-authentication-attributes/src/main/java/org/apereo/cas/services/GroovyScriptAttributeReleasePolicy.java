@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 
@@ -33,10 +34,12 @@ public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
     private String groovyScript;
 
     @Override
-    public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attributes, final RegisteredService service) {
+    public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attributes,
+                                                     final RegisteredService registeredService, final Service selectedService) {
         try {
-            val args = new Object[]{attributes, LOGGER, principal, service};
-            LOGGER.debug("Invoking Groovy script with attributes=[{}], principal=[{}], service=[{}] and default logger", attributes, principal, service);
+            val args = new Object[]{attributes, LOGGER, principal, registeredService};
+            LOGGER.debug("Invoking Groovy script with attributes=[{}], principal=[{}], service=[{}] and default logger",
+                attributes, principal, registeredService);
             val resource = ResourceUtils.getResourceFrom(this.groovyScript);
             return ScriptingUtils.executeGroovyScript(resource, args, Map.class, true);
         } catch (final Exception e) {

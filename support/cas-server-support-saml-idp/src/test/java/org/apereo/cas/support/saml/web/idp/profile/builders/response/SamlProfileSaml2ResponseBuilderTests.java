@@ -1,19 +1,19 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response;
 
-import org.apereo.cas.category.FileSystemCategory;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 
 import lombok.val;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.apache.xerces.xs.XSObject;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.NameID;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link SamlProfileSaml2ResponseBuilderTests}.
@@ -21,7 +21,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Category(FileSystemCategory.class)
+@Tag("FileSystem")
 public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests {
     @Test
     public void verifySamlResponseAllSigned() {
@@ -29,6 +29,7 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
         val response = new MockHttpServletResponse();
 
         val service = getSamlRegisteredServiceForTestShib(true, true);
+        service.getAttributeValueTypes().put("permissions", XSObject.class.getSimpleName());
         val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
             service, service.getServiceId()).get();
 

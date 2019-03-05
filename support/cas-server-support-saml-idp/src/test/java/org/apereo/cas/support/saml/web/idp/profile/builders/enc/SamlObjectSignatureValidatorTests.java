@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
-import org.apereo.cas.category.FileSystemCategory;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.SamlIdPUtils;
@@ -10,9 +9,9 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSe
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
@@ -36,14 +35,14 @@ import java.io.File;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Category(FileSystemCategory.class)
+@Tag("FileSystem")
 public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
     private SAML2Configuration saml2ClientConfiguration;
     private SAML2MessageContext saml2MessageContext;
     private MessageContext<SAMLObject> samlContext;
     private SamlRegisteredServiceServiceProviderMetadataFacade adaptor;
 
-    @Before
+    @BeforeEach
     public void before() throws Exception {
         val idpMetadata = new File("src/test/resources/metadata/idp-metadata.xml").getCanonicalPath();
         val keystorePath = new File(FileUtils.getTempDirectory(), "keystore").getCanonicalPath();

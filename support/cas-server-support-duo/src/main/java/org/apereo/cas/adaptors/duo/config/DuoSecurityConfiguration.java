@@ -1,9 +1,9 @@
 package org.apereo.cas.adaptors.duo.config;
 
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.adaptors.duo.web.flow.DuoAuthenticationWebflowEventResolver;
-import org.apereo.cas.adaptors.duo.web.flow.action.DuoAuthenticationWebflowAction;
-import org.apereo.cas.adaptors.duo.web.flow.action.DuoDirectAuthenticationAction;
+import org.apereo.cas.adaptors.duo.web.flow.DuoSecurityAuthenticationWebflowEventResolver;
+import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityAuthenticationWebflowAction;
+import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityDirectAuthenticationAction;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
@@ -74,19 +74,19 @@ public class DuoSecurityConfiguration {
     @ConditionalOnMissingBean(name = "duoNonWebAuthenticationAction")
     @Bean
     public Action duoNonWebAuthenticationAction() {
-        return new DuoDirectAuthenticationAction();
+        return new DuoSecurityDirectAuthenticationAction();
     }
 
     @ConditionalOnMissingBean(name = "duoAuthenticationWebflowAction")
     @Bean
     public Action duoAuthenticationWebflowAction() {
-        return new DuoAuthenticationWebflowAction(duoAuthenticationWebflowEventResolver());
+        return new DuoSecurityAuthenticationWebflowAction(duoAuthenticationWebflowEventResolver());
     }
 
     @ConditionalOnMissingBean(name = "duoAuthenticationWebflowEventResolver")
     @Bean
     public CasWebflowEventResolver duoAuthenticationWebflowEventResolver() {
-        return new DuoAuthenticationWebflowEventResolver(
+        return new DuoSecurityAuthenticationWebflowEventResolver(
             authenticationSystemSupport.getIfAvailable(),
             centralAuthenticationService.getIfAvailable(),
             servicesManager.getIfAvailable(),

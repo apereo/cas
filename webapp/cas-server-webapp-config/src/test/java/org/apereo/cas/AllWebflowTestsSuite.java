@@ -3,8 +3,7 @@ package org.apereo.cas;
 import org.apereo.cas.web.security.authentication.MonitorEndpointLdapAuthenticationProviderGroupsBasedTests;
 import org.apereo.cas.web.security.authentication.MonitorEndpointLdapAuthenticationProviderRolesBasedTests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * This is {@link AllWebflowTestsSuite}.
@@ -12,8 +11,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@SelectClasses({
     WiringConfigurationTests.class,
     CasWebflowServerSessionContextConfigurationTests.class,
     CasWebflowClientSessionContextConfigurationTests.class,

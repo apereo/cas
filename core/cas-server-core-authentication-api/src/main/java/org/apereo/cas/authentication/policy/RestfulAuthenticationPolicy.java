@@ -44,9 +44,10 @@ public class RestfulAuthenticationPolicy implements AuthenticationPolicy {
         val principal = authentication.getPrincipal();
         try {
             val acceptHeaders = new HttpHeaders();
-            acceptHeaders.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
+            acceptHeaders.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON_UTF8));
+            acceptHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
             val entity = new HttpEntity<Principal>(principal, acceptHeaders);
-            LOGGER.warn("Checking authentication policy for [{}] via POST at [{}]", principal, this.endpoint);
+            LOGGER.debug("Checking authentication policy for [{}] via POST at [{}]", principal, this.endpoint);
             val resp = restTemplate.exchange(this.endpoint, HttpMethod.POST, entity, String.class);
             val statusCode = resp.getStatusCode();
             if (statusCode != HttpStatus.OK) {
@@ -57,7 +58,10 @@ public class RestfulAuthenticationPolicy implements AuthenticationPolicy {
         } catch (final HttpClientErrorException | HttpServerErrorException e) {
             val ex = handleResponseStatusCode(e.getStatusCode(), authentication.getPrincipal());
             throw new GeneralSecurityException(ex);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
         }
+        return false;
     }
 
     private static Exception handleResponseStatusCode(final HttpStatus statusCode, final Principal p) {

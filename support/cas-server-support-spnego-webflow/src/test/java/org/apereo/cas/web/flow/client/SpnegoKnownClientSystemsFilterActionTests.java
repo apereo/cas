@@ -3,7 +3,7 @@ package org.apereo.cas.web.flow.client;
 import org.apereo.cas.util.RegexUtils;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -11,7 +11,7 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test cases for {@link BaseSpnegoKnownClientSystemsFilterAction}

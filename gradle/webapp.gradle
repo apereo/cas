@@ -3,7 +3,6 @@ description = "Apereo CAS Web Application"
 apply plugin: "war"
 
 project.ext["mainClassName"] = "org.apereo.cas.web.CasWebApplication"
-
 sourceSets {
     main {
         resources {
@@ -64,7 +63,7 @@ dependencies {
     implementation project(":support:cas-server-support-reports")
     implementation project(":support:cas-server-support-throttle")
     implementation project(":support:cas-server-support-validation")
-    
+
     implementation project(":webapp:cas-server-webapp-config")
     implementation project(":webapp:cas-server-webapp-init")
 

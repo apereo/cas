@@ -24,7 +24,7 @@ Attribute filters can be chained together so as to associate multiple filters wi
     "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
     "attributeFilter" : {
       "@class" : "org.apereo.cas.services.support.RegisteredServiceChainingAttributeFilter",
-      "policies": [ "java.util.ArrayList",
+      "filters": [ "java.util.ArrayList",
         [
             {
               "@class" : "org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter",

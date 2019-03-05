@@ -129,6 +129,7 @@ layout: null
         *   [CouchDb](/$version/ticketing/CouchDb-Ticket-Registry.html)
         *   [Infinispan](/$version/ticketing/Infinispan-Ticket-Registry.html)
         *   [Redis](/$version/ticketing/Redis-Ticket-Registry.html)
+        *   [Cassandra](/$version/ticketing/Cassandra-Ticket-Registry.html)
         *   [MongoDb](/$version/ticketing/MongoDb-Ticket-Registry.html)
         *   [DynamoDb](/$version/ticketing/DynamoDb-Ticket-Registry.html)
 
@@ -155,6 +156,7 @@ layout: null
         *   [JPA](/$version/services/JPA-Service-Management.html)
         *   [Redis](/$version/services/Redis-Service-Management.html)
         *   [DynamoDb](/$version/services/DynamoDb-Service-Management.html)
+        *   [Cassandra](/$version/services/Cassandra-Service-Management.html)
         *   [CosmosDb](/$version/services/CosmosDb-Service-Management.html)
         *   [Couchbase](/$version/services/Couchbase-Service-Management.html)
         *   [CouchDb](/$version/services/CouchDb-Service-Management.html)

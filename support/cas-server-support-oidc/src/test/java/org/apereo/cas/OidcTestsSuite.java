@@ -1,6 +1,9 @@
 package org.apereo.cas;
 
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettingsFactoryTests;
+import org.apereo.cas.oidc.discovery.webfinger.OidcEchoingWebFingerUserInfoRepositoryTests;
+import org.apereo.cas.oidc.discovery.webfinger.OidcGroovyWebFingerUserInfoRepositoryTests;
+import org.apereo.cas.oidc.discovery.webfinger.OidcRestfulWebFingerUserInfoRepositoryTests;
 import org.apereo.cas.oidc.jwks.OidcDefaultJsonWebKeystoreCacheLoaderTests;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorServiceTests;
 import org.apereo.cas.oidc.jwks.OidcServiceJsonWebKeystoreCacheLoaderTests;
@@ -12,8 +15,7 @@ import org.apereo.cas.oidc.web.controllers.OidcWellKnownEndpointControllerTests;
 import org.apereo.cas.oidc.web.flow.OidcAuthenticationContextWebflowEventResolverTests;
 import org.apereo.cas.oidc.web.flow.OidcRegisteredServiceUIActionTests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * This is {@link OidcTestsSuite}.
@@ -21,8 +23,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@SelectClasses({
     OidcWellKnownEndpointControllerTests.class,
     OidcIdTokenGeneratorServiceTests.class,
     OidcIdTokenSigningAndEncryptionServiceTests.class,
@@ -33,7 +34,10 @@ import org.junit.runners.Suite;
     OidcServerDiscoverySettingsFactoryTests.class,
     OidcRegisteredServiceUIActionTests.class,
     OidcServiceJsonWebKeystoreCacheLoaderTests.class,
-    OidcAuthorizationRequestSupportTests.class
+    OidcAuthorizationRequestSupportTests.class,
+    OidcEchoingWebFingerUserInfoRepositoryTests.class,
+    OidcGroovyWebFingerUserInfoRepositoryTests.class,
+    OidcRestfulWebFingerUserInfoRepositoryTests.class
 })
 public class OidcTestsSuite {
 }

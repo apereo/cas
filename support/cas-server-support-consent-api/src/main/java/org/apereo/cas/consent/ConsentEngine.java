@@ -4,8 +4,6 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import java.io.Serializable;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
@@ -78,7 +76,7 @@ public interface ConsentEngine extends Serializable {
      * @param authentication    the authentication
      * @return true /false
      */
-    Pair<Boolean, ConsentDecision> isConsentRequiredFor(Service service, RegisteredService registeredService, Authentication authentication);
+    ConsentQueryResult isConsentRequiredFor(Service service, RegisteredService registeredService, Authentication authentication);
 
     /**
      * Gets consent repository.

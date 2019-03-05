@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationEventPublisher;
@@ -19,6 +20,7 @@ import java.util.stream.Stream;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class RestfulServiceRegistry extends AbstractServiceRegistry {
     private final transient RestTemplate restTemplate;
     private final String url;
@@ -35,10 +37,14 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
-        val responseEntity = restTemplate.exchange(this.url, HttpMethod.POST,
-            new HttpEntity<>(registeredService, this.headers), RegisteredService.class);
-        if (responseEntity.getStatusCode().is2xxSuccessful()) {
-            return responseEntity.getBody();
+        try {
+            val requestEntity = new HttpEntity<RegisteredService>(registeredService, this.headers);
+            val responseEntity = restTemplate.exchange(this.url, HttpMethod.POST, requestEntity, RegisteredService.class);
+            if (responseEntity.getStatusCode().is2xxSuccessful()) {
+                return responseEntity.getBody();
+            }
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
         }
         return null;
     }
@@ -56,7 +62,9 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
             new HttpEntity<>(this.headers), RegisteredService[].class);
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
             val results = responseEntity.getBody();
-            return Stream.of(results).collect(Collectors.toList());
+            return results != null
+                ? Stream.of(results).collect(Collectors.toList())
+                : new ArrayList<>(0);
         }
         return new ArrayList<>(0);
     }

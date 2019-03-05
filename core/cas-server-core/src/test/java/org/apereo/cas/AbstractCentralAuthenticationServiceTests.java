@@ -23,7 +23,11 @@ import org.springframework.test.context.TestPropertySource;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@TestPropertySource(locations = {"classpath:/core.properties"})
+@TestPropertySource(properties = {
+    "cas.authn.policy.any.tryAll=true",
+    "spring.aop.proxy-target-class=true",
+    "cas.ticket.st.timeToKillInSeconds=30"
+    })
 @Setter
 @Getter
 public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasCoreTests {

@@ -1,7 +1,6 @@
 package org.apereo.cas.aup;
 
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.couchdb.core.CouchDbProfileDocument;
 import org.apereo.cas.couchdb.core.ProfileCouchDbRepository;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -10,7 +9,6 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.tuple.Pair;
 import org.ektorp.UpdateConflictException;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -35,13 +33,13 @@ public class CouchDbAcceptableUsagePolicyRepository extends AbstractPrincipalAtt
     }
 
     @Override
-    public Pair<Boolean, Principal> verify(final RequestContext requestContext, final Credential credential) {
+    public AcceptableUsagePolicyStatus verify(final RequestContext requestContext, final Credential credential) {
         val principal = WebUtils.getPrincipalFromRequestContext(requestContext, this.ticketRegistrySupport);
 
         if (principal != null) {
             if (isUsagePolicyAcceptedBy(principal)) {
                 LOGGER.debug("Usage policy has been accepted by [{}]", principal.getId());
-                return Pair.of(Boolean.TRUE, principal);
+                return AcceptableUsagePolicyStatus.accepted(principal);
             }
             LOGGER.debug("Usage policy has not been accepted by [{}] in the resolved principal", principal.getId());
         } else {
@@ -60,7 +58,7 @@ public class CouchDbAcceptableUsagePolicyRepository extends AbstractPrincipalAtt
         } else {
             LOGGER.warn("No principal found");
         }
-        return Pair.of(accepted, principal);
+        return new AcceptableUsagePolicyStatus(accepted, principal);
     }
 
     @Override

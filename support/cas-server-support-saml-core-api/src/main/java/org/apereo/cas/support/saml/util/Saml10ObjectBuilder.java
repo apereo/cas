@@ -229,7 +229,8 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
     public void addAttributeValuesToSaml1Attribute(final String attributeName,
                                                    final Object attributeValue,
                                                    final List<XMLObject> attributeList) {
-        addAttributeValuesToSamlAttribute(attributeName, attributeValue, attributeList, AttributeValue.DEFAULT_ELEMENT_NAME);
+        addAttributeValuesToSamlAttribute(attributeName, attributeValue, StringUtils.EMPTY,
+            attributeList, AttributeValue.DEFAULT_ELEMENT_NAME);
     }
 
     /**

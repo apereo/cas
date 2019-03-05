@@ -2,16 +2,11 @@ package org.apereo.cas.authentication.surrogate;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link BaseSurrogateAuthenticationServiceTests}.
@@ -20,17 +15,8 @@ import static org.junit.Assert.*;
  * @since 6.0.0
  */
 public abstract class BaseSurrogateAuthenticationServiceTests {
-
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
     public static final String CASUSER = "casuser";
     public static final String BANDERSON = "banderson";
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
 
     @Mock
     protected ServicesManager servicesManager;

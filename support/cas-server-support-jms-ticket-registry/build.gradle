@@ -1,8 +1,5 @@
 description = "Apereo CAS JMS Ticket Registry"
 
-ext {
-    useJunit5 = true
-}
 dependencies {
     implementation libraries.activemq
     

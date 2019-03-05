@@ -7,7 +7,7 @@ import org.apereo.cas.util.EncodingUtils;
 
 import jcifs.spnego.Authentication;
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -19,7 +19,7 @@ import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link SpnegoCredentialsActionTests}.

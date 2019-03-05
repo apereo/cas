@@ -52,12 +52,15 @@ Releasing authentication attributes to service providers and applications can be
 controlled to some extent. To learn more and see the relevant list of CAS properties,
 please [review this guide](../configuration/Configuration-Properties.html#authentication-attributes).
 
-
 ## Principal Attributes
 
 Principal attributes typically convey personally identifiable data about the authenticated user,
 such as address, last name, etc. Release policies are available in CAS and documented below
 to explicitly control the collection of attributes that may be authorized for release to a given application.
+
+<div class="alert alert-info"><strong>Remember</strong><p>Depending on the protocol used and the type/class of service (i.e. relying party) registered with CAS,
+additional release policies may become available that allow more fine-tuned control over attribute release, catering better to the needs of the particular
+authentication protocol at hand. Remember to verify attribute release capabilities of CAS by visiting and studies the appropriate documentation for each protocol.</p></div>
 
 ### Default
 
@@ -369,6 +372,40 @@ The following merging policies are supported:
 | `replace`       | Attributes are merged such that attributes from the source always replace principal attributes.
 | `add`           | Attributes are merged such that attributes from the source that don't already exist for the principal are produced.
 | `multivalued`   | Attributes with the same name are merged into multi-valued attributes.
+
+#### Ordering Policies
+
+Note that each policy in the chain can be assigned a numeric `order` that would determine its position in the chain before execution. This
+order may be important if you have attribute release policies that should calculate a value dynamically first before passing it onto
+the next policy in the chain. 
+
+For example, the policy chain below allows CAS to generate an attribute first using the `GeneratesFancyAttributeReleasePolicy` policy
+where the attribute is next passed onto the next policy in the chain, that is `ReleaseFancyAttributeReleasePolicy`, to decide
+whether or not the attribute should be released. Note the configuration of policy `order` determines the execution sequence.
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 300,
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "policies": [ "java.util.ArrayList",
+      [
+          {
+            "@class": "org.apereo.cas.ReleaseFancyAttributeReleasePolicy",
+            "order": 1
+          },
+          {
+            "@class": "org.apereo.cas.GeneratesFancyAttributeReleasePolicy", 
+            "order": 0
+          }
+      ]
+    ]
+  }
+}
+```
 
 ## Attribute Value Filters
 

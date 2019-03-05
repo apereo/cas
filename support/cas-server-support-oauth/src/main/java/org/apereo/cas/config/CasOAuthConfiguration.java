@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
@@ -15,6 +16,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
@@ -68,6 +70,8 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenProo
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRefreshTokenGrantRequestExtractor;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20DefaultAccessTokenResponseGenerator;
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenCipherExecutor;
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.RegisteredServiceJWTAccessTokenCipherExecutor;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationCodeAuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ClientCredentialsResponseBuilder;
@@ -93,12 +97,16 @@ import org.apereo.cas.ticket.refreshtoken.OAuthRefreshTokenExpirationPolicy;
 import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
+import org.apereo.cas.token.JWTBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.config.Config;
@@ -136,6 +144,7 @@ import java.util.Set;
  */
 @Configuration("oauthConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConfigurer {
 
     @Autowired
@@ -178,7 +187,22 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @ConditionalOnMissingBean(name = "accessTokenResponseGenerator")
     @Bean
     public OAuth20AccessTokenResponseGenerator accessTokenResponseGenerator() {
-        return new OAuth20DefaultAccessTokenResponseGenerator();
+        return new OAuth20DefaultAccessTokenResponseGenerator(accessTokenJwtBuilder());
+    }
+
+    @ConditionalOnMissingBean(name = "accessTokenJwtBuilder")
+    @Bean
+    public JWTBuilder accessTokenJwtBuilder() {
+        return new JWTBuilder(casProperties.getServer().getPrefix(),
+            oauthAccessTokenJwtCipherExecutor(),
+            servicesManager.getIfAvailable(),
+            oauthRegisteredServiceJwtAccessTokenCipherExecutor());
+    }
+
+    @ConditionalOnMissingBean(name = "oauthRegisteredServiceJwtAccessTokenCipherExecutor")
+    @Bean
+    public RegisteredServiceCipherExecutor oauthRegisteredServiceJwtAccessTokenCipherExecutor() {
+        return new RegisteredServiceJWTAccessTokenCipherExecutor();
     }
 
     @ConditionalOnMissingBean(name = "oauthCasClientRedirectActionBuilder")
@@ -222,7 +246,8 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
         val config = new Config(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()),
             oauthCasClient, basicAuthClient, pkceAuthnClient, directFormClient, userFormClient);
         config.setSessionStore(new J2ESessionStore());
-        config.setProfileManagerFactory(OAuth20ClientIdAwareProfileManager::new);
+        config.setProfileManagerFactory(webContext ->
+            new OAuth20ClientIdAwareProfileManager(webContext, config.getSessionStore(), servicesManager.getIfAvailable()));
         return config;
     }
 
@@ -266,14 +291,14 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @ConditionalOnMissingBean(name = "oauthAccessTokenResponseGenerator")
     @Bean
     public OAuth20AccessTokenResponseGenerator oauthAccessTokenResponseGenerator() {
-        return new OAuth20DefaultAccessTokenResponseGenerator();
+        return new OAuth20DefaultAccessTokenResponseGenerator(accessTokenJwtBuilder());
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "defaultAccessTokenFactory")
     public AccessTokenFactory defaultAccessTokenFactory() {
-        return new DefaultAccessTokenFactory(accessTokenIdGenerator(), accessTokenExpirationPolicy());
+        return new DefaultAccessTokenFactory(accessTokenIdGenerator(), accessTokenExpirationPolicy(), accessTokenJwtBuilder());
     }
 
     @Bean
@@ -719,9 +744,9 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
 
     @Override
     public void configureAuditTrailRecordResolutionPlan(final AuditTrailRecordResolutionPlan plan) {
-        plan.registerAuditActionResolver("OAUTH2_USER_PROFILE_DATA_ACTION_RESOLVER",
+        plan.registerAuditActionResolver("OAUTH2_USER_PROFILE_ACTION_RESOLVER",
             new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED, AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
-        plan.registerAuditResourceResolver("OAUTH2_USER_PROFILE_DATA_RESOURCE_RESOLVER",
+        plan.registerAuditResourceResolver("OAUTH2_USER_PROFILE_RESOURCE_RESOLVER",
             new OAuth20UserProfileDataAuditResourceResolver());
 
         plan.registerAuditActionResolver("OAUTH2_ACCESS_TOKEN_REQUEST_ACTION_RESOLVER",
@@ -764,5 +789,35 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @ConditionalOnEnabledEndpoint
     public OAuth20TokenManagementEndpoint oAuth20TokenManagementEndpoint() {
         return new OAuth20TokenManagementEndpoint(casProperties, ticketRegistry.getIfAvailable());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "oauthAccessTokenJwtCipherExecutor")
+    public CipherExecutor oauthAccessTokenJwtCipherExecutor() {
+        val crypto = casProperties.getAuthn().getOauth().getAccessToken().getCrypto();
+
+        val enabled = FunctionUtils.doIf(
+            !crypto.isEnabled() && StringUtils.isNotBlank(crypto.getEncryption().getKey())
+                && StringUtils.isNotBlank(crypto.getSigning().getKey()),
+            () -> {
+                LOGGER.warn("Default encryption/signing is not enabled explicitly for OAuth access tokens as JWTs if necessary, "
+                    + "yet signing/encryption keys are defined for operations. CAS will proceed to enable the token encryption/signing functionality.");
+                return Boolean.TRUE;
+            },
+            crypto::isEnabled)
+            .get();
+
+        if (enabled) {
+            return new OAuth20JwtAccessTokenCipherExecutor(crypto.getEncryption().getKey(),
+                crypto.getSigning().getKey(),
+                crypto.getAlg(),
+                crypto.isEncryptionEnabled(),
+                crypto.isSigningEnabled(),
+                crypto.getSigning().getKeySize(),
+                crypto.getEncryption().getKeySize());
+        }
+        LOGGER.info("OAuth access token encryption/signing is turned off for JWTs, if/when needed. This "
+            + "MAY NOT be safe in a production environment.");
+        return CipherExecutor.noOp();
     }
 }

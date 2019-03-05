@@ -5,8 +5,7 @@ import org.apereo.cas.scim.v2.ScimV2PrincipalAttributeMapperTests;
 import org.apereo.cas.web.flow.PrincipalScimV1ProvisionerActionTests;
 import org.apereo.cas.web.flow.PrincipalScimV2ProvisionerActionTests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * This is {@link AllScimTestsSuite}.
@@ -14,8 +13,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@SelectClasses({
     ScimV1PrincipalAttributeMapperTests.class,
     ScimV2PrincipalAttributeMapperTests.class,
     PrincipalScimV1ProvisionerActionTests.class,

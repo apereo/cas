@@ -18,10 +18,10 @@
         <Logger name="org.apereo" level="error">
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="org.apereo.cas.couchdb.services" level="trace">
+        <Logger name="org.apereo.cas.couchdb.services" level="off">
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="org.apereo.cas.services" level="debug">
+        <Logger name="org.apereo.cas.services" level="off">
             <AppenderRef ref="console"/>
         </Logger>
         <Root level="off">

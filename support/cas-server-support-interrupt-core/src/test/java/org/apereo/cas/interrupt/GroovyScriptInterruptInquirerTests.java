@@ -3,11 +3,12 @@ package org.apereo.cas.interrupt;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.test.MockRequestContext;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link GroovyScriptInterruptInquirerTests}.
@@ -15,6 +16,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Tag("Groovy")
 public class GroovyScriptInterruptInquirerTests {
     @Test
     public void verifyResponseCanBeFoundFromGroovy() {

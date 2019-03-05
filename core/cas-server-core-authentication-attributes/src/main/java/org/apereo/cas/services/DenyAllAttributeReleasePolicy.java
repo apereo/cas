@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +30,8 @@ public class DenyAllAttributeReleasePolicy extends AbstractRegisteredServiceAttr
     }
 
     @Override
-    public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attributes, final RegisteredService service) {
+    public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attributes,
+                                                     final RegisteredService registeredService, final Service selectedService) {
         LOGGER.trace("Ignoring all attributes given the service is designed to never receive any.");
         return new HashMap<>(0);
     }

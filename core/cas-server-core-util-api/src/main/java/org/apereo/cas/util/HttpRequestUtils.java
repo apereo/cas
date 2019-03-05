@@ -161,7 +161,7 @@ public class HttpRequestUtils {
             connection.setConnectTimeout(PING_URL_TIMEOUT);
             connection.setReadTimeout(PING_URL_TIMEOUT);
             connection.setRequestMethod(HttpMethod.HEAD.name());
-            val status = HttpStatus.valueOf(connection.getResponseCode());
+            return HttpStatus.valueOf(connection.getResponseCode());
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

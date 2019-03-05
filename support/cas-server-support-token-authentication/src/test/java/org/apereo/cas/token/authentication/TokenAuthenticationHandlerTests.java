@@ -18,6 +18,7 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.TokenAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
@@ -27,10 +28,9 @@ import org.apereo.cas.util.gen.RandomStringGenerator;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
+import lombok.SneakyThrows;
 import lombok.val;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.jwt.config.encryption.SecretEncryptionConfiguration;
 import org.pac4j.jwt.config.signature.SecretSignatureConfiguration;
@@ -41,13 +41,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link TokenAuthenticationHandlerTests}.
@@ -75,22 +73,17 @@ import static org.junit.Assert.*;
     CasCoreServicesConfiguration.class,
     TokenAuthenticationConfiguration.class})
 public class TokenAuthenticationHandlerTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
     private static final RandomStringGenerator RANDOM_STRING_GENERATOR = new DefaultRandomStringGenerator();
     private static final String SIGNING_SECRET = RANDOM_STRING_GENERATOR.getNewString(256);
     private static final String ENCRYPTION_SECRET = RANDOM_STRING_GENERATOR.getNewString(48);
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     @Qualifier("tokenAuthenticationHandler")
     private AuthenticationHandler tokenAuthenticationHandler;
 
     @Test
-    public void verifyKeysAreSane() throws Exception {
+    @SneakyThrows
+    public void verifyKeysAreSane() {
         val g = new JwtGenerator<CommonProfile>();
         g.setSignatureConfiguration(new SecretSignatureConfiguration(SIGNING_SECRET, JWSAlgorithm.HS256));
         g.setEncryptionConfiguration(new SecretEncryptionConfiguration(ENCRYPTION_SECRET, JWEAlgorithm.DIR, EncryptionMethod.A192CBC_HS384));
@@ -119,7 +112,7 @@ public class TokenAuthenticationHandlerTests {
             p2.addValue(ENCRYPTION_SECRET);
             svc.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION.getPropertyName(), p2);
 
-            val l = new ArrayList();
+            val l = new ArrayList<RegisteredService>();
             l.add(svc);
             return l;
         }

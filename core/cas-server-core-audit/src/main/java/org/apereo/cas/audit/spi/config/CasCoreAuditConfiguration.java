@@ -6,6 +6,7 @@ import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
+import org.apereo.cas.audit.spi.FilterAndDelegateAuditTrailManager;
 import org.apereo.cas.audit.spi.plan.DefaultAuditTrailExecutionPlan;
 import org.apereo.cas.audit.spi.plan.DefaultAuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.spi.principal.ChainingAuditPrincipalIdProvider;
@@ -69,12 +70,17 @@ public class CasCoreAuditConfiguration implements AuditTrailExecutionPlanConfigu
     private ApplicationContext applicationContext;
 
     @Bean
-    public AuditTrailManagementAspect auditTrailManagementAspect(@Qualifier("auditTrailExecutionPlan") final AuditTrailExecutionPlan auditTrailExecutionPlan,
-                                                                 @Qualifier("auditTrailRecordResolutionPlan") final AuditTrailRecordResolutionPlan auditTrailRecordResolutionPlan) {
+    public AuditTrailManagementAspect auditTrailManagementAspect(@Qualifier("auditTrailExecutionPlan")
+                                                                 final AuditTrailExecutionPlan auditTrailExecutionPlan,
+                                                                 @Qualifier("auditTrailRecordResolutionPlan")
+                                                                 final AuditTrailRecordResolutionPlan auditTrailRecordResolutionPlan) {
+        val supportedActions = casProperties.getAudit().getSupportedActions();
+        val auditManager = new FilterAndDelegateAuditTrailManager(auditTrailExecutionPlan.getAuditTrailManagers(), supportedActions);
         val aspect = new AuditTrailManagementAspect(
             casProperties.getAudit().getAppCode(),
             auditablePrincipalResolver(auditPrincipalIdProvider()),
-            auditTrailExecutionPlan.getAuditTrailManagers(), auditTrailRecordResolutionPlan.getAuditActionResolvers(),
+            CollectionUtils.wrapList(auditManager),
+            auditTrailRecordResolutionPlan.getAuditActionResolvers(),
             auditTrailRecordResolutionPlan.getAuditResourceResolvers());
         aspect.setFailOnAuditFailures(!casProperties.getAudit().isIgnoreAuditFailures());
         return aspect;
@@ -110,7 +116,7 @@ public class CasCoreAuditConfiguration implements AuditTrailExecutionPlanConfigu
     public FilterRegistrationBean casClientInfoLoggingFilter() {
         val audit = casProperties.getAudit();
 
-        val bean = new FilterRegistrationBean();
+        val bean = new FilterRegistrationBean<ClientInfoThreadLocalFilter>();
         bean.setFilter(new ClientInfoThreadLocalFilter());
         bean.setUrlPatterns(CollectionUtils.wrap("/*"));
         bean.setName("CAS Client Info Logging Filter");

@@ -3,16 +3,14 @@ package org.apereo.cas.adaptors.generic;
 import org.apereo.cas.authentication.credential.RememberMeUsernamePasswordCredential;
 
 import lombok.val;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 
 import javax.security.auth.login.FailedLoginException;
 import java.util.Collections;
 import java.util.HashSet;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Handles tests for {@link ShiroAuthenticationHandler}.
@@ -21,9 +19,6 @@ import static org.junit.Assert.*;
  * @since 4.2
  */
 public class ShiroAuthenticationHandlerTests {
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @Test
     public void checkAuthenticationSuccessful() throws Exception {
@@ -53,7 +48,7 @@ public class ShiroAuthenticationHandlerTests {
     }
 
     @Test
-    public void checkAuthenticationSuccessfulMissingRole() throws Exception {
+    public void checkAuthenticationSuccessfulMissingRole() {
         val shiro = new ShiroAuthenticationHandler("", null, null, Collections.singleton("student"), new HashSet<>(0));
         shiro.loadShiroConfiguration(new ClassPathResource("shiro.ini"));
 
@@ -62,14 +57,11 @@ public class ShiroAuthenticationHandlerTests {
         creds.setUsername("casuser");
         creds.setPassword("Mellon");
 
-        this.thrown.expect(FailedLoginException.class);
-
-
-        shiro.authenticate(creds);
+        assertThrows(FailedLoginException.class, () -> shiro.authenticate(creds));
     }
 
     @Test
-    public void checkAuthenticationSuccessfulMissingPermission() throws Exception {
+    public void checkAuthenticationSuccessfulMissingPermission() {
         val shiro = new ShiroAuthenticationHandler("", null, null, new HashSet<>(0), Collections.singleton("dosomething"));
         shiro.loadShiroConfiguration(new ClassPathResource("shiro.ini"));
 
@@ -78,9 +70,6 @@ public class ShiroAuthenticationHandlerTests {
         creds.setUsername("casuser");
         creds.setPassword("Mellon");
 
-        this.thrown.expect(FailedLoginException.class);
-
-
-        shiro.authenticate(creds);
+        assertThrows(FailedLoginException.class, () -> shiro.authenticate(creds));
     }
 }

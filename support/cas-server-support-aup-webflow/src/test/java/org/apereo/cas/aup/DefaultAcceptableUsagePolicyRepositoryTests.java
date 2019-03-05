@@ -61,9 +61,9 @@ public class DefaultAcceptableUsagePolicyRepositoryTests extends BaseAcceptableU
         WebUtils.putTicketGrantingTicketInScopes(context, "TGT-12345");
 
         val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casaup");
-        assertFalse(repo.verify(context, c).getLeft());
+        assertFalse(repo.verify(context, c).isAccepted());
         assertTrue(repo.submit(context, c));
-        assertTrue(repo.verify(context, c).getLeft());
+        assertTrue(repo.verify(context, c).isAccepted());
     }
 
     @Override

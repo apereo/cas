@@ -22,7 +22,10 @@ public interface AccessTokenFactory extends TicketFactory {
      * @param authentication       the authentication
      * @param ticketGrantingTicket the ticket granting ticket
      * @param scopes               the scopes
+     * @param clientId             the client id
      * @return the access token
      */
-    AccessToken create(Service service, Authentication authentication, TicketGrantingTicket ticketGrantingTicket, Collection<String> scopes);
+    AccessToken create(Service service, Authentication authentication,
+                       TicketGrantingTicket ticketGrantingTicket, Collection<String> scopes,
+                       String clientId);
 }

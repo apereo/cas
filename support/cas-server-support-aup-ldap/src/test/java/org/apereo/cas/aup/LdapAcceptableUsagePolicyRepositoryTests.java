@@ -1,7 +1,6 @@
 package org.apereo.cas.aup;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
-import org.apereo.cas.category.LdapCategory;
 import org.apereo.cas.config.CasAcceptableUsagePolicyLdapConfiguration;
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
@@ -12,8 +11,8 @@ import lombok.SneakyThrows;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
@@ -27,7 +26,7 @@ import org.springframework.test.context.TestPropertySource;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Category(LdapCategory.class)
+@Tag("Ldap")
 @Import(CasAcceptableUsagePolicyLdapConfiguration.class)
 @EnabledIfContinuousIntegration
 @TestPropertySource(properties = {

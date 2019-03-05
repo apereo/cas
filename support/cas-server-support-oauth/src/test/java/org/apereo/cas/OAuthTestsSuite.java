@@ -16,6 +16,7 @@ import org.apereo.cas.support.oauth.web.OAuth20ProfileControllerTests;
 import org.apereo.cas.support.oauth.web.OAuth20RefreshTokenTests;
 import org.apereo.cas.support.oauth.web.audit.AccessTokenGrantRequestAuditResourceResolverTests;
 import org.apereo.cas.support.oauth.web.audit.OAuth20UserProfileDataAuditResourceResolverTests;
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20DefaultAccessTokenResponseGeneratorTests;
 import org.apereo.cas.support.oauth.web.views.OAuth20DefaultUserProfileViewRendererFlatTests;
 import org.apereo.cas.support.oauth.web.views.OAuth20DefaultUserProfileViewRendererNestedTests;
 import org.apereo.cas.ticket.accesstoken.OAuthAccessTokenExpirationPolicyTests;
@@ -23,8 +24,7 @@ import org.apereo.cas.ticket.accesstoken.OAuthAccessTokenSovereignExpirationPoli
 import org.apereo.cas.ticket.refreshtoken.OAuthRefreshTokenExpirationPolicyTests;
 import org.apereo.cas.ticket.refreshtoken.OAuthRefreshTokenSovereignExpirationPolicyTests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * OAuth test suite that runs all test in a batch.
@@ -32,8 +32,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@SelectClasses({
     OAuth20AccessTokenControllerTests.class,
     OAuth20AccessTokenControllerNoGrantTypeTests.class,
     OAuth20AuthorizeControllerTests.class,
@@ -55,6 +54,7 @@ import org.junit.runners.Suite;
     OAuth20DefaultUserProfileViewRendererNestedTests.class,
     AccessTokenGrantRequestAuditResourceResolverTests.class,
     OAuth20UserProfileDataAuditResourceResolverTests.class,
+    OAuth20DefaultAccessTokenResponseGeneratorTests.class,
     OAuth20RefreshTokenTests.class
 })
 public class OAuthTestsSuite {

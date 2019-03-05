@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.services;
 
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.ResourceUtils;
@@ -36,12 +38,15 @@ public class GroovySamlRegisteredServiceAttributeReleasePolicy extends BaseSamlR
 
     @Override
     protected Map<String, Object> getAttributesForSamlRegisteredService(final Map<String, Object> attributes,
-                                                                        final SamlRegisteredService service, final ApplicationContext applicationContext,
+                                                                        final SamlRegisteredService registeredService,
+                                                                        final ApplicationContext applicationContext,
                                                                         final SamlRegisteredServiceCachingMetadataResolver resolver,
                                                                         final SamlRegisteredServiceServiceProviderMetadataFacade facade,
-                                                                        final EntityDescriptor entityDescriptor) {
+                                                                        final EntityDescriptor entityDescriptor,
+                                                                        final Principal principal,
+                                                                        final Service selectedService) {
         try {
-            val args = new Object[] {attributes, service, resolver, facade, entityDescriptor, applicationContext, LOGGER};
+            val args = new Object[] {attributes, registeredService, resolver, facade, entityDescriptor, applicationContext, LOGGER};
             val resource = ResourceUtils.getResourceFrom(this.groovyScript);
             return ScriptingUtils.executeGroovyScript(resource, args, Map.class, true);
         } catch (final Exception e) {

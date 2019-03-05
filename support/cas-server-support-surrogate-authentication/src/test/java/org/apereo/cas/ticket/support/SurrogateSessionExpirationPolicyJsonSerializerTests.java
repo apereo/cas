@@ -4,9 +4,9 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link SurrogateSessionExpirationPolicyJsonSerializerTests}.
@@ -17,7 +17,7 @@ import static org.junit.Assert.*;
 public class SurrogateSessionExpirationPolicyJsonSerializerTests {
     @Test
     public void verifyOperation() {
-        val policy = new SurrogateSessionExpirationPolicy(new HardTimeoutExpirationPolicy(100));
+        val policy = new SurrogateSessionExpirationPolicy();
         val serializer = new SurrogateSessionExpirationPolicyJsonSerializer();
         val result = serializer.toString(policy);
         assertNotNull(result);
