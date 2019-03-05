@@ -43,6 +43,7 @@ import org.apereo.cas.oidc.web.OidcCallbackAuthorizeViewResolver;
 import org.apereo.cas.oidc.web.OidcCasClientRedirectActionBuilder;
 import org.apereo.cas.oidc.web.OidcConsentApprovalViewResolver;
 import org.apereo.cas.oidc.web.OidcHandlerInterceptorAdapter;
+import org.apereo.cas.oidc.web.OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder;
 import org.apereo.cas.oidc.web.OidcImplicitIdTokenAuthorizationResponseBuilder;
 import org.apereo.cas.oidc.web.OidcSecurityInterceptor;
 import org.apereo.cas.oidc.web.controllers.authorize.OidcAuthorizeEndpointController;
@@ -668,6 +669,12 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
     public OAuth20AuthorizationResponseBuilder oidcImplicitIdTokenCallbackUrlBuilder() {
         return new OidcImplicitIdTokenAuthorizationResponseBuilder(oidcIdTokenGenerator(), oauthTokenGenerator.getIfAvailable(),
             accessTokenExpirationPolicy.getIfAvailable(), grantingTicketExpirationPolicy.getIfAvailable());
+    }
+
+    @Bean
+    public OAuth20AuthorizationResponseBuilder oidcImplicitIdTokenAndTokenCallbackUrlBuilder() {
+        return new OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder(oidcIdTokenGenerator(), oauthTokenGenerator.getIfAvailable(),
+                accessTokenExpirationPolicy.getIfAvailable(), grantingTicketExpirationPolicy.getIfAvailable());
     }
 
     @Bean
