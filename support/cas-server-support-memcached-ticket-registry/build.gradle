@@ -1,7 +1,4 @@
 description = "Apereo CAS Memcached Integration"
-ext {
-    useJunit5 = true
-}
 dependencies {
     implementation libraries.kryo
 
@@ -25,6 +22,7 @@ dependencies {
 
     testImplementation project(":support:cas-server-support-oauth-core")
     testImplementation project(":support:cas-server-support-oauth")
+    testImplementation project(":support:cas-server-support-oauth-core-api")
     testImplementation project(":support:cas-server-support-oauth-api")
     testImplementation project(":support:cas-server-support-oauth-services")
 

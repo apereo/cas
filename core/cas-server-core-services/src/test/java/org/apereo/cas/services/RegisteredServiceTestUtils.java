@@ -90,6 +90,10 @@ public class RegisteredServiceTestUtils {
     }
 
     public static Map<String, Set<String>> getTestAttributes() {
+        return getTestAttributes("CASUser");
+    }
+
+    public static Map<String, Set<String>> getTestAttributes(final String username) {
         val attributes = new HashMap<String, Set<String>>();
         Set<String> attributeValues = new HashSet<>();
         attributeValues.add("uid");
@@ -97,7 +101,7 @@ public class RegisteredServiceTestUtils {
         attributes.put("uid", attributeValues);
 
         attributeValues = new HashSet<>();
-        attributeValues.add("CASUser");
+        attributeValues.add(username);
 
         attributes.put("givenName", attributeValues);
 
@@ -115,11 +119,15 @@ public class RegisteredServiceTestUtils {
     }
 
     @SneakyThrows
-    public static AbstractRegisteredService getRegisteredService(final String id, final Class<? extends RegisteredService> clazz) {
+    public static AbstractRegisteredService getRegisteredService(final String id, final Class<? extends RegisteredService> clazz, final boolean uniq) {
         val s = (AbstractRegisteredService) clazz.getDeclaredConstructor().newInstance();
         s.setServiceId(id);
         s.setEvaluationOrder(1);
-        s.setName("TestService" + UUID.randomUUID().toString());
+        if (uniq) {
+            s.setName("TestService" + UUID.randomUUID().toString());
+        } else {
+            s.setName(id);
+        }
         s.setDescription("Registered service description");
         s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.+"));
         s.setId(RandomUtils.nextLong());
@@ -151,9 +159,16 @@ public class RegisteredServiceTestUtils {
         return s;
     }
 
-    @SneakyThrows
+    public static AbstractRegisteredService getRegisteredService(final String id, final Class<? extends RegisteredService> clazz) {
+        return getRegisteredService(id, clazz, true);
+    }
+
     public static AbstractRegisteredService getRegisteredService(final String id) {
-        return getRegisteredService(id, RegexRegisteredService.class);
+        return getRegisteredService(id, RegexRegisteredService.class, true);
+    }
+
+    public static AbstractRegisteredService getRegisteredService(final String id, final boolean uniq) {
+        return getRegisteredService(id, RegexRegisteredService.class, uniq);
     }
 
     public static Principal getPrincipal() {

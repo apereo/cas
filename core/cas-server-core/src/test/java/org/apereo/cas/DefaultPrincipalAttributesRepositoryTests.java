@@ -1,12 +1,13 @@
 package org.apereo.cas;
 
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,7 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Handles tests for {@link DefaultPrincipalAttributesRepository}.
@@ -34,15 +35,17 @@ public class DefaultPrincipalAttributesRepositoryTests extends BaseCasCoreTests 
     @Test
     public void checkDefaultAttributes() {
         val rep = new DefaultPrincipalAttributesRepository();
-        assertEquals(3, rep.getAttributes(this.principalFactory.getIfAvailable().createPrincipal("uid")).size());
+        val principal = this.principalFactory.getIfAvailable().createPrincipal("uid");
+        assertEquals(3, rep.getAttributes(principal, CoreAuthenticationTestUtils.getRegisteredService()).size());
     }
 
     @Test
     public void checkInitialAttributes() {
         val p = this.principalFactory.getIfAvailable().createPrincipal("uid", Collections.singletonMap("mail", "final@example.com"));
         val rep = new DefaultPrincipalAttributesRepository();
-        assertEquals(1, rep.getAttributes(p).size());
-        assertTrue(rep.getAttributes(p).containsKey("mail"));
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
+        assertEquals(1, rep.getAttributes(p, registeredService).size());
+        assertTrue(rep.getAttributes(p, registeredService).containsKey("mail"));
     }
 
     @Test

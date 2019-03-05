@@ -8,6 +8,7 @@ dependencies {
     implementation libraries.nimbus
     
     implementation project(":support:cas-server-support-oauth-core")
+    implementation project(":support:cas-server-support-oauth-core-api")
     implementation project(":support:cas-server-support-oauth-services")
     implementation project(":support:cas-server-support-oauth-api")
     implementation project(":support:cas-server-support-oauth")

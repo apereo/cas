@@ -4,12 +4,12 @@ import org.apereo.cas.uma.ticket.resource.ResourceSetPolicy;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointControllerTests;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link UmaFindPolicyForResourceSetEndpointControllerTests}.

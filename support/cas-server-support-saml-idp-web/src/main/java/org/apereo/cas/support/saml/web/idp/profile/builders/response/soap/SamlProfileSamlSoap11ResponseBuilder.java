@@ -99,7 +99,8 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
      * @return the org . opensaml . saml . saml 2 . core . response
      */
     protected org.opensaml.saml.saml2.core.Response buildSaml2Response(final Object casAssertion,
-                                                                       final RequestAbstractType authnRequest, final SamlRegisteredService service,
+                                                                       final RequestAbstractType authnRequest,
+                                                                       final SamlRegisteredService service,
                                                                        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                                        final HttpServletRequest request,
                                                                        final String binding,

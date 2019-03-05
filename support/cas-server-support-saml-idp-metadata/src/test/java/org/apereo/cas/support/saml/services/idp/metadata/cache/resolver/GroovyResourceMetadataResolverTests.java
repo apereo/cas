@@ -6,10 +6,11 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.FileSystemResource;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link GroovyResourceMetadataResolverTests}.
@@ -17,6 +18,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Tag("Groovy")
 public class GroovyResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
 
 

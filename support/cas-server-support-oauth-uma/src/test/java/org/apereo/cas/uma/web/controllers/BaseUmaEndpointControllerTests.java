@@ -41,7 +41,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link BaseUmaEndpointControllerTests}.
@@ -111,7 +111,7 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
     private Triple<HttpServletRequest, HttpServletResponse, String> authenticateUmaRequestWithScope(
         final String scope, final SecurityInterceptor interceptor) throws Exception {
         val service = addRegisteredService();
-        val pair = internalVerifyClientOK(service, false, scope);
+        val pair = assertClientOK(service, false, scope);
         assertNotNull(pair.getKey());
         val accessToken = pair.getKey();
 
@@ -122,11 +122,11 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
         return Triple.of(mockRequest, mockResponse, accessToken);
     }
 
-    protected UmaResourceRegistrationRequest createUmaResourceRegistrationRequest() {
+    protected static UmaResourceRegistrationRequest createUmaResourceRegistrationRequest() {
         return createUmaResourceRegistrationRequest(-1);
     }
 
-    protected UmaResourceRegistrationRequest createUmaResourceRegistrationRequest(final long id) {
+    protected static UmaResourceRegistrationRequest createUmaResourceRegistrationRequest(final long id) {
         val resRequest = new UmaResourceRegistrationRequest();
         resRequest.setUri("http://rs.example.com/alice/myresource");
         resRequest.setName("my-resource");
@@ -138,11 +138,11 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
         return resRequest;
     }
 
-    protected ResourceSetPolicy createUmaPolicyRegistrationRequest(final CommonProfile profile) {
+    protected static ResourceSetPolicy createUmaPolicyRegistrationRequest(final CommonProfile profile) {
         return createUmaPolicyRegistrationRequest(profile, CollectionUtils.wrapHashSet("read", "write"));
     }
 
-    protected ResourceSetPolicy createUmaPolicyRegistrationRequest(final CommonProfile profile, final Collection<String> scopes) {
+    protected static ResourceSetPolicy createUmaPolicyRegistrationRequest(final CommonProfile profile, final Collection<String> scopes) {
         val policy = new ResourceSetPolicy();
         val perm = new ResourceSetPolicyPermission();
         perm.setScopes(new HashSet<>(scopes));
@@ -152,7 +152,7 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
         return policy;
     }
 
-    protected UmaPermissionRegistrationRequest createUmaPermissionRegistrationRequest(final long resourceId) {
+    protected static UmaPermissionRegistrationRequest createUmaPermissionRegistrationRequest(final long resourceId) {
         val perm = new UmaPermissionRegistrationRequest();
         perm.setResourceId(resourceId);
         perm.setScopes(CollectionUtils.wrapList("read"));
@@ -167,7 +167,7 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
      * @param response the response
      * @return the current profile
      */
-    protected CommonProfile getCurrentProfile(final HttpServletRequest request, final HttpServletResponse response) {
+    protected static CommonProfile getCurrentProfile(final HttpServletRequest request, final HttpServletResponse response) {
         return (CommonProfile) Pac4jUtils.getPac4jProfileManager(request, response).get(true).get();
     }
 }

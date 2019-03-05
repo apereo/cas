@@ -12,8 +12,10 @@ import org.apereo.cas.services.ServicesManager;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
@@ -52,10 +54,47 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
         super(name, servicesManager, principalFactory, order);
     }
 
+    @SneakyThrows
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
         val originalUserPass = (UsernamePasswordCredential) credential;
-        val userPass = new UsernamePasswordCredential(originalUserPass.getUsername(), originalUserPass.getPassword());
+        val userPass = new UsernamePasswordCredential();
+
+        BeanUtils.copyProperties(userPass, originalUserPass);
+
+        transformUsername(userPass);
+        transformPassword(userPass);
+
+        LOGGER.debug("Attempting authentication internally for transformed credential [{}]", userPass);
+        return authenticateUsernamePasswordInternal(userPass, originalUserPass.getPassword());
+    }
+
+    /**
+     * Transform password.
+     *
+     * @param userPass the user pass
+     * @throws FailedLoginException     the failed login exception
+     * @throws AccountNotFoundException the account not found exception
+     */
+    protected void transformPassword(final UsernamePasswordCredential userPass) throws FailedLoginException, AccountNotFoundException {
+        if (StringUtils.isBlank(userPass.getPassword())) {
+            throw new FailedLoginException("Password is null.");
+        }
+        LOGGER.debug("Attempting to encode credential password via [{}] for [{}]", this.passwordEncoder.getClass().getName(), userPass.getUsername());
+        val transformedPsw = this.passwordEncoder.encode(userPass.getPassword());
+        if (StringUtils.isBlank(transformedPsw)) {
+            throw new AccountNotFoundException("Encoded password is null.");
+        }
+        userPass.setPassword(transformedPsw);
+    }
+
+    /**
+     * Transform username.
+     *
+     * @param userPass the user pass
+     * @throws AccountNotFoundException the account not found exception
+     */
+    protected void transformUsername(final UsernamePasswordCredential userPass) throws AccountNotFoundException {
         if (StringUtils.isBlank(userPass.getUsername())) {
             throw new AccountNotFoundException("Username is null.");
         }
@@ -64,19 +103,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
         if (StringUtils.isBlank(transformedUsername)) {
             throw new AccountNotFoundException("Transformed username is null.");
         }
-        if (StringUtils.isBlank(userPass.getPassword())) {
-            throw new FailedLoginException("Password is null.");
-        }
-        LOGGER.debug("Attempting to encode credential password via [{}] for [{}]", this.passwordEncoder.getClass().getName(),
-            transformedUsername);
-        val transformedPsw = this.passwordEncoder.encode(userPass.getPassword());
-        if (StringUtils.isBlank(transformedPsw)) {
-            throw new AccountNotFoundException("Encoded password is null.");
-        }
         userPass.setUsername(transformedUsername);
-        userPass.setPassword(transformedPsw);
-        LOGGER.debug("Attempting authentication internally for transformed credential [{}]", userPass);
-        return authenticateUsernamePasswordInternal(userPass, originalUserPass.getPassword());
     }
 
     /**

@@ -6,6 +6,7 @@ import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.config.AppenderRef;
 import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.Property;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
 import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
 import org.apache.logging.log4j.core.config.plugins.PluginConfiguration;
@@ -34,7 +35,7 @@ public class CasAppender extends AbstractAppender {
      * @param appenderRef the appender ref
      */
     public CasAppender(final String name, final Configuration config, final AppenderRef appenderRef) {
-        super(name, null, PatternLayout.createDefaultLayout());
+        super(name, null, PatternLayout.createDefaultLayout(), false, Property.EMPTY_ARRAY);
         this.config = config;
         this.appenderRef = appenderRef;
     }

@@ -1,7 +1,4 @@
 description = "Apereo CAS Core Google Authenticator Support"
-ext {
-    useJunit5 = true
-}
 dependencies {
     api libraries.googleauth
     api libraries.zxingbarcode

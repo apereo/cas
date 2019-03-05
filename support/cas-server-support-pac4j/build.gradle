@@ -12,7 +12,7 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-cookie-api")
     implementation project(":support:cas-server-support-pac4j-authentication")
-    
+
     implementation libraries.pac4j
     implementation libraries.pac4jcore
     implementation libraries.pac4jcas
@@ -20,7 +20,7 @@ dependencies {
     implementation libraries.jose4j
     implementation libraries.shibidpjavasupport
     implementation libraries.opensaml
-    
+
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(":core:cas-server-core-services")

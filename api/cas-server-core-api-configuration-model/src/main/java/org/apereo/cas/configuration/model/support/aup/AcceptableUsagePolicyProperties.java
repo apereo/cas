@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbP
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RestEndpointProperties;
+import org.apereo.cas.configuration.support.SpringResourceProperties;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -50,6 +51,11 @@ public class AcceptableUsagePolicyProperties implements Serializable {
      * Keep consent decisions stored via a MongoDb database resource.
      */
     private MongoDb mongo = new MongoDb();
+
+    /**
+     * Keep consent decisions stored via a Groovy script.
+     */
+    private Groovy groovy = new Groovy();
 
     /**
      * AUP enabled allows AUP to be turned off on startup.
@@ -159,5 +165,12 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     public static class Ldap extends AbstractLdapSearchProperties {
 
         private static final long serialVersionUID = -7991011278378393382L;
+    }
+
+    @RequiresModule(name = "cas-server-support-aup-core", automated = true)
+    @Getter
+    @Setter
+    public static class Groovy extends SpringResourceProperties {
+        private static final long serialVersionUID = 9164227843747126083L;
     }
 }
