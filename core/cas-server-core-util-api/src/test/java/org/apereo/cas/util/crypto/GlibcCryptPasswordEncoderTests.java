@@ -15,25 +15,25 @@ import static org.junit.Assert.*;
 public class GlibcCryptPasswordEncoderTests {
 
     @Test
-    public void testSha512Encoding() {
+    public void sha512EncodingTest() {
         testEncoding("SHA-512");
         testEncoding("6");
     }
 
     @Test
-    public void testSha256Encoding() {
+    public void ha256EncodingTest() {
         testEncoding("SHA-256");
         testEncoding("5");
     }
     
     @Test
-    public void testMd5Encoding() {
+    public void md5EncodingTest() {
         testEncoding("MD5");
         testEncoding("1");
     }
     
     @Test
-    public void testDesUnixCryptEncoding() {
+    public void desUnixCryptEncodingTest() {
         testEncoding("aB");
         testEncoding("42xyz");
         testEncoding("");
