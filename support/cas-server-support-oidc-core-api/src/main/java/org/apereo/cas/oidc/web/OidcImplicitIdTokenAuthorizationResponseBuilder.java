@@ -17,7 +17,7 @@ import lombok.val;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.pac4j.core.context.J2EContext;
-import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
@@ -43,11 +43,11 @@ public class OidcImplicitIdTokenAuthorizationResponseBuilder extends OAuth20Toke
     }
 
     @Override
-    protected View buildCallbackUrlResponseType(final AccessTokenRequestDataHolder holder,
-                                                final String redirectUri, final AccessToken accessToken,
-                                                final List<NameValuePair> params,
-                                                final RefreshToken refreshToken,
-                                                final J2EContext context) throws Exception {
+    protected ModelAndView buildCallbackUrlResponseType(final AccessTokenRequestDataHolder holder,
+                                                        final String redirectUri, final AccessToken accessToken,
+                                                        final List<NameValuePair> params,
+                                                        final RefreshToken refreshToken,
+                                                        final J2EContext context) throws Exception {
 
         val idToken = this.idTokenGenerator.generate(context.getRequest(),
             context.getResponse(), accessToken, idTokenExpirationPolicy.getTimeToLive(),

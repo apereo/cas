@@ -1,9 +1,7 @@
 package org.apereo.cas.oidc.web.controllers.authorize;
 
 import org.apereo.cas.audit.AuditableExecution;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -12,7 +10,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
-import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointController;
@@ -25,11 +22,9 @@ import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.pac4j.core.context.J2EContext;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -81,11 +76,5 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
     @Override
     public ModelAndView handleRequestPost(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return handleRequest(request, response);
-    }
-
-    @Override
-    protected View buildAuthorizationForRequest(final OAuthRegisteredService registeredService, final J2EContext context,
-                                                final String clientId, final Service service, final Authentication authentication) {
-        return super.buildAuthorizationForRequest(registeredService, context, clientId, service, authentication);
     }
 }
