@@ -13,7 +13,7 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.pac4j.core.context.J2EContext;
-import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * This is {@link OAuth20ResourceOwnerCredentialsResponseBuilder}.
@@ -29,7 +29,7 @@ public class OAuth20ResourceOwnerCredentialsResponseBuilder implements OAuth20Au
     private final CasConfigurationProperties casProperties;
 
     @Override
-    public View build(final J2EContext context, final String clientId, final AccessTokenRequestDataHolder holder) {
+    public ModelAndView build(final J2EContext context, final String clientId, final AccessTokenRequestDataHolder holder) {
         val accessTokenResult = accessTokenGenerator.generate(holder);
         val result = OAuth20AccessTokenResponseResult.builder()
             .registeredService(holder.getRegisteredService())
@@ -40,7 +40,7 @@ public class OAuth20ResourceOwnerCredentialsResponseBuilder implements OAuth20Au
             .generatedToken(accessTokenResult)
             .build();
         accessTokenResponseGenerator.generate(context.getRequest(), context.getResponse(), result);
-        return null;
+        return new ModelAndView();
     }
 
     @Override

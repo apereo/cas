@@ -17,7 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
 import org.pac4j.core.context.J2EContext;
-import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
 
     @Override
     @SneakyThrows
-    public View build(final J2EContext context, final String clientId, final AccessTokenRequestDataHolder holder) {
+    public ModelAndView build(final J2EContext context, final String clientId, final AccessTokenRequestDataHolder holder) {
 
         val redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI);
         LOGGER.debug("Authorize request verification successful for client [{}] with redirect uri [{}]", clientId, redirectUri);
@@ -63,12 +63,12 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
      * @return the string
      * @throws Exception the exception
      */
-    protected View buildCallbackUrlResponseType(final AccessTokenRequestDataHolder holder,
-                                                final String redirectUri,
-                                                final AccessToken accessToken,
-                                                final List<NameValuePair> params,
-                                                final RefreshToken refreshToken,
-                                                final J2EContext context) throws Exception {
+    protected ModelAndView buildCallbackUrlResponseType(final AccessTokenRequestDataHolder holder,
+                                                        final String redirectUri,
+                                                        final AccessToken accessToken,
+                                                        final List<NameValuePair> params,
+                                                        final RefreshToken refreshToken,
+                                                        final J2EContext context) throws Exception {
         val attributes = holder.getAuthentication().getAttributes();
         val state = attributes.get(OAuth20Constants.STATE).toString();
         val nonce = attributes.get(OAuth20Constants.NONCE).toString();
@@ -115,7 +115,7 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
         val url = builder.toString();
 
         LOGGER.debug("Redirecting to URL [{}]", url);
-        return new RedirectView(url);
+        return new ModelAndView(new RedirectView(url));
     }
 
     @Override

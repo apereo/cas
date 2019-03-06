@@ -39,20 +39,12 @@ public class OAuth20CasCallbackUrlResolver implements UrlResolver {
         if (url.startsWith(callbackUrl)) {
             val builder = new URIBuilder(url);
 
-            var parameter = getQueryParameter(context, OAuth20Constants.CLIENT_ID);
-            parameter.ifPresent(basicNameValuePair -> builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));
-
-            parameter = getQueryParameter(context, OAuth20Constants.REDIRECT_URI);
-            parameter.ifPresent(basicNameValuePair -> builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));
-
-            parameter = getQueryParameter(context, OAuth20Constants.ACR_VALUES);
-            parameter.ifPresent(basicNameValuePair -> builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));
-
-            parameter = getQueryParameter(context, OAuth20Constants.RESPONSE_TYPE);
-            parameter.ifPresent(basicNameValuePair -> builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));
-
-            parameter = getQueryParameter(context, OAuth20Constants.GRANT_TYPE);
-            parameter.ifPresent(basicNameValuePair -> builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));
+            addUrlParameter(context, builder, OAuth20Constants.CLIENT_ID);
+            addUrlParameter(context, builder, OAuth20Constants.REDIRECT_URI);
+            addUrlParameter(context, builder, OAuth20Constants.ACR_VALUES);
+            addUrlParameter(context, builder, OAuth20Constants.RESPONSE_TYPE);
+            addUrlParameter(context, builder, OAuth20Constants.GRANT_TYPE);
+            addUrlParameter(context, builder, OAuth20Constants.RESPONSE_MODE);
 
             val callbackResolved = builder.build().toString();
 
@@ -60,5 +52,10 @@ public class OAuth20CasCallbackUrlResolver implements UrlResolver {
             return callbackResolved;
         }
         return url;
+    }
+
+    private static void addUrlParameter(final WebContext context, final URIBuilder builder, final String parameterName) {
+        var parameter = getQueryParameter(context, parameterName);
+        parameter.ifPresent(basicNameValuePair -> builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));
     }
 }
