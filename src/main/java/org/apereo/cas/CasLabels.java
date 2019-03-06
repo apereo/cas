@@ -51,7 +51,7 @@ public enum CasLabels {
     LABEL_GUA("GUA"),
     LABEL_GEOLOCATION("GeoLocation"),
     LABEL_GRADLE_BUILD_RELEASE("Gradle Build & Release", "gulp|jdk|gradle|sonatype|snapshot|dependency|module|pom|bom|travis-ci|dependencies"),
-    LABEL_HAZELCAST("Hazelcast", "hz"),
+    LABEL_HAZELCAST("Hazelcast", "\bhz\b"),
     LABEL_INFINISPAN("Infinispan"),
     LABEL_INTERNATIONALIZATION("Internationalization", "localization|localized|message bundle|translation|language bundle|I18n"),
     LABEL_INTERRUPT_NOTIFICATIONS("Interrupt Notifications", "interrupt"),
