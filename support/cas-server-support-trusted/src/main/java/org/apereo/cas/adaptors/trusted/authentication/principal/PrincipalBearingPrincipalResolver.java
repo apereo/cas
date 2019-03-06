@@ -10,6 +10,7 @@ import lombok.ToString;
 import org.apereo.services.persondir.IPersonAttributeDao;
 
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Extracts the Principal out of PrincipalBearingCredential. It is very simple
@@ -25,8 +26,11 @@ public class PrincipalBearingPrincipalResolver extends PersonDirectoryPrincipalR
 
     public PrincipalBearingPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,
                                              final boolean returnNullIfNoAttributes, final String principalAttributeName,
-                                             final boolean useCurrentPrincipalId) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName, useCurrentPrincipalId);
+                                             final boolean useCurrentPrincipalId, final boolean resolveAttributes,
+                                             final Set<String> activeAttributeRepositoryIdentifiers) {
+        super(attributeRepository, principalFactory, returnNullIfNoAttributes,
+            principalAttributeName, useCurrentPrincipalId, resolveAttributes,
+            activeAttributeRepositoryIdentifiers);
     }
 
     @Override

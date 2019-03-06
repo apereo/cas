@@ -3,6 +3,7 @@ package org.apereo.cas;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
@@ -35,8 +36,8 @@ public class DefaultPrincipalAttributesRepositoryTests extends BaseCasCoreTests 
     @Test
     public void checkDefaultAttributes() {
         val rep = new DefaultPrincipalAttributesRepository();
-        val principal = this.principalFactory.getIfAvailable().createPrincipal("uid");
-        assertEquals(3, rep.getAttributes(principal, CoreAuthenticationTestUtils.getRegisteredService()).size());
+        val principal = CoreAuthenticationTestUtils.getPrincipal();
+        assertEquals(4, rep.getAttributes(principal, CoreAuthenticationTestUtils.getRegisteredService()).size());
     }
 
     @Test
@@ -51,6 +52,8 @@ public class DefaultPrincipalAttributesRepositoryTests extends BaseCasCoreTests 
     @Test
     public void verifySerializeADefaultPrincipalAttributesRepositoryToJson() throws IOException {
         val repositoryWritten = new DefaultPrincipalAttributesRepository();
+        repositoryWritten.setIgnoreResolvedAttributes(true);
+        repositoryWritten.setAttributeRepositoryIds(CollectionUtils.wrapSet("1", "2", "3"));
         MAPPER.writeValue(JSON_FILE, repositoryWritten);
         val repositoryRead = MAPPER.readValue(JSON_FILE, DefaultPrincipalAttributesRepository.class);
         assertEquals(repositoryWritten, repositoryRead);

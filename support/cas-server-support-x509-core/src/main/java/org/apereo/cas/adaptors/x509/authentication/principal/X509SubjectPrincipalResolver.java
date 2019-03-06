@@ -16,6 +16,7 @@ import org.cryptacular.x509.dn.StandardAttributeType;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -77,8 +78,11 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
     public X509SubjectPrincipalResolver(final IPersonAttributeDao attributeRepository,
                                         final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
                                         final String principalAttributeName, final String descriptor,
-                                        final boolean useCurrentPrincipalId) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName, useCurrentPrincipalId);
+                                        final boolean useCurrentPrincipalId, final boolean resolveAttributes,
+                                        final Set<String> activeAttributeRepositoryIdentifiers) {
+        super(attributeRepository, principalFactory, returnNullIfNoAttributes,
+            principalAttributeName, useCurrentPrincipalId, resolveAttributes,
+            activeAttributeRepositoryIdentifiers);
         this.descriptor = descriptor;
     }
 

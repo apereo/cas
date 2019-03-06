@@ -50,7 +50,7 @@ public class GroovyScriptMultifactorAuthenticationTrigger implements Multifactor
                                                                    final HttpServletRequest httpServletRequest, final Service service) {
         val groovyScript = casProperties.getAuthn().getMfa().getGroovyScript();
         if (groovyScript == null) {
-            LOGGER.debug("No groovy script is configured for multifactor authentication");
+            LOGGER.trace("No groovy script is configured for multifactor authentication");
             return Optional.empty();
         }
 
