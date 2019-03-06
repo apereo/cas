@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.sso.request;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Getter
 public class DefaultSSOSamlHttpRequestExtractor implements SSOSamlHttpRequestExtractor {
     /**
      * The Parser pool.
@@ -44,6 +46,9 @@ public class DefaultSSOSamlHttpRequestExtractor implements SSOSamlHttpRequestExt
         val messageContext = decoder.getMessageContext();
         LOGGER.trace("Locating SAML object from message context...");
         val object = (SignableSAMLObject) messageContext.getMessage();
+        if (object == null) {
+            throw new ClassCastException("SAML object cannot be determined from the decoder [{}]" + decoder.getClass().getSimpleName());
+        }
         if (!clazz.isAssignableFrom(object.getClass())) {
             throw new ClassCastException("SAML object [" + object.getClass().getName() + " type does not match " + clazz);
         }
