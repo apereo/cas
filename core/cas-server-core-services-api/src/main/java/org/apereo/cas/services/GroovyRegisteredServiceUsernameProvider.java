@@ -14,6 +14,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -47,13 +48,15 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
 
     @Override
     public String resolveUsernameInternal(final Principal principal, final Service service, final RegisteredService registeredService) {
-        val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(this.groovyScript);
-        val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(this.groovyScript);
-        if (matcherInline.find()) {
-            return resolveUsernameFromInlineGroovyScript(principal, service, matcherInline.group(1));
-        }
-        if (matcherFile.find()) {
-            return resolveUsernameFromExternalGroovyScript(principal, service, matcherFile.group(1));
+        if (StringUtils.isNotBlank(this.groovyScript)) {
+            val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(this.groovyScript);
+            val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(this.groovyScript);
+            if (matcherInline.find()) {
+                return resolveUsernameFromInlineGroovyScript(principal, service, matcherInline.group(1));
+            }
+            if (matcherFile.find()) {
+                return resolveUsernameFromExternalGroovyScript(principal, service, matcherFile.group(1));
+            }
         }
         LOGGER.warn("Groovy script [{}] is not valid. CAS will switch to use the default principal identifier [{}]", this.groovyScript, principal.getId());
         return principal.getId();
@@ -78,7 +81,7 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
 
     private String resolveUsernameFromInlineGroovyScript(final Principal principal, final Service service, final String script) {
         try {
-            LOGGER.debug("Found groovy script to execute [{}]", this.groovyScript);
+            LOGGER.trace("Found groovy script to execute [{}]", this.groovyScript);
             val result = getGroovyAttributeValue(principal, service, script);
             if (result != null) {
                 LOGGER.debug("Found username [{}] from script [{}]", result, this.groovyScript);
