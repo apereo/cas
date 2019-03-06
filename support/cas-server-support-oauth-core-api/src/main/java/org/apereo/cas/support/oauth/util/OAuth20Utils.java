@@ -23,7 +23,6 @@ import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -66,16 +65,6 @@ public class OAuth20Utils {
         mv.setStatus(HttpStatus.BAD_REQUEST);
         response.setStatus(HttpStatus.BAD_REQUEST.value());
         return mv;
-    }
-
-    /**
-     * Redirect to model and view.
-     *
-     * @param view the view
-     * @return the model and view
-     */
-    public static ModelAndView redirectTo(final View view) {
-        return new ModelAndView(view);
     }
 
     /**
@@ -272,8 +261,8 @@ public class OAuth20Utils {
         }
 
         LOGGER.warn("Registered service [{}] does not define any authorized/supported grant types. "
-                + "It is STRONGLY recommended that you authorize and assign grant types to the service definition. "
-                + "While just a warning for now, this behavior will be enforced by CAS in future versions.", registeredService.getName());
+            + "It is STRONGLY recommended that you authorize and assign grant types to the service definition. "
+            + "While just a warning for now, this behavior will be enforced by CAS in future versions.", registeredService.getName());
         return true;
     }
 
@@ -286,8 +275,8 @@ public class OAuth20Utils {
      */
     public static boolean isAuthorizedGrantTypeForService(final J2EContext context, final OAuthRegisteredService registeredService) {
         return isAuthorizedGrantTypeForService(
-                context.getRequestParameter(OAuth20Constants.GRANT_TYPE),
-                registeredService);
+            context.getRequestParameter(OAuth20Constants.GRANT_TYPE),
+            registeredService);
     }
 
     /**
@@ -399,5 +388,4 @@ public class OAuth20Utils {
         }
         return null;
     }
-
 }

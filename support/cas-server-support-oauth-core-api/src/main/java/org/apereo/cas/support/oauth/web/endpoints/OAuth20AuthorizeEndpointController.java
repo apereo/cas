@@ -38,7 +38,6 @@ import org.pac4j.core.profile.ProfileManager;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -213,9 +212,9 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
             return OAuth20Utils.produceUnauthorizedErrorView();
         }
 
-        val view = buildAuthorizationForRequest(registeredService, context, clientId, service, authentication);
-        if (view != null) {
-            return OAuth20Utils.redirectTo(view);
+        val modelAndView = buildAuthorizationForRequest(registeredService, context, clientId, service, authentication);
+        if (modelAndView != null && modelAndView.hasView()) {
+            return modelAndView;
         }
         LOGGER.debug("No explicit view was defined as part of the authorization response");
         return null;
@@ -231,10 +230,10 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
      * @param authentication    the authentication
      * @return the string
      */
-    protected View buildAuthorizationForRequest(final OAuthRegisteredService registeredService,
-                                                final J2EContext context,
-                                                final String clientId, final Service service,
-                                                final Authentication authentication) {
+    protected ModelAndView buildAuthorizationForRequest(final OAuthRegisteredService registeredService,
+                                                        final J2EContext context,
+                                                        final String clientId, final Service service,
+                                                        final Authentication authentication) {
         val builder = this.oauthAuthorizationResponseBuilders
             .stream()
             .filter(b -> b.supports(context))
@@ -247,7 +246,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
         val grantType = StringUtils.defaultIfEmpty(context.getRequestParameter(OAuth20Constants.GRANT_TYPE),
             OAuth20GrantTypes.AUTHORIZATION_CODE.getType()).toUpperCase();
         val scopes = OAuth20Utils.parseRequestScopes(context);
-        val codeChallenge =context.getRequestParameter(OAuth20Constants.CODE_CHALLENGE);
+        val codeChallenge = context.getRequestParameter(OAuth20Constants.CODE_CHALLENGE);
         val codeChallengeMethod = StringUtils.defaultIfEmpty(context.getRequestParameter(OAuth20Constants.CODE_CHALLENGE_METHOD),
             OAuth20GrantTypes.AUTHORIZATION_CODE.getType()).toUpperCase();
         val holder = AccessTokenRequestDataHolder.builder()

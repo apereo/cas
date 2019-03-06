@@ -3,7 +3,7 @@ package org.apereo.cas.support.oauth.web.response.callback;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
 
 import org.pac4j.core.context.J2EContext;
-import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * This is {@link OAuth20AuthorizationResponseBuilder} that attempts to build the callback url
@@ -24,9 +24,9 @@ public interface OAuth20AuthorizationResponseBuilder {
      * @param holder   the holder
      * @return the view response
      */
-    View build(J2EContext context,
-               String clientId,
-               AccessTokenRequestDataHolder holder);
+    ModelAndView build(J2EContext context,
+                       String clientId,
+                       AccessTokenRequestDataHolder holder);
 
     /**
      * Supports request?

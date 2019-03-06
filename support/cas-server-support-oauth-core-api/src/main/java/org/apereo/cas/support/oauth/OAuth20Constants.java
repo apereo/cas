@@ -47,6 +47,10 @@ public interface OAuth20Constants {
      * The response type.
      */
     String RESPONSE_TYPE = "response_type";
+    /**
+     * The response mode.
+     */
+    String RESPONSE_MODE = "response_mode";
 
     /**
      * The grant type.
