@@ -9,6 +9,7 @@ import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * This is {@link SurrogatePrincipalResolver}.
@@ -29,8 +30,11 @@ public class SurrogatePrincipalResolver extends PersonDirectoryPrincipalResolver
 
     public SurrogatePrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,
                                       final boolean returnNullIfNoAttributes, final String principalAttributeName,
-                                      final boolean useCurrentPrincipalId) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName, useCurrentPrincipalId);
+                                      final boolean useCurrentPrincipalId, final boolean resolveAttributes,
+                                      final Set<String> activeAttributeRepositoryIdentifiers) {
+        super(attributeRepository, principalFactory, returnNullIfNoAttributes,
+            principalAttributeName, useCurrentPrincipalId, resolveAttributes,
+            activeAttributeRepositoryIdentifiers);
     }
 
     @Override

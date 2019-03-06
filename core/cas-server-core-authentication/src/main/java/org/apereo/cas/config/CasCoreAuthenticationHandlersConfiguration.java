@@ -180,7 +180,8 @@ public class CasCoreAuthenticationHandlersConfiguration {
                         jaasPrincipalFactory(),
                         jaasPrincipal.isReturnNull() || personDirectory.isReturnNull(),
                         principalAttribute,
-                        jaasPrincipal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId());
+                        jaasPrincipal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId(),
+                        jaasPrincipal.isAttributeResolutionEnabled());
                 })
                 .collect(Collectors.toList());
         }

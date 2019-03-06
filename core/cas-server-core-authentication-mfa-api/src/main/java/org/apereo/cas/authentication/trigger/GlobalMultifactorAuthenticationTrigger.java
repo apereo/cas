@@ -49,7 +49,7 @@ public class GlobalMultifactorAuthenticationTrigger implements MultifactorAuthen
 
         val globalProviderId = casProperties.getAuthn().getMfa().getGlobalProviderId();
         if (StringUtils.isBlank(globalProviderId)) {
-            LOGGER.debug("No value could be found for request parameter [{}]", globalProviderId);
+            LOGGER.trace("No value could be found for for the global provider id");
             return Optional.empty();
         }
         LOGGER.debug("Attempting to globally activate [{}]", globalProviderId);

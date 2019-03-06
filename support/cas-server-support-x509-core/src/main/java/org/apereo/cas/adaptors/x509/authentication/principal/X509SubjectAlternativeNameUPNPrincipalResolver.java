@@ -25,6 +25,7 @@ import java.security.cert.X509Certificate;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Credential to principal resolver that extracts Subject Alternative Name UPN extension
@@ -47,8 +48,12 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
                                                           final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
                                                           final String principalAttributeName,
                                                           final String alternatePrincipalAttribute,
-                                                          final boolean useCurrentPrincipalId) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName, alternatePrincipalAttribute, useCurrentPrincipalId);
+                                                          final boolean useCurrentPrincipalId,
+                                                          final boolean resolveAttributes,
+                                                          final Set<String> activeAttributeRepositoryIdentifiers) {
+        super(attributeRepository, principalFactory, returnNullIfNoAttributes,
+            principalAttributeName, alternatePrincipalAttribute, useCurrentPrincipalId,
+            resolveAttributes, activeAttributeRepositoryIdentifiers);
     }
 
     /**

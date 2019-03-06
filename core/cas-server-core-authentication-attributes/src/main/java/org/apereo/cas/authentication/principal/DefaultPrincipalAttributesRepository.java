@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
+import org.apereo.cas.services.RegisteredService;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -29,14 +30,17 @@ public class DefaultPrincipalAttributesRepository extends AbstractPrincipalAttri
     }
 
     @Override
-    protected Map<String, Object> getPrincipalAttributes(final Principal p) {
-        val attributes = p.getAttributes();
-        LOGGER.debug("[{}] will return the collection of attributes directly associated with the principal object which are [{}]",
-            this.getClass().getSimpleName(), attributes);
-        return attributes;
-    }
+    public Map<String, Object> getAttributes(final Principal principal, final RegisteredService registeredService) {
+        val mergeStrategy = determineMergingStrategy();
+        val principalAttributes = getPrincipalAttributes(principal);
 
-    @Override
-    public void close() {
+        if (areAttributeRepositoryIdsDefined()) {
+            val personDirectoryAttributes = retrievePersonAttributesFromAttributeRepository(principal.getId());
+            LOGGER.debug("Merging current principal attributes with that of the repository via strategy [{}]", mergeStrategy);
+            val mergedAttributes = mergeStrategy.getAttributeMerger().mergeAttributes(principalAttributes, personDirectoryAttributes);
+            LOGGER.debug("Merged current principal attributes are [{}]", mergedAttributes);
+            return convertAttributesToPrincipalAttributesAndCache(principal, mergedAttributes);
+        }
+        return convertAttributesToPrincipalAttributesAndCache(principal, principalAttributes);
     }
 }

@@ -54,7 +54,7 @@ public class AdaptiveMultifactorAuthenticationTrigger implements MultifactorAuth
         }
 
         if (multifactorMap == null || multifactorMap.isEmpty()) {
-            LOGGER.debug("Adaptive authentication is not configured to require multifactor authentication");
+            LOGGER.trace("Adaptive authentication is not configured to require multifactor authentication");
             return Optional.empty();
         }
 

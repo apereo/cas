@@ -11,6 +11,7 @@ import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.io.FileWatcherService;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +41,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.OrderComparator;
 import org.springframework.http.HttpMethod;
 
@@ -95,6 +97,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
         return list;
     }
 
+    @Scope("prototype")
     @ConditionalOnMissingBean(name = "attributeRepository")
     @Bean
     @RefreshScope
@@ -113,8 +116,17 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
             .forEach(Unchecked.consumer(json -> {
                 val r = json.getLocation();
                 val dao = new JsonBackedComplexStubPersonAttributeDao(r);
+                val watcherService = new FileWatcherService(r.getFile(), file -> {
+                    try {
+                        dao.init();
+                    } catch (final Exception e) {
+                        LOGGER.error(e.getMessage(), e);
+                    }
+                });
+                watcherService.start(getClass().getSimpleName());
                 dao.setOrder(json.getOrder());
-
+                dao.setResourceWatcherService(watcherService);
+                FunctionUtils.doIfNotNull(json.getId(), dao::setId);
                 dao.init();
                 LOGGER.debug("Configured JSON attribute sources from [{}]", r);
                 list.add(dao);
@@ -163,7 +175,8 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
     @RefreshScope
     public List<IPersonAttributeDao> stubAttributeRepositories() {
         val list = new ArrayList<IPersonAttributeDao>();
-        val attrs = casProperties.getAuthn().getAttributeRepository().getStub().getAttributes();
+        val stub = casProperties.getAuthn().getAttributeRepository().getStub();
+        val attrs = stub.getAttributes();
         if (!attrs.isEmpty()) {
             LOGGER.info("Found and added static attributes [{}] to the list of candidate attribute repositories", attrs.keySet());
             val dao = Beans.newStubAttributeRepository(casProperties.getAuthn().getAttributeRepository());

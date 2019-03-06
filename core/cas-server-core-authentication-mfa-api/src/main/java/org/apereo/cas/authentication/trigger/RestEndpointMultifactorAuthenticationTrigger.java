@@ -55,7 +55,7 @@ public class RestEndpointMultifactorAuthenticationTrigger implements Multifactor
         }
         val principal = authentication.getPrincipal();
         if (StringUtils.isBlank(restEndpoint)) {
-            LOGGER.debug("Rest endpoint to determine event is not configured for [{}]", principal.getId());
+            LOGGER.trace("Rest endpoint to determine event is not configured for [{}]", principal.getId());
             return Optional.empty();
         }
         val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);

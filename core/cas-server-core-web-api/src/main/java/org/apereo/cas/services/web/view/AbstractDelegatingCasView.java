@@ -50,7 +50,7 @@ public abstract class AbstractDelegatingCasView extends AbstractCasView {
 
         LOGGER.debug("Preparing the output model [{}] to render view [{}]", model.keySet(), getClass().getSimpleName());
         prepareMergedOutputModel(model, request, response);
-        LOGGER.debug("Prepared output model with objects [{}]. Now rendering view...", model.keySet().toArray());
+        LOGGER.trace("Prepared output model with objects [{}]. Now rendering view...", model.keySet().toArray());
 
         if (this.view != null) {
             this.view.render(model, request, response);

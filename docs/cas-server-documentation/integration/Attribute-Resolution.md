@@ -40,6 +40,10 @@ Attribute sources are defined and configured to describe the global set of attri
 for each authenticated principal. That global set of attributes is then filtered by the
 service manager according to service-specific attribute release rules.
 
+Note that each attribute repository source can be assigned a unique identifier to be used for additional filtering. The attribute resolution engine
+provided by Person Directory can also be configured to only consult not all but a selection of attribute repository sources, *deferring* the task
+of attribute retrieval for later phases in the authentication process, such as [releasing attributes](Attribute-Release-Caching.html).
+
 <div class="alert alert-info"><strong>Principal Resolution</strong><p>Note that in most if not all cases,
 CAS authentication is able to retrieve and resolve attributes from the authentication source, which would
 eliminate the need for configuring a separate resolver specially if both the authentication and the attribute source are the same.

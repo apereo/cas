@@ -11,9 +11,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import org.apache.commons.lang3.StringUtils;
-
 import org.apereo.services.persondir.IPersonAttributeDao;
 
 import java.security.cert.X509Certificate;
@@ -21,7 +19,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
+import java.util.Set;
 
 
 /**
@@ -43,8 +41,12 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
                                          final boolean returnNullIfNoAttributes,
                                          final String principalAttributeName,
                                          final String alternatePrincipalAttribute,
-                                         final boolean useCurrentPrincipalId) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName, useCurrentPrincipalId);
+                                         final boolean useCurrentPrincipalId,
+                                         final boolean resolveAttributes,
+                                         final Set<String> activeAttributeRepositoryIdentifiers) {
+        super(attributeRepository, principalFactory, returnNullIfNoAttributes,
+            principalAttributeName, useCurrentPrincipalId, resolveAttributes,
+            activeAttributeRepositoryIdentifiers);
         this.alternatePrincipalAttribute = alternatePrincipalAttribute;
     }
 
@@ -52,8 +54,12 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
                                          final PrincipalFactory principalFactory,
                                          final boolean returnNullIfNoAttributes,
                                          final String principalAttributeName,
-                                         final boolean useCurrentPrincipalId) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName, useCurrentPrincipalId);
+                                         final boolean useCurrentPrincipalId,
+                                         final boolean resolveAttributes,
+                                         final Set<String> activeAttributeRepositoryIdentifiers) {
+        super(attributeRepository, principalFactory, returnNullIfNoAttributes,
+            principalAttributeName, useCurrentPrincipalId, resolveAttributes,
+            activeAttributeRepositoryIdentifiers);
     }
 
     @Override
@@ -76,6 +82,7 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
 
     /**
      * Get alternate principal if alternate attribute configured.
+     *
      * @param certificate X509 Certificate of user
      * @return principal using alternate attribute or null if none configured
      */
@@ -105,6 +112,7 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
 
     /**
      * Get additional attributes from the certificate.
+     *
      * @param certificate X509 Certificate of user
      * @return map of attributes
      */

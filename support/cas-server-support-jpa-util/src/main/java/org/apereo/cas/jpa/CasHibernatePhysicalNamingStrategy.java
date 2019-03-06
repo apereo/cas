@@ -19,7 +19,7 @@ import org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy;
 public class CasHibernatePhysicalNamingStrategy extends SpringPhysicalNamingStrategy {
     @Override
     public Identifier toPhysicalTableName(final Identifier name, final JdbcEnvironment jdbcEnvironment) {
-        val propsResult = ApplicationContextProvider.getCasProperties();
+        val propsResult = ApplicationContextProvider.getCasConfigurationProperties();
         if (propsResult.isEmpty()) {
             LOGGER.error("Could not load configuration settings. CAS application context may not have initialized correctly.");
             return super.toPhysicalTableName(name, jdbcEnvironment);
@@ -51,7 +51,7 @@ public class CasHibernatePhysicalNamingStrategy extends SpringPhysicalNamingStra
 
     @Override
     protected boolean isCaseInsensitive(final JdbcEnvironment jdbcEnvironment) {
-        val propsResult = ApplicationContextProvider.getCasProperties();
+        val propsResult = ApplicationContextProvider.getCasConfigurationProperties();
         if (propsResult.isEmpty()) {
             LOGGER.error("Could not load configuration settings to determine case insensitivity.");
             return super.isCaseInsensitive(jdbcEnvironment);

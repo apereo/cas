@@ -86,7 +86,7 @@ public class DefaultMultifactorAuthenticationProviderResolver implements Multifa
                                                         final Collection<MultifactorAuthenticationProvider> providers,
                                                         final Predicate<String> predicate) {
         if (attributeNames.isEmpty()) {
-            LOGGER.debug("No attribute names are provided to trigger a multifactor authentication provider via [{}]", getName());
+            LOGGER.trace("No attribute names are provided to trigger a multifactor authentication provider via [{}]", getName());
             return null;
         }
 

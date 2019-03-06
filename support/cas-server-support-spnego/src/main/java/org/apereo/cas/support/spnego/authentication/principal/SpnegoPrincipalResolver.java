@@ -12,6 +12,7 @@ import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Implementation of a CredentialToPrincipalResolver that takes a
@@ -27,9 +28,11 @@ public class SpnegoPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     public SpnegoPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,
                                    final boolean returnNullIfNoAttributes, final PrincipalNameTransformer principalNameTransformer,
-                                   final String principalAttributeName, final boolean useCurrentPrincipalId) {
+                                   final String principalAttributeName, final boolean useCurrentPrincipalId,
+                                   final boolean resolveAttributes, final Set<String> activeAttributeRepositoryIdentifiers) {
         super(attributeRepository, principalFactory, returnNullIfNoAttributes,
-            principalNameTransformer, principalAttributeName, useCurrentPrincipalId);
+            principalNameTransformer, principalAttributeName, useCurrentPrincipalId,
+            resolveAttributes, activeAttributeRepositoryIdentifiers);
     }
 
     @Override

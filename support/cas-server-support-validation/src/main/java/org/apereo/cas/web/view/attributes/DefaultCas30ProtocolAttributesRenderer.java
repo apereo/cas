@@ -23,12 +23,12 @@ public class DefaultCas30ProtocolAttributesRenderer implements CasProtocolAttrib
     @Override
     public Collection<String> render(final Map<String, Object> attributes) {
         val formattedAttributes = new ArrayList<String>(attributes.size());
-        LOGGER.debug("Beginning to format/render attributes for the response");
+        LOGGER.trace("Beginning to format/render attributes for the response");
         attributes.forEach((k, v) -> {
             val values = CollectionUtils.toCollection(v);
             values.forEach(value -> {
                 val fmt = buildSingleAttributeDefinitionLine(k, value);
-                LOGGER.debug("Formatted attribute for the response: [{}]", fmt);
+                LOGGER.trace("Formatted attribute for the response: [{}]", fmt);
                 formattedAttributes.add(fmt);
             });
         });

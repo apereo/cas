@@ -150,7 +150,7 @@ public class X509AuthenticationConfiguration {
             case "ldap":
                 return new LdaptiveResourceCRLFetcher(LdapUtils.newLdaptiveConnectionConfig(x509.getLdap()),
                     LdapUtils.newLdaptiveSearchExecutor(x509.getLdap().getBaseDn(),
-                    x509.getLdap().getSearchFilter()), x509.getLdap().getCertificateAttribute());
+                        x509.getLdap().getSearchFilter()), x509.getLdap().getCertificateAttribute());
             case "resource":
             default:
                 return new ResourceCRLFetcher();
@@ -198,7 +198,9 @@ public class X509AuthenticationConfiguration {
             principal.isReturnNull() || personDirectory.isReturnNull(),
             principalAttribute,
             x509.getPrincipalDescriptor(),
-            principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId());
+            principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId(),
+            principal.isAttributeResolutionEnabled(),
+            org.springframework.util.StringUtils.commaDelimitedListToSet(principal.getActiveAttributeRepositoryIds()));
     }
 
     @Bean
@@ -214,7 +216,9 @@ public class X509AuthenticationConfiguration {
             x509PrincipalFactory(),
             principal.isReturnNull() || personDirectory.isReturnNull(),
             principalAttribute,
-            principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId());
+            principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId(),
+            principal.isAttributeResolutionEnabled(),
+            org.springframework.util.StringUtils.commaDelimitedListToSet(principal.getActiveAttributeRepositoryIds()));
     }
 
     @Bean
@@ -232,7 +236,9 @@ public class X509AuthenticationConfiguration {
             principal.isReturnNull() || personDirectory.isReturnNull(),
             principalAttribute,
             subjectAltNameProperties.getAlternatePrincipalAttribute(),
-            principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId());
+            principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId(),
+            principal.isAttributeResolutionEnabled(),
+            org.springframework.util.StringUtils.commaDelimitedListToSet(principal.getActiveAttributeRepositoryIds()));
     }
 
     @Bean
@@ -265,7 +271,9 @@ public class X509AuthenticationConfiguration {
             principalAttribute,
             serialNoDnProperties.getSerialNumberPrefix(),
             serialNoDnProperties.getValueDelimiter(),
-            principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId());
+            principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId(),
+            principal.isAttributeResolutionEnabled(),
+            org.springframework.util.StringUtils.commaDelimitedListToSet(principal.getActiveAttributeRepositoryIds()));
     }
 
     @Bean
@@ -282,7 +290,9 @@ public class X509AuthenticationConfiguration {
             principal.isReturnNull() || personDirectory.isReturnNull(),
             principalAttribute,
             cnEdipiProperties.getAlternatePrincipalAttribute(),
-            principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId());
+            principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId(),
+            principal.isAttributeResolutionEnabled(),
+            org.springframework.util.StringUtils.commaDelimitedListToSet(principal.getActiveAttributeRepositoryIds()));
     }
 
     @ConditionalOnMissingBean(name = "x509AuthenticationEventExecutionPlanConfigurer")
@@ -332,7 +342,9 @@ public class X509AuthenticationConfiguration {
                     principal.isReturnNull() || personDirectory.isReturnNull(),
                     principalAttribute,
                     radix, serialNoProperties.isPrincipalHexSNZeroPadding(),
-                    principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId());
+                    principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId(),
+                    principal.isAttributeResolutionEnabled(),
+                    org.springframework.util.StringUtils.commaDelimitedListToSet(principal.getActiveAttributeRepositoryIds()));
             }
             return new X509SerialNumberPrincipalResolver(
                 attributeRepository.getIfAvailable(),
@@ -340,14 +352,18 @@ public class X509AuthenticationConfiguration {
                 principal.isReturnNull() || personDirectory.isUseExistingPrincipalId(),
                 principalAttribute,
                 radix, false,
-                principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId());
+                principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId(),
+                principal.isAttributeResolutionEnabled(),
+                org.springframework.util.StringUtils.commaDelimitedListToSet(principal.getActiveAttributeRepositoryIds()));
         }
         return new X509SerialNumberPrincipalResolver(
             attributeRepository.getIfAvailable(),
             x509PrincipalFactory(),
             principal.isReturnNull() || personDirectory.isReturnNull(),
             principalAttribute,
-            principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId());
+            principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId(),
+            principal.isAttributeResolutionEnabled(),
+            org.springframework.util.StringUtils.commaDelimitedListToSet(principal.getActiveAttributeRepositoryIds()));
     }
 
     private RevocationChecker getRevocationCheckerFrom(final X509Properties x509) {

@@ -90,7 +90,9 @@ public class TrustedAuthenticationConfiguration {
             trustedPrincipalFactory(),
             trusted.isReturnNull() || personDirectory.isReturnNull(),
             principalAttribute,
-            trusted.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId());
+            trusted.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId(),
+            trusted.isAttributeResolutionEnabled(),
+            org.springframework.util.StringUtils.commaDelimitedListToSet(trusted.getActiveAttributeRepositoryIds()));
         resolver.setChain(CollectionUtils.wrapList(new EchoingPrincipalResolver(), bearingPrincipalResolver));
         return resolver;
     }

@@ -28,6 +28,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,7 +93,9 @@ public class CasCoreAuthenticationPrincipalConfiguration implements PrincipalRes
             principalFactory(),
             personDirectory.isReturnNull(),
             personDirectory.getPrincipalAttribute(),
-            personDirectory.isUseExistingPrincipalId()
+            personDirectory.isUseExistingPrincipalId(),
+            personDirectory.isAttributeResolutionEnabled(),
+            StringUtils.commaDelimitedListToSet(personDirectory.getActiveAttributeRepositoryIds())
         );
     }
 

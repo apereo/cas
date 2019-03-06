@@ -63,7 +63,9 @@ public class OpenIdAuthenticationEventExecutionPlanConfiguration {
             openidPrincipalFactory(),
             principal.isReturnNull() || personDirectory.isReturnNull(),
             principalAttribute,
-            principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId());
+            principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId(),
+            principal.isAttributeResolutionEnabled(),
+            org.springframework.util.StringUtils.commaDelimitedListToSet(principal.getActiveAttributeRepositoryIds()));
     }
 
     @ConditionalOnMissingBean(name = "openidPrincipalFactory")

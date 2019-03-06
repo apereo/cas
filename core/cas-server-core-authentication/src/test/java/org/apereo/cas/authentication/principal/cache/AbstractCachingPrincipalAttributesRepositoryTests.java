@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal.cache;
 
+import org.apereo.cas.authentication.AttributeMergingStrategy;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
@@ -20,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -38,6 +40,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
     private final PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     private Map<String, List<Object>> attributes;
+
     private Principal principal;
 
     @BeforeEach
@@ -58,6 +61,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
         when(person.getName()).thenReturn("uid");
         when(person.getAttributes()).thenReturn(attributes);
         when(dao.getPerson(any(String.class))).thenReturn(person);
+        when(dao.getId()).thenReturn(new String[]{"Stub"});
 
         email = new ArrayList<>();
         email.add("final@school.com");
@@ -73,12 +77,16 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
         val svc = CoreAuthenticationTestUtils.getRegisteredService();
         assertEquals(1, this.principal.getAttributes().size());
         try (val repository = getPrincipalAttributesRepository(TimeUnit.MILLISECONDS.name(), 100)) {
-            assertEquals(repository.getAttributes(this.principal, svc).size(), this.attributes.size());
-            assertTrue(repository.getAttributes(this.principal, svc).containsKey(MAIL));
-            Thread.sleep(200);
-            this.attributes.remove(MAIL);
-            assertTrue(repository.getAttributes(this.principal, svc).containsKey("a2"));
-            assertFalse(repository.getAttributes(this.principal, svc).containsKey(MAIL));
+            var repoAttrs = repository.getAttributes(this.principal, svc);
+            assertEquals(1, repoAttrs.size());
+            assertTrue(repoAttrs.containsKey(MAIL));
+            Thread.sleep(500);
+            repository.setMergingStrategy(AttributeMergingStrategy.REPLACE);
+            repository.setAttributeRepositoryIds(Arrays.stream(this.dao.getId()).collect(Collectors.toSet()));
+            repoAttrs = repository.getAttributes(this.principal, svc);
+            assertEquals(5, repoAttrs.size());
+            assertTrue(repoAttrs.containsKey("a2"));
+            assertEquals("final@example.com", repoAttrs.get(MAIL));
         }
     }
 
@@ -87,9 +95,8 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
     public void ensureCachedAttributesWithUpdate() {
         val svc = CoreAuthenticationTestUtils.getRegisteredService();
         try (val repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5)) {
-            assertEquals(repository.getAttributes(this.principal, svc).size(), this.attributes.size());
+            assertEquals(1, repository.getAttributes(this.principal, svc).size());
             assertTrue(repository.getAttributes(this.principal, svc).containsKey(MAIL));
-
             attributes.clear();
             assertTrue(repository.getAttributes(this.principal, svc).containsKey(MAIL));
         }
@@ -100,7 +107,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
     public void verifyMergingStrategyWithNoncollidingAttributeAdder() {
         val svc = CoreAuthenticationTestUtils.getRegisteredService();
         try (val repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5)) {
-            repository.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.ADD);
+            repository.setMergingStrategy(AttributeMergingStrategy.ADD);
             assertTrue(repository.getAttributes(this.principal, svc).containsKey(MAIL));
             assertEquals("final@school.com", repository.getAttributes(this.principal, svc).get(MAIL).toString());
         }
@@ -111,7 +118,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
     public void verifyMergingStrategyWithReplacingAttributeAdder() {
         val svc = CoreAuthenticationTestUtils.getRegisteredService();
         try (val repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5)) {
-            repository.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.REPLACE);
+            repository.setMergingStrategy(AttributeMergingStrategy.REPLACE);
             assertTrue(repository.getAttributes(this.principal, svc).containsKey(MAIL));
             assertEquals("final@example.com", repository.getAttributes(this.principal, svc).get(MAIL).toString());
         }
@@ -121,7 +128,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
     @SneakyThrows
     public void verifyMergingStrategyWithMultivaluedAttributeMerger() {
         try (val repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5)) {
-            repository.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.MULTIVALUED);
+            repository.setMergingStrategy(AttributeMergingStrategy.MULTIVALUED);
 
             val mailAttr = repository.getAttributes(this.principal, CoreAuthenticationTestUtils.getRegisteredService()).get(MAIL);
             assertTrue(mailAttr instanceof List);
