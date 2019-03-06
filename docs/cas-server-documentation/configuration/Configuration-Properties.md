@@ -2917,6 +2917,14 @@ under the configuration key `cas.authn.samlIdp.metadata.amazonS3`.
 # cas.authn.samlIdp.ticket.samlAttributeQueryCacheStorageName=samlAttributeQueryCache
 ```
 
+### SAML Profiles
+
+```properties
+# cas.authn.samlIdp.profile.slo.urlDecodeRedirectRequest=false
+# cas.authn.samlIdp.profile.sso.urlDecodeRedirectRequest=false
+# cas.authn.samlIdp.profile.ssoPostSimpleSign.urlDecodeRedirectRequest=false
+```
+
 ## SAML SPs
 
 Allow CAS to register and enable a number of built-in SAML service provider integrations.

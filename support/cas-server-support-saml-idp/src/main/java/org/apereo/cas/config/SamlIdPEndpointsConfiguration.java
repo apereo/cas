@@ -186,10 +186,10 @@ public class SamlIdPEndpointsConfiguration {
     @Bean
     @RefreshScope
     public SSOSamlPostProfileHandlerController ssoPostProfileHandlerController() {
-        val props = casProperties.getAuthn().getSamlIdp().getProfile().getSsoPost();
+        val props = casProperties.getAuthn().getSamlIdp().getProfile().getSso();
 
         val decoders = new EnumMap<HttpMethod, BaseHttpServletRequestXMLMessageDecoder>(HttpMethod.class);
-        decoders.put(HttpMethod.GET, new UrlDecodingHTTPRedirectDeflateDecoder(props.isUrlDecodeRequest()));
+        decoders.put(HttpMethod.GET, new UrlDecodingHTTPRedirectDeflateDecoder(props.isUrlDecodeRedirectRequest()));
         decoders.put(HttpMethod.POST, new HTTPPostDecoder());
 
         return new SSOSamlPostProfileHandlerController(
@@ -213,7 +213,7 @@ public class SamlIdPEndpointsConfiguration {
         val props = casProperties.getAuthn().getSamlIdp().getProfile().getSsoPostSimpleSign();
 
         val decoders = new EnumMap<HttpMethod, BaseHttpServletRequestXMLMessageDecoder>(HttpMethod.class);
-        decoders.put(HttpMethod.GET, new UrlDecodingHTTPRedirectDeflateDecoder(props.isUrlDecodeRequest()));
+        decoders.put(HttpMethod.GET, new UrlDecodingHTTPRedirectDeflateDecoder(props.isUrlDecodeRedirectRequest()));
         decoders.put(HttpMethod.POST, new HTTPPostSimpleSignDecoder());
 
         return new SSOSamlPostSimpleSignProfileHandlerController(
@@ -234,9 +234,9 @@ public class SamlIdPEndpointsConfiguration {
     @Bean
     @RefreshScope
     public SLOSamlRedirectProfileHandlerController sloRedirectProfileHandlerController() {
-        val props = casProperties.getAuthn().getSamlIdp().getProfile().getSloRedirect();
+        val props = casProperties.getAuthn().getSamlIdp().getProfile().getSlo();
         val decoders = new EnumMap<HttpMethod, BaseHttpServletRequestXMLMessageDecoder>(HttpMethod.class);
-        decoders.put(HttpMethod.GET, new UrlDecodingHTTPRedirectDeflateDecoder(props.isUrlDecodeRequest()));
+        decoders.put(HttpMethod.GET, new UrlDecodingHTTPRedirectDeflateDecoder(props.isUrlDecodeRedirectRequest()));
 
         return new SLOSamlRedirectProfileHandlerController(
             samlObjectSigner.getIfAvailable(),
@@ -256,6 +256,9 @@ public class SamlIdPEndpointsConfiguration {
     @Bean
     @RefreshScope
     public SLOSamlPostProfileHandlerController sloPostProfileHandlerController() {
+        val decoders = new EnumMap<HttpMethod, BaseHttpServletRequestXMLMessageDecoder>(HttpMethod.class);
+        decoders.put(HttpMethod.POST, new HTTPPostDecoder());
+
         return new SLOSamlPostProfileHandlerController(
             samlObjectSigner.getIfAvailable(),
             authenticationSystemSupport.getIfAvailable(),
@@ -267,7 +270,8 @@ public class SamlIdPEndpointsConfiguration {
             casProperties,
             samlObjectSignatureValidator(),
             ssoSamlHttpRequestExtractor(),
-            samlIdPCallbackService());
+            samlIdPCallbackService(),
+            decoders);
     }
 
     @Bean

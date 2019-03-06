@@ -21,66 +21,55 @@ public class SamlIdPProfileProperties implements Serializable {
     private static final long serialVersionUID = -3218075783676789852L;
 
     /**
-     * Settings related to the saml2 sso redirect profile.
+     * Settings related to the saml2 sso profile.
      */
-    private Saml2SsoProfileRedirect ssoRedirect = new Saml2SsoProfileRedirect();
-    /**
-     * Settings related to the saml2 sso post profile.
-     */
-    private Saml2SsoProfilePost ssoPost = new Saml2SsoProfilePost();
+    private Saml2SsoProfile sso = new Saml2SsoProfile();
     /**
      * Settings related to the saml2 sso post simple-sign profile.
      */
-    private Saml2SsoProfilePostSimpleSign ssoPostSimpleSign = new Saml2SsoProfilePostSimpleSign();
+    private Saml2SsoPostSimpleSignProfile ssoPostSimpleSign = new Saml2SsoPostSimpleSignProfile();
 
     /**
      * Settings related to the saml2 slo redirect profile.
      */
-    private Saml2SloProfileRedirect sloRedirect = new Saml2SloProfileRedirect();
+    private Saml2SloProfile slo = new Saml2SloProfile();
 
     @RequiresModule(name = "cas-server-support-saml-idp")
     @Getter
     @Setter
-    public static class Saml2SsoProfileRedirect implements Serializable {
-        private static final long serialVersionUID = 8976431439191949383L;
-    }
-
-    @RequiresModule(name = "cas-server-support-saml-idp")
-    @Getter
-    @Setter
-    public static class Saml2SloProfileRedirect implements Serializable {
+    public static class Saml2SloProfile implements Serializable {
         private static final long serialVersionUID = 1976431439191949383L;
 
         /**
          * Whether the initial request should be explicitly url-decoded
          * before it's consumed by the decoder.
          */
-        private boolean urlDecodeRequest;
+        private boolean urlDecodeRedirectRequest;
     }
 
     @RequiresModule(name = "cas-server-support-saml-idp")
     @Getter
     @Setter
-    public static class Saml2SsoProfilePost implements Serializable {
+    public static class Saml2SsoProfile implements Serializable {
         private static final long serialVersionUID = 6576431439191949383L;
 
         /**
          * Whether the initial request should be explicitly url-decoded
          * before it's consumed by the decoder.
          */
-        private boolean urlDecodeRequest;
+        private boolean urlDecodeRedirectRequest;
     }
 
     @RequiresModule(name = "cas-server-support-saml-idp")
     @Getter
     @Setter
-    public static class Saml2SsoProfilePostSimpleSign implements Serializable {
+    public static class Saml2SsoPostSimpleSignProfile implements Serializable {
         private static final long serialVersionUID = 2276431439191949383L;
 
         /**
          * Whether the initial request should be explicitly url-decoded
          * before it's consumed by the decoder.
          */
-        private boolean urlDecodeRequest;
+        private boolean urlDecodeRedirectRequest;
     }
 }
