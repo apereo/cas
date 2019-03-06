@@ -48,7 +48,7 @@ public class PredicatedPrincipalAttributeMultifactorAuthenticationTrigger implem
         val predicateResource = casProperties.getAuthn().getMfa().getGlobalPrincipalAttributePredicate();
 
         if (predicateResource == null || !ResourceUtils.doesResourceExist(predicateResource)) {
-            LOGGER.debug("No groovy script predicate is defined to decide which multifactor authentication provider should be chosen");
+            LOGGER.trace("No groovy script predicate is defined to decide which multifactor authentication provider should be chosen");
             return Optional.empty();
         }
 

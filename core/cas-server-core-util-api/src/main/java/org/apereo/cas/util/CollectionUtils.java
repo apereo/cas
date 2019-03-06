@@ -75,7 +75,7 @@ public class CollectionUtils {
     public static Set<Object> toCollection(final Object obj) {
         val c = new LinkedHashSet<Object>();
         if (obj == null) {
-            LOGGER.debug("Converting null obj to empty collection");
+            LOGGER.trace("Converting null obj to empty collection");
         } else if (obj instanceof Collection) {
             c.addAll((Collection<Object>) obj);
             LOGGER.trace("Converting multi-valued element [{}]", obj);

@@ -134,7 +134,9 @@ public class SpnegoConfiguration {
             spnegoPrincipal.isReturnNull() || personDirectory.isReturnNull(),
             PrincipalNameTransformerUtils.newPrincipalNameTransformer(spnegoProperties.getPrincipalTransformation()),
             principalAttribute,
-            spnegoPrincipal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId());
+            spnegoPrincipal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId(),
+            spnegoPrincipal.isAttributeResolutionEnabled(),
+            org.springframework.util.StringUtils.commaDelimitedListToSet(spnegoPrincipal.getActiveAttributeRepositoryIds()));
     }
 
     @ConditionalOnMissingBean(name = "spnegoPrincipalFactory")

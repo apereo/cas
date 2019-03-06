@@ -153,18 +153,22 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
                 } else {
                     val configurations = wsFederationConfigurations();
                     val cfg = configurations.stream()
-                        .filter(c -> c.getIdentityProviderUrl().equals(wsfed.getIdentityProviderUrl()))
+                        .filter(c -> c.getIdentityProviderUrl().equalsIgnoreCase(wsfed.getIdentityProviderUrl()))
                         .findFirst()
-                        .orElseThrow(() -> new RuntimeException("Unable to find configuration for identity provider " + wsfed.getIdentityProviderUrl()));
+                        .orElseThrow(() -> new RuntimeException("Unable to find configuration for identity provider "
+                            + wsfed.getIdentityProviderUrl()));
 
                     val principal = wsfed.getPrincipal();
-                    val principalAttribute = StringUtils.defaultIfBlank(principal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
+                    val principalAttribute = StringUtils.defaultIfBlank(principal.getPrincipalAttribute(),
+                        personDirectory.getPrincipalAttribute());
                     val r = new WsFederationCredentialsToPrincipalResolver(attributeRepository.getIfAvailable(),
                         wsfedPrincipalFactory(),
                         principal.isReturnNull() || personDirectory.isReturnNull(),
                         principalAttribute,
                         cfg,
-                        personDirectory.isUseExistingPrincipalId() || principal.isUseExistingPrincipalId());
+                        personDirectory.isUseExistingPrincipalId() || principal.isUseExistingPrincipalId(),
+                        principal.isAttributeResolutionEnabled(),
+                        org.springframework.util.StringUtils.commaDelimitedListToSet(principal.getActiveAttributeRepositoryIds()));
                     plan.registerAuthenticationHandlerWithPrincipalResolver(handler, r);
                 }
             });

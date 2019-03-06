@@ -52,7 +52,7 @@ public class TimedMultifactorAuthenticationTrigger implements MultifactorAuthent
         }
 
         if (timedMultifactor == null || timedMultifactor.isEmpty()) {
-            LOGGER.debug("Adaptive authentication is not configured to require multifactor authentication by time");
+            LOGGER.trace("Adaptive authentication is not configured to require multifactor authentication by time");
             return Optional.empty();
         }
 

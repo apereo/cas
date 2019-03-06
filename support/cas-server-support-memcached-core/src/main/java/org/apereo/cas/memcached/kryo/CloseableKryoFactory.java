@@ -1,5 +1,6 @@
 package org.apereo.cas.memcached.kryo;
 
+import org.apereo.cas.authentication.AttributeMergingStrategy;
 import org.apereo.cas.authentication.DefaultAuthentication;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
@@ -226,7 +227,7 @@ public class CloseableKryoFactory implements KryoFactory {
         kryo.register(ReturnRestfulAttributeReleasePolicy.class);
         kryo.register(CachingPrincipalAttributesRepository.class);
         kryo.register(AbstractPrincipalAttributesRepository.class);
-        kryo.register(AbstractPrincipalAttributesRepository.MergingStrategy.class);
+        kryo.register(AttributeMergingStrategy.class);
         kryo.register(DefaultRegisteredServiceConsentPolicy.class);
         kryo.register(DefaultRegisteredServiceMultifactorPolicy.class);
         kryo.register(GeneralSecurityException.class, new ThrowableSerializer());

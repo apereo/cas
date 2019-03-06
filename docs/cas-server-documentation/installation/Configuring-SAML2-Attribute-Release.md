@@ -33,6 +33,9 @@ needed for InCommon Research and Scholarship service providers using the entity 
 }
 ```
 
+Attributes authorized for release are set to be `eduPersonPrincipalName`, `eduPersonTargetedID`, `email`, `displayName`, 
+`givenName`, `surname`, `eduPersonScopedAffiliation`.
+
 ## REFEDS Research and Scholarship
 
 A specific attribute release policy is available to release the [attribute bundles](https://refeds.org/category/research-and-scholarship)
@@ -55,6 +58,8 @@ needed for REFEDS Research and Scholarship service providers using the entity at
   }
 }
 ```
+
+This policy is simply an extension of `InCommonRSAttributeReleasePolicy` that operates based on different entity attribute value.
 
 ## Releasing `eduPersonTargetedID`
 
