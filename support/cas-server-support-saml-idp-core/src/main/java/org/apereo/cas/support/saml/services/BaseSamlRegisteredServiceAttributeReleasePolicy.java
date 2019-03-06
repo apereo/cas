@@ -45,32 +45,32 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
             val entityId = getEntityIdFromRequest(request);
             if (StringUtils.isBlank(entityId)) {
                 LOGGER.warn("Could not locate the entity id for SAML attribute release policy processing");
-                return super.getAttributesInternal(principal, attributes, registeredService, selectedService);
+                return authorizeReleaseOfAllowedAttributes(principal, attributes, registeredService, selectedService);
             }
 
             val applicationContext = ApplicationContextProvider.getApplicationContext();
             if (applicationContext == null) {
                 LOGGER.warn("Could not locate the application context to process attributes");
-                return super.getAttributesInternal(principal, attributes, registeredService, selectedService);
+                return authorizeReleaseOfAllowedAttributes(principal, attributes, registeredService, selectedService);
             }
             val resolver = applicationContext.getBean("defaultSamlRegisteredServiceCachingMetadataResolver",
                 SamlRegisteredServiceCachingMetadataResolver.class);
             val facade = SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, samlRegisteredService, entityId);
 
-            if (facade == null || facade.isEmpty()) {
+            if (facade.isEmpty()) {
                 LOGGER.warn("Could not locate metadata for [{}] to process attributes", entityId);
-                return super.getAttributesInternal(principal, attributes, registeredService, selectedService);
+                return authorizeReleaseOfAllowedAttributes(principal, attributes, registeredService, selectedService);
             }
 
             val entityDescriptor = facade.get().getEntityDescriptor();
             if (entityDescriptor == null) {
                 LOGGER.warn("Could not locate entity descriptor for [{}] to process attributes", entityId);
-                return super.getAttributesInternal(principal, attributes, registeredService, selectedService);
+                return authorizeReleaseOfAllowedAttributes(principal, attributes, registeredService, selectedService);
             }
             return getAttributesForSamlRegisteredService(attributes, samlRegisteredService, applicationContext,
                 resolver, facade.get(), entityDescriptor, principal, selectedService);
         }
-        return super.getAttributesInternal(principal, attributes, registeredService, selectedService);
+        return authorizeReleaseOfAllowedAttributes(principal, attributes, registeredService, selectedService);
     }
 
     private static String getEntityIdFromRequest(final HttpServletRequest request) {

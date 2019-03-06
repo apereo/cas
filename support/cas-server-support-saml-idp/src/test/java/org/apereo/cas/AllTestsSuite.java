@@ -19,6 +19,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.attr.SamlProfileSaml
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidatorTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.nameid.SamlProfileSamlNameIdBuilderTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSaml2ResponseBuilderTests;
+import org.apereo.cas.support.saml.web.idp.profile.sso.request.DefaultSSOSamlHttpRequestExtractorTests;
 
 import org.junit.platform.suite.api.SelectClasses;
 
@@ -42,6 +43,7 @@ import org.junit.platform.suite.api.SelectClasses;
     GroovySamlRegisteredServiceAttributeReleasePolicyTests.class,
     SamlRegisteredServiceJpaPostgresTests.class,
     SamlIdPUtilsTests.class,
+    DefaultSSOSamlHttpRequestExtractorTests.class,
     InCommonRSAttributeReleasePolicyTests.class,
     RefedsRSAttributeReleasePolicyTests.class,
     MetadataRequestedAttributesAttributeReleasePolicyTests.class,

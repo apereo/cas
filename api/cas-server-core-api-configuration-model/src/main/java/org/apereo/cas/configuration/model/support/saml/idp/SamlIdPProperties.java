@@ -82,4 +82,10 @@ public class SamlIdPProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SamlIdPTicketProperties ticket = new SamlIdPTicketProperties();
+
+    /**
+     * Settings related to handling saml2 profiles.
+     */
+    @NestedConfigurationProperty
+    private SamlIdPProfileProperties profile = new SamlIdPProfileProperties();
 }

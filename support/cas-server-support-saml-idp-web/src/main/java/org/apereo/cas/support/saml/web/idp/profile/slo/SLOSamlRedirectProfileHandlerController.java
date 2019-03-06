@@ -14,12 +14,15 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSig
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
 import org.apereo.cas.support.saml.web.idp.profile.sso.request.SSOSamlHttpRequestExtractor;
 
-import org.opensaml.saml.saml2.binding.decoding.impl.HTTPRedirectDeflateDecoder;
+import lombok.val;
+import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
 import org.opensaml.saml.saml2.core.Response;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 /**
  * This is {@link SLOSamlRedirectProfileHandlerController}, responsible for
@@ -29,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since 5.1.0
  */
 public class SLOSamlRedirectProfileHandlerController extends AbstractSamlSLOProfileHandlerController {
+    private final Map<HttpMethod, BaseHttpServletRequestXMLMessageDecoder> samlMessageDecoders;
 
     public SLOSamlRedirectProfileHandlerController(final SamlIdPObjectSigner samlObjectSigner,
                                                    final AuthenticationSystemSupport authenticationSystemSupport,
@@ -40,7 +44,8 @@ public class SLOSamlRedirectProfileHandlerController extends AbstractSamlSLOProf
                                                    final CasConfigurationProperties casProperties,
                                                    final SamlObjectSignatureValidator samlObjectSignatureValidator,
                                                    final SSOSamlHttpRequestExtractor samlHttpRequestExtractor,
-                                                   final Service callbackService) {
+                                                   final Service callbackService,
+                                                   final Map<HttpMethod, BaseHttpServletRequestXMLMessageDecoder> samlMessageDecoders) {
         super(samlObjectSigner,
             authenticationSystemSupport,
             servicesManager,
@@ -52,6 +57,7 @@ public class SLOSamlRedirectProfileHandlerController extends AbstractSamlSLOProf
             samlObjectSignatureValidator,
             samlHttpRequestExtractor,
             callbackService);
+        this.samlMessageDecoders = samlMessageDecoders;
     }
 
     /**
@@ -64,6 +70,7 @@ public class SLOSamlRedirectProfileHandlerController extends AbstractSamlSLOProf
     @GetMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SLO_PROFILE_REDIRECT)
     protected void handleSaml2ProfileSLOPostRequest(final HttpServletResponse response,
                                                     final HttpServletRequest request) throws Exception {
-        handleSloProfileRequest(response, request, new HTTPRedirectDeflateDecoder());
+        val decoder = this.samlMessageDecoders.get(HttpMethod.GET);
+        handleSloProfileRequest(response, request, decoder);
     }
 }
