@@ -35,6 +35,7 @@ import org.apereo.cas.support.oauth.services.OAuth20ServiceRegistry;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
+import org.apereo.cas.support.oauth.validator.authorization.OAuth20IdTokenAndTokenResponseTypeAuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20IdTokenResponseTypeAuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20TokenResponseTypeAuthorizationRequestValidator;
@@ -643,6 +644,14 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     public OAuth20AuthorizationRequestValidator oauthIdTokenResponseTypeRequestValidator() {
         return new OAuth20IdTokenResponseTypeAuthorizationRequestValidator(servicesManager.getIfAvailable(),
             webApplicationServiceFactory.getIfAvailable(), registeredServiceAccessStrategyEnforcer.getIfAvailable());
+    }
+
+    @ConditionalOnMissingBean(name = "oauthIdTokenAndTokenResponseTypeRequestValidator")
+    @Bean
+    @RefreshScope
+    public OAuth20AuthorizationRequestValidator oauthIdTokenAndTokenResponseTypeRequestValidator() {
+        return new OAuth20IdTokenAndTokenResponseTypeAuthorizationRequestValidator(servicesManager.getIfAvailable(),
+                webApplicationServiceFactory.getIfAvailable(), registeredServiceAccessStrategyEnforcer.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "oauthResourceOwnerCredentialsResponseBuilder")
