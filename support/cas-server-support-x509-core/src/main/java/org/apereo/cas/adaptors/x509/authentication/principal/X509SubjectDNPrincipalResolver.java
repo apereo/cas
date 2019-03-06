@@ -7,6 +7,7 @@ import lombok.ToString;
 import org.apereo.services.persondir.IPersonAttributeDao;
 
 import java.security.cert.X509Certificate;
+import java.util.Set;
 
 /**
  * Returns a principal based on the Subject DNs name.
@@ -20,8 +21,11 @@ public class X509SubjectDNPrincipalResolver extends AbstractX509PrincipalResolve
 
     public X509SubjectDNPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,
                                           final boolean returnNullIfNoAttributes, final String principalAttributeName,
-                                          final boolean useCurrentPrincipalId) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName, useCurrentPrincipalId);
+                                          final boolean useCurrentPrincipalId, final boolean resolveAttributes,
+                                          final Set<String> activeAttributeRepositoryIdentifiers) {
+        super(attributeRepository, principalFactory, returnNullIfNoAttributes,
+            principalAttributeName, useCurrentPrincipalId, resolveAttributes,
+            activeAttributeRepositoryIdentifiers);
     }
 
     @Override

@@ -16,9 +16,11 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.merger.BaseAdditiveAttributeMerger;
 import org.apereo.services.persondir.support.merger.IAttributeMerger;
 import org.apereo.services.persondir.support.merger.MultivaluedAttributeMerger;
@@ -31,11 +33,14 @@ import java.nio.charset.StandardCharsets;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -52,6 +57,34 @@ import java.util.stream.Collectors;
 public class CoreAuthenticationUtils {
 
     /**
+     * Retrieve attributes from attribute repository and return map.
+     *
+     * @param attributeRepository                  the attribute repository
+     * @param principalId                          the principal id
+     * @param activeAttributeRepositoryIdentifiers the active attribute repository identifiers
+     * @return the map or null
+     */
+    public static Map<String, List<Object>> retrieveAttributesFromAttributeRepository(final IPersonAttributeDao attributeRepository,
+                                                                                      final String principalId,
+                                                                                      final Set<String> activeAttributeRepositoryIdentifiers) {
+        val originalFilter = attributeRepository.getPersonAttributeDaoFilter();
+        try {
+            if (activeAttributeRepositoryIdentifiers != null && !activeAttributeRepositoryIdentifiers.isEmpty()) {
+                val repoIdsArray = activeAttributeRepositoryIdentifiers.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
+                attributeRepository.setPersonAttributeDaoFilter(dao -> Arrays.stream(dao.getId())
+                    .anyMatch(daoId -> StringUtils.equalsAnyIgnoreCase(daoId, repoIdsArray)));
+            }
+            val attrs = attributeRepository.getPerson(principalId);
+            if (attrs == null) {
+                return null;
+            }
+            return attrs.getAttributes();
+        } finally {
+            attributeRepository.setPersonAttributeDaoFilter(originalFilter);
+        }
+    }
+
+    /**
      * Gets attribute merger.
      *
      * @param mergingPolicy the merging policy
@@ -61,6 +94,7 @@ public class CoreAuthenticationUtils {
         switch (mergingPolicy.toLowerCase()) {
             case "multivalued":
             case "multi_valued":
+            case "combine":
                 return new MultivaluedAttributeMerger();
             case "add":
                 return new NoncollidingAttributeAdder();
@@ -73,7 +107,7 @@ public class CoreAuthenticationUtils {
                     @Override
                     protected Map<String, List<Object>> mergePersonAttributes(final Map<String, List<Object>> toModify,
                                                                               final Map<String, List<Object>> toConsider) {
-                        return toModify;
+                        return new LinkedHashMap<>(toModify);
                     }
                 };
         }

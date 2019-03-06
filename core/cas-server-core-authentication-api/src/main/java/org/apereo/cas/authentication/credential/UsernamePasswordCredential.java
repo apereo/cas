@@ -68,7 +68,7 @@ public class UsernamePasswordCredential implements Credential {
         }
 
         val messages = context.getMessageContext();
-        ApplicationContextProvider.getCasProperties().ifPresent(props -> {
+        ApplicationContextProvider.getCasConfigurationProperties().ifPresent(props -> {
             if (StringUtils.isBlank(source) && props.getAuthn().getPolicy().isSourceSelectionEnabled()) {
                 messages.addMessage(new MessageBuilder()
                     .error()

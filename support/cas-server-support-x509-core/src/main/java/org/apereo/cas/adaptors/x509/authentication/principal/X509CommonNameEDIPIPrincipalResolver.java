@@ -11,6 +11,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 
 import java.security.cert.X509Certificate;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 /**
@@ -34,12 +35,17 @@ public class X509CommonNameEDIPIPrincipalResolver extends AbstractX509PrincipalR
 
     private static final int EDIPI_LENGTH = 10;
 
-    public X509CommonNameEDIPIPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,
+    public X509CommonNameEDIPIPrincipalResolver(final IPersonAttributeDao attributeRepository,
+                                                final PrincipalFactory principalFactory,
                                                 final boolean returnNullIfNoAttributes,
                                                 final String principalAttributeName,
                                                 final String alternatePrincipalAttribute,
-                                                final boolean useCurrentPrincipalId) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName, alternatePrincipalAttribute, useCurrentPrincipalId);
+                                                final boolean useCurrentPrincipalId,
+                                                final boolean resolveAttributes,
+                                                final Set<String> activeAttributeRepositoryIdentifiers) {
+        super(attributeRepository, principalFactory, returnNullIfNoAttributes,
+            principalAttributeName, alternatePrincipalAttribute, useCurrentPrincipalId,
+            resolveAttributes, activeAttributeRepositoryIdentifiers);
     }
 
     @Override
