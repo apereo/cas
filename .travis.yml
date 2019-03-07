@@ -93,7 +93,7 @@ jobs:
   - stage: publish
     if: NOT commit_message =~ ^\[skip\s+snapshots\] and type != "pull_request" and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
     script: ./ci/publish-snapshots-release.sh
-    name: "Publish Artifacts"
+    name: "Publish SNAPSHOT Artifacts"
     ############################################
   - stage: postbuild
     script: ./ci/analyze-sonarqube.sh
@@ -111,7 +111,7 @@ jobs:
     name: "Build Javadocs"
   - stage: postbuild
     script: ./ci/build-config-metadata.sh
-    name: "Build Configuration Metadata"
+    name: "Configuration Metadata Analysis"
   - stage: postbuild
     script: ./ci/check-config-factories.sh
     name: "Configuration Factory Analysis"
