@@ -45,7 +45,7 @@ public class CasConsentReviewController {
 
     private static final String CONSENT_REVIEW_VIEW = "casConsentReviewView";
     private static final String CONSENT_LOGOUT_VIEW = "casConsentLogoutView";
-    
+
     private final ConsentRepository consentRepository;
     private final ConsentEngine consentEngine;
     private final Config pac4jConfig;
@@ -97,10 +97,10 @@ public class CasConsentReviewController {
         final long timeout = Beans.newDuration(casProperties.getHttpClient().getAsyncTimeout()).toMillis();
         return new WebAsyncTask<>(timeout, asyncTask);
     }
-    
+
     /**
      * Endpoint for deleting single consent decisions.
-     * 
+     *
      * @param decisionId the decision id
      * @return true / false
      */
@@ -108,13 +108,13 @@ public class CasConsentReviewController {
     @ResponseBody
     public boolean deleteConsentDecision(@RequestParam final Long decisionId) {
         final String principal = Pac4jUtils.getPac4jAuthenticatedUsername();
-        LOGGER.debug("Deleting consent decision with id [{}] for principal [{}].", decisionId, principal);        
+        LOGGER.debug("Deleting consent decision with id [{}] for principal [{}].", decisionId, principal);
         return this.consentRepository.deleteConsentDecision(decisionId, principal);
     }
-    
+
     /**
      * Endpoint for local logout, no SLO.
-     * 
+     *
      * @param request the request
      * @param response the response
      * @return the logout view
@@ -126,21 +126,21 @@ public class CasConsentReviewController {
         manager.logout();
         return CONSENT_LOGOUT_VIEW;
     }
-    
+
     /**
      * Endpoint for Cas Client Callback.
-     * 
+     *
      * @param request the request
      * @param response the response
      */
     @GetMapping("/callback")
     public void callback(final HttpServletRequest request, final HttpServletResponse response) {
         LOGGER.debug("Callback endpoint hit...");
-        
+
         final CallbackLogic logic = this.pac4jConfig.getCallbackLogic();
         final J2EContext context = Pac4jUtils.getPac4jJ2EContext(request, response);
         final String defaultUrl = this.casProperties.getServer().getPrefix().concat("/consentReview");
         logic.perform(context, this.pac4jConfig, J2ENopHttpActionAdapter.INSTANCE,
-            defaultUrl, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, null);
+            defaultUrl, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, null);
     }
 }
