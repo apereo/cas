@@ -45,13 +45,11 @@ public class CasServerDiscoveryProfileEndpoint extends BaseCasActuatorEndpoint {
     /**
      * Discovery.
      *
-     * @param request  the request
-     * @param response the response
      * @return the map
      */
     @GetMapping
     @ResponseBody
-    public Map<String, Object> discovery(final HttpServletRequest request, final HttpServletResponse response) {
+    public Map<String, Object> discovery() {
         val results = new HashMap<String, Object>();
         results.put("profile", casServerProfileRegistrar.getProfile());
         return results;
