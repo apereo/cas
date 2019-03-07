@@ -47,6 +47,7 @@ public interface OAuth20Constants {
      * The response type.
      */
     String RESPONSE_TYPE = "response_type";
+
     /**
      * The response mode.
      */
@@ -61,21 +62,6 @@ public interface OAuth20Constants {
      * The client id.
      */
     String CLIENT_ID = "client_id";
-
-    /**
-     * The client secret.
-     */
-    String SECRET = "secret";
-
-    /**
-     * The client username.
-     */
-    String USERNAME = "username";
-
-    /**
-     * The client password.
-     */
-    String PASSWORD = "password";
 
     /**
      * PKCE code challenge.
@@ -171,7 +157,6 @@ public interface OAuth20Constants {
      * The invalid client.
      */
     String INVALID_CLIENT = "invalid_client";
-
 
     /**
      * The invalid request.
@@ -316,10 +301,12 @@ public interface OAuth20Constants {
      * requesting party claim.
      */
     String REQUESTING_PARTY_CLAIMS = "requesting_party_claims";
+
     /**
      * error details.
      */
     String ERROR_DETAILS = "error_details";
+
     /**
      * need information.
      */
