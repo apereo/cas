@@ -60,6 +60,14 @@ Research the issue and be sure to do your due diligence:
 
 If you can, always volunteer to post a patch and work up a solution. Be prepared to follow up to test the produced patch in your environment and always try to provide a confirmation. Simply complaining about something and letting it sit in the issue tracker for someone else to handle isn't going to get you much. If you find something that you deem worth someone else's time to fix for you, be sure to demonstrate the issue is first and foremost worth your own time as well. “It ain’t a problem for me if it ain’t a problem for you”, sort of thing. 
 
+When in doubt, please consult the project Apache v2 license:
+
+> Unless required by applicable law or agreed to in writing, software
+> distributed under the License is distributed on an "AS IS" BASIS,
+> WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+> See the License for the specific language governing permissions and
+> limitations under the License.
+
 <div class="alert alert-info"><strong>List Etiquette</strong><p>Unless explicitly asked, please <b>avoid</b> contacting individual project members directly.</p></div>
 
 ## CAS Developer List (cas-dev@apereo.org)
