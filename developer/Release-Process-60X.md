@@ -85,7 +85,7 @@ Do not forget to commit all changes and push changes upstream, creating a new re
 - Then build the project using the following command:
 
 ```bash
-./gradlew clean assemble install -x test -x check -DpublishReleases=true -DskipNodeModulesCleanUp=true -DskipNpmCache=true
+./gradlew clean assemble -x test -x check -DpublishReleases=true -DskipNodeModulesCleanUp=true -DskipNpmCache=true
 ```
 
 ### Release
@@ -93,7 +93,7 @@ Do not forget to commit all changes and push changes upstream, creating a new re
 Release the project using the following commands:
 
 ```bash
-./gradlew uploadArchives -DpublishReleases=true -DsonatypeUsername=<UID> -DsonatypePassword=<PASSWORD> -DskipNodeModulesCleanUp=true -DskipNpmCache=true
+./gradlew uploadArchives -DpublishReleases=true -DsonatypeUsername=<UID> -DsonatypePassword=<PASSWORD> -DskipNodeModulesCleanUp=true -DskipNpmCache=true -Dorg.gradle.internal.http.socketTimeout=160000 -Dorg.gradle.internal.http.connectionTimeout=160000
 ```
 
 ## Performing the Release
