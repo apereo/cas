@@ -31,7 +31,7 @@ public class DefaultSSOSamlHttpRequestExtractorTests extends BaseSamlIdPConfigur
     public void verifyActionWithExplicitUrlDecoding() {
         val ext = new DefaultSSOSamlHttpRequestExtractor(this.openSamlConfigBean.getParserPool());
         val decoded = EncodingUtils.urlDecode(SAML_REQUEST);
-        val  request = getMockHttpServletRequest(decoded);
+        val request = getMockHttpServletRequest(decoded);
         val decoder = new UrlDecodingHTTPRedirectDeflateDecoder(false);
         val result = ext.extract(request, decoder, AuthnRequest.class);
         assertNotNull(result.getKey());
@@ -42,7 +42,7 @@ public class DefaultSSOSamlHttpRequestExtractorTests extends BaseSamlIdPConfigur
     @Test
     public void verifyActionWithoutExplicitUrlDecoding() {
         val ext = new DefaultSSOSamlHttpRequestExtractor(this.openSamlConfigBean.getParserPool());
-        MockHttpServletRequest request = getMockHttpServletRequest(SAML_REQUEST);
+        val request = getMockHttpServletRequest(SAML_REQUEST);
         val decoder = new UrlDecodingHTTPRedirectDeflateDecoder(true);
         val result = ext.extract(request, decoder, AuthnRequest.class);
         assertNotNull(result.getKey());
