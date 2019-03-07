@@ -23,7 +23,7 @@ import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.pac4j.saml.client.SAML2Client;
-import org.pac4j.saml.client.SAML2ClientConfiguration;
+import org.pac4j.saml.config.SAML2Configuration;
 import org.pac4j.saml.context.SAML2MessageContext;
 import org.pac4j.saml.sso.impl.SAML2AuthnRequestBuilder;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -38,7 +38,7 @@ import java.io.File;
  */
 @Category(FileSystemCategory.class)
 public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
-    private SAML2ClientConfiguration saml2ClientConfiguration;
+    private SAML2Configuration saml2Configuration;
     private SAML2MessageContext saml2MessageContext;
     private String spMetadataPath;
     private MessageContext<SAMLObject> samlContext;
@@ -50,12 +50,12 @@ public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationT
         final String keystorePath = new File(FileUtils.getTempDirectory(), "keystore").getCanonicalPath();
         spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata.xml").getCanonicalPath();
 
-        saml2ClientConfiguration = new SAML2ClientConfiguration(keystorePath, "changeit", "changeit", idpMetadata);
-        saml2ClientConfiguration.setServiceProviderEntityId("cas:example:sp");
-        saml2ClientConfiguration.setServiceProviderMetadataPath(spMetadataPath);
-        saml2ClientConfiguration.init();
+        saml2Configuration = new SAML2Configuration(keystorePath, "changeit", "changeit", idpMetadata);
+        saml2Configuration.setServiceProviderEntityId("cas:example:sp");
+        saml2Configuration.setServiceProviderMetadataPath(spMetadataPath);
+        saml2Configuration.init();
 
-        final SAML2Client saml2Client = new SAML2Client(saml2ClientConfiguration);
+        final SAML2Client saml2Client = new SAML2Client(saml2Configuration);
         saml2Client.setCallbackUrl("http://callback.example.org");
         saml2Client.init();
 
@@ -70,7 +70,7 @@ public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationT
             new EntityIdCriterion(peer.getEntityId()), new EntityRoleCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME))));
 
         final SAMLSelfEntityContext self = saml2MessageContext.getSubcontext(SAMLSelfEntityContext.class, true);
-        self.setEntityId(saml2ClientConfiguration.getServiceProviderEntityId());
+        self.setEntityId(saml2Configuration.getServiceProviderEntityId());
 
         final SAMLMetadataContext sp = self.getSubcontext(SAMLMetadataContext.class, true);
         final InMemoryResourceMetadataResolver spRes = new InMemoryResourceMetadataResolver(new File(spMetadataPath), openSamlConfigBean);
@@ -82,7 +82,7 @@ public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationT
 
         final SamlRegisteredService service = new SamlRegisteredService();
         service.setName("Sample");
-        service.setServiceId(saml2ClientConfiguration.getServiceProviderEntityId());
+        service.setServiceId(saml2Configuration.getServiceProviderEntityId());
         service.setId(100);
         service.setDescription("SAML Service");
         service.setMetadataLocation(spMetadataPath);
@@ -93,7 +93,7 @@ public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationT
     @Test
     public void verifySamlAuthnRequestNotSigned() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        final SAML2AuthnRequestBuilder builder = new SAML2AuthnRequestBuilder(saml2ClientConfiguration);
+        final SAML2AuthnRequestBuilder builder = new SAML2AuthnRequestBuilder(saml2Configuration);
         final AuthnRequest authnRequest = builder.build(saml2MessageContext);
         samlObjectSignatureValidator.verifySamlProfileRequestIfNeeded(authnRequest, adaptor, request, samlContext);
     }

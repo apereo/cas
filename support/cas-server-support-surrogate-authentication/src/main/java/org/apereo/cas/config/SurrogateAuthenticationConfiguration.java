@@ -88,7 +88,7 @@ public class SurrogateAuthenticationConfiguration {
     public ExpirationPolicy grantingTicketExpirationPolicy(@Qualifier("ticketGrantingTicketExpirationPolicy") final ExpirationPolicy ticketGrantingTicketExpirationPolicy) {
         final SurrogateAuthenticationProperties su = casProperties.getAuthn().getSurrogate();
         final HardTimeoutExpirationPolicy surrogatePolicy = new HardTimeoutExpirationPolicy(su.getTgt().getTimeToKillInSeconds());
-        final SurrogateSessionExpirationPolicy policy = new SurrogateSessionExpirationPolicy(surrogatePolicy);
+        final SurrogateSessionExpirationPolicy policy = new SurrogateSessionExpirationPolicy(ticketGrantingTicketExpirationPolicy);
         policy.addPolicy(SurrogateSessionExpirationPolicy.PolicyTypes.SURROGATE, surrogatePolicy);
         policy.addPolicy(SurrogateSessionExpirationPolicy.PolicyTypes.DEFAULT, ticketGrantingTicketExpirationPolicy);
         return policy;
