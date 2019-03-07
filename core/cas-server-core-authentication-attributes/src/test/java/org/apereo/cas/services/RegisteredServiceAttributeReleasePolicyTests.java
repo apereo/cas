@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -208,14 +209,15 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         ApplicationContextProvider.registerBeanIntoApplicationContext(this.applicationContext, dao, "attributeRepository");
 
         val repository = new CachingPrincipalAttributesRepository(TimeUnit.MILLISECONDS.name(), 100);
-        val p = new DefaultPrincipalFactory().createPrincipal("uid",
-            Collections.singletonMap("mail", "final@example.com"));
+        repository.setAttributeRepositoryIds(Set.of(stub.getId()));
+        val p = new DefaultPrincipalFactory().createPrincipal("uid", Collections.singletonMap("mail", "final@example.com"));
 
         policy.setPrincipalAttributesRepository(repository);
 
-        val attr = policy.getAttributes(p, CoreAttributesTestUtils.getService(),
-            CoreAttributesTestUtils.getRegisteredService());
-        assertEquals(attr.size(), attributes.size() + 1);
+        val service = CoreAttributesTestUtils.getService();
+        val registeredService = CoreAttributesTestUtils.getRegisteredService();
+        val attr = policy.getAttributes(p, service, registeredService);
+        assertEquals(attributes.size() + 1, attr.size());
     }
 
     @Test

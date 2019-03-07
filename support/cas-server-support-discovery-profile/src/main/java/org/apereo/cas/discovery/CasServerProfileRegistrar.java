@@ -118,8 +118,7 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
                 return null;
             }
         };
-        return (Set) locateSubtypesByReflection(mapper, Collectors.toSet(), IndirectClient.class,
-            Predicates.alwaysTrue(), "org.pac4j");
+        return (Set) locateSubtypesByReflection(mapper, Collectors.toSet(), IndirectClient.class, Predicates.alwaysTrue(), "org.pac4j");
     }
 
     private Set<String> locateDelegatedClientTypes() {
