@@ -6,6 +6,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
@@ -23,7 +24,6 @@ import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,8 +38,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static org.apereo.cas.support.oauth.OAuth20Constants.BASE_OAUTH20_URL;
 
 /**
  * This class has some useful methods to output data in plain text,
@@ -66,16 +64,6 @@ public class OAuth20Utils {
         mv.setStatus(HttpStatus.BAD_REQUEST);
         response.setStatus(HttpStatus.BAD_REQUEST.value());
         return mv;
-    }
-
-    /**
-     * Redirect to model and view.
-     *
-     * @param view the view
-     * @return the model and view
-     */
-    public static ModelAndView redirectTo(final View view) {
-        return new ModelAndView(view);
     }
 
     /**
@@ -184,7 +172,7 @@ public class OAuth20Utils {
      * @return the string
      */
     public static String casOAuthCallbackUrl(final String serverPrefixUrl) {
-        return serverPrefixUrl.concat(BASE_OAUTH20_URL + '/' + OAuth20Constants.CALLBACK_AUTHORIZE_URL);
+        return serverPrefixUrl.concat(OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.CALLBACK_AUTHORIZE_URL);
     }
 
     /**
@@ -196,6 +184,17 @@ public class OAuth20Utils {
     @SneakyThrows
     public static String toJson(final Object value) {
         return MAPPER.writeValueAsString(value);
+    }
+
+    /**
+     * Is response mode type form post?
+     *
+     * @param registeredService the registered service
+     * @param responseType      the response type
+     * @return the boolean
+     */
+    public static boolean isResponseModeTypeFormPost(final OAuthRegisteredService registeredService, final OAuth20ResponseModeTypes responseType) {
+        return responseType == OAuth20ResponseModeTypes.FORM_POST || StringUtils.equalsIgnoreCase("post", registeredService.getResponseType());
     }
 
     /**
@@ -215,6 +214,22 @@ public class OAuth20Utils {
     }
 
     /**
+     * Gets response mode type.
+     *
+     * @param context the context
+     * @return the response type
+     */
+    public static OAuth20ResponseModeTypes getResponseModeType(final J2EContext context) {
+        val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_MODE);
+        val type = Arrays.stream(OAuth20ResponseModeTypes.values())
+            .filter(t -> t.getType().equalsIgnoreCase(responseType))
+            .findFirst()
+            .orElse(OAuth20ResponseModeTypes.NONE);
+        LOGGER.debug("OAuth response type is [{}]", type);
+        return type;
+    }
+
+    /**
      * Check the grant type against an expected grant type.
      *
      * @param type         the given grant type
@@ -225,7 +240,6 @@ public class OAuth20Utils {
         return expectedType.name().equalsIgnoreCase(type);
     }
 
-
     /**
      * Check the response type against an expected response type.
      *
@@ -234,6 +248,17 @@ public class OAuth20Utils {
      * @return whether the response type is the expected one
      */
     public static boolean isResponseType(final String type, final OAuth20ResponseTypes expectedType) {
+        return expectedType.getType().equalsIgnoreCase(type);
+    }
+
+    /**
+     * Is response mode type expected?
+     *
+     * @param type         the type
+     * @param expectedType the expected type
+     * @return the boolean
+     */
+    public static boolean isResponseModeType(final String type, final OAuth20ResponseModeTypes expectedType) {
         return expectedType.getType().equalsIgnoreCase(type);
     }
 
@@ -272,8 +297,8 @@ public class OAuth20Utils {
         }
 
         LOGGER.warn("Registered service [{}] does not define any authorized/supported grant types. "
-                + "It is STRONGLY recommended that you authorize and assign grant types to the service definition. "
-                + "While just a warning for now, this behavior will be enforced by CAS in future versions.", registeredService.getName());
+            + "It is STRONGLY recommended that you authorize and assign grant types to the service definition. "
+            + "While just a warning for now, this behavior will be enforced by CAS in future versions.", registeredService.getName());
         return true;
     }
 
@@ -286,8 +311,8 @@ public class OAuth20Utils {
      */
     public static boolean isAuthorizedGrantTypeForService(final J2EContext context, final OAuthRegisteredService registeredService) {
         return isAuthorizedGrantTypeForService(
-                context.getRequestParameter(OAuth20Constants.GRANT_TYPE),
-                registeredService);
+            context.getRequestParameter(OAuth20Constants.GRANT_TYPE),
+            registeredService);
     }
 
     /**
@@ -399,5 +424,4 @@ public class OAuth20Utils {
         }
         return null;
     }
-
 }

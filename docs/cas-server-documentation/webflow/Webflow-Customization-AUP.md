@@ -6,7 +6,7 @@ category: Webflow Management
 
 # Acceptable Usage Policy
 
-CAS presents the ability to allow the user to accept the usage policy before moving on to the application.
+Also known as *Terms of Use* or *EULA*, CAS presents the ability to allow the user to accept the usage policy before moving on to the application.
 Production-level deployments of this feature would require modifications to the flow such that the retrieval
 and/or acceptance of the policy would be handled via an external storage mechanism such as LDAP or JDBC.
 

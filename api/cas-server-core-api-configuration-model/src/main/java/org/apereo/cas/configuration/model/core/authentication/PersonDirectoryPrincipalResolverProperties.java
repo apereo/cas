@@ -49,4 +49,18 @@ public class PersonDirectoryPrincipalResolverProperties implements Serializable 
      * and a principal is first established to then query an attribute source.
      */
     private boolean useExistingPrincipalId;
+
+    /**
+     * Whether attribute repositories should be contacted
+     * to fetch person attributes.
+     */
+    private boolean attributeResolutionEnabled = true;
+
+    /**
+     * Activated attribute repository identifiers
+     * that should be used for fetching attributes
+     * if attribute resolution is enabled.
+     * The list here may include identifiers separated by comma.
+     */
+    private String activeAttributeRepositoryIds;
 }

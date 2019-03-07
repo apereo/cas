@@ -26,6 +26,7 @@ import org.apereo.cas.support.saml.web.idp.profile.slo.SLOSamlRedirectProfileHan
 import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlPostProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlPostSimpleSignProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlProfileCallbackHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.sso.UrlDecodingHTTPRedirectDeflateDecoder;
 import org.apereo.cas.support.saml.web.idp.profile.sso.request.DefaultSSOSamlHttpRequestExtractor;
 import org.apereo.cas.support.saml.web.idp.profile.sso.request.SSOSamlHttpRequestExtractor;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
@@ -37,7 +38,10 @@ import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
+import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
+import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder;
+import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostSimpleSignDecoder;
 import org.opensaml.saml.saml2.core.Response;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +54,9 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
+import org.springframework.http.HttpMethod;
+
+import java.util.EnumMap;
 
 /**
  * This is {@link SamlIdPEndpointsConfiguration}.
@@ -63,7 +70,7 @@ import org.springframework.core.Ordered;
 public class SamlIdPEndpointsConfiguration {
     @Autowired
     private ApplicationEventPublisher eventPublisher;
-    
+
     @Autowired
     @Qualifier("casClientTicketValidator")
     private ObjectProvider<AbstractUrlBasedTicketValidator> casClientTicketValidator;
@@ -179,6 +186,12 @@ public class SamlIdPEndpointsConfiguration {
     @Bean
     @RefreshScope
     public SSOSamlPostProfileHandlerController ssoPostProfileHandlerController() {
+        val props = casProperties.getAuthn().getSamlIdp().getProfile().getSso();
+
+        val decoders = new EnumMap<HttpMethod, BaseHttpServletRequestXMLMessageDecoder>(HttpMethod.class);
+        decoders.put(HttpMethod.GET, new UrlDecodingHTTPRedirectDeflateDecoder(props.isUrlDecodeRedirectRequest()));
+        decoders.put(HttpMethod.POST, new HTTPPostDecoder());
+
         return new SSOSamlPostProfileHandlerController(
             samlObjectSigner.getObject(),
             authenticationSystemSupport.getObject(),
@@ -190,12 +203,19 @@ public class SamlIdPEndpointsConfiguration {
             casProperties,
             samlObjectSignatureValidator(),
             ssoSamlHttpRequestExtractor(),
-            samlIdPCallbackService());
+            samlIdPCallbackService(),
+            decoders);
     }
 
     @Bean
     @RefreshScope
     public SSOSamlPostSimpleSignProfileHandlerController ssoPostSimpleSignProfileHandlerController() {
+        val props = casProperties.getAuthn().getSamlIdp().getProfile().getSsoPostSimpleSign();
+
+        val decoders = new EnumMap<HttpMethod, BaseHttpServletRequestXMLMessageDecoder>(HttpMethod.class);
+        decoders.put(HttpMethod.GET, new UrlDecodingHTTPRedirectDeflateDecoder(props.isUrlDecodeRedirectRequest()));
+        decoders.put(HttpMethod.POST, new HTTPPostSimpleSignDecoder());
+
         return new SSOSamlPostSimpleSignProfileHandlerController(
             samlObjectSigner.getObject(),
             authenticationSystemSupport.getIfAvailable(),
@@ -207,13 +227,17 @@ public class SamlIdPEndpointsConfiguration {
             casProperties,
             samlObjectSignatureValidator(),
             ssoSamlHttpRequestExtractor(),
-            samlIdPCallbackService());
+            samlIdPCallbackService(),
+            decoders);
     }
-
 
     @Bean
     @RefreshScope
     public SLOSamlRedirectProfileHandlerController sloRedirectProfileHandlerController() {
+        val props = casProperties.getAuthn().getSamlIdp().getProfile().getSlo();
+        val decoders = new EnumMap<HttpMethod, BaseHttpServletRequestXMLMessageDecoder>(HttpMethod.class);
+        decoders.put(HttpMethod.GET, new UrlDecodingHTTPRedirectDeflateDecoder(props.isUrlDecodeRedirectRequest()));
+
         return new SLOSamlRedirectProfileHandlerController(
             samlObjectSigner.getIfAvailable(),
             authenticationSystemSupport.getIfAvailable(),
@@ -225,12 +249,16 @@ public class SamlIdPEndpointsConfiguration {
             casProperties,
             samlObjectSignatureValidator(),
             ssoSamlHttpRequestExtractor(),
-            samlIdPCallbackService());
+            samlIdPCallbackService(),
+            decoders);
     }
 
     @Bean
     @RefreshScope
     public SLOSamlPostProfileHandlerController sloPostProfileHandlerController() {
+        val decoders = new EnumMap<HttpMethod, BaseHttpServletRequestXMLMessageDecoder>(HttpMethod.class);
+        decoders.put(HttpMethod.POST, new HTTPPostDecoder());
+
         return new SLOSamlPostProfileHandlerController(
             samlObjectSigner.getIfAvailable(),
             authenticationSystemSupport.getIfAvailable(),
@@ -242,7 +270,8 @@ public class SamlIdPEndpointsConfiguration {
             casProperties,
             samlObjectSignatureValidator(),
             ssoSamlHttpRequestExtractor(),
-            samlIdPCallbackService());
+            samlIdPCallbackService(),
+            decoders);
     }
 
     @Bean

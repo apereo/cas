@@ -21,7 +21,6 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockOnlyOneTicketRegistry;
 import org.apereo.cas.validation.Cas20WithoutProxyingValidationSpecification;
 
@@ -52,7 +51,7 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
     @Test
     public void verifyBadCredentialsOnTicketGrantingTicketCreation() {
         assertThrows(AuthenticationException.class, () -> CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(),
-                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword()));
+            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword()));
     }
 
     @Test
@@ -344,7 +343,7 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
         val auth = assertion.getPrimaryAuthentication();
         val attributes = auth.getPrincipal().getAttributes();
         assertEquals(1, attributes.size());
-        assertEquals(CollectionUtils.wrapList("adopters"), attributes.get("groupMembership"));
+        assertEquals("adopters", attributes.get("groupMembership"));
     }
 
     @Test

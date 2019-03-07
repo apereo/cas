@@ -95,12 +95,12 @@ public class HttpRequestMultifactorAuthenticationTrigger implements MultifactorA
         val session = request.getSession(false);
         var attributeValue = session != null ? session.getAttribute(attributeName) : null;
         if (attributeValue == null) {
-            LOGGER.debug("No value could be found for session attribute [{}]. Checking request attributes...", attributeName);
+            LOGGER.trace("No value could be found for session attribute [{}]. Checking request attributes...", attributeName);
             attributeValue = request.getAttribute(attributeName);
         }
 
         if (attributeValue == null) {
-            LOGGER.debug("No value could be found for [{}]", attributeName);
+            LOGGER.trace("No value could be found for [{}]", attributeName);
             return null;
         }
 

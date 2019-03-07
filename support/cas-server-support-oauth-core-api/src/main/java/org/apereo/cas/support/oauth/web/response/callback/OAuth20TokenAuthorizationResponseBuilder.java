@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.callback;
 
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
@@ -17,10 +18,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
 import org.pac4j.core.context.J2EContext;
-import org.springframework.web.servlet.View;
-import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -32,13 +33,13 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20AuthorizationResponseBuilder {
-
     private final OAuth20TokenGenerator accessTokenGenerator;
     private final ExpirationPolicy accessTokenExpirationPolicy;
+    private final ServicesManager servicesManager;
 
     @Override
     @SneakyThrows
-    public View build(final J2EContext context, final String clientId, final AccessTokenRequestDataHolder holder) {
+    public ModelAndView build(final J2EContext context, final String clientId, final AccessTokenRequestDataHolder holder) {
 
         val redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI);
         LOGGER.debug("Authorize request verification successful for client [{}] with redirect uri [{}]", clientId, redirectUri);
@@ -63,18 +64,20 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
      * @return the string
      * @throws Exception the exception
      */
-    protected View buildCallbackUrlResponseType(final AccessTokenRequestDataHolder holder,
-                                                final String redirectUri,
-                                                final AccessToken accessToken,
-                                                final List<NameValuePair> params,
-                                                final RefreshToken refreshToken,
-                                                final J2EContext context) throws Exception {
+    protected ModelAndView buildCallbackUrlResponseType(final AccessTokenRequestDataHolder holder,
+                                                        final String redirectUri,
+                                                        final AccessToken accessToken,
+                                                        final List<NameValuePair> params,
+                                                        final RefreshToken refreshToken,
+                                                        final J2EContext context) throws Exception {
         val attributes = holder.getAuthentication().getAttributes();
         val state = attributes.get(OAuth20Constants.STATE).toString();
         val nonce = attributes.get(OAuth20Constants.NONCE).toString();
 
         val builder = new URIBuilder(redirectUri);
         val stringBuilder = new StringBuilder();
+
+        val timeToLive = accessTokenExpirationPolicy.getTimeToLive();
         stringBuilder.append(OAuth20Constants.ACCESS_TOKEN)
             .append('=')
             .append(accessToken.getId())
@@ -85,7 +88,7 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
             .append('&')
             .append(OAuth20Constants.EXPIRES_IN)
             .append('=')
-            .append(accessTokenExpirationPolicy.getTimeToLive());
+            .append(timeToLive);
 
         if (refreshToken != null) {
             stringBuilder.append('&')
@@ -115,7 +118,16 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
         val url = builder.toString();
 
         LOGGER.debug("Redirecting to URL [{}]", url);
-        return new RedirectView(url);
+        val parameters = new LinkedHashMap<String, String>();
+        parameters.put(OAuth20Constants.ACCESS_TOKEN, accessToken.getId());
+        if (refreshToken != null) {
+            parameters.put(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
+        }
+        parameters.put(OAuth20Constants.EXPIRES_IN, timeToLive.toString());
+        parameters.put(OAuth20Constants.STATE, state);
+        parameters.put(OAuth20Constants.NONCE, nonce);
+        parameters.put(OAuth20Constants.CLIENT_ID, accessToken.getClientId());
+        return buildResponseModelAndView(context, servicesManager, accessToken.getClientId(), url, parameters);
     }
 
     @Override

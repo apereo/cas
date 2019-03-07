@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.web;
 
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
@@ -14,11 +15,10 @@ import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.pac4j.core.context.J2EContext;
-import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
@@ -37,18 +37,19 @@ public class OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder extends OAu
     public OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder(final IdTokenGeneratorService idTokenGenerator,
                                                                    final OAuth20TokenGenerator accessTokenGenerator,
                                                                    final ExpirationPolicy accessTokenExpirationPolicy,
-                                                                   final ExpirationPolicy idTokenExpirationPolicy) {
-        super(accessTokenGenerator, accessTokenExpirationPolicy);
+                                                                   final ExpirationPolicy idTokenExpirationPolicy,
+                                                                   final ServicesManager servicesManager) {
+        super(accessTokenGenerator, accessTokenExpirationPolicy, servicesManager);
         this.idTokenGenerator = idTokenGenerator;
         this.idTokenExpirationPolicy = idTokenExpirationPolicy;
     }
 
     @Override
-    protected View buildCallbackUrlResponseType(final AccessTokenRequestDataHolder holder,
-                                                final String redirectUri, final AccessToken accessToken,
-                                                final List<NameValuePair> params,
-                                                final RefreshToken refreshToken,
-                                                final J2EContext context) throws Exception {
+    protected ModelAndView buildCallbackUrlResponseType(final AccessTokenRequestDataHolder holder,
+                                                        final String redirectUri, final AccessToken accessToken,
+                                                        final List<NameValuePair> params,
+                                                        final RefreshToken refreshToken,
+                                                        final J2EContext context) throws Exception {
 
         val idToken = this.idTokenGenerator.generate(context.getRequest(),
             context.getResponse(), accessToken, idTokenExpirationPolicy.getTimeToLive(),

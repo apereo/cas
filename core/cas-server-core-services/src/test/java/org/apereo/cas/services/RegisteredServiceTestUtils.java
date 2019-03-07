@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.authentication.AttributeMergingStrategy;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
@@ -13,7 +14,6 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
 
@@ -150,7 +150,7 @@ public class RegisteredServiceTestUtils {
         policy.setAuthorizedToReleaseProxyGrantingTicket(true);
 
         val repo = new CachingPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 10);
-        repo.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.ADD);
+        repo.setMergingStrategy(AttributeMergingStrategy.ADD);
         policy.setPrincipalAttributesRepository(repo);
         policy.setAttributeFilter(new RegisteredServiceRegexAttributeFilter("https://.+"));
         policy.setAllowedAttributes(new ArrayList<>(getTestAttributes().keySet()));

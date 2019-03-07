@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * This class resolves the principal id regarding the WsFederation credentials.
@@ -34,8 +35,12 @@ public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryP
                                                       final boolean returnNullIfNoAttributes,
                                                       final String principalAttributeName,
                                                       final WsFederationConfiguration configuration,
-                                                      final boolean useCurrentPrincipalId) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName, useCurrentPrincipalId);
+                                                      final boolean useCurrentPrincipalId,
+                                                      final boolean resolveAttributes,
+                                                      final Set<String> activeAttributeRepositoryIdentifiers) {
+        super(attributeRepository, principalFactory, returnNullIfNoAttributes,
+            principalAttributeName, useCurrentPrincipalId, resolveAttributes,
+            activeAttributeRepositoryIdentifiers);
         this.configuration = configuration;
     }
 

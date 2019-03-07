@@ -14,6 +14,7 @@ import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlan;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.persondir.support.CouchbasePersonAttributeDao;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -99,6 +100,7 @@ public class CouchbaseAuthenticationConfiguration {
         val couchbase = casProperties.getAuthn().getAttributeRepository().getCouchbase();
         val cb = new CouchbasePersonAttributeDao(couchbase, authenticationCouchbaseClientFactory());
         cb.setOrder(couchbase.getOrder());
+        FunctionUtils.doIfNotNull(couchbase.getId(), cb::setId);
         return cb;
     }
 

@@ -16,6 +16,7 @@ import org.cryptacular.x509.dn.StandardAttributeType;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -53,7 +54,7 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
      * <bean class="X509SubjectPrincipalResolver"
      * p:descriptor="$UID@$DC.$DC"
      * }
-     * }*
+     * }**
      * <p>
      * The above bean when applied to a certificate with the DN
      * <p>
@@ -61,24 +62,29 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
      * <p>
      * produces the principal <strong>jacky@vt.edu</strong>.</p>
      *
-     * @param attributeRepository      the attribute repository
-     * @param principalFactory         the principal factory
-     * @param returnNullIfNoAttributes the return null if no attributes
-     * @param principalAttributeName   the principal attribute name
-     * @param descriptor               Descriptor string where attribute names are prefixed with "$"
-     *                                 to identify replacement by real attribute values from the subject DN.
-     *                                 Valid attributes include common X.509 DN attributes such as the following:
-     *                                 <ul><li>C</li><li>CN</li><li>DC</li><li>EMAILADDRESS</li>
-     *                                 <li>L</li><li>O</li><li>OU</li><li>SERIALNUMBER</li>
-     *                                 <li>ST</li><li>UID</li><li>UNIQUEIDENTIFIER</li></ul>
-     *                                 For a complete list of supported attributes, see {@link org.cryptacular.x509.dn.StandardAttributeType}.
-     * @param useCurrentPrincipalId    whether the principal id from the resolved principal should be used
+     * @param attributeRepository                  the attribute repository
+     * @param principalFactory                     the principal factory
+     * @param returnNullIfNoAttributes             the return null if no attributes
+     * @param principalAttributeName               the principal attribute name
+     * @param descriptor                           Descriptor string where attribute names are prefixed with "$"
+     *                                             to identify replacement by real attribute values from the subject DN.
+     *                                             Valid attributes include common X.509 DN attributes such as the following:
+     *                                             <ul><li>C</li><li>CN</li><li>DC</li><li>EMAILADDRESS</li>
+     *                                             <li>L</li><li>O</li><li>OU</li><li>SERIALNUMBER</li>
+     *                                             <li>ST</li><li>UID</li><li>UNIQUEIDENTIFIER</li></ul>
+     *                                             For a complete list of supported attributes, see {@link org.cryptacular.x509.dn.StandardAttributeType}.
+     * @param useCurrentPrincipalId                whether the principal id from the resolved principal should be used
+     * @param resolveAttributes                    the resolve attributes
+     * @param activeAttributeRepositoryIdentifiers the active attribute repository identifiers
      */
     public X509SubjectPrincipalResolver(final IPersonAttributeDao attributeRepository,
                                         final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
                                         final String principalAttributeName, final String descriptor,
-                                        final boolean useCurrentPrincipalId) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName, useCurrentPrincipalId);
+                                        final boolean useCurrentPrincipalId, final boolean resolveAttributes,
+                                        final Set<String> activeAttributeRepositoryIdentifiers) {
+        super(attributeRepository, principalFactory, returnNullIfNoAttributes,
+            principalAttributeName, useCurrentPrincipalId, resolveAttributes,
+            activeAttributeRepositoryIdentifiers);
         this.descriptor = descriptor;
     }
 

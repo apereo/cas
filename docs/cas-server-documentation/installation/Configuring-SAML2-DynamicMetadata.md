@@ -12,16 +12,8 @@ Management of service provider metadata in a dynamic on-the-fly fashion may be a
 The following endpoints are provided by CAS:
  
 | Endpoint                                 | Description
-|------------------------------------------|------------------------------------------------------------------
-| `samlIdPRegisteredServiceMetadataCache`  | Manage and control the cache that holds metadata instances for SAML service providers.
-
-A `GET` operation produces the cached copy of the metadata for a given service provider, using the `serviceId` and `entityId` parameters. The `serviceId` parameter
-may be the numeric identifier for the registered service or its name. In case the service definition represents a metadata aggregate such as InCommon, 
-the `entityId` parameter may be used to pinpoint and filter the exact entity within the aggregate.
-
-A `DELETE` operation will delete invalidate the metadata cache. If no parameters are provided, the metadata cache will be entirely invalidated. A `serviceId` parameter
-will force CAS to only invalidate the cached metadata instance for that service provider. The `serviceId` parameter may be the numeric identifier 
-for the registered service or its name.
+|------------------------------------------|--------------------------------------------------------------------------------------
+| `samlIdPRegisteredServiceMetadataCache`  | Manage and control the cache that holds metadata instances for SAML service providers. Note the cache is specific to the JVM memory of the CAS server node and it's **NOT** distributed or replicated. A `GET` operation produces the cached copy of the metadata for a given service provider, using the `serviceId` and `entityId` parameters. The `serviceId` parameter may be the numeric identifier for the registered service or its name. In case the service definition represents a metadata aggregate such as InCommon, the `entityId` parameter may be used to pinpoint and filter the exact entity within the aggregate. A `DELETE` operation will delete invalidate the metadata cache. If no parameters are provided, the metadata cache will be entirely invalidated. A `serviceId` parameter will force CAS to only invalidate the cached metadata instance for that service provider. The `serviceId` parameter may be the numeric identifier for the registered service or its name.
 
 ## Metadata Query Protocol
 
