@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.web;
 
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
@@ -36,8 +37,9 @@ public class OidcImplicitIdTokenAuthorizationResponseBuilder extends OAuth20Toke
     public OidcImplicitIdTokenAuthorizationResponseBuilder(final IdTokenGeneratorService idTokenGenerator,
                                                            final OAuth20TokenGenerator accessTokenGenerator,
                                                            final ExpirationPolicy accessTokenExpirationPolicy,
-                                                           final ExpirationPolicy idTokenExpirationPolicy) {
-        super(accessTokenGenerator, accessTokenExpirationPolicy);
+                                                           final ExpirationPolicy idTokenExpirationPolicy,
+                                                           final ServicesManager servicesManager) {
+        super(accessTokenGenerator, accessTokenExpirationPolicy, servicesManager);
         this.idTokenGenerator = idTokenGenerator;
         this.idTokenExpirationPolicy = idTokenExpirationPolicy;
     }

@@ -4,12 +4,10 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
 import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +16,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.util.CommonHelper;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.LinkedHashMap;
 
@@ -68,7 +65,7 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAu
      * @return the model and view
      */
     protected ModelAndView buildCallbackViewViaRedirectUri(final J2EContext context, final String clientId,
-                                                         final Authentication authentication, final OAuthCode code) {
+                                                           final Authentication authentication, final OAuthCode code) {
         val attributes = authentication.getAttributes();
         val state = attributes.get(OAuth20Constants.STATE).toString();
         val nonce = attributes.get(OAuth20Constants.NONCE).toString();
@@ -85,20 +82,11 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAu
             callbackUrl = CommonHelper.addParameter(callbackUrl, OAuth20Constants.NONCE, nonce);
         }
         LOGGER.debug("Redirecting to URL [{}]", callbackUrl);
-
-        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
-        val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_MODE);
-        if (StringUtils.equalsIgnoreCase("form_post", responseType) || StringUtils.equalsIgnoreCase("post", registeredService.getResponseType())) {
-            val model = new LinkedHashMap<String, Object>();
-            model.put("originalUrl", callbackUrl);
-            val params = new LinkedHashMap<String, String>();
-            params.put(OAuth20Constants.CODE, code.getId());
-            params.put(OAuth20Constants.STATE, state);
-            params.put(OAuth20Constants.NONCE, nonce);
-            params.put(OAuth20Constants.CLIENT_ID, clientId);
-            model.put("parameters", params);
-            return new ModelAndView(CasWebflowConstants.VIEW_ID_POST_RESPONSE, model);
-        }
-        return new ModelAndView(new RedirectView(callbackUrl));
+        val params = new LinkedHashMap<String, String>();
+        params.put(OAuth20Constants.CODE, code.getId());
+        params.put(OAuth20Constants.STATE, state);
+        params.put(OAuth20Constants.NONCE, nonce);
+        params.put(OAuth20Constants.CLIENT_ID, clientId);
+        return buildResponseModelAndView(context, servicesManager, clientId, callbackUrl, params);
     }
 }
