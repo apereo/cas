@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.callback;
 
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
@@ -18,9 +19,9 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
 import org.pac4j.core.context.J2EContext;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -32,9 +33,9 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20AuthorizationResponseBuilder {
-
     private final OAuth20TokenGenerator accessTokenGenerator;
     private final ExpirationPolicy accessTokenExpirationPolicy;
+    private final ServicesManager servicesManager;
 
     @Override
     @SneakyThrows
@@ -75,6 +76,8 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
 
         val builder = new URIBuilder(redirectUri);
         val stringBuilder = new StringBuilder();
+
+        val timeToLive = accessTokenExpirationPolicy.getTimeToLive();
         stringBuilder.append(OAuth20Constants.ACCESS_TOKEN)
             .append('=')
             .append(accessToken.getId())
@@ -85,7 +88,7 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
             .append('&')
             .append(OAuth20Constants.EXPIRES_IN)
             .append('=')
-            .append(accessTokenExpirationPolicy.getTimeToLive());
+            .append(timeToLive);
 
         if (refreshToken != null) {
             stringBuilder.append('&')
@@ -115,7 +118,16 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
         val url = builder.toString();
 
         LOGGER.debug("Redirecting to URL [{}]", url);
-        return new ModelAndView(new RedirectView(url));
+        val parameters = new LinkedHashMap<String, String>();
+        parameters.put(OAuth20Constants.ACCESS_TOKEN, accessToken.getId());
+        if (refreshToken != null) {
+            parameters.put(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
+        }
+        parameters.put(OAuth20Constants.EXPIRES_IN, timeToLive.toString());
+        parameters.put(OAuth20Constants.STATE, state);
+        parameters.put(OAuth20Constants.NONCE, nonce);
+        parameters.put(OAuth20Constants.CLIENT_ID, accessToken.getClientId());
+        return buildResponseModelAndView(context, servicesManager, accessToken.getClientId(), url, parameters);
     }
 
     @Override
