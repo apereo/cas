@@ -46,7 +46,6 @@ public class AuthyClientInstance {
         val authyClient = new AuthyApiClient(apiKey, authyUrl, testFlag);
         this.authyUsers = authyClient.getUsers();
         this.authyTokens = authyClient.getTokens();
-
     }
 
     /**
