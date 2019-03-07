@@ -12,7 +12,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.Synchronized;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -21,6 +20,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 
+import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -49,12 +49,15 @@ import java.util.stream.Collectors;
 public abstract class AbstractPrincipalAttributesRepository implements PrincipalAttributesRepository, AutoCloseable {
     private static final long serialVersionUID = 6350245643948535906L;
 
+    @JsonIgnore
+    @Transient
+    private final transient Object lock = new Object();
     /**
      * The merging strategy that deals with existing principal attributes
      * and those that are retrieved from the source. By default, existing attributes
      * are ignored and the source is always consulted.
      */
-    protected AttributeMergingStrategy mergingStrategy = AttributeMergingStrategy.MULTIVALUED;
+    private AttributeMergingStrategy mergingStrategy = AttributeMergingStrategy.MULTIVALUED;
 
     private Set<String> attributeRepositoryIds = new LinkedHashSet<>();
 
@@ -166,35 +169,35 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      * @param id the person id to locate in the attribute repository
      * @return the map of attributes
      */
-    @Synchronized
     protected Map<String, List<Object>> retrievePersonAttributesFromAttributeRepository(final String id) {
-        val repository = getAttributeRepository();
-        if (repository == null) {
-            LOGGER.warn("No attribute repositories could be fetched from application context");
+        synchronized (lock) {
+            val repository = getAttributeRepository();
+            if (repository == null) {
+                LOGGER.warn("No attribute repositories could be fetched from application context");
+                return new HashMap<>(0);
+            }
+            val originalFilter = repository.getPersonAttributeDaoFilter();
+            try {
+                if (areAttributeRepositoryIdsDefined()) {
+                    configureAttributeRepositoryFilterByIds(repository, this.attributeRepositoryIds);
+
+                    val attrs = repository.getPerson(id);
+                    if (attrs == null) {
+                        LOGGER.debug("Could not find principal [{}] in the repository so no attributes are returned.", id);
+                        return new HashMap<>(0);
+                    }
+                    val attributes = attrs.getAttributes();
+                    if (attributes == null) {
+                        LOGGER.debug("Principal [{}] has no attributes and so none are returned.", id);
+                        return new HashMap<>(0);
+                    }
+                    return attributes;
+                }
+            } finally {
+                repository.setPersonAttributeDaoFilter(originalFilter);
+            }
             return new HashMap<>(0);
         }
-
-        val originalFilter = repository.getPersonAttributeDaoFilter();
-        try {
-            if (areAttributeRepositoryIdsDefined()) {
-                configureAttributeRepositoryFilterByIds(repository, this.attributeRepositoryIds);
-
-                val attrs = repository.getPerson(id);
-                if (attrs == null) {
-                    LOGGER.debug("Could not find principal [{}] in the repository so no attributes are returned.", id);
-                    return new HashMap<>(0);
-                }
-                val attributes = attrs.getAttributes();
-                if (attributes == null) {
-                    LOGGER.debug("Principal [{}] has no attributes and so none are returned.", id);
-                    return new HashMap<>(0);
-                }
-                return attributes;
-            }
-        } finally {
-            repository.setPersonAttributeDaoFilter(originalFilter);
-        }
-        return new HashMap<>(0);
     }
 
     /**
