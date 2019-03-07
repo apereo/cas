@@ -902,6 +902,8 @@ The following merging strategies can be used to resolve conflicts when the same 
 Static attributes that need to be mapped to a hardcoded value belong here.
 
 ```properties
+# cas.authn.attributeRepository.stub.id=
+
 # cas.authn.attributeRepository.stub.attributes.uid=uid
 # cas.authn.attributeRepository.stub.attributes.displayName=displayName
 # cas.authn.attributeRepository.stub.attributes.cn=commonName
@@ -913,6 +915,9 @@ Static attributes that need to be mapped to a hardcoded value belong here.
 If you wish to directly and separately retrieve attributes from an LDAP source, LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.attributeRepository.ldap[0]`.
 
 ```properties
+# cas.authn.attributeRepository.ldap[0].id=
+# cas.authn.attributeRepository.ldap[0].order=0
+
 # cas.authn.attributeRepository.ldap[0].attributes.uid=uid
 # cas.authn.attributeRepository.ldap[0].attributes.displayName=displayName
 # cas.authn.attributeRepository.ldap[0].attributes.cn=commonName
@@ -928,6 +933,7 @@ the following settings are then relevant:
 # cas.authn.attributeRepository.groovy[0].location=file:/etc/cas/attributes.groovy
 # cas.authn.attributeRepository.groovy[0].caseInsensitive=false
 # cas.authn.attributeRepository.groovy[0].order=0
+# cas.authn.attributeRepository.groovy[0].id=
 ```
 
 The Groovy script may be designed as:
@@ -954,6 +960,7 @@ the following settings are then relevant:
 ```properties
 # cas.authn.attributeRepository.json[0].location=file://etc/cas/attribute-repository.json
 # cas.authn.attributeRepository.json[0].order=0
+# cas.authn.attributeRepository.json[0].id=
 ```
 
 The format of the file may be:
@@ -975,6 +982,12 @@ The format of the file may be:
 
 Retrieve attributes from a REST endpoint. RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.authn.attributeRepository.rest[0]`.
 
+```properties
+# cas.authn.attributeRepository.rest[0].order=0
+# cas.authn.attributeRepository.rest[0].id=
+# cas.authn.attributeRepository.rest[0].caseInsensitive=false
+```
+
 The authenticating user id is passed in form of a request parameter under `username.` The response is expected
 to be a JSON map as such:
 
@@ -994,6 +1007,7 @@ The following settings are relevant:
 ```properties
 # cas.authn.attributeRepository.script[0].location=file:/etc/cas/script.groovy
 # cas.authn.attributeRepository.script[0].order=0
+# cas.authn.attributeRepository.script[0].id=
 # cas.authn.attributeRepository.script[0].caseInsensitive=false
 # cas.authn.attributeRepository.script[0].engineName=js|groovy|ruby|python
 ```
@@ -1053,6 +1067,7 @@ Retrieve attributes from a JDBC source. Database settings for this feature are a
 
 # cas.authn.attributeRepository.jdbc[0].singleRow=true
 # cas.authn.attributeRepository.jdbc[0].order=0
+# cas.authn.attributeRepository.jdbc[0].id=
 # cas.authn.attributeRepository.jdbc[0].requireAllAttributes=true
 # cas.authn.attributeRepository.jdbc[0].caseCanonicalization=NONE|LOWER|UPPER
 # cas.authn.attributeRepository.jdbc[0].queryType=OR|AND
@@ -1074,6 +1089,8 @@ To learn more about this topic, [please review this guide](../integration/Attrib
 
 ```properties
 # cas.authn.attributeRepository.grouper[0].enabled=true
+# cas.authn.attributeRepository.grouper[0].id=
+# cas.authn.attributeRepository.grouper[0].order=0
 ```
 
 You will also need to ensure `grouper.client.properties` is available on the classpath (i.e. `src/main/resources`)
@@ -1092,6 +1109,7 @@ This option will fetch attributes from a Couchbase database for a given CAS prin
 ```properties
 # cas.authn.attributeRepository.couchbase.usernameAttribute=username
 # cas.authn.attributeRepository.couchbase.order=0
+# cas.authn.attributeRepository.couchbase.id=
 ```
 
 ### Shibboleth Integrations
@@ -2897,6 +2915,14 @@ under the configuration key `cas.authn.samlIdp.metadata.amazonS3`.
 ```properties
 # cas.authn.samlIdp.ticket.samlArtifactsCacheStorageName=samlArtifactsCache
 # cas.authn.samlIdp.ticket.samlAttributeQueryCacheStorageName=samlAttributeQueryCache
+```
+
+### SAML Profiles
+
+```properties
+# cas.authn.samlIdp.profile.slo.urlDecodeRedirectRequest=false
+# cas.authn.samlIdp.profile.sso.urlDecodeRedirectRequest=false
+# cas.authn.samlIdp.profile.ssoPostSimpleSign.urlDecodeRedirectRequest=false
 ```
 
 ## SAML SPs
