@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -72,11 +73,13 @@ public class CoreAuthenticationUtils {
             if (activeAttributeRepositoryIdentifiers != null && !activeAttributeRepositoryIdentifiers.isEmpty()) {
                 val repoIdsArray = activeAttributeRepositoryIdentifiers.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
                 attributeRepository.setPersonAttributeDaoFilter(dao -> Arrays.stream(dao.getId())
-                    .anyMatch(daoId -> StringUtils.equalsAnyIgnoreCase(daoId, repoIdsArray)));
+                    .anyMatch(daoId -> daoId.equalsIgnoreCase(IPersonAttributeDao.WILDCARD)
+                        || StringUtils.equalsAnyIgnoreCase(daoId, repoIdsArray)
+                        || StringUtils.equalsAnyIgnoreCase(IPersonAttributeDao.WILDCARD, repoIdsArray)));
             }
             val attrs = attributeRepository.getPerson(principalId);
             if (attrs == null) {
-                return null;
+                return new HashMap<>(0);
             }
             return attrs.getAttributes();
         } finally {

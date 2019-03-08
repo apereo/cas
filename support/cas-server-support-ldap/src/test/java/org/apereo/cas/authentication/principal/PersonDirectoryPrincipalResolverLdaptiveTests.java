@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attributeRepository.ldap[0].attributes.description=description",
     "cas.authn.attributeRepository.ldap[0].bindDn=cn=Directory Manager",
     "cas.authn.attributeRepository.ldap[0].bindCredential=password"
-    })
+})
 @DirtiesContext
 @Tag("Ldap")
 @EnabledIfContinuousIntegration
