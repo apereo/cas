@@ -69,7 +69,7 @@ public enum CasLabels {
     LABEL_MFA_SWIVEL_SECURE("MFA Swivel Secure", "swivel"),
     LABEL_MFA_TRUSTED_DEVICES("MFA Trusted Devices"),
     LABEL_MFA_YUBIKEY("MFA YubiKey", "yubikey"),
-    LABEL_MEMCACHED("Memcached"),
+    LABEL_MEMCACHED("Memcached", "memcached|kryo"),
     LABEL_MONGODB("MongoDb"),
     LABEL_MONITORING("Monitoring", "healthcheck|status"),
     LABEL_OAUTH2_PROTOCOL("OAuth2 Protocol", "oauth"),
