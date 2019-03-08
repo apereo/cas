@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.principal.cache;
 
 import org.apereo.cas.authentication.AttributeMergingStrategy;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
 import org.apereo.cas.services.RegisteredService;
@@ -15,14 +16,11 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 
 import javax.persistence.Transient;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -108,18 +106,6 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
         return ObjectUtils.defaultIfNull(getMergingStrategy(), AttributeMergingStrategy.MULTIVALUED);
     }
 
-    /**
-     * Configure attribute repository filter by ids.
-     *
-     * @param repository             the repository
-     * @param attributeRepositoryIds the attribute repository ids
-     */
-    protected static void configureAttributeRepositoryFilterByIds(final IPersonAttributeDao repository,
-                                                                  final Set<String> attributeRepositoryIds) {
-        val repoIdsArray = attributeRepositoryIds.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
-        repository.setPersonAttributeDaoFilter(dao -> Arrays.stream(dao.getId())
-            .anyMatch(daoId -> StringUtils.equalsAnyIgnoreCase(daoId, repoIdsArray)));
-    }
 
     /**
      * Are attribute repository ids defined boolean.
@@ -176,27 +162,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
                 LOGGER.warn("No attribute repositories could be fetched from application context");
                 return new HashMap<>(0);
             }
-            val originalFilter = repository.getPersonAttributeDaoFilter();
-            try {
-                if (areAttributeRepositoryIdsDefined()) {
-                    configureAttributeRepositoryFilterByIds(repository, this.attributeRepositoryIds);
-
-                    val attrs = repository.getPerson(id);
-                    if (attrs == null) {
-                        LOGGER.debug("Could not find principal [{}] in the repository so no attributes are returned.", id);
-                        return new HashMap<>(0);
-                    }
-                    val attributes = attrs.getAttributes();
-                    if (attributes == null) {
-                        LOGGER.debug("Principal [{}] has no attributes and so none are returned.", id);
-                        return new HashMap<>(0);
-                    }
-                    return attributes;
-                }
-            } finally {
-                repository.setPersonAttributeDaoFilter(originalFilter);
-            }
-            return new HashMap<>(0);
+            return CoreAuthenticationUtils.retrieveAttributesFromAttributeRepository(repository, id, this.attributeRepositoryIds);
         }
     }
 
