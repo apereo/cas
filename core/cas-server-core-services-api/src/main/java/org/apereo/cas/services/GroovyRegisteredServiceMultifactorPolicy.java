@@ -31,6 +31,7 @@ public class GroovyRegisteredServiceMultifactorPolicy implements RegisteredServi
 
     @JsonIgnore
     @Transient
+    @org.springframework.data.annotation.Transient
     private transient RegisteredServiceMultifactorPolicy groovyPolicyInstance;
 
     @JsonIgnore
