@@ -48,10 +48,12 @@ public class DefaultSingleLogoutRequest implements SingleLogoutRequest {
 
     @JsonIgnore
     @Transient
+    @org.springframework.data.annotation.Transient
     private final transient RegisteredService registeredService;
 
     @JsonIgnore
     @Transient
+    @org.springframework.data.annotation.Transient
     private final transient TicketGrantingTicket ticketGrantingTicket;
 
     /**

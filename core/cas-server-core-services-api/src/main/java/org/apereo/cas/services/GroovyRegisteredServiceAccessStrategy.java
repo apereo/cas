@@ -39,6 +39,7 @@ public class GroovyRegisteredServiceAccessStrategy implements RegisteredServiceA
 
     @JsonIgnore
     @Transient
+    @org.springframework.data.annotation.Transient
     private transient RegisteredServiceAccessStrategy groovyStrategyInstance;
 
     @Override

@@ -49,6 +49,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
 
     @JsonIgnore
     @Transient
+    @org.springframework.data.annotation.Transient
     private final transient Object lock = new Object();
     /**
      * The merging strategy that deals with existing principal attributes

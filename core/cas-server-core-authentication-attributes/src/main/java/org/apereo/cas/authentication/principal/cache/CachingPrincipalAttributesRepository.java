@@ -56,6 +56,7 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
     protected String timeUnit;
 
     @JsonIgnore
+    @javax.persistence.Transient
     @Transient
     private transient Cache<String, Map<String, Object>> cache;
 
