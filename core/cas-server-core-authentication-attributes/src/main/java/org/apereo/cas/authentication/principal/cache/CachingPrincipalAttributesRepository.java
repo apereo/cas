@@ -76,8 +76,13 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
 
     @Override
     protected void addPrincipalAttributes(final String id, final Map<String, Object> attributes) {
-        this.cache.put(id, attributes);
-        LOGGER.debug("Cached attributes for [{}]", id);
+        try{
+            this.cache.put(id, attributes);
+            LOGGER.debug("Cached attributes for [{}]", id);
+        }catch (final Exception e){
+            LOGGER.debug("Check cache settings. No attributes cached");
+            LOGGER.error(e.getMessage(), e);
+        }
     }
 
     @Override
