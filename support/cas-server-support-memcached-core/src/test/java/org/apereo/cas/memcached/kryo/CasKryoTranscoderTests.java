@@ -10,6 +10,7 @@ import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.CollectionUtils;
@@ -40,6 +41,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CasKryoTranscoderTests {
     private static final String ST_ID = "ST-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK";
     private static final String TGT_ID = "TGT-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK-cas1";
+    private static final String PGT_ID = "PGT-1234567";
+    private static final String PT_ID = "PT-1234567";
 
     private static final String USERNAME = "handymanbob";
     private static final String PASSWORD = "foo";
@@ -72,23 +75,34 @@ public class CasKryoTranscoderTests {
             new AcceptUsersAuthenticationHandler(""),
             new BasicCredentialMetaData(userPassCredential)));
 
+        val authentication = bldr.build();
         val expectedTGT = new TicketGrantingTicketImpl(TGT_ID,
             RegisteredServiceTestUtils.getService(),
-            null, bldr.build(),
+            null, authentication,
             new NeverExpiresExpirationPolicy());
 
-        val ticket = expectedTGT.grantServiceTicket(ST_ID,
+        val serviceTicket = expectedTGT.grantServiceTicket(ST_ID,
             RegisteredServiceTestUtils.getService(),
             new NeverExpiresExpirationPolicy(), false, true);
-        val result1 = transcoder.encode(expectedTGT);
-        val resultTicket = transcoder.decode(result1);
+        var encoded = transcoder.encode(expectedTGT);
+        var decoded = transcoder.decode(encoded);
 
-        assertEquals(expectedTGT, resultTicket);
-        val result2 = transcoder.encode(ticket);
-        val resultStTicket1 = transcoder.decode(result2);
-        assertEquals(ticket, resultStTicket1);
-        val resultStTicket2 = transcoder.decode(result2);
-        assertEquals(ticket, resultStTicket2);
+        assertEquals(expectedTGT, decoded);
+        encoded = transcoder.encode(serviceTicket);
+        decoded = transcoder.decode(encoded);
+        assertEquals(serviceTicket, decoded);
+        decoded = transcoder.decode(encoded);
+        assertEquals(serviceTicket, decoded);
+
+        val pgt = serviceTicket.grantProxyGrantingTicket(PGT_ID, authentication, new HardTimeoutExpirationPolicy(100));
+        encoded = transcoder.encode(pgt);
+        decoded = transcoder.decode(encoded);
+        assertEquals(pgt, decoded);
+
+        val pt = pgt.grantProxyTicket(PT_ID, RegisteredServiceTestUtils.getService(), new HardTimeoutExpirationPolicy(100), true);
+        encoded = transcoder.encode(pt);
+        decoded = transcoder.decode(encoded);
+        assertEquals(pt, decoded);
     }
 
     @Test
