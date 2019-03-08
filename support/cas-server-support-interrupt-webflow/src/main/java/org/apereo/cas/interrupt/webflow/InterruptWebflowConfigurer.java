@@ -97,7 +97,7 @@ public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
         val target = getRealSubmissionState(flow).getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
 
-        val noInterruptTransition = createTransition(CasWebflowConstants.TRANSITION_ID_INTERRUPT_REQUIRED, target);
+        val noInterruptTransition = createTransition(CasWebflowConstants.TRANSITION_ID_INTERRUPT_SKIPPED, target);
         val transitionSet = inquireState.getTransitionSet();
         transitionSet.add(noInterruptTransition);
 
