@@ -3,6 +3,12 @@ package org.apereo.cas.config;
 import org.apereo.cas.ComponentSerializationPlan;
 import org.apereo.cas.ComponentSerializationPlanConfigurator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.support.saml.services.EduPersonTargetedIdAttributeReleasePolicy;
+import org.apereo.cas.support.saml.services.GroovySamlRegisteredServiceAttributeReleasePolicy;
+import org.apereo.cas.support.saml.services.MetadataEntityAttributesAttributeReleasePolicy;
+import org.apereo.cas.support.saml.services.MetadataRequestedAttributesAttributeReleasePolicy;
+import org.apereo.cas.support.saml.services.PatternMatchingEntityIdAttributeReleasePolicy;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketExpirationPolicy;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketExpirationPolicy;
 
@@ -22,5 +28,12 @@ public class SamlIdpComponentSerializationConfiguration implements ComponentSeri
     public void configureComponentSerializationPlan(final ComponentSerializationPlan plan) {
         plan.registerSerializableClass(SamlArtifactTicketExpirationPolicy.class);
         plan.registerSerializableClass(SamlAttributeQueryTicketExpirationPolicy.class);
+        plan.registerSerializableClass(SamlRegisteredService.class);
+
+        plan.registerSerializableClass(EduPersonTargetedIdAttributeReleasePolicy.class);
+        plan.registerSerializableClass(GroovySamlRegisteredServiceAttributeReleasePolicy.class);
+        plan.registerSerializableClass(MetadataEntityAttributesAttributeReleasePolicy.class);
+        plan.registerSerializableClass(MetadataRequestedAttributesAttributeReleasePolicy.class);
+        plan.registerSerializableClass(PatternMatchingEntityIdAttributeReleasePolicy.class);
     }
 }
