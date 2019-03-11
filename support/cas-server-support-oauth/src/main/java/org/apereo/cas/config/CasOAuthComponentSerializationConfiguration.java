@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.ComponentSerializationPlan;
 import org.apereo.cas.ComponentSerializationPlanConfigurator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.accesstoken.AccessTokenImpl;
 import org.apereo.cas.ticket.accesstoken.OAuthAccessTokenExpirationPolicy;
 import org.apereo.cas.ticket.code.OAuthCodeExpirationPolicy;
@@ -30,6 +31,8 @@ public class CasOAuthComponentSerializationConfiguration implements ComponentSer
         plan.registerSerializableClass(OAuthAccessTokenExpirationPolicy.class);
         plan.registerSerializableClass(OAuthRefreshTokenExpirationPolicy.class);
         plan.registerSerializableClass(OAuthCodeExpirationPolicy.class);
+
+        plan.registerSerializableClass(OAuthRegisteredService.class);
 
         plan.registerSerializableClass(OAuthCodeImpl.class);
         plan.registerSerializableClass(AccessTokenImpl.class);
