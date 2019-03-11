@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.ComponentSerializationPlan;
 import org.apereo.cas.ComponentSerializationPlanConfigurator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.SurrogateRegisteredServiceAccessStrategy;
 import org.apereo.cas.ticket.support.SurrogateSessionExpirationPolicy;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -21,5 +22,6 @@ public class SurrogateComponentSerializationConfiguration implements ComponentSe
     @Override
     public void configureComponentSerializationPlan(final ComponentSerializationPlan plan) {
         plan.registerSerializableClass(SurrogateSessionExpirationPolicy.class);
+        plan.registerSerializableClass(SurrogateRegisteredServiceAccessStrategy.class);
     }
 }

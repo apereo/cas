@@ -5,10 +5,12 @@ import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
+import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
@@ -60,6 +62,21 @@ public class CasKryoTranscoderTests {
         this.transcoder = new CasKryoTranscoder(new CasKryoPool(classesToRegister));
         this.principalAttributes = new HashMap<>();
         this.principalAttributes.put(NICKNAME_KEY, NICKNAME_VALUE);
+    }
+
+    @Test
+    public void verifyRegexRegisteredService() {
+        var service = RegisteredServiceTestUtils.getRegisteredService("example");
+        var encoded = transcoder.encode(service);
+        var decoded = transcoder.decode(encoded);
+        assertEquals(service, decoded);
+        service = RegisteredServiceTestUtils.getRegisteredService("example");
+        val attributeReleasePolicy = new ReturnAllAttributeReleasePolicy();
+        attributeReleasePolicy.setPrincipalAttributesRepository(new DefaultPrincipalAttributesRepository());
+        service.setAttributeReleasePolicy(attributeReleasePolicy);
+        encoded = transcoder.encode(service);
+        decoded = transcoder.decode(encoded);
+        assertEquals(service, decoded);
     }
 
     @Test
