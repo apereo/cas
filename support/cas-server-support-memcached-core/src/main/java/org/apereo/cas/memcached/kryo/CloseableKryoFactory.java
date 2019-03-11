@@ -15,6 +15,7 @@ import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
 import org.apereo.cas.authentication.exceptions.MixedPrincipalException;
 import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
+import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.SimplePrincipal;
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
@@ -226,6 +227,7 @@ public class CloseableKryoFactory implements KryoFactory {
         kryo.register(ScriptedRegisteredServiceAttributeReleasePolicy.class);
         kryo.register(ReturnRestfulAttributeReleasePolicy.class);
         kryo.register(CachingPrincipalAttributesRepository.class);
+        kryo.register(DefaultPrincipalAttributesRepository.class);
         kryo.register(AbstractPrincipalAttributesRepository.class);
         kryo.register(AttributeMergingStrategy.class);
         kryo.register(DefaultRegisteredServiceConsentPolicy.class);
@@ -266,6 +268,8 @@ public class CloseableKryoFactory implements KryoFactory {
         kryo.register(HashSet.class);
         kryo.register(EnumMap.class, new EnumMapSerializer());
         kryo.register(EnumSet.class, new EnumSetSerializer());
+
+        kryo.register(Object[].class);
 
         kryo.register(byte[].class);
         kryo.register(ByteBuffer.class);
