@@ -172,6 +172,7 @@ In the event that an aggregate is defined containing multiple entity ids, the be
     "@class": "org.apereo.cas.support.saml.services.PatternMatchingEntityIdAttributeReleasePolicy",
     "allowedAttributes" : [ "java.util.ArrayList", [ "cn", "mail", "sn" ] ],
     "fullMatch" : "true",
+    "reverseMatch" : "false",
     "entityIds" : "entityId1|entityId2|somewhere.+"
   }
 }
