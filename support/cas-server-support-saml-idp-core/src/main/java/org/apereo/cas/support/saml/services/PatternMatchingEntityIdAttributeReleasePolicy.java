@@ -34,6 +34,8 @@ public class PatternMatchingEntityIdAttributeReleasePolicy extends BaseSamlRegis
 
     private boolean fullMatch = true;
 
+    private boolean reverseMatch;
+
     @Override
     protected Map<String, Object> getAttributesForSamlRegisteredService(final Map<String, Object> attributes,
                                                                         final SamlRegisteredService registeredService,
@@ -46,8 +48,14 @@ public class PatternMatchingEntityIdAttributeReleasePolicy extends BaseSamlRegis
         val pattern = RegexUtils.createPattern(this.entityIds);
         val entityID = entityDescriptor.getEntityID();
         val matcher = pattern.matcher(entityID);
-        val matched = fullMatch ? matcher.matches() : matcher.find();
+        var matched = fullMatch ? matcher.matches() : matcher.find();
         LOGGER.debug("Pattern [{}] matched against [{}]? [{}]", pattern.pattern(), entityID, BooleanUtils.toStringYesNo(matched));
+
+        if (reverseMatch) {
+            matched = !matched;
+            LOGGER.debug("Reversed match to be [{}]", BooleanUtils.toStringYesNo(matched));
+        }
+
         if (matched) {
             return authorizeReleaseOfAllowedAttributes(principal, attributes, registeredService, selectedService);
         }
