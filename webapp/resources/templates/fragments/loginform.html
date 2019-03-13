@@ -145,7 +145,7 @@
                                    type="submit"
                                    value="Login3"
                             />
-                            <button class="btn btn-block btn-submit"
+                            <button class="btn btn-block btn-submit g-recaptcha"
                                     th:if="${recaptchaSiteKey != null AND recaptchaInvisible != null AND recaptchaInvisible}"
                                     th:attr="data-sitekey=${recaptchaSiteKey}, data-badge=${recaptchaPosition}"
                                     data-callback="onRecaptchaV2Submit"
