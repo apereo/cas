@@ -4,6 +4,7 @@ import org.apereo.cas.config.RedisServiceRegistryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.ServiceRegistry;
+import org.apereo.cas.util.junit.DisabledIfContinuousIntegration;
 
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
@@ -29,6 +30,7 @@ import redis.embedded.RedisServer;
 @TestPropertySource(properties = {"cas.serviceRegistry.redis.host=localhost", "cas.serviceRegistry.redis.port=6380"})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Redis")
+@DisabledIfContinuousIntegration
 public class RedisEmbeddedServiceRegistryTests extends AbstractServiceRegistryTests {
     private static RedisServer REDIS_SERVER;
 
