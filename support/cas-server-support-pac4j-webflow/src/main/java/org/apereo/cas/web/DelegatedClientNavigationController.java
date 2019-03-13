@@ -102,7 +102,7 @@ public class DelegatedClientNavigationController {
      * @param response   the response
      * @return the view
      */
-    @GetMapping(ENDPOINT_RESPONSE)
+    @RequestMapping(ENDPOINT_RESPONSE)
     public View redirectResponseToFlow(@PathVariable("clientName") final String clientName, final HttpServletRequest request, final HttpServletResponse response) {
         return buildRedirectViewBackToFlow(clientName, request);
     }
