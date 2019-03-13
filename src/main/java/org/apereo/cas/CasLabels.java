@@ -39,7 +39,7 @@ public enum CasLabels {
     LABEL_COSMOSDB("CosmosDb", "documentdb"),
     LABEL_COUCHDB("CouchDb"),
     LABEL_COUCHBASE("Couchbase"),
-    LABEL_PENDING_DOCUMENT_PROPERTY("Pending: Document Property"),
+    LABEL_PENDING_DOCUMENT_PROPERTY("Remember: Document Property"),
     LABEL_DELEGATED_AUTHENTICATION_PAC4J("Delegated Authentication Pac4J", "pac4j"),
     LABEL_DELEGATED_AUTHENTICATION_WS_FED("Delegated Authentication WS-FED", "adfs"),
     LABEL_DEPENDENCIES_MODULES("Dependencies & Modules", "gradle|dependency|bom|maven|depencencies|version|upgrade"),
@@ -80,7 +80,7 @@ public enum CasLabels {
     LABEL_PASSWORD_MANAGEMENT("Password Management", "password reset|\\bpm\\b"),
     LABEL_PASSWORD_POLICY("Password Policy", "lppe"),
     LABEL_PENDING("Pending"),
-    LABEL_PENDING_PORT_FORWARD("Pending: Port Forward"),
+    LABEL_PENDING_PORT_FORWARD("Remember: Port Forward"),
     LABEL_PERFORMANCE_LOAD_TESTS("Performance & Load Tests", "threadsafe|jmeter|performance|non-threadsafe|overhead"),
     LABEL_PRINCIPAL_RESOLUTION("Principal Resolution"),
     LABEL_PROPOSAL_DECLINED("Proposal Declined"),
@@ -122,6 +122,7 @@ public enum CasLabels {
     LABEL_USER_INTERFACE_THEMES("User Interface & Themes", "ux|thymeleaf|\\bhtml\\b|views|screen|page|gulp|javascript|js|sass|css"),
     LABEL_WS_FED_PROTOCOL("WS-FED Protocol", "WSSecurity"),
     LABEL_X509("X.509", "x509|certificates|tls|\bclient authentication\b|CRL"),
+    LABEL_WIP("Pending: Work in Progress", "WIP|\\[WIP\\]"),
     LABEL_RECAPTCHA("reCAPTCHA", "\\bcaptcha\\b");
 
     private final String title;
