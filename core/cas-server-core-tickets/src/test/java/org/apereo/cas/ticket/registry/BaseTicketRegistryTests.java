@@ -11,10 +11,14 @@ import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.ticket.TransientSessionTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.CoreTicketUtils;
+import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.ProxyGrantingTicketIdGenerator;
 import org.apereo.cas.util.ServiceTicketIdGenerator;
 import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
@@ -56,6 +60,7 @@ public abstract class BaseTicketRegistryTests {
 
     private String ticketGrantingTicketId;
     private String serviceTicketId;
+    private String transientSessionTicketId;
     private String proxyGrantingTicketId;
 
     private TicketRegistry ticketRegistry;
@@ -68,8 +73,9 @@ public abstract class BaseTicketRegistryTests {
             .getNewTicketId(ServiceTicket.PREFIX);
         this.proxyGrantingTicketId = new ProxyGrantingTicketIdGenerator(10, StringUtils.EMPTY)
             .getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX);
+        this.transientSessionTicketId = new DefaultUniqueTicketIdGenerator().getNewTicketId(TransientSessionTicket.PREFIX);
 
-        useEncryption = (info.getCurrentRepetition() % 2) != 0;
+        useEncryption = info.getCurrentRepetition() % 2 != 0;
 
         ticketRegistry = this.getNewTicketRegistry();
         if (ticketRegistry != null) {
@@ -115,12 +121,12 @@ public abstract class BaseTicketRegistryTests {
 
     @RepeatedTest(2)
     public void verifyGetNullTicket() {
-        assertNull(ticketRegistry.getTicket(null, TicketGrantingTicket.class), TICKET_SHOULD_BE_NULL_USE_ENCRYPTION + useEncryption +"]");
+        assertNull(ticketRegistry.getTicket(null, TicketGrantingTicket.class), TICKET_SHOULD_BE_NULL_USE_ENCRYPTION + useEncryption + ']');
     }
 
     @RepeatedTest(2)
     public void verifyGetNonExistingTicket() {
-        assertNull(ticketRegistry.getTicket("FALALALALALAL", TicketGrantingTicket.class), TICKET_SHOULD_BE_NULL_USE_ENCRYPTION + useEncryption +"]");
+        assertNull(ticketRegistry.getTicket("FALALALALALAL", TicketGrantingTicket.class), TICKET_SHOULD_BE_NULL_USE_ENCRYPTION + useEncryption + ']');
     }
 
     @RepeatedTest(2)
@@ -129,8 +135,8 @@ public abstract class BaseTicketRegistryTests {
             CoreAuthenticationTestUtils.getAuthentication(),
             new NeverExpiresExpirationPolicy()));
         val ticket = ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
-        assertNotNull(ticket, "Ticket is null. useEncryption["+ useEncryption +"]");
-        assertEquals(ticketGrantingTicketId, ticket.getId(), "Ticket IDs don't match. useEncryption["+ useEncryption +"]");
+        assertNotNull(ticket, "Ticket is null. useEncryption[" + useEncryption + ']');
+        assertEquals(ticketGrantingTicketId, ticket.getId(), "Ticket IDs don't match. useEncryption[" + useEncryption + ']');
     }
 
     @RepeatedTest(2)
@@ -141,17 +147,17 @@ public abstract class BaseTicketRegistryTests {
 
         assertThrows(ClassCastException.class,
             () -> ticketRegistry.getTicket(ticketGrantingTicketId, ServiceTicket.class),
-            "Should throw ClassCastException. useEncryption["+ useEncryption +"]");
+            "Should throw ClassCastException. useEncryption[" + useEncryption + ']');
     }
 
     @RepeatedTest(2)
     public void verifyGetNullTicketWithoutClass() {
-        assertNull(ticketRegistry.getTicket(null), TICKET_SHOULD_BE_NULL_USE_ENCRYPTION + useEncryption +"]");
+        assertNull(ticketRegistry.getTicket(null), TICKET_SHOULD_BE_NULL_USE_ENCRYPTION + useEncryption + ']');
     }
 
     @RepeatedTest(2)
     public void verifyGetNonExistingTicketWithoutClass() {
-        assertNull(ticketRegistry.getTicket("FALALALALALAL"), TICKET_SHOULD_BE_NULL_USE_ENCRYPTION + useEncryption +"]");
+        assertNull(ticketRegistry.getTicket("FALALALALALAL"), TICKET_SHOULD_BE_NULL_USE_ENCRYPTION + useEncryption + ']');
     }
 
     @RepeatedTest(2)
@@ -160,8 +166,8 @@ public abstract class BaseTicketRegistryTests {
             CoreAuthenticationTestUtils.getAuthentication(),
             new NeverExpiresExpirationPolicy()));
         val ticket = ticketRegistry.getTicket(ticketGrantingTicketId);
-        assertNotNull(ticket, "Ticket is null. useEncryption["+ useEncryption +"]");
-        assertEquals(ticketGrantingTicketId, ticket.getId(), "Ticket IDs don't match. useEncryption["+ useEncryption +"]");
+        assertNotNull(ticket, "Ticket is null. useEncryption[" + useEncryption + ']');
+        assertEquals(ticketGrantingTicketId, ticket.getId(), "Ticket IDs don't match. useEncryption[" + useEncryption + ']');
     }
 
     @RepeatedTest(2)
@@ -173,8 +179,8 @@ public abstract class BaseTicketRegistryTests {
         ticketRegistry.addTicket(tgt);
 
         tgt = ticketRegistry.getTicket(tgt.getId(), TicketGrantingTicket.class);
-        assertNotNull(tgt, "Ticket is null. useEncryption["+ useEncryption +"]");
-        assertTrue(tgt.getServices().isEmpty(), "Ticket services should be empty. useEncryption["+ useEncryption +"]");
+        assertNotNull(tgt, "Ticket is null. useEncryption[" + useEncryption + ']');
+        assertTrue(tgt.getServices().isEmpty(), "Ticket services should be empty. useEncryption[" + useEncryption + ']');
 
         tgt.grantServiceTicket("ST1", RegisteredServiceTestUtils.getService("TGT_UPDATE_TEST"),
             new NeverExpiresExpirationPolicy(), false, false);
@@ -193,7 +199,7 @@ public abstract class BaseTicketRegistryTests {
                 new NeverExpiresExpirationPolicy()));
         }
         val actual = ticketRegistry.deleteAll();
-        assertEquals(TICKETS_IN_REGISTRY, actual, "Wrong ticket count. useEncryption["+ useEncryption +"]");
+        assertEquals(TICKETS_IN_REGISTRY, actual, "Wrong ticket count. useEncryption[" + useEncryption + ']');
     }
 
     @RepeatedTest(2)
@@ -202,8 +208,17 @@ public abstract class BaseTicketRegistryTests {
         ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
             CoreAuthenticationTestUtils.getAuthentication(),
             new NeverExpiresExpirationPolicy()));
-        assertSame(1, ticketRegistry.deleteTicket(ticketGrantingTicketId), "Wrong ticket count. useEncryption["+ useEncryption +"]");
-        assertNull(ticketRegistry.getTicket(ticketGrantingTicketId), TICKET_SHOULD_BE_NULL_USE_ENCRYPTION + useEncryption +"]");
+        assertSame(1, ticketRegistry.deleteTicket(ticketGrantingTicketId), "Wrong ticket count. useEncryption[" + useEncryption + ']');
+        assertNull(ticketRegistry.getTicket(ticketGrantingTicketId), TICKET_SHOULD_BE_NULL_USE_ENCRYPTION + useEncryption + ']');
+    }
+
+    @RepeatedTest(2)
+    @Transactional
+    public void verifyTransientSessionTickets() {
+        ticketRegistry.addTicket(new TransientSessionTicketImpl(transientSessionTicketId, new NeverExpiresExpirationPolicy(),
+            RegisteredServiceTestUtils.getService(), CollectionUtils.wrap("key", "value")));
+        assertSame(1, ticketRegistry.deleteTicket(transientSessionTicketId), "Wrong ticket count. useEncryption[" + useEncryption + ']');
+        assertNull(ticketRegistry.getTicket(transientSessionTicketId), TICKET_SHOULD_BE_NULL_USE_ENCRYPTION + useEncryption + ']');
     }
 
     @RepeatedTest(2)
