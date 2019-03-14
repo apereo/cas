@@ -699,6 +699,12 @@
         <property name="message" value="Name of the test class MUST end in 'Tests'"/>
     </module>
     <module name="RegexpSingleline">
+        <metadata name="net.sf.eclipsecs.core.comment" value="Uses external properties file"/>
+        <property name="severity" value="warning"/>
+        <property name="format" value="^\s*@(TestPropertySource|SpringBootTest)\(\s*locations\s*=\s*\{?&quot;\w+:/{0,2}[\w-_]+\.properties"/>
+        <property name="message" value="Properties must be inlined."/>
+    </module>
+    <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Use Collections.singleton instead"/>
         <property name="severity" value="info"/>
         <property name="format" value="new.*Set&lt;&gt;\((Arrays\.asList\([^,]+\)|Collections\.singletonList\(.*\))\)"/>
