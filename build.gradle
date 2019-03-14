@@ -382,7 +382,7 @@ subprojects {
     }
 
     dependencies {
-        optional libraries.springcomponentindexer
+        // optional libraries.springcomponentindexer
 
         implementation libraries.aspectj
         implementation libraries.validationapi
