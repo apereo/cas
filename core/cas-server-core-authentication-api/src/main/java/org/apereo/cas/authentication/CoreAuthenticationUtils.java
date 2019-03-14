@@ -21,6 +21,7 @@ import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.apereo.services.persondir.support.merger.BaseAdditiveAttributeMerger;
 import org.apereo.services.persondir.support.merger.IAttributeMerger;
 import org.apereo.services.persondir.support.merger.MultivaluedAttributeMerger;
@@ -68,23 +69,20 @@ public class CoreAuthenticationUtils {
     public static Map<String, List<Object>> retrieveAttributesFromAttributeRepository(final IPersonAttributeDao attributeRepository,
                                                                                       final String principalId,
                                                                                       final Set<String> activeAttributeRepositoryIdentifiers) {
-        val originalFilter = attributeRepository.getPersonAttributeDaoFilter();
-        try {
-            if (activeAttributeRepositoryIdentifiers != null && !activeAttributeRepositoryIdentifiers.isEmpty()) {
-                val repoIdsArray = activeAttributeRepositoryIdentifiers.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
-                attributeRepository.setPersonAttributeDaoFilter(dao -> Arrays.stream(dao.getId())
-                    .anyMatch(daoId -> daoId.equalsIgnoreCase(IPersonAttributeDao.WILDCARD)
-                        || StringUtils.equalsAnyIgnoreCase(daoId, repoIdsArray)
-                        || StringUtils.equalsAnyIgnoreCase(IPersonAttributeDao.WILDCARD, repoIdsArray)));
-            }
-            val attrs = attributeRepository.getPerson(principalId);
-            if (attrs == null) {
-                return new HashMap<>(0);
-            }
-            return attrs.getAttributes();
-        } finally {
-            attributeRepository.setPersonAttributeDaoFilter(originalFilter);
+        var filter = IPersonAttributeDaoFilter.alwaysChoose();
+        if (activeAttributeRepositoryIdentifiers != null && !activeAttributeRepositoryIdentifiers.isEmpty()) {
+            val repoIdsArray = activeAttributeRepositoryIdentifiers.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
+            filter = dao -> Arrays.stream(dao.getId())
+                .anyMatch(daoId -> daoId.equalsIgnoreCase(IPersonAttributeDao.WILDCARD)
+                    || StringUtils.equalsAnyIgnoreCase(daoId, repoIdsArray)
+                    || StringUtils.equalsAnyIgnoreCase(IPersonAttributeDao.WILDCARD, repoIdsArray));
         }
+        val attrs = attributeRepository.getPerson(principalId, filter);
+        if (attrs == null) {
+            return new HashMap<>(0);
+        }
+        return attrs.getAttributes();
+
     }
 
     /**

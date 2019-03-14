@@ -77,8 +77,7 @@ public class DefaultAuthenticationAttributeReleasePolicy implements Authenticati
 
         decideIfCredentialPasswordShouldBeReleasedAsAttribute(attrs, authentication, service);
         decideIfProxyGrantingTicketShouldBeReleasedAsAttribute(attrs, model, service);
-
-        LOGGER.debug("Processed protocol/authentication attributes from the output model to be [{}]", attrs.keySet());
+        LOGGER.trace("Processed protocol/authentication attributes from the output model to be [{}]", attrs.keySet());
         return attrs;
     }
 
