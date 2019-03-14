@@ -30,7 +30,7 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
     @Override
     public Pair<Boolean, Optional<MultifactorAuthenticationProvider>> validateAuthenticationContext(final Assertion assertion,
                                                                                                     final HttpServletRequest request) {
-        LOGGER.debug("Locating the primary authentication associated with this service request [{}]", assertion.getService());
+        LOGGER.trace("Locating the primary authentication associated with this service request [{}]", assertion.getService());
         val registeredService = servicesManager.findServiceBy(assertion.getService());
         val authentication = assertion.getPrimaryAuthentication();
 

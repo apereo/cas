@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.Service;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -53,6 +54,16 @@ public interface RegisteredServiceAttributeReleasePolicy extends Serializable, O
      * @param filter the new attribute filter
      */
     default void setAttributeFilter(final RegisteredServiceAttributeFilter filter) {
+    }
+
+    /**
+     * Gets principal attribute repository that may control the fetching
+     * and caching of attributes at release time from attribute repository sources..
+     *
+     * @return the principal attribute repository
+     */
+    default PrincipalAttributesRepository getPrincipalAttributesRepository() {
+        return null;
     }
 
     /**

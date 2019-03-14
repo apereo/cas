@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.apereo.services.persondir.support.BasePersonAttributeDao;
 import org.apereo.services.persondir.support.CaseInsensitiveNamedPersonImpl;
@@ -45,20 +46,21 @@ public class CouchbasePersonAttributeDao extends BasePersonAttributeDao {
 
     @Override
     @SneakyThrows
-    public IPersonAttributes getPerson(final String uid) {
+    public IPersonAttributes getPerson(final String uid, final IPersonAttributeDaoFilter filter) {
         val result = couchbase.query(couchbaseProperties.getUsernameAttribute(), uid);
         val attributes = new LinkedHashMap<String, Object>();
         if (result.allRows().isEmpty()) {
             LOGGER.debug("Couchbase query did not return any results/rows.");
         } else {
+            val bucketName = couchbase.getBucket().name();
             attributes.putAll(result.allRows()
                 .stream()
-                .filter(row -> row.value().containsKey(couchbase.getBucket().name()))
+                .filter(row -> row.value().containsKey(bucketName))
                 .filter(row -> {
-                    val value = (JsonObject) row.value().get(couchbase.getBucket().name());
+                    val value = (JsonObject) row.value().get(bucketName);
                     return value.containsKey(couchbaseProperties.getUsernameAttribute());
                 })
-                .map(row -> (JsonObject) row.value().get(couchbase.getBucket().name()))
+                .map(row -> (JsonObject) row.value().get(bucketName))
                 .map(entity -> couchbase.collectAttributesFromEntity(entity, s -> !s.equals(couchbaseProperties.getUsernameAttribute())).entrySet())
                 .flatMap(Collection::stream)
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
@@ -67,15 +69,15 @@ public class CouchbasePersonAttributeDao extends BasePersonAttributeDao {
     }
 
     @Override
-    public Set<IPersonAttributes> getPeople(final Map<String, Object> map) {
-        return getPeopleWithMultivaluedAttributes(stuffAttributesIntoList(map));
+    public Set<IPersonAttributes> getPeople(final Map<String, Object> map, final IPersonAttributeDaoFilter filter) {
+        return getPeopleWithMultivaluedAttributes(stuffAttributesIntoList(map), filter);
     }
 
     @Override
-    public Set<IPersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> map) {
+    public Set<IPersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> map, final IPersonAttributeDaoFilter filter) {
         val people = new LinkedHashSet();
         val username = this.usernameAttributeProvider.getUsernameFromQuery(map);
-        val person = this.getPerson(username);
+        val person = this.getPerson(username, filter);
         if (person != null) {
             people.add(person);
         }
@@ -84,12 +86,12 @@ public class CouchbasePersonAttributeDao extends BasePersonAttributeDao {
     }
 
     @Override
-    public Set<String> getPossibleUserAttributeNames() {
+    public Set<String> getPossibleUserAttributeNames(final IPersonAttributeDaoFilter filter) {
         return new LinkedHashSet<>(0);
     }
 
     @Override
-    public Set<String> getAvailableQueryAttributes() {
+    public Set<String> getAvailableQueryAttributes(final IPersonAttributeDaoFilter filter) {
         return new LinkedHashSet<>(0);
     }
 }

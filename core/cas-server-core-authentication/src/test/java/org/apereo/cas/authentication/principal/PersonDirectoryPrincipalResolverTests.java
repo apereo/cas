@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipa
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
+import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
 import org.junit.jupiter.api.Test;
 
@@ -76,7 +77,8 @@ public class PersonDirectoryPrincipalResolverTests {
         val p = chain.resolve(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
             Optional.of(CoreAuthenticationTestUtils.getPrincipal(CoreAuthenticationTestUtils.CONST_USERNAME, attributes)),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
-        assertEquals(p.getAttributes().size(), CoreAuthenticationTestUtils.getAttributeRepository().getPossibleUserAttributeNames().size() + 1);
+        assertEquals(p.getAttributes().size(),
+            CoreAuthenticationTestUtils.getAttributeRepository().getPossibleUserAttributeNames(IPersonAttributeDaoFilter.alwaysChoose()).size() + 1);
         assertTrue(p.getAttributes().containsKey(ATTR_1));
         assertTrue(p.getAttributes().containsKey("cn"));
         assertNotEquals("originalCN", p.getAttributes().get("cn"));
@@ -91,7 +93,8 @@ public class PersonDirectoryPrincipalResolverTests {
         val p = chain.resolve(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
             Optional.of(CoreAuthenticationTestUtils.getPrincipal(CoreAuthenticationTestUtils.CONST_USERNAME, Collections.singletonMap(ATTR_1, "value"))),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
-        assertEquals(p.getAttributes().size(), CoreAuthenticationTestUtils.getAttributeRepository().getPossibleUserAttributeNames().size() + 1);
+        assertEquals(p.getAttributes().size(),
+            CoreAuthenticationTestUtils.getAttributeRepository().getPossibleUserAttributeNames(IPersonAttributeDaoFilter.alwaysChoose()).size() + 1);
         assertTrue(p.getAttributes().containsKey(ATTR_1));
     }
 
