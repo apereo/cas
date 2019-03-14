@@ -55,17 +55,19 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
         val currentTime = ZonedDateTime.now(ZoneOffset.UTC);
         val lastTimeUsed = ticketState.getLastTimeUsed();
         val killTime = lastTimeUsed.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+        LOGGER.trace("Current time is [{}], ticket's last usage time is [{}] while expiration time is [{}]", currentTime, lastTimeUsed, killTime);
+
         if (ticketState.getCountOfUses() == 0 && currentTime.isBefore(killTime)) {
-            LOGGER.debug("Ticket is not expired due to a count of zero and the time being less " + "than the timeToKillInSeconds");
+            LOGGER.debug("Ticket is not expired due to a count of zero and the current time [{}] being less than the expiration time [{}]", currentTime, killTime);
             return super.isExpired(ticketState);
         }
         if (currentTime.isAfter(killTime)) {
-            LOGGER.debug("Ticket is expired due to the time being greater than the timeToKillInSeconds");
+            LOGGER.debug("Ticket is expired due to the current time [{}] being greater than the expiration time [{}]", currentTime, killTime);
             return true;
         }
         val dontUseUntil = lastTimeUsed.plus(this.timeInBetweenUsesInSeconds, ChronoUnit.SECONDS);
         if (currentTime.isBefore(dontUseUntil)) {
-            LOGGER.warn("Ticket is expired due to the time being less than the waiting period.");
+            LOGGER.warn("Ticket is expired due to the current time [{}] being less than the waiting/throttled expiration period [{}].", currentTime, killTime);
             return true;
         }
         return super.isExpired(ticketState);
@@ -80,5 +82,4 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
     public Long getTimeToIdle() {
         return this.timeInBetweenUsesInSeconds;
     }
-
 }

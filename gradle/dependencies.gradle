@@ -2359,14 +2359,6 @@ ext.libraries = [
                     force = true
                 }
         ],
-        springcomponentindexer  : [
-                dependencies.create("org.springframework:spring-context-indexer:$springVersion") {
-                    exclude(group: "org.springframework", module: "spring-web")
-                    exclude(group: "org.springframework", module: "spring-webmvc")
-                    exclude(group: "org.springframework", module: "spring-core")
-                    exclude(group: "org.springframework", module: "spring-context")
-                }
-        ],
         springbootconfigmetadata: [
                 dependencies.create("org.springframework.boot:spring-boot-configuration-processor:$springBootVersion") {
                     exclude(group: "org.springframework", module: "spring-web")

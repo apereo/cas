@@ -5,7 +5,9 @@ import org.apereo.cas.services.RegisteredService;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Defines operations required for retrieving principal attributes.
@@ -31,4 +33,15 @@ public interface PrincipalAttributesRepository extends Serializable {
      * @return the attributes
      */
     Map<String, Object> getAttributes(Principal principal, RegisteredService registeredService);
+
+    /**
+     * Gets attribute repository ids that should be used to
+     * fetch attributes. An empty collection indicates
+     * that all sources available and defined should be used.
+     *
+     * @return the attribute repository ids
+     */
+    default Set<String> getAttributeRepositoryIds() {
+        return new HashSet<>(0);
+    }
 }

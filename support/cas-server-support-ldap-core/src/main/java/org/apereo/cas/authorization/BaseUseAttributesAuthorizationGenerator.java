@@ -3,6 +3,7 @@ package org.apereo.cas.authorization;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -24,6 +25,7 @@ import org.pac4j.core.profile.CommonProfile;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Getter
 public abstract class BaseUseAttributesAuthorizationGenerator implements AuthorizationGenerator<CommonProfile> {
     /**
      * Search connection factory.

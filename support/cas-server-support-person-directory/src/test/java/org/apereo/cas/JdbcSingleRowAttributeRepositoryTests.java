@@ -2,6 +2,7 @@ package org.apereo.cas;
 
 import lombok.SneakyThrows;
 import lombok.val;
+import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
@@ -29,7 +30,7 @@ public class JdbcSingleRowAttributeRepositoryTests extends BaseJdbcAttributeRepo
     @Test
     public void verifySingleRowAttributeRepository() {
         assertNotNull(attributeRepository);
-        val person = attributeRepository.getPerson("casuser");
+        val person = attributeRepository.getPerson("casuser", IPersonAttributeDaoFilter.alwaysChoose());
         assertNotNull(person);
         assertNotNull(person.getAttributes());
         assertFalse(person.getAttributes().isEmpty());

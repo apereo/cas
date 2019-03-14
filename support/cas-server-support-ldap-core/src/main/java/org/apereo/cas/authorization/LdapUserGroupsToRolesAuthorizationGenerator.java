@@ -16,7 +16,7 @@ import org.pac4j.core.profile.CommonProfile;
  * Two searches are performed by this component for every user details lookup:
  * <ol>
  * <li>Search for an entry to resolve the username. In most cases the search should return exactly one result,
- * but the {@link #allowMultipleResults} property may be toggled to change that behavior.</li>
+ * but the {@link #isAllowMultipleResults()} property may be toggled to change that behavior.</li>
  * <li>Search for groups of which the user is a member. This search commonly occurs on a separate directory
  * branch than that of the user search.</li>
  * </ol>

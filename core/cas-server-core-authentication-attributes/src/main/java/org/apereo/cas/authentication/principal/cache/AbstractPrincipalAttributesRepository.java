@@ -151,7 +151,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
 
     /**
      * Obtains attributes first from the repository by calling
-     * {@link org.apereo.services.persondir.IPersonAttributeDao#getPerson(String)}.
+     * {@link IPersonAttributeDao#getPerson(String, org.apereo.services.persondir.IPersonAttributeDaoFilter)}.
      *
      * @param id the person id to locate in the attribute repository
      * @return the map of attributes

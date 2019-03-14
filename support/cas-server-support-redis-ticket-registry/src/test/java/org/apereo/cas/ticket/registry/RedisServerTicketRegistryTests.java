@@ -5,7 +5,7 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.RedisTicketRegistryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.util.junit.DisabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +39,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 })
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-@DisabledIfContinuousIntegration
+@EnabledIfContinuousIntegration
 public class RedisServerTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired

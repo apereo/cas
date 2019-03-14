@@ -21,6 +21,7 @@ import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +67,7 @@ public class CouchbasePersonAttributeDaoTests {
 
     @Test
     public void verifyAttributes() {
-        val person = attributeRepository.getPerson("casuser");
+        val person = attributeRepository.getPerson("casuser", IPersonAttributeDaoFilter.alwaysChoose());
         assertNotNull(person);
         val attributes = person.getAttributes();
         assertTrue(attributes.containsKey("firstname"));

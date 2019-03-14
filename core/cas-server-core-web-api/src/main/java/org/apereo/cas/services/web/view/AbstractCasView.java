@@ -220,7 +220,7 @@ public abstract class AbstractCasView extends AbstractView {
         putIntoModel(model, CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL, getPrincipal(model));
         putIntoModel(model, CasViewConstants.MODEL_ATTRIBUTE_NAME_CHAINED_AUTHENTICATIONS, getChainedAuthentications(model));
         putIntoModel(model, CasViewConstants.MODEL_ATTRIBUTE_NAME_PRIMARY_AUTHENTICATION, getPrimaryAuthenticationFrom(model));
-        LOGGER.debug("Prepared CAS response output model with attribute names [{}]", model.keySet());
+        LOGGER.trace("Prepared CAS response output model with attribute names [{}]", model.keySet());
         return model;
     }
 
