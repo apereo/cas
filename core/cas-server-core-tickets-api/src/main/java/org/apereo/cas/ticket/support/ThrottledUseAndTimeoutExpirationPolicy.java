@@ -46,17 +46,19 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
         final ZonedDateTime currentTime = ZonedDateTime.now(ZoneOffset.UTC);
         final ZonedDateTime lastTimeUsed = ticketState.getLastTimeUsed();
         final ZonedDateTime killTime = lastTimeUsed.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+        LOGGER.trace("Current time [{}], last time ticket is used [{}] with expiration time at [{}]", currentTime, lastTimeUsed, killTime);
         if (ticketState.getCountOfUses() == 0 && currentTime.isBefore(killTime)) {
-            LOGGER.debug("Ticket is not expired due to a count of zero and the time being less " + "than the timeToKillInSeconds");
+            LOGGER.debug("Ticket is not expired due to a count of zero and the time being less than the expiration time");
             return super.isExpired(ticketState);
         }
         if (currentTime.isAfter(killTime)) {
-            LOGGER.debug("Ticket is expired due to the time being greater than the timeToKillInSeconds");
+            LOGGER.debug("Ticket is expired due to the current time being greater than the expiration time");
             return true;
         }
         final ZonedDateTime dontUseUntil = lastTimeUsed.plus(this.timeInBetweenUsesInSeconds, ChronoUnit.SECONDS);
+        LOGGER.trace("Calculated throttled do-not-use expiration time at [{}]", dontUseUntil);
         if (currentTime.isBefore(dontUseUntil)) {
-            LOGGER.warn("Ticket is expired due to the time being less than the waiting period.");
+            LOGGER.warn("Ticket is expired due to the current time being less than the throttled expiration period [{}].", dontUseUntil);
             return true;
         }
         return super.isExpired(ticketState);
