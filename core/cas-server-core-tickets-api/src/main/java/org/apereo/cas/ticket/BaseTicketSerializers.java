@@ -68,6 +68,15 @@ public abstract class BaseTicketSerializers {
         }
     };
 
+    private static final StringSerializer<TransientSessionTicket> TRANSIENT_SESSION_TICKET_SERIALIZER = new AbstractJacksonBackedStringSerializer<>(MINIMAL_PRETTY_PRINTER) {
+        private static final long serialVersionUID = 8959617299162115085L;
+
+        @Override
+        protected Class<TransientSessionTicket> getTypeToSerialize() {
+            return TransientSessionTicket.class;
+        }
+    };
+
     private static final StringSerializer<EncodedTicket> ENCODED_TICKET_SERIALIZER = new AbstractJacksonBackedStringSerializer<>(MINIMAL_PRETTY_PRINTER) {
         private static final long serialVersionUID = 8959835299162115085L;
 
@@ -77,38 +86,22 @@ public abstract class BaseTicketSerializers {
         }
     };
 
-    /**
-     * Gets proxy granting ticket serializer.
-     *
-     * @return the proxy granting ticket serializer
-     */
+    public static StringSerializer<TransientSessionTicket> getTransientSessionTicketSerializer() {
+        return TRANSIENT_SESSION_TICKET_SERIALIZER;
+    }
+
     public static StringSerializer<ProxyGrantingTicket> getProxyGrantingTicketSerializer() {
         return PROXY_GRANTING_TICKET_SERIALIZER;
     }
 
-    /**
-     * Gets proxy ticket serializer.
-     *
-     * @return the proxy ticket serializer
-     */
     public static StringSerializer<ProxyTicket> getProxyTicketSerializer() {
         return PROXY_TICKET_SERIALIZER;
     }
 
-    /**
-     * Gets ticket granting ticket serializer.
-     *
-     * @return the ticket granting ticket serializer
-     */
     public static StringSerializer<TicketGrantingTicket> getTicketGrantingTicketSerializer() {
         return TICKET_GRANTING_TICKET_SERIALIZER;
     }
 
-    /**
-     * Gets service ticket serializer.
-     *
-     * @return the service ticket serializer
-     */
     public static StringSerializer<ServiceTicket> getServiceTicketSerializer() {
         return SERVICE_TICKET_SERIALIZER;
     }
@@ -135,6 +128,8 @@ public abstract class BaseTicketSerializers {
             getServiceTicketSerializer().to(writer, ServiceTicket.class.cast(ticket));
         } else if (ticket instanceof EncodedTicket) {
             getEncodedTicketSerializer().to(writer, EncodedTicket.class.cast(ticket));
+        } else if (ticket instanceof TransientSessionTicket) {
+            getTransientSessionTicketSerializer().to(writer, TransientSessionTicket.class.cast(ticket));
         } else {
             LOGGER.warn("Could not find serializer to marshal ticket [{}]. Ticket type may not be supported.", ticket.getId());
         }
@@ -174,7 +169,11 @@ public abstract class BaseTicketSerializers {
      * @return the ticket instance
      */
     public static <T extends Ticket> T deserializeTicket(final String ticketContent, final Class<T> clazz) {
-        val ticket = getTicketDeserializerFor(clazz).from(ticketContent);
+        val deserializer = getTicketDeserializerFor(clazz);
+        if (deserializer == null) {
+            throw new IllegalArgumentException("Unable to find ticket deserializer for " + clazz.getSimpleName());
+        }
+        val ticket = deserializer.from(ticketContent);
         if (ticket == null) {
             throw new InvalidTicketException(clazz.getName());
         }
@@ -192,6 +191,9 @@ public abstract class BaseTicketSerializers {
         }
         if (ServiceTicket.class.isAssignableFrom(clazz)) {
             return getServiceTicketSerializer();
+        }
+        if (TransientSessionTicket.class.isAssignableFrom(clazz)) {
+            return getTransientSessionTicketSerializer();
         }
         if (EncodedTicket.class.isAssignableFrom(clazz)) {
             return getEncodedTicketSerializer();
