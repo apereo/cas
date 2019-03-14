@@ -19,11 +19,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Slf4j
 @AllArgsConstructor
 public class GlibcCryptPasswordEncoder implements PasswordEncoder {
-
     private static final int SALT_LENGTH = 8;
 
     private final String encodingAlgorithm;
     private final int strength;
+
     private String secret;
 
     @Override
@@ -46,7 +46,7 @@ public class GlibcCryptPasswordEncoder implements PasswordEncoder {
             LOGGER.warn("The encoded password provided for matching is null. Returning false");
             return false;
         }
-        var providedSalt = "";
+        var providedSalt = StringUtils.EMPTY;
         val lastDollarIndex = encodedPassword.lastIndexOf('$');
         if (lastDollarIndex == -1) {
             // DES UnixCrypt, so first two letters are the salt
@@ -69,23 +69,19 @@ public class GlibcCryptPasswordEncoder implements PasswordEncoder {
         }
         val cryptSalt = new StringBuilder();
         if ("1".equals(this.encodingAlgorithm) || "MD5".equals(this.encodingAlgorithm.toUpperCase())) {
-            // MD5
             cryptSalt.append("$1$");
             LOGGER.debug("Encoding with MD5 algorithm");
         } else if ("5".equals(this.encodingAlgorithm) || "SHA-256".equals(this.encodingAlgorithm.toUpperCase())) {
-            // SHA-256
             cryptSalt.append("$5$rounds=").append(this.strength).append('$');
             LOGGER.debug("Encoding with SHA-256 algorithm and {} rounds", this.strength);
         } else if ("6".equals(this.encodingAlgorithm) || "SHA-512".equals(this.encodingAlgorithm.toUpperCase())) {
-            // SHA-512
             cryptSalt.append("$6$rounds=").append(this.strength).append('$');
             LOGGER.debug("Encoding with SHA-512 algorithm and {} rounds", this.strength);
         } else {
-            // DES UnixCrypt algorithm
             cryptSalt.append(this.encodingAlgorithm);
             LOGGER.debug("Encoding with DES UnixCrypt algorithm as no indicator for another algorithm was found.");
         }
-        // Add real salt
+
         if (StringUtils.isBlank(this.secret)) {
             LOGGER.debug("No secret was found. Generating a salt with length {}", SALT_LENGTH);
             val keygen = new HexRandomStringGenerator(SALT_LENGTH);
@@ -94,7 +90,6 @@ public class GlibcCryptPasswordEncoder implements PasswordEncoder {
             LOGGER.debug("The provided secrect is used as a salt");
         }
         cryptSalt.append(this.secret);
-        // Done
         return cryptSalt.toString();
     }
 
