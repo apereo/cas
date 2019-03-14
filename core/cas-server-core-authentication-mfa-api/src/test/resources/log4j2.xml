@@ -4,8 +4,8 @@
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}" />
         </Console>
-        <RollingFile name="file" fileName="build/jdbcaudit.log" append="true"
-                     filePattern="mongo-%d{yyyy-MM-dd-HH}-%i.log.gz">
+        <RollingFile name="file" fileName="build/authnmfaapi.log" append="true"
+                     filePattern="events-%d{yyyy-MM-dd-HH}-%i.log.gz">
             <PatternLayout pattern="%highlight{%d %p [%c] - %m%n}" />
             <Policies>
                 <OnStartupTriggeringPolicy />
@@ -15,10 +15,7 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="off" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
-        <Logger name="org.hibernate" level="debug" additivity="false">
+        <Logger name="org.apereo" level="error" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
         <Root level="off">
