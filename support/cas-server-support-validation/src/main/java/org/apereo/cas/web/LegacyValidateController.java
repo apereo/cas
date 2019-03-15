@@ -15,7 +15,6 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,14 +32,14 @@ public class LegacyValidateController extends AbstractServiceValidateController 
                                     final ProxyHandler proxyHandler,
                                     final ArgumentExtractor argumentExtractor,
                                     final RequestedContextValidator requestedContextValidator,
-                                    final View jsonView,
-                                    final View successView, final View failureView,
                                     final String authnContextAttribute,
                                     final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers,
-                                    final boolean renewEnabled) {
+                                    final boolean renewEnabled,
+                                    final ServiceValidationViewFactory validationViewFactory) {
         super(CollectionUtils.wrapSet(validationSpecification), validationAuthorizers,
             authenticationSystemSupport, servicesManager, centralAuthenticationService, proxyHandler,
-            successView, failureView, argumentExtractor, requestedContextValidator, jsonView, authnContextAttribute, renewEnabled);
+            argumentExtractor, requestedContextValidator, authnContextAttribute, renewEnabled,
+            validationViewFactory);
     }
 
     /**
