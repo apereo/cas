@@ -8,11 +8,11 @@ import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.RequestedContextValidator;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
+import org.apereo.cas.web.ServiceValidationViewFactory;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,14 +30,13 @@ public class V3ProxyValidateController extends V3ServiceValidateController {
                                      final ProxyHandler proxyHandler,
                                      final ArgumentExtractor argumentExtractor,
                                      final RequestedContextValidator requestedContextValidator,
-                                     final View jsonView,
-                                     final View successView, final View failureView,
                                      final String authnContextAttribute,
                                      final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers,
-                                     final boolean renewEnabled) {
+                                     final boolean renewEnabled,
+                                     final ServiceValidationViewFactory validationViewFactory) {
         super(validationSpecification, authenticationSystemSupport, servicesManager,
             centralAuthenticationService, proxyHandler, argumentExtractor, requestedContextValidator,
-            jsonView, successView, failureView, authnContextAttribute, validationAuthorizers, renewEnabled);
+            authnContextAttribute, validationAuthorizers, renewEnabled, validationViewFactory);
     }
 
     /**

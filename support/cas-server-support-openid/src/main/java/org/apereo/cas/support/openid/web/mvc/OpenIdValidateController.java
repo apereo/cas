@@ -10,6 +10,7 @@ import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.RequestedContextValidator;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.AbstractServiceValidateController;
+import org.apereo.cas.web.ServiceValidationViewFactory;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -39,17 +40,20 @@ public class OpenIdValidateController extends AbstractServiceValidateController 
 
     public OpenIdValidateController(final CasProtocolValidationSpecification validationSpecification,
                                     final AuthenticationSystemSupport authenticationSystemSupport,
-                                    final ServicesManager servicesManager, final CentralAuthenticationService centralAuthenticationService,
-                                    final ProxyHandler proxyHandler, final ArgumentExtractor argumentExtractor,
+                                    final ServicesManager servicesManager,
+                                    final CentralAuthenticationService centralAuthenticationService,
+                                    final ProxyHandler proxyHandler,
+                                    final ArgumentExtractor argumentExtractor,
                                     final RequestedContextValidator requestedContextValidator,
-                                    final View jsonView, final View successView,
-                                    final View failureView, final String authnContextAttribute,
+                                    final String authnContextAttribute,
                                     final ServerManager serverManager,
                                     final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers,
-                                    final boolean renewEnabled) {
+                                    final boolean renewEnabled,
+                                    final ServiceValidationViewFactory validationViewFactory) {
         super(CollectionUtils.wrapSet(validationSpecification), validationAuthorizers,
             authenticationSystemSupport, servicesManager, centralAuthenticationService, proxyHandler,
-            successView, failureView, argumentExtractor, requestedContextValidator, jsonView, authnContextAttribute, renewEnabled);
+            argumentExtractor, requestedContextValidator,
+            authnContextAttribute, renewEnabled, validationViewFactory);
         this.serverManager = serverManager;
     }
 
@@ -64,10 +68,10 @@ public class OpenIdValidateController extends AbstractServiceValidateController 
             val parameters = new HashMap<String, String>(message.getParameterMap());
             if (message.isSignatureVerified()) {
                 LOGGER.debug("Signature verification request successful.");
-                return new ModelAndView(getSuccessView(), parameters);
+                return new ModelAndView(getValidationViewFactory().getSuccessView(getClass().getSimpleName()), parameters);
             }
             LOGGER.debug("Signature verification request unsuccessful.");
-            return new ModelAndView(getFailureView(), parameters);
+            return new ModelAndView(getValidationViewFactory().getFailureView(getClass().getSimpleName()), parameters);
         }
         return super.handleRequestInternal(request, response);
     }
