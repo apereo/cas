@@ -62,7 +62,13 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class,
     JdbcPasswordManagementConfiguration.class,
     PasswordManagementConfiguration.class})
-@TestPropertySource(locations = {"classpath:/pm.properties"})
+@TestPropertySource(properties = {
+    "cas.authn.pm.enabled=true",
+    "cas.authn.pm.jdbc.autoCommit=true",
+    "cas.authn.pm.jdbc.sqlSecurityQuestions=SELECT question, answer FROM pm_table_questions WHERE userid=?",
+    "cas.authn.pm.jdbc.sqlFindEmail=SELECT email FROM pm_table_accounts WHERE userid=?",
+    "cas.authn.pm.jdbc.sqlChangePassword=UPDATE pm_table_accounts SET password=? WHERE userid=?"
+})
 public class JdbcPasswordManagementServiceTests {
     @Autowired
     @Qualifier("passwordChangeService")

@@ -57,7 +57,11 @@ import static org.junit.jupiter.api.Assertions.*;
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreUtilConfiguration.class,
     PasswordManagementConfiguration.class})
-@TestPropertySource(locations = {"classpath:/pm.properties"})
+@TestPropertySource(properties = {
+    "cas.authn.pm.json.location=classpath:jsonResourcePassword.json",
+    "cas.authn.pm.enabled=true",
+    "cas.authn.pm.policyPattern=^(?=.*[A-Z])(?=.*[a-z])(?=.*\\\\d)(?=.*[@$!%#?&])[A-Za-z\\\\d@$!%#?&]{8,}$"
+})
 public class JsonResourcePasswordManagementServiceTests {
     @Autowired
     @Qualifier("passwordChangeService")
