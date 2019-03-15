@@ -45,7 +45,8 @@ import org.springframework.test.context.TestPropertySource;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@SpringBootTest(classes = {X509AuthenticationConfiguration.class,
+@SpringBootTest(classes = {
+    X509AuthenticationConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationPolicyConfiguration.class,
@@ -62,8 +63,26 @@ import org.springframework.test.context.TestPropertySource;
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
-    CasCoreServicesConfiguration.class})
-@TestPropertySource(locations = {"classpath:/x509.properties"})
+    CasCoreServicesConfiguration.class
+})
+@TestPropertySource(properties = {
+    "ldap.managerDn=cn=Directory Manager,dc=example,dc=org",
+    "ldap.managerPassword=Password",
+    "cas.authn.attributeRepository.stub.attributes.uid=uid",
+    "cas.authn.attributeRepository.stub.attributes.eduPersonAffiliation=developer",
+    "cas.authn.attributeRepository.stub.attributes.groupMembership=adopters",
+    "cas.authn.attributeRepository.stub.attributes.certificateRevocationList=certificateRevocationList",
+    "cas.authn.x509.regExTrustedIssuerDnPattern=CN=\\w+,DC=jasig,DC=org",
+    "cas.authn.x509.principalType=SERIAL_NO_DN",
+    "cas.authn.policy.any.tryAll=true",
+    "cas.authn.x509.crlFetcher=ldap",
+    "cas.authn.x509.ldap.ldapUrl=ldap://localhost:1389",
+    "cas.authn.x509.ldap.useSsl=false",
+    "cas.authn.x509.ldap.baseDn=ou=people,dc=example,dc=org",
+    "cas.authn.x509.ldap.searchFilter=cn=X509",
+    "cas.authn.x509.ldap.bindDn=${ldap.managerDn}",
+    "cas.authn.x509.ldap.bindCredential=${ldap.managerPassword}"
+})
 @EnableScheduling
 public class LdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests implements InitializingBean {
     private static final int LDAP_PORT = 1389;

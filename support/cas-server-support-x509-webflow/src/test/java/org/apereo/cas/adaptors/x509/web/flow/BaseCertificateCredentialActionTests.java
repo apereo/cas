@@ -19,7 +19,24 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@TestPropertySource(locations = {"classpath:/x509.properties"})
+@TestPropertySource(properties = {
+    "ldap.managerDn=cn=Directory Manager,dc=example,dc=org",
+    "ldap.managerPassword=Password",
+    "cas.authn.attributeRepository.stub.attributes.uid=uid",
+    "cas.authn.attributeRepository.stub.attributes.eduPersonAffiliation=developer",
+    "cas.authn.attributeRepository.stub.attributes.groupMembership=adopters",
+    "cas.authn.attributeRepository.stub.attributes.certificateRevocationList=certificateRevocationList",
+    "cas.authn.x509.regExTrustedIssuerDnPattern=CN=\\w+,DC=jasig,DC=org",
+    "cas.authn.x509.principalType=SERIAL_NO_DN",
+    "cas.authn.policy.any.tryAll=true",
+    "cas.authn.x509.crlFetcher=ldap",
+    "cas.authn.x509.ldap.ldapUrl=ldap://localhost:1389",
+    "cas.authn.x509.ldap.useSsl=false",
+    "cas.authn.x509.ldap.baseDn=ou=people,dc=example,dc=org",
+    "cas.authn.x509.ldap.searchFilter=cn=X509",
+    "cas.authn.x509.ldap.bindDn=${ldap.managerDn}",
+    "cas.authn.x509.ldap.bindCredential=${ldap.managerPassword}"
+})
 @Import(value = {
     X509AuthenticationWebflowConfiguration.class,
     X509AuthenticationConfiguration.class,
