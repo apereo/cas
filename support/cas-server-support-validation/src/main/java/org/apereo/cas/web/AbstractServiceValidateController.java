@@ -11,7 +11,6 @@ import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedProxyingException;
@@ -41,7 +40,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -80,18 +78,12 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
 
     private ProxyHandler proxyHandler;
 
-    @Getter
-    private final View successView;
-
-    @Getter
-    private final View failureView;
-
     private final ArgumentExtractor argumentExtractor;
     private final RequestedContextValidator<MultifactorAuthenticationProvider> requestedContextValidator;
-    private final View jsonView;
     private final String authnContextAttribute;
-
     private boolean renewEnabled = true;
+    @Getter
+    private final ServiceValidationViewFactory validationViewFactory;
 
     /**
      * Ensure that the service is found and enabled in the service registry.
@@ -317,9 +309,13 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     private ModelAndView getModelAndView(final HttpServletRequest request, final boolean isSuccess, final WebApplicationService service) {
         val type = getValidationResponseType(request, service);
         if (type == ValidationResponseType.JSON) {
-            return new ModelAndView(this.jsonView);
+            val view = validationViewFactory.getSingleInstanceView(ServiceValidationViewFactory.ViewTypes.JSON);
+            return new ModelAndView(view);
         }
-        return new ModelAndView(isSuccess ? this.successView : this.failureView);
+        val view = isSuccess
+            ? validationViewFactory.getSuccessView(this.getClass().getSimpleName())
+            : validationViewFactory.getSuccessView(this.getClass().getSimpleName());
+        return new ModelAndView(view);
     }
 
     private static ValidationResponseType getValidationResponseType(final HttpServletRequest request, final WebApplicationService service) {
