@@ -18,6 +18,7 @@ import org.apereo.cas.web.LegacyValidateController;
 import org.apereo.cas.web.ProxyController;
 import org.apereo.cas.web.ProxyValidateController;
 import org.apereo.cas.web.ServiceValidateController;
+import org.apereo.cas.web.ServiceValidationViewFactory;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.v3.V3ProxyValidateController;
 import org.apereo.cas.web.v3.V3ServiceValidateController;
@@ -233,6 +234,47 @@ public class CasValidationConfiguration {
             applicationContext);
     }
 
+    @Bean
+    @ConditionalOnMissingBean(name = "serviceValidationViewFactory")
+    public ServiceValidationViewFactory serviceValidationViewFactory() {
+            /*
+                cas3ServiceJsonView(),
+                cas3ServiceSuccessView(),
+                cas3ServiceFailureView.getIfAvailable(),
+             */
+
+            /*
+                cas3ServiceJsonView(),
+                cas3ServiceSuccessView(),
+                cas3ServiceFailureView.getIfAvailable(),
+             */
+
+            /*
+                cas3ServiceJsonView(),
+                cas3ServiceSuccessView(),
+                cas3ServiceFailureView.getIfAvailable(),
+             */
+            /*
+                cas3ServiceJsonView(),
+                cas2ServiceSuccessView(),
+                cas2ServiceFailureView.getIfAvailable(),
+             */
+            /*
+                cas3ServiceJsonView(),
+                cas1ServiceSuccessView(),
+                cas1ServiceFailureView(),
+             */
+            /*
+                cas3ServiceJsonView(),
+                cas3ServiceSuccessView(),
+                cas3ServiceFailureView.getIfAvailable(),
+             */
+            /*
+                cas3ServiceJsonView(),
+                cas2ServiceSuccessView(),
+                cas2ServiceFailureView.getIfAvailable(),
+             */
+    }
 
     @Bean
     @ConditionalOnMissingBean(name = "v3ServiceValidateController")
@@ -245,12 +287,10 @@ public class CasValidationConfiguration {
             proxy20Handler.getIfAvailable(),
             argumentExtractor.getIfAvailable(),
             requestedContextValidator.getIfAvailable(),
-            cas3ServiceJsonView(),
-            cas3ServiceSuccessView(),
-            cas3ServiceFailureView.getIfAvailable(),
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
             serviceValidationAuthorizers.getIfAvailable(),
-            casProperties.getSso().isRenewAuthnEnabled()
+            casProperties.getSso().isRenewAuthnEnabled(),
+            serviceValidationViewFactory()
         );
     }
 
@@ -266,12 +306,10 @@ public class CasValidationConfiguration {
             proxy20Handler.getIfAvailable(),
             argumentExtractor.getIfAvailable(),
             requestedContextValidator.getIfAvailable(),
-            cas3ServiceJsonView(),
-            cas3ServiceSuccessView(),
-            cas3ServiceFailureView.getIfAvailable(),
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
             serviceValidationAuthorizers.getIfAvailable(),
-            casProperties.getSso().isRenewAuthnEnabled()
+            casProperties.getSso().isRenewAuthnEnabled(),
+            serviceValidationViewFactory()
         );
     }
 
@@ -287,12 +325,10 @@ public class CasValidationConfiguration {
                 proxy20Handler.getIfAvailable(),
                 argumentExtractor.getIfAvailable(),
                 requestedContextValidator.getIfAvailable(),
-                cas3ServiceJsonView(),
-                cas3ServiceSuccessView(),
-                cas3ServiceFailureView.getIfAvailable(),
                 casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
                 serviceValidationAuthorizers.getIfAvailable(),
-                casProperties.getSso().isRenewAuthnEnabled()
+                casProperties.getSso().isRenewAuthnEnabled(),
+                serviceValidationViewFactory()
             );
         }
 
@@ -304,12 +340,10 @@ public class CasValidationConfiguration {
             proxy20Handler.getIfAvailable(),
             argumentExtractor.getIfAvailable(),
             requestedContextValidator.getIfAvailable(),
-            cas3ServiceJsonView(),
-            cas2ServiceSuccessView(),
-            cas2ServiceFailureView.getIfAvailable(),
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
             serviceValidationAuthorizers.getIfAvailable(),
-            casProperties.getSso().isRenewAuthnEnabled()
+            casProperties.getSso().isRenewAuthnEnabled(),
+            serviceValidationViewFactory()
         );
     }
 
@@ -324,12 +358,10 @@ public class CasValidationConfiguration {
             proxy10Handler.getIfAvailable(),
             argumentExtractor.getIfAvailable(),
             requestedContextValidator.getIfAvailable(),
-            cas3ServiceJsonView(),
-            cas1ServiceSuccessView(),
-            cas1ServiceFailureView(),
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
             serviceValidationAuthorizers.getIfAvailable(),
-            casProperties.getSso().isRenewAuthnEnabled()
+            casProperties.getSso().isRenewAuthnEnabled(),
+            serviceValidationViewFactory()
         );
     }
 
@@ -345,12 +377,10 @@ public class CasValidationConfiguration {
                 proxy20Handler.getIfAvailable(),
                 argumentExtractor.getIfAvailable(),
                 requestedContextValidator.getIfAvailable(),
-                cas3ServiceJsonView(),
-                cas3ServiceSuccessView(),
-                cas3ServiceFailureView.getIfAvailable(),
                 casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
                 serviceValidationAuthorizers.getIfAvailable(),
-                casProperties.getSso().isRenewAuthnEnabled()
+                casProperties.getSso().isRenewAuthnEnabled(),
+                serviceValidationViewFactory()
             );
         }
 
@@ -362,12 +392,10 @@ public class CasValidationConfiguration {
             proxy20Handler.getIfAvailable(),
             argumentExtractor.getIfAvailable(),
             requestedContextValidator.getIfAvailable(),
-            cas3ServiceJsonView(),
-            cas2ServiceSuccessView(),
-            cas2ServiceFailureView.getIfAvailable(),
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
             serviceValidationAuthorizers.getIfAvailable(),
-            casProperties.getSso().isRenewAuthnEnabled()
+            casProperties.getSso().isRenewAuthnEnabled(),
+            serviceValidationViewFactory()
         );
     }
 }
