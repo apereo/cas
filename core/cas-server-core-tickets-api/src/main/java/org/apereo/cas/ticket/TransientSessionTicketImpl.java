@@ -59,7 +59,7 @@ public class TransientSessionTicketImpl extends AbstractTicket implements Transi
      */
     @Lob
     @Column(name = "PROPERTIES", nullable = false)
-    private HashMap<String, Serializable> properties = new HashMap<>();
+    private HashMap<String, Object> properties = new HashMap<>();
 
     public TransientSessionTicketImpl(final String id, final ExpirationPolicy expirationPolicy, final Service service) {
         super(id, expirationPolicy);

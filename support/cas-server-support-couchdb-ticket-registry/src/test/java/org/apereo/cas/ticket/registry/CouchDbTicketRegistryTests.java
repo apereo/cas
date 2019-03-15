@@ -22,6 +22,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.tickets.TicketRepository;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
@@ -64,6 +65,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
         "cas.ticket.registry.couchDb.password=password"
     })
 @Tag("CouchDb")
+@EnabledIfContinuousIntegration
 public class CouchDbTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
