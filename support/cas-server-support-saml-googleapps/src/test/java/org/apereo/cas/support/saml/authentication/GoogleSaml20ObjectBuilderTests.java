@@ -18,7 +18,16 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Import(SamlGoogleAppsConfiguration.class)
-@TestPropertySource(locations = "classpath:/gapps.properties")
+@TestPropertySource(properties = {
+    "cas.server.name=http://localhost:8080",
+    "cas.server.prefix=${server.name}/cas",
+    "cas.samlCore.issuer=localhost",
+    "cas.samlCore.skewAllowance=200",
+    "cas.samlCore.ticketidSaml2=false",
+    "cas.googleApps.keyAlgorithm=DSA",
+    "cas.googleApps.publicKeyLocation=classpath:DSAPublicKey01.key",
+    "cas.googleApps.privateKeyLocation=classpath:DSAPrivateKey01.key"
+})
 public class GoogleSaml20ObjectBuilderTests extends AbstractOpenSamlTests {
 
     private static final String BASE64_SAML_AUTHN_REQUEST = "fVJNT+MwEL2vtP/B8j1JEy6V1QR1QWgrwW5EA4e9uc4kMbU9weO0u/9+3RQEHOD6/OZ9jGd1+dcadgBPGl3J83TBGTiFrXZ9yR"

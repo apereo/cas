@@ -12,7 +12,13 @@ import org.springframework.test.context.TestPropertySource;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@TestPropertySource(locations = "classpath:samlpostgres.properties")
+@TestPropertySource(properties = {
+    "cas.serviceRegistry.jpa.user=sa",
+    "cas.serviceRegistry.jpa.password=p@ssw0rd",
+    "cas.serviceRegistry.jpa.driverClass=com.microsoft.sqlserver.jdbc.SQLServerDriver",
+    "cas.serviceRegistry.jpa.url=jdbc:sqlserver://localhost:1433;databaseName=saml",
+    "cas.serviceRegistry.jpa.dialect=org.hibernate.dialect.SQLServer2012Dialect"
+})
 @EnabledIfPortOpen(port = 5432)
 @EnabledIfContinuousIntegration
 @Tag("Postgres")
