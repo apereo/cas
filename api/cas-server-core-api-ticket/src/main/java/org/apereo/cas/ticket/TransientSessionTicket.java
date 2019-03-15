@@ -36,7 +36,7 @@ public interface TransientSessionTicket extends Ticket {
      *
      * @return the properties
      */
-    Map<String, Serializable> getProperties();
+    Map<String, Object> getProperties();
 
     /**
      * Gets service.
