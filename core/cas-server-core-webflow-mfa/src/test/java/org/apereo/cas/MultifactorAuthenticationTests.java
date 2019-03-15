@@ -31,8 +31,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@TestPropertySource(locations = {"classpath:/core.properties"},
-    properties = "cas.authn.policy.requiredHandlerAuthenticationPolicyEnabled=true")
+@TestPropertySource(properties = {
+    "cas.authn.policy.requiredHandlerAuthenticationPolicyEnabled=true",
+    "cas.authn.policy.any.tryAll=true",
+    "spring.aop.proxy-target-class=true",
+    "cas.ticket.st.timeToKillInSeconds=30"
+})
 @Import(CasMultifactorTestAuthenticationEventExecutionPlanConfiguration.class)
 public class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAuthenticationTests {
 
