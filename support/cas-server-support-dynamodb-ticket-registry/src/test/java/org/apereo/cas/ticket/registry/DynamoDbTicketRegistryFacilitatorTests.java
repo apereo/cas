@@ -47,7 +47,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 8000)
-@TestPropertySource(locations = "classpath:/dynamodb-ticketregistry.properties")
+//@TestPropertySource(locations = "classpath:/dynamodb-ticketregistry.properties")
+@TestPropertySource(properties = {
+    "cas.ticket.registry.dynamoDb.endpoint=http://localhost:8000",
+    "cas.ticket.registry.dynamoDb.dropTablesOnStartup=true",
+    "cas.ticket.registry.dynamoDb.localInstance=true",
+    "cas.ticket.registry.dynamoDb.region=us-east-1"
+})
 @SpringBootTest(classes = {
     DynamoDbTicketRegistryConfiguration.class,
     DynamoDbTicketRegistryTicketCatalogConfiguration.class,

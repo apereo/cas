@@ -75,7 +75,12 @@ import static org.junit.jupiter.api.Assertions.*;
     CasPersonDirectoryConfiguration.class,
     RefreshAutoConfiguration.class
 })
-@TestPropertySource(locations = "classpath:/dynamodb-ticketregistry.properties")
+@TestPropertySource(properties = {
+    "cas.ticket.registry.dynamoDb.endpoint=http://localhost:8000",
+    "cas.ticket.registry.dynamoDb.dropTablesOnStartup=true",
+    "cas.ticket.registry.dynamoDb.localInstance=true",
+    "cas.ticket.registry.dynamoDb.region=us-east-1"
+})
 //@EnabledIfContinuousIntegration
 //@EnabledIfPortOpen(port = 8000)
 public class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {

@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
@@ -26,6 +27,16 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1
  */
 @Import(BaseLdapSpnegoKnownClientSystemsFilterActionTests.CasTestConfiguration.class)
+@TestPropertySource(properties = {
+    "cas.authn.attributeRepository.stub.attributes.uid=uid",
+    "cas.authn.attributeRepository.stub.attributes.host=host",
+    "cas.authn.attributeRepository.stub.attributes.mail=mail",
+    "cas.authn.spnego.alternativeRemoteHostAttribute=",
+    "cas.authn.spnego.ipsToCheckPattern=",
+    "cas.authn.spnego.dnsTimeout=0",
+    "cas.authn.spnego.hostNameClientActionStrategy=ldapSpnegoClientAction",
+    "cas.authn.spnego.spnegoAttributeName=mail"
+})
 public abstract class BaseLdapSpnegoKnownClientSystemsFilterActionTests extends AbstractSpnegoTests {
 
     @Test

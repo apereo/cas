@@ -15,7 +15,14 @@ import org.springframework.test.context.TestPropertySource;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@TestPropertySource(locations = {"classpath:/spnego.properties", "classpath:/spnego-ldap-ci.properties"})
+@TestPropertySource(properties = {
+    "cas.authn.spnego.ldap.ldapUrl=ldap://localhost:10389",
+    "cas.authn.spnego.ldap.useSsl=false",
+    "cas.authn.spnego.ldap.baseDn=ou=people,dc=example,dc=org",
+    "cas.authn.spnego.ldap.searchFilter=host={host}",
+    "cas.authn.spnego.ldap.bindDn=cn=Directory Manager",
+    "cas.authn.spnego.ldap.bindCredential=password"
+})
 @Tag("Ldap")
 @EnabledIfContinuousIntegration
 public class LdapContinuousIntegrationSpnegoKnownClientSystemsFilterActionTests
