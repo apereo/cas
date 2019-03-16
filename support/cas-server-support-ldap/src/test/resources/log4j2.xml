@@ -18,10 +18,10 @@
         <Logger name="org.apereo" level="warn" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="org.ldaptive" level="warn" additivity="false">
+        <Logger name="org.ldaptive" level="debug" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="com.unboundid" level="warn" additivity="false">
+        <Logger name="com.unboundid" level="debug" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
         <Logger name="org.springframework" level="warn" additivity="false">

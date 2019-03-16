@@ -73,6 +73,7 @@ stages:
 - build
 - publish
 - postbuild
+- wip
 - test
 - dependencies
 - spotbugs
@@ -163,7 +164,7 @@ jobs:
   - stage: test
     script: ./ci/tests/influxdb/run-tests-influxdb.sh
     name: "InfluxDb Tests"
-  - stage: test
+  - stage: wip
     script: ./ci/tests/ldap/run-tests-ldap.sh
     name: "LDAP Tests"
   - stage: test

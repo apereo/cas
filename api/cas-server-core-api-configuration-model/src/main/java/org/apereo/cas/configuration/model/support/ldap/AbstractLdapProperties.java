@@ -41,6 +41,22 @@ public abstract class AbstractLdapProperties implements Serializable {
      * by the underlying Java platform.
      */
     private String keystoreType;
+
+    /**
+     * Name of the truststore to use for the SSL or startTLS connection.
+     */
+    private String trustStore;
+
+    /**
+     * Password needed to open the truststore.
+     */
+    private String trustStorePassword;
+
+    /**
+     * Truststore type.
+     */
+    private String trustStoreType;
+
     /**
      * Minimum LDAP connection pool size.
      * Size the pool should be initialized to and pruned to
