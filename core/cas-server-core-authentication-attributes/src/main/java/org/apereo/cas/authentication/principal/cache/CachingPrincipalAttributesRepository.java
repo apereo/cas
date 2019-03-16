@@ -27,11 +27,11 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
 
     @JsonIgnore
     @Transient
-    private final transient Cache<String, Map<String, Object>> cache;
+    private transient Cache<String, Map<String, Object>> cache;
 
     @JsonIgnore
     @Transient
-    private final transient PrincipalAttributesCacheLoader cacheLoader = new PrincipalAttributesCacheLoader();
+    private transient PrincipalAttributesCacheLoader cacheLoader = new PrincipalAttributesCacheLoader();
 
     private long maxCacheSize = DEFAULT_MAXIMUM_CACHE_SIZE;
 
@@ -76,18 +76,16 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
 
     @Override
     protected void addPrincipalAttributes(final String id, final Map<String, Object> attributes) {
-        try{
-            this.cache.put(id, attributes);
-            LOGGER.debug("Cached attributes for [{}]", id);
-        }catch (final Exception e){
-            LOGGER.debug("Check cache settings. No attributes cached");
-            LOGGER.error(e.getMessage(), e);
-        }
+        initializeCacheIfNecessary();
+        this.cache.put(id, attributes);
+        LOGGER.debug("Cached attributes for [{}]", id);
     }
 
     @Override
     protected Map<String, Object> getPrincipalAttributes(final Principal p) {
         try {
+            initializeCacheIfNecessary();
+
             return this.cache.get(p.getId(), s -> {
                 LOGGER.debug("No cached attributes could be found for [{}]", p.getId());
                 return new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
@@ -100,7 +98,18 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
 
     @Override
     public void close() {
-        this.cache.cleanUp();
+        if (this.cache != null) {
+            this.cache.cleanUp();
+        }
+    }
+
+    private void initializeCacheIfNecessary() {
+        if (this.cache == null) {
+            this.cache = Caffeine.newBuilder()
+                .maximumSize(this.maxCacheSize)
+                .expireAfterWrite(getExpiration(), TimeUnit.valueOf(getTimeUnit()))
+                .build(s -> new TreeMap<>(String.CASE_INSENSITIVE_ORDER));
+        }
     }
 
     private static class PrincipalAttributesCacheLoader implements CacheLoader<String, Map<String, Object>> {
