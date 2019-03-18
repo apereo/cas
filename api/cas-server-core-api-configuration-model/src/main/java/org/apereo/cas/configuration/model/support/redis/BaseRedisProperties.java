@@ -50,7 +50,7 @@ public class BaseRedisProperties implements Serializable {
     private int timeout = 2000;
 
     /**
-     * Radius connection pool settings.
+     * Redis connection pool settings.
      */
     private Pool pool;
 
