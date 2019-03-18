@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.GroovyAuthenticationPreProcessor;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.handler.ByCredentialSourceAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.handler.RegisteredServiceAuthenticationHandlerResolver;
+import org.apereo.cas.authentication.principal.cache.PrincipalAttributesRepositoryCache;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 
@@ -93,5 +94,11 @@ public class CasCoreAuthenticationSupportConfiguration {
                 plan.registerAuthenticationPostProcessor(new GroovyAuthenticationPostProcessor(postResource));
             }
         };
+    }
+
+    @ConditionalOnMissingBean(name = "principalAttributesRepositoryCache")
+    @Bean
+    public PrincipalAttributesRepositoryCache principalAttributesRepositoryCache() {
+        return new PrincipalAttributesRepositoryCache();
     }
 }

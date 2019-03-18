@@ -25,7 +25,8 @@ public class DefaultPrincipalAttributesRepository extends AbstractPrincipalAttri
     private static final long serialVersionUID = -4535358847021241725L;
 
     @Override
-    protected void addPrincipalAttributes(final String id, final Map<String, Object> attributes) {
+    protected void addPrincipalAttributes(final String id, final Map<String, Object> attributes,
+                                          final RegisteredService registeredService) {
         LOGGER.debug("Using [{}], no caching takes place for [{}] to add attributes.", id, this.getClass().getSimpleName());
     }
 
@@ -39,8 +40,8 @@ public class DefaultPrincipalAttributesRepository extends AbstractPrincipalAttri
             LOGGER.debug("Merging current principal attributes with that of the repository via strategy [{}]", mergeStrategy);
             val mergedAttributes = mergeStrategy.getAttributeMerger().mergeAttributes(principalAttributes, personDirectoryAttributes);
             LOGGER.debug("Merged current principal attributes are [{}]", mergedAttributes);
-            return convertAttributesToPrincipalAttributesAndCache(principal, mergedAttributes);
+            return convertAttributesToPrincipalAttributesAndCache(principal, mergedAttributes, registeredService);
         }
-        return convertAttributesToPrincipalAttributesAndCache(principal, principalAttributes);
+        return convertAttributesToPrincipalAttributesAndCache(principal, principalAttributes, registeredService);
     }
 }
