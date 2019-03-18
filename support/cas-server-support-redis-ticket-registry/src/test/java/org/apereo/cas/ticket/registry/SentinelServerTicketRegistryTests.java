@@ -35,12 +35,16 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @TestPropertySource(properties = {
     "cas.ticket.registry.redis.host=localhost",
     "cas.ticket.registry.redis.port=6379",
-    "cas.ticket.registry.redis.pool.max-active=20"
+    "cas.ticket.registry.redis.pool.max-active=20",
+    "cas.ticket.registry.redis.sentinel.master=mymaster",
+    "cas.ticket.registry.redis.sentinel.node[0]=localhost:26379",
+    "cas.ticket.registry.redis.sentinel.node[1]=localhost:26380",
+    "cas.ticket.registry.redis.sentinel.node[2]=localhost:26381"
 })
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnabledIfContinuousIntegration
-public class RedisServerTicketRegistryTests extends BaseTicketRegistryTests {
+public class SentinelServerTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
     @Qualifier("ticketRegistry")

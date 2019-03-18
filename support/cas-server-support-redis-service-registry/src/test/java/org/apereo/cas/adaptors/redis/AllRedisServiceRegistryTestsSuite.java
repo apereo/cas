@@ -2,6 +2,8 @@ package org.apereo.cas.adaptors.redis;
 
 import org.apereo.cas.adaptors.redis.services.RedisEmbeddedServiceRegistryTests;
 import org.apereo.cas.adaptors.redis.services.RedisServerServiceRegistryTests;
+import org.apereo.cas.adaptors.redis.services.SentinelEmbeddedServiceRegistryTests;
+import org.apereo.cas.adaptors.redis.services.SentinelServerServiceRegistryTests;
 
 import org.junit.platform.suite.api.SelectClasses;
 
@@ -13,7 +15,9 @@ import org.junit.platform.suite.api.SelectClasses;
  */
 @SelectClasses({
     RedisEmbeddedServiceRegistryTests.class,
-    RedisServerServiceRegistryTests.class
+    SentinelEmbeddedServiceRegistryTests.class,
+    RedisServerServiceRegistryTests.class,
+    SentinelServerServiceRegistryTests.class
 })
 public class AllRedisServiceRegistryTestsSuite {
 }
