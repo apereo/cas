@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpMethod;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -56,6 +57,11 @@ public class InitialFlowSetupAction extends AbstractAction {
     }
 
     private void configureWebflowContextForService(final RequestContext context) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+
+        if (request.getMethod().equalsIgnoreCase(HttpMethod.POST.name())) {
+            WebUtils.putInitialHttpRequestPostParameters(context);
+        }
         WebUtils.putCustomLoginFormFields(context, casProperties.getView().getCustomLoginFormFields());
 
         val service = WebUtils.getService(this.argumentExtractors, context);
@@ -81,7 +87,7 @@ public class InitialFlowSetupAction extends AbstractAction {
             }
         } else if (!casProperties.getSso().isAllowMissingServiceParameter()) {
             LOGGER.warn("No service authentication request is available at [{}]. CAS is configured to disable the flow.",
-                WebUtils.getHttpServletRequestFromExternalWebflowContext(context).getRequestURL());
+                request.getRequestURL());
             throw new NoSuchFlowExecutionException(context.getFlowExecutionContext().getKey(),
                 new UnauthorizedServiceException("screen.service.required.message", "Service is required"));
         }
