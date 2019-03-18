@@ -1,6 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.response;
 
-import org.apereo.cas.token.cipher.JWTTicketCipherExecutor;
+import org.apereo.cas.token.cipher.JwtTicketCipherExecutor;
 
 /**
  * This is {@link OAuth20JwtAccessTokenCipherExecutor}.
@@ -8,7 +8,7 @@ import org.apereo.cas.token.cipher.JWTTicketCipherExecutor;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-public class OAuth20JwtAccessTokenCipherExecutor extends JWTTicketCipherExecutor {
+public class OAuth20JwtAccessTokenCipherExecutor extends JwtTicketCipherExecutor {
     public OAuth20JwtAccessTokenCipherExecutor() {
         super();
     }

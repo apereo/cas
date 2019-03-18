@@ -7,7 +7,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.validation.RequestedContextValidator;
+import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -59,7 +59,7 @@ public class CasCoreMultifactorAuthenticationConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "requestedContextValidator")
-    public RequestedContextValidator<MultifactorAuthenticationProvider> requestedContextValidator() {
+    public RequestedAuthenticationContextValidator<MultifactorAuthenticationProvider> requestedContextValidator() {
         return new DefaultRequestedAuthenticationContextValidator(servicesManager.getIfAvailable(),
             multifactorTriggerSelectionStrategy.getIfAvailable(),
             authenticationContextValidator(),

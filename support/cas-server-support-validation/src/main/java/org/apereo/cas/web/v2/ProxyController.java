@@ -1,4 +1,4 @@
-package org.apereo.cas.web;
+package org.apereo.cas.web.v2;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.web.AbstractDelegateController;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -66,17 +67,9 @@ public class ProxyController extends AbstractDelegateController {
         return targetService != null && StringUtils.hasText(proxyGrantingTicket);
     }
 
-    /**
-     * Handle request internal.
-     *
-     * @param request  the request
-     * @param response the response
-     * @return ModelAndView containing a view name of either
-     * {@code casProxyFailureView} or {@code casProxySuccessView}
-     */
     @Override
     @GetMapping(path = "/proxy")
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) {
+    public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) {
         val proxyGrantingTicket = request.getParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET);
         val targetService = getTargetService(request);
         if (!StringUtils.hasText(proxyGrantingTicket) || targetService == null) {

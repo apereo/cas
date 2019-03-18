@@ -12,7 +12,7 @@ import java.util.Optional;
  * @since 6.0
  */
 @FunctionalInterface
-public interface RequestedContextValidator<T> {
+public interface RequestedAuthenticationContextValidator<T> {
 
     /**
      * Inspect the current authentication to validate the current requested context.

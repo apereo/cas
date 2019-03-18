@@ -13,13 +13,13 @@ import java.text.ParseException;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link JWTTokenTicketBuilderWithoutEncryptionTests}.
+ * This is {@link JwtTokenTicketBuilderWithoutEncryptionTests}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @TestPropertySource(properties = "cas.authn.token.crypto.encryptionEnabled=false")
-public class JWTTokenTicketBuilderWithoutEncryptionTests extends BaseJWTTokenTicketBuilderTests {
+public class JwtTokenTicketBuilderWithoutEncryptionTests extends BaseJwtTokenTicketBuilderTests {
 
     @Test
     public void verifyJwtForServiceTicket() throws ParseException {

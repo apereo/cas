@@ -3,7 +3,7 @@ package org.apereo.cas.support.oauth.web.response.accesstoken.response;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
-import org.apereo.cas.token.JWTBuilder;
+import org.apereo.cas.token.JwtBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +35,7 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
     /**
      * JWT builder.
      */
-    protected final JWTBuilder jwtBuilder;
+    protected final JwtBuilder jwtBuilder;
 
     @Audit(action = "OAUTH2_ACCESS_TOKEN_RESPONSE",
         actionResolverName = "OAUTH2_ACCESS_TOKEN_RESPONSE_ACTION_RESOLVER",
