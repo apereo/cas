@@ -20,8 +20,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 /**
  * Unit test for {@link RedisTicketRegistry}.
  *
- * @author Misagh Moayyed
- * @since 5.0.0
+ * @author Julien Gribonvald
+ * @since 6.1.0
  */
 @Tag("Redis")
 @SpringBootTest(classes = {

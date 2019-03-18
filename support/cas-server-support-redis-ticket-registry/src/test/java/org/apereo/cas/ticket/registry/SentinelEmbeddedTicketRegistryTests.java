@@ -23,8 +23,8 @@ import redis.embedded.RedisServer;
 /**
  * Unit test for {@link RedisTicketRegistry}.
  *
- * @author Misagh Moayyed
- * @since 5.0.0
+ * @author Julien Gribonvald
+ * @since 6.1.0
  */
 @Tag("Redis")
 @SpringBootTest(classes = {
@@ -62,19 +62,18 @@ public class SentinelEmbeddedTicketRegistryTests extends BaseTicketRegistryTests
 
     @BeforeAll
     public static void startRedis() throws Exception {
-        // server redis+sentinel 1
         REDIS_SERVER_1 = RedisServer.builder().port(6320).build();
         REDIS_SERVER_1.start();
         SENTINEL_SERVER_1 =
                 RedisSentinel.builder().masterName("mymaster").masterPort(6320).port(26739).quorumSize(2).build();
         SENTINEL_SERVER_1.start();
-        // server redis+sentinel 2
+
         REDIS_SERVER_2 = RedisServer.builder().port(6321).slaveOf("localhost", 6320).build();
         REDIS_SERVER_2.start();
         SENTINEL_SERVER_2 =
                 RedisSentinel.builder().masterName("mymaster").masterPort(6320).port(26740).quorumSize(2).build();
         SENTINEL_SERVER_2.start();
-        // server redis+sentinel 2
+
         REDIS_SERVER_3 = RedisServer.builder().port(6322).slaveOf("localhost", 6320).build();
         REDIS_SERVER_3.start();
         SENTINEL_SERVER_3 =
