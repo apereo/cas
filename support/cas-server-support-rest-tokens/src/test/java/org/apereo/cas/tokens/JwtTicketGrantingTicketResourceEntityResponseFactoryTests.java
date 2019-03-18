@@ -12,12 +12,12 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link JWTTicketGrantingTicketResourceEntityResponseFactoryTests}.
+ * This is {@link JwtTicketGrantingTicketResourceEntityResponseFactoryTests}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class JWTTicketGrantingTicketResourceEntityResponseFactoryTests extends BaseTicketResourceEntityResponseFactoryTests {
+public class JwtTicketGrantingTicketResourceEntityResponseFactoryTests extends BaseTicketResourceEntityResponseFactoryTests {
     @Test
     public void verifyTicketGrantingTicketAsDefault() throws Exception {
         val result = CoreAuthenticationTestUtils.getAuthenticationResult(authenticationSystemSupport);

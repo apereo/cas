@@ -7,7 +7,7 @@ import org.apereo.cas.support.openid.OpenIdProtocolConstants;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
-import org.apereo.cas.validation.RequestedContextValidator;
+import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.AbstractServiceValidateController;
 import org.apereo.cas.web.ServiceValidationViewFactory;
@@ -20,7 +20,6 @@ import org.openid4java.message.ParameterList;
 import org.openid4java.message.VerifyResponse;
 import org.openid4java.server.ServerManager;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,7 +43,7 @@ public class OpenIdValidateController extends AbstractServiceValidateController 
                                     final CentralAuthenticationService centralAuthenticationService,
                                     final ProxyHandler proxyHandler,
                                     final ArgumentExtractor argumentExtractor,
-                                    final RequestedContextValidator requestedContextValidator,
+                                    final RequestedAuthenticationContextValidator requestedContextValidator,
                                     final String authnContextAttribute,
                                     final ServerManager serverManager,
                                     final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers,
@@ -58,20 +57,20 @@ public class OpenIdValidateController extends AbstractServiceValidateController 
     }
 
     @Override
-    public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
-        throws Exception {
+    public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         val openIdMode = request.getParameter(OpenIdProtocolConstants.OPENID_MODE);
         if (StringUtils.equals(openIdMode, OpenIdProtocolConstants.CHECK_AUTHENTICATION)) {
 
-            val message = (VerifyResponse) this.serverManager.verify(new ParameterList(request.getParameterMap()));
+            val requestParams = new ParameterList(request.getParameterMap());
+            val message = (VerifyResponse) this.serverManager.verify(requestParams);
 
             val parameters = new HashMap<String, String>(message.getParameterMap());
             if (message.isSignatureVerified()) {
                 LOGGER.debug("Signature verification request successful.");
-                return new ModelAndView(getValidationViewFactory().getSuccessView(getClass().getSimpleName()), parameters);
+                return new ModelAndView(getValidationViewFactory().getSuccessView(getClass()), parameters);
             }
             LOGGER.debug("Signature verification request unsuccessful.");
-            return new ModelAndView(getValidationViewFactory().getFailureView(getClass().getSimpleName()), parameters);
+            return new ModelAndView(getValidationViewFactory().getFailureView(getClass()), parameters);
         }
         return super.handleRequestInternal(request, response);
     }

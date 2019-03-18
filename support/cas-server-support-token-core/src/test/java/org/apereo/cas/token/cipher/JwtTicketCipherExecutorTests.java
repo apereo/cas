@@ -17,7 +17,7 @@ public class JwtTicketCipherExecutorTests {
 
     @Test
     public void verifyCipheredToken() {
-        val c = new JWTTicketCipherExecutor(null,
+        val c = new JwtTicketCipherExecutor(null,
             "qeALfMKRSME3mkHy0Qis6mhbGQFzps0ZiU-qyjsPOq_tYyR4fk2uAQR3wZfYTAlGGO3yhpJAMsq2JufeEC4fQg", true, 0, 0);
         val token = c.encode(ST);
         assertEquals(ST, c.decode(token));
@@ -25,7 +25,7 @@ public class JwtTicketCipherExecutorTests {
 
     @Test
     public void verifyCipheredTokenWithoutEncryption() {
-        val c = new JWTTicketCipherExecutor(null,
+        val c = new JwtTicketCipherExecutor(null,
             "qeALfMKRSME3mkHy0Qis6mhbGQFzps0ZiU-qyjsPOq_tYyR4fk2uAQR3wZfYTAlGGO3yhpJAMsq2JufeEC4fQg", false, 0, 0);
         val token = c.encode(ST);
         assertEquals(ST, c.decode(token));
@@ -33,7 +33,7 @@ public class JwtTicketCipherExecutorTests {
 
     @Test
     public void verifyCipheredTokenWithoutEncryptionAndSigning() {
-        val c = new JWTTicketCipherExecutor();
+        val c = new JwtTicketCipherExecutor();
         val token = c.encode(ST);
         assertEquals(ST, c.decode(token));
     }

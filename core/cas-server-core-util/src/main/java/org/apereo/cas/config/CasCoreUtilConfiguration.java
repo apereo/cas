@@ -19,6 +19,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -65,7 +66,7 @@ public class CasCoreUtilConfiguration implements InitializingBean {
     private CasConfigurationProperties casProperties;
 
     @Bean
-    @Scope(value = "prototype")
+    @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public ApplicationContextProvider applicationContextProvider() {
         return new ApplicationContextProvider();
     }

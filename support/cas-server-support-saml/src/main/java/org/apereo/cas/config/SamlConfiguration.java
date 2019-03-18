@@ -21,12 +21,15 @@ import org.apereo.cas.support.saml.web.view.Saml10SuccessResponseView;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
-import org.apereo.cas.validation.RequestedContextValidator;
+import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
+import org.apereo.cas.web.ServiceValidationViewFactory;
+import org.apereo.cas.web.ServiceValidationViewFactoryConfigurer;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.view.attributes.NoOpProtocolAttributesRenderer;
 
 import lombok.val;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -49,6 +52,9 @@ import java.nio.charset.StandardCharsets;
 @Configuration("samlConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SamlConfiguration {
+    @Autowired
+    @Qualifier("serviceValidationViewFactory")
+    private ObjectProvider<ServiceValidationViewFactory> serviceValidationViewFactory;
 
     @Autowired
     @Qualifier("argumentExtractor")
@@ -64,11 +70,7 @@ public class SamlConfiguration {
     @Autowired
     @Qualifier("casAttributeEncoder")
     private ObjectProvider<ProtocolAttributeEncoder> protocolAttributeEncoder;
-
-    @Autowired
-    @Qualifier("cas3ServiceJsonView")
-    private ObjectProvider<View> cas3ServiceJsonView;
-
+    
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
     private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationServiceSelectionPlan;
@@ -95,7 +97,7 @@ public class SamlConfiguration {
 
     @Autowired
     @Qualifier("requestedContextValidator")
-    private ObjectProvider<RequestedContextValidator> requestedContextValidator;
+    private ObjectProvider<RequestedAuthenticationContextValidator> requestedContextValidator;
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
@@ -172,12 +174,17 @@ public class SamlConfiguration {
             proxy20Handler.getIfAvailable(),
             argumentExtractor.getIfAvailable(),
             requestedContextValidator.getIfAvailable(),
-            cas3ServiceJsonView.getIfAvailable(),
-            casSamlServiceSuccessView(),
-            casSamlServiceFailureView(),
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
             validationAuthorizers.getIfAvailable(),
-            casProperties.getSso().isRenewAuthnEnabled());
+            casProperties.getSso().isRenewAuthnEnabled(),
+            serviceValidationViewFactory.getIfAvailable());
+    }
+
+    @Bean
+    public ServiceValidationViewFactoryConfigurer samlServiceValidationViewFactoryConfigurer() {
+        return factory ->
+            factory.registerView(SamlValidateController.class,
+                Pair.of(casSamlServiceSuccessView(), casSamlServiceFailureView()));
     }
 
     @Bean

@@ -12,9 +12,9 @@ import org.junit.platform.suite.api.SelectClasses;
  */
 @SelectClasses({
     JwtTicketCipherExecutorTests.class,
-    JWTTokenTicketBuilderTests.class,
-    JWTTokenTicketBuilderWithoutCryptoTests.class,
-    JWTTokenTicketBuilderWithoutEncryptionTests.class
+    JwtTokenTicketBuilderTests.class,
+    JwtTokenTicketBuilderWithoutCryptoTests.class,
+    JwtTokenTicketBuilderWithoutEncryptionTests.class
 })
 public class AllTokenTicketTestsSuite {
 }

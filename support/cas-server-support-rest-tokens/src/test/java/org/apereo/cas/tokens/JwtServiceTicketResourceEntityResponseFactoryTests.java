@@ -12,12 +12,12 @@ import org.springframework.http.HttpStatus;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link JWTServiceTicketResourceEntityResponseFactoryTests}.
+ * This is {@link JwtServiceTicketResourceEntityResponseFactoryTests}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class JWTServiceTicketResourceEntityResponseFactoryTests extends BaseTicketResourceEntityResponseFactoryTests {
+public class JwtServiceTicketResourceEntityResponseFactoryTests extends BaseTicketResourceEntityResponseFactoryTests {
 
     @Test
     public void verifyServiceTicketAsDefault() {

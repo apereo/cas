@@ -5,7 +5,7 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20DefaultAccessTokenResponseGenerator;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
-import org.apereo.cas.token.JWTBuilder;
+import org.apereo.cas.token.JwtBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -25,7 +25,7 @@ public class OidcAccessTokenResponseGenerator extends OAuth20DefaultAccessTokenR
     private final IdTokenGeneratorService idTokenGenerator;
 
     public OidcAccessTokenResponseGenerator(final IdTokenGeneratorService idTokenGenerator,
-                                            final JWTBuilder jwtBuilder) {
+                                            final JwtBuilder jwtBuilder) {
         super(jwtBuilder);
         this.idTokenGenerator = idTokenGenerator;
     }

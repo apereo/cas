@@ -12,7 +12,7 @@ import org.apereo.cas.support.oauth.web.AbstractOAuth20Tests;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
 import org.apereo.cas.ticket.accesstoken.DefaultAccessTokenFactory;
 import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
-import org.apereo.cas.token.JWTBuilder;
+import org.apereo.cas.token.JwtBuilder;
 
 import com.nimbusds.jwt.JWTParser;
 import lombok.val;
@@ -106,8 +106,8 @@ public class OAuth20DefaultAccessTokenResponseGeneratorTests extends AbstractOAu
         val service = RegisteredServiceTestUtils.getService("example");
 
         val factory = new DefaultAccessTokenFactory(new HardTimeoutExpirationPolicy(30),
-            new JWTBuilder("cas.example.org", new OAuth20JwtAccessTokenCipherExecutor(), servicesManager,
-                new RegisteredServiceJWTAccessTokenCipherExecutor()));
+            new JwtBuilder("cas.example.org", new OAuth20JwtAccessTokenCipherExecutor(), servicesManager,
+                new RegisteredServiceJwtAccessTokenCipherExecutor()));
 
         val accessToken = factory.create(service,
             RegisteredServiceTestUtils.getAuthentication("casuser"),

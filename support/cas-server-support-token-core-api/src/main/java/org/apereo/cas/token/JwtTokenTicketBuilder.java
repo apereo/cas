@@ -17,7 +17,7 @@ import java.time.ZonedDateTime;
 import java.util.HashMap;
 
 /**
- * This is {@link JWTTokenTicketBuilder}.
+ * This is {@link JwtTokenTicketBuilder}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
@@ -25,10 +25,10 @@ import java.util.HashMap;
 @Slf4j
 @Getter
 @RequiredArgsConstructor
-public class JWTTokenTicketBuilder implements TokenTicketBuilder {
+public class JwtTokenTicketBuilder implements TokenTicketBuilder {
     private final TicketValidator ticketValidator;
     private final ExpirationPolicy expirationPolicy;
-    private final JWTBuilder jwtBuilder;
+    private final JwtBuilder jwtBuilder;
 
     @Override
     @SneakyThrows
@@ -46,7 +46,7 @@ public class JWTTokenTicketBuilder implements TokenTicketBuilder {
             })
             .get();
 
-        val builder = JWTBuilder.JwtRequest.builder();
+        val builder = JwtBuilder.JwtRequest.builder();
         val request = builder.serviceAudience(service.getId())
             .issueDate(assertion.getAuthenticationDate())
             .jwtId(serviceTicketId)
@@ -67,7 +67,7 @@ public class JWTTokenTicketBuilder implements TokenTicketBuilder {
         val dt = ZonedDateTime.now().plusSeconds(expirationPolicy.getTimeToLive());
         val validUntilDate = DateTimeUtils.dateOf(dt);
 
-        val builder = JWTBuilder.JwtRequest.builder();
+        val builder = JwtBuilder.JwtRequest.builder();
         val request = builder.serviceAudience(jwtBuilder.getCasSeverPrefix())
             .issueDate(DateTimeUtils.dateOf(ticketGrantingTicket.getCreationTime()))
             .jwtId(ticketGrantingTicket.getId())

@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * This is {@link JWTBuilder}.
+ * This is {@link JwtBuilder}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
@@ -32,7 +32,7 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 @Getter
-public class JWTBuilder {
+public class JwtBuilder {
     private final String casSeverPrefix;
     private final CipherExecutor<Serializable, String> defaultTokenCipherExecutor;
     private final ServicesManager servicesManager;

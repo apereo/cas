@@ -15,13 +15,13 @@ import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 
 /**
- * This is {@link JWTServiceTicketResourceEntityResponseFactory}.
+ * This is {@link JwtServiceTicketResourceEntityResponseFactory}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @Slf4j
-public class JWTServiceTicketResourceEntityResponseFactory extends CasProtocolServiceTicketResourceEntityResponseFactory {
+public class JwtServiceTicketResourceEntityResponseFactory extends CasProtocolServiceTicketResourceEntityResponseFactory {
     /**
      * The ticket builder that produces tokens.
      */
@@ -31,7 +31,7 @@ public class JWTServiceTicketResourceEntityResponseFactory extends CasProtocolSe
 
     private final ServicesManager servicesManager;
 
-    public JWTServiceTicketResourceEntityResponseFactory(final CentralAuthenticationService centralAuthenticationService,
+    public JwtServiceTicketResourceEntityResponseFactory(final CentralAuthenticationService centralAuthenticationService,
                                                          final TokenTicketBuilder tokenTicketBuilder,
                                                          final TicketRegistrySupport ticketRegistrySupport,
                                                          final ServicesManager servicesManager) {
