@@ -136,6 +136,14 @@
                         <input type="hidden" name="_eventId" value="submit"/>
                         <input type="hidden" name="geolocation"/>
 
+                        <p th:if="${#request.getMethod().equalsIgnoreCase('POST')}">
+                            <span th:each="entry : ${#request.getParameterMap()}" th:remove="tag">
+                                <span th:each="entryValue : ${entry.value}" th:remove="tag">
+                                    <input type="hidden" th:name="${entry.key}" th:value="${entryValue}" />
+                                </span>
+                            </span>
+                        </p>
+                        
                         <input class="btn btn-block btn-submit"
                                th:if="${recaptchaSiteKey == null}"
                                name="submit"
@@ -156,7 +164,7 @@
                                    type="submit"
                                    value="Login3"
                             />
-                            <button class="btn btn-block btn-submit"
+                            <button class="btn btn-block btn-submit g-recaptcha"
                                     th:if="${recaptchaSiteKey != null AND recaptchaInvisible != null AND recaptchaInvisible}"
                                     th:attr="data-sitekey=${recaptchaSiteKey}, data-badge=${recaptchaPosition}"
                                     data-callback="onRecaptchaV2Submit"

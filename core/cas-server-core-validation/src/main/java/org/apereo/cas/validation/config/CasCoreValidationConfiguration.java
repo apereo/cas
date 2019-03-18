@@ -90,7 +90,7 @@ public class CasCoreValidationConfiguration implements ServiceTicketValidationAu
     @ConditionalOnMissingBean(name = "requestedContextValidator")
     public RequestedContextValidator requestedContextValidator() {
         return (assertion, request) -> {
-            LOGGER.debug("Locating the primary authentication associated with this service request [{}]", assertion.getService());
+            LOGGER.trace("Locating the primary authentication associated with this service request [{}]", assertion.getService());
             val service = servicesManager.getIfAvailable().findServiceBy(assertion.getService());
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(assertion.getService(), service);
             return Pair.of(Boolean.TRUE, Optional.empty());

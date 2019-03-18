@@ -39,6 +39,7 @@ public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKe
 
     @JsonIgnore
     @Transient
+    @javax.persistence.Transient
     private Class<PublicKeyFactoryBean> publicKeyFactoryBeanClass = PublicKeyFactoryBean.class;
 
     /**

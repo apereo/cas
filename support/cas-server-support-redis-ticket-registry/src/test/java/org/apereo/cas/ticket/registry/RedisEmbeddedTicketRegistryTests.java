@@ -5,6 +5,7 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.RedisTicketRegistryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.util.junit.DisabledIfContinuousIntegration;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -41,6 +42,7 @@ import redis.embedded.RedisServer;
 })
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
+@DisabledIfContinuousIntegration
 public class RedisEmbeddedTicketRegistryTests extends BaseTicketRegistryTests {
 
     private static RedisServer REDIS_SERVER;

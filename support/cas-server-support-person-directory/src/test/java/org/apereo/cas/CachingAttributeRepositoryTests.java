@@ -4,6 +4,7 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -34,12 +35,12 @@ public class CachingAttributeRepositoryTests {
 
     @Test
     public void verifyRepositoryCaching() {
-        val person1 = cachingAttributeRepository.getPerson("casuser");
+        val person1 = cachingAttributeRepository.getPerson("casuser", IPersonAttributeDaoFilter.alwaysChoose());
         assertEquals("casuser", person1.getName());
         assertEquals(4, person1.getAttributes().size());
 
         // The second call should not go out to the repositories again
-        val person2 = cachingAttributeRepository.getPerson("casuser");
+        val person2 = cachingAttributeRepository.getPerson("casuser", IPersonAttributeDaoFilter.alwaysChoose());
         assertEquals(4, person2.getAttributes().size());
     }
 }
