@@ -19,14 +19,14 @@ import org.springframework.http.ResponseEntity;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * This is {@link JWTTicketGrantingTicketResourceEntityResponseFactory}.
+ * This is {@link JwtTicketGrantingTicketResourceEntityResponseFactory}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @Slf4j
 @RequiredArgsConstructor
-public class JWTTicketGrantingTicketResourceEntityResponseFactory extends DefaultTicketGrantingTicketResourceEntityResponseFactory {
+public class JwtTicketGrantingTicketResourceEntityResponseFactory extends DefaultTicketGrantingTicketResourceEntityResponseFactory {
     private final ServicesManager servicesManager;
     private final TokenTicketBuilder tokenTicketBuilder;
 

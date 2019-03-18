@@ -10,7 +10,7 @@ import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link JWTTokenTicketBuilderWithoutCryptoTests}.
+ * This is {@link JwtTokenTicketBuilderWithoutCryptoTests}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.token.crypto.encryptionEnabled=false",
     "cas.authn.token.crypto.signingEnabled=false"
 })
-public class JWTTokenTicketBuilderWithoutCryptoTests extends BaseJWTTokenTicketBuilderTests {
+public class JwtTokenTicketBuilderWithoutCryptoTests extends BaseJwtTokenTicketBuilderTests {
 
     @Test
     public void verifyJwtForServiceTicketEncoding() throws Exception {

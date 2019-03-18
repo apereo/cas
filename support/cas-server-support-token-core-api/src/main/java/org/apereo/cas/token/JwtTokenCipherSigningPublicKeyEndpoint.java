@@ -4,7 +4,7 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.token.cipher.RegisteredServiceJWTTicketCipherExecutor;
+import org.apereo.cas.token.cipher.RegisteredServiceJwtTicketCipherExecutor;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
@@ -21,18 +21,18 @@ import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.spec.RSAPublicKeySpec;
 
 /**
- * This is {@link JWTTokenCipherSigningPublicKeyEndpoint}.
+ * This is {@link JwtTokenCipherSigningPublicKeyEndpoint}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
  */
 @Slf4j
 @Endpoint(id = "jwtTicketSigningPublicKey", enableByDefault = false)
-public class JWTTokenCipherSigningPublicKeyEndpoint extends BaseCasActuatorEndpoint {
+public class JwtTokenCipherSigningPublicKeyEndpoint extends BaseCasActuatorEndpoint {
     private final CipherExecutor tokenCipherExecutor;
     private final ServicesManager servicesManager;
 
-    public JWTTokenCipherSigningPublicKeyEndpoint(final CasConfigurationProperties casProperties,
+    public JwtTokenCipherSigningPublicKeyEndpoint(final CasConfigurationProperties casProperties,
                                                   final CipherExecutor tokenCipherExecutor,
                                                   final ServicesManager servicesManager) {
         super(casProperties);
@@ -55,7 +55,7 @@ public class JWTTokenCipherSigningPublicKeyEndpoint extends BaseCasActuatorEndpo
         if (StringUtils.isNotBlank(service)) {
             val registeredService = this.servicesManager.findServiceBy(service);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
-            val serviceCipher = new RegisteredServiceJWTTicketCipherExecutor();
+            val serviceCipher = new RegisteredServiceJwtTicketCipherExecutor();
             if (serviceCipher.supports(registeredService)) {
                 val cipher = serviceCipher.getTokenTicketCipherExecutorForService(registeredService);
                 if (cipher.isEnabled()) {

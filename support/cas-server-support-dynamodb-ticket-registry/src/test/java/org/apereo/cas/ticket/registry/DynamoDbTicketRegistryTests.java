@@ -30,7 +30,7 @@ import org.apereo.cas.ticket.accesstoken.DefaultAccessTokenFactory;
 import org.apereo.cas.ticket.code.DefaultOAuthCodeFactory;
 import org.apereo.cas.ticket.refreshtoken.DefaultRefreshTokenFactory;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
-import org.apereo.cas.token.JWTBuilder;
+import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -109,7 +109,7 @@ public class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
 
     @RepeatedTest(2)
     public void verifyAccessTokenCanBeAdded() {
-        val jwtBuilder = new JWTBuilder("cas-prefix", CipherExecutor.noOpOfSerializableToString(),
+        val jwtBuilder = new JwtBuilder("cas-prefix", CipherExecutor.noOpOfSerializableToString(),
             servicesManager, RegisteredServiceCipherExecutor.noOp());
         val token = new DefaultAccessTokenFactory(new NeverExpiresExpirationPolicy(), jwtBuilder)
             .create(RegisteredServiceTestUtils.getService(),
