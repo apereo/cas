@@ -8,7 +8,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
-import org.apereo.cas.token.JWTBuilder;
+import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
@@ -42,9 +42,9 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
     /**
      * JWT builder instance.
      */
-    protected final JWTBuilder jwtBuilder;
+    protected final JwtBuilder jwtBuilder;
 
-    public DefaultAccessTokenFactory(final ExpirationPolicy expirationPolicy, final JWTBuilder jwtBuilder) {
+    public DefaultAccessTokenFactory(final ExpirationPolicy expirationPolicy, final JwtBuilder jwtBuilder) {
         this(new DefaultUniqueTicketIdGenerator(), expirationPolicy, jwtBuilder);
     }
 
@@ -57,7 +57,7 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
         val registeredService = (OAuthRegisteredService) this.jwtBuilder.getServicesManager().findServiceBy(service);
         if (registeredService != null && registeredService.isJwtAccessToken()) {
             val dt = ZonedDateTime.now().plusSeconds(this.expirationPolicy.getTimeToLive());
-            val builder = JWTBuilder.JwtRequest.builder();
+            val builder = JwtBuilder.JwtRequest.builder();
             val request = builder.serviceAudience(service.getId())
                 .issueDate(DateTimeUtils.dateOf(authentication.getAuthenticationDate()))
                 .jwtId(accessTokenId)

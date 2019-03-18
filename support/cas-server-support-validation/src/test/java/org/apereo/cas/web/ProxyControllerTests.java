@@ -20,6 +20,7 @@ import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
 import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.web.v2.ProxyController;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -69,8 +70,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
     @Test
     public void verifyNoParams() {
         assertEquals(CasProtocolConstants.ERROR_CODE_INVALID_REQUEST_PROXY, this.proxyController
-            .handleRequestInternal(new MockHttpServletRequest(),
-                new MockHttpServletResponse()).getModel()
+            .handleRequestInternal(new MockHttpServletRequest(), new MockHttpServletResponse()).getModel()
             .get("code"));
     }
 
@@ -78,7 +78,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
     public void verifyNonExistentPGT() {
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET, "TestService");
-        request.addParameter("targetService", "testDefault");
+        request.addParameter(CasProtocolConstants.PARAMETER_TARGET_SERVICE, "testDefault");
 
         assertTrue(this.proxyController.handleRequestInternal(request,
             new MockHttpServletResponse()).getModel().containsKey("code"));
@@ -92,7 +92,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
         getTicketRegistry().addTicket(ticket);
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET, ticket.getId());
-        request.addParameter("targetService", "testDefault");
+        request.addParameter(CasProtocolConstants.PARAMETER_TARGET_SERVICE, "testDefault");
 
         assertTrue(this.proxyController.handleRequestInternal(request,
             new MockHttpServletResponse()).getModel().containsKey(

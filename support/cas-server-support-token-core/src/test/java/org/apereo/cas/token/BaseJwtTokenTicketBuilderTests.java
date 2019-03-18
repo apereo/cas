@@ -33,7 +33,7 @@ import java.net.URL;
 import java.util.List;
 
 /**
- * This is {@link BaseJWTTokenTicketBuilderTests}.
+ * This is {@link BaseJwtTokenTicketBuilderTests}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
@@ -41,7 +41,7 @@ import java.util.List;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     TokenCoreConfiguration.class,
-    BaseJWTTokenTicketBuilderTests.TokenTicketBuilderTestConfiguration.class,
+    BaseJwtTokenTicketBuilderTests.TokenTicketBuilderTestConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
@@ -51,7 +51,7 @@ import java.util.List;
     CasCoreHttpConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class
 })
-public abstract class BaseJWTTokenTicketBuilderTests {
+public abstract class BaseJwtTokenTicketBuilderTests {
     @Autowired
     @Qualifier("tokenTicketBuilder")
     protected TokenTicketBuilder tokenTicketBuilder;
