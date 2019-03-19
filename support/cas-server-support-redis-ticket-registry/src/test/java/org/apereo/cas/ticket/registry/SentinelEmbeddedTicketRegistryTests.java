@@ -38,6 +38,7 @@ import redis.embedded.RedisServer;
 @TestPropertySource(properties = {
     "cas.ticket.registry.redis.host=localhost",
     "cas.ticket.registry.redis.port=6320",
+    "cas.ticket.registry.redis.readFrom=MASTER",
     "cas.ticket.registry.redis.pool.max-active=20",
     "cas.ticket.registry.redis.sentinel.master=mymaster",
     "cas.ticket.registry.redis.sentinel.node[0]=localhost:26739",

@@ -2,6 +2,7 @@ package org.apereo.cas.redis.core;
 
 import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 
+import io.lettuce.core.ReadFrom;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
@@ -73,6 +74,9 @@ public class RedisObjectFactory {
         val poolConfig = LettucePoolingClientConfiguration.builder();
         if (redis.isUseSsl()) {
             poolConfig.useSsl();
+        }
+        if (StringUtils.hasText(redis.getReadFrom())) {
+            poolConfig.readFrom(ReadFrom.valueOf(redis.getReadFrom()));
         }
         if (redis.getTimeout() > 0){
             poolConfig.commandTimeout(Duration.ofMillis(redis.getTimeout()));
