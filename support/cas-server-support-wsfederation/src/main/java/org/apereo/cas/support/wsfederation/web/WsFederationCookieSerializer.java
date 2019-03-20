@@ -20,7 +20,7 @@ public class WsFederationCookieSerializer extends AbstractJacksonBackedStringSer
     }
 
     @Override
-    protected Class<Map> getTypeToSerialize() {
+    public Class<Map> getTypeToSerialize() {
         return Map.class;
     }
 }

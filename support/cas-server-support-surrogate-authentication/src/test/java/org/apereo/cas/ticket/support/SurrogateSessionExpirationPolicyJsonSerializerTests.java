@@ -30,7 +30,7 @@ public class SurrogateSessionExpirationPolicyJsonSerializerTests {
         private static final long serialVersionUID = -7883370764375218898L;
 
         @Override
-        protected Class<ExpirationPolicy> getTypeToSerialize() {
+        public Class<ExpirationPolicy> getTypeToSerialize() {
             return ExpirationPolicy.class;
         }
     }

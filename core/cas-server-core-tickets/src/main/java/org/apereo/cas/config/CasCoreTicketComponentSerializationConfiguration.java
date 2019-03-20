@@ -9,14 +9,14 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Configuration;
 
 /**
- * This is {@link CasCoreComponentSerializationConfiguration}.
+ * This is {@link CasCoreTicketComponentSerializationConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @Configuration("casCoreComponentSerializationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasCoreComponentSerializationConfiguration implements ComponentSerializationPlanConfigurator {
+public class CasCoreTicketComponentSerializationConfiguration implements ComponentSerializationPlanConfigurator {
     @Override
     public void configureComponentSerializationPlan(final ComponentSerializationPlan plan) {
         plan.registerSerializableClass(RememberMeDelegatingExpirationPolicy.class);

@@ -1,11 +1,11 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
-import org.apereo.cas.ticket.BaseTicketSerializers;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.TicketState;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 
 import com.google.common.collect.ImmutableSet;
 import com.mongodb.client.ListIndexesIterable;
@@ -43,13 +43,16 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     private final TicketCatalog ticketCatalog;
     private final MongoOperations mongoTemplate;
     private final boolean dropCollection;
+    private final TicketSerializationManager ticketSerializationManager;
 
     public MongoDbTicketRegistry(final TicketCatalog ticketCatalog,
                                  final MongoOperations mongoTemplate,
-                                 final boolean dropCollection) {
+                                 final boolean dropCollection,
+                                 final TicketSerializationManager ticketSerializationManager) {
         this.ticketCatalog = ticketCatalog;
         this.mongoTemplate = mongoTemplate;
         this.dropCollection = dropCollection;
+        this.ticketSerializationManager = ticketSerializationManager;
 
         createTicketCollections();
         LOGGER.info("Configured MongoDb Ticket Registry instance with available collections: [{}]", mongoTemplate.getCollectionNames());
@@ -72,17 +75,17 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         return new Date(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(ttl));
     }
 
-    private static String serializeTicketForMongoDocument(final Ticket ticket) {
+    private String serializeTicketForMongoDocument(final Ticket ticket) {
         try {
-            return BaseTicketSerializers.serializeTicket(ticket);
+            return ticketSerializationManager.serializeTicket(ticket);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
         return null;
     }
 
-    private static Ticket deserializeTicketFromMongoDocument(final TicketHolder holder) {
-        return BaseTicketSerializers.deserializeTicket(holder.getJson(), holder.getType());
+    private Ticket deserializeTicketFromMongoDocument(final TicketHolder holder) {
+        return ticketSerializationManager.deserializeTicket(holder.getJson(), holder.getType());
     }
 
     private MongoCollection createTicketCollection(final TicketDefinition ticket, final MongoDbConnectionFactory factory) {

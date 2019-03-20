@@ -4,6 +4,7 @@ import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
@@ -12,6 +13,8 @@ import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicketFactory;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -35,18 +38,30 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketsSerializationConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class
 })
 public class TicketSerializersTests {
     @Autowired
     @Qualifier("defaultTicketFactory")
-    protected TicketFactory defaultTicketFactory;
+    private TicketFactory defaultTicketFactory;
+
+    @Autowired
+    @Qualifier("ticketSerializationManager")
+    private TicketSerializationManager ticketSerializationManager;
 
     @Test
     public void verifyTicketGrantingTicketSerialization() {
         val factory = (TicketGrantingTicketFactory) this.defaultTicketFactory.get(TicketGrantingTicket.class);
         val ticket = factory.create(RegisteredServiceTestUtils.getAuthentication(), TicketGrantingTicket.class);
+        verifySerialization(ticket);
+    }
+
+    @Test
+    public void verifyTransientSessionTicketSerialization() {
+        val factory = (TransientSessionTicketFactory) this.defaultTicketFactory.get(TransientSessionTicket.class);
+        val ticket = factory.create(RegisteredServiceTestUtils.getService(), CollectionUtils.wrap("key", "value"));
         verifySerialization(ticket);
     }
 
@@ -91,10 +106,11 @@ public class TicketSerializersTests {
         verifySerialization(pt);
     }
 
-    private static void verifySerialization(final Ticket ticket) {
-        val serialized = BaseTicketSerializers.serializeTicket(ticket);
+    private void verifySerialization(final Ticket ticket) {
+        val serialized = ticketSerializationManager.serializeTicket(ticket);
         assertNotNull(serialized);
-        val deserialized = BaseTicketSerializers.deserializeTicket(serialized, ticket.getClass());
+        val deserialized = ticketSerializationManager.deserializeTicket(serialized, ticket.getClass());
         assertNotNull(deserialized);
+        assertEquals(deserialized, ticket);
     }
 }

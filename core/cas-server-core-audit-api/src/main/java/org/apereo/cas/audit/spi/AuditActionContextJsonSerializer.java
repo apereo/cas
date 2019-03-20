@@ -14,7 +14,7 @@ public class AuditActionContextJsonSerializer extends AbstractJacksonBackedStrin
     private static final long serialVersionUID = -8983370764375218898L;
 
     @Override
-    protected Class<AuditActionContext> getTypeToSerialize() {
+    public Class<AuditActionContext> getTypeToSerialize() {
         return AuditActionContext.class;
     }
 }
