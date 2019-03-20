@@ -6,9 +6,11 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.CassandraTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CoreTicketUtils;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -31,10 +33,16 @@ public class CassandraTicketRegistryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier("ticketSerializationManager;")
+    private ObjectProvider<TicketSerializationManager> ticketSerializationManager;
+
+    @Autowired
     @Bean
     public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
         val cassandra = casProperties.getTicket().getRegistry().getCassandra();
-        val registry = new CassandraTicketRegistry(ticketCatalog, cassandraTicketRegistrySessionFactory(), cassandra);
+        val registry = new CassandraTicketRegistry(ticketCatalog, cassandraTicketRegistrySessionFactory(),
+            cassandra, ticketSerializationManager.getIfAvailable());
         registry.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(cassandra.getCrypto(), "cassandra"));
         return registry;
     }

@@ -156,7 +156,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
         private static final long serialVersionUID = 1466569521275630254L;
 
         @Override
-        protected Class getTypeToSerialize() {
+        public Class getTypeToSerialize() {
             return HashMap.class;
         }
     }
