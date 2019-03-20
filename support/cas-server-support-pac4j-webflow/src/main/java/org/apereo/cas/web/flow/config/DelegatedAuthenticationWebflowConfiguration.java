@@ -23,6 +23,7 @@ import org.apereo.cas.web.flow.DelegatedAuthenticationErrorViewResolver;
 import org.apereo.cas.web.flow.DelegatedAuthenticationSAML2ClientLogoutAction;
 import org.apereo.cas.web.flow.DelegatedAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationAction;
+import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.pac4j.DelegatedSessionCookieManager;
@@ -57,6 +58,10 @@ import java.util.ArrayList;
 @Configuration("delegatedAuthenticationWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
+
+    @Autowired
+    @Qualifier("singleSignOnParticipationStrategy")
+    private ObjectProvider<SingleSignOnParticipationStrategy> webflowSingleSignOnParticipationStrategy;
 
     @Autowired
     @Qualifier("defaultTicketFactory")
@@ -172,7 +177,8 @@ public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowEx
             casProperties.getLocale().getParamName(),
             casProperties.getTheme().getParamName(),
             authenticationRequestServiceSelectionStrategies.getIfAvailable(),
-            centralAuthenticationService.getIfAvailable());
+            centralAuthenticationService.getIfAvailable(),
+            webflowSingleSignOnParticipationStrategy.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "delegatedAuthenticationWebflowConfigurer")

@@ -321,6 +321,7 @@ public class DelegatedClientAuthenticationActionTests {
             LocaleChangeInterceptor.DEFAULT_PARAM_NAME,
             ThemeChangeInterceptor.DEFAULT_PARAM_NAME,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
-            mock(CentralAuthenticationService.class));
+            mock(CentralAuthenticationService.class),
+            SingleSignOnParticipationStrategy.alwaysParticipating());
     }
 }
