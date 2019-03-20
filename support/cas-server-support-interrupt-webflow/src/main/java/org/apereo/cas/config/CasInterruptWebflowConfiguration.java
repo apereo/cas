@@ -7,13 +7,12 @@ import org.apereo.cas.interrupt.webflow.InterruptWebflowConfigurer;
 import org.apereo.cas.interrupt.webflow.actions.FinalizeInterruptFlowAction;
 import org.apereo.cas.interrupt.webflow.actions.InquireInterruptAction;
 import org.apereo.cas.interrupt.webflow.actions.PrepareInterruptViewAction;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
+import org.apereo.cas.web.flow.SingleSignOnParticipationStrategyConfigurer;
 
-import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -39,10 +38,6 @@ import org.springframework.webflow.execution.Action;
 public class CasInterruptWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("interruptInquirer")
@@ -85,11 +80,15 @@ public class CasInterruptWebflowConfiguration implements CasWebflowExecutionPlan
 
     @Bean
     @RefreshScope
-    public SingleSignOnParticipationStrategy singleSignOnParticipationStrategy() {
-        val sso = casProperties.getSso();
-        return new InterruptSingleSignOnParticipationStrategy(servicesManager.getIfAvailable(),
-            sso.isCreateSsoCookieOnRenewAuthn(),
-            sso.isRenewAuthnEnabled());
+    @ConditionalOnMissingBean(name = "interruptSingleSignOnParticipationStrategy")
+    public SingleSignOnParticipationStrategy interruptSingleSignOnParticipationStrategy() {
+        return new InterruptSingleSignOnParticipationStrategy();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "interruptSingleSignOnParticipationStrategyConfigurer")
+    public SingleSignOnParticipationStrategyConfigurer interruptSingleSignOnParticipationStrategyConfigurer() {
+        return chain -> chain.addStrategy(interruptSingleSignOnParticipationStrategy());
     }
 
     @Override

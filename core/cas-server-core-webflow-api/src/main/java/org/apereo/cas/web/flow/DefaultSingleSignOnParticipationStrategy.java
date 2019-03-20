@@ -5,9 +5,12 @@ import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.core.Ordered;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -18,10 +21,14 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Getter
 public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnParticipationStrategy {
     private final ServicesManager servicesManager;
     private final boolean createSsoSessionCookieOnRenewAuthentications;
     private final boolean renewEnabled;
+
+    @Setter
+    private int order = Ordered.LOWEST_PRECEDENCE;
 
     @Override
     public boolean isParticipating(final RequestContext ctx) {
