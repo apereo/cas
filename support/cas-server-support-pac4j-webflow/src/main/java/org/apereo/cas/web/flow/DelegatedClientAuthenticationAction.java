@@ -117,6 +117,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
 
     private final CentralAuthenticationService centralAuthenticationService;
 
+    private final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy;
+
     public DelegatedClientAuthenticationAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
                                                final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
                                                final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
@@ -129,7 +131,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                                                final String localeParamName,
                                                final String themeParamName,
                                                final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
-                                               final CentralAuthenticationService centralAuthenticationService) {
+                                               final CentralAuthenticationService centralAuthenticationService,
+                                               final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy) {
         super(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
         this.clients = clients;
         this.servicesManager = servicesManager;
@@ -141,38 +144,9 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         this.themeParamName = themeParamName;
         this.authenticationRequestServiceSelectionStrategies = authenticationRequestServiceSelectionStrategies;
         this.centralAuthenticationService = centralAuthenticationService;
+        this.singleSignOnParticipationStrategy = singleSignOnParticipationStrategy;
     }
 
-    /**
-     * Determine if request has errors.
-     *
-     * @param request the request
-     * @param status  the status
-     * @return the optional model and view, if request is an error.
-     */
-    public static Optional<ModelAndView> hasDelegationRequestFailed(final HttpServletRequest request, final int status) {
-        val params = request.getParameterMap();
-        if (Stream.of("error", "error_code", "error_description", "error_message").anyMatch(params::containsKey)) {
-            val model = new HashMap<String, Object>();
-            if (params.containsKey("error_code")) {
-                model.put("code", StringEscapeUtils.escapeHtml4(request.getParameter("error_code")));
-            } else {
-                model.put("code", status);
-            }
-            model.put("error", StringEscapeUtils.escapeHtml4(request.getParameter("error")));
-            model.put("reason", StringEscapeUtils.escapeHtml4(request.getParameter("error_reason")));
-            if (params.containsKey("error_description")) {
-                model.put("description", StringEscapeUtils.escapeHtml4(request.getParameter("error_description")));
-            } else if (params.containsKey("error_message")) {
-                model.put("description", StringEscapeUtils.escapeHtml4(request.getParameter("error_message")));
-            }
-            model.put(CasProtocolConstants.PARAMETER_SERVICE, request.getAttribute(CasProtocolConstants.PARAMETER_SERVICE));
-            model.put("client", StringEscapeUtils.escapeHtml4(request.getParameter("client_name")));
-            LOGGER.debug("Delegation request has failed. Details are [{}]", model);
-            return Optional.of(new ModelAndView("casPac4jStopWebflow", model));
-        }
-        return Optional.empty();
-    }
 
     @Override
     public Event doExecute(final RequestContext context) {
@@ -225,8 +199,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
      * Handle the thrown exception.
      *
      * @param webContext the web context
-     * @param client the authentication client
-     * @param e the thrown exception
+     * @param client     the authentication client
+     * @param e          the thrown exception
      * @return the event to trigger
      */
     protected Event handleException(final J2EContext webContext, final BaseClient<Credentials, CommonProfile> client, final Exception e) {
@@ -253,7 +227,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             val ticket = this.centralAuthenticationService.getTicket(tgtId, Ticket.class);
             if (ticket != null && !ticket.isExpired()) {
                 LOGGER.trace("Located a valid ticket-granting ticket, honoring existing single sign-on session");
-                return true;
+                return singleSignOnParticipationStrategy.supports(requestContext)
+                    && singleSignOnParticipationStrategy.isParticipating(requestContext);
             }
         } catch (final AbstractTicketException e) {
             LOGGER.trace("Could not retrieve ticket id [{}] from registry.", e.getMessage());
@@ -461,6 +436,37 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             }
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Service unauthorized");
         }
+    }
+
+    /**
+     * Determine if request has errors.
+     *
+     * @param request the request
+     * @param status  the status
+     * @return the optional model and view, if request is an error.
+     */
+    public static Optional<ModelAndView> hasDelegationRequestFailed(final HttpServletRequest request, final int status) {
+        val params = request.getParameterMap();
+        if (Stream.of("error", "error_code", "error_description", "error_message").anyMatch(params::containsKey)) {
+            val model = new HashMap<String, Object>();
+            if (params.containsKey("error_code")) {
+                model.put("code", StringEscapeUtils.escapeHtml4(request.getParameter("error_code")));
+            } else {
+                model.put("code", status);
+            }
+            model.put("error", StringEscapeUtils.escapeHtml4(request.getParameter("error")));
+            model.put("reason", StringEscapeUtils.escapeHtml4(request.getParameter("error_reason")));
+            if (params.containsKey("error_description")) {
+                model.put("description", StringEscapeUtils.escapeHtml4(request.getParameter("error_description")));
+            } else if (params.containsKey("error_message")) {
+                model.put("description", StringEscapeUtils.escapeHtml4(request.getParameter("error_message")));
+            }
+            model.put(CasProtocolConstants.PARAMETER_SERVICE, request.getAttribute(CasProtocolConstants.PARAMETER_SERVICE));
+            model.put("client", StringEscapeUtils.escapeHtml4(request.getParameter("client_name")));
+            LOGGER.debug("Delegation request has failed. Details are [{}]", model);
+            return Optional.of(new ModelAndView("casPac4jStopWebflow", model));
+        }
+        return Optional.empty();
     }
 
     /**

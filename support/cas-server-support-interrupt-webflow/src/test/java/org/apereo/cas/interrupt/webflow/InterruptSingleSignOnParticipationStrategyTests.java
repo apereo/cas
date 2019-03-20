@@ -1,14 +1,12 @@
 package org.apereo.cas.interrupt.webflow;
 
 import org.apereo.cas.interrupt.InterruptResponse;
-import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.webflow.test.MockRequestContext;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link InterruptSingleSignOnParticipationStrategyTests}.
@@ -19,19 +17,18 @@ import static org.mockito.Mockito.*;
 public class InterruptSingleSignOnParticipationStrategyTests {
     @Test
     public void verifyStrategyWithoutInterrupt() {
-        val s =
-            new InterruptSingleSignOnParticipationStrategy(mock(ServicesManager.class), true, true);
-        assertTrue(s.isParticipating(new MockRequestContext()));
+        val s = new InterruptSingleSignOnParticipationStrategy();
+        assertFalse(s.isParticipating(new MockRequestContext()));
     }
 
     @Test
     public void verifyStrategyWithInterruptDisabled() {
-        val s =
-            new InterruptSingleSignOnParticipationStrategy(mock(ServicesManager.class), true, true);
+        val s = new InterruptSingleSignOnParticipationStrategy();
         val ctx = new MockRequestContext();
         val response = new InterruptResponse();
         response.setSsoEnabled(false);
         InterruptUtils.putInterruptIn(ctx, response);
+        assertTrue(s.supports(ctx));
         assertFalse(s.isParticipating(ctx));
     }
 }
