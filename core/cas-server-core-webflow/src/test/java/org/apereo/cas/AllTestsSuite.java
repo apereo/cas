@@ -1,6 +1,8 @@
 
 package org.apereo.cas;
 
+import org.apereo.cas.web.flow.ChainingSingleSignOnParticipationStrategyTests;
+import org.apereo.cas.web.flow.DefaultSingleSignOnParticipationStrategyTests;
 import org.apereo.cas.web.flow.actions.AuthenticationExceptionHandlerActionTests;
 import org.apereo.cas.web.flow.actions.CasDefaultFlowUrlHandlerTests;
 import org.apereo.cas.web.flow.actions.InjectResponseHeadersActionTests;
@@ -18,6 +20,8 @@ import org.junit.platform.suite.api.SelectClasses;
     InjectResponseHeadersActionTests.class,
     CasDefaultFlowUrlHandlerTests.class,
     RedirectToServiceActionTests.class,
+    DefaultSingleSignOnParticipationStrategyTests.class,
+    ChainingSingleSignOnParticipationStrategyTests.class,
     AuthenticationExceptionHandlerActionTests.class
 })
 public class AllTestsSuite {
