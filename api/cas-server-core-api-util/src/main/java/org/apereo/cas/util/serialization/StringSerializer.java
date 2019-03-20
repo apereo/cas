@@ -1,7 +1,5 @@
 package org.apereo.cas.util.serialization;
 
-import org.apereo.cas.util.CollectionUtils;
-
 import lombok.val;
 
 import java.io.File;
@@ -16,8 +14,8 @@ import java.util.Collection;
 /**
  * Interface to define operations needed to map objects from/to  clobs.
  *
- * @param <T> the type parameter
  * @author Misagh Moayyed
+ * @param <T> the type parameter
  * @since 4.1.0
  */
 public interface StringSerializer<T> extends Serializable {
@@ -102,7 +100,9 @@ public interface StringSerializer<T> extends Serializable {
     default Collection<T> load(final InputStream stream) {
         val result = from(stream);
         if (result != null) {
-            return CollectionUtils.wrapList(result);
+            val list = new ArrayList<T>();
+            list.add(result);
+            return list;
         }
         return new ArrayList<>(0);
     }
@@ -116,7 +116,9 @@ public interface StringSerializer<T> extends Serializable {
     default Collection<T> load(final Reader stream) {
         val result = from(stream);
         if (result != null) {
-            return CollectionUtils.wrapList(result);
+            val list = new ArrayList<T>();
+            list.add(result);
+            return list;
         }
         return new ArrayList<>(0);
     }
