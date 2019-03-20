@@ -14,7 +14,6 @@ import lombok.val;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 
 /**
  * Implementation of an expiration policy that adds the concept of saying that a
@@ -52,24 +51,35 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
 
     @Override
     public boolean isExpired(final TicketState ticketState) {
-        val currentTime = ZonedDateTime.now(ZoneOffset.UTC);
+        LOGGER.trace("Checking validity of ticket [{}]", ticketState);
         val lastTimeUsed = ticketState.getLastTimeUsed();
-        val killTime = lastTimeUsed.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
-        LOGGER.trace("Current time is [{}], ticket's last usage time is [{}] while expiration time is [{}]", currentTime, lastTimeUsed, killTime);
+        val currentTime = ZonedDateTime.now(ZoneOffset.UTC);
 
-        if (ticketState.getCountOfUses() == 0 && currentTime.isBefore(killTime)) {
-            LOGGER.debug("Ticket is not expired due to a count of zero and the current time [{}] being less than the expiration time [{}]", currentTime, killTime);
+        LOGGER.trace("Current time is [{}]. Ticket last used time is [{}]", currentTime, lastTimeUsed);
+
+        val currentTimeSeconds = currentTime.toEpochSecond();
+        val lastTimeUsedInSeconds = lastTimeUsed.toEpochSecond();
+
+        val margin = currentTimeSeconds - lastTimeUsedInSeconds;
+        LOGGER.trace("Current time in seconds is [{}]. Ticket last used time in seconds is [{}]", currentTimeSeconds, lastTimeUsedInSeconds);
+
+        if (ticketState.getCountOfUses() == 0 && margin < this.timeToKillInSeconds) {
+            LOGGER.debug("Valid [{}]: Usage count is zero and number of seconds since ticket usage time [{}] is less than [{}]",
+                ticketState, margin, this.timeToKillInSeconds);
             return super.isExpired(ticketState);
         }
-        if (currentTime.isAfter(killTime)) {
-            LOGGER.debug("Ticket is expired due to the current time [{}] being greater than the expiration time [{}]", currentTime, killTime);
+
+        if (margin >= this.timeToKillInSeconds) {
+            LOGGER.debug("Expired [{}]: number of seconds since ticket usage time [{}] is greater than or equal to [{}]",
+                ticketState, margin, this.timeToKillInSeconds);
             return true;
         }
-        val dontUseUntil = lastTimeUsed.plus(this.timeInBetweenUsesInSeconds, ChronoUnit.SECONDS);
-        if (currentTime.isBefore(dontUseUntil)) {
-            LOGGER.warn("Ticket is expired due to the current time [{}] being less than the waiting/throttled expiration period [{}].", currentTime, killTime);
+        if (margin > 0 && margin <= this.timeInBetweenUsesInSeconds) {
+            LOGGER.warn("Expired [{}]: number of seconds since ticket usage time [{}] is less than or equal to time in between uses in seconds [{}]",
+                ticketState, margin, this.timeInBetweenUsesInSeconds);
             return true;
         }
+
         return super.isExpired(ticketState);
     }
 

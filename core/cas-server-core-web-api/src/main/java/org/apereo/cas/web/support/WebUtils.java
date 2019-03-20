@@ -1006,7 +1006,7 @@ public class WebUtils {
      * @param context the context
      */
     public static void putInitialHttpRequestPostParameters(final RequestContext context) {
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        val request = getHttpServletRequestFromExternalWebflowContext(context);
         context.getFlashScope().put("httpRequestInitialPostParameters", request.getParameterMap());
     }
 }

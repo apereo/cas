@@ -63,10 +63,11 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests {
     }
 
     @Test
-    public void verifyNotWaitingEnoughTime() {
+    public void verifyNotWaitingEnoughTime() throws Exception {
         this.ticket.grantServiceTicket("test", RegisteredServiceTestUtils.getService(), this.expirationPolicy, false,
             true);
         expirationPolicy.setTimeToKillInSeconds(TIMEOUT);
+        Thread.sleep(1_000);
         assertTrue(this.ticket.isExpired());
     }
 

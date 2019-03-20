@@ -70,7 +70,7 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
             request.setEntity(entity);
 
             val handler = (ResponseHandler<Boolean>) response -> response.getStatusLine().getStatusCode() == HttpStatus.SC_OK;
-            LOGGER.debug("Created HTTP post message payload [{}]", request);
+            LOGGER.trace("Created HTTP post message payload [{}]", request);
             val task = this.requestExecutorService.execute(request, HttpClientContext.create(), handler);
             if (message.isAsynchronous()) {
                 return true;
