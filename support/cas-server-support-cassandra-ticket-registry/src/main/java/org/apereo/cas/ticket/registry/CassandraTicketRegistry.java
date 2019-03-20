@@ -2,9 +2,9 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.cassandra.CassandraSessionFactory;
 import org.apereo.cas.configuration.model.support.cassandra.ticketregistry.CassandraTicketRegistryProperties;
-import org.apereo.cas.ticket.BaseTicketSerializers;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 
 import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.Session;
@@ -32,16 +32,20 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
     private final TicketCatalog ticketCatalog;
     private final CassandraTicketRegistryProperties properties;
     private final Session cassandraSession;
+    private final TicketSerializationManager ticketSerializationManager;
 
     public CassandraTicketRegistry(final TicketCatalog ticketCatalog,
                                    final CassandraSessionFactory cassandraSessionFactory,
-                                   final CassandraTicketRegistryProperties properties) {
+                                   final CassandraTicketRegistryProperties properties,
+                                   final TicketSerializationManager ticketSerializationManager) {
         this.ticketCatalog = ticketCatalog;
         this.properties = properties;
 
         this.cassandraSession = cassandraSessionFactory.getSession();
         val mappingManager = new MappingManager(this.cassandraSession);
         this.entityManager = mappingManager.mapper(CassandraTicketHolder.class);
+
+        this.ticketSerializationManager = ticketSerializationManager;
     }
 
     @Override
@@ -91,7 +95,7 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
     @Override
     public void addTicket(final Ticket ticket) {
         val encTicket = encodeTicket(ticket);
-        val data = BaseTicketSerializers.serializeTicket(encTicket);
+        val data = ticketSerializationManager.serializeTicket(encTicket);
         val ttl = getTimeToLive(ticket);
         entityManager.save(new CassandraTicketHolder(encTicket.getId(), data), ttl, getConsistencyLevel());
     }
@@ -123,7 +127,7 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
         if (definition == null) {
             throw new IllegalArgumentException("Ticket catalog has not registered a ticket definition for " + holder.getId());
         }
-        return BaseTicketSerializers.deserializeTicket(holder.getData(), definition.getImplementationClass());
+        return ticketSerializationManager.deserializeTicket(holder.getData(), definition.getImplementationClass());
     }
 
     private static Mapper.Option getTimeToLive(final Ticket ticket) {

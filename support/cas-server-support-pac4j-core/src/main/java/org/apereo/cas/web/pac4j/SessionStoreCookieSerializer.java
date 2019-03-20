@@ -20,7 +20,7 @@ public class SessionStoreCookieSerializer extends AbstractJacksonBackedStringSer
     }
 
     @Override
-    protected Class<Map<String, Object>> getTypeToSerialize() {
+    public Class<Map<String, Object>> getTypeToSerialize() {
         return (Class<Map<String, Object>>) (Class<?>) Map.class;
     }
 }

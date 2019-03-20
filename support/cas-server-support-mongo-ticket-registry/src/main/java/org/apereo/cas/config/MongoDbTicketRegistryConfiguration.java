@@ -10,10 +10,12 @@ import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.support.LockingStrategy;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CoreTicketUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -36,12 +38,17 @@ public class MongoDbTicketRegistryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier("ticketSerializationManager")
+    private ObjectProvider<TicketSerializationManager> ticketSerializationManager;
+
     @RefreshScope
     @Bean
     @Autowired
     public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
         val mongo = casProperties.getTicket().getRegistry().getMongo();
-        val registry = new MongoDbTicketRegistry(ticketCatalog, mongoDbTicketRegistryTemplate(), mongo.isDropCollection());
+        val registry = new MongoDbTicketRegistry(ticketCatalog, mongoDbTicketRegistryTemplate(),
+            mongo.isDropCollection(), ticketSerializationManager.getIfAvailable());
         registry.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(mongo.getCrypto(), "mongo"));
         return registry;
     }
@@ -53,10 +60,10 @@ public class MongoDbTicketRegistryConfiguration {
                                                        @Qualifier("ticketRegistry") final TicketRegistry ticketRegistry) {
         val isCleanerEnabled = casProperties.getTicket().getRegistry().getCleaner().getSchedule().isEnabled();
         if (isCleanerEnabled) {
-            LOGGER.debug("Ticket registry cleaner is enabled.");
+            LOGGER.debug("Ticket registry cleaner for MongoDb is enabled.");
             return new DefaultTicketRegistryCleaner(lockingStrategy, logoutManager, ticketRegistry);
         }
-        LOGGER.debug("Ticket registry cleaner is not enabled. "
+        LOGGER.debug("Ticket registry cleaner for MongoDb is not enabled. "
             + "Expired tickets are not forcefully collected and cleaned by CAS. It is up to the ticket registry itself to "
             + "clean up tickets based on expiration and eviction policies.");
         return NoOpTicketRegistryCleaner.getInstance();

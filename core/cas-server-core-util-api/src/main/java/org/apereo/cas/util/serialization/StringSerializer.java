@@ -16,8 +16,8 @@ import java.util.Collection;
 /**
  * Interface to define operations needed to map objects from/to  clobs.
  *
- * @author Misagh Moayyed
  * @param <T> the type parameter
+ * @author Misagh Moayyed
  * @since 4.1.0
  */
 public interface StringSerializer<T> extends Serializable {
@@ -140,4 +140,11 @@ public interface StringSerializer<T> extends Serializable {
     default boolean supports(final String content) {
         return true;
     }
+
+    /**
+     * Gets type to serialize.
+     *
+     * @return the type to serialize
+     */
+    Class<T> getTypeToSerialize();
 }
