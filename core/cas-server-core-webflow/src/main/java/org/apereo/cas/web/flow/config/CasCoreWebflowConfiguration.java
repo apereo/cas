@@ -20,8 +20,10 @@ import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.cipher.WebflowConversationStateCipherExecutor;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.ChainingSingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.DefaultSingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
+import org.apereo.cas.web.flow.SingleSignOnParticipationStrategyConfigurer;
 import org.apereo.cas.web.flow.actions.AuthenticationExceptionHandlerAction;
 import org.apereo.cas.web.flow.actions.CheckWebAuthenticationRequestAction;
 import org.apereo.cas.web.flow.actions.ClearWebflowCredentialAction;
@@ -43,9 +45,11 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Action;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -176,10 +180,20 @@ public class CasCoreWebflowConfiguration {
     @ConditionalOnMissingBean(name = "singleSignOnParticipationStrategy")
     @RefreshScope
     public SingleSignOnParticipationStrategy singleSignOnParticipationStrategy() {
+        val resolvers = applicationContext.getBeansOfType(SingleSignOnParticipationStrategyConfigurer.class, false, true);
+        val providers = new ArrayList<SingleSignOnParticipationStrategyConfigurer>(resolvers.values());
+        AnnotationAwareOrderComparator.sort(providers);
+
+        val chain = new ChainingSingleSignOnParticipationStrategy();
+        providers.forEach(provider -> provider.configureStrategy(chain));
+
         val sso = casProperties.getSso();
-        return new DefaultSingleSignOnParticipationStrategy(servicesManager.getIfAvailable(),
+        val defaultStrategy = new DefaultSingleSignOnParticipationStrategy(servicesManager.getIfAvailable(),
             sso.isCreateSsoCookieOnRenewAuthn(),
             sso.isRenewAuthnEnabled());
+
+        chain.addStrategy(defaultStrategy);
+        return chain;
     }
 
     @ConditionalOnMissingBean(name = "authenticationExceptionHandler")
