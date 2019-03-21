@@ -55,6 +55,7 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
     @Override
     public Map<String, Object> getAttributes(final Principal principal, final RegisteredService registeredService) {
         val mergeStrategy = determineMergingStrategy();
+        LOGGER.trace("Determined merging strategy as [{}]", mergeStrategy);
 
         val cachedAttributes = getCachedPrincipalAttributes(principal, registeredService);
         if (cachedAttributes != null && !cachedAttributes.isEmpty()) {
@@ -63,6 +64,7 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
         }
 
         val principalAttributes = getPrincipalAttributes(principal);
+        LOGGER.trace("Principal attributes extracted for [{}] are [{}]", principal.getId(), principalAttributes);
 
         if (areAttributeRepositoryIdsDefined()) {
             val personDirectoryAttributes = retrievePersonAttributesFromAttributeRepository(principal.getId());
@@ -105,8 +107,15 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
         return new HashMap<>(0);
     }
 
-    private static PrincipalAttributesRepositoryCache getCacheInstanceFromApplicationContext() {
+    /**
+     * Gets cache instance from application context.
+     *
+     * @return the cache instance from application context
+     */
+    @JsonIgnore
+    public PrincipalAttributesRepositoryCache getCacheInstanceFromApplicationContext() {
         val ctx = ApplicationContextProvider.getApplicationContext();
         return ctx.getBean("principalAttributesRepositoryCache", PrincipalAttributesRepositoryCache.class);
     }
+
 }

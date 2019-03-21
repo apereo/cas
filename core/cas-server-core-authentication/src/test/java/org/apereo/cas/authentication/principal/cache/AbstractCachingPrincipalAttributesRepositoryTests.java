@@ -66,8 +66,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
 
         email = new ArrayList<>();
         email.add("final@school.com");
-        this.principal = this.principalFactory.createPrincipal("uid",
-            Collections.singletonMap(MAIL, email));
+        this.principal = this.principalFactory.createPrincipal("uid", Collections.singletonMap(MAIL, email));
     }
 
     protected abstract AbstractPrincipalAttributesRepository getPrincipalAttributesRepository(String unit, long duration);
@@ -81,13 +80,13 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
             var repoAttrs = repository.getAttributes(this.principal, svc);
             assertEquals(1, repoAttrs.size());
             assertTrue(repoAttrs.containsKey(MAIL));
-            Thread.sleep(500);
+            Thread.sleep(1_000);
             repository.setMergingStrategy(AttributeMergingStrategy.REPLACE);
             repository.setAttributeRepositoryIds(Arrays.stream(this.dao.getId()).collect(Collectors.toSet()));
             repoAttrs = repository.getAttributes(this.principal, svc);
-            assertEquals(5, repoAttrs.size());
-            assertTrue(repoAttrs.containsKey("a2"));
-            assertEquals("final@example.com", repoAttrs.get(MAIL));
+            assertEquals(1, repoAttrs.size());
+            assertFalse(repoAttrs.containsKey("uid"));
+            assertEquals("final@school.com", repoAttrs.get(MAIL));
         }
     }
 
