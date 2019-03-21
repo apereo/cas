@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -31,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class
 })
+@DirtiesContext
 public class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPrincipalAttributesRepositoryTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "cachingPrincipalAttributesRepository.json");
@@ -42,7 +44,9 @@ public class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPr
     @Override
     protected AbstractPrincipalAttributesRepository getPrincipalAttributesRepository(final String unit, final long duration) {
         ApplicationContextProvider.registerBeanIntoApplicationContext(this.applicationContext, this.dao, "attributeRepository");
-        return new CachingPrincipalAttributesRepository(unit, duration);
+        val repository = new CachingPrincipalAttributesRepository(unit, duration);
+        repository.getCacheInstanceFromApplicationContext().invalidateAll();
+        return repository;
     }
 
     @Test
