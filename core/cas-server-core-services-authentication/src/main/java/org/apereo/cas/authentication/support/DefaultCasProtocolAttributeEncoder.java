@@ -151,6 +151,8 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
                                                        final RegisteredService registeredService) {
         encryptAndEncodeAndPutIntoAttributesMap(attributes, cachedAttributesToEncode,
             CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, cipher, registeredService);
+        encryptAndEncodeAndPutIntoAttributesMap(attributes, cachedAttributesToEncode,
+            CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET_IOU, cipher, registeredService);
     }
 
     /**
