@@ -25,13 +25,21 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class PrincipalAttributesRepositoryCache implements Closeable {
     private static final int DEFAULT_MAXIMUM_CACHE_SIZE = 1000;
+
     private static final String DEFAULT_CACHE_EXPIRATION_UNIT = TimeUnit.HOURS.name();
 
     private final Map<String, Cache<String, Map<String, Object>>> registeredServicesCache = new HashMap<>();
 
     @Override
     public void close() {
-        registeredServicesCache.values().forEach(Cache::cleanUp);
+        invalidateAll();
+    }
+
+    /**
+     * Invalidate all.
+     */
+    public void invalidateAll() {
+        registeredServicesCache.values().forEach(Cache::invalidateAll);
     }
 
     /**
@@ -67,11 +75,24 @@ public class PrincipalAttributesRepositoryCache implements Closeable {
         cache.put(id, attributes);
     }
 
+    /**
+     * Build registered service cache key string.
+     *
+     * @param registeredService the registered service
+     * @return the string
+     */
     private static String buildRegisteredServiceCacheKey(final RegisteredService registeredService) {
         val key = registeredService.getId() + '@' + registeredService.getName();
         return DigestUtils.sha512(key);
     }
 
+    /**
+     * Gets registered service cache instance.
+     *
+     * @param registeredService the registered service
+     * @param repository        the repository
+     * @return the registered service cache instance
+     */
     private Cache<String, Map<String, Object>> getRegisteredServiceCacheInstance(final RegisteredService registeredService,
                                                                                  final CachingPrincipalAttributesRepository repository) {
         val key = buildRegisteredServiceCacheKey(registeredService);
@@ -83,6 +104,12 @@ public class PrincipalAttributesRepositoryCache implements Closeable {
         return cache;
     }
 
+    /**
+     * Initialize cache cache.
+     *
+     * @param repository the repository
+     * @return the cache
+     */
     private static Cache<String, Map<String, Object>> initializeCache(final CachingPrincipalAttributesRepository repository) {
         val unit = TimeUnit.valueOf(StringUtils.defaultString(repository.getTimeUnit(), DEFAULT_CACHE_EXPIRATION_UNIT));
         return Caffeine.newBuilder()
