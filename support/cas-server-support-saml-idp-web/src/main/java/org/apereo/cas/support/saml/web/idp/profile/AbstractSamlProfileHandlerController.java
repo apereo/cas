@@ -21,12 +21,12 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredSer
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.web.support.WebUtils;
 
-import com.google.common.base.Splitter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -61,7 +61,6 @@ import java.time.ZonedDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.TreeMap;
 
 /**
  * A parent controller to handle SAML requests.
@@ -284,15 +283,8 @@ public abstract class AbstractSamlProfileHandlerController {
      * @return the authentication context mappings
      */
     protected Map<String, String> getAuthenticationContextMappings() {
-        val mappings = new TreeMap<String, String>();
-        casProperties.getAuthn().getSamlIdp().getAuthenticationContextClassMappings()
-            .stream()
-            .map(s -> {
-                val bits = Splitter.on("->").splitToList(s);
-                return Pair.of(bits.get(0), bits.get(1));
-            })
-            .forEach(p -> mappings.put(p.getKey(), p.getValue()));
-        return mappings;
+        val authnContexts = casProperties.getAuthn().getSamlIdp().getAuthenticationContextClassMappings();
+        return CollectionUtils.convertDirectedListToMap(authnContexts);
     }
 
     /**
