@@ -55,7 +55,7 @@ public class SimpleHttpClientTests {
 
     @Test
     public void verifyBadUrl() {
-        assertFalse(getHttpClient().isValidEndPoint("https://www.abc1234.org"));
+        assertFalse(getHttpClient().isValidEndPoint("https://www.whateverabc1234.org"));
     }
 
     @Test
