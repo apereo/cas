@@ -62,13 +62,15 @@ public class SamlIdPResponseProperties implements Serializable {
             return new HashMap<>(0);
         }
         val nameFormats = new HashMap<String, String>();
-        this.attributeNameFormats.forEach(value -> Arrays.stream(value.split(",")).forEach(format -> {
-            val values = Splitter.on("->").splitToList(format);
+        this.attributeNameFormats
+            .forEach(value -> Arrays.stream(value.split(","))
+                .forEach(format -> {
+                    val values = Splitter.on("->").splitToList(format);
 
-            if (values.size() == 2) {
-                nameFormats.put(values.get(0), values.get(1));
-            }
-        }));
+                    if (values.size() == 2) {
+                        nameFormats.put(values.get(0), values.get(1));
+                    }
+                }));
         return nameFormats;
     }
 
