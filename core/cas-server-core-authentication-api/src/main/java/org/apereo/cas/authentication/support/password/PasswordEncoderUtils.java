@@ -3,9 +3,11 @@ package org.apereo.cas.authentication.support.password;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.DefaultPasswordEncoder;
+import org.apereo.cas.util.crypto.GlibcCryptPasswordEncoder;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
@@ -81,6 +83,12 @@ public class PasswordEncoderUtils {
                     return new Pbkdf2PasswordEncoder();
                 }
                 return new Pbkdf2PasswordEncoder(properties.getSecret(), properties.getStrength(), HASH_WIDTH);
+            case GLIBC_CRYPT:
+                val hasSecret = StringUtils.isNotBlank(properties.getSecret());
+                LOGGER.debug("Creating glibc CRYPT encoder with encoding alg [{}], strength [{}] and {}secret",
+                        properties.getEncodingAlgorithm(), properties.getStrength(),
+                        BooleanUtils.toString(hasSecret, StringUtils.EMPTY, "without "));
+                return new GlibcCryptPasswordEncoder(properties.getEncodingAlgorithm(), properties.getStrength(), properties.getSecret());
             case NONE:
             default:
                 LOGGER.trace("No password encoder shall be created given the requested encoder type [{}]", type);
