@@ -45,12 +45,12 @@ import java.nio.file.Files;
 @Getter
 @RequiredArgsConstructor
 public abstract class AbstractJacksonBackedStringSerializer<T> implements StringSerializer<T> {
-    private static final long serialVersionUID = -8415599777321259365L;
-
     /**
      * Minimal pretty printer instance.
      */
     protected static final PrettyPrinter MINIMAL_PRETTY_PRINTER = new MinimalPrettyPrinter();
+
+    private static final long serialVersionUID = -8415599777321259365L;
 
     private final ObjectMapper objectMapper;
     private final transient PrettyPrinter prettyPrinter;

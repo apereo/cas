@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.serialization;
 
-import org.apereo.cas.ticket.AbstractTicket;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.Ticket;
 

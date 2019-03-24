@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.serialization.serializers;
 
-import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketImpl;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 

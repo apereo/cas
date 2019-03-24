@@ -1,7 +1,6 @@
 package org.apereo.cas.ticket.serialization.serializers;
 
 import org.apereo.cas.ticket.ProxyTicketImpl;
-import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 
 /**
