@@ -117,8 +117,9 @@ The following options are supported:
 | `DEFAULT`               | Use the `DefaultPasswordEncoder` of CAS. For message-digest algorithms via `characterEncoding` and `encodingAlgorithm`.
 | `BCRYPT`                | Use the `BCryptPasswordEncoder` based on the `strength` provided and an optional `secret`.     
 | `SCRYPT`                | Use the `SCryptPasswordEncoder`.
-| `PBKDF2`                | Use the `Pbkdf2PasswordEncoder` based on the `strength` provided and an optional `secret`.  
-| `STANDARD`              | Use the `StandardPasswordEncoder` based on the `secret` provided.  
+| `PBKDF2`                | Use the `Pbkdf2PasswordEncoder` based on the `strength` provided and an optional `secret`.
+| `STANDARD`              | Use the `StandardPasswordEncoder` based on the `secret` provided.
+| `GLIBC_CRYPT`           | Use the `GlibcCryptPasswordEncoder` based on the [`encodingAlgorithm`](https://commons.apache.org/proper/commons-codec/archives/1.10/apidocs/org/apache/commons/codec/digest/Crypt.html), `strength` provided and an optional `secret`.
 | `org.example.MyEncoder` | An implementation of `PasswordEncoder` of your own choosing.
 | `file:///path/to/script.groovy` | Path to a Groovy script charged with handling password encoding operations.
 
