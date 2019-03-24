@@ -54,6 +54,12 @@ public class SamlIdPProperties implements Serializable {
     private List<String> authenticationContextClassMappings;
 
     /**
+     * A mapping of attribute names to their friendly names, defined globally.
+     * Example might be {@code urn:oid:1.3.6.1.4.1.5923.1.1.1.6->eduPersonPrincipalName}.
+     */
+    private List<String> attributeFriendlyNames;
+
+    /**
      * Settings related to SAML2 responses.
      */
     @NestedConfigurationProperty
