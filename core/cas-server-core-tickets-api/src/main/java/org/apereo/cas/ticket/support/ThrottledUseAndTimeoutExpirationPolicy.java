@@ -1,16 +1,17 @@
 package org.apereo.cas.ticket.support;
 
+import org.apereo.cas.ticket.TicketState;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.ticket.TicketState;
+
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
 
 /**
  * Implementation of an expiration policy that adds the concept of saying that a
@@ -27,10 +28,14 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
-    /** Serialization support. */
+    /**
+     * Serialization support.
+     */
     private static final long serialVersionUID = 205979491183779408L;
 
-    /** The time to kill in seconds. */
+    /**
+     * The time to kill in seconds.
+     */
     private long timeToKillInSeconds;
 
     private long timeInBetweenUsesInSeconds;
@@ -43,24 +48,35 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
 
     @Override
     public boolean isExpired(final TicketState ticketState) {
-        final ZonedDateTime currentTime = ZonedDateTime.now(ZoneOffset.UTC);
+        LOGGER.trace("Checking validity of ticket [{}]", ticketState);
         final ZonedDateTime lastTimeUsed = ticketState.getLastTimeUsed();
-        final ZonedDateTime killTime = lastTimeUsed.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
-        LOGGER.trace("Current time [{}], last time ticket is used [{}] with expiration time at [{}]", currentTime, lastTimeUsed, killTime);
-        if (ticketState.getCountOfUses() == 0 && currentTime.isBefore(killTime)) {
-            LOGGER.debug("Ticket is not expired due to a count of zero and the time being less than the expiration time");
+        final ZonedDateTime currentTime = ZonedDateTime.now(ZoneOffset.UTC);
+
+        LOGGER.trace("Current time is [{}]. Ticket last used time is [{}]", currentTime, lastTimeUsed);
+
+        final long currentTimeSeconds = currentTime.toEpochSecond();
+        final long lastTimeUsedInSeconds = lastTimeUsed.toEpochSecond();
+
+        final long margin = currentTimeSeconds - lastTimeUsedInSeconds;
+        LOGGER.trace("Current time in seconds is [{}]. Ticket last used time in seconds is [{}]", currentTimeSeconds, lastTimeUsedInSeconds);
+
+        if (ticketState.getCountOfUses() == 0 && margin < this.timeToKillInSeconds) {
+            LOGGER.debug("Valid [{}]: Usage count is zero and number of seconds since ticket usage time [{}] is less than [{}]",
+                ticketState, margin, this.timeToKillInSeconds);
             return super.isExpired(ticketState);
         }
-        if (currentTime.isAfter(killTime)) {
-            LOGGER.debug("Ticket is expired due to the current time being greater than the expiration time");
+
+        if (margin >= this.timeToKillInSeconds) {
+            LOGGER.debug("Expired [{}]: number of seconds since ticket usage time [{}] is greater than or equal to [{}]",
+                ticketState, margin, this.timeToKillInSeconds);
             return true;
         }
-        final ZonedDateTime dontUseUntil = lastTimeUsed.plus(this.timeInBetweenUsesInSeconds, ChronoUnit.SECONDS);
-        LOGGER.trace("Calculated throttled do-not-use expiration time at [{}]", dontUseUntil);
-        if (currentTime.isBefore(dontUseUntil)) {
-            LOGGER.warn("Ticket is expired due to the current time being less than the throttled expiration period [{}].", dontUseUntil);
+        if (margin > 0 && margin <= this.timeInBetweenUsesInSeconds) {
+            LOGGER.warn("Expired [{}]: number of seconds since ticket usage time [{}] is less than or equal to time in between uses in seconds [{}]",
+                ticketState, margin, this.timeInBetweenUsesInSeconds);
             return true;
         }
+
         return super.isExpired(ticketState);
     }
 

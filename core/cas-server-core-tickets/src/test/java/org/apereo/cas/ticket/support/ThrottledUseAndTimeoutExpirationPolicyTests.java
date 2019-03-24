@@ -1,13 +1,14 @@
 package org.apereo.cas.ticket.support;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -57,17 +58,18 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests {
     @Test
     public void verifyTicketUsedButWithTimeout() {
         this.ticket.grantServiceTicket("test", RegisteredServiceTestUtils.getService(), this.expirationPolicy, false,
-                true);
+            true);
         expirationPolicy.setTimeToKillInSeconds(TIMEOUT);
         expirationPolicy.setTimeInBetweenUsesInSeconds(-10);
         assertFalse(this.ticket.isExpired());
     }
 
     @Test
-    public void verifyNotWaitingEnoughTime() {
+    public void verifyNotWaitingEnoughTime() throws Exception {
         this.ticket.grantServiceTicket("test", RegisteredServiceTestUtils.getService(), this.expirationPolicy, false,
-                true);
+            true);
         expirationPolicy.setTimeToKillInSeconds(TIMEOUT);
+        Thread.sleep(1_000);
         assertTrue(this.ticket.isExpired());
     }
 
