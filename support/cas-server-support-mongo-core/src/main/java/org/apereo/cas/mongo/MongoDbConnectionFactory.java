@@ -148,6 +148,7 @@ public class MongoDbConnectionFactory {
         val dbRefResolver = new DefaultDbRefResolver(mongoDbFactory);
         val converter = new MappingMongoConverter(dbRefResolver, this.mongoMappingContext());
         converter.setCustomConversions(customConversions);
+        converter.setMapKeyDotReplacement("_#_");
         converter.afterPropertiesSet();
         return converter;
     }
