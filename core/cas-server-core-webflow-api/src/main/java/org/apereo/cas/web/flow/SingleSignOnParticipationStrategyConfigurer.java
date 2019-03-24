@@ -8,5 +8,10 @@ package org.apereo.cas.web.flow;
  */
 @FunctionalInterface
 public interface SingleSignOnParticipationStrategyConfigurer {
+    /**
+     * Configure strategy.
+     *
+     * @param chain the chain
+     */
     void configureStrategy(ChainingSingleSignOnParticipationStrategy chain);
 }
