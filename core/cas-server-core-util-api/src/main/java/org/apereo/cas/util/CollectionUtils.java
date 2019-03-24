@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.Multimap;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 /**
@@ -459,6 +461,23 @@ public class CollectionUtils {
         return org.springframework.util.CollectionUtils.toMultiValueMap(wrap);
     }
 
+    /**
+     * Convert directed list to map.
+     *
+     * @param inputList the input list
+     * @return the map
+     */
+    public static Map<String, String> convertDirectedListToMap(final List<String> inputList) {
+        val mappings = new TreeMap<String, String>();
+        inputList
+            .stream()
+            .map(s -> {
+                val bits = Splitter.on("->").splitToList(s);
+                return Pair.of(bits.get(0), bits.get(1));
+            })
+            .forEach(p -> mappings.put(p.getKey(), p.getValue()));
+        return mappings;
+    }
     private static <T> void addToCollection(final Collection<T> list, final T[] source) {
         if (source != null) {
             Arrays.stream(source).forEach(s -> {

@@ -2801,6 +2801,8 @@ To learn more about this topic, [please review this guide](../installation/Confi
 # cas.authn.samlIdp.authenticationContextClassMappings[0]=urn:oasis:names:tc:SAML:2.0:ac:classes:SomeClassName->mfa-duo
 # cas.authn.samlIdp.authenticationContextClassMappings[1]=https://refeds.org/profile/mfa->mfa-gauth
 
+# cas.authn.samlIdp.attributeFriendlyNames[0]=urn:oid:1.3.6.1.4.1.5923.1.1.1.6->eduPersonPrincipalName
+  
 # cas.authn.samlIdp.attributeQueryProfileEnabled=true
 ```
 
