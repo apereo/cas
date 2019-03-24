@@ -103,7 +103,6 @@ If you do have a pending pull request available and one that might also be tagge
 Yes, absolutely. Provided the change fits the scope of the maintenance branch and its tracking release and assuming the branch is still under care, you are more than welcome to move changes across the codebase various branches as much as needed to remove pain and improve.  
 
 <div class="alert alert-success">
-  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
   <strong>Port Forward</strong><br/>Remember that changes applied to previous branches that target CAS versions in maintenance mode <b>MUST</b> be ported forward to the master branch as well, via a separate pull request.
 </div>
 
@@ -183,7 +182,6 @@ You want to isolate your changes inside individual topics branches and never com
 4. Go back to #2 until you are satisfied.
 
 <div class="alert alert-success">
-  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
   <strong>Functional Build</strong><br/>You may want to ensure the codebase can be built locally from source. <a href="https://apereo.github.io/cas/developer/Build-Process.html">Follow this guide</a> to learn more.
 </div>
 
