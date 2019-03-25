@@ -27,7 +27,7 @@ To review the old archives of the application security working group, [please se
 
 ### Time to Fix
 
-Remember that activity on the mailing lists and all other support channels is entirely voluntary. There is no official meaning or sense of urgency built into the response model and as such, fixes to potential security issues are 100% dependent on individuals' availbility and willingness. We strongly recommend that you study the project's license for more information on this matter. If you are interested in contractual obligations, SLAs and a response model based on calculated levels of urgency, please consider negotiating a professional support agreement with Apereo commercial service providers.
+Remember that activity on the mailing lists and all other support channels is entirely voluntary. There is no official meaning or sense of urgency built into the response model and as such, fixes to potential security issues are 100% dependent on individuals' availbility and willingness. We strongly recommend that you study the project's license for more information on this matter. If you are interested in contractual obligations, SLAs and a response model based on calculated levels of urgency, please consider negotiating a professional support agreement with Apereo commercial [service/support providers](/cas/Support.html).
 
 ## CVEs
 
