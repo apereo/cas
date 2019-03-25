@@ -24,6 +24,7 @@ public class SamlIdPProfileProperties implements Serializable {
      * Settings related to the saml2 sso profile.
      */
     private Saml2SsoProfile sso = new Saml2SsoProfile();
+
     /**
      * Settings related to the saml2 sso post simple-sign profile.
      */
