@@ -25,6 +25,10 @@ To review the old archives of the application security working group, [please se
 
 <div class="alert alert-warning"><strong>List Etiquette</strong><p>The security team asks that you please <strong>DO NOT</strong> create publicly-viewable issues or posts to address the problem. There is no good sense in creating panic and chaos. All community members <strong>SHOULD</strong> ignore all such public announcements and reports.</p></div>
 
+### Time to Fix
+
+Remember that activity on the mailing lists and all other support channels is entirely voluntary. There is no official meaning or sense of urgency built into the response model and as such, fixes to potential security issues are 100% dependent on individuals' availbility and willingness. We strongly recommend that you study the project's license for more information on this matter. If you are interested in contractual obligations, SLAs and a response model based on calculated levels of urgency, please consider negotiating a professional support agreement with Apereo commercial service providers.
+
 ## CVEs
 
 The CAS project does not request or provide CVEs when handling security issues. This is a task that must entirely be handled by you,
