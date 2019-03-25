@@ -105,6 +105,9 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuthToken
             throw new IllegalArgumentException("JSON web key used to validate the id token signature has no associated public key");
         }
         val jwt = EncodingUtils.verifyJwsSignature(jsonWebKey.getPublicKey(), token);
+        if (jwt == null) {
+            throw new IllegalArgumentException("Unable to verify signature of the token using the JSON web key public key");
+        }
         val result = new String(jwt, StandardCharsets.UTF_8);
         val claims = JwtClaims.parse(result);
 
