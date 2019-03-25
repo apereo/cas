@@ -1,8 +1,6 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.services.UnauthorizedServiceException;
-import org.apereo.cas.util.Pac4jUtils;
-import org.apereo.cas.web.pac4j.DelegatedSessionCookieManager;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,13 +23,11 @@ import java.util.Map;
 public class DelegatedAuthenticationErrorViewResolver implements ErrorViewResolver {
 
     private final ErrorViewResolver conventionErrorViewResolver;
-    private final DelegatedSessionCookieManager delegatedSessionCookieManager;
 
     @Override
     public ModelAndView resolveErrorView(final HttpServletRequest request,
                                          final HttpStatus status, final Map<String, Object> map) {
 
-        delegatedSessionCookieManager.removeCookie(Pac4jUtils.getPac4jJ2EContext(request));
         val mv = DelegatedClientAuthenticationAction.hasDelegationRequestFailed(request, status.value());
         val exception = request.getAttribute("javax.servlet.error.exception");
         if (exception != null) {

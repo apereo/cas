@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.pac4j.core.client.Clients;
+import org.pac4j.core.context.session.J2ESessionStore;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -99,8 +100,12 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Audit
     @ConditionalOnMissingBean(name = "clientAuthenticationHandler")
     public AuthenticationHandler clientAuthenticationHandler() {
         val pac4j = casProperties.getAuthn().getPac4j();
-        val h = new DelegatedClientAuthenticationHandler(pac4j.getName(), servicesManager.getIfAvailable(),
-            clientPrincipalFactory(), builtClients(), clientUserProfileProvisioner());
+        val h = new DelegatedClientAuthenticationHandler(pac4j.getName(),
+            servicesManager.getIfAvailable(),
+            clientPrincipalFactory(),
+            builtClients(),
+            clientUserProfileProvisioner(),
+            new J2ESessionStore());
         h.setTypedIdUsed(pac4j.isTypedIdUsed());
         h.setPrincipalAttributeId(pac4j.getPrincipalAttributeId());
         return h;

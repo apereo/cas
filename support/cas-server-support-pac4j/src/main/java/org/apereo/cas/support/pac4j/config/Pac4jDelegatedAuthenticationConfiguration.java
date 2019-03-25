@@ -1,21 +1,13 @@
 package org.apereo.cas.support.pac4j.config;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.validation.DelegatedAuthenticationServiceTicketValidationAuthorizer;
 import org.apereo.cas.validation.RegisteredServiceDelegatedAuthenticationPolicyAuditableEnforcer;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizer;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizerConfigurer;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
-import org.apereo.cas.web.pac4j.DelegatedSessionCookieCipherExecutor;
-import org.apereo.cas.web.pac4j.DelegatedSessionCookieManager;
-import org.apereo.cas.web.pac4j.SessionStoreCookieGenerator;
-import org.apereo.cas.web.pac4j.SessionStoreCookieSerializer;
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
-import org.apereo.cas.web.support.DefaultCasCookieValueManager;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -33,8 +25,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.Map;
 
 /**
  * This is {@link Pac4jDelegatedAuthenticationConfiguration}.
@@ -62,51 +52,11 @@ public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketV
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "pac4jDelegatedSessionCookieManager")
-    public DelegatedSessionCookieManager pac4jDelegatedSessionCookieManager() {
-        return new DelegatedSessionCookieManager(pac4jSessionStoreCookieGenerator(), pac4jDelegatedSessionStoreCookieSerializer());
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(name = "pac4jDelegatedSessionStoreCookieSerializer")
-    public StringSerializer<Map<String, Object>> pac4jDelegatedSessionStoreCookieSerializer() {
-        val serializer = new SessionStoreCookieSerializer();
-        serializer.getObjectMapper().registerModule(pac4jJacksonModule());
-        return serializer;
-    }
-
-    @Bean
     @ConditionalOnMissingBean(name = "pac4jJacksonModule")
     public Module pac4jJacksonModule() {
         val module = new SimpleModule();
         module.setMixInAnnotation(OAuth1RequestToken.class, AbstractOAuth1RequestTokenMixin.class);
         return module;
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(name = "pac4jSessionStoreCookieGenerator")
-    public CookieRetrievingCookieGenerator pac4jSessionStoreCookieGenerator() {
-        val c = casProperties.getAuthn().getPac4j().getCookie();
-        val valueManager = new DefaultCasCookieValueManager(pac4jDelegatedSessionStoreCookieCipherExecutor(), c);
-        return new SessionStoreCookieGenerator(valueManager, c);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(name = "pac4jDelegatedSessionStoreCookieCipherExecutor")
-    public CipherExecutor pac4jDelegatedSessionStoreCookieCipherExecutor() {
-        val c = casProperties.getAuthn().getPac4j().getCookie().getCrypto();
-        if (c.isEnabled()) {
-            return new DelegatedSessionCookieCipherExecutor(c.getEncryption().getKey(),
-                c.getSigning().getKey(),
-                c.getAlg(),
-                c.getSigning().getKeySize(),
-                c.getEncryption().getKeySize());
-        }
-        LOGGER.info("Delegated authentication cookie encryption/signing is turned off and "
-            + "MAY NOT be safe in a production environment. "
-            + "Consider using other choices to handle encryption, signing and verification of "
-            + "delegated authentication cookie.");
-        return CipherExecutor.noOp();
     }
 
     @Bean

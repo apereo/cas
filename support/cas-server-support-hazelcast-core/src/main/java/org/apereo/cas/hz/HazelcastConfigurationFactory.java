@@ -11,6 +11,7 @@ import com.hazelcast.config.EvictionPolicy;
 import com.hazelcast.config.JoinConfig;
 import com.hazelcast.config.MapConfig;
 import com.hazelcast.config.MaxSizeConfig;
+import com.hazelcast.config.MergePolicyConfig;
 import com.hazelcast.config.MulticastConfig;
 import com.hazelcast.config.NetworkConfig;
 import com.hazelcast.config.PartitionGroupConfig;
@@ -55,8 +56,14 @@ public class HazelcastConfigurationFactory {
             .setMaxSizePolicy(MaxSizeConfig.MaxSizePolicy.valueOf(cluster.getMaxSizePolicy()))
             .setSize(cluster.getMaxHeapSizePercentage());
 
+        val mergePolicyConfig = new MergePolicyConfig();
+        if (StringUtils.hasText(hz.getCluster().getMapMergePolicy())) {
+            mergePolicyConfig.setPolicy(hz.getCluster().getMapMergePolicy());
+        }
+
         return new MapConfig()
             .setName(mapName)
+            .setMergePolicyConfig(mergePolicyConfig)
             .setMaxIdleSeconds((int) timeoutSeconds)
             .setBackupCount(cluster.getBackupCount())
             .setAsyncBackupCount(cluster.getAsyncBackupCount())

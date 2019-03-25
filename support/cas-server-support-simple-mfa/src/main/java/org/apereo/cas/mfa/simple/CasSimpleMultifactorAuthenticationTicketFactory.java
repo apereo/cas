@@ -40,6 +40,11 @@ public class CasSimpleMultifactorAuthenticationTicketFactory implements Transien
     }
 
     @Override
+    public TransientSessionTicket create(final String id, final Map<String, Serializable> properties) {
+        return new TransientSessionTicketImpl(TransientSessionTicketFactory.normalizeTicketId(id), expirationPolicy, null, properties);
+    }
+
+    @Override
     public TicketFactory get(final Class<? extends Ticket> clazz) {
         return this;
     }

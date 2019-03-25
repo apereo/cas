@@ -17,6 +17,7 @@ import org.apereo.cas.util.Pac4jUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.pac4j.core.context.session.J2ESessionStore;
 import org.pac4j.core.profile.CommonProfile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -55,7 +56,7 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
         LOGGER.debug("Located OAuth registered service [{}]", registeredService);
 
-        val context = Pac4jUtils.getPac4jJ2EContext(request, response);
+        val context = Pac4jUtils.getPac4jJ2EContext(request, response, new J2ESessionStore());
         val manager = Pac4jUtils.getPac4jProfileManager(request, response);
         val profile = (Optional<CommonProfile>) manager.get(true);
         if (profile.isEmpty()) {
