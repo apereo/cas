@@ -10,7 +10,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.BaseIdTokenGeneratorService;
-import org.apereo.cas.ticket.OidcTokenSigningAndEncryptionService;
+import org.apereo.cas.ticket.OAuthTokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -49,7 +49,7 @@ import java.util.stream.Stream;
 public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
 
     public OidcIdTokenGeneratorService(final CasConfigurationProperties casProperties,
-                                       final OidcTokenSigningAndEncryptionService signingService,
+                                       final OAuthTokenSigningAndEncryptionService signingService,
                                        final ServicesManager servicesManager,
                                        final TicketRegistry ticketRegistry) {
         super(casProperties, signingService, servicesManager, ticketRegistry);
