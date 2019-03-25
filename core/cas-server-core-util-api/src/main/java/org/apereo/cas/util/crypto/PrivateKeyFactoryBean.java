@@ -64,7 +64,7 @@ public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
     }
 
     private PrivateKey readDERPrivateKey() {
-        LOGGER.debug("Attempting to read key as DER [{}]", this.location);
+        LOGGER.trace("Attempting to read key as DER [{}]", this.location);
         try (val privKey = this.location.getInputStream()) {
             val bytes = new byte[(int) this.location.contentLength()];
             privKey.read(bytes);
