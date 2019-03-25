@@ -91,6 +91,13 @@ public class HazelcastClusterProperties implements Serializable {
     private int port = 5701;
 
     /**
+     * Define how data items in Hazelcast maps are merged together from source to destination.
+     * Requires the fully qualified class name of the merge policy component.
+     * By default, merges map entries from source to destination if they don't exist in the destination map.
+     */
+    private String mapMergePolicy = "com.hazelcast.map.merge.PutIfAbsentMapMergePolicy";
+
+    /**
      * Enables a multicast configuration using a group address and port.
      * Contains the configuration for the multicast discovery mechanism.
      * With the multicast discovery mechanism Hazelcast allows Hazelcast members to find each other using multicast.
@@ -219,6 +226,7 @@ public class HazelcastClusterProperties implements Serializable {
      * This is the default time-to-live for multicast packets sent out on the socket
      */
     private int multicastTimeToLive = 32;
+
 
     /**
      * Describe discovery strategies for Hazelcast.

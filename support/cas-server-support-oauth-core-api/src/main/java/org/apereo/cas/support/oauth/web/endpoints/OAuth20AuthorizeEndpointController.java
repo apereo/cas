@@ -33,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.session.J2ESessionStore;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -124,7 +125,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
      */
     @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.AUTHORIZE_URL)
     public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        val context = Pac4jUtils.getPac4jJ2EContext(request, response);
+        val context = Pac4jUtils.getPac4jJ2EContext(request, response, new J2ESessionStore());
         val manager = Pac4jUtils.getPac4jProfileManager(request, response);
 
         if (!verifyAuthorizeRequest(context) || !isRequestAuthenticated(manager, context)) {

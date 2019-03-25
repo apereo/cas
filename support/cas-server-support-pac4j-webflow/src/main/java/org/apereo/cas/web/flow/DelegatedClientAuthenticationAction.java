@@ -23,7 +23,6 @@ import org.apereo.cas.web.DelegatedClientWebflowManager;
 import org.apereo.cas.web.flow.actions.AbstractAuthenticationAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
-import org.apereo.cas.web.pac4j.DelegatedSessionCookieManager;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;
@@ -40,6 +39,7 @@ import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.saml.metadata.SAML2ServiceProviderMetadataResolver;
@@ -84,30 +84,32 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
      * The Clients.
      */
     protected final Clients clients;
+
     /**
      * The Services manager.
      */
     protected final ServicesManager servicesManager;
+
     /**
      * The Delegated authentication policy enforcer.
      */
     protected final AuditableExecution delegatedAuthenticationPolicyEnforcer;
+
     /**
      * The Delegated client webflow manager.
      */
     protected final DelegatedClientWebflowManager delegatedClientWebflowManager;
-    /**
-     * The Delegated session cookie manager.
-     */
-    protected final DelegatedSessionCookieManager delegatedSessionCookieManager;
+
     /**
      * The Authentication system support.
      */
     protected final AuthenticationSystemSupport authenticationSystemSupport;
+
     /**
      * The Locale param name.
      */
     protected final String localeParamName;
+
     /**
      * The Theme param name.
      */
@@ -119,6 +121,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
 
     private final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy;
 
+    private final SessionStore sessionStore;
+
     public DelegatedClientAuthenticationAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
                                                final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
                                                final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
@@ -126,25 +130,25 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                                                final ServicesManager servicesManager,
                                                final AuditableExecution delegatedAuthenticationPolicyEnforcer,
                                                final DelegatedClientWebflowManager delegatedClientWebflowManager,
-                                               final DelegatedSessionCookieManager delegatedSessionCookieManager,
                                                final AuthenticationSystemSupport authenticationSystemSupport,
                                                final String localeParamName,
                                                final String themeParamName,
                                                final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
                                                final CentralAuthenticationService centralAuthenticationService,
-                                               final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy) {
+                                               final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy,
+                                               final SessionStore sessionStore) {
         super(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
         this.clients = clients;
         this.servicesManager = servicesManager;
         this.delegatedAuthenticationPolicyEnforcer = delegatedAuthenticationPolicyEnforcer;
         this.delegatedClientWebflowManager = delegatedClientWebflowManager;
-        this.delegatedSessionCookieManager = delegatedSessionCookieManager;
         this.authenticationSystemSupport = authenticationSystemSupport;
         this.localeParamName = localeParamName;
         this.themeParamName = themeParamName;
         this.authenticationRequestServiceSelectionStrategies = authenticationRequestServiceSelectionStrategies;
         this.centralAuthenticationService = centralAuthenticationService;
         this.singleSignOnParticipationStrategy = singleSignOnParticipationStrategy;
+        this.sessionStore = sessionStore;
     }
 
 
@@ -164,7 +168,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             throw new IllegalArgumentException("Delegated authentication has failed with client " + clientName);
         }
 
-        val webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
+        val webContext = Pac4jUtils.getPac4jJ2EContext(request, response, this.sessionStore);
         if (StringUtils.isNotBlank(clientName)) {
             val service = restoreAuthenticationRequestInContext(context, webContext, clientName);
             val client = findDelegatedClientByName(request, clientName, service);
@@ -285,7 +289,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
 
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
-        val webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
+        val webContext = Pac4jUtils.getPac4jJ2EContext(request, response, this.sessionStore);
 
         val urls = new LinkedHashSet<ProviderLoginPageConfiguration>();
         this.clients
@@ -422,13 +426,14 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
      * @param clientName     the client name
      * @return the service
      */
-    protected Service restoreAuthenticationRequestInContext(final RequestContext requestContext, final J2EContext webContext, final String clientName) {
+    protected Service restoreAuthenticationRequestInContext(final RequestContext requestContext,
+                                                            final J2EContext webContext,
+                                                            final String clientName) {
         val logoutEndpoint = webContext.getRequestParameter(SAML2ServiceProviderMetadataResolver.LOGOUT_ENDPOINT_PARAMETER);
         if (logoutEndpoint != null) {
             return null;
         } else {
             try {
-                delegatedSessionCookieManager.restore(webContext);
                 val client = (BaseClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
                 return delegatedClientWebflowManager.retrieve(requestContext, webContext, client);
             } catch (final Exception e) {

@@ -13,6 +13,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.core.context.session.J2ESessionStore;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.profile.creator.AuthenticatorProfileCreator;
@@ -50,7 +51,8 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
      */
     protected static WebContext getWebContext() {
         return Pac4jUtils.getPac4jJ2EContext(HttpRequestUtils.getHttpServletRequestFromRequestAttributes(),
-            HttpRequestUtils.getHttpServletResponseFromRequestAttributes());
+            HttpRequestUtils.getHttpServletResponseFromRequestAttributes(),
+            new J2ESessionStore());
     }
 
     @Override

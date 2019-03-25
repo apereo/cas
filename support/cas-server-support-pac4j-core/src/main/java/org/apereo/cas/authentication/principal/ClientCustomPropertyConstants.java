@@ -11,6 +11,7 @@ public interface ClientCustomPropertyConstants {
      * Property to indicate the principal attribute used for profile creation.
      */
     String CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID = "principalAttributeId";
+
     /**
      * Property to indicate whether auto-redirect should execute for this client.
      */
