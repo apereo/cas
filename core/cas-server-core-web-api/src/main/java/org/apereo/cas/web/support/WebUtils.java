@@ -998,4 +998,13 @@ public class WebUtils {
         return requestContext.getFlowScope().contains("guaUserImage");
     }
 
+    /**
+     * Put initial http request post parameters.
+     *
+     * @param context the context
+     */
+    public static void putInitialHttpRequestPostParameters(final RequestContext context) {
+        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        context.getFlashScope().put("httpRequestInitialPostParameters", request.getParameterMap());
+    }
 }
