@@ -14,6 +14,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.context.HttpConstants;
+import org.pac4j.core.context.session.J2ESessionStore;
 import org.pac4j.http.credentials.extractor.DigestAuthExtractor;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -51,7 +52,7 @@ public class DigestAuthenticationAction extends AbstractNonInteractiveCredential
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
 
             val extractor = new DigestAuthExtractor();
-            val webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
+            val webContext = Pac4jUtils.getPac4jJ2EContext(request, response, new J2ESessionStore());
 
             val credentials = extractor.extract(webContext);
             if (credentials == null) {

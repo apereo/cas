@@ -30,6 +30,7 @@ import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.soap.messaging.context.SOAP11Context;
+import org.pac4j.core.context.session.J2ESessionStore;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -187,7 +188,7 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
                                                                    final HttpServletResponse response) {
         try {
             val extractor = new BasicAuthExtractor();
-            val webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
+            val webContext = Pac4jUtils.getPac4jJ2EContext(request, response, new J2ESessionStore());
             val credentials = extractor.extract(webContext);
             if (credentials != null) {
                 LOGGER.debug("Received basic authentication ECP request from credentials [{}]", credentials);
