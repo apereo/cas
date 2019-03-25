@@ -150,6 +150,7 @@ public class MongoDbConnectionFactory {
         final DbRefResolver dbRefResolver = new DefaultDbRefResolver(mongoDbFactory);
         final MappingMongoConverter converter = new MappingMongoConverter(dbRefResolver, this.mongoMappingContext());
         converter.setCustomConversions(customConversions);
+        converter.setMapKeyDotReplacement("_#_");
         converter.afterPropertiesSet();
         return converter;
     }
