@@ -35,7 +35,7 @@ import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
-import org.apereo.cas.ticket.OidcTokenSigningAndEncryptionService;
+import org.apereo.cas.ticket.OAuthTokenSigningAndEncryptionService;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
@@ -123,7 +123,7 @@ public abstract class AbstractOidcTests {
 
     @Autowired
     @Qualifier("oidcTokenSigningAndEncryptionService")
-    protected OidcTokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService;
+    protected OAuthTokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService;
 
     @Autowired
     @Qualifier("oidcServiceJsonWebKeystoreCache")

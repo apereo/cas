@@ -6,7 +6,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.BaseIdTokenGeneratorService;
-import org.apereo.cas.ticket.OidcTokenSigningAndEncryptionService;
+import org.apereo.cas.ticket.OAuthTokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.uma.ticket.permission.UmaPermissionTicket;
@@ -33,7 +33,7 @@ import java.util.UUID;
 @Slf4j
 public class UmaIdTokenGeneratorService extends BaseIdTokenGeneratorService {
     public UmaIdTokenGeneratorService(final CasConfigurationProperties casProperties,
-                                      final OidcTokenSigningAndEncryptionService signingService,
+                                      final OAuthTokenSigningAndEncryptionService signingService,
                                       final ServicesManager servicesManager,
                                       final TicketRegistry ticketRegistry) {
         super(casProperties, signingService, servicesManager, ticketRegistry);
