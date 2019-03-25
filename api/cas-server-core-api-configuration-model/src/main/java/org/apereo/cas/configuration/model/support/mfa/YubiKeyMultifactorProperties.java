@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.Resource;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -57,7 +58,7 @@ public class YubiKeyMultifactorProperties extends BaseMultifactorProviderPropert
      * This is done using a key-value structure where the key is the user
      * the value is the whitelisted collection of yubikey device ids.
      */
-    private Map<String, String> allowedDevices;
+    private Map<String, String> allowedDevices = new LinkedHashMap<>();
 
     /**
      * YubiKey API urls to contact for verification of credentials.

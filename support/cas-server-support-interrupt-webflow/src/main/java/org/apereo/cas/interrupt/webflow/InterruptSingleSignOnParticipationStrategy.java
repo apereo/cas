@@ -22,6 +22,6 @@ public class InterruptSingleSignOnParticipationStrategy implements SingleSignOnP
     @Override
     public boolean isParticipating(final RequestContext ctx) {
         val response = InterruptUtils.getInterruptFrom(ctx);
-        return response.isSsoEnabled();
+        return response != null && response.isSsoEnabled();
     }
 }

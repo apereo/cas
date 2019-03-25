@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -195,6 +196,6 @@ public class BaseRedisProperties implements Serializable {
         /**
          * list of host:port pairs.
          */
-        private List<String> node;
+        private List<String> node = new ArrayList<>();
     }
 }
