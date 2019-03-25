@@ -13,6 +13,8 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
+
+import org.springframework.http.HttpMethod;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -46,6 +48,11 @@ public class InitialFlowSetupAction extends AbstractAction {
 
     @Override
     public Event doExecute(final RequestContext context) {
+        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        if (request.getMethod().equalsIgnoreCase(HttpMethod.POST.name())) {
+            WebUtils.putInitialHttpRequestPostParameters(context);
+        }
+
         configureCookieGenerators(context);
         configureWebflowContext(context);
         configureWebflowContextForService(context);
