@@ -1,9 +1,4 @@
-package org.apereo.cas.adaptors.redis;
-
-import org.apereo.cas.adaptors.redis.services.RedisEmbeddedServiceRegistryTests;
-import org.apereo.cas.adaptors.redis.services.RedisServerServiceRegistryTests;
-import org.apereo.cas.adaptors.redis.services.SentinelEmbeddedServiceRegistryTests;
-import org.apereo.cas.adaptors.redis.services.SentinelServerServiceRegistryTests;
+package org.apereo.cas.adaptors.redis.services;
 
 import org.junit.platform.suite.api.SelectClasses;
 
