@@ -141,13 +141,7 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
      * The name of the authentication handler in CAS used for delegation.
      */
     private String name;
-
-    /**
-     * Indicates settings related to tracking the delegation cookie.
-     */
-    @NestedConfigurationProperty
-    private Pac4jDelegatedSessionCookieProperties cookie = new Pac4jDelegatedSessionCookieProperties();
-
+    
     @RequiresModule(name = "cas-server-support-pac4j-webflow")
     @Getter
     @Setter

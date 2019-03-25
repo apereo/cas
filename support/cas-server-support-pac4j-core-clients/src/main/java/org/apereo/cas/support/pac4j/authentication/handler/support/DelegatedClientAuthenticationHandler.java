@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
+import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.exception.HttpAction;
 import org.pac4j.core.profile.UserProfile;
 
@@ -33,13 +34,18 @@ public class DelegatedClientAuthenticationHandler extends AbstractPac4jAuthentic
 
     private final Clients clients;
     private final DelegatedClientUserProfileProvisioner profileProvisioner;
+    private final SessionStore sessionStore;
 
-    public DelegatedClientAuthenticationHandler(final String name, final ServicesManager servicesManager,
+    public DelegatedClientAuthenticationHandler(final String name,
+                                                final ServicesManager servicesManager,
                                                 final PrincipalFactory principalFactory,
-                                                final Clients clients, final DelegatedClientUserProfileProvisioner profileProvisioner) {
+                                                final Clients clients,
+                                                final DelegatedClientUserProfileProvisioner profileProvisioner,
+                                                final SessionStore sessionStore) {
         super(name, servicesManager, principalFactory, null);
         this.clients = clients;
         this.profileProvisioner = profileProvisioner;
+        this.sessionStore = sessionStore;
     }
 
     @Override
@@ -65,7 +71,7 @@ public class DelegatedClientAuthenticationHandler extends AbstractPac4jAuthentic
 
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext();
-            val webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
+            val webContext = Pac4jUtils.getPac4jJ2EContext(request, response, this.sessionStore);
 
             val userProfile = client.getUserProfile(credentials, webContext);
             LOGGER.debug("Final user profile is: [{}]", userProfile);
