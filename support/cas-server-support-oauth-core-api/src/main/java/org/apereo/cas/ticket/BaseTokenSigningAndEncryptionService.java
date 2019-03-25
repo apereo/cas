@@ -21,7 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 
 /**
- * This is {@link BaseOidcTokenSigningAndEncryptionService}.
+ * This is {@link BaseTokenSigningAndEncryptionService}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
@@ -29,7 +29,7 @@ import java.security.Key;
 @Slf4j
 @RequiredArgsConstructor
 @Getter
-public abstract class BaseOidcTokenSigningAndEncryptionService implements OidcTokenSigningAndEncryptionService {
+public abstract class BaseTokenSigningAndEncryptionService implements OAuthTokenSigningAndEncryptionService {
     private final String issuer;
 
     /**
@@ -58,11 +58,11 @@ public abstract class BaseOidcTokenSigningAndEncryptionService implements OidcTo
      * @return the json web encryption
      */
     @SneakyThrows
-    protected String encryptIdToken(final String encryptionAlg,
-                                    final String encryptionEncoding,
-                                    final String keyIdHeaderValue,
-                                    final Key publicKey,
-                                    final String payload) {
+    protected String encryptToken(final String encryptionAlg,
+                                  final String encryptionEncoding,
+                                  final String keyIdHeaderValue,
+                                  final Key publicKey,
+                                  final String payload) {
         val jwe = new JsonWebEncryption();
         jwe.setAlgorithmHeaderValue(encryptionAlg);
         jwe.setEncryptionMethodHeaderParameter(encryptionEncoding);

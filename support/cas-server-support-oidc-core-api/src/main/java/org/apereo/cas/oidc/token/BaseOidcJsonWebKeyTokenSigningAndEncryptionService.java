@@ -2,7 +2,7 @@ package org.apereo.cas.oidc.token;
 
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.ticket.BaseOidcTokenSigningAndEncryptionService;
+import org.apereo.cas.ticket.BaseTokenSigningAndEncryptionService;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.SneakyThrows;
@@ -23,7 +23,7 @@ import java.util.Optional;
  * @since 6.1.0
  */
 @Slf4j
-public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends BaseOidcTokenSigningAndEncryptionService {
+public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends BaseTokenSigningAndEncryptionService {
     /**
      * The default keystore for OIDC tokens.
      */
