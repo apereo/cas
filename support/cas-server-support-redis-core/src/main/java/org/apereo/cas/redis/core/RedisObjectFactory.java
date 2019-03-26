@@ -74,12 +74,15 @@ public class RedisObjectFactory {
         val poolConfig = LettucePoolingClientConfiguration.builder();
         if (redis.isUseSsl()) {
             poolConfig.useSsl();
+            LOGGER.trace("Redis configuration: SSL connections are enabled");
         }
         if (StringUtils.hasText(redis.getReadFrom())) {
             poolConfig.readFrom(ReadFrom.valueOf(redis.getReadFrom()));
+            LOGGER.debug("Redis configuration: readFrom property is set to [{}]", redis.getReadFrom());
         }
         if (redis.getTimeout() > 0){
             poolConfig.commandTimeout(Duration.ofMillis(redis.getTimeout()));
+            LOGGER.trace("Redis configuration: commandTimeout is set to [{}]ms", redis.getTimeout());
         }
 
         if (redis.getPool() != null) {
@@ -105,12 +108,13 @@ public class RedisObjectFactory {
                 config.setSoftMinEvictableIdleTimeMillis(props.getSoftMinEvictableIdleTimeMillis());
             }
             poolConfig.poolConfig(config);
+            LOGGER.trace("Redis configuration: the pool is configured to [{}]", config);
         }
         return poolConfig.build();
     }
 
     private static RedisStandaloneConfiguration getStandaloneConfig(final BaseRedisProperties redis) {
-        LOGGER.trace("Setting Redis standalone configuration on host '{}' and port '{}'", redis.getHost(),
+        LOGGER.debug("Setting Redis standalone configuration on host [{}] and port [{}]", redis.getHost(),
                 redis.getPort());
         val standaloneConfig = new RedisStandaloneConfiguration(redis.getHost(), redis.getPort());
         standaloneConfig.setDatabase(redis.getDatabase());
@@ -121,9 +125,9 @@ public class RedisObjectFactory {
     }
 
     private static RedisSentinelConfiguration getSentinelConfig(final BaseRedisProperties redis) {
-        LOGGER.trace("Setting Redis with Sentinel configuration on master '{}'", redis.getSentinel().getMaster());
+        LOGGER.debug("Setting Redis with Sentinel configuration on master [{}]", redis.getSentinel().getMaster());
         val sentinelConfig = new RedisSentinelConfiguration().master(redis.getSentinel().getMaster());
-        LOGGER.trace("Sentinel nodes configured are '{}'", redis.getSentinel().getNode());
+        LOGGER.debug("Sentinel nodes configured are [{}]", redis.getSentinel().getNode());
         sentinelConfig.setSentinels(createRedisNodesForProperties(redis));
         sentinelConfig.setDatabase(redis.getDatabase());
         if (StringUtils.hasText(redis.getPassword())) {
