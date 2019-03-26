@@ -84,7 +84,7 @@ public class DistributedJ2ESessionStore extends J2ESessionStore implements HttpS
      *
      * @param id the id
      */
-    public void removeSessionTicket(final String id) {
+    private void removeSessionTicket(final String id) {
         val ticketId = TransientSessionTicketFactory.normalizeTicketId(id);
         this.ticketRegistry.deleteTicket(ticketId);
     }
