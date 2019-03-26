@@ -480,6 +480,7 @@ More advanced Hazelcast configuration settings are listed below, given the compo
 # ${configurationKey}.cluster.tcpipEnabled=true
 
 # ${configurationKey}.cluster.partitionMemberGroupType=HOST_AWARE|CUSTOM|PER_MEMBER|ZONE_AWARE|SPI
+# ${configurationKey}.cluster.mapMergePolicy=com.hazelcast.map.merge.PutIfAbsentMapMergePolicy
 
 # ${configurationKey}.cluster.evictionPolicy=LRU
 # ${configurationKey}.cluster.maxNoHeartbeatSeconds=300
