@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.factory;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
@@ -28,11 +29,11 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class DefaultProxyTicketFactory implements ProxyTicketFactory {
     private final UniqueTicketIdGenerator defaultTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
-
     private final ExpirationPolicy proxyTicketExpirationPolicy;
     private final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
     private final CipherExecutor<String, String> cipherExecutor;
     private final boolean onlyTrackMostRecentSession;
+    private final ServicesManager servicesManager;
 
     @Override
     public <T extends Ticket> T create(final ProxyGrantingTicket proxyGrantingTicket, final Service service,
