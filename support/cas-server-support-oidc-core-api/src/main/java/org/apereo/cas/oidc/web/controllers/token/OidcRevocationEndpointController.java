@@ -19,6 +19,7 @@ import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.pac4j.core.context.session.J2ESessionStore;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -64,7 +65,7 @@ public class OidcRevocationEndpointController extends BaseOAuth20Controller {
                                                         final HttpServletResponse response) {
         try {
             val authExtractor = new BasicAuthExtractor();
-            val credentials = authExtractor.extract(Pac4jUtils.getPac4jJ2EContext(request, response));
+            val credentials = authExtractor.extract(Pac4jUtils.getPac4jJ2EContext(request, response, new J2ESessionStore()));
             if (credentials == null) {
                 throw new IllegalArgumentException("No credentials are provided to verify revocation of the token");
             }
