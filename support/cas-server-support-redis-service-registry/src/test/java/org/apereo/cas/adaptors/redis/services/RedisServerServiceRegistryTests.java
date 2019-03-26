@@ -1,18 +1,7 @@
 package org.apereo.cas.adaptors.redis.services;
 
-import org.apereo.cas.config.RedisServiceRegistryConfiguration;
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.AbstractServiceRegistryTests;
-import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
-import org.junit.jupiter.api.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -21,19 +10,10 @@ import org.springframework.test.context.TestPropertySource;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@SpringBootTest(classes = {RedisServiceRegistryConfiguration.class, RefreshAutoConfiguration.class})
-@EnableScheduling
-@TestPropertySource(properties = {"cas.serviceRegistry.redis.host=localhost", "cas.serviceRegistry.redis.port=6379"})
-@EnableConfigurationProperties(CasConfigurationProperties.class)
+@TestPropertySource(properties = {
+    "cas.serviceRegistry.redis.host=localhost",
+    "cas.serviceRegistry.redis.port=6379"
+})
 @EnabledIfContinuousIntegration
-@Tag("Redis")
-public class RedisServerServiceRegistryTests extends AbstractServiceRegistryTests {
-    @Autowired
-    @Qualifier("redisServiceRegistry")
-    private ServiceRegistry dao;
-
-    @Override
-    public ServiceRegistry getNewServiceRegistry() {
-        return this.dao;
-    }
+public class RedisServerServiceRegistryTests extends BaseRedisSentinelServiceRegistryTests {
 }

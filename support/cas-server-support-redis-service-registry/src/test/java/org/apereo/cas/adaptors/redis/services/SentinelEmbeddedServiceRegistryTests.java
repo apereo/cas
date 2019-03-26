@@ -1,21 +1,10 @@
 package org.apereo.cas.adaptors.redis.services;
 
-import org.apereo.cas.config.RedisServiceRegistryConfiguration;
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.AbstractServiceRegistryTests;
-import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.util.junit.DisabledIfContinuousIntegration;
 
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
 import redis.embedded.RedisSentinel;
 import redis.embedded.RedisServer;
@@ -26,8 +15,6 @@ import redis.embedded.RedisServer;
  * @author Julien Gribonvald
  * @since 6.1.0
  */
-@SpringBootTest(classes = {RedisServiceRegistryConfiguration.class, RefreshAutoConfiguration.class})
-@EnableScheduling
 @TestPropertySource(properties = {
     "cas.serviceRegistry.redis.host=localhost",
     "cas.serviceRegistry.redis.port=6330",
@@ -37,20 +24,14 @@ import redis.embedded.RedisServer;
     "cas.ticket.registry.redis.sentinel.node[1]=localhost:26640",
     "cas.ticket.registry.redis.sentinel.node[2]=localhost:26641"
 })
-@EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("Redis")
 @DisabledIfContinuousIntegration
-public class SentinelEmbeddedServiceRegistryTests extends AbstractServiceRegistryTests {
+public class SentinelEmbeddedServiceRegistryTests extends BaseRedisSentinelServiceRegistryTests {
     private static RedisServer REDIS_SERVER_1;
     private static RedisSentinel SENTINEL_SERVER_1;
     private static RedisServer REDIS_SERVER_2;
     private static RedisSentinel SENTINEL_SERVER_2;
     private static RedisServer REDIS_SERVER_3;
     private static RedisSentinel SENTINEL_SERVER_3;
-
-    @Autowired
-    @Qualifier("redisServiceRegistry")
-    private ServiceRegistry dao;
 
     @BeforeAll
     @SneakyThrows
@@ -82,10 +63,5 @@ public class SentinelEmbeddedServiceRegistryTests extends AbstractServiceRegistr
         REDIS_SERVER_3.stop();
         REDIS_SERVER_2.stop();
         REDIS_SERVER_1.stop();
-    }
-
-    @Override
-    public ServiceRegistry getNewServiceRegistry() {
-        return this.dao;
     }
 }
