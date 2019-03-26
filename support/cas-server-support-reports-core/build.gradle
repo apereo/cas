@@ -1,15 +1,23 @@
 description = "Apereo CAS Web Application Reports"
 dependencies {
-    implementation project(":support:cas-server-support-reports-core")
+    api project(":api:cas-server-core-api")
     
-    implementation project(":core:cas-server-core-configuration-api")
-    implementation project(":core:cas-server-core-cookie-api")
+    compileOnly libraries.log4j
+    
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-audit-api")
     implementation project(":core:cas-server-core-monitor")
     implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-validation")
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-validation-api")
+    implementation project(":core:cas-server-core-cookie-api")
+
+    compileOnly project(":support:cas-server-support-trusted-mfa")
+    compileOnly project(":core:cas-server-core-events")
+    compileOnly project(":support:cas-server-support-discovery-profile")
     
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout-api")
