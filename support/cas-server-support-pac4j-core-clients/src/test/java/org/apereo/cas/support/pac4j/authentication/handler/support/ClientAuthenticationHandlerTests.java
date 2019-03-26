@@ -10,6 +10,7 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.client.Clients;
+import org.pac4j.core.context.session.J2ESessionStore;
 import org.pac4j.oauth.client.FacebookClient;
 import org.pac4j.oauth.credentials.OAuth20Credentials;
 import org.pac4j.oauth.profile.facebook.FacebookProfile;
@@ -49,7 +50,7 @@ public class ClientAuthenticationHandlerTests {
         val clients = new Clients(CALLBACK_URL, fbClient);
         this.handler = new DelegatedClientAuthenticationHandler("",
             mock(ServicesManager.class), PrincipalFactoryUtils.newPrincipalFactory(), clients,
-            DelegatedClientUserProfileProvisioner.noOp());
+            DelegatedClientUserProfileProvisioner.noOp(), new J2ESessionStore());
         this.handler.setTypedIdUsed(true);
 
         val credentials = new OAuth20Credentials(null);
