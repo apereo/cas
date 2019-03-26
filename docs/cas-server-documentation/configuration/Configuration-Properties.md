@@ -3069,11 +3069,6 @@ The following external identity providers share [common blocks of settings](Conf
 
 See below for other identity providers such as CAS, SAML2 and more.
 
-### Signing & Encryption
-
-The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
-The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under `${configurationKey}.cookie`.
-
 ### Provisioning
 
 Provision and create established user profiles to identity stores.
