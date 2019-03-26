@@ -49,7 +49,7 @@ public class DefaultCasCookieValueManager extends EncryptedCookieValueManager {
             }
             builder.append(COOKIE_FIELD_SEPARATOR).append(userAgent);
         } else {
-            LOGGER.debug("Cookie session-pinning is disabled");
+            LOGGER.trace("Cookie session-pinning is disabled");
         }
 
         return builder.toString();
@@ -63,7 +63,7 @@ public class DefaultCasCookieValueManager extends EncryptedCookieValueManager {
         }
         val value = cookieParts.get(0);
         if (!cookieProperties.isPinToSession()) {
-            LOGGER.debug("Cookie session-pinning is disabled. Returning cookie value as it was provided");
+            LOGGER.trace("Cookie session-pinning is disabled. Returning cookie value as it was provided");
             return value;
         }
 

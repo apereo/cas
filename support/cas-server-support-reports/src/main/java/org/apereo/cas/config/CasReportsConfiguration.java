@@ -172,6 +172,7 @@ public class CasReportsConfiguration {
      * @since 6.0.0
      */
     @Configuration("statusEndpointConfiguration")
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class StatusEndpointConfiguration {
         @Autowired
         private CasConfigurationProperties casProperties;
