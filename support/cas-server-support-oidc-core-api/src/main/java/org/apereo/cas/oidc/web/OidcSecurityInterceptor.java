@@ -6,6 +6,7 @@ import org.apereo.cas.util.Pac4jUtils;
 
 import lombok.val;
 import org.pac4j.core.config.Config;
+import org.pac4j.core.context.session.J2ESessionStore;
 import org.pac4j.springframework.web.SecurityInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,7 +31,7 @@ public class OidcSecurityInterceptor extends SecurityInterceptor {
     public boolean preHandle(final HttpServletRequest request,
                              final HttpServletResponse response,
                              final Object handler) throws Exception {
-        val ctx = Pac4jUtils.getPac4jJ2EContext(request, response);
+        val ctx = Pac4jUtils.getPac4jJ2EContext(request, response, new J2ESessionStore());
         val manager = Pac4jUtils.getPac4jProfileManager(request, response);
 
         var clearCreds = false;

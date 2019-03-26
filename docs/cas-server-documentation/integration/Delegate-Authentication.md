@@ -59,15 +59,7 @@ Once you have configured (see information above) your CAS server to act as an OA
 CAS, OpenID (Connect) or SAML client, users will be able to authenticate at a OAuth/CAS/OpenID/SAML
 provider (like Facebook) instead of authenticating directly inside the CAS server.
 
-In the CAS server, after this kind of delegated authentication, users have specific authentication data.
-
-The `Authentication` object has:
-
-* The attribute `AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE`
-set to `org.apereo.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler`
-* The attribute `clientName` set to the type of the provider used during authentication process.
-
-The `Principal` object of the `Authentication` object has:
+In the CAS server, after this kind of delegated authentication, users have specific authentication data. These include:
 
 * An identifier which is the profile type + `#` + the identifier of the user for this provider (i.e `FacebookProfile#0000000001`)
 * Attributes populated by the data retrieved from the provider (first name, last name, birthdate...)
