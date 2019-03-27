@@ -3,6 +3,7 @@ package org.apereo.cas.web;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
@@ -52,8 +53,7 @@ public class DelegatedClientWebflowManager {
 
     private final TicketRegistry ticketRegistry;
     private final TicketFactory ticketFactory;
-    private final String themeParamName;
-    private final String localParamName;
+    private final CasConfigurationProperties casProperties;
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
     private final ArgumentExtractor argumentExtractor;
 
@@ -117,8 +117,11 @@ public class DelegatedClientWebflowManager {
     protected Map<String, Serializable> buildTicketProperties(final J2EContext webContext) {
         val properties = new HashMap<String, Serializable>();
 
-        properties.put(this.themeParamName, StringUtils.defaultString(webContext.getRequestParameter(this.themeParamName)));
-        properties.put(this.localParamName, StringUtils.defaultString(webContext.getRequestParameter(this.localParamName)));
+        val themeParamName = casProperties.getTheme().getParamName();
+        val localParamName = casProperties.getLocale().getParamName();
+
+        properties.put(themeParamName, StringUtils.defaultString(webContext.getRequestParameter(themeParamName)));
+        properties.put(localParamName, StringUtils.defaultString(webContext.getRequestParameter(localParamName)));
         properties.put(CasProtocolConstants.PARAMETER_METHOD,
             StringUtils.defaultString(webContext.getRequestParameter(CasProtocolConstants.PARAMETER_METHOD)));
 
@@ -154,13 +157,18 @@ public class DelegatedClientWebflowManager {
     protected Service restoreDelegatedAuthenticationRequest(final RequestContext requestContext, final WebContext webContext,
                                                             final TransientSessionTicket ticket) {
         val service = ticket.getService();
-        LOGGER.debug("Restoring requested service [{}] back in the authentication flow", service);
+        LOGGER.trace("Restoring requested service [{}] back in the authentication flow", service);
 
         WebUtils.putServiceIntoFlowScope(requestContext, service);
         webContext.setRequestAttribute(CasProtocolConstants.PARAMETER_SERVICE, service);
-        webContext.setRequestAttribute(this.themeParamName, ticket.getProperties().get(this.themeParamName));
-        webContext.setRequestAttribute(this.localParamName, ticket.getProperties().get(this.localParamName));
-        webContext.setRequestAttribute(CasProtocolConstants.PARAMETER_METHOD, ticket.getProperties().get(CasProtocolConstants.PARAMETER_METHOD));
+
+        val themeParamName = casProperties.getTheme().getParamName();
+        val localParamName = casProperties.getLocale().getParamName();
+
+        val properties = ticket.getProperties();
+        webContext.setRequestAttribute(themeParamName, properties.get(themeParamName));
+        webContext.setRequestAttribute(localParamName, properties.get(localParamName));
+        webContext.setRequestAttribute(CasProtocolConstants.PARAMETER_METHOD, properties.get(CasProtocolConstants.PARAMETER_METHOD));
         return service;
     }
 
