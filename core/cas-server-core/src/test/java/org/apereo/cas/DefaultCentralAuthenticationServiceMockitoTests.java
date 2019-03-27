@@ -189,13 +189,16 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
     private static TicketFactory getTicketFactory() {
         val factory = new DefaultTicketFactory();
         factory.addTicketFactory(ProxyGrantingTicket.class,
-            new DefaultProxyGrantingTicketFactory(null, null, null));
+            new DefaultProxyGrantingTicketFactory(null,
+                null, CipherExecutor.noOpOfStringToString()));
         factory.addTicketFactory(TicketGrantingTicket.class,
-            new DefaultTicketGrantingTicketFactory(null, null, null));
+            new DefaultTicketGrantingTicketFactory(null,
+                null, CipherExecutor.noOpOfSerializableToString()));
         factory.addTicketFactory(ServiceTicket.class,
-            new DefaultServiceTicketFactory(new NeverExpiresExpirationPolicy(), new HashMap<>(0), false, null));
+            new DefaultServiceTicketFactory(new NeverExpiresExpirationPolicy(), new HashMap<>(0), false, CipherExecutor.noOpOfStringToString(), mock(ServicesManager.class)));
         factory.addTicketFactory(ProxyTicket.class,
-            new DefaultProxyTicketFactory(null, new HashMap<>(0), null, true));
+            new DefaultProxyTicketFactory(null, new HashMap<>(0),
+                CipherExecutor.noOpOfStringToString(), true, mock(ServicesManager.class)));
         factory.addTicketFactory(TransientSessionTicket.class,
             new DefaultTransientSessionTicketFactory(new NeverExpiresExpirationPolicy()));
         return factory;

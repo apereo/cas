@@ -2,6 +2,8 @@ package org.apereo.cas.ticket.factory;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketFactory;
@@ -9,6 +11,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
 import lombok.RequiredArgsConstructor;
@@ -32,16 +35,18 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
     private final boolean trackMostRecentSession;
     private final CipherExecutor<String, String> cipherExecutor;
     private final UniqueTicketIdGenerator defaultServiceTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
-
+    private final ServicesManager servicesManager;
 
     @Override
-    public <T extends Ticket> T create(final TicketGrantingTicket ticketGrantingTicket, final Service service,
-                                       final boolean credentialProvided, final Class<T> clazz) {
+    public <T extends Ticket> T create(final TicketGrantingTicket ticketGrantingTicket,
+                                       final Service service,
+                                       final boolean credentialProvided,
+                                       final Class<T> clazz) {
         val ticketId = produceTicketIdentifier(service, ticketGrantingTicket, credentialProvided);
         if (this.cipherExecutor == null) {
             return produceTicket(ticketGrantingTicket, service, credentialProvided, ticketId, clazz);
         }
-        LOGGER.debug("Attempting to encode service ticket [{}]", ticketId);
+        LOGGER.trace("Attempting to encode service ticket [{}]", ticketId);
         val encodedId = this.cipherExecutor.encode(ticketId);
         LOGGER.debug("Encoded service ticket id [{}]", encodedId);
         return produceTicket(ticketGrantingTicket, service, credentialProvided, encodedId, clazz);
@@ -58,12 +63,17 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
      * @param clazz                the clazz
      * @return the ticket
      */
-    protected <T extends Ticket> T produceTicket(final TicketGrantingTicket ticketGrantingTicket, final Service service,
-                                                 final boolean credentialProvided, final String ticketId, final Class<T> clazz) {
+    protected <T extends Ticket> T produceTicket(final TicketGrantingTicket ticketGrantingTicket,
+                                                 final Service service,
+                                                 final boolean credentialProvided,
+                                                 final String ticketId,
+                                                 final Class<T> clazz) {
+        val expirationPolicyToUse = determineExpirationPolicyForService(service);
+
         val result = ticketGrantingTicket.grantServiceTicket(
             ticketId,
             service,
-            this.serviceTicketExpirationPolicy,
+            expirationPolicyToUse,
             credentialProvided,
             trackMostRecentSession);
 
@@ -73,6 +83,18 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
                 + " when we were expecting " + clazz);
         }
         return (T) result;
+    }
+
+    private ExpirationPolicy determineExpirationPolicyForService(final Service service) {
+        val registeredService = servicesManager.findServiceBy(service);
+        if (registeredService != null) {
+            val count = RegisteredServiceProperties.SERVICE_TICKET_EXPIRATION_POLICY_NUMBER_OF_USES.getPropertyIntegerValue(registeredService);
+            val ttl = RegisteredServiceProperties.SERVICE_TICKET_EXPIRATION_POLICY_TIME_TO_LIVE.getPropertyIntegerValue(registeredService);
+            if (count > 0 && ttl > 0) {
+                return new MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy(count, ttl);
+            }
+        }
+        return this.serviceTicketExpirationPolicy;
     }
 
     /**
