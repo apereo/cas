@@ -150,7 +150,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
     @Test
     public void verifyProxyGrantingTicketAsAuthenticationAttributeCanDecrypt() throws Exception {
         val attributes = renderView();
-        LOGGER.warn("Attributes are [{}]", attributes.keySet());
+        LOGGER.trace("Attributes are [{}]", attributes.keySet());
         assertTrue(attributes.containsKey(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET));
 
         val encodedPgt = (String) attributes.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET);

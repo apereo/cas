@@ -45,6 +45,14 @@ public interface AuthenticationSystemSupport {
     AuthenticationResultBuilder establishAuthenticationContextFromInitial(Authentication authentication, Credential credential);
 
     /**
+     * Establish authentication context from initial authentication result builder.
+     *
+     * @param authentication the authentication
+     * @return the authentication result builder
+     */
+    AuthenticationResultBuilder establishAuthenticationContextFromInitial(Authentication authentication);
+
+    /**
      * Initiate potential multi-transaction authentication event by handling the initial authentication transaction.
      *
      * @param service    the service
