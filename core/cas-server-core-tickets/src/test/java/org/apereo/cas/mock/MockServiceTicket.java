@@ -38,7 +38,7 @@ public class MockServiceTicket implements ServiceTicket, TicketState {
 
     private final Service service;
     private final TicketGrantingTicket ticketGrantingTicket;
-    private final ExpirationPolicy expirationPolicy;
+    private ExpirationPolicy expirationPolicy;
     private boolean expired;
 
     public MockServiceTicket(final String id, final Service service,

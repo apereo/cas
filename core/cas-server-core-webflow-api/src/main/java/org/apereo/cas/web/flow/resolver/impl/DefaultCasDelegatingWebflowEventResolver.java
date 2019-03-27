@@ -116,12 +116,14 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
             return null;
         }
 
-        LOGGER.debug("Locating service [{}] in service registry to determine authentication policy", service);
+        LOGGER.trace("Locating service [{}] in service registry to determine authentication policy", service);
         val registeredService = this.servicesManager.findServiceBy(service);
-        LOGGER.debug("Locating authentication event in the request context...");
+        LOGGER.trace("Locating authentication event in the request context...");
         val authn = WebUtils.getAuthentication(context);
-
-        LOGGER.debug("Enforcing access strategy policies for registered service [{}] and principal [{}]", registeredService, authn.getPrincipal());
+        if (authn == null) {
+            throw new IllegalArgumentException("Unable to locate authentication object in the webflow context");
+        }
+        LOGGER.trace("Enforcing access strategy policies for registered service [{}] and principal [{}]", registeredService, authn.getPrincipal());
         val unauthorizedRedirectUrl = registeredService.getAccessStrategy().getUnauthorizedRedirectUrl();
         if (unauthorizedRedirectUrl != null) {
             WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context, unauthorizedRedirectUrl);
