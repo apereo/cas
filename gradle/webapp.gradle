@@ -63,7 +63,7 @@ dependencies {
     implementation project(":support:cas-server-support-reports")
     implementation project(":support:cas-server-support-throttle")
     implementation project(":support:cas-server-support-validation")
-
+    
     implementation project(":webapp:cas-server-webapp-config")
     implementation project(":webapp:cas-server-webapp-init")
 
