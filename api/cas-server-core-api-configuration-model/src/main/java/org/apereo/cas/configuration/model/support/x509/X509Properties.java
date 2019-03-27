@@ -261,7 +261,11 @@ public class X509Properties implements Serializable {
         /**
          * Create principal by common name and EDIPI.
          */
-        CN_EDIPI
+        CN_EDIPI,
+        /**
+         * Create principal by email in subject alternative name email type.
+         */
+        RFC822_EMAIL
     }
 
     /**
@@ -275,6 +279,12 @@ public class X509Properties implements Serializable {
      */
     @NestedConfigurationProperty
     private SubjectAltNamePrincipalResolverProperties subjectAltName = new SubjectAltNamePrincipalResolverProperties();
+
+    /**
+     * Principal resolver properties for RFC822_EMAIL resolver type.
+     */
+    @NestedConfigurationProperty
+    private Rfc822EmailPrincipalResolverProperties rfc822Email = new Rfc822EmailPrincipalResolverProperties();
 
     /**
      * Principal resolver properties for SERIAL_NO_DN resolver type.

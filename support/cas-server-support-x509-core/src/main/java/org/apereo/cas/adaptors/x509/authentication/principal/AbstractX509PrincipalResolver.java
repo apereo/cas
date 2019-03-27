@@ -14,7 +14,9 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 
+import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +35,8 @@ import java.util.Set;
 @Slf4j
 @Setter
 public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrincipalResolver {
+
+    private static int RFC822_SAN_TYPE = 1;
 
     private String alternatePrincipalAttribute;
 
@@ -131,8 +135,47 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
             if (subjectPrincipal != null) {
                 attributes.put("subjectX500Principal", CollectionUtils.wrapList(subjectPrincipal.getName()));
             }
+            try {
+                val rfc822Email = getRFC822EmailAddress(certificate.getSubjectAlternativeNames());
+                if (rfc822Email != null) {
+                    attributes.put("x509Rfc822Email", CollectionUtils.wrapList(rfc822Email));
+                }
+            } catch (final CertificateParsingException e) {
+                LOGGER.warn("Error parsing subject alternative names to get rfc822 email {}", e.getMessage());
+            }
         }
         return attributes;
     }
 
+    /**
+     * Get Email Address.
+     *
+     * @param subjectAltNames list of subject alternative name values encoded as collection of Lists with two elements in each List containing type and value.
+     * @return String email address or null if the item passed in is not type 1 (rfc822Name)
+     * as expected to be returned by implementation of {@code X509Certificate.html#getSubjectAlternativeNames}
+     * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/security/cert/X509Certificate.html#getSubjectAlternativeNames()">
+     * X509Certificate#getSubjectAlternativeNames</a>
+     */
+    protected String getRFC822EmailAddress(final Collection<List<?>> subjectAltNames) {
+        try {
+            if (subjectAltNames == null) {
+                return null;
+            }
+            Optional<List<?>> email = subjectAltNames.stream().filter(s -> ((Integer) s.get(0)) == RFC822_SAN_TYPE).findFirst();
+            if (email.isPresent()) {
+                return (String) email.get().get(1);
+            }
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            LOGGER.error("Subject Alternative Name List does not contain at least two required elements. Returning null principal id...");
+        }
+        return null;
+    }
+
+    @Override
+    protected Map<String, List<Object>> retrievePersonAttributes(final String principalId, final Credential credential) {
+        val attributes = new LinkedHashMap<String, List<Object>>(super.retrievePersonAttributes(principalId, credential));
+        val certificate = ((X509CertificateCredential) credential).getCertificate();
+        attributes.putAll(extractPersonAttributes(certificate));
+        return attributes;
+    }
 }
