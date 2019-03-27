@@ -1,7 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.support.pac4j.authentication.DelegatedClientFactoryTests;
-import org.apereo.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandlerTests;
+import org.apereo.cas.support.pac4j.authentication.handler.support.DelegatedClientAuthenticationHandlerTests;
 
 import org.junit.platform.suite.api.SelectClasses;
 
@@ -12,6 +12,6 @@ import org.junit.platform.suite.api.SelectClasses;
  * @since 5.1.0
  */
 
-@SelectClasses({ClientAuthenticationHandlerTests.class, DelegatedClientFactoryTests.class})
+@SelectClasses({DelegatedClientAuthenticationHandlerTests.class, DelegatedClientFactoryTests.class})
 public class AllTestsSuite {
 }
