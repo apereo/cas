@@ -7,7 +7,7 @@
   overlays could use and pull this file and have their 
   dependencies match that of CAS. 
  */
-ext["hibernateVersion"] = "5.4.1.Final"
+ext["hibernateVersion"] = "5.4.2.Final"
 ext["hazelcastVersion"] = "3.11.2"
 ext["infinispanVersion"] = "9.4.1.Final"
 

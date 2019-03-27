@@ -241,7 +241,7 @@ public class CasKryoTranscoderTests {
         val tgt = new MockTicketGrantingTicket(USERNAME);
         val expectedST = new MockServiceTicket(ST_ID, RegisteredServiceTestUtils.getService(), tgt);
         val step = new MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy(1, 600);
-        expectedST.setExpiration(step);
+        expectedST.setExpirationPolicy(step);
         val result = transcoder.encode(expectedST);
         assertEquals(expectedST, transcoder.decode(result));
         assertEquals(expectedST, transcoder.decode(result));
@@ -253,7 +253,7 @@ public class CasKryoTranscoderTests {
         val expectedST = new MockServiceTicket(ST_ID, RegisteredServiceTestUtils.getService(), tgt);
 
         val step = new UnregisteredServiceTicketExpirationPolicy(1, 600);
-        expectedST.setExpiration(step);
+        expectedST.setExpirationPolicy(step);
         try {
             transcoder.encode(expectedST);
             throw new AssertionError("Unregistered class is not allowed by Kryo");
