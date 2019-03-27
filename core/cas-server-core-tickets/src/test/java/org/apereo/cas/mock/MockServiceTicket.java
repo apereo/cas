@@ -3,6 +3,7 @@ package org.apereo.cas.mock;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -13,6 +14,7 @@ import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.val;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -32,18 +34,26 @@ public class MockServiceTicket implements ServiceTicket, TicketState {
 
     private final String id;
 
-    private final ZonedDateTime created;
+    private final ZonedDateTime creationTime;
 
     private final Service service;
-    private final TicketGrantingTicket parent;
-    private ExpirationPolicy expiration = new NeverExpiresExpirationPolicy();
+    private final TicketGrantingTicket ticketGrantingTicket;
+    private ExpirationPolicy expirationPolicy;
     private boolean expired;
 
-    public MockServiceTicket(final String id, final Service service, final TicketGrantingTicket parent) {
+    public MockServiceTicket(final String id, final Service service,
+                             final TicketGrantingTicket parent) {
+        this(id, service, parent, null);
+    }
+
+    public MockServiceTicket(final String id, final Service service,
+                             final TicketGrantingTicket parent,
+                             final ExpirationPolicy policy) {
         this.service = service;
         this.id = id;
-        this.parent = parent;
-        created = ZonedDateTime.now(ZoneOffset.UTC);
+        this.ticketGrantingTicket = parent;
+        this.creationTime = ZonedDateTime.now(ZoneOffset.UTC);
+        this.expirationPolicy = policy == null ? new NeverExpiresExpirationPolicy() : policy;
     }
 
     @Override
@@ -58,12 +68,9 @@ public class MockServiceTicket implements ServiceTicket, TicketState {
 
     @Override
     public ProxyGrantingTicket grantProxyGrantingTicket(final String id, final Authentication authentication, final ExpirationPolicy expirationPolicy) {
-        return null;
-    }
-
-    @Override
-    public ExpirationPolicy getExpirationPolicy() {
-        return this.expiration;
+        val pgt = new ProxyGrantingTicketImpl(id, this.service, this.getTicketGrantingTicket(), authentication, expirationPolicy);
+        getTicketGrantingTicket().getProxyGrantingTickets().put(pgt.getId(), this.service);
+        return pgt;
     }
 
     @Override
@@ -73,22 +80,12 @@ public class MockServiceTicket implements ServiceTicket, TicketState {
 
     @Override
     public boolean isExpired() {
-        return this.expired || this.expiration.isExpired(this);
-    }
-
-    @Override
-    public TicketGrantingTicket getTicketGrantingTicket() {
-        return parent;
-    }
-
-    @Override
-    public ZonedDateTime getCreationTime() {
-        return created;
+        return this.expired || this.expirationPolicy.isExpired(this);
     }
 
     @Override
     public Authentication getAuthentication() {
-        return this.parent.getAuthentication();
+        return this.ticketGrantingTicket.getAuthentication();
     }
 
     @Override
