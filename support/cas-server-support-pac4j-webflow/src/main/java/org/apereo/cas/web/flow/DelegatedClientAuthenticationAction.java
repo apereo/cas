@@ -15,7 +15,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.pac4j.logout.RequestSloException;
 import org.apereo.cas.ticket.AbstractTicketException;
-import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.DelegatedClientNavigationController;
@@ -158,12 +158,12 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
 
         if (singleSignOnSessionExists(context)) {
-            LOGGER.debug("An existing single sign-on session already exists. Skipping delegation and routing back to CAS authentication flow");
+            LOGGER.trace("An existing single sign-on session already exists. Skipping delegation and routing back to CAS authentication flow");
             return super.doExecute(context);
         }
 
         val clientName = request.getParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER);
-        LOGGER.debug("Delegated authentication is handled by client name [{}]", clientName);
+        LOGGER.trace("Delegated authentication is handled by client name [{}]", clientName);
         if (hasDelegationRequestFailed(request, response.getStatus()).isPresent()) {
             throw new IllegalArgumentException("Delegated authentication has failed with client " + clientName);
         }
@@ -180,10 +180,10 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                 LOGGER.info("Credentials are successfully authenticated using the delegated client [{}]", clientName);
                 WebUtils.putCredential(context, clientCredential);
                 WebUtils.putServiceIntoFlowScope(context, service);
-                LOGGER.debug("Authentication is resolved by service request from [{}]", service);
+                LOGGER.trace("Authentication is resolved by service request from [{}]", service);
                 val resolvedService = authenticationRequestServiceSelectionStrategies.resolveService(service);
                 val registeredService = servicesManager.findServiceBy(resolvedService);
-                LOGGER.debug("Located registered service [{}] mapped to resolved service [{}]", registeredService, resolvedService);
+                LOGGER.trace("Located registered service [{}] mapped to resolved service [{}]", registeredService, resolvedService);
                 WebUtils.putRegisteredService(context, registeredService);
             } catch (final Exception e) {
                 return handleException(webContext, client, e);
@@ -215,10 +215,10 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                 throw new IllegalArgumentException("Unable to call logout", ioe);
             }
             return stopWebflow();
-        } else {
-            LOGGER.info(e.getMessage(), e);
-            throw new IllegalArgumentException("Delegated authentication has failed with client " + client.getName());
         }
+        val msg = String.format("Delegated authentication has failed with client %s", client.getName());
+        LOGGER.error(msg, e);
+        throw new IllegalArgumentException(msg);
     }
 
     private boolean singleSignOnSessionExists(final RequestContext requestContext) {
@@ -228,9 +228,16 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             return false;
         }
         try {
-            val ticket = this.centralAuthenticationService.getTicket(tgtId, Ticket.class);
+            val ticket = this.centralAuthenticationService.getTicket(tgtId, TicketGrantingTicket.class);
             if (ticket != null && !ticket.isExpired()) {
-                LOGGER.trace("Located a valid ticket-granting ticket, honoring existing single sign-on session");
+                LOGGER.trace("Located a valid ticket-granting ticket. Examining existing single sign-on session strategies...");
+
+                val authentication = ticket.getAuthentication();
+                val builder = this.authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication);
+                LOGGER.trace("Recording and tracking initial authentication results in the request context");
+                WebUtils.putAuthenticationResultBuilder(builder, requestContext);
+                WebUtils.putAuthentication(authentication, requestContext);
+
                 return singleSignOnParticipationStrategy.supports(requestContext)
                     && singleSignOnParticipationStrategy.isParticipating(requestContext);
             }
