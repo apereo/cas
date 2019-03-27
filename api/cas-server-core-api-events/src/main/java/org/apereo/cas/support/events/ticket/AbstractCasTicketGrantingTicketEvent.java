@@ -22,7 +22,7 @@ public abstract class AbstractCasTicketGrantingTicketEvent extends AbstractCasEv
 
     private final TicketGrantingTicket ticketGrantingTicket;
 
-    public AbstractCasTicketGrantingTicketEvent(Object source, TicketGrantingTicket ticketGrantingTicket) {
+    public AbstractCasTicketGrantingTicketEvent(final Object source, final TicketGrantingTicket ticketGrantingTicket) {
         super(source);
         this.ticketGrantingTicket = ticketGrantingTicket;
     }
