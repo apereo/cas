@@ -64,9 +64,34 @@ ST expiration policy governs the time span during which an authenticated user ma
 ### Default
 
 This is the default policy applied to service tickets where a ticket is expired after a fixed number of uses or after a maximum
-period of inactivity elapses. This is the default and only option.
+period of inactivity elapses.
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#service-tickets-behavior).
+
+### Per Service
+
+The expiration policy of service tickets can be conditionally decided on a per-application basis. The candidate service
+whose service ticket expiration policy is to deviate from the default configuration must be designed as such:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "^https://.*",
+  "name" : "Sample",
+  "id" : 10,
+  "properties" : {
+    "@class" : "java.util.HashMap",
+    "serviceTicketExpirationPolicyNumberOfUses" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "2" ] ]
+    },
+    "serviceTicketExpirationPolicyTimeToLive" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "45" ] ]
+    }
+  }
+}
+```
 
 ## Proxy Ticket Policies
 
@@ -75,9 +100,34 @@ PT expiration policy governs the time span during which an authenticated user ma
 ### Default
 
 This is the default policy applied to proxy tickets where a ticket is expired after a fixed number of uses or after a maximum
-period of inactivity elapses. This is default and only option.
+period of inactivity elapses. 
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#proxy-tickets-behavior).
+
+### Per Service
+
+The expiration policy of proxy tickets can be conditionally decided on a per-application basis. The candidate service
+whose proxy ticket expiration policy is to deviate from the default configuration must be designed as such:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "^https://.*",
+  "name" : "Sample",
+  "id" : 10,
+  "properties" : {
+    "@class" : "java.util.HashMap",
+    "proxyTicketExpirationPolicyNumberOfUses" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "2" ] ]
+    },
+    "proxyTicketExpirationPolicyTimeToLive" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "45" ] ]
+    }
+  }
+}
+```
 
 ## Proxy-Granting Ticket Policies
 

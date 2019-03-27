@@ -63,6 +63,10 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
                                                               final String pgtId, final Class<T> clazz) {
         val result = serviceTicket.grantProxyGrantingTicket(pgtId,
             authentication, this.ticketGrantingTicketExpirationPolicy);
+
+        if (result == null) {
+            throw new IllegalArgumentException("Unable to create the proxy-granting ticket object for identifier " + pgtId);
+        }
         if (!clazz.isAssignableFrom(result.getClass())) {
             throw new ClassCastException("Result [" + result
                 + " is of type " + result.getClass()
