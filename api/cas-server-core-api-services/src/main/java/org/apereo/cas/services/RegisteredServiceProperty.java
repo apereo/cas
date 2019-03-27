@@ -1,11 +1,13 @@
 package org.apereo.cas.services;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.google.common.base.Predicates;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
@@ -130,7 +132,23 @@ public interface RegisteredServiceProperty extends Serializable {
         /**
          * Whether CAS should inject xss protection headers into the response when this service is in process.
          */
-        HTTP_HEADER_ENABLE_XSS_PROTECTION("httpHeaderEnableXSSProtection", "true");
+        HTTP_HEADER_ENABLE_XSS_PROTECTION("httpHeaderEnableXSSProtection", "true"),
+        /**
+         * Control the number of times a proxy ticket may be used via a custom expiration policy for a service.
+         */
+        PROXY_TICKET_EXPIRATION_POLICY_NUMBER_OF_USES("proxyTicketExpirationPolicyNumberOfUses", StringUtils.EMPTY),
+        /**
+         * Control the ttl for a proxy ticket via a custom expiration policy for a service.
+         */
+        PROXY_TICKET_EXPIRATION_POLICY_TIME_TO_LIVE("proxyTicketExpirationPolicyTimeToLive", StringUtils.EMPTY),
+        /**
+         * Control the number of times a service ticket may be used via a custom expiration policy for a service.
+         */
+        SERVICE_TICKET_EXPIRATION_POLICY_NUMBER_OF_USES("serviceTicketExpirationPolicyNumberOfUses", StringUtils.EMPTY),
+        /**
+         * Control the ttl for a service ticket via a custom expiration policy for a service.
+         */
+        SERVICE_TICKET_EXPIRATION_POLICY_TIME_TO_LIVE("serviceTicketExpirationPolicyTimeToLive", StringUtils.EMPTY);
 
         private final String propertyName;
         private final String defaultValue;
@@ -141,6 +159,7 @@ public interface RegisteredServiceProperty extends Serializable {
          * @param service the service
          * @return the property value
          */
+        @JsonIgnore
         public RegisteredServiceProperty getPropertyValue(final RegisteredService service) {
             if (isAssignedTo(service)) {
                 val property = service.getProperties().entrySet()
@@ -162,6 +181,7 @@ public interface RegisteredServiceProperty extends Serializable {
          * @param clazz   the clazz
          * @return the property value
          */
+        @JsonIgnore
         public <T> T getPropertyValue(final RegisteredService service, final Class<T> clazz) {
             if (isAssignedTo(service)) {
                 val prop = getPropertyValue(service);
@@ -173,11 +193,80 @@ public interface RegisteredServiceProperty extends Serializable {
         }
 
         /**
+         * Gets property integer value.
+         *
+         * @param service the service
+         * @return the property integer value
+         */
+        @JsonIgnore
+        public int getPropertyIntegerValue(final RegisteredService service) {
+            if (isAssignedTo(service)) {
+                val prop = getPropertyValue(service);
+                if (prop != null) {
+                    return Integer.parseInt(prop.getValue());
+                }
+            }
+            return Integer.MIN_VALUE;
+        }
+
+        /**
+         * Gets property long value.
+         *
+         * @param service the service
+         * @return the property long value
+         */
+        @JsonIgnore
+        public long getPropertyLongValue(final RegisteredService service) {
+            if (isAssignedTo(service)) {
+                val prop = getPropertyValue(service);
+                if (prop != null) {
+                    return Long.parseLong(prop.getValue());
+                }
+            }
+            return Long.MIN_VALUE;
+        }
+
+        /**
+         * Gets property double value.
+         *
+         * @param service the service
+         * @return the property double value
+         */
+        @JsonIgnore
+        public double getPropertyDoubleValue(final RegisteredService service) {
+            if (isAssignedTo(service)) {
+                val prop = getPropertyValue(service);
+                if (prop != null) {
+                    return Double.parseDouble(prop.getValue());
+                }
+            }
+            return Double.NaN;
+        }
+
+        /**
+         * Gets property boolean value.
+         *
+         * @param service the service
+         * @return the property boolean value
+         */
+        @JsonIgnore
+        public boolean getPropertyBooleanValue(final RegisteredService service) {
+            if (isAssignedTo(service)) {
+                val prop = getPropertyValue(service);
+                if (prop != null) {
+                    return BooleanUtils.toBoolean(prop.getValue());
+                }
+            }
+            return false;
+        }
+
+        /**
          * Check to see if the property is assigned to this service and is defined with a value.
          *
          * @param service registered service
          * @return true/false
          */
+        @JsonIgnore
         public boolean isAssignedTo(final RegisteredService service) {
             return isAssignedTo(service, Predicates.alwaysTrue());
         }
@@ -189,6 +278,7 @@ public interface RegisteredServiceProperty extends Serializable {
          * @param valueFilter the filter
          * @return true/false
          */
+        @JsonIgnore
         public boolean isAssignedTo(final RegisteredService service, final Predicate<String> valueFilter) {
             return service.getProperties().entrySet()
                 .stream()
