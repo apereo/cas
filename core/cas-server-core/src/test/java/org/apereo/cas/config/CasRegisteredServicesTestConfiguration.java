@@ -20,6 +20,7 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.SneakyThrows;
 import lombok.val;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 
@@ -42,6 +43,7 @@ public class CasRegisteredServicesTestConfiguration {
         return new CachingPrincipalAttributesRepository("SECONDS", 20);
     }
 
+    @ConditionalOnMissingBean(name = "inMemoryRegisteredServices")
     @Bean
     @SneakyThrows
     public List inMemoryRegisteredServices() {
