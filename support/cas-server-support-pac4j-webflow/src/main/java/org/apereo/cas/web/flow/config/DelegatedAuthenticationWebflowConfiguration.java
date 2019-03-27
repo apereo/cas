@@ -199,8 +199,7 @@ public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowEx
     public DelegatedClientWebflowManager delegatedClientWebflowManager() {
         return new DelegatedClientWebflowManager(ticketRegistry.getIfAvailable(),
             ticketFactory.getIfAvailable(),
-            casProperties.getTheme().getParamName(),
-            casProperties.getLocale().getParamName(),
+            casProperties,
             authenticationRequestServiceSelectionStrategies.getIfAvailable(),
             argumentExtractor.getIfAvailable()
         );
