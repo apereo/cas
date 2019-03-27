@@ -9,7 +9,6 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -81,8 +80,9 @@ public class DelegatedClientWebflowManager {
         this.ticketRegistry.addTicket(ticket);
         webContext.setRequestAttribute(PARAMETER_CLIENT_ID, ticketId);
 
+        val sessionStore = webContext.getSessionStore();
         if (client instanceof SAML2Client) {
-            webContext.getSessionStore().set(webContext, SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE, ticketId);
+            sessionStore.set(webContext, SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE, ticketId);
         }
         if (client instanceof OAuth20Client) {
             val oauthClient = (OAuth20Client) client;
@@ -93,16 +93,17 @@ public class DelegatedClientWebflowManager {
         if (client instanceof OidcClient) {
             val oidcClient = (OidcClient) client;
             val config = oidcClient.getConfiguration();
-            config.setCustomParams(CollectionUtils.wrap(PARAMETER_CLIENT_ID, ticketId));
+            config.addCustomParam(PARAMETER_CLIENT_ID, ticketId);
             config.setWithState(true);
             config.setStateGenerator(new StaticOrRandomStateGenerator(ticketId));
         }
         if (client instanceof CasClient) {
             val casClient = (CasClient) client;
-            casClient.getConfiguration().addCustomParam(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticketId);
+            val config = casClient.getConfiguration();
+            config.addCustomParam(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticketId);
         }
         if (client instanceof OAuth10Client) {
-            webContext.getSessionStore().set(webContext, OAUTH10_CLIENT_ID_SESSION_KEY, ticket.getId());
+            sessionStore.set(webContext, OAUTH10_CLIENT_ID_SESSION_KEY, ticket.getId());
         }
         return ticket;
     }
@@ -119,7 +120,7 @@ public class DelegatedClientWebflowManager {
         properties.put(this.themeParamName, StringUtils.defaultString(webContext.getRequestParameter(this.themeParamName)));
         properties.put(this.localParamName, StringUtils.defaultString(webContext.getRequestParameter(this.localParamName)));
         properties.put(CasProtocolConstants.PARAMETER_METHOD,
-                StringUtils.defaultString(webContext.getRequestParameter(CasProtocolConstants.PARAMETER_METHOD)));
+            StringUtils.defaultString(webContext.getRequestParameter(CasProtocolConstants.PARAMETER_METHOD)));
 
         return properties;
     }
@@ -151,7 +152,7 @@ public class DelegatedClientWebflowManager {
      * @return the service
      */
     protected Service restoreDelegatedAuthenticationRequest(final RequestContext requestContext, final WebContext webContext,
-                                                          final TransientSessionTicket ticket) {
+                                                            final TransientSessionTicket ticket) {
         val service = ticket.getService();
         LOGGER.debug("Restoring requested service [{}] back in the authentication flow", service);
 
