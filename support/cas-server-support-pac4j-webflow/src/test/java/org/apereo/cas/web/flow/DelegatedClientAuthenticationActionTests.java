@@ -19,6 +19,7 @@ import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy;
 import org.apereo.cas.services.RegisteredServiceAccessStrategy;
@@ -130,7 +131,7 @@ public class DelegatedClientAuthenticationActionTests {
         val ticketRegistry = new DefaultTicketRegistry();
         val manager = new DelegatedClientWebflowManager(ticketRegistry,
             new DefaultTransientSessionTicketFactory(new HardTimeoutExpirationPolicy(60)),
-            ThemeChangeInterceptor.DEFAULT_PARAM_NAME, LocaleChangeInterceptor.DEFAULT_PARAM_NAME,
+            new CasConfigurationProperties(),
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
             new DefaultArgumentExtractor(new WebApplicationServiceFactory()));
 
@@ -299,7 +300,7 @@ public class DelegatedClientAuthenticationActionTests {
         val ticketRegistry = new DefaultTicketRegistry();
         val manager = new DelegatedClientWebflowManager(ticketRegistry,
             new DefaultTransientSessionTicketFactory(new HardTimeoutExpirationPolicy(60)),
-            ThemeChangeInterceptor.DEFAULT_PARAM_NAME, LocaleChangeInterceptor.DEFAULT_PARAM_NAME,
+            new CasConfigurationProperties(),
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
             new DefaultArgumentExtractor(new WebApplicationServiceFactory()));
         val webContext = Pac4jUtils.getPac4jJ2EContext(mockRequest, new MockHttpServletResponse(), new J2ESessionStore());
