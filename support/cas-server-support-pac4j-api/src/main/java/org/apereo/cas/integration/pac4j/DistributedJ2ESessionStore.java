@@ -93,7 +93,7 @@ public class DistributedJ2ESessionStore extends J2ESessionStore implements HttpS
     public void handle(final TicketGrantingTicket ticketGrantingTicket) {
         val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
         val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
-        val id = getOrCreateSessionId(new J2EContext(request, response));
+        val id = getOrCreateSessionId(new J2EContext(request, response, this));
         removeSessionTicket(id);
     }
 }

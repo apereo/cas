@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
  * @since 4.1.0
  */
 @SpringBootTest(classes = {RefreshAutoConfiguration.class})
-public class ClientAuthenticationHandlerTests {
+public class DelegatedClientAuthenticationHandlerTests {
 
     private static final String CALLBACK_URL = "http://localhost:8080/callback";
     private static final String ID = "123456789";
