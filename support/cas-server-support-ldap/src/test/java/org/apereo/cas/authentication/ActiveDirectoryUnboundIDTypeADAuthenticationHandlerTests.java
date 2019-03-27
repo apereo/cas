@@ -1,12 +1,13 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.ldaptive.provider.unboundid.UnboundIDProvider;
 import org.springframework.test.context.TestPropertySource;
 
 /**
  * Unit test for {@link LdapAuthenticationHandler}.
- * This test shows that UnboundIDProvider works with the type set to AD if the dnFormat is standard DN.
- * This method doesn't required a bind DN but it requires users to all be in the same folder.
+ * This test shows that {@link UnboundIDProvider} works with the type set to <code>AD</code> if the dnFormat is a standard DN.
+ * This method doesn't required a bind DN but it requires users to all be in the same folder or organization unit.
  * This test assumes the user is logging in with the CN.
  * @author Hal Deadman
  * @since 6.1.0

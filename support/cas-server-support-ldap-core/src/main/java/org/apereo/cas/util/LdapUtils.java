@@ -783,13 +783,13 @@ public class LdapUtils {
         } else if (l.getTrustStore() != null || l.getKeystore() != null) {
             val cfg = new KeyStoreCredentialConfig();
             if (l.getTrustStore() != null) {
-                LOGGER.debug("Creating LDAP SSL configuration with truststore [{}]", l.getTrustStore());
+                LOGGER.trace("Creating LDAP SSL configuration with truststore [{}]", l.getTrustStore());
                 cfg.setTrustStore(l.getTrustStore());
                 cfg.setTrustStoreType(l.getTrustStoreType());
                 cfg.setTrustStorePassword(l.getTrustStorePassword());
             }
             if (l.getKeystore() != null) {
-                LOGGER.debug("Creating LDAP SSL configuration via keystore [{}]", l.getKeystore());
+                LOGGER.trace("Creating LDAP SSL configuration via keystore [{}]", l.getKeystore());
                 cfg.setKeyStore(l.getKeystore());
                 cfg.setKeyStorePassword(l.getKeystorePassword());
                 cfg.setKeyStoreType(l.getKeystoreType());

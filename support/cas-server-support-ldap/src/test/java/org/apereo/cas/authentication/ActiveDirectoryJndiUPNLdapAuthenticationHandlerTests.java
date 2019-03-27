@@ -1,15 +1,17 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.ldaptive.provider.jndi.JndiProvider;
+import org.ldaptive.provider.unboundid.UnboundIDProvider;
 import org.springframework.test.context.TestPropertySource;
 
 /**
  * Unit test for {@link LdapAuthenticationHandler}.
- * This test uses the JNDIProvider and type AD where the user logs in with the userPrincipalName attribute.
+ * This test uses the {@link JndiProvider} and type AD where the user logs in with the userPrincipalName attribute.
  * The userPrincipalName attribute is the format UPN_PREFIX@UPN_SUFFIX where UPN_PREFIX is the "long" username
- * and UPN_SUFFIX is a domain in the AD forest or a domain listed in upnSuffixes attribute.
+ * and UPN_SUFFIX is a domain in the Active Directory forest or a domain listed in upnSuffixes attribute.
  * UPN_PREFIX does not have to be unique but it is unique when combined with UPN_SUFFIX.
- * The UnboundIDProvider would fail this due to its DN validation.
+ * The {@link UnboundIDProvider} would fail this due to its DN validation.
  * This test currently uses no SSL or startTls due to bug JDK-8217606, turn on startTls once it is fixed.
  * @author Hal Deadman
  * @since 6.1.0

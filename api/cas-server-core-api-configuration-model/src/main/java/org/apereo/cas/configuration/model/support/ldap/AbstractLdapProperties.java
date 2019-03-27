@@ -43,7 +43,9 @@ public abstract class AbstractLdapProperties implements Serializable {
     private String keystoreType;
 
     /**
-     * Name of the truststore to use for the SSL or startTLS connection.
+     * Path to the keystore used to determine which certificates or certificate authorities should be trusted.
+     * Used when connecting to an LDAP server via LDAPS or startTLS connection.
+     * If left blank, the default truststore for the Java runtime is used.
      */
     private String trustStore;
 
@@ -53,7 +55,10 @@ public abstract class AbstractLdapProperties implements Serializable {
     private String trustStorePassword;
 
     /**
-     * Truststore type.
+     * The type of trust keystore that determines which certificates or certificate authorities are trusted.
+     * Types depend on underlying java platform, typically {@code PKCS12} or {@code JKS}.
+     * If left blank, defaults to the default keystore type indicated
+     * by the underlying Java platform.
      */
     private String trustStoreType;
 

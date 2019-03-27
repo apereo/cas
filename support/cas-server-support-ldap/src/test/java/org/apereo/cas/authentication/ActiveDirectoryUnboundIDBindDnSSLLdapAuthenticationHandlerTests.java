@@ -1,15 +1,16 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.ldaptive.provider.unboundid.UnboundIDProvider;
 import org.springframework.test.context.TestPropertySource;
 
 /**
  * Unit test for {@link LdapAuthenticationHandler}.
- * This test uses UnboundID Provider against Active Directory but it specifies the type as AUTHENTICATED.
- * The AD type requires a dnFormat and Ldaptive will try create an UnboundID DN object but some patterns
- * that AD will let you bind as (e.g. userPrincipalName@domain.name or Domain\sAMAccountName won't pass
+ * This test uses {@link UnboundIDProvider} against Active Directory but it specifies the type as <code>AUTHENTICATED</code>.
+ * The <code>AD</code> type requires a dnFormat and Ldaptive will try create an UnboundID DN object but some patterns
+ * that <code>AD</code> will let you bind as (e.g. userPrincipalName@domain.name or Domain\sAMAccountName won't pass
  * UnboundID DN validation.
- * This test validates a configuration where the user logs in with the sAMAccountName.
+ * This test validates a configuration where the user logs in with the <code>sAMAccountName</code>.
  * Referrals are turned off since search is subtree search from root.
  * @author Hal Deadman
  * @since 6.1.0
@@ -34,10 +35,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.ldap[0].trustStorePassword=changeit",
     "cas.authn.ldap[0].hostnameVerifier=DEFAULT"
     })
-
 @EnabledIfContinuousIntegration
 public class ActiveDirectoryUnboundIDBindDnSSLLdapAuthenticationHandlerTests extends BaseActiveDirectoryLdapAuthenticationHandlerTests {
 
 }
-
-

@@ -1,6 +1,18 @@
 #!/bin/bash
 
+# This script starts up a SAMBA domain controller that looks and acts very much like a Windows Active Directory
+# domain controller. In this script, only the LDAP related ports are exposed but SAMBA also supports other
+# protocols such as Kerberos that might be relevant for CAS tests.
+# This docker image used is a fork of the well documented https://github.com/Fmstrat/samba-domain.
 # This script does some things in order to work on docker for windows in msys2 bash (and maybe git bash)
+#
+# There is a section below where samba-tool is used to create users for various tests.
+# If more users are needed one can exec into the container and explore the command line options of samba-tool.
+# After running this script (so samba container running), execute the following:
+# docker exec samba bash -c "samba-tool user create --help"
+# To go into the container and explore, run:
+# docker exec -it samba /bin/bash
+# The container also contains the ldap-utils package so users could be imported via LDIF files.
 
 # Passing true as first argument will reset directory config and data
 RESET=${1:-false}
@@ -53,10 +65,10 @@ fi
 docker volume create samba_data
 docker volume create samba_conf
 
-# things might be easier if INSECURELDAP and NOCOMPLEXITY were true but this tests more paths
+# Certain things might be easier if INSECURELDAP and NOCOMPLEXITY were true but this tests more paths.
 # Having complexity enabled could be used to test handling for password change errors
-# Allowing INSECURELDAP so JndiProvider can be tested until JDK-8217606 is fixed
-# This container only exposes ldap related ports but container also does kerberos, etc
+# Currently allowing INSECURELDAP so JndiProvider can be tested until JDK-8217606 is fixed
+# This container only exposes LDAP related ports but container also does kerberos, etc
 docker run --detach \
     -e "DOMAIN=${ORG}.${DOMAIN}" \
     -e "DOMAINPASS=${DOMAINPASS}" \
@@ -81,7 +93,8 @@ docker run --detach \
 sleep 15 # Give it time to come up before we create users
 docker logs samba
 
-# if we aren't setting up brand new instance these will fail if they already exist
+# Create users that can be used by various tests (e.g. authenticiation tests, password change tests, etc.
+# If we aren't setting up brand new instance these will fail if they already exist but that is OK.
 echo Creating users for tests
 docker exec samba bash -c "samba-tool user create admin $DEFAULT_TESTUSER_PASSWORD --given-name=Joe --surname=Admin --use-username-as-cn"
 docker exec samba bash -c "samba-tool user create aburr $DEFAULT_TESTUSER_PASSWORD --given-name=Aaron --surname=Burr"
@@ -92,6 +105,7 @@ docker exec samba bash -c "samba-tool user setexpiry --days 0 expireduser"
 docker exec samba bash -c "samba-tool user disable disableduser"
 docker exec samba bash -c "samba-tool user list"
 
+# Copying certificate out of the container so it can be put in a Java certificate trust store.
 echo Putting cert in trust store for use by unit test
 docker cp samba:/etc/samba/tls/${ORG}.${DOMAIN}.crt ${ORG}.${DOMAIN}.crt
 
