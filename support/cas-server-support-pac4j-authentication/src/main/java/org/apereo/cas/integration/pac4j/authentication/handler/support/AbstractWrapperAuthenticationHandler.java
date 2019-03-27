@@ -63,15 +63,16 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
         val credentials = convertToPac4jCredentials((I) credential);
-        LOGGER.debug("credentials: [{}]", credentials);
+        LOGGER.trace("credentials: [{}]", credentials);
         try {
             val authenticator = getAuthenticator(credential);
             if (authenticator instanceof InitializableObject) {
                 ((InitializableObject) authenticator).init();
             }
-            authenticator.validate(credentials, getWebContext());
-            val profile = this.profileCreator.create(credentials, getWebContext());
-            LOGGER.debug("profile: [{}]", profile);
+            val webContext = getWebContext();
+            authenticator.validate(credentials, webContext);
+            val profile = this.profileCreator.create(credentials, webContext);
+            LOGGER.debug("Authenticated profile: [{}]", profile);
             return createResult(new ClientCredential(credentials, authenticator.getClass().getSimpleName()), profile, null);
         } catch (final Exception e) {
             LOGGER.error("Failed to validate credentials", e);
