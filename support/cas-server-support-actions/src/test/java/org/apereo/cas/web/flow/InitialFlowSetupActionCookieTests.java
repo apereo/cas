@@ -8,8 +8,9 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.login.InitialFlowSetupAction;
 import org.apereo.cas.web.support.ArgumentExtractor;
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
+import org.apereo.cas.web.support.gen.CookieGenerationContext;
+import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -53,11 +54,28 @@ public class InitialFlowSetupActionCookieTests extends AbstractWebflowActionsTes
 
     @BeforeEach
     public void initialize() throws Exception {
-        this.warnCookieGenerator = new CookieRetrievingCookieGenerator("warn", StringUtils.EMPTY, 2,
-            false, null, false);
+
+        val warn = CookieGenerationContext.builder()
+            .name("warn")
+            .path(StringUtils.EMPTY)
+            .maxAge(2)
+            .domain(null)
+            .secure(false)
+            .httpOnly(false)
+            .build();
+
+        val tgt = CookieGenerationContext.builder()
+            .name("tgt")
+            .path(StringUtils.EMPTY)
+            .maxAge(2)
+            .domain(null)
+            .secure(false)
+            .httpOnly(false)
+            .build();
+
+        this.warnCookieGenerator = new CookieRetrievingCookieGenerator(warn);
         this.warnCookieGenerator.setCookiePath(StringUtils.EMPTY);
-        this.tgtCookieGenerator = new CookieRetrievingCookieGenerator("tgt", StringUtils.EMPTY, 2,
-            false, null, false);
+        this.tgtCookieGenerator = new CookieRetrievingCookieGenerator(tgt);
         this.tgtCookieGenerator.setCookiePath(StringUtils.EMPTY);
 
         val argExtractors = Collections.<ArgumentExtractor>singletonList(new DefaultArgumentExtractor(new WebApplicationServiceFactory()));

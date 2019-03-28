@@ -1,8 +1,8 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;

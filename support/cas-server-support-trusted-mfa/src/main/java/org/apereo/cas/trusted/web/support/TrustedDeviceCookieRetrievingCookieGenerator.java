@@ -1,7 +1,8 @@
 package org.apereo.cas.trusted.web.support;
 
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
-import org.apereo.cas.web.support.CookieValueManager;
+import org.apereo.cas.web.support.gen.CookieGenerationContext;
+import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.support.mgmr.CookieValueManager;
 
 /**
  * {@link CookieRetrievingCookieGenerator} for trusted device cookies.
@@ -12,10 +13,12 @@ import org.apereo.cas.web.support.CookieValueManager;
 public class TrustedDeviceCookieRetrievingCookieGenerator extends CookieRetrievingCookieGenerator {
     private static final long serialVersionUID = 3555244208199798618L;
 
-    public TrustedDeviceCookieRetrievingCookieGenerator(final String name, final String path, final int maxAge,
-                                                        final boolean secure, final String domain,
-                                                        final boolean httpOnly,
-                                                        final CookieValueManager cookieValueManager) {
-        super(name, path, maxAge, secure, domain, httpOnly, cookieValueManager);
+    public TrustedDeviceCookieRetrievingCookieGenerator(final CookieGenerationContext context) {
+        super(context);
+    }
+
+    public TrustedDeviceCookieRetrievingCookieGenerator(final CookieGenerationContext context,
+                                                        final CookieValueManager casCookieValueManager) {
+        super(context, casCookieValueManager);
     }
 }

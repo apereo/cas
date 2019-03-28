@@ -16,7 +16,7 @@ import org.apereo.cas.support.wsfederation.authentication.handler.support.WsFede
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredentialsToPrincipalResolver;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieCipherExecutor;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieGenerator;
-import org.apereo.cas.web.support.DefaultCasCookieValueManager;
+import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
