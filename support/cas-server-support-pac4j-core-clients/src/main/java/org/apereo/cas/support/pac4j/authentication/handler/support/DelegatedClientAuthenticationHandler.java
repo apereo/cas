@@ -60,10 +60,10 @@ public class DelegatedClientAuthenticationHandler extends AbstractPac4jAuthentic
             LOGGER.debug("Located client credentials as [{}]", clientCredentials);
 
             val credentials = clientCredentials.getCredentials();
-            LOGGER.debug("Client name: [{}]", clientCredentials.getClientName());
+            LOGGER.trace("Client name: [{}]", clientCredentials.getClientName());
 
             val client = (BaseClient) this.clients.findClient(clientCredentials.getClientName());
-            LOGGER.debug("Delegated client is: [{}]", client);
+            LOGGER.trace("Delegated client is: [{}]", client);
 
             if (client == null) {
                 throw new IllegalArgumentException("Unable to determine client based on client name " + clientCredentials.getClientName());
@@ -73,7 +73,10 @@ public class DelegatedClientAuthenticationHandler extends AbstractPac4jAuthentic
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext();
             val webContext = Pac4jUtils.getPac4jJ2EContext(request, response, this.sessionStore);
 
-            val userProfile = client.getUserProfile(credentials, webContext);
+            var userProfile = clientCredentials.getUserProfile();
+            if (userProfile == null) {
+                userProfile = client.getUserProfile(credentials, webContext);
+            }
             LOGGER.debug("Final user profile is: [{}]", userProfile);
             return createResult(clientCredentials, userProfile, client);
         } catch (final HttpAction e) {
