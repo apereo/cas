@@ -28,6 +28,7 @@ echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
 ./ci/tests/ldap/run-ldap-server.sh
+./ci/tests/ldap/run-ad-server.sh true
 
 gradleBuild="$gradleBuild testLdap jacocoRootReport -x test -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \

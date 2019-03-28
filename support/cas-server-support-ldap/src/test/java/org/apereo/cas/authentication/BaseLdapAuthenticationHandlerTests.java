@@ -30,6 +30,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import javax.security.auth.login.FailedLoginException;
+import java.util.Arrays;
 import java.util.Collection;
 
 import static org.apereo.cas.util.junit.Assertions.*;
@@ -73,7 +74,7 @@ public abstract class BaseLdapAuthenticationHandlerTests {
     public void verifyAuthenticateFailure() throws Throwable {
         assertNotEquals(handler.size(), 0);
         assertThrowsWithRootCause(UncheckedException.class, FailedLoginException.class,
-            () -> this.handler.forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("admin", "bad")))));
+            () -> this.handler.forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential(getUsername(), getFailurePassword())))));
     }
 
     @Test
@@ -81,14 +82,28 @@ public abstract class BaseLdapAuthenticationHandlerTests {
         assertNotEquals(handler.size(), 0);
 
         this.handler.forEach(Unchecked.consumer(h -> {
-            val credential = new UsernamePasswordCredential("admin", "password");
+            val credential = new UsernamePasswordCredential(getUsername(), getSuccessPassword());
             val result = h.authenticate(credential);
             assertNotNull(result.getPrincipal());
             assertEquals(credential.getUsername(), result.getPrincipal().getId());
             val attributes = result.getPrincipal().getAttributes();
-            assertTrue(attributes.containsKey("cn"));
-            assertTrue(attributes.containsKey("description"));
+            Arrays.stream(getPrincipalAttributes()).forEach(s -> assertTrue(attributes.containsKey(s)));
         }));
+    }
 
+    String[] getPrincipalAttributes() {
+        return new String[] {"cn", "description"};
+    }
+
+    String getUsername() {
+        return "admin";
+    }
+
+    String getSuccessPassword() {
+        return "password";
+    }
+
+    String getFailurePassword() {
+        return "bad";
     }
 }
