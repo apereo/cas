@@ -16,7 +16,7 @@ import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
 import org.apereo.cas.ticket.OAuthTokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;

@@ -1,7 +1,12 @@
 package org.apereo.cas.web.support;
 
+import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
+import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookieProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.web.support.gen.CookieGenerationContext;
+import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 
 import lombok.NoArgsConstructor;
 import lombok.val;
@@ -54,5 +59,37 @@ public class CookieUtils {
             return Optional.empty();
         }
         return Arrays.stream(cookies).filter(c -> c.getName().equalsIgnoreCase(cookieName)).findFirst();
+    }
+
+    /**
+     * Build cookie generation context.
+     *
+     * @param cookie the cookie
+     * @return the cookie generation context
+     */
+    public static CookieGenerationContext buildCookieGenerationContext(final CookieProperties cookie) {
+        return buildCookieGenerationContextBuilder(cookie).build();
+    }
+
+    /**
+     * Build cookie generation context cookie.
+     *
+     * @param cookie the cookie
+     * @return the cookie generation context
+     */
+    public static CookieGenerationContext buildCookieGenerationContext(final TicketGrantingCookieProperties cookie) {
+        val rememberMeMaxAge = (int) Beans.newDuration(cookie.getRememberMeMaxAge()).getSeconds();
+        val builder = buildCookieGenerationContextBuilder(cookie);
+        return builder.rememberMeMaxAge(rememberMeMaxAge).build();
+    }
+
+    private static CookieGenerationContext.CookieGenerationContextBuilder buildCookieGenerationContextBuilder(final CookieProperties cookie) {
+        return CookieGenerationContext.builder()
+            .name(cookie.getName())
+            .path(cookie.getPath())
+            .maxAge(cookie.getMaxAge())
+            .secure(cookie.isSecure())
+            .domain(cookie.getDomain())
+            .httpOnly(cookie.isHttpOnly());
     }
 }

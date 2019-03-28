@@ -5,8 +5,8 @@ import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
 import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -37,15 +37,25 @@ public class TerminateSessionAction extends AbstractAction {
      */
     public static final String REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED = "LogoutRequestConfirmed";
 
-    /** The event factory. */
+    /**
+     * The event factory.
+     */
     protected final EventFactorySupport eventFactorySupport = new EventFactorySupport();
-    /** The authentication service. */
+    /**
+     * The authentication service.
+     */
     protected final CentralAuthenticationService centralAuthenticationService;
-    /** The TGT cookie generator. */
+    /**
+     * The TGT cookie generator.
+     */
     protected final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
-    /** The warn cookie generator. */
+    /**
+     * The warn cookie generator.
+     */
     protected final CookieRetrievingCookieGenerator warnCookieGenerator;
-    /** The logout properties. */
+    /**
+     * The logout properties.
+     */
     protected final LogoutProperties logoutProperties;
 
     /**
