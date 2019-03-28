@@ -1086,6 +1086,9 @@ The following  options apply  to features that integrate with an LDAP server (i.
 #${configurationKey}.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
 #${configurationKey}.connectTimeout=PT5S
 #${configurationKey}.trustCertificates=
+#${configurationKey}.trustStore=
+#${configurationKey}.trustStorePassword=
+#${configurationKey}.trustStoreType=JKS|JCEKS|PKCS12
 #${configurationKey}.keystore=
 #${configurationKey}.keystorePassword=
 #${configurationKey}.keystoreType=JKS|JCEKS|PKCS12
