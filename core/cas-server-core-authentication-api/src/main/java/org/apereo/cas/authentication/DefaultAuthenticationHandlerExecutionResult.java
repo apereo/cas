@@ -67,7 +67,7 @@ public class DefaultAuthenticationHandlerExecutionResult implements Authenticati
 
 
     public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final CredentialMetaData metaData,
-                                                       final List<MessageDescriptor> warnings) {
+                                                       final  @NonNull List<MessageDescriptor> warnings) {
         this(source, metaData, null, warnings);
     }
 
