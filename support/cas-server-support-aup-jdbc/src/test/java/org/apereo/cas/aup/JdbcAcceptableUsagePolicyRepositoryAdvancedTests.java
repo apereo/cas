@@ -5,6 +5,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -76,7 +77,8 @@ public class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAc
     
     @Test
     public void raiseEmptyPrincipalAttributeError() {
-        val exception = assertThrows(IllegalStateException.class, () -> raiseException(CollectionUtils.wrap("aupAccepted", "false", "email", "")));
+        val exception = assertThrows(IllegalStateException.class,
+            () -> raiseException(CollectionUtils.wrap("aupAccepted", "false", "email", StringUtils.EMPTY)));
         assertTrue(exception.getMessage().contains("empty or multi-valued with an empty element"));
     }
     

@@ -17,7 +17,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.params.provider.Arguments.*;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 
 /**
@@ -31,9 +31,7 @@ public class ResourceCRLRevocationCheckerTests extends BaseCRLRevocationCheckerT
     @ParameterizedTest
     @MethodSource("getTestParameters")
     public void checkCertificate(final ResourceCRLRevocationChecker checker, final String[] certFiles, final GeneralSecurityException expected) {
-
         checker.init();
-
         super.checkCertificate(checker, certFiles, expected);
     }
 
@@ -46,8 +44,10 @@ public class ResourceCRLRevocationCheckerTests extends BaseCRLRevocationCheckerT
         val zeroThresholdPolicy = new ThresholdExpiredCRLRevocationPolicy(0);
 
         return Stream.of(
-            // Test case #1
-            // Valid certificate on valid CRL data
+            /*
+             * Test case #1
+             * Valid certificate on valid CRL data
+             */
             arguments(
                 new ResourceCRLRevocationChecker(new ClassPathResource[]{
                     new ClassPathResource("userCA-valid.crl"),
@@ -56,8 +56,10 @@ public class ResourceCRLRevocationCheckerTests extends BaseCRLRevocationCheckerT
                 null
             ),
 
-            // Test case #2
-            // Revoked certificate on valid CRL data
+            /*
+             * Test case #2
+             * Revoked certificate on valid CRL data
+             */
             arguments(
                 new ResourceCRLRevocationChecker(new ClassPathResource[]{
                     new ClassPathResource("userCA-valid.crl"),
@@ -68,8 +70,10 @@ public class ResourceCRLRevocationCheckerTests extends BaseCRLRevocationCheckerT
                 new RevokedCertificateException(ZonedDateTime.now(ZoneOffset.UTC), new BigInteger("1"))
             ),
 
-            // Test case #3
-            // Valid certificate on expired CRL data for head cert
+            /*
+             * Test case #3
+             * Valid certificate on expired CRL data for head cert
+             */
             arguments(
                 new ResourceCRLRevocationChecker(new ClassPathResource[]{
                     new ClassPathResource("userCA-expired.crl"),
@@ -80,8 +84,9 @@ public class ResourceCRLRevocationCheckerTests extends BaseCRLRevocationCheckerT
                 new ExpiredCRLException("test", ZonedDateTime.now(ZoneOffset.UTC))
             ),
 
-            // Test case #4
-            // Valid certificate on expired CRL data for intermediate cert
+            /*
+             * Test case #4: Valid certificate on expired CRL data for intermediate cert
+             */
             arguments(
                 new ResourceCRLRevocationChecker(new ClassPathResource[]{
                     new ClassPathResource("userCA-valid.crl"),
@@ -92,9 +97,11 @@ public class ResourceCRLRevocationCheckerTests extends BaseCRLRevocationCheckerT
                 new ExpiredCRLException("test", ZonedDateTime.now(ZoneOffset.UTC))
             ),
 
-            // Test case #5
-            // Valid certificate on expired CRL data with custom expiration
-            // policy to always allow expired CRL data
+            /*
+             * Test case #5
+             * Valid certificate on expired CRL data with custom expiration
+             * policy to always allow expired CRL data
+             */
             arguments(
                 new ResourceCRLRevocationChecker(new ClassPathResource[]{
                     new ClassPathResource("userCA-expired.crl"),

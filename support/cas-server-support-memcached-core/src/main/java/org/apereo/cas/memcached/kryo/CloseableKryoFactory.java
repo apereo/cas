@@ -170,7 +170,10 @@ public class CloseableKryoFactory implements KryoFactory {
         kryo.register(Collections.EMPTY_MAP.getClass(), new CollectionsEmptyMapSerializer());
         kryo.register(Collections.EMPTY_SET.getClass(), new CollectionsEmptySetSerializer());
 
-        // Can't directly access Collections classes (private class), so instantiate one and do a getClass().
+        /*
+         * Can't directly access Collections classes (private class),
+         * so instantiate one and do a getClass().
+         */
         val singletonSet = Collections.singleton("key");
         kryo.register(singletonSet.getClass());
 

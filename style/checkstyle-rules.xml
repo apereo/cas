@@ -375,6 +375,14 @@
         </module>
 
         <module name="RegexpSinglelineJava">
+            <property name="id" value="codeTagJavadocs"/>
+            <metadata name="net.sf.eclipsecs.core.comment" value="Consider using {@code} Javadoc instead"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="&lt;code&gt;"/>
+            <property name="message" value="Consider using '{'@code'}' tag when wrapping code elements in Javadocs"/>
+        </module>
+
+        <module name="RegexpSinglelineJava">
             <property name="id" value="tests-suite-classname"/>
             <metadata name="net.sf.eclipsecs.core.comment" value="Name the test suite class consistently to match the CAS codebase"/>
             <property name="severity" value="error"/>
@@ -414,7 +422,7 @@
             <property name="severity" value="error"/>
             <property name="format" value="Collections\.unmodifiable(List|Set|Map)"/>
             <property name="message"
-                      value="Returning an unmodifiable collection is specially problematic for serialization tasks. To avoid future side effects try using an empty collection of size zero instead"/>
+                      value="Returning an unmodifiable collection is problematic for serialization. Try using an empty collection, of size zero, instead"/>
         </module>
 
         <module name="RegexpSinglelineJava">
@@ -427,13 +435,29 @@
         </module>
 
         <module name="RegexpSinglelineJava">
+            <property name="id" value="singlelineComment"/>
+            <metadata name="net.sf.eclipsecs.core.comment" value="Convert single-line comments into Javadocs"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="//\s+.*"/>
+            <property name="message" value="Avoid single-line comments. Turn notes and explanations into public javadocs. "/>
+        </module>
+
+        <module name="RegexpSinglelineJava">
             <metadata name="net.sf.eclipsecs.core.comment" value="Parameteric log messages"/>
             <property name="severity" value="error"/>
             <property name="format" value="log\.\w+\(((\&quot;.+\&quot;\s*\+)|(.*\s*\+\s*\&quot;))"/>
             <property name="message"
                       value="Avoid string concatenation for constructing log messages. Use parametric messages instead"/>
         </module>
-        
+
+        <module name="RegexpSinglelineJava">
+            <metadata name="net.sf.eclipsecs.core.comment" value="Emoty String constants"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="(?&lt;!\\)&quot;(?&lt;!\\)&quot;"/>
+            <property name="message" value="Consider using StringUtils.EMPTY instead"/>
+        </module>
+
+
         <module name="RegexpSinglelineJava">
             <metadata name="net.sf.eclipsecs.core.comment" value="JavaDoc @version tag"/>
             <property name="severity" value="error"/>

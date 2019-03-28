@@ -59,10 +59,10 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
                                            final int rememberMeMaxAge, final boolean httpOnly) {
         super.setCookieName(name);
         super.setCookiePath(path);
-        this.setCookieDomain(domain);
         super.setCookieMaxAge(maxAge);
         super.setCookieSecure(secure);
         super.setCookieHttpOnly(httpOnly);
+        this.setCookieDomain(domain);
         this.casCookieValueManager = casCookieValueManager;
         this.rememberMeMaxAge = rememberMeMaxAge;
     }

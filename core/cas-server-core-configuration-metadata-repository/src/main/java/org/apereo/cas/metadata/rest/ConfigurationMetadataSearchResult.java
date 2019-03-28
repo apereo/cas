@@ -78,7 +78,7 @@ public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProp
 
     private static String cleanUpDescription(final String propDescription) {
         var description = propDescription;
-        val format = "<code>%s</code>";
+        val format = "<pre>%s</pre>";
         if (StringUtils.isNotBlank(description)) {
             var matcher = PATTERN_DESCRIPTION_CODE.matcher(description);
             if (matcher.find()) {

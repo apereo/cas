@@ -27,6 +27,13 @@ public class TicketGrantingCookieProperties extends CookieProperties {
     private String rememberMeMaxAge = "P14D";
 
     /**
+     * Decide if cookie paths should be automatically configured
+     * based on the application context path, when the cookie
+     * path is not configured.
+     */
+    private boolean autoConfigureCookiePath = true;
+
+    /**
      * Crypto settings that determine how the cookie should be signed and encrypted.
      */
     @NestedConfigurationProperty

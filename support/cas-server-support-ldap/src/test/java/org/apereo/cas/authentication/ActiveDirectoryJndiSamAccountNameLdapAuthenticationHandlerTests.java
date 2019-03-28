@@ -9,11 +9,11 @@ import org.springframework.test.context.TestPropertySource;
  * Unit test for {@link LdapAuthenticationHandler}.
  * This test demonstrates using the AD type with the {@link JndiProvider}.
  * Using the Ldaptive {@link UnboundIDProvider} would fail because the name doesn't validate as a DN.
- * Login name is <code>sAMAccountName</code> (aka "short" windows login name), bind as DOMAIN\USERNAME.
+ * Login name is {@code sAMAccountName} (aka "short" windows login name), bind as DOMAIN\USERNAME.
  * This allows for a dnFormat that the UnboundID provider would not allow since it is not a valid DN.
  * Issues:
  *  - This configuration doesn't retrieve any attributes as part of the authentication.
- *  - If the pool passivator is <code>CLOSE</code>, and the both success and failure tests run, the failure test will
+ *  - If the pool passivator is {@code CLOSE}, and the both success and failure tests run, the failure test will
  *      fail with wrong exception type. If multiple success tests are added, every other test will fail.
  *  - No SSL or startTls due to JDK-8217606 which currently impacts {@link JndiProvider}
  * @author Hal Deadman

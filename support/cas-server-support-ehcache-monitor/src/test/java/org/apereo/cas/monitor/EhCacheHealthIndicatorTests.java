@@ -58,7 +58,10 @@ public class EhCacheHealthIndicatorTests {
         var status = monitor.health();
         assertEquals(Status.UP, status.getStatus());
 
-        // Fill cache 95% full, which is above 10% free WARN threshold
+        /*
+         * Fill cache 95% full, which is
+         * above 10% free WARN threshold
+         */
         IntStream.range(0, 95)
             .forEach(i -> this.ticketRegistry.addTicket(new MockServiceTicket("T" + i, RegisteredServiceTestUtils.getService(),
                 new MockTicketGrantingTicket("test"))));
@@ -66,7 +69,10 @@ public class EhCacheHealthIndicatorTests {
         status = monitor.health();
         assertEquals(Status.OUT_OF_SERVICE, status.getStatus());
 
-        // Exceed the capacity and force evictions which should report WARN status
+        /*
+         * Exceed the capacity and force evictions
+         * which should report WARN status
+         */
         IntStream.range(95, 110).forEach(i -> {
             val st = new MockServiceTicket("T" + i, RegisteredServiceTestUtils.getService(),
                 new MockTicketGrantingTicket("test"));

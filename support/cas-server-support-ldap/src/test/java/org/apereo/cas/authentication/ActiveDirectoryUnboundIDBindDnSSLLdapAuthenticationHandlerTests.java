@@ -6,11 +6,11 @@ import org.springframework.test.context.TestPropertySource;
 
 /**
  * Unit test for {@link LdapAuthenticationHandler}.
- * This test uses {@link UnboundIDProvider} against Active Directory but it specifies the type as <code>AUTHENTICATED</code>.
- * The <code>AD</code> type requires a dnFormat and Ldaptive will try create an UnboundID DN object but some patterns
- * that <code>AD</code> will let you bind as (e.g. userPrincipalName@domain.name or Domain\sAMAccountName won't pass
+ * This test uses {@link UnboundIDProvider} against Active Directory but it specifies the type as {@code AUTHENTICATED}.
+ * The {@code AD} type requires a dnFormat and Ldaptive will try create an UnboundID DN object but some patterns
+ * that {@code AD} will let you bind as (e.g. userPrincipalName@domain.name or Domain\sAMAccountName won't pass
  * UnboundID DN validation.
- * This test validates a configuration where the user logs in with the <code>sAMAccountName</code>.
+ * This test validates a configuration where the user logs in with the {@code sAMAccountName}.
  * Referrals are turned off since search is subtree search from root.
  * @author Hal Deadman
  * @since 6.1.0

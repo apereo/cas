@@ -18,8 +18,8 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.stream.Stream;
 
-import static org.apereo.cas.util.junit.Assertions.*;
-import static org.junit.jupiter.params.provider.Arguments.*;
+import static org.apereo.cas.util.junit.Assertions.assertThrowsOrNot;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 /**
  * Unit test for {@link ThresholdExpiredCRLRevocationPolicy} class.
@@ -42,24 +42,27 @@ public class ThresholdExpiredCRLRevocationPolicyTests {
         val issuer = new X500Principal("CN=CAS");
 
         return Stream.of(
-            // Test case #1
-            // Expect expired for zero leniency on CRL expiring 1ms ago
+            /* Test case #1
+             * Expect expired for zero leniency on CRL expiring 1ms ago
+             */
             arguments(
                 new ThresholdExpiredCRLRevocationPolicy(0),
                 new MockX509CRL(issuer, DateTimeUtils.dateOf(oneHourAgo), DateTimeUtils.dateOf(now.minusSeconds(1))),
                 new ExpiredCRLException("CN=CAS", ZonedDateTime.now(ZoneOffset.UTC))
             ),
 
-            // Test case #2
-            // Expect expired for 1h leniency on CRL expired 1 hour 1ms ago
+            /* Test case #2
+             * Expect expired for 1h leniency on CRL expired 1 hour 1ms ago
+             */
             arguments(
                 new ThresholdExpiredCRLRevocationPolicy(3600),
                 new MockX509CRL(issuer, DateTimeUtils.dateOf(twoHoursAgo), DateTimeUtils.dateOf(oneHourAgo.minusSeconds(1))),
                 new ExpiredCRLException("CN=CAS", ZonedDateTime.now(ZoneOffset.UTC))
             ),
 
-            // Test case #3
-            // Expect valid for 1h leniency on CRL expired 30m ago
+            /* Test case #3
+             * Expect valid for 1h leniency on CRL expired 30m ago
+             */
             arguments(
                 new ThresholdExpiredCRLRevocationPolicy(3600),
                 new MockX509CRL(issuer, DateTimeUtils.dateOf(twoHoursAgo), DateTimeUtils.dateOf(halfHourAgo)),

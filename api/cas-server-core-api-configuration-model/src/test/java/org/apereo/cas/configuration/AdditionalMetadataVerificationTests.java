@@ -56,7 +56,7 @@ public class AdditionalMetadataVerificationTests {
             if (deprecation != null && StringUtils.isNotBlank(deprecation.getReplacement())) {
                 ConfigurationPropertyName.of(deprecation.getReplacement());
                 if (deprecation.getReplacement().endsWith("[0]")) {
-                    // array references may work, but not at the end
+                    /* array references may work, but not at the end. */
                     fail("Deprecation replacement should not end in [0].");
                 }
             }

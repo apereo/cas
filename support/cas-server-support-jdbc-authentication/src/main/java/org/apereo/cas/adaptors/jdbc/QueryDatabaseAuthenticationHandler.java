@@ -87,8 +87,10 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
             val dbFields = query(credential);
             if (dbFields.containsKey(this.fieldPassword)) {
                 val dbPassword = (String) dbFields.get(this.fieldPassword);
-                if ((StringUtils.isNotBlank(originalPassword) && !matches(originalPassword, dbPassword))
-                    || (StringUtils.isBlank(originalPassword) && !StringUtils.equals(password, dbPassword))) {
+
+                val originalPasswordMatchFails = StringUtils.isNotBlank(originalPassword) && !matches(originalPassword, dbPassword);
+                val originalPasswordEquals = StringUtils.isBlank(originalPassword) && !StringUtils.equals(password, dbPassword);
+                if (originalPasswordMatchFails || originalPasswordEquals) {
                     throw new FailedLoginException("Password does not match value on record.");
                 }
             } else {

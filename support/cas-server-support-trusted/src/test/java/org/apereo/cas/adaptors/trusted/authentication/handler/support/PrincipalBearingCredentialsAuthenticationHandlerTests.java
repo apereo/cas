@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class PrincipalBearingCredentialsAuthenticationHandlerTests {
 
     private final PrincipalBearingCredentialsAuthenticationHandler handler =
-        new PrincipalBearingCredentialsAuthenticationHandler("", null,
+        new PrincipalBearingCredentialsAuthenticationHandler(StringUtils.EMPTY, null,
             PrincipalFactoryUtils.newPrincipalFactory(), null);
 
     /**

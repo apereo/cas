@@ -153,7 +153,10 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
         when(tgtMock.getProxiedBy()).thenReturn(getService("proxiedBy"));
 
         val authnListMock = mock(List.class);
-        // Size is required to be 2, so that we can simulate proxying capabilities
+        /*
+         * Size is required to be 2, so that
+         * we can simulate proxying capabilities
+         */
         when(authnListMock.size()).thenReturn(2);
         when(authnListMock.toArray()).thenReturn(new Object[]{this.authentication, this.authentication});
         when(authnListMock.get(anyInt())).thenReturn(this.authentication);

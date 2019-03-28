@@ -119,12 +119,11 @@ public class MockX509CRL extends X509CRL {
 
     @Override
     public void verify(final PublicKey key) {
-        // Do nothing to indicate valid signature
+
     }
 
     @Override
     public void verify(final PublicKey key, final String sigProvider) {
-        // Do nothing to indicate valid signature
     }
 
     /**

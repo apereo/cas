@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.handler.support.jaas.JaasAuthenticationHand
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
@@ -39,7 +40,7 @@ public class JaasAuthenticationHandlerSystemConfigurationTests {
         }
         if (fileName.exists()) {
             System.setProperty("java.security.auth.login.config", '=' + fileName.getCanonicalPath());
-            handler = new JaasAuthenticationHandler("", null, null, null);
+            handler = new JaasAuthenticationHandler(StringUtils.EMPTY, null, null, null);
         }
     }
 

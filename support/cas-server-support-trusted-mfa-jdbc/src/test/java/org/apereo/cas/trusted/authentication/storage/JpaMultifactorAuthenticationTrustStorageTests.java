@@ -57,13 +57,12 @@ public class JpaMultifactorAuthenticationTrustStorageTests {
 
     @Test
     public void verifyExpireByKey() {
-        // create 2 records
+
         mfaTrustEngine.set(MultifactorAuthenticationTrustRecord.newInstance(PRINCIPAL, GEOGRAPHY, DEVICE_FINGERPRINT));
         mfaTrustEngine.set(MultifactorAuthenticationTrustRecord.newInstance(PRINCIPAL, GEOGRAPHY, DEVICE_FINGERPRINT));
         val records = mfaTrustEngine.get(PRINCIPAL);
         assertEquals(2, records.size());
 
-        // expire 1 of the records
         mfaTrustEngine.expire(records.stream().findFirst().orElseThrow().getRecordKey());
         assertEquals(1, mfaTrustEngine.get(PRINCIPAL).size());
     }
@@ -81,7 +80,6 @@ public class JpaMultifactorAuthenticationTrustStorageTests {
         assertEquals(6, mfaTrustEngine.get(LocalDateTime.now().minusDays(30)).size());
         assertEquals(2, mfaTrustEngine.get(LocalDateTime.now().minusSeconds(1)).size());
 
-        // expire records older than today
         mfaTrustEngine.expire(LocalDateTime.now().minusDays(1));
         assertEquals(2, mfaTrustEngine.get(LocalDateTime.now().minusDays(30)).size());
         assertEquals(2, mfaTrustEngine.get(LocalDateTime.now().minusSeconds(1)).size());
@@ -89,9 +87,7 @@ public class JpaMultifactorAuthenticationTrustStorageTests {
 
     @Test
     public void verifyStoreAndRetrieve() {
-        // create record
-        val original =
-            MultifactorAuthenticationTrustRecord.newInstance(PRINCIPAL, GEOGRAPHY, DEVICE_FINGERPRINT);
+        val original = MultifactorAuthenticationTrustRecord.newInstance(PRINCIPAL, GEOGRAPHY, DEVICE_FINGERPRINT);
         mfaTrustEngine.set(original);
         val records = mfaTrustEngine.get(PRINCIPAL);
         assertEquals(1, records.size());

@@ -23,6 +23,8 @@ import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultCasConfigurationPropertiesSourceLocator}.
+ * <p>
+ * Note: The order of the elements in {@link #EXTENSIONS} is important, last one overrides previous ones.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
@@ -30,7 +32,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfigurationPropertiesSourceLocator {
-    // The order of the elements in these constants is important, last one overrides previous ones
     private static final List<String> EXTENSIONS = Arrays.asList("properties", "yml", "yaml");
     private static final List<String> PROFILE_PATTERNS = Arrays.asList("application-%s.%s", "%s.%s");
 

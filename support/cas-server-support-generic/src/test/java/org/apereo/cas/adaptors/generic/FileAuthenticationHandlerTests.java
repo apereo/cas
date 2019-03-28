@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
@@ -28,7 +29,7 @@ public class FileAuthenticationHandlerTests {
 
     @BeforeEach
     public void initialize() {
-        this.authenticationHandler = new FileAuthenticationHandler("", null, null, new ClassPathResource("authentication.txt"),
+        this.authenticationHandler = new FileAuthenticationHandler(StringUtils.EMPTY, null, null, new ClassPathResource("authentication.txt"),
             FileAuthenticationHandler.DEFAULT_SEPARATOR);
         val p = new PasswordEncoderProperties();
         p.setType(PasswordEncoderProperties.PasswordEncoderTypes.DEFAULT.name());
@@ -112,7 +113,7 @@ public class FileAuthenticationHandlerTests {
     @Test
     public void verifyAuthenticatesUserInFileWithCommaSeparator() throws Exception {
         val c = new UsernamePasswordCredential();
-        this.authenticationHandler = new FileAuthenticationHandler("", null, null, new ClassPathResource("authentication2.txt"), ",");
+        this.authenticationHandler = new FileAuthenticationHandler(StringUtils.EMPTY, null, null, new ClassPathResource("authentication2.txt"), ",");
         c.setUsername("scott");
         c.setPassword("rutgers");
         assertNotNull(this.authenticationHandler.authenticate(c));
@@ -122,7 +123,8 @@ public class FileAuthenticationHandlerTests {
     public void verifyFailsUserNotInFileWithCommaSeparator() throws Exception {
         val c = new UsernamePasswordCredential();
 
-        this.authenticationHandler = new FileAuthenticationHandler("", null, null, new ClassPathResource("authentication2.txt"), ",");
+        this.authenticationHandler = new FileAuthenticationHandler(StringUtils.EMPTY, null, null,
+            new ClassPathResource("authentication2.txt"), ",");
         c.setUsername("fds");
         c.setPassword("rutgers");
         assertThrows(AccountNotFoundException.class, () -> {
@@ -133,7 +135,8 @@ public class FileAuthenticationHandlerTests {
     @Test
     public void verifyFailsGoodUsernameBadPassword() {
         val c = new UsernamePasswordCredential();
-        this.authenticationHandler = new FileAuthenticationHandler("", null, null, new ClassPathResource("authentication2.txt"), ",");
+        this.authenticationHandler = new FileAuthenticationHandler(StringUtils.EMPTY, null, null,
+            new ClassPathResource("authentication2.txt"), ",");
 
         c.setUsername("scott");
         c.setPassword("rutgers1");
@@ -144,7 +147,8 @@ public class FileAuthenticationHandlerTests {
     @Test
     public void verifyAuthenticateNoFileName() {
         val c = new UsernamePasswordCredential();
-        this.authenticationHandler = new FileAuthenticationHandler("", null, null, new ClassPathResource("fff"), FileAuthenticationHandler.DEFAULT_SEPARATOR);
+        this.authenticationHandler = new FileAuthenticationHandler(StringUtils.EMPTY, null, null,
+            new ClassPathResource("fff"), FileAuthenticationHandler.DEFAULT_SEPARATOR);
 
         c.setUsername("scott");
         c.setPassword("rutgers");

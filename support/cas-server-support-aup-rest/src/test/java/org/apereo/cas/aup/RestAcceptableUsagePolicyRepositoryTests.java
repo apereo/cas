@@ -6,6 +6,7 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.MockWebServer;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ByteArrayResource;
@@ -36,7 +37,7 @@ public class RestAcceptableUsagePolicyRepositoryTests {
         props.setUrl("http://localhost:9298");
         val r = new RestAcceptableUsagePolicyRepository(ticketRegistrySupport, "givenName", props);
 
-        val data = "";
+        val data = StringUtils.EMPTY;
         try (val webServer = new MockWebServer(9298,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();

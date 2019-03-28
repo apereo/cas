@@ -36,6 +36,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -102,7 +103,7 @@ public class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthen
     @Override
     @Test
     public void verifyList() {
-        var data = "";
+        var data = StringUtils.EMPTY;
         try {
             data = MAPPER.writeValueAsString(CollectionUtils.wrapList("casuser", "otheruser"));
         } catch (final JsonProcessingException e) {
@@ -122,7 +123,7 @@ public class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthen
     @Override
     @Test
     public void verifyProxying() {
-        var data = "";
+        var data = StringUtils.EMPTY;
         try {
             data = MAPPER.writeValueAsString(CollectionUtils.wrapList("casuser", "otheruser"));
         } catch (final JsonProcessingException e) {
@@ -139,7 +140,10 @@ public class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthen
             val result = surrogateService.canAuthenticateAs("cassurrogate",
                 CoreAuthenticationTestUtils.getPrincipal("casuser"),
                 CoreAuthenticationTestUtils.getService());
-            // Can't use super() until the REST classes are completely refactored and don't need an actual server to connect to.
+            /*
+             * Can't use super() until the REST classes are
+             * completely refactored and don't need an actual server to connect to.
+             */
             assertTrue(result);
         } catch (final Exception e) {
             throw new AssertionError(e.getMessage(), e);

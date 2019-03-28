@@ -21,6 +21,7 @@ import com.esotericsoftware.kryo.KryoException;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -89,7 +90,7 @@ public class CasKryoTranscoderTests {
         bldr.addCredential(new BasicCredentialMetaData(userPassCredential));
         bldr.addFailure("error", new AccountNotFoundException());
         bldr.addSuccess("authn", new DefaultAuthenticationHandlerExecutionResult(
-            new AcceptUsersAuthenticationHandler(""),
+            new AcceptUsersAuthenticationHandler(StringUtils.EMPTY),
             new BasicCredentialMetaData(userPassCredential)));
 
         val authentication = bldr.build();

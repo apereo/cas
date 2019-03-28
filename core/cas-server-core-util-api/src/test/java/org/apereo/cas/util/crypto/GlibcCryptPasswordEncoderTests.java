@@ -47,13 +47,13 @@ public class GlibcCryptPasswordEncoderTests {
 
     private boolean testEncodingRoundtrip(final String algorithm) {
         val encoder = new GlibcCryptPasswordEncoder(algorithm, 0, null);
-        // Encode
+
         val passwordHash = encoder.encode(PASSWORD_CLEAR);
         LOGGER.debug("Password [{}] was encoded by algorithm [{}] to hash [{}]", PASSWORD_CLEAR, algorithm, passwordHash);
-        // Match
+
         val match = encoder.matches(PASSWORD_CLEAR, passwordHash);
         LOGGER.debug("Does password [{}] match original password [{}]: {}", passwordHash, PASSWORD_CLEAR, match);
-        // Check
+
         return match;
     }
 

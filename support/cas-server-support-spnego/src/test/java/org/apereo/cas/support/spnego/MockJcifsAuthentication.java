@@ -30,6 +30,5 @@ public class MockJcifsAuthentication extends Authentication {
 
     @Override
     public void process(final byte[] arg0) {
-        // empty
     }
 }

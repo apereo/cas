@@ -94,7 +94,6 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
 
     @Test
     public void verifyGetWithDecodedSecret() throws Exception {
-        // given
         when(cipherExecutor.encode(PLAIN_SECRET)).thenReturn("abc321");
         when(cipherExecutor.decode("abc321")).thenReturn(PLAIN_SECRET);
         val repo = getRegistry("verifyGetWithDecodedSecret");
@@ -102,10 +101,8 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         acct.setSecretKey(PLAIN_SECRET);
         repo.save(acct.getUsername(), acct.getSecretKey(), acct.getValidationCode(), acct.getScratchCodes());
 
-        // when
         acct = repo.get(CASUSER);
 
-        // then
         assertEquals(PLAIN_SECRET, acct.getSecretKey());
     }
 

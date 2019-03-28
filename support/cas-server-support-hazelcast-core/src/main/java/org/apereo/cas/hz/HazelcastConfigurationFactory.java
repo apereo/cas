@@ -50,15 +50,14 @@ public class HazelcastConfigurationFactory {
         val cluster = hz.getCluster();
         val evictionPolicy = EvictionPolicy.valueOf(cluster.getEvictionPolicy());
 
-        LOGGER.debug("Creating Hazelcast map configuration for [{}] with idle timeoutSeconds [{}] second(s)", mapName, timeoutSeconds);
-
+        LOGGER.trace("Creating Hazelcast map configuration for [{}] with idle timeoutSeconds [{}] second(s)", mapName, timeoutSeconds);
         val maxSizeConfig = new MaxSizeConfig()
             .setMaxSizePolicy(MaxSizeConfig.MaxSizePolicy.valueOf(cluster.getMaxSizePolicy()))
             .setSize(cluster.getMaxHeapSizePercentage());
 
         val mergePolicyConfig = new MergePolicyConfig();
-        if (StringUtils.hasText(hz.getCluster().getMapMergePolicy())) {
-            mergePolicyConfig.setPolicy(hz.getCluster().getMapMergePolicy());
+        if (StringUtils.hasText(cluster.getMapMergePolicy())) {
+            mergePolicyConfig.setPolicy(cluster.getMapMergePolicy());
         }
 
         return new MapConfig()
@@ -125,10 +124,10 @@ public class HazelcastConfigurationFactory {
         val joinConfig = cluster.getDiscovery().isEnabled()
             ? createDiscoveryJoinConfig(config, hz.getCluster(), networkConfig)
             : createDefaultJoinConfig(config, hz.getCluster());
-        LOGGER.debug("Created Hazelcast join configuration [{}]", joinConfig);
+        LOGGER.trace("Created Hazelcast join configuration [{}]", joinConfig);
         networkConfig.setJoin(joinConfig);
 
-        LOGGER.debug("Created Hazelcast network configuration [{}]", networkConfig);
+        LOGGER.trace("Created Hazelcast network configuration [{}]", networkConfig);
         config.setNetworkConfig(networkConfig);
 
         return config.setInstanceName(cluster.getInstanceName())
@@ -170,13 +169,13 @@ public class HazelcastConfigurationFactory {
     private static JoinConfig createDiscoveryJoinConfig(final Config config, final HazelcastClusterProperties cluster, final NetworkConfig networkConfig) {
         val joinConfig = new JoinConfig();
 
-        LOGGER.debug("Disabling multicast and TCP/IP configuration for discovery");
+        LOGGER.trace("Disabling multicast and TCP/IP configuration for discovery");
         joinConfig.getMulticastConfig().setEnabled(false);
         joinConfig.getTcpIpConfig().setEnabled(false);
 
         val discoveryConfig = new DiscoveryConfig();
         val strategyConfig = locateDiscoveryStrategyConfig(cluster, joinConfig, config, networkConfig);
-        LOGGER.debug("Creating discovery strategy configuration as [{}]", strategyConfig);
+        LOGGER.trace("Creating discovery strategy configuration as [{}]", strategyConfig);
         discoveryConfig.setDiscoveryStrategyConfigs(CollectionUtils.wrap(strategyConfig));
         joinConfig.setDiscoveryConfig(discoveryConfig);
         return joinConfig;
@@ -200,7 +199,7 @@ public class HazelcastConfigurationFactory {
             .setEnabled(cluster.isTcpipEnabled())
             .setMembers(cluster.getMembers())
             .setConnectionTimeoutSeconds(cluster.getTimeout());
-        LOGGER.debug("Created Hazelcast TCP/IP configuration [{}] for members [{}]", tcpIpConfig, cluster.getMembers());
+        LOGGER.trace("Created Hazelcast TCP/IP configuration [{}] for members [{}]", tcpIpConfig, cluster.getMembers());
 
         val multicastConfig = new MulticastConfig().setEnabled(cluster.isMulticastEnabled());
         if (cluster.isMulticastEnabled()) {
@@ -228,7 +227,7 @@ public class HazelcastConfigurationFactory {
             val partitionGroupConfig = config.getPartitionGroupConfig();
             val type = PartitionGroupConfig.MemberGroupType.valueOf(
                 hz.getCluster().getPartitionMemberGroupType().toUpperCase());
-            LOGGER.debug("Using partition member group type [{}]", type);
+            LOGGER.trace("Using partition member group type [{}]", type);
             partitionGroupConfig.setEnabled(true).setGroupType(type);
         }
         return config;

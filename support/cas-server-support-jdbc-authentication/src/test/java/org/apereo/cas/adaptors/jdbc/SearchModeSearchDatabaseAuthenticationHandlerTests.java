@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 
 import lombok.SneakyThrows;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,7 +49,7 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests {
     @BeforeEach
     @SneakyThrows
     public void initialize() {
-        this.handler = new SearchModeSearchDatabaseAuthenticationHandler("", null, null, null, this.dataSource, "username", "password", "cassearchusers");
+        this.handler = new SearchModeSearchDatabaseAuthenticationHandler(StringUtils.EMPTY, null, null, null, this.dataSource, "username", "password", "cassearchusers");
 
         try (val c = this.dataSource.getConnection()) {
             try (val s = c.createStatement()) {

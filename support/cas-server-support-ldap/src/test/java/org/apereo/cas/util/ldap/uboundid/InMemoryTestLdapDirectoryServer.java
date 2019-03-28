@@ -68,15 +68,15 @@ public class InMemoryTestLdapDirectoryServer implements AutoCloseable, Disposabl
 
         LOGGER.debug("Loading LDAP listeners and ports...");
         config.setListenerConfigs(
-            InMemoryListenerConfig.createLDAPConfig("LDAP", // Listener name
-                null, // Listen address. (null = listen on all interfaces)
-                port, // Listen port (0 = automatically choose an available port)
-                serverSSLUtil.createSSLSocketFactory()), // StartTLS factory
-            InMemoryListenerConfig.createLDAPSConfig("LDAPS", // Listener name
-                null, // Listen address. (null = listen on all interfaces)
-                0, // Listen port (0 = automatically choose an available port)
-                serverSSLUtil.createSSLServerSocketFactory(), // Server factory
-                clientSSLUtil.createSSLSocketFactory())); // Client factory
+            InMemoryListenerConfig.createLDAPConfig("LDAP",
+                null,
+                port,
+                serverSSLUtil.createSSLSocketFactory()),
+            InMemoryListenerConfig.createLDAPSConfig("LDAPS",
+                null,
+                0,
+                serverSSLUtil.createSSLServerSocketFactory(),
+                clientSSLUtil.createSSLSocketFactory()));
 
         config.setEnforceSingleStructuralObjectClass(false);
         config.setEnforceAttributeSyntaxCompliance(true);

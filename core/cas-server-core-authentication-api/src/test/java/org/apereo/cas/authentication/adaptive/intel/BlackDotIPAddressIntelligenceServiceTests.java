@@ -104,12 +104,14 @@ public class BlackDotIPAddressIntelligenceServiceTests {
         }
     }
 
-//    @Test
-//    public void verifyAllowedOperation() {
-//        val props = new AdaptiveAuthenticationProperties();
-//        props.getIpIntel().getBlackDot().setEmailAddress("cas@apereo.org");
-//        val service = new BlackDotIPAddressIntelligenceService(props);
-//        val response = service.examine(new MockRequestContext(), "8.8.8.8");
-//        assertTrue(response.isAllowed());
-//    }
+    /*
+    @Test
+    public void verifyAllowedOperation() {
+        val props = new AdaptiveAuthenticationProperties();
+        props.getIpIntel().getBlackDot().setEmailAddress("cas@apereo.org");
+        val service = new BlackDotIPAddressIntelligenceService(props);
+        val response = service.examine(new MockRequestContext(), "8.8.8.8");
+        assertTrue(response.isAllowed());
+    }
+     */
 }

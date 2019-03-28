@@ -15,7 +15,7 @@ import java.security.cert.X509Certificate;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.params.provider.Arguments.*;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 /**
  * Unit test for {@link X509SubjectPrincipalResolver}.
@@ -32,40 +32,45 @@ public class X509SubjectPrincipalResolverTests {
      */
     public static Stream<Arguments> getTestParameters() throws IOException {
         return Stream.of(
-            // Test case #1
-            // Use CN for principal ID
+            /* Test case #1
+             * Use CN for principal ID
+             */
             arguments(
                 new ClassPathResource("x509-ctop-resolver-hizzy.crt").getFile().getCanonicalPath(),
                 "$CN",
                 "Hizzogarthington I.S. Pleakinsense"
             ),
 
-            // Test case #2
-            // Use email address for principal ID
+            /* Test case #2
+             * Use email address for principal ID
+             */
             arguments(
                 new ClassPathResource("x509-ctop-resolver-hizzy.crt").getFile().getCanonicalPath(),
                 "$EMAILADDRESS",
                 "hizzy@vt.edu"
             ),
 
-            // Test case #2
-            // Use combination of ou and cn for principal ID
+            /* Test case #2
+             * Use combination of ou and cn for principal ID
+             */
             arguments(
                 new ClassPathResource("x509-ctop-resolver-hizzy.crt").getFile().getCanonicalPath(),
                 "$OU $CN",
                 "Middleware Hizzogarthington I.S. Pleakinsense"
             ),
 
-            // Test case #3
-            // Use combination of serial number and cn for principal ID
+            /* Test case #3
+             * Use combination of serial number and cn for principal ID
+             */
             arguments(
                 new ClassPathResource("x509-ctop-resolver-gazzo.crt").getFile().getCanonicalPath(),
                 "$CN:$SERIALNUMBER",
                 "Gazzaloddi P. Wishwashington:271828183"
             ),
 
-            // Test case #4
-            // Build principal ID from multivalued attributes
+            /* Test case #4
+             * Build principal ID from multivalued attributes
+             */
             arguments(
                 new ClassPathResource("x509-ctop-resolver-jacky.crt").getFile().getCanonicalPath(),
                 "$UID@$DC.$DC",
@@ -81,7 +86,7 @@ public class X509SubjectPrincipalResolverTests {
                                                final String expectedResult) throws CertificateException, FileNotFoundException {
         val resolver = new X509SubjectPrincipalResolver(descriptor);
         val certificate = (X509Certificate) CertificateFactory.getInstance("X509").generateCertificate(
-                new FileInputStream(certPath));
+            new FileInputStream(certPath));
 
         assertEquals(expectedResult, resolver.resolvePrincipalInternal(certificate));
     }

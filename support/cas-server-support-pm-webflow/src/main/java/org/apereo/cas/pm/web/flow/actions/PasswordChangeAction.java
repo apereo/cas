@@ -60,7 +60,7 @@ public class PasswordChangeAction extends AbstractAction {
             }
         } catch (final InvalidPasswordException e) {
             return getErrorEvent(requestContext,
-                PASSWORD_VALIDATION_FAILURE_CODE + StringUtils.defaultIfBlank(e.getCode(), ""),
+                PASSWORD_VALIDATION_FAILURE_CODE + StringUtils.defaultIfBlank(e.getCode(), StringUtils.EMPTY),
                 StringUtils.defaultIfBlank(e.getValidationMessage(), DEFAULT_MESSAGE),
                 e.getParams());
         } catch (final Exception e) {

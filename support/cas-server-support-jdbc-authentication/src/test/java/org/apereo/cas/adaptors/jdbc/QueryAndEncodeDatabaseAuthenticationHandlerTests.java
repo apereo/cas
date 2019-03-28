@@ -8,6 +8,7 @@ import org.apereo.cas.util.transforms.PrefixSuffixPrincipalNameTransformer;
 
 import lombok.SneakyThrows;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.crypto.hash.DefaultHashService;
 import org.apache.shiro.crypto.hash.HashRequest;
 import org.apache.shiro.util.ByteSource;
@@ -112,24 +113,24 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticationFailsToFindUser() {
-        val q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
-            buildSql(), PASSWORD_FIELD_NAME, "salt", null, null, "ops", 0, "");
+        val q = new QueryAndEncodeDatabaseAuthenticationHandler(StringUtils.EMPTY, null, null, null, dataSource, ALG_NAME,
+            buildSql(), PASSWORD_FIELD_NAME, "salt", null, null, "ops", 0, StringUtils.EMPTY);
 
         assertThrows(AccountNotFoundException.class, () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
     }
 
     @Test
     public void verifyAuthenticationInvalidSql() {
-        val q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
-            buildSql("makesNoSenseInSql"), PASSWORD_FIELD_NAME, "salt", null, null, "ops", 0, "");
+        val q = new QueryAndEncodeDatabaseAuthenticationHandler(StringUtils.EMPTY, null, null, null, dataSource, ALG_NAME,
+            buildSql("makesNoSenseInSql"), PASSWORD_FIELD_NAME, "salt", null, null, "ops", 0, StringUtils.EMPTY);
 
         assertThrows(PreventedException.class, () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
     }
 
     @Test
     public void verifyAuthenticationMultipleAccounts() {
-        val q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
-            buildSql(), PASSWORD_FIELD_NAME, "salt", null, null, "ops", 0, "");
+        val q = new QueryAndEncodeDatabaseAuthenticationHandler(StringUtils.EMPTY, null, null, null, dataSource, ALG_NAME,
+            buildSql(), PASSWORD_FIELD_NAME, "salt", null, null, "ops", 0, StringUtils.EMPTY);
 
         assertThrows(FailedLoginException.class,
             () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "password0")));
@@ -138,7 +139,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     @Test
     @SneakyThrows
     public void verifyAuthenticationSuccessful() {
-        val q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
+        val q = new QueryAndEncodeDatabaseAuthenticationHandler(StringUtils.EMPTY, null, null, null, dataSource, ALG_NAME,
             buildSql(), PASSWORD_FIELD_NAME, "salt", null, null, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
 
         val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("user1");
@@ -150,7 +151,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticationWithExpiredField() {
-        val q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
+        val q = new QueryAndEncodeDatabaseAuthenticationHandler(StringUtils.EMPTY, null, null, null, dataSource, ALG_NAME,
             buildSql(), PASSWORD_FIELD_NAME, "salt", EXPIRED_FIELD_NAME, null, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
 
         assertThrows(AccountPasswordMustChangeException.class,
@@ -159,7 +160,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticationWithDisabledField() {
-        val q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
+        val q = new QueryAndEncodeDatabaseAuthenticationHandler(StringUtils.EMPTY, null, null, null, dataSource, ALG_NAME,
             buildSql(), PASSWORD_FIELD_NAME, "salt", null, DISABLED_FIELD_NAME, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
 
         assertThrows(AccountDisabledException.class, () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("user21")));
@@ -168,7 +169,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     @Test
     @SneakyThrows
     public void verifyAuthenticationSuccessfulWithAPasswordEncoder() {
-        val q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
+        val q = new QueryAndEncodeDatabaseAuthenticationHandler(StringUtils.EMPTY, null, null, null, dataSource, ALG_NAME,
             buildSql(), PASSWORD_FIELD_NAME, "salt", null, null, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
         q.setPasswordEncoder(new PasswordEncoder() {
             @Override

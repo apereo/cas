@@ -7,6 +7,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -37,7 +38,7 @@ public class CloudDirectoryAuthenticationHandlerTests {
     public void verifyAction() throws Exception {
         val repository = mock(CloudDirectoryRepository.class);
         when(repository.getUser(anyString())).thenReturn(CollectionUtils.wrap("username", "casuser", "password", "Mellon"));
-        val h = new CloudDirectoryAuthenticationHandler("", mock(ServicesManager.class),
+        val h = new CloudDirectoryAuthenticationHandler(StringUtils.EMPTY, mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), repository, casProperties.getAuthn().getCloudDirectory());
         assertNotNull(h.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon")));
     }

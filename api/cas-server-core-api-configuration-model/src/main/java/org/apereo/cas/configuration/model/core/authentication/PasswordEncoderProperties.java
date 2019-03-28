@@ -80,7 +80,7 @@ public class PasswordEncoderProperties implements Serializable {
          */
         PBKDF2,
         /**
-         * Uses <code>org.apereo.cas.util.crypto.GlibcCryptPasswordEncoder</code>.
+         * Uses {@code org.apereo.cas.util.crypto.GlibcCryptPasswordEncoder}.
          * GNU libc crypt(3) compatible hash method.
          */
         GLIBC_CRYPT

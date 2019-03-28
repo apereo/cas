@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -30,7 +31,7 @@ public class TestOneTimePasswordAuthenticationHandler extends AbstractAuthentica
      * @param credentialMap Non-null map of one-time password identifiers to password values.
      */
     public TestOneTimePasswordAuthenticationHandler(final Map<String, String> credentialMap) {
-        super("", null, null, null);
+        super(StringUtils.EMPTY, null, null, null);
         this.credentialMap = credentialMap;
     }
 

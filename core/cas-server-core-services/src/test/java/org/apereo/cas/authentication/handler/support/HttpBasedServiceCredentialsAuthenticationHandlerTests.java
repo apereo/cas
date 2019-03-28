@@ -6,6 +6,7 @@ import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 
 import lombok.SneakyThrows;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +24,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTests {
 
     @BeforeEach
     public void initialize() {
-        this.authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler("", null, null, null, new SimpleHttpClientFactoryBean().getObject());
+        this.authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler(StringUtils.EMPTY, null, null, null, new SimpleHttpClientFactoryBean().getObject());
     }
 
     @Test
@@ -66,7 +67,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTests {
         val clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setAcceptableCodes(CollectionUtils.wrapList(900));
         val httpClient = clientFactory.getObject();
-        this.authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler("", null, null, null, httpClient);
+        this.authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler(StringUtils.EMPTY, null, null, null, httpClient);
         assertThrows(FailedLoginException.class,
             () -> this.authenticationHandler.authenticate(RegisteredServiceTestUtils.getHttpBasedServiceCredentials("https://www.ja-sig.org")));
     }
