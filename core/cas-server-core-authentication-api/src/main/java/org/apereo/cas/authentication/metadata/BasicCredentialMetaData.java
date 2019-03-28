@@ -5,7 +5,7 @@ import org.apereo.cas.authentication.CredentialMetaData;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Basic credential metadata implementation that stores the original credential ID and the original credential type.
@@ -15,8 +15,8 @@ import lombok.NoArgsConstructor;
  * @since 4.0.0
  */
 @Getter
-@NoArgsConstructor(force = true)
 @EqualsAndHashCode
+@RequiredArgsConstructor
 public class BasicCredentialMetaData implements CredentialMetaData {
 
     /**
@@ -24,24 +24,15 @@ public class BasicCredentialMetaData implements CredentialMetaData {
      */
     private static final long serialVersionUID = 4929579849241505377L;
 
-    /**
-     * Credential type unique identifier.
-     */
-    private final String id;
+    private final Credential credential;
 
-    /**
-     * Type of original credential.
-     */
-    private final Class<? extends Credential> credentialClass;
-
-    /**
-     * Creates a new instance from the given credential.
-     *
-     * @param credential Credential for which metadata should be created.
-     */
-    public BasicCredentialMetaData(final Credential credential) {
-        this.id = credential.getId();
-        this.credentialClass = credential.getClass();
+    @Override
+    public String getId() {
+        return this.credential.getId();
     }
 
+    @Override
+    public Class<? extends Credential> getCredentialClass() {
+        return this.credential.getClass();
+    }
 }

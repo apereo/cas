@@ -76,4 +76,9 @@ public abstract class AbstractCredential implements Credential, CredentialMetaDa
                 .build());
         }
     }
+
+    @Override
+    public Credential getCredential() {
+        return this;
+    }
 }

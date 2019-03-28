@@ -17,24 +17,27 @@ import java.io.Serializable;
 @Getter
 @Builder
 public class CookieGenerationContext implements Serializable {
-    private static final long serialVersionUID = -3058351444389458036L;
-
-    private static final int DEFAULT_REMEMBER_ME_MAX_AGE = 7889231;
-
     /**
      * Empty cookie generation context.
      */
     public static final CookieGenerationContext EMPTY = CookieGenerationContext.builder().build();
 
+    private static final long serialVersionUID = -3058351444389458036L;
+
+    private static final int DEFAULT_REMEMBER_ME_MAX_AGE = 7889231;
+
     private String name;
 
+    @Builder.Default
     private String path = StringUtils.EMPTY;
 
-    private int maxAge;
+    @Builder.Default
+    private int maxAge = -1;
 
     @Builder.Default
     private boolean secure = true;
 
+    @Builder.Default
     private String domain = StringUtils.EMPTY;
 
     @Builder.Default
