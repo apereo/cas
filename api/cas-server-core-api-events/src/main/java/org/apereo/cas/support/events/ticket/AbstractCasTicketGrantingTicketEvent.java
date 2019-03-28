@@ -1,11 +1,13 @@
 package org.apereo.cas.support.events.ticket;
 
-import lombok.Getter;
-import lombok.ToString;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
+import lombok.Getter;
+import lombok.ToString;
+
 import java.time.ZonedDateTime;
+
 
 /**
  * Abstract subclass of {@link AbstractCasEvent} encapsulating TGT and exposing key pieces attached to it. Useful for

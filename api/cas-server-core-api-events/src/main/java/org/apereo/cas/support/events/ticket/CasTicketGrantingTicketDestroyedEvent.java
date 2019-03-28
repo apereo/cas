@@ -1,6 +1,5 @@
 package org.apereo.cas.support.events.ticket;
 
-import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import lombok.Getter;
