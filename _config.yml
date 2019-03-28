@@ -3,6 +3,8 @@ markdown: kramdown
 plugins:
   - jekyll-sitemap
   - jekyll-feed
+gems:
+  - jekyll-pdf
 kramdown:
   input: GFM
   syntax_highlighter: rouge
