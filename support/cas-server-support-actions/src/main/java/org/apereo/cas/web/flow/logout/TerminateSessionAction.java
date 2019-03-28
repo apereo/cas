@@ -129,7 +129,7 @@ public class TerminateSessionAction extends AbstractAction {
         if (session != null) {
             val requestedUrl = session.getAttribute(Pac4jConstants.REQUESTED_URL);
             session.invalidate();
-            if (requestedUrl != null && !requestedUrl.equals("")) {
+            if (requestedUrl != null && !requestedUrl.equals(StringUtils.EMPTY)) {
                 request.getSession(true).setAttribute(Pac4jConstants.REQUESTED_URL, requestedUrl);
             }
         }

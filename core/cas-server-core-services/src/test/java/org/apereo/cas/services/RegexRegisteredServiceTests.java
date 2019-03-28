@@ -30,7 +30,6 @@ public class RegexRegisteredServiceTests {
         val domainCatchallHttpImap = "(https*|imaps*)://([A-Za-z0-9_-]+\\.)+vt\\.edu/.*";
         val globalCatchallHttpImap = "(https*|imaps*)://.*";
         return Stream.of(
-            // CAS-1071 domain-specific HTTP catch-all #1
             arguments(
                 newService(domainCatchallHttp),
                 "https://service.vt.edu/webapp?a=1",
@@ -46,31 +45,26 @@ public class RegexRegisteredServiceTests {
                 "https://thepiratebay.se?service.vt.edu/webapp?a=1",
                 false
                 ),
-            // Domain-specific catch-all for HTTP(S)/IMAP(S) #1
             arguments(
                 newService(domainCatchallHttpImap),
                 "http://test_service.vt.edu/login",
                 true
             ),
-            // Domain-specific catch-all for HTTP(S)/IMAP(S) #2
             arguments(
                 newService(domainCatchallHttpImap),
                 "imaps://imap-server-01.vt.edu/",
                 true
                 ),
-            // Global catch-all for HTTP(S)/IMAP(S) #1
             arguments(
                 newService(globalCatchallHttpImap),
                 "https://host-01.example.com/",
                 true
                 ),
-            // Global catch-all for HTTP(S)/IMAP(S) #2
             arguments(
                 newService(globalCatchallHttpImap),
                 "imap://host-02.example.edu/",
                 true
             ),
-            // Null case
             arguments(
                 newService(globalCatchallHttpImap),
                 null,

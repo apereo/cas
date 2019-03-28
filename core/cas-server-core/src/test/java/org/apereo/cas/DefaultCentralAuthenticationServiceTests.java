@@ -394,7 +394,6 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
         val tgtId = cas.createTicketGrantingTicket(ctx);
         cas.grantServiceTicket(tgtId.getId(), svc, ctx);
-        // simulate renew with new good same credentials
         val st2Id = cas.grantServiceTicket(tgtId.getId(), svc, ctx);
         val assertion = cas.validateServiceTicket(st2Id.getId(), svc);
         val validationSpecification = new Cas20WithoutProxyingValidationSpecification();

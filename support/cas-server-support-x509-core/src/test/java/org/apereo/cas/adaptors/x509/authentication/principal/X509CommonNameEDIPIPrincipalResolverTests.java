@@ -13,7 +13,7 @@ import java.security.cert.X509Certificate;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.params.provider.Arguments.*;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 /**
  * This is {@link X509CommonNameEDIPIPrincipalResolverTests}.
@@ -29,21 +29,25 @@ public class X509CommonNameEDIPIPrincipalResolverTests extends AbstractX509Certi
      */
     public static Stream<Arguments> getTestParameters() {
         return Stream.of(
-            // test with cert with EDIPI and no alternate
+            /*
+            * test with cert with EDIPI and no alternate
+             */
             arguments(
                 "/edipi.cer",
                 "1234567890",
                 null
             ),
     
-            // test with alternate parameter and cert without EDIPI
+            /*
+            * test with alternate parameter and cert without EDIPI
+             */
             arguments(
                 "/user-valid.crt",
                 "CN=Alice, OU=CAS, O=Jasig, L=Westminster, ST=Colorado, C=US",
                 "subjectDn"
             )
         );
-        
+
     }
 
     @ParameterizedTest
