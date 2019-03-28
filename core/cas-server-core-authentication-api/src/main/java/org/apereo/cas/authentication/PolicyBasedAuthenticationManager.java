@@ -407,6 +407,9 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         if (ex instanceof UndeclaredThrowableException) {
             e = ((UndeclaredThrowableException) ex).getUndeclaredThrowable();
         }
+
+        LOGGER.trace(e.getMessage(), e);
+
         val msg = new StringBuilder(StringUtils.defaultString(e.getMessage()));
         if (e.getCause() != null) {
             msg.append(" / ").append(e.getCause().getMessage());

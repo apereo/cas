@@ -181,14 +181,17 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
 
             LOGGER.trace("Creating transition [{}] for state [{}]", subflowId, actionState.getId());
             createTransitionForState(actionState, subflowId, subflowId);
-
-            registerMultifactorFlowDefinitionIntoLoginFlowRegistry(mfaProviderFlowRegistry);
-            augmentMultifactorProviderFlowRegistry(mfaProviderFlowRegistry);
-
-            LOGGER.trace("Registering the [{}] flow into the flow [{}]", subflowId, flow.getId());
-            val startState = flow.getTransitionableState(flow.getStartState().getId());
-            createTransitionForState(startState, subflowId, subflowId);
         });
+
+        registerMultifactorFlowDefinitionIntoLoginFlowRegistry(mfaProviderFlowRegistry);
+        augmentMultifactorProviderFlowRegistry(mfaProviderFlowRegistry);
+
+        LOGGER.trace("Registering the [{}] flow into the flow [{}]", subflowId, flow.getId());
+        val startState = flow.getTransitionableState(flow.getStartState().getId());
+        createTransitionForState(startState, subflowId, subflowId);
+
+        val initState = flow.getTransitionableState(CasWebflowConstants.STATE_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK);
+        createTransitionForState(initState, subflowId, subflowId);
     }
 
     protected Collection<String> getCandidateStatesForMultifactorAuthentication() {
