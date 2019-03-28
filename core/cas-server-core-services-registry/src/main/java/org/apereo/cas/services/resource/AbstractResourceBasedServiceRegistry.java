@@ -54,8 +54,6 @@ import java.util.stream.Collectors;
 @ToString
 public abstract class AbstractResourceBasedServiceRegistry extends AbstractServiceRegistry implements ResourceBasedServiceRegistry, DisposableBean {
 
-    private static final String PATTERN_REGISTERED_SERVICE_FILE_NAME = "(\\w+)-(\\d+)\\.";
-
     private static final BinaryOperator<RegisteredService> LOG_DUPLICATE_AND_RETURN_FIRST_ONE = (s1, s2) -> {
         BaseResourceBasedRegisteredServiceWatcher.LOG_SERVICE_DUPLICATE.accept(s2);
         return s1;
@@ -79,11 +77,11 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
 
     private PathWatcherService serviceRegistryConfigWatcher;
 
-    private Pattern serviceFileNamePattern;
-
     private RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy;
 
     private RegisteredServiceResourceNamingStrategy resourceNamingStrategy;
+
+    private Pattern serviceFileNamePattern;
 
     public AbstractResourceBasedServiceRegistry(final Resource configDirectory,
                                                 final Collection<StringSerializer<RegisteredService>> serializers,
@@ -140,9 +138,9 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         this.resourceNamingStrategy = ObjectUtils.defaultIfNull(resourceNamingStrategy, new DefaultRegisteredServiceResourceNamingStrategy());
         this.registeredServiceSerializers = serializers;
 
-        val pattern = String.join("|", getExtensions());
-        this.serviceFileNamePattern = RegexUtils.createPattern(PATTERN_REGISTERED_SERVICE_FILE_NAME.concat(pattern));
+        this.serviceFileNamePattern = resourceNamingStrategy.buildNamingPattern(getExtensions());
         LOGGER.trace("Constructed service name file pattern [{}]", serviceFileNamePattern.pattern());
+
 
         this.serviceRegistryDirectory = configDirectory;
         val file = this.serviceRegistryDirectory.toFile();
