@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 
 import lombok.SneakyThrows;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -34,7 +35,7 @@ public class AcceptUsersAuthenticationHandlerTests {
         users.put("bill", "thisisAwesoME");
         users.put("brian", "t�st");
 
-        this.authenticationHandler = new AcceptUsersAuthenticationHandler("", null, new DefaultPrincipalFactory(), null, users);
+        this.authenticationHandler = new AcceptUsersAuthenticationHandler(StringUtils.EMPTY, null, new DefaultPrincipalFactory(), null, users);
     }
 
     @Test

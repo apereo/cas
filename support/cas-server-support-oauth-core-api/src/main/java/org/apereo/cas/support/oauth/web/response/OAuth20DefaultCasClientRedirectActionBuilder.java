@@ -5,6 +5,7 @@ import org.apereo.cas.util.EncodingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.redirect.RedirectAction;
@@ -39,8 +40,8 @@ public class OAuth20DefaultCasClientRedirectActionBuilder implements OAuth20CasC
         val casServerLoginUrl = casClient.getConfiguration().getLoginUrl();
         val redirectionUrl = casServerLoginUrl + (casServerLoginUrl.contains("?") ? "&" : "?")
             + CasProtocolConstants.PARAMETER_SERVICE + '=' + EncodingUtils.urlEncode(serviceUrl)
-            + (renew ? '&' + CasProtocolConstants.PARAMETER_RENEW + "=true" : "")
-            + (gateway ? '&' + CasProtocolConstants.PARAMETER_GATEWAY + "=true" : "");
+            + (renew ? '&' + CasProtocolConstants.PARAMETER_RENEW + "=true" : StringUtils.EMPTY)
+            + (gateway ? '&' + CasProtocolConstants.PARAMETER_GATEWAY + "=true" : StringUtils.EMPTY);
         LOGGER.debug("Final redirect url is [{}]", redirectionUrl);
         return RedirectAction.redirect(redirectionUrl);
     }

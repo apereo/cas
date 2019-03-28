@@ -178,9 +178,13 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
         if (auth1 == null && auth2 == null) {
             return false;
         }
-        if ((auth1 == null && auth2 != null) || (auth1 != null && auth2 == null)) {
+        if (auth1 == null && auth2 != null) {
             return false;
         }
+        if (auth1 != null && auth2 == null) {
+            return false;
+        }
+
         val builder = new EqualsBuilder();
         builder.append(auth1.getPrincipal(), auth2.getPrincipal());
         builder.append(auth1.getCredentials(), auth2.getCredentials());

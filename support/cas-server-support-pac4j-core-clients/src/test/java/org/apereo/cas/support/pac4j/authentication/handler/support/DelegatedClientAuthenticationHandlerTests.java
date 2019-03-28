@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.provision.DelegatedClientUserProf
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.client.Clients;
@@ -48,7 +49,7 @@ public class DelegatedClientAuthenticationHandlerTests {
     public void initialize() {
         this.fbClient = new FacebookClient();
         val clients = new Clients(CALLBACK_URL, fbClient);
-        this.handler = new DelegatedClientAuthenticationHandler("",
+        this.handler = new DelegatedClientAuthenticationHandler(StringUtils.EMPTY,
             mock(ServicesManager.class), PrincipalFactoryUtils.newPrincipalFactory(), clients,
             DelegatedClientUserProfileProvisioner.noOp(), new J2ESessionStore());
         this.handler.setTypedIdUsed(true);

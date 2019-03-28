@@ -48,22 +48,27 @@ public class TicketGrantingTicketExpirationPolicyTests {
 
     @Test
     public void verifyTgtIsExpiredByHardTimeOut() {
-        // keep tgt alive via sliding window until within SLIDING_TIME / 2 of the HARD_TIMEOUT
+        /*
+         * keep tgt alive via sliding window
+         * until within SLIDING_TIME / 2 of the HARD_TIMEOUT
+         */
         val creationTime = ticketGrantingTicket.getCreationTime();
         while (creationTime.plus(HARD_TIMEOUT - SLIDING_TIMEOUT / 2, ChronoUnit.SECONDS)
             .isAfter(org.apereo.cas.util.DateTimeUtils.zonedDateTimeOf(DateTimeUtils.currentTimeMillis()))) {
             ticketGrantingTicket.grantServiceTicket(TGT_ID, RegisteredServiceTestUtils.getService(), expirationPolicy, false, true);
 
-            val tt = DateTimeUtils.currentTimeMillis() + ((SLIDING_TIMEOUT - TIMEOUT_BUFFER) * 1_000);
+            val tt = DateTimeUtils.currentTimeMillis() + (SLIDING_TIMEOUT - TIMEOUT_BUFFER) * 1_000;
             DateTimeUtils.setCurrentMillisFixed(tt);
 
             assertFalse(this.ticketGrantingTicket.isExpired());
         }
 
-        // final sliding window extension past the HARD_TIMEOUT
+        /*
+         * Final sliding window extension past the HARD_TIMEOUT
+         */
         ticketGrantingTicket.grantServiceTicket(TGT_ID, RegisteredServiceTestUtils.getService(), expirationPolicy, false, true);
 
-        val tt = DateTimeUtils.currentTimeMillis() + ((SLIDING_TIMEOUT / 2 + TIMEOUT_BUFFER) * 1_000);
+        val tt = DateTimeUtils.currentTimeMillis() + (SLIDING_TIMEOUT / 2 + TIMEOUT_BUFFER) * 1_000;
         DateTimeUtils.setCurrentMillisFixed(tt);
 
         assertTrue(ticketGrantingTicket.isExpired());
@@ -73,17 +78,17 @@ public class TicketGrantingTicketExpirationPolicyTests {
     public void verifyTgtIsExpiredBySlidingWindow() {
         ticketGrantingTicket.grantServiceTicket(TGT_ID, RegisteredServiceTestUtils.getService(), expirationPolicy, false, true);
 
-        val tt1 = System.currentTimeMillis() + ((SLIDING_TIMEOUT - TIMEOUT_BUFFER) * 1_000);
+        val tt1 = System.currentTimeMillis() + (SLIDING_TIMEOUT - TIMEOUT_BUFFER) * 1_000;
         DateTimeUtils.setCurrentMillisFixed(tt1);
         assertFalse(ticketGrantingTicket.isExpired());
 
         ticketGrantingTicket.grantServiceTicket(TGT_ID, RegisteredServiceTestUtils.getService(), expirationPolicy, false, true);
-        val tt2 = DateTimeUtils.currentTimeMillis() + ((SLIDING_TIMEOUT - TIMEOUT_BUFFER) * 1_000);
+        val tt2 = DateTimeUtils.currentTimeMillis() + (SLIDING_TIMEOUT - TIMEOUT_BUFFER) * 1_000;
         DateTimeUtils.setCurrentMillisFixed(tt2);
         assertFalse(ticketGrantingTicket.isExpired());
 
         ticketGrantingTicket.grantServiceTicket(TGT_ID, RegisteredServiceTestUtils.getService(), expirationPolicy, false, true);
-        val tt3 = DateTimeUtils.currentTimeMillis() + ((SLIDING_TIMEOUT + TIMEOUT_BUFFER) * 1_000);
+        val tt3 = DateTimeUtils.currentTimeMillis() + (SLIDING_TIMEOUT + TIMEOUT_BUFFER) * 1_000;
         DateTimeUtils.setCurrentMillisFixed(tt3);
         assertTrue(ticketGrantingTicket.isExpired());
     }

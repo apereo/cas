@@ -15,8 +15,14 @@ import lombok.Setter;
 @Getter
 @Setter
 public class WarningCookieProperties extends CookieProperties {
-
     private static final long serialVersionUID = -266090748600049578L;
+
+    /**
+     * Decide if cookie paths should be automatically configured
+     * based on the application context path, when the cookie
+     * path is not configured.
+     */
+    private boolean autoConfigureCookiePath = true;
 
     public WarningCookieProperties() {
         super.setName("CASPRIVACY");

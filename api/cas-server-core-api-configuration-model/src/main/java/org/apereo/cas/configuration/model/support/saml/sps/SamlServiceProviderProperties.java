@@ -451,9 +451,11 @@ public class SamlServiceProviderProperties implements Serializable {
 
         private static final long serialVersionUID = -6336757169059216490L;
 
+        /**
+         * InCommon metadata should
+         * be available <a href="http://md.incommon.org/InCommon/InCommon-metadata.xml">here</a>.
+         */
         public InCommon() {
-            // setMetadata("http://md.incommon.org/InCommon/InCommon-metadata.xml");
-            // setSignatureLocation("/etc/cas/config/certs/inc-md-cert.pem");
             addAttributes(CommonAttributeNames.EDU_PERSON_PRINCIPAL_NAME.getAttributeName());
         }
     }
