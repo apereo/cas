@@ -1,5 +1,9 @@
 package org.apereo.cas.hz;
 
+import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
+import org.apereo.cas.configuration.model.support.hazelcast.HazelcastClusterProperties;
+import org.apereo.cas.util.CollectionUtils;
+
 import com.hazelcast.config.Config;
 import com.hazelcast.config.DiscoveryConfig;
 import com.hazelcast.config.DiscoveryStrategyConfig;
@@ -7,15 +11,13 @@ import com.hazelcast.config.EvictionPolicy;
 import com.hazelcast.config.JoinConfig;
 import com.hazelcast.config.MapConfig;
 import com.hazelcast.config.MaxSizeConfig;
+import com.hazelcast.config.MergePolicyConfig;
 import com.hazelcast.config.MulticastConfig;
 import com.hazelcast.config.NetworkConfig;
 import com.hazelcast.config.PartitionGroupConfig;
 import com.hazelcast.config.TcpIpConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
-import org.apereo.cas.configuration.model.support.hazelcast.HazelcastClusterProperties;
-import org.apereo.cas.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
@@ -32,7 +34,7 @@ import java.util.Set;
  */
 @Slf4j
 public class HazelcastConfigurationFactory {
-    
+
     /**
      * Build map config map config.
      *
@@ -51,8 +53,14 @@ public class HazelcastConfigurationFactory {
             .setMaxSizePolicy(MaxSizeConfig.MaxSizePolicy.valueOf(cluster.getMaxSizePolicy()))
             .setSize(cluster.getMaxHeapSizePercentage());
 
+        final MergePolicyConfig mergePolicyConfig = new MergePolicyConfig();
+        if (StringUtils.hasText(cluster.getMapMergePolicy())) {
+            mergePolicyConfig.setPolicy(cluster.getMapMergePolicy());
+        }
+
         return new MapConfig()
             .setName(mapName)
+            .setMergePolicyConfig(mergePolicyConfig)
             .setMaxIdleSeconds((int) timeoutSeconds)
             .setBackupCount(cluster.getBackupCount())
             .setAsyncBackupCount(cluster.getAsyncBackupCount())

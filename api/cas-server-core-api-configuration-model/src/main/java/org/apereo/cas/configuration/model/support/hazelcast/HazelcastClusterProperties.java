@@ -81,6 +81,13 @@ public class HazelcastClusterProperties implements Serializable {
     private boolean portAutoIncrement = true;
 
     /**
+     * Define how data items in Hazelcast maps are merged together from source to destination.
+     * Requires the fully qualified class name of the merge policy component.
+     * By default, merges map entries from source to destination if they don't exist in the destination map.
+     */
+    private String mapMergePolicy = "com.hazelcast.map.merge.PutIfAbsentMapMergePolicy";
+
+    /**
      * You can specify the ports which Hazelcast will use to communicate between cluster members.
      * The name of the parameter for this is port and its default value is 5701.
      * By default, Hazelcast will try 100 ports to bind. Meaning that, if you set the value of port as 5701,
