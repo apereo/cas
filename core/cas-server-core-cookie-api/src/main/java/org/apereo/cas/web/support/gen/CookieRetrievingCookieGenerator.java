@@ -1,6 +1,9 @@
-package org.apereo.cas.web.support;
+package org.apereo.cas.web.support.gen;
 
 import org.apereo.cas.authentication.RememberMeCredential;
+import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.web.support.mgmr.CookieValueManager;
+import org.apereo.cas.web.support.mgmr.NoOpCookieValueManager;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -28,44 +31,30 @@ import java.util.Collection;
 @Slf4j
 @Setter
 public class CookieRetrievingCookieGenerator extends CookieGenerator implements Serializable {
-
-    private static final int DEFAULT_REMEMBER_ME_MAX_AGE = 7889231;
     private static final long serialVersionUID = -4926982428809856313L;
-
-    /**
-     * The maximum age the cookie should be remembered for.
-     */
-    private final int rememberMeMaxAge;
 
     /**
      * Responsible for manging and verifying the cookie value.
      **/
     private final CookieValueManager casCookieValueManager;
 
-    public CookieRetrievingCookieGenerator(final String name, final String path, final int maxAge,
-                                           final boolean secure, final String domain, final boolean httpOnly) {
-        this(name, path, maxAge, secure, domain, new NoOpCookieValueManager(),
-            DEFAULT_REMEMBER_ME_MAX_AGE, httpOnly);
+    private final CookieGenerationContext cookieGenerationContext;
+
+    public CookieRetrievingCookieGenerator(final CookieGenerationContext context) {
+        this(context, new NoOpCookieValueManager());
     }
 
-    public CookieRetrievingCookieGenerator(final String name, final String path, final int maxAge,
-                                           final boolean secure, final String domain, final boolean httpOnly,
-                                           final CookieValueManager cookieValueManager) {
-        this(name, path, maxAge, secure, domain, cookieValueManager,
-            DEFAULT_REMEMBER_ME_MAX_AGE, httpOnly);
-    }
+    public CookieRetrievingCookieGenerator(final CookieGenerationContext context,
+                                           final CookieValueManager casCookieValueManager) {
+        super.setCookieName(context.getName());
+        super.setCookiePath(context.getPath());
+        super.setCookieMaxAge(context.getMaxAge());
+        super.setCookieSecure(context.isSecure());
+        super.setCookieHttpOnly(context.isHttpOnly());
+        this.setCookieDomain(context.getDomain());
 
-    public CookieRetrievingCookieGenerator(final String name, final String path, final int maxAge, final boolean secure,
-                                           final String domain, final CookieValueManager casCookieValueManager,
-                                           final int rememberMeMaxAge, final boolean httpOnly) {
-        super.setCookieName(name);
-        super.setCookiePath(path);
-        super.setCookieMaxAge(maxAge);
-        super.setCookieSecure(secure);
-        super.setCookieHttpOnly(httpOnly);
-        this.setCookieDomain(domain);
+        this.cookieGenerationContext = context;
         this.casCookieValueManager = casCookieValueManager;
-        this.rememberMeMaxAge = rememberMeMaxAge;
     }
 
     /**
@@ -80,12 +69,14 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         val theCookieValue = this.casCookieValueManager.buildCookieValue(cookieValue, request);
         if (isRememberMeAuthentication(requestContext)) {
-            LOGGER.trace("Creating cookie [{}] for remember-me authentication with max-age [{}]", getCookieName(), this.rememberMeMaxAge);
+            LOGGER.trace("Creating cookie [{}] for remember-me authentication", getCookieName());
             val cookie = createCookie(theCookieValue);
-            cookie.setMaxAge(this.rememberMeMaxAge);
+
+            cookie.setMaxAge(cookieGenerationContext.getRememberMeMaxAge());
             cookie.setSecure(isCookieSecure());
             cookie.setHttpOnly(isCookieHttpOnly());
             cookie.setComment("CAS Cookie w/ Remember-Me");
+
             response.addCookie(cookie);
         } else {
             LOGGER.trace("Creating cookie [{}]", getCookieName());
@@ -116,30 +107,6 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
             return Boolean.TRUE;
         }
         return Boolean.FALSE;
-    }
-
-    private static Boolean isRememberMeRecordedInAuthentication(final RequestContext requestContext) {
-        LOGGER.debug("Request does not indicate a remember-me authentication event. Locating authentication object from the request context...");
-        val auth = WebUtils.getAuthentication(requestContext);
-        if (auth == null) {
-            return Boolean.FALSE;
-        }
-        val attributes = auth.getAttributes();
-        LOGGER.trace("Located authentication attributes [{}]", attributes);
-
-        if (attributes.containsKey(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME)) {
-            val rememberMeValue = (Collection) attributes.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
-            LOGGER.debug("Located remember-me authentication attribute [{}]", rememberMeValue);
-            return rememberMeValue.contains(Boolean.TRUE);
-        }
-        return Boolean.FALSE;
-    }
-
-    private static boolean isRememberMeProvidedInRequest(final RequestContext requestContext) {
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        val value = request.getParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME);
-        LOGGER.trace("Locating request parameter [{}] with value [{}]", RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME, value);
-        return StringUtils.isNotBlank(value) && WebUtils.isRememberMeAuthenticationEnabled(requestContext);
     }
 
     /**
@@ -175,5 +142,29 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         val c = super.createCookie(cookieValue);
         c.setComment("CAS Cookie");
         return c;
+    }
+
+    private static Boolean isRememberMeRecordedInAuthentication(final RequestContext requestContext) {
+        LOGGER.debug("Request does not indicate a remember-me authentication event. Locating authentication object from the request context...");
+        val auth = WebUtils.getAuthentication(requestContext);
+        if (auth == null) {
+            return Boolean.FALSE;
+        }
+        val attributes = auth.getAttributes();
+        LOGGER.trace("Located authentication attributes [{}]", attributes);
+
+        if (attributes.containsKey(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME)) {
+            val rememberMeValue = (Collection) attributes.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
+            LOGGER.debug("Located remember-me authentication attribute [{}]", rememberMeValue);
+            return rememberMeValue.contains(Boolean.TRUE);
+        }
+        return Boolean.FALSE;
+    }
+
+    private static boolean isRememberMeProvidedInRequest(final RequestContext requestContext) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        val value = request.getParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME);
+        LOGGER.trace("Locating request parameter [{}] with value [{}]", RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME, value);
+        return StringUtils.isNotBlank(value) && WebUtils.isRememberMeAuthenticationEnabled(requestContext);
     }
 }

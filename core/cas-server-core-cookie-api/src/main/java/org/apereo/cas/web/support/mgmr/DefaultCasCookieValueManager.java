@@ -1,4 +1,4 @@
-package org.apereo.cas.web.support;
+package org.apereo.cas.web.support.mgmr;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.model.support.cookie.CookieProperties;

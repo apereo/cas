@@ -1,8 +1,8 @@
 package org.apereo.cas.trusted.web.flow.fingerprint;
 
 import org.apereo.cas.util.gen.RandomStringGenerator;
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
