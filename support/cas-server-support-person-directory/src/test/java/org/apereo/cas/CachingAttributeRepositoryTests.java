@@ -39,7 +39,10 @@ public class CachingAttributeRepositoryTests {
         assertEquals("casuser", person1.getName());
         assertEquals(4, person1.getAttributes().size());
 
-        // The second call should not go out to the repositories again
+        /*
+         * The second call should not
+         * go out to the repositories again
+         */
         val person2 = cachingAttributeRepository.getPerson("casuser", IPersonAttributeDaoFilter.alwaysChoose());
         assertEquals(4, person2.getAttributes().size());
     }

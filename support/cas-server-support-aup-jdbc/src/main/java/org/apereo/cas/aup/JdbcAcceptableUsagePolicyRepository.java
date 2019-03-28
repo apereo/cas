@@ -76,7 +76,7 @@ public class JdbcAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
         }
         val pIdAttributeValue = principal.getAttributes().get(pIdAttribName);
         val pIdAttributeValues = CollectionUtils.toCollection(pIdAttributeValue);
-        var principalId = "";
+        var principalId = StringUtils.EMPTY;
         if (!pIdAttributeValues.isEmpty()) {
             principalId = pIdAttributeValues.iterator().next().toString().trim();
         }

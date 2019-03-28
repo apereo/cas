@@ -8,6 +8,7 @@ import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepositor
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,7 +76,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseO
         mockServer.expect(requestTo("http://example.com"))
             .andExpect(method(HttpMethod.GET)).andRespond(withNoContent());
         mockServer.expect(requestTo("http://example.com"))
-            .andExpect(method(HttpMethod.POST)).andRespond(withSuccess("", MediaType.APPLICATION_JSON));
+            .andExpect(method(HttpMethod.POST)).andRespond(withSuccess(StringUtils.EMPTY, MediaType.APPLICATION_JSON));
         mockServer.expect(requestTo("http://example.com"))
             .andExpect(method(HttpMethod.GET))
             .andRespond(withSuccess(MAPPER.writeValueAsString(getAccount("verifyGet", CASUSER)), MediaType.APPLICATION_JSON));
@@ -94,7 +95,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseO
         acct.setSecretKey(PLAIN_SECRET);
         val mockServer = MockRestServiceServer.createServer(repository.getRestTemplate());
         mockServer.expect(requestTo("http://example.com"))
-            .andExpect(method(HttpMethod.POST)).andRespond(withSuccess("", MediaType.APPLICATION_JSON));
+            .andExpect(method(HttpMethod.POST)).andRespond(withSuccess(StringUtils.EMPTY, MediaType.APPLICATION_JSON));
         mockServer.expect(requestTo("http://example.com"))
             .andExpect(method(HttpMethod.GET))
             .andRespond(withSuccess(MAPPER.writeValueAsString(acct), MediaType.APPLICATION_JSON));
@@ -112,7 +113,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseO
 
         val mockServer = MockRestServiceServer.createServer(repository.getRestTemplate());
         mockServer.expect(requestTo("http://example.com"))
-            .andExpect(method(HttpMethod.POST)).andRespond(withSuccess("", MediaType.APPLICATION_JSON));
+            .andExpect(method(HttpMethod.POST)).andRespond(withSuccess(StringUtils.EMPTY, MediaType.APPLICATION_JSON));
         mockServer.expect(requestTo("http://example.com"))
             .andExpect(method(HttpMethod.GET))
             .andRespond(withSuccess(MAPPER.writeValueAsString(acct), MediaType.APPLICATION_JSON));
@@ -121,7 +122,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseO
         acct.setValidationCode(999666);
 
         mockServer.expect(requestTo("http://example.com"))
-            .andExpect(method(HttpMethod.POST)).andRespond(withSuccess("", MediaType.APPLICATION_JSON));
+            .andExpect(method(HttpMethod.POST)).andRespond(withSuccess(StringUtils.EMPTY, MediaType.APPLICATION_JSON));
         mockServer.expect(requestTo("http://example.com"))
             .andExpect(method(HttpMethod.GET))
             .andRespond(withSuccess(MAPPER.writeValueAsString(acct), MediaType.APPLICATION_JSON));

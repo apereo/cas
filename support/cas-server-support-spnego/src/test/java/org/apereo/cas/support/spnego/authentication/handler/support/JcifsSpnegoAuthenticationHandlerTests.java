@@ -30,7 +30,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
     @Test
     public void verifySuccessfulAuthenticationWithDomainName() throws Exception {
         val credentials = new SpnegoCredential(new byte[]{0, 1, 2});
-        val authenticationHandler = new JcifsSpnegoAuthenticationHandler("", null, null,
+        val authenticationHandler = new JcifsSpnegoAuthenticationHandler(StringUtils.EMPTY, null, null,
             CollectionUtils.wrapList(new MockJcifsAuthentication()), true, true, null);
         assertNotNull(authenticationHandler.authenticate(credentials));
         assertEquals("test", credentials.getPrincipal().getId());
@@ -40,7 +40,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
     @Test
     public void verifySuccessfulAuthenticationWithoutDomainName() throws Exception {
         val credentials = new SpnegoCredential(new byte[]{0, 1, 2});
-        val authenticationHandler = new JcifsSpnegoAuthenticationHandler("", null, null,
+        val authenticationHandler = new JcifsSpnegoAuthenticationHandler(StringUtils.EMPTY, null, null,
             CollectionUtils.wrapList(new MockJcifsAuthentication()), false, true, null);
         assertNotNull(authenticationHandler.authenticate(credentials));
         assertEquals("test", credentials.getPrincipal().getId());
@@ -50,7 +50,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
     @Test
     public void verifyUnsuccessfulAuthenticationWithExceptionOnProcess() throws Exception {
         val credentials = new SpnegoCredential(new byte[]{0, 1, 2});
-        val authenticationHandler = new JcifsSpnegoAuthenticationHandler("", null, null,
+        val authenticationHandler = new JcifsSpnegoAuthenticationHandler(StringUtils.EMPTY, null, null,
             CollectionUtils.wrapList(new MockUnsuccessfulJcifsAuthentication(true)),
             true, true, null);
 
@@ -70,7 +70,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
     @Test
     public void verifyUnsuccessfulAuthentication() throws Exception {
         val credentials = new SpnegoCredential(new byte[]{0, 1, 2});
-        val authenticationHandler = new JcifsSpnegoAuthenticationHandler("", null, null,
+        val authenticationHandler = new JcifsSpnegoAuthenticationHandler(StringUtils.EMPTY, null, null,
             CollectionUtils.wrapList(new MockUnsuccessfulJcifsAuthentication(false)),
             true, true, null);
 
@@ -79,7 +79,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
 
     @Test
     public void verifySupports() {
-        val authenticationHandler = new JcifsSpnegoAuthenticationHandler("", null, null,
+        val authenticationHandler = new JcifsSpnegoAuthenticationHandler(StringUtils.EMPTY, null, null,
             CollectionUtils.wrapList(new MockJcifsAuthentication()), true, true, null);
 
         assertFalse(authenticationHandler.supports((SpnegoCredential) null));
@@ -94,7 +94,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
         val myKerberosUser = "Username@DOMAIN.COM";
 
         val factory = new DefaultPrincipalFactory();
-        val authenticationHandler = new JcifsSpnegoAuthenticationHandler("", null, null,
+        val authenticationHandler = new JcifsSpnegoAuthenticationHandler(StringUtils.EMPTY, null, null,
             CollectionUtils.wrapList(new MockJcifsAuthentication()), true,
             true, null);
 

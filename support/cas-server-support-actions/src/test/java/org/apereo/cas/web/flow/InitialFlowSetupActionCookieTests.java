@@ -53,10 +53,10 @@ public class InitialFlowSetupActionCookieTests extends AbstractWebflowActionsTes
 
     @BeforeEach
     public void initialize() throws Exception {
-        this.warnCookieGenerator = new CookieRetrievingCookieGenerator("warn", "", 2,
+        this.warnCookieGenerator = new CookieRetrievingCookieGenerator("warn", StringUtils.EMPTY, 2,
             false, null, false);
         this.warnCookieGenerator.setCookiePath(StringUtils.EMPTY);
-        this.tgtCookieGenerator = new CookieRetrievingCookieGenerator("tgt", "", 2,
+        this.tgtCookieGenerator = new CookieRetrievingCookieGenerator("tgt", StringUtils.EMPTY, 2,
             false, null, false);
         this.tgtCookieGenerator.setCookiePath(StringUtils.EMPTY);
 
