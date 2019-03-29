@@ -156,7 +156,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
 
-        if (singleSignOnSessionExists(context)) {
+        if (!isLogoutRequest(request) && singleSignOnSessionExists(context)) {
             LOGGER.trace("An existing single sign-on session already exists. Skipping delegation and routing back to CAS authentication flow");
             return resumeWebflow();
         }
@@ -218,6 +218,10 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         val msg = String.format("Delegated authentication has failed with client %s", client.getName());
         LOGGER.error(msg, e);
         throw new IllegalArgumentException(msg);
+    }
+
+    private boolean isLogoutRequest(final HttpServletRequest request) {
+        return request.getParameter(SAML2ServiceProviderMetadataResolver.LOGOUT_ENDPOINT_PARAMETER) != null;
     }
 
     private boolean singleSignOnSessionExists(final RequestContext requestContext) {
