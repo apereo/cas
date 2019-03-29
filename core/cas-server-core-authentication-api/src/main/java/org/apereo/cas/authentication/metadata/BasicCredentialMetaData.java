@@ -3,8 +3,8 @@ package org.apereo.cas.authentication.metadata;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.CredentialMetaData;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +20,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode
 public class BasicCredentialMetaData implements CredentialMetaData {
 
@@ -29,7 +30,6 @@ public class BasicCredentialMetaData implements CredentialMetaData {
     private static final long serialVersionUID = 4929579849241505377L;
 
     private Credential credential;
-
 
     @JsonIgnore
     @Override
