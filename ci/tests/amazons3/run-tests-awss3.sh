@@ -30,8 +30,8 @@ echo -e "***********************************************"
 ./ci/tests/amazons3/run-awss3-server.sh
 
 gradleBuild="$gradleBuild testAWSS3 jacocoRootReport -x test -x javadoc -x check \
-    -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \
-    -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
+    -DskipGradleLint=true --parallel \
+    -DskipNestedConfigMetadataGen=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
     gradleBuild="$gradleBuild -DshowStandardStreams=true "

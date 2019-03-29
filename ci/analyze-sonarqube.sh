@@ -27,13 +27,10 @@ echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-echo -e "Installing NPM...\n"
-./gradlew npmInstall --stacktrace -q --no-daemon
-
 gradleBuild="$gradleBuild sonarqube -x javadoc -Dsonar.organization=apereo \
             -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${SONARCLOUD_TOKEN} \
-            -DskipGradleLint=true -DskipSass=true -DskipNestedConfigMetadataGen=true \
-            -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel "
+            -DskipGradleLint=true -DskipNestedConfigMetadataGen=true \
+            --parallel "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
     gradleBuild="$gradleBuild -DshowStandardStreams=true "
