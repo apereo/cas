@@ -60,8 +60,8 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     public MockTicketGrantingTicket(final String principal, final Credential c, final Map attributes) {
         id = ID_GENERATOR.getNewTicketId("TGT");
         val metaData = new BasicCredentialMetaData(c);
-        authentication = new DefaultAuthenticationBuilder(new DefaultPrincipalFactory()
-            .createPrincipal(principal, attributes)).addCredential(metaData)
+        authentication = new DefaultAuthenticationBuilder(new DefaultPrincipalFactory().createPrincipal(principal, attributes))
+            .addCredential(metaData)
             .addSuccess(SimpleTestUsernamePasswordAuthenticationHandler.class.getName(),
                 new DefaultAuthenticationHandlerExecutionResult(new SimpleTestUsernamePasswordAuthenticationHandler(), metaData)).build();
         created = ZonedDateTime.now(ZoneOffset.UTC);

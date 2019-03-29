@@ -19,6 +19,14 @@ public interface TicketSerializationExecutionPlan {
     void registerTicketSerializer(StringSerializer<? extends Ticket> serializer);
 
     /**
+     * Register ticket serializer.
+     *
+     * @param typeToSerialize the type to serialize
+     * @param serializer      the serializer
+     */
+    void registerTicketSerializer(String typeToSerialize, StringSerializer<? extends Ticket> serializer);
+
+    /**
      * Gets ticket serializer.
      *
      * @param clazz the clazz

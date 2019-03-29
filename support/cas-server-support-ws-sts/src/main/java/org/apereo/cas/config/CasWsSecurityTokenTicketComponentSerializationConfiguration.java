@@ -4,6 +4,7 @@ import org.apereo.cas.ComponentSerializationPlan;
 import org.apereo.cas.ComponentSerializationPlanConfigurator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.DefaultSecurityTokenTicket;
+import org.apereo.cas.ticket.SecurityTokenTicket;
 import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlan;
 import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlanConfigurer;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
@@ -24,18 +25,21 @@ public class CasWsSecurityTokenTicketComponentSerializationConfiguration
 
     @Override
     public void configureTicketSerialization(final TicketSerializationExecutionPlan plan) {
-        plan.registerTicketSerializer(new AbstractJacksonBackedStringSerializer<DefaultSecurityTokenTicket>() {
-            private static final long serialVersionUID = -3198623586274810263L;
-
-            @Override
-            public Class<DefaultSecurityTokenTicket> getTypeToSerialize() {
-                return DefaultSecurityTokenTicket.class;
-            }
-        });
+        plan.registerTicketSerializer(new SecurityTokenTicketStringSerializer());
+        plan.registerTicketSerializer(SecurityTokenTicket.class.getName(), new SecurityTokenTicketStringSerializer());
     }
 
     @Override
     public void configureComponentSerializationPlan(final ComponentSerializationPlan plan) {
         plan.registerSerializableClass(DefaultSecurityTokenTicket.class);
+    }
+
+    private static class SecurityTokenTicketStringSerializer extends AbstractJacksonBackedStringSerializer<DefaultSecurityTokenTicket> {
+        private static final long serialVersionUID = -3198623586274810263L;
+
+        @Override
+        public Class<DefaultSecurityTokenTicket> getTypeToSerialize() {
+            return DefaultSecurityTokenTicket.class;
+        }
     }
 }
