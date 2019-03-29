@@ -10,7 +10,9 @@ import org.junit.platform.suite.api.SelectClasses;
  */
 @SelectClasses({
     RedisEmbeddedTicketRegistryTests.class,
-    RedisServerTicketRegistryTests.class
+    SentinelEmbeddedTicketRegistryTests.class,
+    RedisServerTicketRegistryTests.class,
+    SentinelServerTicketRegistryTests.class
 })
 public class AllRedisTicketRegistryTestsSuite {
 }
