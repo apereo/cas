@@ -72,7 +72,7 @@ public interface AuthenticationHandler extends Ordered {
      * Supports credential class.
      *
      * @param clazz the clazz
-     * @return the boolean
+     * @return true/false
      */
     default boolean supports(final Class<? extends Credential> clazz) {
         return false;
