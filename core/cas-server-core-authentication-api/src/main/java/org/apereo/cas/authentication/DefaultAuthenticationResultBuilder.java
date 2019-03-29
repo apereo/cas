@@ -82,6 +82,14 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
     }
 
     @Override
+    public Optional<Credential> getInitialCredential() {
+        if (this.providedCredentials.isEmpty()) {
+            LOGGER.warn("Provided credentials chain is empty as no credentials have been collected");
+        }
+        return this.providedCredentials.stream().findFirst();
+    }
+
+    @Override
     public AuthenticationResult build(final PrincipalElectionStrategy principalElectionStrategy) {
         return build(principalElectionStrategy, null);
     }

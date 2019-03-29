@@ -2,13 +2,12 @@ package org.apereo.cas.authentication.metadata;
 
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.CredentialMetaData;
+import org.apereo.cas.util.serialization.SerializationUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * Basic credential metadata implementation that stores the original credential ID and the original credential type.
@@ -18,9 +17,7 @@ import lombok.Setter;
  * @since 4.0.0
  */
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(force = true)
 @EqualsAndHashCode
 public class BasicCredentialMetaData implements CredentialMetaData {
 
@@ -29,17 +26,32 @@ public class BasicCredentialMetaData implements CredentialMetaData {
      */
     private static final long serialVersionUID = 4929579849241505377L;
 
-    private Credential credential;
+    /**
+     * Credential type unique identifier.
+     */
+    private final String id;
 
-    @JsonIgnore
-    @Override
-    public String getId() {
-        return this.credential.getId();
+    /**
+     * Type of original credential.
+     */
+    private final Class<? extends Credential> credentialClass;
+
+    private final byte[] credentialInstance;
+
+    /**
+     * Creates a new instance from the given credential.
+     *
+     * @param credential Credential for which metadata should be created.
+     */
+    public BasicCredentialMetaData(final Credential credential) {
+        this.id = credential.getId();
+        this.credentialClass = credential.getClass();
+        this.credentialInstance = SerializationUtils.serialize(credential);
     }
 
     @JsonIgnore
     @Override
-    public Class<? extends Credential> getCredentialClass() {
-        return this.credential.getClass();
+    public Credential toCredential() {
+        return SerializationUtils.deserialize(this.credentialInstance, credentialClass);
     }
 }

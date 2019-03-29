@@ -235,8 +235,11 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                 val builder = this.authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication);
                 val credentials = authentication.getCredentials();
                 if (!credentials.isEmpty()) {
-                    credentials.forEach(c -> builder.collect(c.getCredential()));
-                    val credential = credentials.get(0).getCredential();
+                    credentials.forEach(c -> {
+                        val credential = c.toCredential();
+                        builder.collect(credential);
+                    });
+                    val credential = builder.getInitialCredential().get();
                     WebUtils.putCredential(requestContext, credential);
                 }
                 LOGGER.trace("Recording and tracking initial authentication results in the request context");
