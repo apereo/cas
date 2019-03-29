@@ -3,9 +3,10 @@ package org.apereo.cas.authentication.metadata;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.CredentialMetaData;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 /**
  * Basic credential metadata implementation that stores the original credential ID and the original credential type.
@@ -16,7 +17,6 @@ import lombok.RequiredArgsConstructor;
  */
 @Getter
 @EqualsAndHashCode
-@RequiredArgsConstructor
 public class BasicCredentialMetaData implements CredentialMetaData {
 
     /**
@@ -26,11 +26,18 @@ public class BasicCredentialMetaData implements CredentialMetaData {
 
     private final Credential credential;
 
+    @JsonCreator
+    public BasicCredentialMetaData(final Credential credential) {
+        this.credential = credential;
+    }
+
+    @JsonIgnore
     @Override
     public String getId() {
         return this.credential.getId();
     }
 
+    @JsonIgnore
     @Override
     public Class<? extends Credential> getCredentialClass() {
         return this.credential.getClass();
