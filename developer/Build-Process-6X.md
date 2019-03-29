@@ -59,13 +59,10 @@ The following commandline boolean flags are supported by the build and can be pa
 | `skipCheckstyle`                  | Skip running checkstyle checks.
 | `skipFindbugs`                    | Skip running findbugs checks.
 | `skipVersionConflict`             | If a dependency conflict is found, use the latest version rather than failing the build.
-| `skipSass`                        | Skip compilation of `.sass` files into `.css`, etc. Mostly useful when running tests.
 | `skipNestedConfigMetadataGen`     | Skip generating configuration metadata for nested properties and generic collections.
-| `skipNodeModulesCleanUp`          | Skip cleaning and removing the `node_modules` directory. Mostly useful when running tests.
 | `skipSonarqube`                   | Ignore reporting results to Sonarqube.
 | `skipErrorProneCompiler`          | Skip running the `error-prone` static-analysis compiler.
 | `skipBootifulArtifact`            | Do not apply the Spring Boot plugin to bootify application artifacts.
-| `skipNpmLint`                     | Skip running the linter for resources managed by NPM, such as Javascript files.
 | `forceBom`                        | Force the generation of the CAS Maven BOM.
 | `ignoreJavadocFailures`           | Ignore javadoc failures and let the build resume.
 | `ignoreFindbugsFailures`          | Ignore Findbugs failures and let the build resume.
