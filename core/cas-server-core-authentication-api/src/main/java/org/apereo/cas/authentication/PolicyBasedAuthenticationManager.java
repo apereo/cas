@@ -280,7 +280,6 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         }
 
         val builder = new DefaultAuthenticationBuilder(NullPrincipal.getInstance());
-        credentials.forEach(cred -> builder.addCredential(new BasicCredentialMetaData(cred)));
 
         val handlerSet = this.authenticationEventExecutionPlan.getAuthenticationHandlersForTransaction(transaction);
         LOGGER.debug("Candidate resolved authentication handlers for this transaction are [{}]", handlerSet);
@@ -307,6 +306,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                             LOGGER.debug("Attempting authentication of [{}] using [{}]", credential.getId(), handler.getName());
                             authenticateAndResolvePrincipal(builder, credential, resolver, handler);
                             val authnResult = builder.build();
+                            builder.addCredential(new BasicCredentialMetaData(credential));
                             AuthenticationCredentialsThreadLocalBinder.bindInProgress(authnResult);
                             val failures = evaluateAuthenticationPolicies(authnResult, transaction, handlerSet);
                             proceedWithNextHandler = !failures.getKey();

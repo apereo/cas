@@ -24,6 +24,13 @@ public interface AuthenticationResultBuilder extends Serializable {
     Optional<Authentication> getInitialAuthentication();
 
     /**
+     * Gets initial credential.
+     *
+     * @return the initial credential
+     */
+    Optional<Credential> getInitialCredential();
+
+    /**
      * Collect authentication objects from any number of processed authentication transactions.
      *
      * @param authentication the authentication
