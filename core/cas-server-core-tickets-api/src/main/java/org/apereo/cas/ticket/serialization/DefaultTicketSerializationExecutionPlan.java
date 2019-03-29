@@ -1,6 +1,10 @@
 package org.apereo.cas.ticket.serialization;
 
+import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
+import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.serialization.serializers.EncodedTicketStringSerializer;
 import org.apereo.cas.ticket.serialization.serializers.ProxyGrantingTicketStringSerializer;
 import org.apereo.cas.ticket.serialization.serializers.ProxyTicketStringSerializer;
@@ -33,11 +37,21 @@ public class DefaultTicketSerializationExecutionPlan implements TicketSerializat
         registerTicketSerializer(new ServiceTicketStringSerializer());
         registerTicketSerializer(new TicketGrantingTicketStringSerializer());
         registerTicketSerializer(new TransientSessionTicketStringSerializer());
+
+        registerTicketSerializer(TicketGrantingTicket.class.getName(), new TicketGrantingTicketStringSerializer());
+        registerTicketSerializer(ServiceTicket.class.getName(), new ServiceTicketStringSerializer());
+        registerTicketSerializer(ProxyTicket.class.getName(), new ProxyTicketStringSerializer());
+        registerTicketSerializer(ProxyGrantingTicket.class.getName(), new ProxyGrantingTicketStringSerializer());
+    }
+
+    @Override
+    public void registerTicketSerializer(final String typeToSerialize, final StringSerializer<? extends Ticket> serializer) {
+        ticketSerializers.put(typeToSerialize, serializer);
     }
 
     @Override
     public void registerTicketSerializer(final StringSerializer<? extends Ticket> serializer) {
-        ticketSerializers.put(serializer.getTypeToSerialize().getName(), serializer);
+        registerTicketSerializer(serializer.getTypeToSerialize().getName(), serializer);
     }
 
     @Override
