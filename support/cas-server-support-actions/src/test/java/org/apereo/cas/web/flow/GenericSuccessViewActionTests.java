@@ -11,6 +11,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.web.flow.login.GenericSuccessViewAction;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -37,7 +38,7 @@ public class GenericSuccessViewActionTests {
         when(tgt.getAuthentication()).thenReturn(authn);
 
         when(cas.getTicket(any(String.class), any())).thenReturn(tgt);
-        val action = new GenericSuccessViewAction(cas, mgr, factory, "");
+        val action = new GenericSuccessViewAction(cas, mgr, factory, StringUtils.EMPTY);
         val p = action.getAuthenticationPrincipal("TGT-1");
         assertNotNull(p);
         assertEquals("cas", p.getId());
@@ -49,7 +50,7 @@ public class GenericSuccessViewActionTests {
         val mgr = mock(ServicesManager.class);
         val factory = mock(ServiceFactory.class);
         when(cas.getTicket(any(String.class), any())).thenThrow(new InvalidTicketException("TGT-1"));
-        val action = new GenericSuccessViewAction(cas, mgr, factory, "");
+        val action = new GenericSuccessViewAction(cas, mgr, factory, StringUtils.EMPTY);
         val p = action.getAuthenticationPrincipal("TGT-1");
         assertNotNull(p);
         assertTrue(p instanceof NullPrincipal);

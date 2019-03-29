@@ -36,7 +36,7 @@ import org.apereo.cas.oidc.profile.OidcRegisteredServicePreProcessorEventListene
 import org.apereo.cas.oidc.profile.OidcUserProfileDataCreator;
 import org.apereo.cas.oidc.token.OidcIdTokenGeneratorService;
 import org.apereo.cas.oidc.token.OidcIdTokenSigningAndEncryptionService;
-import org.apereo.cas.oidc.token.OidcRegisteredServiceJWTAccessTokenCipherExecutor;
+import org.apereo.cas.oidc.token.OidcRegisteredServiceJwtAccessTokenCipherExecutor;
 import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupport;
 import org.apereo.cas.oidc.web.OidcAccessTokenResponseGenerator;
 import org.apereo.cas.oidc.web.OidcCallbackAuthorizeViewResolver;
@@ -77,12 +77,12 @@ import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolv
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
-import org.apereo.cas.ticket.OidcTokenSigningAndEncryptionService;
+import org.apereo.cas.ticket.OAuthTokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.token.JWTBuilder;
+import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.apereo.cas.util.serialization.StringSerializer;
@@ -92,7 +92,7 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.mfa.DefaultMultifactorAuthenticationProviderEventResolver;
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -144,7 +144,7 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
 
     @Autowired
     @Qualifier("accessTokenJwtBuilder")
-    private ObjectProvider<JWTBuilder> accessTokenJwtBuilder;
+    private ObjectProvider<JwtBuilder> accessTokenJwtBuilder;
 
     @Autowired
     @Qualifier("accessTokenGrantAuditableRequestExtractor")
@@ -588,7 +588,7 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
     }
 
     @Bean
-    public OidcTokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService() {
+    public OAuthTokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService() {
         val oidc = casProperties.getAuthn().getOidc();
         return new OidcIdTokenSigningAndEncryptionService(oidcDefaultJsonWebKeystoreCache(),
             oidcServiceJsonWebKeystoreCache(),
@@ -682,7 +682,7 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
     @Bean
     public RegisteredServiceCipherExecutor oauthRegisteredServiceJwtAccessTokenCipherExecutor() {
         val oidc = casProperties.getAuthn().getOidc();
-        return new OidcRegisteredServiceJWTAccessTokenCipherExecutor(oidcDefaultJsonWebKeystoreCache(),
+        return new OidcRegisteredServiceJwtAccessTokenCipherExecutor(oidcDefaultJsonWebKeystoreCache(),
             oidcServiceJsonWebKeystoreCache(),
             oidc.getIssuer());
     }

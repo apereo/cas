@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -35,7 +36,8 @@ public class SurrogatePrincipalElectionStrategyTests {
         val attributeRepository = CoreAuthenticationTestUtils.getAttributeRepository();
         val surrogatePrincipalBuilder = new SurrogatePrincipalBuilder(new DefaultPrincipalFactory(), attributeRepository);
         val surrogatePrincipal = surrogatePrincipalBuilder.buildSurrogatePrincipal("cas-surrogate",
-            primaryAuth.getPrincipal(), CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("cas-surrogate"));
+            primaryAuth.getPrincipal(), CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("cas-surrogate"),
+            RegisteredServiceTestUtils.getRegisteredService());
 
         authentications.add(CoreAuthenticationTestUtils.getAuthentication(surrogatePrincipal));
         val principal = strategy.nominate(authentications, (Map) attributes);

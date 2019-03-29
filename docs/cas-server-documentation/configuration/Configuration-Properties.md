@@ -1952,29 +1952,27 @@ Principal resolution and Person Directory settings for this feature are availabl
 ### System Settings
 
 ```properties
-# cas.authn.spnego.kerberosConf=
-# cas.authn.spnego.loginConf=
-# cas.authn.spnego.kerberosRealm=EXAMPLE.COM
-# cas.authn.spnego.kerberosDebug=true
-# cas.authn.spnego.useSubjectCredsOnly=false
-# cas.authn.spnego.kerberosKdc=172.10.1.10
+# cas.authn.spnego.system.kerberosConf=
+# cas.authn.spnego.system.loginConf=
+# cas.authn.spnego.system.kerberosRealm=EXAMPLE.COM
+# cas.authn.spnego.system.kerberosDebug=true
+# cas.authn.spnego.system.useSubjectCredsOnly=false
+# cas.authn.spnego.system.kerberosKdc=172.10.1.10
 ```
 
 ### Spnego Authentication Settings
 
 ```properties
-# cas.authn.spnego[0].cachePolicy=600
-# cas.authn.spnego[0].jcifsDomainController=
-# cas.authn.spnego[0].jcifsDomain=
-# cas.authn.spnego[0].jcifsPassword=
-# cas.authn.spnego[0].jcifsUsername=
-# cas.authn.spnego[0].jcifsServicePassword=
-# cas.authn.spnego[0].timeout=300000
-# cas.authn.spnego[0].jcifsServicePrincipal=HTTP/cas.example.com@EXAMPLE.COM
-# cas.authn.spnego[0].jcifsNetbiosWins=
+# cas.authn.spnego.properties[0].cachePolicy=600
+# cas.authn.spnego.properties[0].jcifsDomainController=
+# cas.authn.spnego.properties[0].jcifsDomain=
+# cas.authn.spnego.properties[0].jcifsPassword=
+# cas.authn.spnego.properties[0].jcifsUsername=
+# cas.authn.spnego.properties[0].jcifsServicePassword=
+# cas.authn.spnego.properties[0].timeout=300000
+# cas.authn.spnego.properties[0].jcifsServicePrincipal=HTTP/cas.example.com@EXAMPLE.COM
+# cas.authn.spnego.properties[0].jcifsNetbiosWins=
 
-# cas.authn.spnego[0].name=
-# cas.authn.spnego[0].order=
 ```
 
 ### SPNEGO Client Selection Strategy
@@ -2801,6 +2799,8 @@ To learn more about this topic, [please review this guide](../installation/Confi
 # cas.authn.samlIdp.authenticationContextClassMappings[0]=urn:oasis:names:tc:SAML:2.0:ac:classes:SomeClassName->mfa-duo
 # cas.authn.samlIdp.authenticationContextClassMappings[1]=https://refeds.org/profile/mfa->mfa-gauth
 
+# cas.authn.samlIdp.attributeFriendlyNames[0]=urn:oid:1.3.6.1.4.1.5923.1.1.1.6->eduPersonPrincipalName
+  
 # cas.authn.samlIdp.attributeQueryProfileEnabled=true
 ```
 
@@ -3068,11 +3068,6 @@ The following external identity providers share [common blocks of settings](Conf
 | HiOrg-Server              | `cas.authn.pac4j.hiOrgServer`
 
 See below for other identity providers such as CAS, SAML2 and more.
-
-### Signing & Encryption
-
-The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
-The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under `${configurationKey}.cookie`.
 
 ### Provisioning
 

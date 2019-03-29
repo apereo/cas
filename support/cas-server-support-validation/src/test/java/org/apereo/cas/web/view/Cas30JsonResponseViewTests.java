@@ -16,6 +16,8 @@ import org.springframework.web.servlet.View;
 
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Unit tests for {@link Cas30ResponseView}.
  *
@@ -37,8 +39,10 @@ public class Cas30JsonResponseViewTests extends Cas30ResponseViewTests {
 
     @Override
     protected Map getRenderedViewModelMap(final MockHttpServletRequest req) {
-        val response = (CasJsonServiceResponse)
-            req.getAttribute(Cas30JsonResponseView.ATTRIBUTE_NAME_MODEL_SERVICE_RESPONSE);
-        return response.getAuthenticationSuccess().getAttributes();
+        val response = (CasJsonServiceResponse) req.getAttribute(Cas30JsonResponseView.ATTRIBUTE_NAME_MODEL_SERVICE_RESPONSE);
+        assertNotNull(response, "Response cannot be null");
+        val success = response.getAuthenticationSuccess();
+        assertNotNull(response, "Authentication success cannot be null");
+        return success.getAttributes();
     }
 }

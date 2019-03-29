@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -60,13 +61,12 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
         val person = mock(IPersonAttributes.class);
         when(person.getName()).thenReturn("uid");
         when(person.getAttributes()).thenReturn(attributes);
-        when(dao.getPerson(any(String.class))).thenReturn(person);
+        when(dao.getPerson(any(String.class), any(IPersonAttributeDaoFilter.class))).thenReturn(person);
         when(dao.getId()).thenReturn(new String[]{"Stub"});
 
         email = new ArrayList<>();
         email.add("final@school.com");
-        this.principal = this.principalFactory.createPrincipal("uid",
-            Collections.singletonMap(MAIL, email));
+        this.principal = this.principalFactory.createPrincipal("uid", Collections.singletonMap(MAIL, email));
     }
 
     protected abstract AbstractPrincipalAttributesRepository getPrincipalAttributesRepository(String unit, long duration);
@@ -80,13 +80,13 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
             var repoAttrs = repository.getAttributes(this.principal, svc);
             assertEquals(1, repoAttrs.size());
             assertTrue(repoAttrs.containsKey(MAIL));
-            Thread.sleep(500);
+            Thread.sleep(1_000);
             repository.setMergingStrategy(AttributeMergingStrategy.REPLACE);
             repository.setAttributeRepositoryIds(Arrays.stream(this.dao.getId()).collect(Collectors.toSet()));
             repoAttrs = repository.getAttributes(this.principal, svc);
-            assertEquals(5, repoAttrs.size());
-            assertTrue(repoAttrs.containsKey("a2"));
-            assertEquals("final@example.com", repoAttrs.get(MAIL));
+            assertEquals(1, repoAttrs.size());
+            assertFalse(repoAttrs.containsKey("uid"));
+            assertEquals("final@school.com", repoAttrs.get(MAIL));
         }
     }
 

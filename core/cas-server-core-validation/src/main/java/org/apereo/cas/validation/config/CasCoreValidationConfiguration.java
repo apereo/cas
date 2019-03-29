@@ -9,7 +9,7 @@ import org.apereo.cas.validation.Cas20WithoutProxyingValidationSpecification;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.DefaultServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.validation.RegisteredServiceRequiredHandlersServiceTicketValidationAuthorizer;
-import org.apereo.cas.validation.RequestedContextValidator;
+import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizer;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizerConfigurer;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
@@ -22,6 +22,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -46,19 +47,19 @@ public class CasCoreValidationConfiguration implements ServiceTicketValidationAu
     private ObjectProvider<ServicesManager> servicesManager;
 
     @Bean
-    @Scope(value = "prototype")
+    @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public CasProtocolValidationSpecification cas10ProtocolValidationSpecification() {
         return new Cas10ProtocolValidationSpecification();
     }
 
     @Bean
-    @Scope(value = "prototype")
+    @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public CasProtocolValidationSpecification cas20ProtocolValidationSpecification() {
         return new Cas20ProtocolValidationSpecification();
     }
 
     @Bean
-    @Scope(value = "prototype")
+    @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public CasProtocolValidationSpecification cas20WithoutProxyProtocolValidationSpecification() {
         return new Cas20WithoutProxyingValidationSpecification();
     }
@@ -88,9 +89,9 @@ public class CasCoreValidationConfiguration implements ServiceTicketValidationAu
 
     @Bean
     @ConditionalOnMissingBean(name = "requestedContextValidator")
-    public RequestedContextValidator requestedContextValidator() {
+    public RequestedAuthenticationContextValidator requestedContextValidator() {
         return (assertion, request) -> {
-            LOGGER.debug("Locating the primary authentication associated with this service request [{}]", assertion.getService());
+            LOGGER.trace("Locating the primary authentication associated with this service request [{}]", assertion.getService());
             val service = servicesManager.getIfAvailable().findServiceBy(assertion.getService());
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(assertion.getService(), service);
             return Pair.of(Boolean.TRUE, Optional.empty());

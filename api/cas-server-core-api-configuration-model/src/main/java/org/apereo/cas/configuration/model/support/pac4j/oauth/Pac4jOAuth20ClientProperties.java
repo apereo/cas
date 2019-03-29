@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -53,10 +54,10 @@ public class Pac4jOAuth20ClientProperties extends Pac4jIdentifiableClientPropert
     /**
      * Profile attributes to request and collect in form of key-value pairs.
      */
-    private Map<String, String> profileAttrs;
+    private Map<String, String> profileAttrs = new LinkedHashMap<>();
 
     /**
-     * Custsom parameters in form of key-value pairs sent along in authZ requests, etc.
+     * Custom parameters in form of key-value pairs sent along in authZ requests, etc.
      */
-    private Map<String, String> customParams;
+    private Map<String, String> customParams = new LinkedHashMap<>();
 }

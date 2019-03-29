@@ -39,9 +39,7 @@ import java.util.stream.Collectors;
  * @since 4.2
  */
 @Slf4j
-@ToString
-@Getter
-@Setter
+@ToString(exclude = "lock")
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"mergingStrategy", "attributeRepositoryIds"})
 public abstract class AbstractPrincipalAttributesRepository implements PrincipalAttributesRepository, AutoCloseable {
@@ -51,15 +49,22 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
     @Transient
     @org.springframework.data.annotation.Transient
     private final transient Object lock = new Object();
+
     /**
      * The merging strategy that deals with existing principal attributes
      * and those that are retrieved from the source. By default, existing attributes
      * are ignored and the source is always consulted.
      */
+    @Getter
+    @Setter
     private AttributeMergingStrategy mergingStrategy = AttributeMergingStrategy.MULTIVALUED;
 
+    @Getter
+    @Setter
     private Set<String> attributeRepositoryIds = new LinkedHashSet<>();
 
+    @Getter
+    @Setter
     private boolean ignoreResolvedAttributes;
 
     @Override
@@ -68,24 +73,28 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
     /**
      * Convert attributes to principal attributes and cache.
      *
-     * @param p                the p
-     * @param sourceAttributes the source attributes
+     * @param principal         the principal
+     * @param sourceAttributes  the source attributes
+     * @param registeredService the registered service
      * @return the map
      */
-    protected Map<String, Object> convertAttributesToPrincipalAttributesAndCache(final Principal p, final Map<String, List<Object>> sourceAttributes) {
+    protected Map<String, Object> convertAttributesToPrincipalAttributesAndCache(final Principal principal,
+                                                                                 final Map<String, List<Object>> sourceAttributes,
+                                                                                 final RegisteredService registeredService) {
         val finalAttributes = convertPersonAttributesToPrincipalAttributes(sourceAttributes);
-        addPrincipalAttributes(p.getId(), finalAttributes);
+        addPrincipalAttributes(principal.getId(), finalAttributes, registeredService);
         return finalAttributes;
     }
 
     /**
      * Add principal attributes into the underlying cache instance.
      *
-     * @param id         identifier used by the cache as key.
-     * @param attributes attributes to cache
+     * @param id                identifier used by the cache as key.
+     * @param attributes        attributes to cache
+     * @param registeredService the registered service
      * @since 4.2
      */
-    protected abstract void addPrincipalAttributes(String id, Map<String, Object> attributes);
+    protected abstract void addPrincipalAttributes(String id, Map<String, Object> attributes, RegisteredService registeredService);
 
     /**
      * Gets attribute repository.
@@ -151,7 +160,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
 
     /**
      * Obtains attributes first from the repository by calling
-     * {@link org.apereo.services.persondir.IPersonAttributeDao#getPerson(String)}.
+     * {@link IPersonAttributeDao#getPerson(String, org.apereo.services.persondir.IPersonAttributeDaoFilter)}.
      *
      * @param id the person id to locate in the attribute repository
      * @return the map of attributes

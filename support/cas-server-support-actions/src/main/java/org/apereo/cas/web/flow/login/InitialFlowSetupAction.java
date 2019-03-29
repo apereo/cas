@@ -8,13 +8,15 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.web.support.ArgumentExtractor;
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpMethod;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -40,7 +42,10 @@ import java.util.stream.Collectors;
 public class InitialFlowSetupAction extends AbstractAction {
 
     private final List<ArgumentExtractor> argumentExtractors;
+
+    @Getter
     private final ServicesManager servicesManager;
+
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
     private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
     private final CookieRetrievingCookieGenerator warnCookieGenerator;
@@ -56,6 +61,11 @@ public class InitialFlowSetupAction extends AbstractAction {
     }
 
     private void configureWebflowContextForService(final RequestContext context) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+
+        if (request.getMethod().equalsIgnoreCase(HttpMethod.POST.name())) {
+            WebUtils.putInitialHttpRequestPostParameters(context);
+        }
         WebUtils.putCustomLoginFormFields(context, casProperties.getView().getCustomLoginFormFields());
 
         val service = WebUtils.getService(this.argumentExtractors, context);
@@ -81,7 +91,7 @@ public class InitialFlowSetupAction extends AbstractAction {
             }
         } else if (!casProperties.getSso().isAllowMissingServiceParameter()) {
             LOGGER.warn("No service authentication request is available at [{}]. CAS is configured to disable the flow.",
-                WebUtils.getHttpServletRequestFromExternalWebflowContext(context).getRequestURL());
+                request.getRequestURL());
             throw new NoSuchFlowExecutionException(context.getFlowExecutionContext().getKey(),
                 new UnauthorizedServiceException("screen.service.required.message", "Service is required"));
         }
@@ -117,23 +127,24 @@ public class InitialFlowSetupAction extends AbstractAction {
         val contextPath = context.getExternalContext().getContextPath();
         val cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
 
-        if (StringUtils.isBlank(this.warnCookieGenerator.getCookiePath())) {
-            LOGGER.info("Setting path for cookies for warn cookie generator to: [{}] ", cookiePath);
-            this.warnCookieGenerator.setCookiePath(cookiePath);
-        } else {
-            LOGGER.trace("Warning cookie path is set to [{}] and path [{}]", this.warnCookieGenerator.getCookieDomain(),
-                this.warnCookieGenerator.getCookiePath());
+        if (casProperties.getWarningCookie().isAutoConfigureCookiePath()) {
+            val path = this.warnCookieGenerator.getCookiePath();
+            if (StringUtils.isBlank(path)) {
+                LOGGER.debug("Setting path for cookies for warn cookie generator to: [{}]", cookiePath);
+                this.warnCookieGenerator.setCookiePath(cookiePath);
+            } else {
+                LOGGER.trace("Warning cookie domain is set to [{}] with path [{}]", this.warnCookieGenerator.getCookieDomain(), path);
+            }
         }
-        if (StringUtils.isBlank(this.ticketGrantingTicketCookieGenerator.getCookiePath())) {
-            LOGGER.debug("Setting path for cookies for TGC cookie generator to: [{}] ", cookiePath);
-            this.ticketGrantingTicketCookieGenerator.setCookiePath(cookiePath);
-        } else {
-            LOGGER.trace("TGC cookie path is set to [{}] and path [{}]", this.ticketGrantingTicketCookieGenerator.getCookieDomain(),
-                this.ticketGrantingTicketCookieGenerator.getCookiePath());
-        }
-    }
 
-    public ServicesManager getServicesManager() {
-        return servicesManager;
+        if (casProperties.getTgc().isAutoConfigureCookiePath()) {
+            val path = this.ticketGrantingTicketCookieGenerator.getCookiePath();
+            if (StringUtils.isBlank(path)) {
+                LOGGER.debug("Setting path for cookies for TGC cookie generator to: [{}]", cookiePath);
+                this.ticketGrantingTicketCookieGenerator.setCookiePath(cookiePath);
+            } else {
+                LOGGER.trace("TGC cookie domain is [{}] with path [{}]", this.ticketGrantingTicketCookieGenerator.getCookieDomain(), path);
+            }
+        }
     }
 }

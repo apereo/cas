@@ -12,11 +12,11 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileEndpointController;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenCipherExecutor;
-import org.apereo.cas.support.oauth.web.response.accesstoken.response.RegisteredServiceJWTAccessTokenCipherExecutor;
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.RegisteredServiceJwtAccessTokenCipherExecutor;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.accesstoken.DefaultAccessTokenFactory;
 import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
-import org.apereo.cas.token.JWTBuilder;
+import org.apereo.cas.token.JwtBuilder;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -95,7 +95,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
     public void verifyExpiredAccessToken() throws Exception {
         val principal = CoreAuthenticationTestUtils.getPrincipal(ID, new HashMap<>());
         val authentication = getAuthentication(principal);
-        val jwtBuilder = new JWTBuilder("cas.example.org", new OAuth20JwtAccessTokenCipherExecutor(), servicesManager, new RegisteredServiceJWTAccessTokenCipherExecutor());
+        val jwtBuilder = new JwtBuilder("cas.example.org", new OAuth20JwtAccessTokenCipherExecutor(), servicesManager, new RegisteredServiceJwtAccessTokenCipherExecutor());
         val expiringAccessTokenFactory = new DefaultAccessTokenFactory(new AlwaysExpiresExpirationPolicy(), jwtBuilder);
         val accessToken = expiringAccessTokenFactory.create(RegisteredServiceTestUtils.getService(), authentication,
             new MockTicketGrantingTicket("casuser"), new ArrayList<>(), null);

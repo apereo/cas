@@ -66,10 +66,10 @@ public class GenerateJwtCommand {
     public static void generate(
         @ShellOption(value = {"signingSecretSize"},
             help = "Size of the signing secret",
-            defaultValue = "" + DEFAULT_SIGNING_SECRET_SIZE) final int signingSecretSize,
+            defaultValue = StringUtils.EMPTY + DEFAULT_SIGNING_SECRET_SIZE) final int signingSecretSize,
         @ShellOption(value = {"encryptionSecretSize"},
             help = "Size of the encryption secret",
-            defaultValue = "" + DEFAULT_ENCRYPTION_SECRET_SIZE) final int encryptionSecretSize,
+            defaultValue = StringUtils.EMPTY + DEFAULT_ENCRYPTION_SECRET_SIZE) final int encryptionSecretSize,
         @ShellOption(value = {"signingAlgorithm"},
             help = "Algorithm to use for signing",
             defaultValue = DEFAULT_SIGNING_ALGORITHM) final String signingAlgorithm,

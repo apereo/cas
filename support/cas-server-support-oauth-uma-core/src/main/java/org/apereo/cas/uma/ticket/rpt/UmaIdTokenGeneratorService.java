@@ -6,7 +6,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.BaseIdTokenGeneratorService;
-import org.apereo.cas.ticket.OidcTokenSigningAndEncryptionService;
+import org.apereo.cas.ticket.OAuthTokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.uma.ticket.permission.UmaPermissionTicket;
@@ -17,6 +17,7 @@ import lombok.val;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.session.J2ESessionStore;
 import org.pac4j.core.profile.UserProfile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,7 +34,7 @@ import java.util.UUID;
 @Slf4j
 public class UmaIdTokenGeneratorService extends BaseIdTokenGeneratorService {
     public UmaIdTokenGeneratorService(final CasConfigurationProperties casProperties,
-                                      final OidcTokenSigningAndEncryptionService signingService,
+                                      final OAuthTokenSigningAndEncryptionService signingService,
                                       final ServicesManager servicesManager,
                                       final TicketRegistry ticketRegistry) {
         super(casProperties, signingService, servicesManager, ticketRegistry);
@@ -47,7 +48,7 @@ public class UmaIdTokenGeneratorService extends BaseIdTokenGeneratorService {
                            final OAuth20ResponseTypes responseType,
                            final OAuthRegisteredService registeredService) {
 
-        val context = Pac4jUtils.getPac4jJ2EContext(request, response);
+        val context = Pac4jUtils.getPac4jJ2EContext(request, response, new J2ESessionStore());
         LOGGER.debug("Attempting to produce claims for the rpt access token [{}]", accessToken);
         val authenticatedProfile = getAuthenticatedProfile(request, response);
         val claims = buildJwtClaims(request, accessToken, timeoutInSeconds,

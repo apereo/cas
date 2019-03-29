@@ -5,7 +5,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.Pac4jUtils;
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

@@ -13,7 +13,7 @@ public class OidcClientRegistrationRequestSerializer extends AbstractJacksonBack
     private static final long serialVersionUID = -4029907481854505324L;
 
     @Override
-    protected Class<OidcClientRegistrationRequest> getTypeToSerialize() {
+    public Class<OidcClientRegistrationRequest> getTypeToSerialize() {
         return OidcClientRegistrationRequest.class;
     }
 

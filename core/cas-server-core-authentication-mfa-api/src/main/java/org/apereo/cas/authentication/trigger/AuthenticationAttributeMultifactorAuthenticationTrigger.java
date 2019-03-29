@@ -53,7 +53,7 @@ public class AuthenticationAttributeMultifactorAuthenticationTrigger implements 
         }
 
         if (attributeNames.isEmpty()) {
-            LOGGER.debug("Authentication attribute name to determine event is not configured");
+            LOGGER.trace("Authentication attribute name to determine event is not configured");
             return Optional.empty();
         }
 

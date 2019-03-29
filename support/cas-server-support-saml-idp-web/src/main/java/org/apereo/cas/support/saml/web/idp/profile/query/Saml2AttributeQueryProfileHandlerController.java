@@ -17,7 +17,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObj
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicket;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;

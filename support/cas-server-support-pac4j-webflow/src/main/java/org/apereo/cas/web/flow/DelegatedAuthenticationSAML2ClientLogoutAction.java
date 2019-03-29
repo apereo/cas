@@ -9,6 +9,7 @@ import lombok.val;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.exception.TechnicalException;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.saml.client.SAML2Client;
@@ -36,13 +37,14 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class DelegatedAuthenticationSAML2ClientLogoutAction extends AbstractAction {
     private final Clients clients;
+    private final SessionStore sessionStore;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         try {
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-            val context = Pac4jUtils.getPac4jJ2EContext(request, response);
+            val context = Pac4jUtils.getPac4jJ2EContext(request, response, this.sessionStore);
 
             Client<?, ?> client;
             try {

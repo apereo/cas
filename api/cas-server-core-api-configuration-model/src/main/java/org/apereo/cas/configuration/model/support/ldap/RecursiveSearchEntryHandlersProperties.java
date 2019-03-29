@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,5 +27,5 @@ public class RecursiveSearchEntryHandlersProperties implements Serializable {
     /**
      * The Merge attributes.
      */
-    private List<String> mergeAttributes;
+    private List<String> mergeAttributes = new ArrayList<>();
 }

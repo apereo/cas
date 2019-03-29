@@ -999,4 +999,14 @@ public class WebUtils {
     public static void putCustomLoginFormFields(final RequestContext context, final Map customLoginFormFields) {
         context.getFlowScope().put("customLoginFormFields", customLoginFormFields);
     }
+
+    /**
+     * Put initial http request post parameters.
+     *
+     * @param context the context
+     */
+    public static void putInitialHttpRequestPostParameters(final RequestContext context) {
+        val request = getHttpServletRequestFromExternalWebflowContext(context);
+        context.getFlashScope().put("httpRequestInitialPostParameters", request.getParameterMap());
+    }
 }

@@ -7,12 +7,12 @@
   overlays could use and pull this file and have their 
   dependencies match that of CAS. 
  */
-ext["hibernateVersion"] = "5.4.1.Final"
+ext["hibernateVersion"] = "5.4.2.Final"
 ext["hazelcastVersion"] = "3.11.2"
 ext["infinispanVersion"] = "9.4.1.Final"
 
 ext["springVersion"] = "5.1.5.RELEASE"
-ext["springBootTomcatVersion"] = "9.0.16"
+ext["springBootTomcatVersion"] = "9.0.17"
 ext["springSessionVersion"] = "2.1.4.RELEASE"
 ext["springSessionMongoVersion"] = "2.1.2.RELEASE"
 

@@ -67,7 +67,7 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
      */
     protected AuthenticationHandlerExecutionResult createHandlerResult(final @NonNull Credential credential,
                                                                        final @NonNull Principal principal,
-                                                                       final List<MessageDescriptor> warnings) {
+                                                                       final @NonNull List<MessageDescriptor> warnings) {
         return new DefaultAuthenticationHandlerExecutionResult(this, new BasicCredentialMetaData(credential), principal, warnings);
     }
 

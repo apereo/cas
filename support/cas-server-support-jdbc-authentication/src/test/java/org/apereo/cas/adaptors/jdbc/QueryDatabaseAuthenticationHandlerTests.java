@@ -10,6 +10,7 @@ import org.apereo.cas.util.RandomUtils;
 
 import lombok.SneakyThrows;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -91,7 +92,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticationFailsToFindUser() {
-        val q = new QueryDatabaseAuthenticationHandler("", null, null, null, this.dataSource, SQL, PASSWORD_FIELD, null,
+        val q = new QueryDatabaseAuthenticationHandler(StringUtils.EMPTY, null, null, null, this.dataSource, SQL, PASSWORD_FIELD, null,
             null, new HashMap<>(0));
         assertThrows(AccountNotFoundException.class,
             () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("usernotfound", "psw1")));
@@ -99,7 +100,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyPasswordInvalid() {
-        val q = new QueryDatabaseAuthenticationHandler("", null, null, null, this.dataSource, SQL, PASSWORD_FIELD,
+        val q = new QueryDatabaseAuthenticationHandler(StringUtils.EMPTY, null, null, null, this.dataSource, SQL, PASSWORD_FIELD,
             null, null, new HashMap<>(0));
         assertThrows(FailedLoginException.class,
             () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user1", "psw11")));
@@ -107,7 +108,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyMultipleRecords() {
-        val q = new QueryDatabaseAuthenticationHandler("", null, null, null, this.dataSource, SQL, PASSWORD_FIELD,
+        val q = new QueryDatabaseAuthenticationHandler(StringUtils.EMPTY, null, null, null, this.dataSource, SQL, PASSWORD_FIELD,
             null, null, new HashMap<>(0));
         assertThrows(FailedLoginException.class,
             () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0")));
@@ -115,7 +116,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyBadQuery() {
-        val q = new QueryDatabaseAuthenticationHandler("", null, null, null, this.dataSource, SQL.replace("*", "error"),
+        val q = new QueryDatabaseAuthenticationHandler(StringUtils.EMPTY, null, null, null, this.dataSource, SQL.replace("*", "error"),
             PASSWORD_FIELD, null, null, new HashMap<>(0));
         assertThrows(PreventedException.class,
             () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0")));
@@ -125,7 +126,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
     @SneakyThrows
     public void verifySuccess() {
         val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(Collections.singletonList("phone:phoneNumber"));
-        val q = new QueryDatabaseAuthenticationHandler("", null, null, null,
+        val q = new QueryDatabaseAuthenticationHandler(StringUtils.EMPTY, null, null, null,
             this.dataSource, SQL, PASSWORD_FIELD,
             null, null,
             CollectionUtils.wrap(map));
@@ -138,7 +139,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyFindUserAndExpired() {
-        val q = new QueryDatabaseAuthenticationHandler("", null, null, null, this.dataSource, SQL, PASSWORD_FIELD,
+        val q = new QueryDatabaseAuthenticationHandler(StringUtils.EMPTY, null, null, null, this.dataSource, SQL, PASSWORD_FIELD,
             "expired", null, new HashMap<>(0));
         assertThrows(AccountPasswordMustChangeException.class,
             () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user20", "psw20")));
@@ -146,7 +147,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyFindUserAndDisabled() {
-        val q = new QueryDatabaseAuthenticationHandler("", null, null, null, this.dataSource, SQL, PASSWORD_FIELD,
+        val q = new QueryDatabaseAuthenticationHandler(StringUtils.EMPTY, null, null, null, this.dataSource, SQL, PASSWORD_FIELD,
             null, "disabled", new HashMap<>(0));
         assertThrows(AccountDisabledException.class,
             () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user21", "psw21")));
@@ -161,7 +162,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
     public void verifyBCryptFail() {
         val encoder = new BCryptPasswordEncoder(8, RandomUtils.getNativeInstance());
         val sql = SQL.replace("*", '\'' + encoder.encode("pswbc1") + "' password");
-        val q = new QueryDatabaseAuthenticationHandler("", null, null, null, this.dataSource, sql, PASSWORD_FIELD,
+        val q = new QueryDatabaseAuthenticationHandler(StringUtils.EMPTY, null, null, null, this.dataSource, sql, PASSWORD_FIELD,
             null, null, new HashMap<>(0));
         q.setPasswordEncoder(encoder);
         assertThrows(FailedLoginException.class,
@@ -177,7 +178,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
     public void verifyBCryptSuccess() {
         val encoder = new BCryptPasswordEncoder(6, RandomUtils.getNativeInstance());
         val sql = SQL.replace("*", '\'' + encoder.encode("pswbc2") + "' password");
-        val q = new QueryDatabaseAuthenticationHandler("", null, null, null, this.dataSource, sql, PASSWORD_FIELD,
+        val q = new QueryDatabaseAuthenticationHandler(StringUtils.EMPTY, null, null, null, this.dataSource, sql, PASSWORD_FIELD,
             null, null, new HashMap<>(0));
 
         q.setPasswordEncoder(encoder);

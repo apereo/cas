@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationManager;
@@ -9,9 +8,7 @@ import org.apereo.cas.authentication.DefaultAuthenticationAttributeReleasePolicy
 import org.apereo.cas.authentication.DefaultAuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
 import org.apereo.cas.authentication.PolicyBasedAuthenticationManager;
-import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 
 import lombok.extern.slf4j.Slf4j;
@@ -87,14 +84,8 @@ public class CasCoreAuthenticationConfiguration {
             LOGGER.debug("CAS is configured to not release protocol-level authentication attributes.");
             return AuthenticationAttributeReleasePolicy.noOp();
         }
-
-        val attributesToNeverRelease = CollectionUtils.wrapSet(
-            CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL,
-            CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET,
-            RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
-        attributesToNeverRelease.addAll(release.getNeverRelease());
-
-        return new DefaultAuthenticationAttributeReleasePolicy(release.getOnlyRelease(), attributesToNeverRelease,
+        return new DefaultAuthenticationAttributeReleasePolicy(release.getOnlyRelease(),
+            release.getNeverRelease(),
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
     }
 }

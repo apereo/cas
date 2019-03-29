@@ -82,7 +82,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
         val credential = WebUtils.getCredential(context);
         val builder = this.authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication, credential);
 
-        LOGGER.debug("Recording and tracking initial authentication results in the request context");
+        LOGGER.trace("Recording and tracking initial authentication results in the request context");
         WebUtils.putAuthenticationResultBuilder(builder, context);
         WebUtils.putAuthentication(authentication, context);
 
@@ -93,15 +93,15 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
         }
 
         val id = event.getId();
-        LOGGER.debug("Resolved event from the initial authentication leg is [{}]", id);
+        LOGGER.trace("Resolved event from the initial authentication leg is [{}]", id);
 
         if (List.of(CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE,
             CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS).contains(id)) {
-            LOGGER.debug("Returning webflow event as [{}]", id);
+            LOGGER.trace("Returning webflow event as [{}]", id);
             return CollectionUtils.wrapSet(event);
         }
 
-        LOGGER.debug("Validating authentication context for event [{}] and service [{}]", id, service);
+        LOGGER.trace("Validating authentication context for event [{}] and service [{}]", id, service);
         val result = this.authenticationContextValidator.validate(authentication, id, service);
 
         if (result.getKey()) {

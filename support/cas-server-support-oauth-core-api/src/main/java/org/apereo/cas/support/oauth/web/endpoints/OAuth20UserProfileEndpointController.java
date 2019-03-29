@@ -15,12 +15,13 @@ import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.Pac4jUtils;
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.HttpConstants;
+import org.pac4j.core.context.session.J2ESessionStore;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -93,7 +94,7 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
     public ResponseEntity<String> handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-        val context = Pac4jUtils.getPac4jJ2EContext(request, response);
+        val context = Pac4jUtils.getPac4jJ2EContext(request, response, new J2ESessionStore());
 
         val accessToken = getAccessTokenFromRequest(request);
         if (StringUtils.isBlank(accessToken)) {

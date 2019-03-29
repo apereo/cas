@@ -10,6 +10,7 @@ import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -66,7 +67,7 @@ public class OpenIdSingleSignOnActionTests extends AbstractOpenIdTests {
         request.setParameter(OpenIdProtocolConstants.OPENID_IDENTITY, "fablah");
         request.setParameter(OpenIdProtocolConstants.OPENID_RETURNTO, "http://www.cnn.com");
 
-        val factory = new OpenIdServiceFactory("");
+        val factory = new OpenIdServiceFactory(StringUtils.EMPTY);
         val service = factory.createService(request);
         WebUtils.putServiceIntoFlowScope(context, service);
         context.getFlowScope().put(WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, "tgtId");

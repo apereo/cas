@@ -21,7 +21,7 @@ import org.apereo.cas.web.report.SingleSignOnSessionsEndpoint;
 import org.apereo.cas.web.report.SpringWebflowEndpoint;
 import org.apereo.cas.web.report.StatisticsEndpoint;
 import org.apereo.cas.web.report.StatusEndpoint;
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -172,6 +172,7 @@ public class CasReportsConfiguration {
      * @since 6.0.0
      */
     @Configuration("statusEndpointConfiguration")
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class StatusEndpointConfiguration {
         @Autowired
         private CasConfigurationProperties casProperties;
