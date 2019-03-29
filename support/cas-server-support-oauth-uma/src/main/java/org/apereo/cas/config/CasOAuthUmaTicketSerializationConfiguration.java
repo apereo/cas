@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlan;
 import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlanConfigurer;
 import org.apereo.cas.uma.ticket.permission.DefaultUmaPermissionTicket;
+import org.apereo.cas.uma.ticket.permission.UmaPermissionTicket;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -21,13 +22,16 @@ public class CasOAuthUmaTicketSerializationConfiguration implements TicketSerial
 
     @Override
     public void configureTicketSerialization(final TicketSerializationExecutionPlan plan) {
-        plan.registerTicketSerializer(new AbstractJacksonBackedStringSerializer<DefaultUmaPermissionTicket>() {
-            private static final long serialVersionUID = -2198623586274810263L;
+        plan.registerTicketSerializer(new UmaPermissionTicketStringSerializer());
+        plan.registerTicketSerializer(UmaPermissionTicket.class.getName(), new UmaPermissionTicketStringSerializer());
+    }
 
-            @Override
-            public Class<DefaultUmaPermissionTicket> getTypeToSerialize() {
-                return DefaultUmaPermissionTicket.class;
-            }
-        });
+    private static class UmaPermissionTicketStringSerializer extends AbstractJacksonBackedStringSerializer<DefaultUmaPermissionTicket> {
+        private static final long serialVersionUID = -2198623586274810263L;
+
+        @Override
+        public Class<DefaultUmaPermissionTicket> getTypeToSerialize() {
+            return DefaultUmaPermissionTicket.class;
+        }
     }
 }
