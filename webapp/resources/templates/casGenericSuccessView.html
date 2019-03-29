@@ -37,8 +37,8 @@
                     </thead>
                     <tbody>
                     <tr th:each="attribute : ${principal.attributes}">
-                        <td><code><span th:utext="${attribute.key}"/></code></td>
-                        <td><code><span th:utext="${attribute.value}"/></code></td>
+                        <td class="col-auto"><code><span th:utext="${attribute.key}"/></code></td>
+                        <td class="col-auto"><code><span th:utext="${attribute.value}"/></code></td>
                     </tr>
                     </tbody>
                 </table>
