@@ -13,14 +13,12 @@
 <body class="login">
     <main role="main" class="container-fluid mt-3 mb-3">
         <div layout:fragment="content" class="row">
-
-            
             <div id="loginForm" th:if="${delegatedAuthenticationProviderPrimary == null}">
                 <div th:replace="fragments/loginform :: loginform">
                     <a href="fragments/loginform.html">Login Form goes here</a>
                 </div>
             </div>
-            <div id="providers">
+            <div id="providers" style="display: none;">
                 <div th:replace="fragments/loginProviders :: loginProviders">
                     <a href="fragments/loginProviders.html">loginProviders</a>
                 </div>
@@ -29,6 +27,7 @@
                 if ($('#list-providers').length) {
                     $('#providers').addClass("col");
                     $('#loginForm').addClass("col");
+                    $('#providers').show();
                 }
             </script>
 

@@ -77,16 +77,15 @@
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
                     <div class="btn-group">
-                        <div class="btn-group dropleft" role="group">
-                            <button type="button" class="btn btn-warning dropdown-toggle dropdown-toggle-split"
+                        <div class="btn-group btn-group-sm dropleft" role="group">
+                            <button id="messagesButton" type="button" class="btn btn-info dropdown-toggle"
                                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="sr-only">Toggle</span>
                             </button>
                             <div class="dropdown-menu">
                                 <a class="dropdown-item" th:if="${staticAuthentication}">
                                     <script>countMessages++;</script>
                                     <h5 class="dropdown-header" th:utext="#{screen.defaultauthn.title}"/>
-                                    <span class="text-wrap small" th:utext="#{screen.defaultauthn.heading}">
+                                    <span class="text text-wrap small" th:utext="#{screen.defaultauthn.heading}">
                                         Static is ONLY useful for demo purposes. It is recommended that you connect CAS to LDAP, JDBC, etc instead.
                                     </span>
                                 </a>
@@ -100,18 +99,18 @@
                                 </a>
                             </div>
                         </div>
-                        <span class="btn btn-warning">
-                            <script>
-                                document.write("(" + countMessages + ")");
-                                if (countMessages == 0) {
-                                    $('#narvarMessages').remove();
-                                }
-                            </script>
-                        </span>
                     </div>
                 </li>
             </ul>
         </div>
+
+        <script>
+            if (countMessages == 0) {
+                $('#narvarMessages').remove();
+            } else {
+                $('#messagesButton').text("[" + countMessages + "]")
+            }
+        </script>
     </nav>
 
 
