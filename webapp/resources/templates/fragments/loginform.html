@@ -14,12 +14,8 @@
         <div class="col-md">
             <!-- Login form template begins here -->
             <div th:fragment="loginform" class="card">
-                <div class="card-header text-center">
-                    <h2 th:text="#{cas.login.pagetitle}">Login</h2>
-                    <span class="fa-stack fa-2x hidden-xs">
-                      <i class="fa fa-circle fa-stack-2x"></i>
-                      <i class="fa fa-lock fa-stack-1x fa-inverse"></i>
-                    </span>
+                <div class="card-header" th:if="${delegatedAuthenticationProviderPrimary == null}" th:replace="fragments/serviceui :: serviceUI">
+                    <a href="fragments/serviceui.html">service ui fragment</a>
                 </div>
                 <div class="card-body">
                     <form method="post" id="fm1" th:object="${credential}" action="login">

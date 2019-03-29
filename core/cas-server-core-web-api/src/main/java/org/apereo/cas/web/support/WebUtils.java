@@ -966,8 +966,8 @@ public class WebUtils {
      * @param context the context
      * @param client  the client
      */
-    public static void putDelegatedAuthenticationProviderDominant(final RequestContext context, final Object client) {
-        context.getFlowScope().put("delegatedAuthenticationProviderDominant", client);
+    public static void putDelegatedAuthenticationProviderPrimary(final RequestContext context, final Object client) {
+        context.getFlowScope().put("delegatedAuthenticationProviderPrimary", client);
     }
 
     /**
