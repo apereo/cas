@@ -71,18 +71,6 @@ function preventFormResubmission() {
     });
 }
 
-function areCookiesEnabled() {
-    if ($.cookie == undefined) {
-        return;
-    }
-
-    $.cookie('cookiesEnabled', 'true');
-    var value = $.cookie('cookiesEnabled');
-    $.removeCookie('cookiesEnabled');
-    return value != undefined;
-
-}
-
 function resourceLoadedSuccessfully() {
     $(document).ready(function () {
 
@@ -92,12 +80,6 @@ function resourceLoadedSuccessfully() {
 
         if ($(':focus').length === 0) {
             $('input:visible:enabled:first').focus();
-        }
-
-        if (areCookiesEnabled()) {
-            $('#cookiesDisabled').hide();
-        } else {
-            $('#cookiesDisabled').show();
         }
 
         preserveAnchorTagOnForm();

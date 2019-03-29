@@ -315,7 +315,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                     provider.ifPresent(p -> {
                         urls.add(p);
                         if (p.isAutoRedirect()) {
-                            WebUtils.putDelegatedAuthenticationProviderDominant(context, p);
+                            WebUtils.putDelegatedAuthenticationProviderPrimary(context, p);
                         }
                     });
                 } catch (final Exception e) {

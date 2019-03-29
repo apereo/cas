@@ -12,16 +12,16 @@
 <main role="main" class="container mt-3 mb-3">
     <div th:fragment="loginProviders" th:remove="tag">
         <div th:if="${delegatedAuthenticationProviderUrls}" id="list-providers"
-             th:class="${delegatedAuthenticationProviderDominant == null ? 'card d-sm-none d-md-block bg-light' : ''}">
+             th:class="${delegatedAuthenticationProviderPrimary == null ? 'card d-sm-none d-md-block bg-light' : ''}">
             
             <div class="card-body">
-                <h3 class="card-title" th:utext="#{screen.welcome.label.loginwith}" th:if="${delegatedAuthenticationProviderDominant == null}">Login with:</h3>
-                <div class="card-title" th:if="${delegatedAuthenticationProviderDominant != null}">
+                <h3 class="card-title" th:utext="#{screen.welcome.label.loginwith}" th:if="${delegatedAuthenticationProviderPrimary == null}">Login with:</h3>
+                <div class="card-title" th:if="${delegatedAuthenticationProviderPrimary != null}">
                     <div class="alert alert-success" role="alert">
                         <span th:utext="#{screen.welcome.label.navto}" />
                     </div>
                 </div>
-                <div class="card-text" th:style="'display:' + ${delegatedAuthenticationProviderDominant != null ? 'none' : 'block'}">
+                <div class="card-text" th:style="'display:' + ${delegatedAuthenticationProviderPrimary != null ? 'none' : 'block'}">
                     <ul>
                         <li th:each="entry: ${delegatedAuthenticationProviderUrls}" th:switch="${entry.type}">
                             <a class="btn btn-block btn-social"
@@ -55,17 +55,17 @@
         </div>
 
         <div th:if="${wsfedUrls}" id="list-providers"
-             th:class="${delegatedAuthenticationProviderDominant == null ? 'card d-sm-none d-md-block bg-light' : ''}">
+             th:class="${delegatedAuthenticationProviderPrimary == null ? 'card d-sm-none d-md-block bg-light' : ''}">
 
             <div class="card-body">
-                <h3 class="card-title" th:utext="#{screen.welcome.label.loginwith}" th:if="${delegatedAuthenticationProviderDominant == null}">Login with:</h3>
-                <div class="card-title" th:if="${delegatedAuthenticationProviderDominant != null}">
+                <h3 class="card-title" th:utext="#{screen.welcome.label.loginwith}" th:if="${delegatedAuthenticationProviderPrimary == null}">Login with:</h3>
+                <div class="card-title" th:if="${delegatedAuthenticationProviderPrimary != null}">
                     <div class="alert alert-info">
                         <span th:utext="#{screen.welcome.label.navto}" />
                     </div>
                 </div>
 
-                <div class="card-text" th:style="'display:' + ${delegatedAuthenticationProviderDominant != null ? 'none' : 'block'}">
+                <div class="card-text" th:style="'display:' + ${delegatedAuthenticationProviderPrimary != null ? 'none' : 'block'}">
                     <ul>
                         <li th:each="entry: ${wsfedUrls}">
                             <a class="btn btn-block btn-social"

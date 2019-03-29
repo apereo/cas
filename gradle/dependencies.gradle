@@ -3537,9 +3537,6 @@ ext.libraries = [
                     exclude(group: "org.webjars", module: "popper.js")
                     force = true
                 },
-                dependencies.create("org.webjars:jquery-cookie:$jqueryCookieVersion") {
-                    force = true
-                },
                 dependencies.create("org.webjars:datatables:$datatablesVersion") {
                     force = true
                 },

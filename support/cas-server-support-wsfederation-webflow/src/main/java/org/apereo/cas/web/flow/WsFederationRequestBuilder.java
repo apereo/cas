@@ -82,7 +82,7 @@ public class WsFederationRequestBuilder {
             clients.add(c);
 
             if (cfg.isAutoRedirect()) {
-                WebUtils.putDelegatedAuthenticationProviderDominant(context, cfg);
+                WebUtils.putDelegatedAuthenticationProviderPrimary(context, cfg);
             }
         });
         context.getFlowScope().put(PARAMETER_NAME_WSFED_CLIENTS, clients);
