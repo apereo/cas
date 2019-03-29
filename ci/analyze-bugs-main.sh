@@ -27,12 +27,9 @@ echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-echo -e "Installing NPM...\n"
-./gradlew npmInstall --stacktrace -q --no-daemon
-
 gradleBuild="$gradleBuild spotbugsMain -x test -x javadoc \
-     -DskipGradleLint=true -DskipSass=true -DskipNestedConfigMetadataGen=true \
-     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DshowStandardStreams=true "
+     -DskipGradleLint=true -DskipNestedConfigMetadataGen=true \
+     -DshowStandardStreams=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[rerun tasks]"* ]]; then
     gradleBuild="$gradleBuild --rerun-tasks "

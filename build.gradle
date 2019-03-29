@@ -73,7 +73,6 @@ buildscript {
         classpath "io.spring.gradle:propdeps-plugin:$gradlePropDepsVersion"
         classpath "org.ajoberstar:grgit:$gradleGitVersion"
         classpath "net.ltgt.gradle:gradle-errorprone-javacplugin-plugin:$gradleErrorProneVersion"
-        classpath "com.moowork.gradle:gradle-node-plugin:$gradleNodeVersion"
         classpath "org.owasp:dependency-check-gradle:$gradleDependencyCheckVersion"
         classpath "gradle.plugin.com.github.spotbugs:spotbugs-gradle-plugin:$gradleSpotbugsVersion"
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$gradleSonarqubeVersion"

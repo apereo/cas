@@ -7,14 +7,12 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.SpringBootVersion;
 import org.springframework.core.SpringVersion;
 
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -59,9 +57,6 @@ public class SystemUtils {
         info.put("JVM Total Memory", FileUtils.byteCountToDisplaySize(runtime.totalMemory()));
 
         info.put("JCE Installed", StringUtils.capitalize(BooleanUtils.toStringYesNo(EncodingUtils.isJceInstalled())));
-
-        info.put("Node Version", getNodeVersion());
-        info.put("NPM Version", getNpmVersion());
 
         info.put("OS Architecture", properties.get("os.arch"));
         info.put("OS Name", properties.get("os.name"));
@@ -109,39 +104,5 @@ public class SystemUtils {
                 info.put("Update Availability", updateString);
             }
         }
-    }
-
-    /**
-     * Gets node version.
-     *
-     * @return the node version
-     */
-    @SneakyThrows
-    public static String getNodeVersion() {
-        try {
-            val pb = new ProcessBuilder("node", "--version");
-            val p = pb.start();
-            return IOUtils.toString(p.getInputStream(), StandardCharsets.UTF_8).trim();
-        } catch (final Exception e) {
-            LOGGER.trace(e.getMessage(), e);
-        }
-        return "N/A";
-    }
-
-    /**
-     * Gets npm version.
-     *
-     * @return the npm version
-     */
-    @SneakyThrows
-    public static String getNpmVersion() {
-        try {
-            val pb = new ProcessBuilder("npm", "--version");
-            val p = pb.start();
-            return IOUtils.toString(p.getInputStream(), StandardCharsets.UTF_8).trim();
-        } catch (final Exception e) {
-            LOGGER.trace(e.getMessage(), e);
-        }
-        return "N/A";
     }
 }
