@@ -22,11 +22,16 @@ public class DefaultTicketStringSerializationManager implements TicketSerializat
 
     @Override
     public String serializeTicket(final Ticket ticket) {
-        val serializer = ticketSerializationExecutionPlan.getTicketSerializer(ticket);
-        if (serializer == null) {
-            throw new IllegalArgumentException("Unable to find ticket serializer for " + ticket.getId());
+        try {
+            val serializer = ticketSerializationExecutionPlan.getTicketSerializer(ticket);
+            if (serializer == null) {
+                throw new IllegalArgumentException("Unable to find ticket serializer for " + ticket.getId());
+            }
+            return serializer.toString(ticket);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw e;
         }
-        return serializer.toString(ticket);
     }
 
     @Override

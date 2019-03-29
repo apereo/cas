@@ -28,7 +28,10 @@ import java.util.Properties;
 @Slf4j
 @Getter
 public class AmazonSecretsManagerCloudConfigBootstrapConfiguration implements PropertySourceLocator {
-    private static final String CAS_CONFIGURATION_PREFIX = "cas.spring.cloud.aws.secretsManager";
+    /**
+     * Configuration prefix for amazon secrets manager.
+     */
+    public static final String CAS_CONFIGURATION_PREFIX = "cas.spring.cloud.aws.secretsManager";
 
     @Override
     public PropertySource<?> locate(final Environment environment) {
