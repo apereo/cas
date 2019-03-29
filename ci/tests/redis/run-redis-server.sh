@@ -2,14 +2,14 @@
 
 # while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
 
-echo "Running Redis docker image..."
-docker run -d -p 6379:6379 --name redis-server redis:latest
+echo "Running Redis + Sentinel docker image..."
+docker-compose -f ./ci/tests/redis/docker-compose-sentinel.yml up -d
 
-docker ps | grep "redis-server"
-retVal=$?
-if [ $retVal == 0 ]; then
-    echo "Redis docker image is running."
+COUNT_REDIS=$(docker ps | grep "redis_server_"| wc -l)
+COUNT_SENTINEL=$(docker ps | grep "redis_sentinel_"| wc -l)
+if [ "$COUNT_REDIS" -eq 3 -a "$COUNT_SENTINEL" -eq 3 ]; then
+    echo "Redis + sentinel docker images are running."
 else
-    echo "Redis docker image failed to start."
-    exit $retVal
+    echo "Redis + sentinel docker images failed to start."
+    exit
 fi
