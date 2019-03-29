@@ -1,6 +1,5 @@
 <script type="text/javascript" th:src="@{#{webjars.zxcvbn.js}}"></script>
 <script type="text/javascript" th:src="@{#{webjars.jqueryui.js}}"></script>
-<script type="text/javascript" th:src="@{#{webjars.jquerycookie.js}}"></script>
 <script src="//www.google.com/recaptcha/api.js" async defer th:if="${recaptchaSiteKey != null and recaptchaVersion=='v2'}"></script>
 <script th:src="${'//www.google.com/recaptcha/api.js?render=' + recaptchaSiteKey}" th:if="${recaptchaSiteKey != null and recaptchaVersion == 'v3'}"></script>
 <script th:src="@{#{webjars.bootstrapmin.js}}"></script>
@@ -20,11 +19,6 @@
 
     function loadjQueryUI() {
         var jqueryUrl = /*[[@{#{webjars.jqueryui.js}}]]*/;
-        head.load(jqueryUrl, loadjQueryCookies);
-    }
-
-    function loadjQueryCookies() {
-        var jqueryUrl = /*[[@{#{webjars.jquerycookie.js}}]]*/;
         head.load(jqueryUrl, notifyResourcesAreLoaded(resourceLoadedSuccessfully));
     }
 
