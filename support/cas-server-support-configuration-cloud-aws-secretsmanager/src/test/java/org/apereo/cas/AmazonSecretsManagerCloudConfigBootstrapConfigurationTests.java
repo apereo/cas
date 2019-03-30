@@ -9,6 +9,7 @@ import com.amazonaws.services.secretsmanager.AWSSecretsManagerClientBuilder;
 import com.amazonaws.services.secretsmanager.model.PutSecretValueRequest;
 import lombok.val;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -35,6 +36,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.spring.cloud.aws.secretsManager.credentialSecretKey="
         + AmazonSecretsManagerCloudConfigBootstrapConfigurationTests.CREDENTIAL_SECRET_KEY
 })
+@Tag("AmazonWebServicesSecretManager")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class AmazonSecretsManagerCloudConfigBootstrapConfigurationTests {
     static final String ENDPOINT = "http://127.0.0.1:4584";
