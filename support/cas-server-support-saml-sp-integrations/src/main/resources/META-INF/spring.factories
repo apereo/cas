@@ -29,6 +29,7 @@ org.apereo.cas.config.CasSamlSPNewRelicConfiguration,\
 org.apereo.cas.config.CasSamlSPEgnyteConfiguration,\
 org.apereo.cas.config.CasSamlSPArcGISConfiguration,\
 org.apereo.cas.config.CasSamlSPNeoGovConfiguration,\
+org.apereo.cas.config.CasSamlSPCraniumCafeConfiguration,\
 org.apereo.cas.config.CasSamlSPOpenAthensConfiguration,\
 org.apereo.cas.config.CasSamlSPEverBridgeConfiguration,\
 org.apereo.cas.config.CasSamlSPCherWellConfiguration,\
