@@ -32,7 +32,7 @@ public class LoadSurrogatesListAction extends AbstractAction {
     protected Event doExecute(final RequestContext requestContext) {
         if (WebUtils.hasRequestSurrogateAuthenticationRequest(requestContext)) {
             WebUtils.removeRequestSurrogateAuthenticationRequest(requestContext);
-            LOGGER.debug("Attempting to load surrogates...");
+            LOGGER.trace("Attempting to load surrogates...");
             if (loadSurrogates(requestContext)) {
                 return new Event(this, SurrogateWebflowConfigurer.TRANSITION_ID_SURROGATE_VIEW);
             }
