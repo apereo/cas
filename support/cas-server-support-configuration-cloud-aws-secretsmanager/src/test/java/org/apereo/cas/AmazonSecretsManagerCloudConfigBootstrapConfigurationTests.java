@@ -8,8 +8,7 @@ import com.amazonaws.services.secretsmanager.AWSSecretsManager;
 import com.amazonaws.services.secretsmanager.AWSSecretsManagerClientBuilder;
 import com.amazonaws.services.secretsmanager.model.PutSecretValueRequest;
 import lombok.val;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -46,7 +45,7 @@ public class AmazonSecretsManagerCloudConfigBootstrapConfigurationTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @BeforeClass
+    @BeforeAll
     public static void initialize() {
         val environment = new MockEnvironment();
         val prefix = AmazonSecretsManagerCloudConfigBootstrapConfiguration.CAS_CONFIGURATION_PREFIX;
