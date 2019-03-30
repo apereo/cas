@@ -218,6 +218,10 @@ public class SamlServiceProviderProperties implements Serializable {
      * Settings related to Cranium Cafe acting as a SAML service provider.
      */
     private CraniumCafe craniumCafe = new CraniumCafe();
+    /**
+     * Settings related to CCC acting as a SAML service provider.
+     */
+    private CaliforniaCommunityColleges cccco = new CaliforniaCommunityColleges();
 
     @Getter
     private enum CommonAttributeNames {
@@ -225,6 +229,10 @@ public class SamlServiceProviderProperties implements Serializable {
          * Attribute name.
          */
         EDU_PERSON_PRINCIPAL_NAME("eduPersonPrincipalName"),
+        /**
+         * Attribute name.
+         */
+        EDU_PERSON_PRIMARY_NAME("eduPersonPrimaryAffiliation"),
         /**
          * Attribute name.
          */
@@ -245,6 +253,10 @@ public class SamlServiceProviderProperties implements Serializable {
          * Attribute name.
          */
         UID("uid"),
+        /**
+         * Attribute name.
+         */
+        COMMON_NAME("commonName"),
         /**
          * Attribute name.
          */
@@ -903,6 +915,25 @@ public class SamlServiceProviderProperties implements Serializable {
                 CommonAttributeNames.EDU_PERSON_PRINCIPAL_NAME.getAttributeName(),
                 CommonAttributeNames.EDU_PERSON_SCOPED_AFFILIATION.getAttributeName(),
                 CommonAttributeNames.STUDENT_ID.getAttributeName(),
+                CommonAttributeNames.DISPLAY_NAME.getAttributeName());
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class CaliforniaCommunityColleges extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public CaliforniaCommunityColleges() {
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
+                CommonAttributeNames.UID.getAttributeName(),
+                CommonAttributeNames.GIVEN_NAME.getAttributeName(),
+                CommonAttributeNames.COMMON_NAME.getAttributeName(),
+                CommonAttributeNames.SURNAME.getAttributeName(),
+                CommonAttributeNames.EDU_PERSON_PRINCIPAL_NAME.getAttributeName(),
+                CommonAttributeNames.EDU_PERSON_PRIMARY_NAME.getAttributeName(),
+                CommonAttributeNames.EDU_PERSON_SCOPED_AFFILIATION.getAttributeName(),
                 CommonAttributeNames.DISPLAY_NAME.getAttributeName());
         }
     }
