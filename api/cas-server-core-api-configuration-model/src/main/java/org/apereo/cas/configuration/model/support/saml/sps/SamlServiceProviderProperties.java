@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * This is {@link SamlServiceProviderProperties}.
@@ -73,7 +74,6 @@ public class SamlServiceProviderProperties implements Serializable {
      * Settings related to Office365 acting as a SAML service provider.
      */
     private Office365 office365 = new Office365();
-
     /**
      * Settings related to InCommon acting as a SAML service provider.
      */
@@ -202,6 +202,10 @@ public class SamlServiceProviderProperties implements Serializable {
      * Settings related to RocketChat acting as a SAML service provider.
      */
     private RocketChat rocketChat = new RocketChat();
+    /**
+     * Settings related to ArmsSoftware acting as a SAML service provider.
+     */
+    private ArmsSoftware armsSoftware = new ArmsSoftware();
 
     @Getter
     private enum CommonAttributeNames {
@@ -253,6 +257,10 @@ public class SamlServiceProviderProperties implements Serializable {
          * Attribute name.
          */
         MAIL("mail"),
+        /**
+         * Attribute name.
+         */
+        EMPLOYEE_NUMBER("employeeNumber"),
         /**
          * Attribute name.
          */
@@ -813,8 +821,24 @@ public class SamlServiceProviderProperties implements Serializable {
             addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
                 CommonAttributeNames.SURNAME.getAttributeName(),
                 CommonAttributeNames.GIVEN_NAME.getAttributeName(),
-                "employeeNumber",
+                CommonAttributeNames.EMPLOYEE_NUMBER.getAttributeName(),
                 CommonAttributeNames.EDU_PERSON_SCOPED_AFFILIATION.getAttributeName(),
+                CommonAttributeNames.EDU_PERSON_PRINCIPAL_NAME.getAttributeName());
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class ArmsSoftware extends AbstractSamlSPProperties {
+
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public ArmsSoftware() {
+            setEntityIds(List.of("https://sso.armssoftware.com/sp/shibboleth"));
+
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
+                CommonAttributeNames.UID.getAttributeName(),
                 CommonAttributeNames.EDU_PERSON_PRINCIPAL_NAME.getAttributeName());
         }
     }
