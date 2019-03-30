@@ -38,4 +38,5 @@ org.apereo.cas.config.CasSamlSPRocketChatConfiguration,\
 org.apereo.cas.config.CasSamlSPInCommonConfiguration,\
 org.apereo.cas.config.CasSamlSPBlackBaudConfiguration,\
 org.apereo.cas.config.CasSamlSPPollEverywhereConfiguration,\
+org.apereo.cas.config.CasSamlSPArmsSoftwareConfiguration,\
 org.apereo.cas.config.CasSamlSPConcurSolutionsConfiguration
