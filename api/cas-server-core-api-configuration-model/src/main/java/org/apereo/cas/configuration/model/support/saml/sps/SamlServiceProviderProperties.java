@@ -210,6 +210,10 @@ public class SamlServiceProviderProperties implements Serializable {
      * Settings related to Academic HealthPlans acting as a SAML service provider.
      */
     private AcademicHealthPlans academicHealthPlans = new AcademicHealthPlans();
+    /**
+     * Settings related to NeoGov acting as a SAML service provider.
+     */
+    private NeoGov neoGov = new NeoGov();
 
     @Getter
     private enum CommonAttributeNames {
@@ -269,6 +273,11 @@ public class SamlServiceProviderProperties implements Serializable {
          * Attribute name.
          */
         STUDENT_ID("studentId"),
+        /**
+         * Attribute name.
+         */
+        IMMUTABLE_ID("ImmutableID"),
+
         /**
          * Attribute name.
          */
@@ -388,7 +397,7 @@ public class SamlServiceProviderProperties implements Serializable {
 
         public Office365() {
             setNameIdAttribute("objectGUID");
-            addAttributes("IDPEmail", "ImmutableID");
+            addAttributes("IDPEmail", CommonAttributeNames.IMMUTABLE_ID.getAttributeName());
             setSignResponses(false);
             setSignAssertions(true);
         }
@@ -858,11 +867,23 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = -6141931806328699054L;
 
         public AcademicHealthPlans() {
-            setEntityIds(List.of("https://sso.armssoftware.com/sp/shibboleth"));
             addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
                 CommonAttributeNames.SURNAME.getAttributeName(),
                 CommonAttributeNames.STUDENT_ID.getAttributeName(),
                 CommonAttributeNames.GIVEN_NAME.getAttributeName());
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class NeoGov extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public NeoGov() {
+            setEntityIds(List.of("https://login.neogov.com/"));
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
+                CommonAttributeNames.IMMUTABLE_ID.getAttributeName());
         }
     }
 
