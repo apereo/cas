@@ -214,6 +214,10 @@ public class SamlServiceProviderProperties implements Serializable {
      * Settings related to NeoGov acting as a SAML service provider.
      */
     private NeoGov neoGov = new NeoGov();
+    /**
+     * Settings related to Cranium Cafe acting as a SAML service provider.
+     */
+    private CraniumCafe craniumCafe = new CraniumCafe();
 
     @Getter
     private enum CommonAttributeNames {
@@ -887,4 +891,19 @@ public class SamlServiceProviderProperties implements Serializable {
         }
     }
 
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class CraniumCafe extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public CraniumCafe() {
+            setEntityIds(List.of("https://my.craniumcafe.com/login/saml2"));
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
+                CommonAttributeNames.EDU_PERSON_PRINCIPAL_NAME.getAttributeName(),
+                CommonAttributeNames.EDU_PERSON_SCOPED_AFFILIATION.getAttributeName(),
+                CommonAttributeNames.STUDENT_ID.getAttributeName(),
+                CommonAttributeNames.DISPLAY_NAME.getAttributeName());
+        }
+    }
 }

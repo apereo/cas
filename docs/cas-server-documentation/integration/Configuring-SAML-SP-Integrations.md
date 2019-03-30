@@ -171,6 +171,9 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="https://www.neogov.com/">
 <img src="https://user-images.githubusercontent.com/1205228/55275543-f3359500-52a4-11e9-9407-02ba4fc21a80.png" height="38" width="150"></a>
 
+<a href="https://www.conexed.com/">
+<img src="https://user-images.githubusercontent.com/1205228/55275622-ff6e2200-52a5-11e9-833d-f48518e58d0e.png" height="58" width="250"></a>
+
 </div>
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#saml-sps).
