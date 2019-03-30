@@ -2986,7 +2986,8 @@ Configuration settings for all SAML2 service providers are [available here](Conf
 | Academic HealthPlans      | `cas.samlSp.academicHealthPlans` | `email`, `givenName`, `surname`, `studentId`
 | NeoGov                    | `cas.samlSp.neoGov` | `email`, `ImmutableID`
 | CraniumCafe               | `cas.samlSp.craniumCafe` | `email`, `eduPersonPrincipalName`, `displayName`, `eduPersonScopedAffiliation`, `studentId`
-                
+| CCC Central               | `cas.samlSp.cccco` | `email`, `eduPersonPrincipalName`, `displayName`, `eduPersonScopedAffiliation`, `uid`, `givenName`, `commonName`, `surname`, `eduPersonPrimaryffiliation`
+                                
 **Note**: For InCommon and other metadata aggregates, multiple entity ids can be specified to 
 filter [the InCommon metadata](https://spaces.internet2.edu/display/InCFederation/Metadata+Aggregates). EntityIds 
 can be regular expression patterns and are mapped to 

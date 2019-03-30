@@ -174,6 +174,9 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="https://www.conexed.com/">
 <img src="https://user-images.githubusercontent.com/1205228/55275622-ff6e2200-52a5-11e9-833d-f48518e58d0e.png" height="58" width="250"></a>
 
+<a href="https://www.cccco.edu/">
+<img src="https://user-images.githubusercontent.com/1205228/55275721-62ac8400-52a7-11e9-89c2-121f2c494920.png" height="98" width="140"></a>
+
 </div>
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#saml-sps).
