@@ -2961,7 +2961,7 @@ Configuration settings for all SAML2 service providers are [available here](Conf
 | Gartner               | `cas.samlSp.gartner`      | `urn:oid:2.5.4.42`, `urn:oid:2.5.4.4`, `urn:oid:0.9.2342.19200300.100.1.3`
 | Arc GIS               | `cas.samlSp.arcGIS`       | `arcNameId`, `mail`, `givenName`
 | Benefit Focus         | `cas.samlSp.benefitFocus` | `benefitFocusUniqueId`
-| Office365             | `cas.samlSp.office365`    | `IDPEmail`, `ImmutableID`, `scopedImmutableID`
+| Office365             | `cas.samlSp.office365`    | `IDPEmail`, `ImmutableID`
 | SAManage              | `cas.samlSp.saManage`     | `mail`
 | Salesforce            | `cas.samlSp.salesforce`   | `eduPersonPrincipalName`
 | Workday               | `cas.samlSp.workday`      | N/A
@@ -2984,8 +2984,12 @@ Configuration settings for all SAML2 service providers are [available here](Conf
 | RocketChat                | `cas.samlSp.rocketChat`   | `email`, `cn`, `username`
 | ArmsSoftware              | `cas.samlSp.armsSoftware` | `email`, `uid`, `eduPersonPrincipalName`
 | Academic HealthPlans      | `cas.samlSp.academicHealthPlans` | `email`, `givenName`, `surname`, `studentId`
+| NeoGov                    | `cas.samlSp.neoGov` | `email`, `ImmutableID`
 
-**Note**: For InCommon and other metadata aggregates, multiple entity ids can be specified to filter [the InCommon metadata](https://spaces.internet2.edu/display/InCFederation/Metadata+Aggregates). EntityIds can be regular expression patterns and are mapped to CAS' `serviceId` field in the registry. The signature location MUST BE the public key used to sign the metadata.
+**Note**: For InCommon and other metadata aggregates, multiple entity ids can be specified to 
+filter [the InCommon metadata](https://spaces.internet2.edu/display/InCFederation/Metadata+Aggregates). EntityIds 
+can be regular expression patterns and are mapped to 
+CAS' `serviceId` field in the registry. The signature location MUST BE the public key used to sign the metadata.
 
 ## OpenID Connect
 
