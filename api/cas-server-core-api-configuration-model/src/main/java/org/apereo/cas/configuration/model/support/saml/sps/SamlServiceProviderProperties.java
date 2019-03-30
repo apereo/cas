@@ -206,6 +206,10 @@ public class SamlServiceProviderProperties implements Serializable {
      * Settings related to ArmsSoftware acting as a SAML service provider.
      */
     private ArmsSoftware armsSoftware = new ArmsSoftware();
+    /**
+     * Settings related to Academic HealthPlans acting as a SAML service provider.
+     */
+    private AcademicHealthPlans academicHealthPlans = new AcademicHealthPlans();
 
     @Getter
     private enum CommonAttributeNames {
@@ -261,6 +265,10 @@ public class SamlServiceProviderProperties implements Serializable {
          * Attribute name.
          */
         EMPLOYEE_NUMBER("employeeNumber"),
+        /**
+         * Attribute name.
+         */
+        STUDENT_ID("studentId"),
         /**
          * Attribute name.
          */
@@ -367,7 +375,7 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = 5262806306575955633L;
 
         public NetPartner() {
-            setNameIdAttribute("studentId");
+            setNameIdAttribute(CommonAttributeNames.STUDENT_ID.getAttributeName());
         }
     }
 
@@ -842,4 +850,20 @@ public class SamlServiceProviderProperties implements Serializable {
                 CommonAttributeNames.EDU_PERSON_PRINCIPAL_NAME.getAttributeName());
         }
     }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class AcademicHealthPlans extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public AcademicHealthPlans() {
+            setEntityIds(List.of("https://sso.armssoftware.com/sp/shibboleth"));
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
+                CommonAttributeNames.SURNAME.getAttributeName(),
+                CommonAttributeNames.STUDENT_ID.getAttributeName(),
+                CommonAttributeNames.GIVEN_NAME.getAttributeName());
+        }
+    }
+
 }
