@@ -2,6 +2,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.web.DefaultTokenRequestExtractorTests;
+import org.apereo.cas.web.TokenCredentialTests;
 import org.apereo.cas.web.flow.TokenAuthenticationActionTests;
 
 import org.junit.platform.suite.api.SelectClasses;
@@ -14,7 +15,8 @@ import org.junit.platform.suite.api.SelectClasses;
  */
 @SelectClasses({
     DefaultTokenRequestExtractorTests.class,
-    TokenAuthenticationActionTests.class
+    TokenAuthenticationActionTests.class,
+    TokenCredentialTests.class
 })
 public class AllTestsSuite {
 }
