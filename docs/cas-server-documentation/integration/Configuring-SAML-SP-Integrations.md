@@ -198,6 +198,10 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="https://www.safaribooksonline.com/">
 <img src="https://user-images.githubusercontent.com/1205228/55340518-b65ecf00-5459-11e9-9941-3b0e80ceaf73.png" height="78" width="110"></a>
 
+<a href="https://www.tophat.com/">
+<img src="https://user-images.githubusercontent.com/1205228/55340927-89f78280-545a-11e9-81fb-baf0413bcbfa.png" height="48" width="140"></a>
+ 
+
 
 </div>
 

@@ -35,6 +35,10 @@ public class SamlServiceProviderProperties implements Serializable {
      */
     private SafariOnline safariOnline = new SafariOnline();
     /**
+     * Settings related to TopHat acting as a SAML service provider.
+     */
+    private TopHat topHat = new TopHat();
+    /**
      * Settings related to DocuSign acting as a SAML service provider.
      */
     private DocuSign docuSign = new DocuSign();
@@ -1062,6 +1066,18 @@ public class SamlServiceProviderProperties implements Serializable {
 
         public Zimbra() {
             addAttributes(CommonAttributeNames.EMAIL.getAttributeName());
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class TopHat extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public TopHat() {
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
+                CommonAttributeNames.EDU_PERSON_PRINCIPAL_NAME.getAttributeName());
         }
     }
 }
