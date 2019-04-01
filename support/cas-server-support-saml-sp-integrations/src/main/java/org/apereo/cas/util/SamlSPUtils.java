@@ -14,8 +14,10 @@ import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.saml.common.xml.SAMLConstants;
+import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.filter.impl.PredicateFilter;
@@ -105,7 +107,10 @@ public class SamlSPUtils {
                                                       final SamlRegisteredService service) {
         val entityIDList = sp.getEntityIds();
         if (entityIDList.isEmpty()) {
-            val metadataResolver = resolver.resolve(service);
+
+            val criteriaSet = new CriteriaSet();
+            criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
+            val metadataResolver = resolver.resolve(service, criteriaSet);
 
             val resolvers = new ArrayList<MetadataResolver>();
             if (metadataResolver instanceof ChainingMetadataResolver) {
