@@ -39,6 +39,7 @@ org.apereo.cas.config.CasSamlSPFamisConfiguration,\
 org.apereo.cas.config.CasSamlSPGiveCampusConfiguration,\
 org.apereo.cas.config.CasSamlSPConfluenceConfiguration,\
 org.apereo.cas.config.CasSamlSPJiraConfiguration,\
+org.apereo.cas.config.CasSamlSPCrashPlanConfiguration,\
 org.apereo.cas.config.CasSamlSPPagerDutyConfiguration,\
 org.apereo.cas.config.CasSamlSPZimbraConfiguration,\
 org.apereo.cas.config.CasSamlSPRocketChatConfiguration,\
