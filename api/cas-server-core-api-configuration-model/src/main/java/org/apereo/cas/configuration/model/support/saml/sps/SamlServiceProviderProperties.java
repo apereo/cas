@@ -31,6 +31,10 @@ public class SamlServiceProviderProperties implements Serializable {
      */
     private CrashPlan crashPlan = new CrashPlan();
     /**
+     * Settings related to DocuSign acting as a SAML service provider.
+     */
+    private DocuSign docuSign = new DocuSign();
+    /**
      * Settings related to PagerDuty acting as a SAML service provider.
      */
     private PagerDuty pagerDuty = new PagerDuty();
@@ -997,6 +1001,20 @@ public class SamlServiceProviderProperties implements Serializable {
         public CrashPlan() {
             addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
                 CommonAttributeNames.GIVEN_NAME.getAttributeName(),
+                CommonAttributeNames.SURNAME.getAttributeName());
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class DocuSign extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public DocuSign() {
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
+                CommonAttributeNames.GIVEN_NAME.getAttributeName(),
+                CommonAttributeNames.EMPLOYEE_NUMBER.getAttributeName(),
                 CommonAttributeNames.SURNAME.getAttributeName());
         }
     }
