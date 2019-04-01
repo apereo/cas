@@ -1,6 +1,7 @@
 package org.apereo.cas.web.support.mgmr;
 
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.web.cookie.CookieValueManager;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

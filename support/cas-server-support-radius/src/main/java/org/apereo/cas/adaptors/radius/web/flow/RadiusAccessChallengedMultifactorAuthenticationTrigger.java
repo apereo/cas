@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.radius.web.flow;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.MultifactorAuthenticationProviderAbsentException;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
@@ -49,7 +50,7 @@ public class RadiusAccessChallengedMultifactorAuthenticationTrigger implements M
         val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(ApplicationContextProvider.getApplicationContext());
         if (providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context");
-            throw new AuthenticationException();
+            throw new AuthenticationException(new MultifactorAuthenticationProviderAbsentException());
         }
 
         val principal = authentication.getPrincipal();

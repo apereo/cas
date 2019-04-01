@@ -1,4 +1,4 @@
-package org.apereo.cas.web.support.gen;
+package org.apereo.cas.web.cookie;
 
 import lombok.Builder;
 import lombok.Getter;

@@ -4,9 +4,9 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
 import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
-import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -48,11 +48,11 @@ public class TerminateSessionAction extends AbstractAction {
     /**
      * The TGT cookie generator.
      */
-    protected final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    protected final CasCookieBuilder ticketGrantingTicketCookieGenerator;
     /**
      * The warn cookie generator.
      */
-    protected final CookieRetrievingCookieGenerator warnCookieGenerator;
+    protected final CasCookieBuilder warnCookieGenerator;
     /**
      * The logout properties.
      */
