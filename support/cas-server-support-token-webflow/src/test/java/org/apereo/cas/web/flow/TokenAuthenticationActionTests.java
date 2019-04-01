@@ -1,7 +1,6 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.TokenAuthenticationConfiguration;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
@@ -100,7 +99,7 @@ public class TokenAuthenticationActionTests extends AbstractCentralAuthenticatio
         request.addHeader(TokenConstants.PARAMETER_NAME_TOKEN, token);
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService("https://example.token.org"));
+        WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService("https://example.token.org"));
         assertEquals("success", this.action.execute(context).getId());
     }
 }

@@ -31,6 +31,18 @@ public class SamlServiceProviderProperties implements Serializable {
      */
     private CrashPlan crashPlan = new CrashPlan();
     /**
+     * Settings related to SafariOnline acting as a SAML service provider.
+     */
+    private SafariOnline safariOnline = new SafariOnline();
+    /**
+     * Settings related to TopHat acting as a SAML service provider.
+     */
+    private TopHat topHat = new TopHat();
+    /**
+     * Settings related to DocuSign acting as a SAML service provider.
+     */
+    private DocuSign docuSign = new DocuSign();
+    /**
      * Settings related to PagerDuty acting as a SAML service provider.
      */
     private PagerDuty pagerDuty = new PagerDuty();
@@ -252,7 +264,11 @@ public class SamlServiceProviderProperties implements Serializable {
         /**
          * Attribute name.
          */
-        EDU_PERSON_PRIMARY_NAME("eduPersonPrimaryAffiliation"),
+        EDU_PERSON_PRIMARY_AFFILIATION("eduPersonPrimaryAffiliation"),
+        /**
+         * Attribute name.
+         */
+        EDU_PERSON_AFFILIATION("eduPersonAffiliation"),
         /**
          * Attribute name.
          */
@@ -952,7 +968,7 @@ public class SamlServiceProviderProperties implements Serializable {
                 CommonAttributeNames.COMMON_NAME.getAttributeName(),
                 CommonAttributeNames.SURNAME.getAttributeName(),
                 CommonAttributeNames.EDU_PERSON_PRINCIPAL_NAME.getAttributeName(),
-                CommonAttributeNames.EDU_PERSON_PRIMARY_NAME.getAttributeName(),
+                CommonAttributeNames.EDU_PERSON_PRIMARY_AFFILIATION.getAttributeName(),
                 CommonAttributeNames.EDU_PERSON_SCOPED_AFFILIATION.getAttributeName(),
                 CommonAttributeNames.DISPLAY_NAME.getAttributeName());
         }
@@ -1004,6 +1020,36 @@ public class SamlServiceProviderProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-saml-sp-integrations")
     @Getter
     @Setter
+    public static class DocuSign extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public DocuSign() {
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
+                CommonAttributeNames.GIVEN_NAME.getAttributeName(),
+                CommonAttributeNames.EMPLOYEE_NUMBER.getAttributeName(),
+                CommonAttributeNames.SURNAME.getAttributeName());
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class SafariOnline extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public SafariOnline() {
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
+                CommonAttributeNames.GIVEN_NAME.getAttributeName(),
+                CommonAttributeNames.EMPLOYEE_NUMBER.getAttributeName(),
+                CommonAttributeNames.EDU_PERSON_AFFILIATION.getAttributeName(),
+                CommonAttributeNames.SURNAME.getAttributeName());
+        }
+    }
+
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
     public static class PagerDuty extends AbstractSamlSPProperties {
         private static final long serialVersionUID = -6141931806328699054L;
 
@@ -1020,6 +1066,18 @@ public class SamlServiceProviderProperties implements Serializable {
 
         public Zimbra() {
             addAttributes(CommonAttributeNames.EMAIL.getAttributeName());
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class TopHat extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public TopHat() {
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
+                CommonAttributeNames.EDU_PERSON_PRINCIPAL_NAME.getAttributeName());
         }
     }
 }

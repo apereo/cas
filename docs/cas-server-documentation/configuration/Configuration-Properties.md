@@ -2982,11 +2982,14 @@ Configuration settings for all SAML2 service providers are [available here](Conf
 | Amazon                    | `cas.samlSp.amazon`       | `awsRoles`, `awsRoleSessionName`
 | Concur Solutions          | `cas.samlSp.concurSolutions`  | `email`
 | PollEverywhere            | `cas.samlSp.pollEverywhere`   | `email`
+| DocuSign                  | `cas.samlSp.docuSign`   | `email`, `givenName`, `surname`, `employeeNumber`
+| SafariOnline              | `cas.samlSp.safariOnline`   | `email`, `givenName`, `surname`, `employeeNumber`,`eduPersonAffiliation`
 | BlackBaud                 | `cas.samlSp.blackBaud`    | `email`, `eduPersonPrincipalName`
 | GiveCampus                | `cas.samlSp.giveCampus`   | `email`, `givenName`, `surname`, `displayName`
 | WarpWire                  | `cas.samlSp.warpWire`     | `email`, `givenName`, `eduPersonPrincipalName`, `surname`, `eduPersonScopedAffiliation`, `employeeNumber`
 | RocketChat                | `cas.samlSp.rocketChat`   | `email`, `cn`, `username`
 | ArmsSoftware              | `cas.samlSp.armsSoftware` | `email`, `uid`, `eduPersonPrincipalName`
+| TopHat                    | `cas.samlSp.topHat` | `email`, `eduPersonPrincipalName`
 | Academic HealthPlans      | `cas.samlSp.academicHealthPlans` | `email`, `givenName`, `surname`, `studentId`
 | Confluence                | `cas.samlSp.confluence` | `email`, `givenName`, `surname`, `uid`, `displayName`
 | JIRA                      | `cas.samlSp.jira` | `email`, `givenName`, `surname`, `uid`, `displayName`
