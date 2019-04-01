@@ -1,8 +1,10 @@
 package org.apereo.cas.web.support.gen;
 
 import org.apereo.cas.authentication.RememberMeCredential;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.cookie.CookieGenerationContext;
+import org.apereo.cas.web.cookie.CookieValueManager;
 import org.apereo.cas.web.support.WebUtils;
-import org.apereo.cas.web.support.mgmr.CookieValueManager;
 import org.apereo.cas.web.support.mgmr.NoOpCookieValueManager;
 
 import lombok.Setter;
@@ -30,7 +32,7 @@ import java.util.Collection;
  */
 @Slf4j
 @Setter
-public class CookieRetrievingCookieGenerator extends CookieGenerator implements Serializable {
+public class CookieRetrievingCookieGenerator extends CookieGenerator implements Serializable, CasCookieBuilder {
     private static final long serialVersionUID = -4926982428809856313L;
 
     /**
@@ -57,13 +59,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         this.casCookieValueManager = casCookieValueManager;
     }
 
-    /**
-     * Adds the cookie, taking into account {@link RememberMeCredential#REQUEST_PARAMETER_REMEMBER_ME}
-     * in the request.
-     *
-     * @param requestContext the request context
-     * @param cookieValue    the cookie value
-     */
+    @Override
     public void addCookie(final RequestContext requestContext, final String cookieValue) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
@@ -84,37 +80,15 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         }
     }
 
-    /**
-     * Add cookie.
-     *
-     * @param request     the request
-     * @param response    the response
-     * @param cookieValue the cookie value
-     */
+    @Override
     public void addCookie(final HttpServletRequest request, final HttpServletResponse response, final String cookieValue) {
         val theCookieValue = this.casCookieValueManager.buildCookieValue(cookieValue, request);
         LOGGER.trace("Creating cookie [{}]", getCookieName());
         super.addCookie(response, theCookieValue);
     }
 
-    private static Boolean isRememberMeAuthentication(final RequestContext requestContext) {
-        if (isRememberMeProvidedInRequest(requestContext)) {
-            LOGGER.debug("This request is from a remember-me authentication event");
-            return Boolean.TRUE;
-        }
-        if (isRememberMeRecordedInAuthentication(requestContext)) {
-            LOGGER.debug("The recorded authentication is from a remember-me request");
-            return Boolean.TRUE;
-        }
-        return Boolean.FALSE;
-    }
 
-    /**
-     * Retrieve cookie value.
-     *
-     * @param request the request
-     * @return the cookie value
-     */
+    @Override
     public String retrieveCookieValue(final HttpServletRequest request) {
         try {
             var cookie = org.springframework.web.util.WebUtils.getCookie(request, getCookieName());
@@ -135,6 +109,18 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
     @Override
     public void setCookieDomain(final String cookieDomain) {
         super.setCookieDomain(StringUtils.defaultIfEmpty(cookieDomain, null));
+    }
+
+    private static Boolean isRememberMeAuthentication(final RequestContext requestContext) {
+        if (isRememberMeProvidedInRequest(requestContext)) {
+            LOGGER.debug("This request is from a remember-me authentication event");
+            return Boolean.TRUE;
+        }
+        if (isRememberMeRecordedInAuthentication(requestContext)) {
+            LOGGER.debug("The recorded authentication is from a remember-me request");
+            return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
     }
 
     @Override

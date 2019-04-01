@@ -26,8 +26,8 @@ import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.Pac4jUtils;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.CookieUtils;
-import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -93,7 +93,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
                                               final ConsentApprovalViewResolver consentApprovalViewResolver,
                                               final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
                                               final CasConfigurationProperties casProperties,
-                                              final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
+                                              final CasCookieBuilder ticketGrantingTicketCookieGenerator,
                                               final OAuth20CasAuthenticationBuilder authenticationBuilder,
                                               final Set<OAuth20AuthorizationResponseBuilder> oauthAuthorizationResponseBuilders,
                                               final Set<OAuth20AuthorizationRequestValidator> oauthRequestValidators,

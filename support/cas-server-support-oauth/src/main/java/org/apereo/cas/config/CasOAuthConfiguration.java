@@ -103,7 +103,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -184,7 +184,7 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
 
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")
-    private ObjectProvider<CookieRetrievingCookieGenerator> ticketGrantingTicketCookieGenerator;
+    private ObjectProvider<CasCookieBuilder> ticketGrantingTicketCookieGenerator;
 
     @ConditionalOnMissingBean(name = "accessTokenResponseGenerator")
     @Bean

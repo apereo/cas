@@ -26,6 +26,7 @@ import org.apereo.cas.authentication.trigger.TimedMultifactorAuthenticationTrigg
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationAvailableAction;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationBypassAction;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationFailureAction;
@@ -51,7 +52,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import org.springframework.web.util.CookieGenerator;
 
 import java.util.List;
 
@@ -91,7 +91,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
 
     @Autowired
     @Qualifier("warnCookieGenerator")
-    private ObjectProvider<CookieGenerator> warnCookieGenerator;
+    private ObjectProvider<CasCookieBuilder> warnCookieGenerator;
 
     @Autowired
     private CasConfigurationProperties casProperties;

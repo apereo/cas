@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.authentication.RankedMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
@@ -24,7 +25,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Action;
 
 /**
@@ -69,7 +69,7 @@ public class DuoSecurityConfiguration {
 
     @Autowired
     @Qualifier("warnCookieGenerator")
-    private ObjectProvider<CookieGenerator> warnCookieGenerator;
+    private ObjectProvider<CasCookieBuilder> warnCookieGenerator;
 
     @ConditionalOnMissingBean(name = "duoNonWebAuthenticationAction")
     @Bean

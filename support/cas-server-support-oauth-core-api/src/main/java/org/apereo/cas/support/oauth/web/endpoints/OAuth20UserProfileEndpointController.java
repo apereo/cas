@@ -15,7 +15,7 @@ import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.Pac4jUtils;
-import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -59,7 +59,7 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
                                                 final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
                                                 final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
                                                 final CasConfigurationProperties casProperties,
-                                                final CookieRetrievingCookieGenerator cookieGenerator,
+                                                final CasCookieBuilder cookieGenerator,
                                                 final OAuth20UserProfileViewRenderer userProfileViewRenderer,
                                                 final OAuth20UserProfileDataCreator userProfileDataCreator) {
         super(servicesManager, ticketRegistry, accessTokenFactory, principalFactory,

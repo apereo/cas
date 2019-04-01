@@ -6,11 +6,11 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.web.util.CookieGenerator;
 
 /**
  * This is {@link AbstractCasMultifactorAuthenticationWebflowEventResolver} that provides parent
@@ -31,7 +31,7 @@ public abstract class AbstractCasMultifactorAuthenticationWebflowEventResolver e
                                                                     final CentralAuthenticationService centralAuthenticationService,
                                                                     final ServicesManager servicesManager,
                                                                     final TicketRegistrySupport ticketRegistrySupport,
-                                                                    final CookieGenerator warnCookieGenerator,
+                                                                    final CasCookieBuilder warnCookieGenerator,
                                                                     final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
                                                                     final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector,
                                                                     final ApplicationEventPublisher eventPublisher,

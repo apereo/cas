@@ -16,8 +16,8 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.WebUtils;
-import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 
@@ -90,7 +90,7 @@ public abstract class BaseWSFederationRequestController {
     /**
      * The Ticket granting ticket cookie generator.
      */
-    protected final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    protected final CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
     /**
      * The Ticket registry support.
@@ -105,7 +105,7 @@ public abstract class BaseWSFederationRequestController {
         final HttpClient httpClient,
         final SecurityTokenTicketFactory securityTokenTicketFactory,
         final TicketRegistry ticketRegistry,
-        final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
+        final CasCookieBuilder ticketGrantingTicketCookieGenerator,
         final TicketRegistrySupport ticketRegistrySupport,
         final Service callbackService) {
         this.servicesManager = servicesManager;

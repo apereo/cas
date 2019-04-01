@@ -38,7 +38,8 @@ public class PolicyBasedAuthenticationManagerTests {
     private static final String HANDLER_B = "HandlerB";
 
     private final AuthenticationTransaction transaction = DefaultAuthenticationTransaction.of(CoreAuthenticationTestUtils.getService(),
-        mock(Credential.class), mock(Credential.class));
+        mock(Credential.class, withSettings().serializable()),
+        mock(Credential.class, withSettings().serializable()));
 
     /**
      * Creates a new mock authentication handler that either successfully validates all credentials or fails to

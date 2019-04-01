@@ -15,7 +15,7 @@ import org.apereo.cas.support.oauth.web.response.introspection.OAuth20Introspect
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.val;
 import org.springframework.http.MediaType;
@@ -40,7 +40,7 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
                                                final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
                                                final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
                                                final CasConfigurationProperties casProperties,
-                                               final CookieRetrievingCookieGenerator cookieGenerator,
+                                               final CasCookieBuilder cookieGenerator,
                                                final CentralAuthenticationService centralAuthenticationService,
                                                final AuditableExecution registeredServiceAccessStrategyEnforcer) {
         super(servicesManager, ticketRegistry, accessTokenFactory, principalFactory,

@@ -1,6 +1,7 @@
 package org.apereo.cas.web.support.gen;
 
-import org.apereo.cas.web.support.mgmr.CookieValueManager;
+import org.apereo.cas.web.cookie.CookieGenerationContext;
+import org.apereo.cas.web.cookie.CookieValueManager;
 
 /**
  * Generates the tgc cookie.

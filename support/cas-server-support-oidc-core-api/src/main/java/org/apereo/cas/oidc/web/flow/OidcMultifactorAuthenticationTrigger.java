@@ -4,6 +4,7 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.MultifactorAuthenticationProviderAbsentException;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
@@ -81,7 +82,7 @@ public class OidcMultifactorAuthenticationTrigger implements MultifactorAuthenti
         val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(ApplicationContextProvider.getApplicationContext());
         if (providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context to handle [{}]", values);
-            throw new AuthenticationException();
+            throw new AuthenticationException(new MultifactorAuthenticationProviderAbsentException());
         }
 
         return providerMap.values()

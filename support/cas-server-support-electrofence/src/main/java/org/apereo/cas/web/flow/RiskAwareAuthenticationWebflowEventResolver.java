@@ -15,6 +15,7 @@ import org.apereo.cas.support.events.authentication.adaptive.CasRiskyAuthenticat
 import org.apereo.cas.support.events.authentication.adaptive.CasRiskyAuthenticationMitigatedEvent;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -22,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -46,7 +46,7 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
                                                        final CentralAuthenticationService centralAuthenticationService,
                                                        final ServicesManager servicesManager,
                                                        final TicketRegistrySupport ticketRegistrySupport,
-                                                       final CookieGenerator warnCookieGenerator,
+                                                       final CasCookieBuilder warnCookieGenerator,
                                                        final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
                                                        final AuthenticationRiskEvaluator authenticationRiskEvaluator,
                                                        final AuthenticationRiskMitigator authenticationRiskMitigator,

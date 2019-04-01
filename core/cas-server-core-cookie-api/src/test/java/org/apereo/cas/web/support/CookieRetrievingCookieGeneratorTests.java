@@ -3,7 +3,7 @@ package org.apereo.cas.web.support;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.web.support.gen.CookieGenerationContext;
+import org.apereo.cas.web.cookie.CookieGenerationContext;
 import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 
 import lombok.val;

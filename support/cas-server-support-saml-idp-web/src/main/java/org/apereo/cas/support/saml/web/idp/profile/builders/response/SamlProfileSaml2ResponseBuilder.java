@@ -17,8 +17,8 @@ import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.CookieUtils;
-import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -51,7 +51,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
 
     private final transient TicketRegistry ticketRegistry;
     private final transient SamlArtifactTicketFactory samlArtifactTicketFactory;
-    private final transient CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    private final transient CasCookieBuilder ticketGrantingTicketCookieGenerator;
     private final transient SAMLArtifactMap samlArtifactMap;
     private final transient SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory;
 
@@ -62,7 +62,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
                                            final SamlIdPObjectEncrypter samlObjectEncrypter,
                                            final TicketRegistry ticketRegistry,
                                            final SamlArtifactTicketFactory samlArtifactTicketFactory,
-                                           final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
+                                           final CasCookieBuilder ticketGrantingTicketCookieGenerator,
                                            final SAMLArtifactMap samlArtifactMap,
                                            final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
                                            final CasConfigurationProperties casProperties) {

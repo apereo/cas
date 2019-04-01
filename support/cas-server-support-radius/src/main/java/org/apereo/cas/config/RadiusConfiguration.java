@@ -25,6 +25,7 @@ import org.apereo.cas.configuration.model.support.radius.RadiusClientProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusServerProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.mfa.DefaultMultifactorAuthenticationProviderEventResolver;
@@ -42,7 +43,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
-import org.springframework.web.util.CookieGenerator;
 
 import java.util.List;
 import java.util.Set;
@@ -100,7 +100,7 @@ public class RadiusConfiguration {
 
     @Autowired
     @Qualifier("warnCookieGenerator")
-    private ObjectProvider<CookieGenerator> warnCookieGenerator;
+    private ObjectProvider<CasCookieBuilder> warnCookieGenerator;
 
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")

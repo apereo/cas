@@ -7,9 +7,9 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
-import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -47,8 +47,8 @@ public class InitialFlowSetupAction extends AbstractAction {
     private final ServicesManager servicesManager;
 
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
-    private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
-    private final CookieRetrievingCookieGenerator warnCookieGenerator;
+    private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
+    private final CasCookieBuilder warnCookieGenerator;
     private final CasConfigurationProperties casProperties;
     private final AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 

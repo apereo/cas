@@ -5,7 +5,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.Pac4jUtils;
-import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class OidcAuthorizationRequestSupport {
-    private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
     private final TicketRegistrySupport ticketRegistrySupport;
 
     /**

@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.trigger;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.MultifactorAuthenticationProviderAbsentException;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Service;
@@ -59,7 +60,7 @@ public class TimedMultifactorAuthenticationTrigger implements MultifactorAuthent
         val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(ApplicationContextProvider.getApplicationContext());
         if (providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context");
-            throw new AuthenticationException();
+            throw new AuthenticationException(new MultifactorAuthenticationProviderAbsentException());
         }
 
         return checkTimedMultifactorProvidersForRequest(registeredService, authentication);

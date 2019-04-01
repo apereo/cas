@@ -3,11 +3,11 @@ package org.apereo.cas.web.config;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.cipher.TicketGrantingCookieCipherExecutor;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.cookie.CookieValueManager;
 import org.apereo.cas.web.support.CookieUtils;
-import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.gen.TicketGrantingCookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.gen.WarningCookieRetrievingCookieGenerator;
-import org.apereo.cas.web.support.mgmr.CookieValueManager;
 import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
 import org.apereo.cas.web.support.mgmr.NoOpCookieValueManager;
 
@@ -36,7 +36,7 @@ public class CasCookieConfiguration {
 
     @Bean
     @RefreshScope
-    public CookieRetrievingCookieGenerator warnCookieGenerator() {
+    public CasCookieBuilder warnCookieGenerator() {
         val props = casProperties.getWarningCookie();
         return new WarningCookieRetrievingCookieGenerator(CookieUtils.buildCookieGenerationContext(props));
     }
@@ -79,7 +79,7 @@ public class CasCookieConfiguration {
     @ConditionalOnMissingBean(name = "ticketGrantingTicketCookieGenerator")
     @Bean
     @RefreshScope
-    public CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator() {
+    public CasCookieBuilder ticketGrantingTicketCookieGenerator() {
         val tgc = casProperties.getTgc();
         return new TicketGrantingCookieRetrievingCookieGenerator(
             CookieUtils.buildCookieGenerationContext(tgc), cookieValueManager());

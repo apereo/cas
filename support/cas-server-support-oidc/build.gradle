@@ -3,6 +3,7 @@ dependencies {
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api-ticket")
+    api project(":api:cas-server-core-api-cookie")
     api project(":api:cas-server-core-api-protocol")
     
     implementation project(":support:cas-server-support-throttle")

@@ -1,5 +1,7 @@
 package org.apereo.cas.web.support.gen;
 
+import org.apereo.cas.web.cookie.CookieGenerationContext;
+
 /**
  * Generates the warning cookie.
  *

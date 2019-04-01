@@ -5,8 +5,8 @@ import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookiePro
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.web.support.gen.CookieGenerationContext;
-import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.cookie.CookieGenerationContext;
 
 import lombok.NoArgsConstructor;
 import lombok.val;
@@ -34,7 +34,7 @@ public class CookieUtils {
      * @param request                             the request
      * @return the ticket granting ticket from request
      */
-    public static TicketGrantingTicket getTicketGrantingTicketFromRequest(final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
+    public static TicketGrantingTicket getTicketGrantingTicketFromRequest(final CasCookieBuilder ticketGrantingTicketCookieGenerator,
                                                                           final TicketRegistry ticketRegistry, final HttpServletRequest request) {
         val cookieValue = ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
         if (StringUtils.isNotBlank(cookieValue)) {

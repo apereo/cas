@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import lombok.Getter;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,6 +56,10 @@ public class AuthenticationException extends RuntimeException {
      */
     public AuthenticationException(final Map<String, Throwable> handlerErrors) {
         this(handlerErrors, new HashMap<>(0));
+    }
+
+    public AuthenticationException(final Throwable handlerError) {
+        this(Collections.singletonMap(handlerError.getClass().getSimpleName(), handlerError));
     }
 
     /**
