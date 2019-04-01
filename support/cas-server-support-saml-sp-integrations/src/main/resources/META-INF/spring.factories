@@ -18,6 +18,7 @@ org.apereo.cas.config.CasSamlSPDropboxConfiguration,\
 org.apereo.cas.config.CasSamlSPNetPartnerConfiguration,\
 org.apereo.cas.config.CasSamlSPOffice365Configuration,\
 org.apereo.cas.config.CasSamlSPSafariOnlineConfiguration,\
+org.apereo.cas.config.CasSamlSPSTopHatConfiguration,\
 org.apereo.cas.config.CasSamlSPBoxConfiguration,\
 org.apereo.cas.config.CasSamlSPYujaConfiguration,\
 org.apereo.cas.config.CasSamlSPDocuSignConfiguration,\
