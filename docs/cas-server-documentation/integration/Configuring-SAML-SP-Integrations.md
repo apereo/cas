@@ -163,7 +163,7 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <img src="https://user-images.githubusercontent.com/1205228/39877039-1128c7ae-548a-11e8-8735-1abf90883df6.png" height="58" width="170"></a>
 
 <a href="https://armssoftware.com/">
-<img src="https://user-images.githubusercontent.com/1205228/55275345-0f840280-52a2-11e9-979a-dbb583cadf50.png" height="50" width="120"></a>
+<img src="https://user-images.githubusercontent.com/1205228/55328877-35e0a400-5442-11e9-8848-cda5a9efe1c5.png" height="50" width="120"></a>
 
 <a href="https://www.ahpcare.com/">
 <img src="https://user-images.githubusercontent.com/1205228/55275480-e5334480-52a3-11e9-982a-1fad518258c5.png" height="50" width="190"></a>
@@ -172,25 +172,25 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <img src="https://user-images.githubusercontent.com/1205228/55275543-f3359500-52a4-11e9-9407-02ba4fc21a80.png" height="38" width="150"></a>
 
 <a href="https://www.conexed.com/">
-<img src="https://user-images.githubusercontent.com/1205228/55275622-ff6e2200-52a5-11e9-833d-f48518e58d0e.png" height="58" width="250"></a>
+<img src="https://user-images.githubusercontent.com/1205228/55275622-ff6e2200-52a5-11e9-833d-f48518e58d0e.png" height="58" width="170"></a>
 
 <a href="https://www.cccco.edu/">
-<img src="https://user-images.githubusercontent.com/1205228/55275721-62ac8400-52a7-11e9-89c2-121f2c494920.png" height="98" width="140"></a>
+<img src="https://user-images.githubusercontent.com/1205228/55275721-62ac8400-52a7-11e9-89c2-121f2c494920.png" height="98" width="100"></a>
 
 <a href="https://www.zimbra.com/">
-<img src="https://user-images.githubusercontent.com/1205228/55322014-f14c0d00-542f-11e9-9355-3dd766ea56e6.png" height="68" width="210"></a>
+<img src="https://user-images.githubusercontent.com/1205228/55322014-f14c0d00-542f-11e9-9355-3dd766ea56e6.png" height="68" width="170"></a>
 
 <a href="https://www.atlassian.com/software/confluence">
-<img src="https://user-images.githubusercontent.com/1205228/55322216-97981280-5430-11e9-9ea3-b3682cb67ff1.png" height="68" width="210"></a>
+<img src="https://user-images.githubusercontent.com/1205228/55322216-97981280-5430-11e9-9ea3-b3682cb67ff1.png" height="68" width="150"></a>
 
 <a href="https://www.atlassian.com/software/jira">
-<img src="https://user-images.githubusercontent.com/1205228/55322296-cb733800-5430-11e9-93e7-0f57e1a1ae89.png" height="78" width="150"></a>
+<img src="https://user-images.githubusercontent.com/1205228/55322296-cb733800-5430-11e9-93e7-0f57e1a1ae89.png" height="78" width="120"></a>
 
 <a href="https://www.pagerduty.com/">
-<img src="https://user-images.githubusercontent.com/1205228/55322626-b34fe880-5431-11e9-8574-74cc9ab9643f.png" height="78" width="210"></a>
+<img src="https://user-images.githubusercontent.com/1205228/55322626-b34fe880-5431-11e9-8574-74cc9ab9643f.png" height="78" width="120"></a>
 
 <a href="https://www.crashplan.com/">
-<img src="https://user-images.githubusercontent.com/1205228/55322944-7f28f780-5432-11e9-8dd0-e999f0b6e03e.png" height="78" width="160"></a>
+<img src="https://user-images.githubusercontent.com/1205228/55322944-7f28f780-5432-11e9-8dd0-e999f0b6e03e.png" height="78" width="120"></a>
 
 
 </div>

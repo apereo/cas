@@ -13,6 +13,7 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.services.SamlIdPServiceRegistry;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.apereo.cas.support.saml.web.idp.profile.HttpServletRequestXMLMessageDecodersMap;
 import org.apereo.cas.support.saml.web.idp.profile.IdPInitiatedProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.artifact.Saml1ArtifactResolutionProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
@@ -57,6 +58,7 @@ import org.springframework.core.Ordered;
 import org.springframework.http.HttpMethod;
 
 import java.util.EnumMap;
+import java.util.Map;
 
 /**
  * This is {@link SamlIdPEndpointsConfiguration}.
@@ -184,14 +186,18 @@ public class SamlIdPEndpointsConfiguration {
     }
 
     @Bean
-    @RefreshScope
-    public SSOSamlPostProfileHandlerController ssoPostProfileHandlerController() {
+    @ConditionalOnMissingBean(name = "ssoPostProfileHandlerDecoders")
+    public HttpServletRequestXMLMessageDecodersMap ssoPostProfileHandlerDecoders() {
         val props = casProperties.getAuthn().getSamlIdp().getProfile().getSso();
-
-        val decoders = new EnumMap<HttpMethod, BaseHttpServletRequestXMLMessageDecoder>(HttpMethod.class);
+        val decoders = new HttpServletRequestXMLMessageDecodersMap(HttpMethod.class);
         decoders.put(HttpMethod.GET, new UrlDecodingHTTPRedirectDeflateDecoder(props.isUrlDecodeRedirectRequest()));
         decoders.put(HttpMethod.POST, new HTTPPostDecoder());
+        return decoders;
+    }
 
+    @Bean
+    @RefreshScope
+    public SSOSamlPostProfileHandlerController ssoPostProfileHandlerController() {
         return new SSOSamlPostProfileHandlerController(
             samlObjectSigner.getObject(),
             authenticationSystemSupport.getObject(),
@@ -204,18 +210,22 @@ public class SamlIdPEndpointsConfiguration {
             samlObjectSignatureValidator(),
             ssoSamlHttpRequestExtractor(),
             samlIdPCallbackService(),
-            decoders);
+            ssoPostProfileHandlerDecoders());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "ssoPostSimpleSignProfileHandlerDecoders")
+    public HttpServletRequestXMLMessageDecodersMap ssoPostSimpleSignProfileHandlerDecoders() {
+        val props = casProperties.getAuthn().getSamlIdp().getProfile().getSsoPostSimpleSign();
+        val decoders = new HttpServletRequestXMLMessageDecodersMap(HttpMethod.class);
+        decoders.put(HttpMethod.GET, new UrlDecodingHTTPRedirectDeflateDecoder(props.isUrlDecodeRedirectRequest()));
+        decoders.put(HttpMethod.POST, new HTTPPostSimpleSignDecoder());
+        return decoders;
     }
 
     @Bean
     @RefreshScope
     public SSOSamlPostSimpleSignProfileHandlerController ssoPostSimpleSignProfileHandlerController() {
-        val props = casProperties.getAuthn().getSamlIdp().getProfile().getSsoPostSimpleSign();
-
-        val decoders = new EnumMap<HttpMethod, BaseHttpServletRequestXMLMessageDecoder>(HttpMethod.class);
-        decoders.put(HttpMethod.GET, new UrlDecodingHTTPRedirectDeflateDecoder(props.isUrlDecodeRedirectRequest()));
-        decoders.put(HttpMethod.POST, new HTTPPostSimpleSignDecoder());
-
         return new SSOSamlPostSimpleSignProfileHandlerController(
             samlObjectSigner.getObject(),
             authenticationSystemSupport.getIfAvailable(),
@@ -228,16 +238,21 @@ public class SamlIdPEndpointsConfiguration {
             samlObjectSignatureValidator(),
             ssoSamlHttpRequestExtractor(),
             samlIdPCallbackService(),
-            decoders);
+            ssoPostSimpleSignProfileHandlerDecoders());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "sloRedirectProfileHandlerDecoders")
+    public HttpServletRequestXMLMessageDecodersMap sloRedirectProfileHandlerDecoders() {
+        val props = casProperties.getAuthn().getSamlIdp().getProfile().getSlo();
+        val decoders = new HttpServletRequestXMLMessageDecodersMap(HttpMethod.class);
+        decoders.put(HttpMethod.GET, new UrlDecodingHTTPRedirectDeflateDecoder(props.isUrlDecodeRedirectRequest()));
+        return decoders;
     }
 
     @Bean
     @RefreshScope
     public SLOSamlRedirectProfileHandlerController sloRedirectProfileHandlerController() {
-        val props = casProperties.getAuthn().getSamlIdp().getProfile().getSlo();
-        val decoders = new EnumMap<HttpMethod, BaseHttpServletRequestXMLMessageDecoder>(HttpMethod.class);
-        decoders.put(HttpMethod.GET, new UrlDecodingHTTPRedirectDeflateDecoder(props.isUrlDecodeRedirectRequest()));
-
         return new SLOSamlRedirectProfileHandlerController(
             samlObjectSigner.getIfAvailable(),
             authenticationSystemSupport.getIfAvailable(),
@@ -250,15 +265,20 @@ public class SamlIdPEndpointsConfiguration {
             samlObjectSignatureValidator(),
             ssoSamlHttpRequestExtractor(),
             samlIdPCallbackService(),
-            decoders);
+            sloRedirectProfileHandlerDecoders());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "sloPostProfileHandlerDecoders")
+    public Map<HttpMethod, BaseHttpServletRequestXMLMessageDecoder> sloPostProfileHandlerDecoders() {
+        val decoders = new EnumMap<HttpMethod, BaseHttpServletRequestXMLMessageDecoder>(HttpMethod.class);
+        decoders.put(HttpMethod.POST, new HTTPPostDecoder());
+        return decoders;
     }
 
     @Bean
     @RefreshScope
     public SLOSamlPostProfileHandlerController sloPostProfileHandlerController() {
-        val decoders = new EnumMap<HttpMethod, BaseHttpServletRequestXMLMessageDecoder>(HttpMethod.class);
-        decoders.put(HttpMethod.POST, new HTTPPostDecoder());
-
         return new SLOSamlPostProfileHandlerController(
             samlObjectSigner.getIfAvailable(),
             authenticationSystemSupport.getIfAvailable(),
@@ -271,7 +291,7 @@ public class SamlIdPEndpointsConfiguration {
             samlObjectSignatureValidator(),
             ssoSamlHttpRequestExtractor(),
             samlIdPCallbackService(),
-            decoders);
+            sloPostProfileHandlerDecoders());
     }
 
     @Bean

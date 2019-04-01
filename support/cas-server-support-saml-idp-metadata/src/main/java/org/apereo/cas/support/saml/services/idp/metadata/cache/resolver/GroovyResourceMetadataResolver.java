@@ -9,6 +9,7 @@ import org.apereo.cas.util.scripting.ScriptingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 
 import java.util.ArrayList;
@@ -28,14 +29,13 @@ public class GroovyResourceMetadataResolver extends BaseSamlRegisteredServiceMet
     }
 
     @Override
-    public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service) {
+    public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
         try {
             val metadataLocation = service.getMetadataLocation();
             LOGGER.info("Loading SAML metadata via [{}]", metadataLocation);
             val metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
-            val args = new Object[] {service, this.configBean, this.samlIdPProperties, LOGGER};
-            val metadataResolver =
-                ScriptingUtils.executeGroovyScript(metadataResource, args, MetadataResolver.class, true);
+            val args = new Object[]{service, this.configBean, this.samlIdPProperties, criteriaSet, LOGGER};
+            val metadataResolver = ScriptingUtils.executeGroovyScript(metadataResource, args, MetadataResolver.class, true);
             if (metadataResolver != null) {
                 return CollectionUtils.wrap(metadataResolver);
             }

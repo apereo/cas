@@ -7,6 +7,7 @@ import org.apereo.cas.util.SamlSPUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +50,7 @@ public class CasSamlSPInCommonConfiguration implements InitializingBean {
             LOGGER.info("Launching background thread to load the InCommon metadata. Depending on bandwidth, this might take a while...");
             new Thread(() -> {
                 LOGGER.debug("Loading InCommon metadata at [{}]...", service.getMetadataLocation());
-                resolver.resolve(service);
+                resolver.resolve(service, new CriteriaSet());
             }).start();
         }
     }

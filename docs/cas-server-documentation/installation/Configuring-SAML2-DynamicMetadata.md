@@ -275,7 +275,8 @@ def Collection<MetadataResolver> run(final Object... args) {
     def registeredService = args[0]
     def samlConfigBean = args[1]
     def samlProperties = args[2]
-    def logger = args[3]
+    def criteriaSet = args[3]
+    def logger = args[4]
 
     /*
      Stuff happens where you build the relevant metadata resolver instance(s).
@@ -294,6 +295,7 @@ The parameters passed are as follows:
 | `registeredService`   | The object representing the corresponding service definition in the registry.
 | `samlConfigBean`      | The object representing the OpenSAML configuration class holding various builder and marshaller factory instances.
 | `samlProperties`      | The object responsible for capturing the CAS SAML IdP properties defined in the configuration.
+| `criteriaSet`         | The object responsible for capturing the criteria for metadata solution, if any.
 | `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
 
 ## Amazon S3

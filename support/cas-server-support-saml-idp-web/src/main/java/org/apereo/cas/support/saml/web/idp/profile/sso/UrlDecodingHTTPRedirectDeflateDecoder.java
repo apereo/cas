@@ -2,8 +2,10 @@ package org.apereo.cas.support.saml.web.idp.profile.sso;
 
 import org.apereo.cas.util.EncodingUtils;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.opensaml.messaging.decoder.MessageDecodingException;
@@ -19,9 +21,11 @@ import java.io.InputStream;
  */
 @Slf4j
 @Getter
-@RequiredArgsConstructor
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class UrlDecodingHTTPRedirectDeflateDecoder extends HTTPRedirectDeflateDecoder {
-    private final boolean urlDecodeMessage;
+    private boolean urlDecodeMessage;
 
     @Override
     protected InputStream decodeMessage(final String message) throws MessageDecodingException {

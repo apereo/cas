@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.NotImplementedException;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 
@@ -19,10 +20,21 @@ public interface SamlRegisteredServiceMetadataResolver {
     /**
      * Resolve list.
      *
-     * @param service the service
+     * @param service     the service
+     * @param criteriaSet the criteria set
      * @return the list
      */
-    Collection<? extends MetadataResolver> resolve(SamlRegisteredService service);
+    Collection<? extends MetadataResolver> resolve(SamlRegisteredService service, CriteriaSet criteriaSet);
+
+    /**
+     * Resolve list.
+     *
+     * @param service the service
+     * @return the collection
+     */
+    default Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service) {
+        return resolve(service, new CriteriaSet());
+    }
 
     /**
      * Supports this service?

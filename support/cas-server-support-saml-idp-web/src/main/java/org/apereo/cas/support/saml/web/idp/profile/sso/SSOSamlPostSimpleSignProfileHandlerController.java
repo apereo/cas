@@ -10,6 +10,7 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlProfileHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.HttpServletRequestXMLMessageDecodersMap;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
@@ -25,7 +26,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 
 /**
  * The {@link SSOSamlPostSimpleSignProfileHandlerController} is responsible for
@@ -36,7 +36,7 @@ import java.util.Map;
  */
 public class SSOSamlPostSimpleSignProfileHandlerController extends AbstractSamlProfileHandlerController {
     private final SSOSamlHttpRequestExtractor samlHttpRequestExtractor;
-    private final Map<HttpMethod, BaseHttpServletRequestXMLMessageDecoder> samlMessageDecoders;
+    private final HttpServletRequestXMLMessageDecodersMap samlMessageDecoders;
 
     public SSOSamlPostSimpleSignProfileHandlerController(final SamlIdPObjectSigner samlObjectSigner,
                                                          final AuthenticationSystemSupport authenticationSystemSupport,
@@ -49,7 +49,7 @@ public class SSOSamlPostSimpleSignProfileHandlerController extends AbstractSamlP
                                                          final SamlObjectSignatureValidator samlObjectSignatureValidator,
                                                          final SSOSamlHttpRequestExtractor samlHttpRequestExtractor,
                                                          final Service callbackService,
-                                                         final Map<HttpMethod, BaseHttpServletRequestXMLMessageDecoder> samlMessageDecoders) {
+                                                         final HttpServletRequestXMLMessageDecodersMap samlMessageDecoders) {
         super(samlObjectSigner,
             authenticationSystemSupport,
             servicesManager,
@@ -74,7 +74,7 @@ public class SSOSamlPostSimpleSignProfileHandlerController extends AbstractSamlP
     @GetMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_SIMPLE_SIGN)
     protected void handleSaml2ProfileSsoRedirectRequest(final HttpServletResponse response,
                                                         final HttpServletRequest request) throws Exception {
-        val decoder = this.samlMessageDecoders.get(HttpMethod.GET);
+        val decoder = this.samlMessageDecoders.getInstance(HttpMethod.GET);
         handleSsoPostProfileRequest(response, request, decoder);
     }
 
@@ -88,7 +88,7 @@ public class SSOSamlPostSimpleSignProfileHandlerController extends AbstractSamlP
     @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_SIMPLE_SIGN)
     protected void handleSaml2ProfileSsoPostRequest(final HttpServletResponse response,
                                                     final HttpServletRequest request) throws Exception {
-        val decoder = this.samlMessageDecoders.get(HttpMethod.POST);
+        val decoder = this.samlMessageDecoders.getInstance(HttpMethod.POST);
         handleSsoPostProfileRequest(response, request, decoder);
     }
 

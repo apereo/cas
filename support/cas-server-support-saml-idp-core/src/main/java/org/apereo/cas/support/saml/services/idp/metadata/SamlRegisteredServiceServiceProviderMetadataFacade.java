@@ -90,7 +90,7 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
         LOGGER.trace("Adapting SAML metadata for CAS service [{}] issued by [{}]", registeredService.getName(), entityID);
         criterions.add(new EntityIdCriterion(entityID), true);
         LOGGER.debug("Locating metadata for entityID [{}] by attempting to run through the metadata chain...", entityID);
-        val chainingMetadataResolver = resolver.resolve(registeredService);
+        val chainingMetadataResolver = resolver.resolve(registeredService, criterions);
         LOGGER.info("Resolved metadata chain from [{}]. Filtering the chain by entity ID [{}]",
             registeredService.getMetadataLocation(), entityID);
 
