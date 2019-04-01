@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 
 import java.io.Serializable;
 
@@ -26,10 +27,13 @@ public class SamlRegisteredServiceCacheKey implements Serializable {
 
     private final String id;
     private final SamlRegisteredService registeredService;
+    private final CriteriaSet criteriaSet;
 
-    public SamlRegisteredServiceCacheKey(final SamlRegisteredService registeredService) {
+    public SamlRegisteredServiceCacheKey(final SamlRegisteredService registeredService,
+                                         final CriteriaSet criteriaSet) {
         this.id = buildRegisteredServiceCacheKey(registeredService);
         this.registeredService = registeredService;
+        this.criteriaSet = criteriaSet;
     }
 
     /**

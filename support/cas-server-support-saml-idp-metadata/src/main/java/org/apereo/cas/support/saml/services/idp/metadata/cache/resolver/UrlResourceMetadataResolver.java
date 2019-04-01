@@ -1,8 +1,10 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
+import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
@@ -12,6 +14,7 @@ import org.apereo.cas.util.HttpUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.IOUtils;
@@ -68,10 +71,10 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
     }
 
     @Override
-    public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service) {
+    public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
         HttpResponse response = null;
         try {
-            val metadataLocation = getMetadataLocationForService(service);
+            val metadataLocation = getMetadataLocationForService(service, criteriaSet);
             LOGGER.info("Loading SAML metadata from [{}]", metadataLocation);
             val metadataResource = new UrlResource(metadataLocation);
 
@@ -83,15 +86,16 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
             LOGGER.debug("Metadata backup file will be at [{}]", canonicalPath);
             FileUtils.forceMkdirParent(backupFile);
 
-            response = fetchMetadata(metadataLocation);
-            if (response != null) {
-                val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
-                if (shouldHttpResponseStatusBeProcessed(status)) {
-                    val metadataProvider = getMetadataResolverFromResponse(response, backupFile);
-                    configureAndInitializeSingleMetadataResolver(metadataProvider, service);
-                    return CollectionUtils.wrap(metadataProvider);
-                }
+            response = fetchMetadata(metadataLocation, criteriaSet);
+            val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
+            if (shouldHttpResponseStatusBeProcessed(status)) {
+                val metadataProvider = getMetadataResolverFromResponse(response, backupFile);
+                configureAndInitializeSingleMetadataResolver(metadataProvider, service);
+                return CollectionUtils.wrap(metadataProvider);
             }
+        } catch (final UnauthorizedServiceException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new SamlException(e.getMessage(), e);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         } finally {
@@ -133,9 +137,10 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
      * Fetch metadata http response.
      *
      * @param metadataLocation the metadata location
+     * @param criteriaSet      the criteria set
      * @return the http response
      */
-    protected HttpResponse fetchMetadata(final String metadataLocation) {
+    protected HttpResponse fetchMetadata(final String metadataLocation, final CriteriaSet criteriaSet) {
         LOGGER.debug("Fetching metadata from [{}]", metadataLocation);
         return HttpUtils.executeGet(metadataLocation, new LinkedHashMap<>());
     }
@@ -143,10 +148,11 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
     /**
      * Gets metadata location for service.
      *
-     * @param service the service
+     * @param service     the service
+     * @param criteriaSet the criteria set
      * @return the metadata location for service
      */
-    protected String getMetadataLocationForService(final SamlRegisteredService service) {
+    protected String getMetadataLocationForService(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
         return service.getMetadataLocation();
     }
 
@@ -214,7 +220,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
     @Override
     public boolean supports(final SamlRegisteredService service) {
         try {
-            val metadataLocation = getMetadataLocationForService(service);
+            val metadataLocation = getMetadataLocationForService(service, new CriteriaSet());
             return StringUtils.isNotBlank(metadataLocation) && StringUtils.startsWith(metadataLocation, "http");
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);

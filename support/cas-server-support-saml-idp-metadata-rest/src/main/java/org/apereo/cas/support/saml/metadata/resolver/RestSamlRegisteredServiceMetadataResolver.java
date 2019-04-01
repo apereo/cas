@@ -12,6 +12,7 @@ import org.apereo.cas.util.HttpUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
@@ -35,7 +36,7 @@ public class RestSamlRegisteredServiceMetadataResolver extends BaseSamlRegistere
     }
 
     @Override
-    public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service) {
+    public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
         HttpResponse response = null;
         try {
             val rest = samlIdPProperties.getMetadata().getRest();
