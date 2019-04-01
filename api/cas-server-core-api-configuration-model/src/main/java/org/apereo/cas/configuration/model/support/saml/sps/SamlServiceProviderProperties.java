@@ -27,6 +27,14 @@ public class SamlServiceProviderProperties implements Serializable {
      */
     private ConcurSolutions concurSolutions = new ConcurSolutions();
     /**
+     * Settings related to PagerDuty acting as a SAML service provider.
+     */
+    private PagerDuty pagerDuty = new PagerDuty();
+    /**
+     * Settings related to JIRA acting as a SAML service provider.
+     */
+    private Jira jira = new Jira();
+    /**
      * Settings related to PollEverywhere acting as a SAML service provider.
      */
     private PollEverywhere pollEverywhere = new PollEverywhere();
@@ -174,6 +182,14 @@ public class SamlServiceProviderProperties implements Serializable {
      * Settings related to Yuja acting as a SAML service provider.
      */
     private Yuja yuja = new Yuja();
+    /**
+     * Settings related to Confluence acting as a SAML service provider.
+     */
+    private Confluence confluence = new Confluence();
+    /**
+     * Settings related to Zimbra acting as a SAML service provider.
+     */
+    private Zimbra zimbra = new Zimbra();
     /**
      * Settings related to Symplicity acting as a SAML service provider.
      */
@@ -935,6 +951,58 @@ public class SamlServiceProviderProperties implements Serializable {
                 CommonAttributeNames.EDU_PERSON_PRIMARY_NAME.getAttributeName(),
                 CommonAttributeNames.EDU_PERSON_SCOPED_AFFILIATION.getAttributeName(),
                 CommonAttributeNames.DISPLAY_NAME.getAttributeName());
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class Confluence extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public Confluence() {
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
+                CommonAttributeNames.UID.getAttributeName(),
+                CommonAttributeNames.GIVEN_NAME.getAttributeName(),
+                CommonAttributeNames.SURNAME.getAttributeName(),
+                CommonAttributeNames.DISPLAY_NAME.getAttributeName());
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class Jira extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public Jira() {
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
+                CommonAttributeNames.UID.getAttributeName(),
+                CommonAttributeNames.GIVEN_NAME.getAttributeName(),
+                CommonAttributeNames.SURNAME.getAttributeName(),
+                CommonAttributeNames.DISPLAY_NAME.getAttributeName());
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class PagerDuty extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public PagerDuty() {
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName());
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class Zimbra extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public Zimbra() {
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName());
         }
     }
 }
