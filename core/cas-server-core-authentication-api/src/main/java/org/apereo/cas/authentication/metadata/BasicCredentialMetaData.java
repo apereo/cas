@@ -48,7 +48,11 @@ public class BasicCredentialMetaData implements CredentialMetaData {
     public BasicCredentialMetaData(final Credential credential) {
         this.id = credential.getId();
         this.credentialClass = credential.getClass();
-        this.credentialInstance = SerializationUtils.serialize(credential);
+        try {
+            this.credentialInstance = SerializationUtils.serialize(credential);
+        } catch (final Exception e) {
+            throw new IllegalArgumentException("Unable to accept/serialize credential " + credentialClass + " to build credential metadata instance.");
+        }
     }
 
     @JsonIgnore
