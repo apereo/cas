@@ -177,6 +177,18 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="https://www.cccco.edu/">
 <img src="https://user-images.githubusercontent.com/1205228/55275721-62ac8400-52a7-11e9-89c2-121f2c494920.png" height="98" width="140"></a>
 
+<a href="https://www.zimbra.com/">
+<img src="https://user-images.githubusercontent.com/1205228/55322014-f14c0d00-542f-11e9-9355-3dd766ea56e6.png" height="68" width="210"></a>
+
+<a href="https://www.atlassian.com/software/confluence">
+<img src="https://user-images.githubusercontent.com/1205228/55322216-97981280-5430-11e9-9ea3-b3682cb67ff1.png" height="68" width="210"></a>
+
+<a href="https://www.atlassian.com/software/jira">
+<img src="https://user-images.githubusercontent.com/1205228/55322296-cb733800-5430-11e9-93e7-0f57e1a1ae89.png" height="78" width="150"></a>
+
+<a href="https://www.pagerduty.com/">
+<img src="https://user-images.githubusercontent.com/1205228/55322626-b34fe880-5431-11e9-8574-74cc9ab9643f.png" height="78" width="210"></a>
+
 </div>
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#saml-sps).

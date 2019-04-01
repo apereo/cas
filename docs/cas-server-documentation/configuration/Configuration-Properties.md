@@ -2984,7 +2984,11 @@ Configuration settings for all SAML2 service providers are [available here](Conf
 | RocketChat                | `cas.samlSp.rocketChat`   | `email`, `cn`, `username`
 | ArmsSoftware              | `cas.samlSp.armsSoftware` | `email`, `uid`, `eduPersonPrincipalName`
 | Academic HealthPlans      | `cas.samlSp.academicHealthPlans` | `email`, `givenName`, `surname`, `studentId`
+| Confluence                | `cas.samlSp.confluence` | `email`, `givenName`, `surname`, `uid`, `displayName`
+| JIRA                      | `cas.samlSp.jira` | `email`, `givenName`, `surname`, `uid`, `displayName`
 | NeoGov                    | `cas.samlSp.neoGov` | `email`, `ImmutableID`
+| Zimbra                    | `cas.samlSp.zimbra` | `email`
+| PagerDuty                 | `cas.samlSp.pagerDuty` | `email`
 | CraniumCafe               | `cas.samlSp.craniumCafe` | `email`, `eduPersonPrincipalName`, `displayName`, `eduPersonScopedAffiliation`, `studentId`
 | CCC Central               | `cas.samlSp.cccco` | `email`, `eduPersonPrincipalName`, `displayName`, `eduPersonScopedAffiliation`, `uid`, `givenName`, `commonName`, `surname`, `eduPersonPrimaryffiliation`
                                 
