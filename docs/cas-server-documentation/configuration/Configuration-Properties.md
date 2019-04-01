@@ -2986,6 +2986,7 @@ Configuration settings for all SAML2 service providers are [available here](Conf
 | Academic HealthPlans      | `cas.samlSp.academicHealthPlans` | `email`, `givenName`, `surname`, `studentId`
 | Confluence                | `cas.samlSp.confluence` | `email`, `givenName`, `surname`, `uid`, `displayName`
 | JIRA                      | `cas.samlSp.jira` | `email`, `givenName`, `surname`, `uid`, `displayName`
+| CrashPlan                 | `cas.samlSp.crashPlan` | `email`, `givenName`, `surname`
 | NeoGov                    | `cas.samlSp.neoGov` | `email`, `ImmutableID`
 | Zimbra                    | `cas.samlSp.zimbra` | `email`
 | PagerDuty                 | `cas.samlSp.pagerDuty` | `email`
