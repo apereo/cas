@@ -3,6 +3,8 @@ package org.apereo.cas;
 import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
 import org.apereo.cas.config.AmazonSecretsManagerCloudConfigBootstrapConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import com.amazonaws.services.secretsmanager.AWSSecretsManager;
 import com.amazonaws.services.secretsmanager.AWSSecretsManagerClientBuilder;
@@ -38,6 +40,8 @@ import org.springframework.test.context.TestPropertySource;
 })
 @Tag("AmazonWebServicesSecretManager")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 4584)
 public class AmazonSecretsManagerCloudConfigBootstrapConfigurationTests {
     static final String ENDPOINT = "http://127.0.0.1:4584";
     static final String CREDENTIAL_SECRET_KEY = "test";
@@ -50,6 +54,7 @@ public class AmazonSecretsManagerCloudConfigBootstrapConfigurationTests {
 
     @BeforeAll
     public static void initialize() {
+
         val environment = new MockEnvironment();
         val prefix = AmazonSecretsManagerCloudConfigBootstrapConfiguration.CAS_CONFIGURATION_PREFIX;
         environment.setProperty(prefix + '.' + "endpoint", ENDPOINT);
@@ -63,6 +68,7 @@ public class AmazonSecretsManagerCloudConfigBootstrapConfigurationTests {
         request.setSecretId("cas.authn.accept.users");
         request.setSecretString(STATIC_AUTHN_USERS);
         client.putSecretValue(request);
+
     }
 
     @Test
