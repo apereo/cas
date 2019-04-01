@@ -2985,6 +2985,7 @@ Configuration settings for all SAML2 service providers are [available here](Conf
 | WarpWire                  | `cas.samlSp.warpWire`     | `email`, `givenName`, `eduPersonPrincipalName`, `surname`, `eduPersonScopedAffiliation`, `employeeNumber`
 | RocketChat                | `cas.samlSp.rocketChat`   | `email`, `cn`, `username`
 | ArmsSoftware              | `cas.samlSp.armsSoftware` | `email`, `uid`, `eduPersonPrincipalName`
+| TopHat                    | `cas.samlSp.topHat` | `email`, `eduPersonPrincipalName`
 | Academic HealthPlans      | `cas.samlSp.academicHealthPlans` | `email`, `givenName`, `surname`, `studentId`
 | Confluence                | `cas.samlSp.confluence` | `email`, `givenName`, `surname`, `uid`, `displayName`
 | JIRA                      | `cas.samlSp.jira` | `email`, `givenName`, `surname`, `uid`, `displayName`
