@@ -192,6 +192,9 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="https://www.crashplan.com/">
 <img src="https://user-images.githubusercontent.com/1205228/55322944-7f28f780-5432-11e9-8dd0-e999f0b6e03e.png" height="78" width="120"></a>
 
+<a href="https://www.docusign.com/">
+<img src="https://user-images.githubusercontent.com/1205228/55340232-1c972200-5459-11e9-87d2-53e1eccef8b8.png" height="78" width="150"></a>
+
 
 </div>
 
