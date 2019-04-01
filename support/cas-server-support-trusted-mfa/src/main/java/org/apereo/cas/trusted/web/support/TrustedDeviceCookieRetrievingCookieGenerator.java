@@ -1,8 +1,8 @@
 package org.apereo.cas.trusted.web.support;
 
-import org.apereo.cas.web.support.gen.CookieGenerationContext;
+import org.apereo.cas.web.cookie.CookieGenerationContext;
+import org.apereo.cas.web.cookie.CookieValueManager;
 import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
-import org.apereo.cas.web.support.mgmr.CookieValueManager;
 
 /**
  * {@link CookieRetrievingCookieGenerator} for trusted device cookies.

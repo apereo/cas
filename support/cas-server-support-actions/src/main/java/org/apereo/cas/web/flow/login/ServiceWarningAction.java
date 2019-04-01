@@ -6,13 +6,13 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -36,7 +36,7 @@ public class ServiceWarningAction extends AbstractAction {
     private final CentralAuthenticationService centralAuthenticationService;
     private final AuthenticationSystemSupport authenticationSystemSupport;
     private final TicketRegistrySupport ticketRegistrySupport;
-    private final CookieGenerator warnCookieGenerator;
+    private final CasCookieBuilder warnCookieGenerator;
     private final PrincipalElectionStrategy principalElectionStrategy;
 
     @Override

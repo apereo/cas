@@ -12,6 +12,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -23,7 +24,6 @@ import lombok.val;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -56,7 +56,7 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
                                                     final CentralAuthenticationService centralAuthenticationService,
                                                     final ServicesManager servicesManager,
                                                     final TicketRegistrySupport ticketRegistrySupport,
-                                                    final CookieGenerator warnCookieGenerator,
+                                                    final CasCookieBuilder warnCookieGenerator,
                                                     final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
                                                     final AuditableExecution registeredServiceAccessStrategyEnforcer,
                                                     final ApplicationEventPublisher eventPublisher,
@@ -83,7 +83,8 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
             LOGGER.trace("Attempting to resolve candidate authentication events for service [{}]", service);
             val resolvedEvents = resolveCandidateAuthenticationEvents(context, service, registeredService);
             if (!resolvedEvents.isEmpty()) {
-                LOGGER.trace("The set of authentication events resolved for [{}] are [{}]. Beginning to select the final event...", service, resolvedEvents);
+                LOGGER.trace("The set of authentication events resolved for [{}] are [{}]. Beginning to select the final event...",
+                    service, resolvedEvents);
                 putResolvedEventsAsAttribute(context, resolvedEvents);
                 val finalResolvedEvent = this.selectiveResolver.resolveSingle(context);
                 LOGGER.debug("The final authentication event resolved for [{}] is [{}]", service, finalResolvedEvent);
