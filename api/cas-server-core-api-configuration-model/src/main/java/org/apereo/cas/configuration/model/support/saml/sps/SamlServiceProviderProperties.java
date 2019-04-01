@@ -27,6 +27,10 @@ public class SamlServiceProviderProperties implements Serializable {
      */
     private ConcurSolutions concurSolutions = new ConcurSolutions();
     /**
+     * Settings related to CrashPlan acting as a SAML service provider.
+     */
+    private CrashPlan crashPlan = new CrashPlan();
+    /**
      * Settings related to PagerDuty acting as a SAML service provider.
      */
     private PagerDuty pagerDuty = new PagerDuty();
@@ -981,6 +985,19 @@ public class SamlServiceProviderProperties implements Serializable {
                 CommonAttributeNames.GIVEN_NAME.getAttributeName(),
                 CommonAttributeNames.SURNAME.getAttributeName(),
                 CommonAttributeNames.DISPLAY_NAME.getAttributeName());
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class CrashPlan extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public CrashPlan() {
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
+                CommonAttributeNames.GIVEN_NAME.getAttributeName(),
+                CommonAttributeNames.SURNAME.getAttributeName());
         }
     }
 
