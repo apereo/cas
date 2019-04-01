@@ -189,6 +189,10 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="https://www.pagerduty.com/">
 <img src="https://user-images.githubusercontent.com/1205228/55322626-b34fe880-5431-11e9-8574-74cc9ab9643f.png" height="78" width="210"></a>
 
+<a href="https://www.crashplan.com/">
+<img src="https://user-images.githubusercontent.com/1205228/55322944-7f28f780-5432-11e9-8dd0-e999f0b6e03e.png" height="78" width="160"></a>
+
+
 </div>
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#saml-sps).
