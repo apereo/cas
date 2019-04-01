@@ -1,5 +1,7 @@
 description = "Apereo CAS Web Application Reports"
 dependencies {
+    api project(":api:cas-server-core-api-cookie")
+    
     implementation project(":support:cas-server-support-reports-core")
     
     implementation project(":core:cas-server-core-configuration-api")
