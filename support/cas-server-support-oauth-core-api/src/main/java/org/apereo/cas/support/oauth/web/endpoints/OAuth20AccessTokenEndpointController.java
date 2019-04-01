@@ -25,7 +25,7 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.Pac4jUtils;
-import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import com.google.common.base.Supplier;
 import lombok.SneakyThrows;
@@ -70,7 +70,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
                                                 final OAuth20AccessTokenResponseGenerator accessTokenResponseGenerator,
                                                 final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
                                                 final CasConfigurationProperties casProperties,
-                                                final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
+                                                final CasCookieBuilder ticketGrantingTicketCookieGenerator,
                                                 final ExpirationPolicy accessTokenExpirationPolicy,
                                                 final ExpirationPolicy deviceTokenExpirationPolicy,
                                                 final Collection<OAuth20TokenRequestValidator> accessTokenGrantRequestValidators,

@@ -12,7 +12,7 @@ import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolv
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.Pac4jUtils;
-import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -46,7 +46,7 @@ public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Contr
                                                       final OAuth20CallbackAuthorizeViewResolver oAuth20CallbackAuthorizeViewResolver,
                                                       final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
                                                       final CasConfigurationProperties casProperties,
-                                                      final CookieRetrievingCookieGenerator cookieGenerator) {
+                                                      final CasCookieBuilder cookieGenerator) {
         super(servicesManager, ticketRegistry, accessTokenFactory, principalFactory,
             webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties, cookieGenerator);
         this.oAuth20CallbackAuthorizeViewResolver = oAuth20CallbackAuthorizeViewResolver;

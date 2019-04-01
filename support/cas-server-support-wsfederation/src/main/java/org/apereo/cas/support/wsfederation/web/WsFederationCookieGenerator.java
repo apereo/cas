@@ -1,10 +1,10 @@
 package org.apereo.cas.support.wsfederation.web;
 
 import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
+import org.apereo.cas.web.cookie.CookieGenerationContext;
+import org.apereo.cas.web.cookie.CookieValueManager;
 import org.apereo.cas.web.support.CookieUtils;
-import org.apereo.cas.web.support.gen.CookieGenerationContext;
 import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
-import org.apereo.cas.web.support.mgmr.CookieValueManager;
 
 /**
  * This is {@link WsFederationCookieGenerator}.
