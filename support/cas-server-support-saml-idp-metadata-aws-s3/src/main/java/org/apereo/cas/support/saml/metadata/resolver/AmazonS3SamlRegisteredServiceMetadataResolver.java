@@ -12,6 +12,7 @@ import com.amazonaws.util.IOUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 
@@ -41,7 +42,7 @@ public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegis
     }
 
     @Override
-    public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service) {
+    public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
         try {
             val result = s3Client.listObjectsV2(bucketName);
             val objects = result.getObjectSummaries();

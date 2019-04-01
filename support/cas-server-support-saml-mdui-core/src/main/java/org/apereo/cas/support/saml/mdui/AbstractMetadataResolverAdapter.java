@@ -112,7 +112,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
     @Synchronized
     @SneakyThrows
     public void buildMetadataResolverAggregate(final String entityId) {
-        LOGGER.debug("Building metadata resolver aggregate");
+        LOGGER.trace("Building metadata resolver aggregate");
         this.metadataResolver = new ChainingMetadataResolver();
         val resolvers = new ArrayList<MetadataResolver>();
         val entries = this.metadataResources.entrySet();
@@ -123,7 +123,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
         });
         this.metadataResolver.setId(ChainingMetadataResolver.class.getCanonicalName());
         this.metadataResolver.setResolvers(resolvers);
-        LOGGER.info("Collected metadata from [{}] resolvers(s). Initializing aggregate resolver...", resolvers.size());
+        LOGGER.debug("Collected metadata from [{}] resolvers(s). Initializing aggregate resolver...", resolvers.size());
         this.metadataResolver.initialize();
         LOGGER.info("Metadata aggregate initialized successfully.");
     }
