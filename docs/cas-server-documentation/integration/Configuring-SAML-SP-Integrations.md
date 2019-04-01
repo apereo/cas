@@ -195,6 +195,9 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="https://www.docusign.com/">
 <img src="https://user-images.githubusercontent.com/1205228/55340232-1c972200-5459-11e9-87d2-53e1eccef8b8.png" height="78" width="150"></a>
 
+<a href="https://www.safaribooksonline.com/">
+<img src="https://user-images.githubusercontent.com/1205228/55340518-b65ecf00-5459-11e9-9941-3b0e80ceaf73.png" height="78" width="110"></a>
+
 
 </div>
 
