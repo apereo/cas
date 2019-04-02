@@ -201,7 +201,11 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="https://www.tophat.com/">
 <img src="https://user-images.githubusercontent.com/1205228/55340927-89f78280-545a-11e9-81fb-baf0413bcbfa.png" height="48" width="140"></a>
  
+<a href="https://myemma.com/">
+<img src="https://user-images.githubusercontent.com/1205228/55434382-58f77a80-554c-11e9-8494-1c6a830b532c.png" height="48" width="140"></a>
 
+<a href="https://www.qualtrics.com">
+<img src="https://user-images.githubusercontent.com/1205228/55434613-d3c09580-554c-11e9-83ef-6b5805d7424e.png" height="48" width="140"></a>
 
 </div>
 
