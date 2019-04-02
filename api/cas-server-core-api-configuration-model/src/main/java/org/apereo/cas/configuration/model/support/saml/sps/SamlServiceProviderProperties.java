@@ -27,6 +27,14 @@ public class SamlServiceProviderProperties implements Serializable {
      */
     private ConcurSolutions concurSolutions = new ConcurSolutions();
     /**
+     * Settings related to Qualtrics acting as a SAML service provider.
+     */
+    private Qualtrics qualtrics = new Qualtrics();
+    /**
+     * Settings related to Emma acting as a SAML service provider.
+     */
+    private Emma emma = new Emma();
+    /**
      * Settings related to CrashPlan acting as a SAML service provider.
      */
     private CrashPlan crashPlan = new CrashPlan();
@@ -1078,6 +1086,34 @@ public class SamlServiceProviderProperties implements Serializable {
         public TopHat() {
             addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
                 CommonAttributeNames.EDU_PERSON_PRINCIPAL_NAME.getAttributeName());
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class Emma extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public Emma() {
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
+                CommonAttributeNames.SURNAME.getAttributeName(),
+                CommonAttributeNames.GIVEN_NAME.getAttributeName());
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class Qualtrics extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public Qualtrics() {
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
+                CommonAttributeNames.SURNAME.getAttributeName(),
+                CommonAttributeNames.EDU_PERSON_PRINCIPAL_NAME.getAttributeName(),
+                CommonAttributeNames.EMPLOYEE_NUMBER.getAttributeName(),
+                CommonAttributeNames.GIVEN_NAME.getAttributeName());
         }
     }
 }
