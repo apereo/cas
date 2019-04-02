@@ -18,7 +18,7 @@ public class LoggingGitProgressMonitor extends BatchingProgressMonitor {
 
     @Override
     protected void onUpdate(final String taskName, final int workCurr, final int workTotal, final int percentDone) {
-        LOGGER.debug("[{}] -> [{}], total [{}] {}% Completed", taskName, workCurr, workTotal, percentDone);
+        LOGGER.debug("[{}] -> [{}], total [{}] [{}]% Completed", taskName, workCurr, workTotal, percentDone);
     }
 
     @Override
@@ -28,6 +28,6 @@ public class LoggingGitProgressMonitor extends BatchingProgressMonitor {
 
     @Override
     protected void onEndTask(final String taskName, final int workCurr, final int workTotal, final int percentDone) {
-        LOGGER.debug("Finished [{}] -> [{}], total [{}] {}% Completed", taskName, workCurr, workTotal, percentDone);
+        LOGGER.debug("Finished [{}] -> [{}], total [{}] [{}]% Completed", taskName, workCurr, workTotal, percentDone);
     }
 }

@@ -52,7 +52,7 @@ public class GlibcCryptPasswordEncoderTests {
         LOGGER.debug("Password [{}] was encoded by algorithm [{}] to hash [{}]", PASSWORD_CLEAR, algorithm, passwordHash);
 
         val match = encoder.matches(PASSWORD_CLEAR, passwordHash);
-        LOGGER.debug("Does password [{}] match original password [{}]: {}", passwordHash, PASSWORD_CLEAR, match);
+        LOGGER.debug("Does password [{}] match original password [{}]: [{}]", passwordHash, PASSWORD_CLEAR, match);
 
         return match;
     }
@@ -60,7 +60,7 @@ public class GlibcCryptPasswordEncoderTests {
     private boolean testMatchWithDifferentSalt(final String algorithm, final String encodedPassword) {
         val encoder = new GlibcCryptPasswordEncoder(algorithm, 0, null);
         val match = encoder.matches(PASSWORD_CLEAR, encodedPassword);
-        LOGGER.debug("Does password [{}] match original password [{}]: {}", encodedPassword, PASSWORD_CLEAR, match);
+        LOGGER.debug("Does password [{}] match original password [{}]: [{}]", encodedPassword, PASSWORD_CLEAR, match);
         return match;
     }
 

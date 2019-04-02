@@ -56,7 +56,7 @@ public class ThemeBasedViewResolver implements ViewResolver, Ordered {
                 return delegate.get().resolveViewName(viewName, locale);
             }
         } catch (final Exception e) {
-            LOGGER.debug("error resolving view '{}' for theme '{}'", viewName, theme.orElse(null), e);
+            LOGGER.debug("error resolving view [{}] for theme [{}]", viewName, theme.orElse(null), e);
         }
         return null;
     }
