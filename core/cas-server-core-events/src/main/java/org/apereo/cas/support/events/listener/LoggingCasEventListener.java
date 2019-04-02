@@ -25,23 +25,23 @@ import static org.apereo.cas.util.serialization.TicketIdSanitizationUtils.saniti
 @Slf4j
 public class LoggingCasEventListener {
 
-    private static final String GRANTED_TGT_MSG = "Established SSO session at {}\nTGT: {}, With TimeToLive: {}, TimeToIdle: {}\n"
-            + "For principal: {}";
+    private static final String GRANTED_TGT_MSG = "Established SSO session at [{}]\nTGT: [{}], With TimeToLive: [{}], TimeToIdle: [{}]\n"
+            + "For principal: [{}]";
 
-    private static final String AUTHN_TX_FAIL_MSG = "Authentication transaction failed for credential: {}\nFailure(s): {}";
+    private static final String AUTHN_TX_FAIL_MSG = "Authentication transaction failed for credential: [{}]\nFailure(s): [{}]";
 
-    private static final String PRINCIPAL_RESOLVED_MSG = "Principal [{}] resolved\nWith attributes: {}";
+    private static final String PRINCIPAL_RESOLVED_MSG = "Principal [{}] resolved\nWith attributes: [{}]";
 
-    private static final String DESTROYED_TGT_MSG = "SSO session ended\nTGT creation time: {} TGT: {}, With TimeToLive: {}, TimeToIdle: {}\n"
-            + "For principal: {}\nInitiator source: {}";
+    private static final String DESTROYED_TGT_MSG = "SSO session ended\nTGT creation time: [{}] TGT: [{}], With TimeToLive: [{}], TimeToIdle: [{}]\n"
+            + "For principal: [{}]\nInitiator source: [{}]";
 
-    private static final String GRANTED_PT_MSG = "Proxy ticket granted at: {}\nPT: {}, With TimeToLive: {}, TimeToIdle: {}\n"
-            + "By PGT: {}, For service: {}\nProxied by: {}\nFor principal: {}";
+    private static final String GRANTED_PT_MSG = "Proxy ticket granted at: [{}]\nPT: [{}], With TimeToLive: [{}], TimeToIdle: [{}]\n"
+            + "By PGT: [{}], For service: [{}]\nProxied by: [{}]\nFor principal: [{}]";
 
-    private static final String CREATED_ST_MSG = "Service ticket created at {}\nST: {}\nFor service: {}\nFor principal: {}";
+    private static final String CREATED_ST_MSG = "Service ticket created at [{}]\nST: [{}]\nFor service: [{}]\nFor principal: [{}]";
 
-    private static final String VALIDATED_ST_MSG = "Service ticket validated at {}\nST: {}\nFor service: {}\n"
-            + "For principal: {}\nWith released attributes: {}";
+    private static final String VALIDATED_ST_MSG = "Service ticket validated at [{}]\nST: [{}]\nFor service: [{}]\n"
+            + "For principal: [{}]\nWith released attributes: [{}]";
 
     /**
      * Log {@link CasTicketGrantingTicketCreatedEvent} at debug level.

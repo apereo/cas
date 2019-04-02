@@ -84,17 +84,17 @@ public class GlibcCryptPasswordEncoder implements PasswordEncoder {
             LOGGER.debug("Encoding with MD5 algorithm");
         } else if ("5".equals(this.encodingAlgorithm) || "SHA-256".equals(this.encodingAlgorithm.toUpperCase())) {
             cryptSalt.append("$5$rounds=").append(this.strength).append('$');
-            LOGGER.debug("Encoding with SHA-256 algorithm and {} rounds", this.strength);
+            LOGGER.debug("Encoding with SHA-256 algorithm and [{}] rounds", this.strength);
         } else if ("6".equals(this.encodingAlgorithm) || "SHA-512".equals(this.encodingAlgorithm.toUpperCase())) {
             cryptSalt.append("$6$rounds=").append(this.strength).append('$');
-            LOGGER.debug("Encoding with SHA-512 algorithm and {} rounds", this.strength);
+            LOGGER.debug("Encoding with SHA-512 algorithm and [{}] rounds", this.strength);
         } else {
             cryptSalt.append(this.encodingAlgorithm);
             LOGGER.debug("Encoding with DES UnixCrypt algorithm as no indicator for another algorithm was found.");
         }
 
         if (StringUtils.isBlank(this.secret)) {
-            LOGGER.debug("No secret was found. Generating a salt with length {}", SALT_LENGTH);
+            LOGGER.debug("No secret was found. Generating a salt with length [{}]", SALT_LENGTH);
             val keygen = new HexRandomStringGenerator(SALT_LENGTH);
             this.secret = keygen.getNewString();
         } else {
