@@ -14,6 +14,9 @@ org.apereo.cas.config.CasSamlSPAcademicWorksConfiguration,\
 org.apereo.cas.config.CasSamlSPSalesforceConfiguration,\
 org.apereo.cas.config.CasSamlSPSaManageConfiguration,\
 org.apereo.cas.config.CasSamlSPWebAdvisorConfiguration,\
+org.apereo.cas.config.CasSamlSPSlackConfiguration,\
+org.apereo.cas.config.CasSamlSPZendeskConfiguration,\
+org.apereo.cas.config.CasSamlSPEmmaConfiguration,\
 org.apereo.cas.config.CasSamlSPDropboxConfiguration,\
 org.apereo.cas.config.CasSamlSPNetPartnerConfiguration,\
 org.apereo.cas.config.CasSamlSPOffice365Configuration,\
@@ -35,11 +38,13 @@ org.apereo.cas.config.CasSamlSPNeoGovConfiguration,\
 org.apereo.cas.config.CasSamlSPCaliforniaCommunityCollegesConfiguration,\
 org.apereo.cas.config.CasSamlSPCraniumCafeConfiguration,\
 org.apereo.cas.config.CasSamlSPOpenAthensConfiguration,\
+org.apereo.cas.config.CasSamlSPBenefitFocusConfiguration,\
 org.apereo.cas.config.CasSamlSPEverBridgeConfiguration,\
 org.apereo.cas.config.CasSamlSPCherWellConfiguration,\
 org.apereo.cas.config.CasSamlSPBynderConfiguration,\
 org.apereo.cas.config.CasSamlSPFamisConfiguration,\
 org.apereo.cas.config.CasSamlSPGiveCampusConfiguration,\
+org.apereo.cas.config.CasSamlSPWarpWireConfiguration,\
 org.apereo.cas.config.CasSamlSPConfluenceConfiguration,\
 org.apereo.cas.config.CasSamlSPJiraConfiguration,\
 org.apereo.cas.config.CasSamlSPCrashPlanConfiguration,\

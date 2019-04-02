@@ -284,8 +284,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             LOGGER.debug("Attribute policy [{}] is associated with service [{}]", attributePolicy, registeredService);
 
             val attributesToRelease = attributePolicy != null
-                ? attributePolicy.getAttributes(principal, selectedService, registeredService)
-                : new HashMap<>();
+                ? attributePolicy.getAttributes(principal, selectedService, registeredService) : new HashMap<String, Object>();
 
             LOGGER.debug("Calculated attributes for release per the release policy are [{}]", attributesToRelease.keySet());
 
