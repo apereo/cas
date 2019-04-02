@@ -86,7 +86,7 @@ public class CouchDbAcceptableUsagePolicyRepository extends AbstractPrincipalAtt
             }
         }
         if (exception != null) {
-            LOGGER.debug("Could not update AUP acceptance for [{}].\n{}", username, exception.getMessage());
+            LOGGER.debug("Could not update AUP acceptance for [{}].\n[{}]", username, exception.getMessage());
         }
         return success;
     }

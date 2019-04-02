@@ -33,7 +33,7 @@ public class DefaultCassandraRepository implements CassandraRepository {
 
     private static BoundStatement bind(final PreparedStatement statement, final Object... params) {
         val boundStatement = statement.bind(params);
-        LOGGER.debug("CQL: {} with parameters [{}]", statement.getQueryString(), StringUtils.join(params, ", "));
+        LOGGER.debug("CQL: [{}] with parameters [{}]", statement.getQueryString(), StringUtils.join(params, ", "));
         return boundStatement;
     }
 
