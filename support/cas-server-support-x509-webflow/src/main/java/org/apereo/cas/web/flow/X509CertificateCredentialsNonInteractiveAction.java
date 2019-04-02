@@ -43,7 +43,7 @@ public class X509CertificateCredentialsNonInteractiveAction extends AbstractNonI
         val certificates = (X509Certificate[]) request.getAttribute(REQUEST_ATTRIBUTE_X509_CERTIFICATE);
 
         if (certificates == null || certificates.length == 0) {
-            LOGGER.debug("Certificates not found in request attribute: {}", REQUEST_ATTRIBUTE_X509_CERTIFICATE);
+            LOGGER.debug("Certificates not found in request attribute: [{}]", REQUEST_ATTRIBUTE_X509_CERTIFICATE);
             return null;
         }
         LOGGER.debug("[{}] Certificate(s) found in request: [{}]", certificates.length, Arrays.toString(certificates));

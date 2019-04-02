@@ -123,7 +123,7 @@ public interface CipherExecutor<I, O> {
                     decrypted.put(key, result);
                 }
             } catch (final ClassCastException e) {
-                LOGGER.debug("Value of key {}, is not the correct type, not decrypting, but using value as-is.", key);
+                LOGGER.debug("Value of key [{}], is not the correct type, not decrypting, but using value as-is.", key);
                 decrypted.put(key, value);
             }
         });

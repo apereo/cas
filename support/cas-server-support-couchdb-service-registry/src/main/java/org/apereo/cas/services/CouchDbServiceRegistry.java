@@ -47,7 +47,7 @@ public class CouchDbServiceRegistry extends AbstractServiceRegistry {
                 LOGGER.debug("New service [{}] with id [{}] created", registeredService.getName(), registeredService.getId());
             }
         } catch (final DbAccessException e) {
-            LOGGER.debug("Failed to update service [{}] with id [{}] {}", registeredService.getName(), registeredService.getId(), e.getMessage());
+            LOGGER.debug("Failed to update service [{}] with id [{}]: [{}]", registeredService.getName(), registeredService.getId(), e.getMessage());
             return null;
         }
         return registeredService;
@@ -62,7 +62,7 @@ public class CouchDbServiceRegistry extends AbstractServiceRegistry {
             LOGGER.debug("Successfully deleted service [{}] with id [{}].", service.getName(), service.getId());
             return true;
         } catch (final DbAccessException exception) {
-            LOGGER.debug("Could not delete service [{}] with id [{}] {}", service.getName(), service.getId(), exception.getMessage());
+            LOGGER.debug("Could not delete service [{}] with id [{}]: [{}]", service.getName(), service.getId(), exception.getMessage());
             return false;
         }
     }

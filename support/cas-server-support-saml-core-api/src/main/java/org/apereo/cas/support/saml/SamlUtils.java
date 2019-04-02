@@ -236,7 +236,7 @@ public class SamlUtils {
         val repeat = "*".repeat(SAML_OBJECT_LOG_ASTERIXLINE_LENGTH);
         LOGGER.debug(repeat);
         try (val writer = transformSamlObject(configBean, samlObject, true)) {
-            LOGGER.debug("Logging [{}]\n\n{}\n\n", samlObject.getClass().getName(), writer);
+            LOGGER.debug("Logging [{}]\n\n[{}]\n\n", samlObject.getClass().getName(), writer);
             LOGGER.debug(repeat);
             return writer.toString();
         } catch (final Exception e) {
