@@ -457,8 +457,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     protected Service restoreAuthenticationRequestInContext(final RequestContext requestContext,
                                                             final J2EContext webContext,
                                                             final String clientName) {
-        val logoutEndpoint = webContext.getRequestParameter(SAML2ServiceProviderMetadataResolver.LOGOUT_ENDPOINT_PARAMETER);
-        if (logoutEndpoint != null) {
+        val logoutEndpoint = isLogoutRequest(webContext.getRequest());
+        if (logoutEndpoint) {
             return null;
         } else {
             try {
