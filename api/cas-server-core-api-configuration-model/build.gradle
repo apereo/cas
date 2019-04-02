@@ -37,6 +37,4 @@ if (!skipConfigurationMetadata) {
 
     compileJava.dependsOn(processResources)
     jar.dependsOn(generateConfigurationMetadata)
-
-
 }
