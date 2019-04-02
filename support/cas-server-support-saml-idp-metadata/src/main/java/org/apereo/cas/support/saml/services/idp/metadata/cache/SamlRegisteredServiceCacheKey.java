@@ -27,7 +27,7 @@ public class SamlRegisteredServiceCacheKey implements Serializable {
 
     private final String id;
     private final SamlRegisteredService registeredService;
-    private final CriteriaSet criteriaSet;
+    private final transient CriteriaSet criteriaSet;
 
     public SamlRegisteredServiceCacheKey(final SamlRegisteredService registeredService,
                                          final CriteriaSet criteriaSet) {
