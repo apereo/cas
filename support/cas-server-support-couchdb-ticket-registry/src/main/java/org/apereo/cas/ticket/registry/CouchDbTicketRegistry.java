@@ -59,7 +59,7 @@ public class CouchDbTicketRegistry extends AbstractTicketRegistry {
         }
 
         if (exception != null) {
-            LOGGER.debug("Could not delete [{}] {}", ticketId, exception.getMessage());
+            LOGGER.debug("Could not delete [{}] [{}]", ticketId, exception.getMessage());
         } else if (success) {
             LOGGER.debug("Successfully deleted ticket [{}].", ticketId);
         } else {
@@ -134,7 +134,7 @@ public class CouchDbTicketRegistry extends AbstractTicketRegistry {
             }
         }
         if (exception != null) {
-            LOGGER.debug("Could not update [{}] {}", encodedTicket.getId(), exception.getMessage());
+            LOGGER.debug("Could not update [{}] [{}]", encodedTicket.getId(), exception.getMessage());
         }
         return null;
     }

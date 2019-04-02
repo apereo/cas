@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.util.MultiValueMap;
@@ -22,6 +23,7 @@ import java.util.List;
  */
 @Slf4j
 @Getter
+@Setter
 public class UsernamePasswordRestHttpRequestCredentialFactory implements RestHttpRequestCredentialFactory {
     private static final String USERNAME = "username";
     private static final String PASSWORD = "password";
@@ -31,7 +33,7 @@ public class UsernamePasswordRestHttpRequestCredentialFactory implements RestHtt
     @Override
     public List<Credential> fromRequest(final HttpServletRequest request, final MultiValueMap<String, String> requestBody) {
         if (requestBody == null || requestBody.isEmpty()) {
-            LOGGER.debug("Skipping {} because the requestBody is null or empty", getClass().getSimpleName());
+            LOGGER.debug("Skipping [{}] because the requestBody is null or empty", getClass().getSimpleName());
             return new ArrayList<>(0);
         }
         val username = requestBody.getFirst(USERNAME);

@@ -46,7 +46,7 @@ public class AttributeConsentReportEndpoint extends BaseCasActuatorEndpoint {
         val result = new HashSet<Map<String, Object>>();
         LOGGER.debug("Fetching consent decisions for principal [{}]", principal);
         val consentDecisions = this.consentRepository.findConsentDecisions(principal);
-        LOGGER.debug("Resolved consent decisions for principal [{}]: {}", principal, consentDecisions);
+        LOGGER.debug("Resolved consent decisions for principal [{}]: [{}]", principal, consentDecisions);
 
         consentDecisions.forEach(d -> {
             val map = new HashMap<String, Object>();

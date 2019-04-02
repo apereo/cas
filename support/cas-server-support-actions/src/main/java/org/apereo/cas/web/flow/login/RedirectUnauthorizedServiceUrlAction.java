@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow.login;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -20,6 +21,7 @@ import java.net.URI;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Getter
 public class RedirectUnauthorizedServiceUrlAction extends AbstractAction {
     private final ServicesManager servicesManager;
 

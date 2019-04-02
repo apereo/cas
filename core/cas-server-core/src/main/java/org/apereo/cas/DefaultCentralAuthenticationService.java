@@ -70,6 +70,8 @@ import java.util.List;
 public class DefaultCentralAuthenticationService extends AbstractCentralAuthenticationService {
     private static final long serialVersionUID = -8943828074939533986L;
 
+    private final transient Object serviceTicketValidationLock = new Object();
+
     public DefaultCentralAuthenticationService(final ApplicationEventPublisher applicationEventPublisher,
                                                final TicketRegistry ticketRegistry,
                                                final ServicesManager servicesManager,
@@ -253,7 +255,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
              * access to critical section. The reason is that cache pulls serialized data and
              * builds new object, most likely for each pull. Is this synchronization needed here?
              */
-            synchronized (serviceTicket) {
+            synchronized (this.serviceTicketValidationLock) {
                 if (serviceTicket.isExpired()) {
                     LOGGER.info("ServiceTicket [{}] has expired.", serviceTicketId);
                     throw new InvalidTicketException(serviceTicketId);
@@ -282,7 +284,8 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             LOGGER.debug("Attribute policy [{}] is associated with service [{}]", attributePolicy, registeredService);
 
             val attributesToRelease = attributePolicy != null
-                ? attributePolicy.getAttributes(principal, selectedService, registeredService) : new HashMap<String, Object>();
+                ? attributePolicy.getAttributes(principal, selectedService, registeredService)
+                : new HashMap<>();
 
             LOGGER.debug("Calculated attributes for release per the release policy are [{}]", attributesToRelease.keySet());
 

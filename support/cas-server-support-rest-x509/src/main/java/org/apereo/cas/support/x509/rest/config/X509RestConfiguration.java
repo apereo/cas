@@ -61,7 +61,7 @@ public class X509RestConfiguration implements RestHttpRequestCredentialFactoryCo
         val headerAuth = restProperties.isHeaderAuth();
         val bodyAuth = restProperties.isBodyAuth();
         val tlsClientAuth = restProperties.isTlsClientAuth();
-        LOGGER.trace("Is certificate extractor available? = {}, headerAuth = {}, bodyAuth = {}, tlsClientAuth = {}",
+        LOGGER.trace("Is certificate extractor available? = [{}], headerAuth = [{}], bodyAuth = [{}], tlsClientAuth = [{}]",
                      extractor, headerAuth, bodyAuth, tlsClientAuth);
 
         if (tlsClientAuth && (headerAuth || bodyAuth)) {

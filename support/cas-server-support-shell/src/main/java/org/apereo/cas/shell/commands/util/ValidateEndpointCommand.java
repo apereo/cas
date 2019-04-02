@@ -52,12 +52,12 @@ public class ValidateEndpointCommand {
         try {
             var trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             trustManagerFactory.init((KeyStore) null);
-            LOGGER.info("Detected Truststore: {}", trustManagerFactory.getProvider().getName());
+            LOGGER.info("Detected Truststore: [{}]", trustManagerFactory.getProvider().getName());
             val x509TrustManagers = new ArrayList<X509TrustManager>();
             for (val trustManager : trustManagerFactory.getTrustManagers()) {
                 if (trustManager instanceof X509TrustManager) {
                     val x509TrustManager = (X509TrustManager) trustManager;
-                    LOGGER.info("Trusted issuers found: {}", x509TrustManager.getAcceptedIssuers().length);
+                    LOGGER.info("Trusted issuers found: [{}]", x509TrustManager.getAcceptedIssuers().length);
                     x509TrustManagers.add(x509TrustManager);
                 }
             }
@@ -104,7 +104,7 @@ public class ValidateEndpointCommand {
             }
         } catch (final Exception e) {
             LOGGER.info("Could not connect to the host address [{}]", url);
-            LOGGER.info("The error is: {}", e.getMessage());
+            LOGGER.info("The error is: [{}]", e.getMessage());
             LOGGER.info("Here are the details:");
             LOGGER.error(consolidateExceptionMessages(e));
             testBadTlsConnection(url, proxy);
@@ -183,10 +183,10 @@ public class ValidateEndpointCommand {
                 e -> "invalid: " + e.getMessage()
             ).apply(certificate);
 
-            LOGGER.info("  subject: {}", certificate.getSubjectDN().getName());
-            LOGGER.info("  issuer: {}", certificate.getIssuerDN().getName());
-            LOGGER.info("  expiration: {} - {} ({})", certificate.getNotBefore(), certificate.getNotAfter(), validity);
-            LOGGER.info("  trust anchor {}", checkTrustedCertStatus(certificate, systemTrustManagers));
+            LOGGER.info("  subject: [{}]", certificate.getSubjectDN().getName());
+            LOGGER.info("  issuer: [{}]", certificate.getIssuerDN().getName());
+            LOGGER.info("  expiration: [{}] - [{}] [{}]", certificate.getNotBefore(), certificate.getNotAfter(), validity);
+            LOGGER.info("  trust anchor [{}]", checkTrustedCertStatus(certificate, systemTrustManagers));
             LOGGER.info("---");
         }
     }
@@ -200,7 +200,7 @@ public class ValidateEndpointCommand {
                     return "Matches found: " + trustedCert.getIssuerDN().getName();
                 } catch (final CertificateException | NoSuchAlgorithmException
                     | InvalidKeyException | NoSuchProviderException | SignatureException e) {
-                    LOGGER.trace("{}: {}", trustedCert.getIssuerDN().getName(), e.getMessage());
+                    LOGGER.trace("[{}]: [{}]", trustedCert.getIssuerDN().getName(), e.getMessage());
                 }
             }
         }

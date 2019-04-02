@@ -56,10 +56,10 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
             if (StringUtils.isNotBlank(email) && EmailValidator.getInstance().isValid(email)) {
                 return email;
             }
-            LOGGER.debug("Username {} not found when searching for email", username);
+            LOGGER.debug("Username [{}] not found when searching for email", username);
             return null;
         } catch (final EmptyResultDataAccessException e) {
-            LOGGER.debug("Username {} not found when searching for email", username);
+            LOGGER.debug("Username [{}] not found when searching for email", username);
             return null;
         }
     }
@@ -71,10 +71,10 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
             if (StringUtils.isNotBlank(username)) {
                 return username;
             }
-            LOGGER.debug("Email {} not found when searching for user", email);
+            LOGGER.debug("Email [{}] not found when searching for user", email);
             return null;
         } catch (final EmptyResultDataAccessException e) {
-            LOGGER.debug("Email {} not found when searching for user", email);
+            LOGGER.debug("Email [{}] not found when searching for user", email);
             return null;
         }
     }

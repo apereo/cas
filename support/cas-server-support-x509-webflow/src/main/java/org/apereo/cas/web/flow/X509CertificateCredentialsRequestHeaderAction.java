@@ -43,7 +43,7 @@ public class X509CertificateCredentialsRequestHeaderAction extends X509Certifica
         if (x509CertificateExtractor != null) {
             val certFromHeader = x509CertificateExtractor.extract(request);
             if (certFromHeader != null) {
-                LOGGER.debug("Certificate found in HTTP request via {}", x509CertificateExtractor.getClass().getName());
+                LOGGER.debug("Certificate found in HTTP request via [{}]", x509CertificateExtractor.getClass().getName());
                 return new X509CertificateCredential(certFromHeader);
             }
             LOGGER.debug("Certificates not found in request header.");
