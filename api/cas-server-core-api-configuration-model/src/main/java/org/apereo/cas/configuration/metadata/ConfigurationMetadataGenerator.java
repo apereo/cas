@@ -10,7 +10,7 @@ import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.javaparser.JavaParser;
+import com.github.javaparser.StaticJavaParser;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ClassUtils;
@@ -150,7 +150,7 @@ public class ConfigurationMetadataGenerator {
             val typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, parent);
 
             try {
-                val cu = JavaParser.parse(new File(typePath));
+                val cu = StaticJavaParser.parse(new File(typePath));
                 val primaryType = cu.getPrimaryType().get();
                 primaryType.getMembers()
                     .stream()
@@ -207,9 +207,9 @@ public class ConfigurationMetadataGenerator {
         final Set<ConfigurationMetadataHint> hints = new LinkedHashSet<>();
 
         val nonDeprecatedErrors = props.stream()
-                .filter(p -> p.getDeprecation() == null
-                        || !Deprecation.Level.ERROR.equals(p.getDeprecation().getLevel()))
-                .collect(Collectors.toList());
+            .filter(p -> p.getDeprecation() == null
+                || !Deprecation.Level.ERROR.equals(p.getDeprecation().getLevel()))
+            .collect(Collectors.toList());
 
         for (val entry : nonDeprecatedErrors) {
             try {
