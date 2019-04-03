@@ -2185,7 +2185,7 @@ X.509 principal resolution can act on the following principal types:
 | `SUBJECT_ALT_NAME`      | Resolve the principal by the subject alternative name extension. (type: otherName)
 | `SUBJECT_DN`            | The default type; Resolve the principal by the certificate's subject dn.
 | `CN_EDIPI`              | Resolve the principal by the Electronic Data Interchange Personal Identifier (EDIPI) from the Common Name.
-| `RFC822_EMAIL`          | Resolve the principal by the rfc822Name type of subject alternative name.
+| `RFC822_EMAIL`          | Resolve the principal by the [RFC822 Name](https://tools.ietf.org/html/rfc5280#section-4.2.1.6) (aka E-mail address) type of subject alternative name field. 
 
 For the ```CN_EDIPI```,```SUBJECT_ALT_NAME```, and ```RFC822_EMAIL``` principal resolvers, since not all certificates have those attributes, 
 you may specify the following property in order to have a different attribute from the certificate used as the principal.  

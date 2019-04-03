@@ -36,7 +36,7 @@ import java.util.Set;
 @Setter
 public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrincipalResolver {
 
-    private static int RFC822_SAN_TYPE = 1;
+    private static int SAN_RFC822_EMAIL_TYPE = 1;
 
     private String alternatePrincipalAttribute;
 
@@ -141,7 +141,7 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
                     attributes.put("x509Rfc822Email", CollectionUtils.wrapList(rfc822Email));
                 }
             } catch (final CertificateParsingException e) {
-                LOGGER.warn("Error parsing subject alternative names to get rfc822 email {}", e.getMessage());
+                LOGGER.warn("Error parsing subject alternative names to get rfc822 email [{}]", e.getMessage());
             }
         }
         return attributes;
@@ -157,16 +157,15 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
      * X509Certificate#getSubjectAlternativeNames</a>
      */
     protected String getRFC822EmailAddress(final Collection<List<?>> subjectAltNames) {
-        try {
-            if (subjectAltNames == null) {
-                return null;
-            }
-            Optional<List<?>> email = subjectAltNames.stream().filter(s -> ((Integer) s.get(0)) == RFC822_SAN_TYPE).findFirst();
-            if (email.isPresent()) {
-                return (String) email.get().get(1);
-            }
-        } catch (final ArrayIndexOutOfBoundsException e) {
-            LOGGER.error("Subject Alternative Name List does not contain at least two required elements. Returning null principal id...");
+        if (subjectAltNames == null) {
+            return null;
+        }
+        Optional<List<?>> email = subjectAltNames
+            .stream()
+            .filter(s -> s.size() == 2 && ((Integer) s.get(0)) == SAN_RFC822_EMAIL_TYPE)
+            .findFirst();
+        if (email.isPresent()) {
+            return (String) email.get().get(1);
         }
         return null;
     }

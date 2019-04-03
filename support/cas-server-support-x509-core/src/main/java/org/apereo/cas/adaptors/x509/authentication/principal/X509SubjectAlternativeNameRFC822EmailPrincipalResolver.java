@@ -14,7 +14,7 @@ import java.util.Set;
 
 
 /**
- * Credential to principal resolver that extracts Subject Alternative Name UPN extension
+ * Credential to principal resolver that extracts Subject Alternative Name RFC822 extension
  * from the provided certificate if available as a resolved principal id.
  *
  * @author Hal Deadman
@@ -47,8 +47,7 @@ public class X509SubjectAlternativeNameRFC822EmailPrincipalResolver extends Abst
                 return email;
             }
         } catch (final CertificateParsingException e) {
-            LOGGER.error("Error is encountered while trying to retrieve subject alternative names collection from certificate", e);
-            return getAlternatePrincipal(certificate);
+            LOGGER.error("Error encountered while trying to retrieve subject alternative names collection from certificate [{}]", e.getMessage(), e);
         }
         return getAlternatePrincipal(certificate);
     }

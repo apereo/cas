@@ -263,7 +263,9 @@ public class X509Properties implements Serializable {
          */
         CN_EDIPI,
         /**
-         * Create principal by email in subject alternative name email type.
+         * Create principal from the RFC822 type name (aka email address) in the subject alternative name field.
+         * The subject alternative name field contains a list of various types of names, one type is RFC822 e-mail
+         * address. This will return the first e-mail address that is found (if there are more than one).
          */
         RFC822_EMAIL
     }

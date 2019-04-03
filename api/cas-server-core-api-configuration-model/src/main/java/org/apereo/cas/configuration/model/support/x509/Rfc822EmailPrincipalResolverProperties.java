@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Properties for Rfc822 Email Principal Resolver}.
+ * This is {@link Rfc822EmailPrincipalResolverProperties}.
  * @since 6.1.0
  */
 @RequiresModule(name = "cas-server-support-x509-webflow")
