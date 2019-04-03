@@ -1009,4 +1009,24 @@ public class WebUtils {
         val request = getHttpServletRequestFromExternalWebflowContext(context);
         context.getFlashScope().put("httpRequestInitialPostParameters", request.getParameterMap());
     }
+
+    /**
+     * Put existing single sign on session available.
+     *
+     * @param context the context
+     * @param value   the value
+     */
+    public static void putExistingSingleSignOnSessionAvailable(final RequestContext context, final boolean value) {
+        context.getFlowScope().put("existingSingleSignOnSessionAvailable", value);
+    }
+
+    /**
+     * Put existing single sign on session principal.
+     *
+     * @param context the context
+     * @param value   the value
+     */
+    public static void putExistingSingleSignOnSessionPrincipal(final RequestContext context, final Principal value) {
+        context.getFlashScope().put("existingSingleSignOnSessionPrincipal", value);
+    }
 }
