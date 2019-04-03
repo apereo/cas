@@ -49,19 +49,19 @@ public class CasCoreValidationConfiguration implements ServiceTicketValidationAu
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public CasProtocolValidationSpecification cas10ProtocolValidationSpecification() {
-        return new Cas10ProtocolValidationSpecification();
+        return new Cas10ProtocolValidationSpecification(servicesManager.getIfAvailable());
     }
 
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public CasProtocolValidationSpecification cas20ProtocolValidationSpecification() {
-        return new Cas20ProtocolValidationSpecification();
+        return new Cas20ProtocolValidationSpecification(servicesManager.getIfAvailable());
     }
 
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public CasProtocolValidationSpecification cas20WithoutProxyProtocolValidationSpecification() {
-        return new Cas20WithoutProxyingValidationSpecification();
+        return new Cas20WithoutProxyingValidationSpecification(servicesManager.getIfAvailable());
     }
 
     @Autowired

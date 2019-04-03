@@ -9,10 +9,12 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.exceptions.MixedPrincipalException;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
 import org.apereo.cas.ticket.AbstractTicketException;
@@ -396,7 +398,7 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
         cas.grantServiceTicket(tgtId.getId(), svc, ctx);
         val st2Id = cas.grantServiceTicket(tgtId.getId(), svc, ctx);
         val assertion = cas.validateServiceTicket(st2Id.getId(), svc);
-        val validationSpecification = new Cas20WithoutProxyingValidationSpecification();
+        val validationSpecification = new Cas20WithoutProxyingValidationSpecification(mock(ServicesManager.class));
         assertTrue(validationSpecification.isSatisfiedBy(assertion, new MockHttpServletRequest()));
     }
 
@@ -417,9 +419,15 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
             });
         registry.addTicket(tgt);
         val cas = new DefaultCentralAuthenticationService(
-            mock(ApplicationEventPublisher.class), registry, null, logoutManager,
-            null, null,
-            null, null, null,
+            mock(ApplicationEventPublisher.class),
+            registry,
+            mock(ServicesManager.class),
+            logoutManager,
+            null,
+            null,
+            null,
+            PrincipalFactoryUtils.newPrincipalFactory(),
+            CipherExecutor.noOpOfStringToString(),
             mock(AuditableExecution.class));
         cas.destroyTicketGrantingTicket(tgt.getId());
     }
