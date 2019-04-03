@@ -89,7 +89,6 @@
                                         Static AuthN is ONLY useful for demo purposes. It is recommended that you connect CAS to LDAP, JDBC, etc instead.
                                     </span>
                                 </a>
-
                                 <a class="dropdown-item" th:if="${not #httpServletRequest.secure}">
                                     <script>countMessages++;</script>
                                     <h5 class="dropdown-header" th:utext="#{screen.nonsecure.title}"/>

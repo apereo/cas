@@ -10,7 +10,7 @@ echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
 gradleBuild="$gradleBuild test jacocoRootReport --parallel -x javadoc -x check \
-    -DskipGradleLint=true -DskipNestedConfigMetadataGen=true "
+    -DskipGradleLint=true -DskipNestedConfigMetadataGen=true --fail-fast "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
    gradleBuild="$gradleBuild -DshowStandardStreams=true "
