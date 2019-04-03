@@ -28,8 +28,6 @@ import java.util.List;
 @Slf4j
 public class X509RestHttpRequestHeaderCredentialFactory implements RestHttpRequestCredentialFactory {
 
-    private static final String CERTIFICATE = "cert";
-
     private final X509CertificateExtractor certificateExtractor;
 
     @Override
@@ -37,7 +35,7 @@ public class X509RestHttpRequestHeaderCredentialFactory implements RestHttpReque
         val credentials = new ArrayList<Credential>();
         val certFromHeader = certificateExtractor.extract(request);
         if (certFromHeader != null) {
-            LOGGER.debug("Certificate found in HTTP request via {}", certificateExtractor.getClass().getName());
+            LOGGER.debug("Certificate found in HTTP request via [{}]", certificateExtractor.getClass().getName());
             credentials.add(new X509CertificateCredential(certFromHeader));
         }
         return credentials;

@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Basic credential metadata implementation that stores the original credential ID and the original credential type.
@@ -19,6 +20,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(force = true)
 @EqualsAndHashCode
+@Slf4j
 public class BasicCredentialMetaData implements CredentialMetaData {
 
     /**
@@ -36,7 +38,7 @@ public class BasicCredentialMetaData implements CredentialMetaData {
      */
     private final Class<? extends Credential> credentialClass;
 
-    private final byte[] credentialInstance;
+    private byte[] credentialInstance;
 
     /**
      * Creates a new instance from the given credential.
@@ -46,12 +48,19 @@ public class BasicCredentialMetaData implements CredentialMetaData {
     public BasicCredentialMetaData(final Credential credential) {
         this.id = credential.getId();
         this.credentialClass = credential.getClass();
-        this.credentialInstance = SerializationUtils.serialize(credential);
+        try {
+            this.credentialInstance = SerializationUtils.serialize(credential);
+        } catch (final Exception e) {
+            throw new IllegalArgumentException("Unable to accept/serialize credential " + credentialClass + " to build credential metadata instance.");
+        }
     }
 
     @JsonIgnore
     @Override
     public Credential toCredential() {
-        return SerializationUtils.deserialize(this.credentialInstance, credentialClass);
+        if (credentialInstance != null) {
+            return SerializationUtils.deserialize(this.credentialInstance, credentialClass);
+        }
+        throw new IllegalArgumentException("Unable to accept credential " + credentialClass + " to build credential metadata instance.");
     }
 }

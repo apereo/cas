@@ -8,7 +8,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -61,6 +61,6 @@ public abstract class BaseOAuth20Controller {
     /**
      * Cookie retriever.
      */
-    protected final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    protected final CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
 }

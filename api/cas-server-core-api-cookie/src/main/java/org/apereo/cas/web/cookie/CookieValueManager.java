@@ -1,4 +1,4 @@
-package org.apereo.cas.web.support.mgmr;
+package org.apereo.cas.web.cookie;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;

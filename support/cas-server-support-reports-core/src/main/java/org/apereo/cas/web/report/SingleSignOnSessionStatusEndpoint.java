@@ -1,7 +1,7 @@
 package org.apereo.cas.web.report;
 
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 public class SingleSignOnSessionStatusEndpoint {
 
-    private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
     private final TicketRegistrySupport ticketRegistrySupport;
 
     /**

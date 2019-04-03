@@ -1,8 +1,8 @@
 package org.apereo.cas.trusted.web.flow.fingerprint;
 
 import org.apereo.cas.util.gen.RandomStringGenerator;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.WebUtils;
-import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ import java.util.function.Supplier;
 @Setter
 @RequiredArgsConstructor
 public class CookieDeviceFingerprintComponentExtractor implements DeviceFingerprintComponentExtractor {
-    private final CookieRetrievingCookieGenerator cookieGenerator;
+    private final CasCookieBuilder cookieGenerator;
     private final RandomStringGenerator randomStringGenerator;
 
     private int order = LOWEST_PRECEDENCE;

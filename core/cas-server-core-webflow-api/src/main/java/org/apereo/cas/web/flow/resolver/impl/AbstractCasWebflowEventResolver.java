@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
@@ -20,7 +21,6 @@ import org.springframework.binding.message.MessageBuilder;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -62,7 +62,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     /**
      * Warn cookie generator.
      */
-    protected final CookieGenerator warnCookieGenerator;
+    protected final CasCookieBuilder warnCookieGenerator;
     /**
      * Extract the service specially in the event that it's proxied by a callback.
      */

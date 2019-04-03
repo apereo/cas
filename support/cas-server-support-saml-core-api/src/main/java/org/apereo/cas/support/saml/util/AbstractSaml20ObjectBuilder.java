@@ -130,7 +130,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         samlResponse.setIssueInstant(DateTimeUtils.dateTimeOf(issueInstant));
         samlResponse.setVersion(SAMLVersion.VERSION_20);
         if (StringUtils.isNotBlank(recipient)) {
-            LOGGER.debug("Setting provided RequestId {} as InResponseTo", recipient);
+            LOGGER.debug("Setting provided RequestId [{}] as InResponseTo", recipient);
             samlResponse.setInResponseTo(recipient);
         } else {
             LOGGER.debug("No recipient is provided. Skipping InResponseTo");

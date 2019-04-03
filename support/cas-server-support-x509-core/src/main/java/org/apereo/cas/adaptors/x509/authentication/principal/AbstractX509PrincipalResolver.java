@@ -97,17 +97,17 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
         val attributes = extractPersonAttributes(certificate);
         val attribute = attributes.get(alternatePrincipalAttribute);
         if (attribute == null) {
-            LOGGER.debug("Attempt to get alternate principal with attribute {} was unsuccessful.", alternatePrincipalAttribute);
+            LOGGER.debug("Attempt to get alternate principal with attribute [{}] was unsuccessful.", alternatePrincipalAttribute);
             return null;
         }
         val optionalAttribute = CollectionUtils.firstElement(attribute);
         if (optionalAttribute.isEmpty()) {
-            LOGGER.debug("Alternate attribute list for {} was empty.", alternatePrincipalAttribute);
+            LOGGER.debug("Alternate attribute list for [{}] was empty.", alternatePrincipalAttribute);
             return null;
         }
         val alternatePrincipal = optionalAttribute.get().toString();
         if (StringUtils.isNotEmpty(alternatePrincipal)) {
-            LOGGER.debug("Using alternate principal attribute {} ", alternatePrincipal);
+            LOGGER.debug("Using alternate principal attribute [{}]", alternatePrincipal);
             return alternatePrincipal;
         }
         LOGGER.debug("Returning null principal id...");
