@@ -6,6 +6,8 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.cookie.CookieGenerationContext;
 import org.apereo.cas.web.flow.login.InitialFlowSetupAction;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -49,8 +51,8 @@ public class InitialFlowSetupActionCookieTests extends AbstractWebflowActionsTes
     private AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 
     private InitialFlowSetupAction action;
-    private CookieRetrievingCookieGenerator warnCookieGenerator;
-    private CookieRetrievingCookieGenerator tgtCookieGenerator;
+    private CasCookieBuilder warnCookieGenerator;
+    private CasCookieBuilder tgtCookieGenerator;
 
     @BeforeEach
     public void initialize() throws Exception {
@@ -83,7 +85,9 @@ public class InitialFlowSetupActionCookieTests extends AbstractWebflowActionsTes
         when(servicesManager.findServiceBy(any(Service.class))).thenReturn(RegisteredServiceTestUtils.getRegisteredService("test"));
         this.action = new InitialFlowSetupAction(argExtractors, servicesManager,
             authenticationRequestServiceSelectionStrategies, tgtCookieGenerator,
-            warnCookieGenerator, casProperties, authenticationEventExecutionPlan);
+            warnCookieGenerator, casProperties, authenticationEventExecutionPlan,
+            new DefaultSingleSignOnParticipationStrategy(servicesManager, true, true),
+            mock(TicketRegistrySupport.class));
 
         this.action.afterPropertiesSet();
     }
