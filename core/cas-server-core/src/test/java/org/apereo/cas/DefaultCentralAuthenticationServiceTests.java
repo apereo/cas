@@ -419,7 +419,7 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
         registry.addTicket(tgt);
         val commonComponents = new CasCommonComponents(
                 mock(AuditableExecution.class), null, registry, null,
-                logoutManager, null, null,null);
+                logoutManager, null, null, null);
 
         val cas = new DefaultCentralAuthenticationService(commonComponents,
                 null, null);
