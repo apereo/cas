@@ -18,7 +18,7 @@
         <Logger name="org.apereo" level="error">
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="com.amazonaws" level="debug">
+        <Logger name="com.amazonaws" level="info">
             <AppenderRef ref="console"/>
         </Logger>
         <Root level="off">

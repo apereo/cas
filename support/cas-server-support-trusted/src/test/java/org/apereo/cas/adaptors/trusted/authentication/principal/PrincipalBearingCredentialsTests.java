@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class PrincipalBearingCredentialsTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "principalBearingCredential.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     private PrincipalBearingCredential principalBearingCredentials;
 

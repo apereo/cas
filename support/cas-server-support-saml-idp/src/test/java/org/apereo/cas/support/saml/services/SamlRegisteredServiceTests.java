@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
 public class SamlRegisteredServiceTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "samlRegisteredService.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");
     private static final String SAML_SERVICE = "SAMLService";

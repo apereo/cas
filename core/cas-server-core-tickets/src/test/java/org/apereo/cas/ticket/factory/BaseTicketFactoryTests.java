@@ -8,9 +8,9 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.DefaultRegisteredServiceProperty;
+import org.apereo.cas.services.DefaultRegisteredServiceProxyTicketExpirationPolicy;
+import org.apereo.cas.services.DefaultRegisteredServiceServiceTicketExpirationPolicy;
 import org.apereo.cas.services.RegexRegisteredService;
-import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.util.CollectionUtils;
@@ -24,7 +24,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -56,18 +55,8 @@ public abstract class BaseTicketFactoryTests {
         @Bean
         public List inMemoryRegisteredServices() {
             val svc = RegisteredServiceTestUtils.getRegisteredService("customExpirationPolicy", RegexRegisteredService.class);
-            val props = new HashMap<String, RegisteredServiceProperty>();
-            props.put(RegisteredServiceProperty.RegisteredServiceProperties.SERVICE_TICKET_EXPIRATION_POLICY_NUMBER_OF_USES.getPropertyName(),
-                new DefaultRegisteredServiceProperty("10"));
-            props.put(RegisteredServiceProperty.RegisteredServiceProperties.SERVICE_TICKET_EXPIRATION_POLICY_TIME_TO_LIVE.getPropertyName(),
-                new DefaultRegisteredServiceProperty("666"));
-
-            props.put(RegisteredServiceProperty.RegisteredServiceProperties.PROXY_TICKET_EXPIRATION_POLICY_NUMBER_OF_USES.getPropertyName(),
-                new DefaultRegisteredServiceProperty("50"));
-            props.put(RegisteredServiceProperty.RegisteredServiceProperties.PROXY_TICKET_EXPIRATION_POLICY_TIME_TO_LIVE.getPropertyName(),
-                new DefaultRegisteredServiceProperty("1984"));
-
-            svc.setProperties(props);
+            svc.setServiceTicketExpirationPolicy(new DefaultRegisteredServiceServiceTicketExpirationPolicy(10, 666));
+            svc.setProxyTicketExpirationPolicy(new DefaultRegisteredServiceProxyTicketExpirationPolicy(50, 1984));
 
             val defaultSvc = RegisteredServiceTestUtils.getRegisteredService("defaultExpirationPolicy", RegexRegisteredService.class);
             return CollectionUtils.wrapList(svc, defaultSvc);

@@ -75,21 +75,15 @@ whose service ticket expiration policy is to deviate from the default configurat
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
-  "serviceId" : "^https://.*",
-  "name" : "Sample",
-  "id" : 10,
-  "properties" : {
-    "@class" : "java.util.HashMap",
-    "serviceTicketExpirationPolicyNumberOfUses" : {
-      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
-      "values" : [ "java.util.HashSet", [ "2" ] ]
-    },
-    "serviceTicketExpirationPolicyTimeToLive" : {
-      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
-      "values" : [ "java.util.HashSet", [ "45" ] ]
+    "@class" : "org.apereo.cas.services.RegexRegisteredService",
+    "serviceId" : "^https://.*",
+    "name" : "Sample",
+    "id" : 10,
+    "serviceTicketExpirationPolicy": {
+      "@class": "org.apereo.cas.services.DefaultRegisteredServiceServiceTicketExpirationPolicy",
+      "numberOfUses": 1,
+      "timeToLive": 10
     }
-  }
 }
 ```
 
@@ -111,21 +105,15 @@ whose proxy ticket expiration policy is to deviate from the default configuratio
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
-  "serviceId" : "^https://.*",
-  "name" : "Sample",
-  "id" : 10,
-  "properties" : {
-    "@class" : "java.util.HashMap",
-    "proxyTicketExpirationPolicyNumberOfUses" : {
-      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
-      "values" : [ "java.util.HashSet", [ "2" ] ]
-    },
-    "proxyTicketExpirationPolicyTimeToLive" : {
-      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
-      "values" : [ "java.util.HashSet", [ "45" ] ]
-    }
-  }
+    "@class" : "org.apereo.cas.services.RegexRegisteredService",
+    "serviceId" : "^https://.*",
+    "name" : "Sample",
+    "id" : 10,
+    "proxyTicketExpirationPolicy": {
+     "@class": "org.apereo.cas.services.DefaultRegisteredServiceProxyTicketExpirationPolicy",
+     "numberOfUses": 1,
+     "timeToLive": 30
+    } 
 }
 ```
 

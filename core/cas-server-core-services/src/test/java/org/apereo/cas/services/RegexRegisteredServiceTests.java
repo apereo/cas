@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.params.provider.Arguments.*;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 /**
  * Unit test for {@link RegexRegisteredService}.
@@ -23,7 +23,7 @@ import static org.junit.jupiter.params.provider.Arguments.*;
 public class RegexRegisteredServiceTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "regexRegisteredService.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     public static Stream<Arguments> getParameters() {
         val domainCatchallHttp = "https*://([A-Za-z0-9_-]+\\.)+vt\\.edu/.*";
@@ -44,7 +44,7 @@ public class RegexRegisteredServiceTests {
                 newService(domainCatchallHttp),
                 "https://thepiratebay.se?service.vt.edu/webapp?a=1",
                 false
-                ),
+            ),
             arguments(
                 newService(domainCatchallHttpImap),
                 "http://test_service.vt.edu/login",
@@ -54,12 +54,12 @@ public class RegexRegisteredServiceTests {
                 newService(domainCatchallHttpImap),
                 "imaps://imap-server-01.vt.edu/",
                 true
-                ),
+            ),
             arguments(
                 newService(globalCatchallHttpImap),
                 "https://host-01.example.com/",
                 true
-                ),
+            ),
             arguments(
                 newService(globalCatchallHttpImap),
                 "imap://host-02.example.edu/",
@@ -76,6 +76,8 @@ public class RegexRegisteredServiceTests {
     private static RegexRegisteredService newService(final String id) {
         val service = new RegexRegisteredService();
         service.setServiceId(id);
+        service.setServiceTicketExpirationPolicy(new DefaultRegisteredServiceServiceTicketExpirationPolicy(100, 100));
+        service.setProxyTicketExpirationPolicy(new DefaultRegisteredServiceProxyTicketExpirationPolicy(100, 100));
         return service;
     }
 
@@ -103,8 +105,8 @@ public class RegexRegisteredServiceTests {
     @ParameterizedTest
     @MethodSource("getParameters")
     public void verifySerializeRegexRegisteredServiceWithLogoutToJson(final RegexRegisteredService service,
-                                                             final String serviceToMatch,
-                                                             final boolean expectedResult) throws IOException {
+                                                                      final String serviceToMatch,
+                                                                      final boolean expectedResult) throws IOException {
         service.setLogoutType(RegisteredServiceLogoutType.FRONT_CHANNEL);
         MAPPER.writeValue(JSON_FILE, service);
         val serviceRead = MAPPER.readValue(JSON_FILE, RegexRegisteredService.class);

@@ -23,7 +23,7 @@ public class OAuthCodeExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPo
      * @param numberOfUses             the number of uses
      * @param timeToKillInMilliSeconds the time to kill in milli seconds
      */
-    public OAuthCodeExpirationPolicy(@JsonProperty("numberOfUses") final int numberOfUses,
+    public OAuthCodeExpirationPolicy(@JsonProperty("numberOfUses") final long numberOfUses,
                                      @JsonProperty("timeToLive") final long timeToKillInMilliSeconds) {
         super(numberOfUses, timeToKillInMilliSeconds);
     }

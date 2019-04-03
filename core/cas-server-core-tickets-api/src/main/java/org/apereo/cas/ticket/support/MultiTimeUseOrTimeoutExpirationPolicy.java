@@ -37,7 +37,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
     private long timeToKillInSeconds;
 
     @JsonProperty("numberOfUses")
-    private int numberOfUses;
+    private long numberOfUses;
 
     /**
      * Instantiates a new multi time use or timeout expiration policy.
@@ -46,7 +46,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
      * @param timeToKillInSeconds the time to kill in seconds
      */
     @JsonCreator
-    public MultiTimeUseOrTimeoutExpirationPolicy(@JsonProperty("numberOfUses") final int numberOfUses, @JsonProperty("timeToLive") final long timeToKillInSeconds) {
+    public MultiTimeUseOrTimeoutExpirationPolicy(@JsonProperty("numberOfUses") final long numberOfUses, @JsonProperty("timeToLive") final long timeToKillInSeconds) {
         this.timeToKillInSeconds = timeToKillInSeconds;
         this.numberOfUses = numberOfUses;
         Assert.isTrue(this.numberOfUses > 0, "numberOfUses must be greater than 0.");
@@ -111,7 +111,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
          * @param timeToKillInSeconds the time to kill in seconds
          */
         @JsonCreator
-        public ProxyTicketExpirationPolicy(@JsonProperty("numberOfUses") final int numberOfUses, @JsonProperty("timeToLive") final long timeToKillInSeconds) {
+        public ProxyTicketExpirationPolicy(@JsonProperty("numberOfUses") final long numberOfUses, @JsonProperty("timeToLive") final long timeToKillInSeconds) {
             super(numberOfUses, timeToKillInSeconds);
         }
     }
@@ -132,7 +132,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
          * @param timeToKillInSeconds the time to kill in seconds
          */
         @JsonCreator
-        public ServiceTicketExpirationPolicy(@JsonProperty("numberOfUses") final int numberOfUses, @JsonProperty("timeToLive") final long timeToKillInSeconds) {
+        public ServiceTicketExpirationPolicy(@JsonProperty("numberOfUses") final long numberOfUses, @JsonProperty("timeToLive") final long timeToKillInSeconds) {
             super(numberOfUses, timeToKillInSeconds);
         }
     }

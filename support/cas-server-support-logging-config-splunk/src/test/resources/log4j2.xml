@@ -9,7 +9,7 @@
         </SplunkAppender>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="debug">
+        <Logger name="org.apereo" level="info">
             <AppenderRef ref="casSplunk"/>
         </Logger>
         <Root level="error">

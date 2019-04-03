@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 public class OidcRegisteredServiceTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "oidcRegisteredService.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");
 

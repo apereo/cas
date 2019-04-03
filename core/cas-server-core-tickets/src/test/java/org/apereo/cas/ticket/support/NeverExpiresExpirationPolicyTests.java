@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class NeverExpiresExpirationPolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "neverExpiresExpirationPolicy.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     @Test
     public void verifySerializeANeverExpiresExpirationPolicyToJson() throws IOException {

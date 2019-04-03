@@ -9,6 +9,8 @@ import org.apereo.cas.authentication.principal.WebApplicationServiceFactoryTests
 import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProviderTests;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategyTests;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicyTests;
+import org.apereo.cas.services.DefaultRegisteredServiceProxyTicketExpirationPolicyTests;
+import org.apereo.cas.services.DefaultRegisteredServiceServiceTicketExpirationPolicyTests;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProviderTests;
 import org.apereo.cas.services.DefaultServicesManagerByEnvironmentTests;
 import org.apereo.cas.services.DefaultServicesManagerTests;
@@ -69,6 +71,8 @@ import org.junit.platform.suite.api.SelectClasses;
     UnauthorizedServiceExceptionTests.class,
     UnauthorizedSsoServiceExceptionTests.class,
     ResponseTests.class,
+    DefaultRegisteredServiceProxyTicketExpirationPolicyTests.class,
+    DefaultRegisteredServiceServiceTicketExpirationPolicyTests.class,
     DefaultServicesManagerByEnvironmentTests.class,
     ScriptedRegisteredServiceUsernameProviderTests.class,
     RemoteEndpointServiceAccessStrategyTests.class,
