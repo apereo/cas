@@ -39,6 +39,15 @@ public interface SingleSignOnParticipationStrategy extends Ordered {
     }
 
     /**
+     * Is creating single sign on session cookie on renewed authentication?
+     *
+     * @return the boolean
+     */
+    default boolean isCreateCookieOnRenewedAuthentication() {
+        return true;
+    }
+
+    /**
      * Always participating single sign on participation strategy.
      *
      * @return the single sign on participation strategy

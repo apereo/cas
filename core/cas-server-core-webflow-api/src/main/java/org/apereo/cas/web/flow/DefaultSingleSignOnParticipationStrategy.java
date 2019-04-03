@@ -35,7 +35,7 @@ public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnPar
         if (renewEnabled && ctx.getRequestParameters().contains(CasProtocolConstants.PARAMETER_RENEW)) {
             LOGGER.debug("[{}] is specified for the request. The authentication session will be considered renewed.",
                 CasProtocolConstants.PARAMETER_RENEW);
-            return this.createSsoSessionCookieOnRenewAuthentications;
+            return false;
         }
 
         val authentication = WebUtils.getAuthentication(ctx);
@@ -57,5 +57,10 @@ public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnPar
         }
 
         return true;
+    }
+
+    @Override
+    public boolean isCreateCookieOnRenewedAuthentication() {
+        return createSsoSessionCookieOnRenewAuthentications;
     }
 }

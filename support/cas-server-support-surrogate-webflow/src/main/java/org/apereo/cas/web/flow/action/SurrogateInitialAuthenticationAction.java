@@ -34,17 +34,17 @@ public class SurrogateInitialAuthenticationAction extends InitialAuthenticationA
     }
 
     @Override
-    protected Event doPreExecute(final RequestContext context) {
+    protected Event doPreExecute(final RequestContext context) throws Exception {
         val up = WebUtils.getCredential(context, UsernamePasswordCredential.class);
         if (up == null) {
             LOGGER.debug("Provided credentials cannot be found, or are already of type [{}]", SurrogateUsernamePasswordCredential.class.getName());
-            return null;
+            return super.doPreExecute(context);
         }
         if (up.getUsername().contains(this.separator)) {
             LOGGER.debug("Credential username includes the separator [{}]. Converting to surrogate...", this.separator);
             convertToSurrogateCredential(context, up);
         }
-        return null;
+        return super.doPreExecute(context);
     }
 
     private void convertToSurrogateCredential(final RequestContext context, final UsernamePasswordCredential up) {

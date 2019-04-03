@@ -211,7 +211,9 @@ public class CasSupportActionsConfiguration {
             ticketGrantingTicketCookieGenerator.getIfAvailable(),
             warnCookieGenerator.getIfAvailable(),
             casProperties,
-            authenticationEventExecutionPlan.getIfAvailable());
+            authenticationEventExecutionPlan.getIfAvailable(),
+            webflowSingleSignOnParticipationStrategy.getIfAvailable(),
+            ticketRegistrySupport.getIfAvailable());
     }
 
     @RefreshScope

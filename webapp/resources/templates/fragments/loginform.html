@@ -23,7 +23,12 @@
                             <span th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">Example error</span>
                         </div>
 
-                        <h3 th:utext="#{screen.welcome.instructions}">Enter your Username and Password</h3>
+                        <div th:if="${existingSingleSignOnSessionAvailable}">
+                            <h6><i class="fas fa-info-circle"></i>&nbsp;
+                                <span th:utext="#{screen.welcome.forcedsso(${existingSingleSignOnSessionPrincipal.id})}" /></h6>
+                        </div>
+                        <h3 th:unless="${existingSingleSignOnSessionAvailable}"
+                            th:utext="#{screen.welcome.instructions}">Enter your Username and Password:</h3>
 
                         <section class="form-group">
                             <span th:if="${availableAuthenticationHandlerNames != null}">
