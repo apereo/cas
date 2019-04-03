@@ -162,12 +162,9 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
         }
         Optional<List<?>> email = subjectAltNames
             .stream()
-            .filter(s -> s.size() == 2 && ((Integer) s.get(0)) == SAN_RFC822_EMAIL_TYPE)
+            .filter(s -> s.size() == 2 && (Integer) s.get(0) == SAN_RFC822_EMAIL_TYPE)
             .findFirst();
-        if (email.isPresent()) {
-            return (String) email.get().get(1);
-        }
-        return null;
+        return email.map(objects -> (String) objects.get(1)).orElse(null);
     }
 
     @Override
