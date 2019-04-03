@@ -2182,15 +2182,16 @@ X.509 principal resolution can act on the following principal types:
 | `SERIAL_NO`             | Resolve the principal by the serial number with a configurable <strong>radix</strong>, ranging from 2 to 36. If <code>radix</code> is <code>16</code>, then the serial number could be filled with leading zeros to even the number of digits.
 | `SERIAL_NO_DN`          | Resolve the principal by serial number and issuer dn.
 | `SUBJECT`               | Resolve the principal by extracting one or more attribute values from the certificate subject DN and combining them with intervening delimiters.
-| `SUBJECT_ALT_NAME`      | Resolve the principal by the subject alternative name extension.
+| `SUBJECT_ALT_NAME`      | Resolve the principal by the subject alternative name extension. (type: otherName)
 | `SUBJECT_DN`            | The default type; Resolve the principal by the certificate's subject dn.
 | `CN_EDIPI`              | Resolve the principal by the Electronic Data Interchange Personal Identifier (EDIPI) from the Common Name.
+| `RFC822_EMAIL`          | Resolve the principal by the [RFC822 Name](https://tools.ietf.org/html/rfc5280#section-4.2.1.6) (aka E-mail address) type of subject alternative name field. 
 
-For the ```CN_EDIPI``` and ```SUBJECT_ALT_NAME``` principal resolvers, since not all certificates have those attributes, 
+For the ```CN_EDIPI```,```SUBJECT_ALT_NAME```, and ```RFC822_EMAIL``` principal resolvers, since not all certificates have those attributes, 
 you may specify the following property in order to have a different attribute from the certificate used as the principal.  
 If no alternative attribute is specified then the principal will be null and CAS will fail auth or use a different authenticator.
 ```properties
-# cas.authn.x509.alternatePrincipalAttribute=subjectDn|sigAlgOid|subjectX500Principal
+# cas.authn.x509.alternatePrincipalAttribute=subjectDn|sigAlgOid|subjectX500Principal|x509Rfc822Email
 ```
 
 ### CRL Fetching / Revocation
@@ -2272,10 +2273,13 @@ To fetch CRLs, the following options are available:
 # cas.authn.x509.serialNo.principalHexSNZeroPadding=false
 
 # SUBJECT_ALT_NAME
-# cas.authn.x509.subjectAltName.alternatePrincipalAttribute=[sigAlgOid|subjectDn|subjectX500Principal]
+# cas.authn.x509.subjectAltName.alternatePrincipalAttribute=[sigAlgOid|subjectDn|subjectX500Principal|x509Rfc822Email]
 
 # CN_EDIPI 
-# cas.authn.x509.cnEdipi.alternatePrincipalAttribute=[sigAlgOid|subjectDn|subjectX500Principal]
+# cas.authn.x509.cnEdipi.alternatePrincipalAttribute=[sigAlgOid|subjectDn|subjectX500Principal|x509Rfc822Email]
+
+# RFC822_EMAIL 
+# cas.authn.x509.rfc822Email.alternatePrincipalAttribute=[sigAlgOid|subjectDn|subjectX500Principal]
 ```
 
 ### X509 Certificate Extraction
