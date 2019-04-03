@@ -2,7 +2,9 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.TicketState;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -24,9 +26,21 @@ public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
     private final TicketRegistry ticketRegistry;
 
     @Override
-    public Authentication getAuthenticationFrom(final String ticketGrantingTicketId) throws RuntimeException {
+    public TicketState getTicketState(final String ticketId) {
+        val state = this.ticketRegistry.getTicket(ticketId, Ticket.class);
+        return state == null || state.isExpired() ? null : TicketState.class.cast(state);
+    }
+
+    @Override
+    public TicketGrantingTicket getTicketGrantingTicket(final String ticketGrantingTicketId) {
         val tgt = this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
-        return tgt == null || tgt.isExpired() ? null : tgt.getAuthentication();
+        return tgt == null || tgt.isExpired() ? null : tgt;
+    }
+
+    @Override
+    public Authentication getAuthenticationFrom(final String ticketGrantingTicketId) throws RuntimeException {
+        val tgt = getTicketGrantingTicket(ticketGrantingTicketId);
+        return tgt != null ? tgt.getAuthentication() : null;
     }
 
     @Override
@@ -44,7 +58,9 @@ public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
     @Override
     public void updateAuthentication(final String ticketGrantingTicketId, final Authentication authentication) {
         val tgt = this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
-        tgt.getAuthentication().update(authentication);
-        this.ticketRegistry.updateTicket(tgt);
+        if (tgt != null && !tgt.isExpired()) {
+            tgt.getAuthentication().update(authentication);
+            this.ticketRegistry.updateTicket(tgt);
+        }
     }
 }
