@@ -34,6 +34,8 @@ public interface GitHubOperations {
 
     Issue removeLabel(Issue issue, String label);
 
+    void removeLabel(PullRequest issue, String label);
+
     Comment addComment(Issue issue, String comment);
 
     Comment addComment(PullRequest pullRequest, String comment);

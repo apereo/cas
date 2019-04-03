@@ -9,6 +9,7 @@ import org.apereo.cas.github.PullRequestFile;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -22,7 +23,7 @@ public class CasPullRequestListener implements PullRequestListener {
     @Override
     public void onOpenPullRequest(final PullRequest pr) {
         log.debug("Processing {}", pr);
-        
+
         if (processLabelSeeMaintenancePolicy(pr)) {
             return;
         }
@@ -31,6 +32,18 @@ public class CasPullRequestListener implements PullRequestListener {
         processLabelPendingUpdateProperty(pr);
         processMilestoneAssignment(pr);
         processLabelsByFeatures(pr);
+
+        removeLabelWorkInProgress(pr);
+    }
+
+    private void removeLabelWorkInProgress(final PullRequest pr) {
+        if (pr.isLabeledAs(CasLabels.LABEL_WIP)) {
+            val title = pr.getTitle().toLowerCase();
+            if (CasLabels.LABEL_WIP.getKeywords() != null && !CasLabels.LABEL_WIP.getKeywords().matcher(title).find()) {
+                log.info("{} will remove the label {}", pr, CasLabels.LABEL_WIP);
+                repository.removeLabelFrom(pr, CasLabels.LABEL_WIP);
+            }
+        }
     }
 
     private void processLabelPendingUpdateProperty(final PullRequest pr) {

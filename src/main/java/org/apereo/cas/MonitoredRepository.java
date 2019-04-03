@@ -34,7 +34,6 @@ import org.springframework.web.client.RestTemplate;
 import java.io.StringReader;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
@@ -119,6 +118,10 @@ public class MonitoredRepository implements InitializingBean {
         this.labels.stream().filter(getLabelPredicateByName(labelName)).findFirst().ifPresent(l -> {
             this.gitHub.addLabel(pr, l.getName());
         });
+    }
+
+    public void removeLabelFrom(final PullRequest pr, final CasLabels labelName) {
+        this.gitHub.removeLabel(pr, labelName.getTitle());
     }
 
     public List<PullRequestFile> getPullRequestFiles(final PullRequest pr) {

@@ -149,7 +149,7 @@ public class GitHubTemplate implements GitHubOperations {
     @Override
     public PullRequest mergeWithBase(final String organization, final String repository, final PullRequest pr) {
         if (pr.getHead().getRepository().isFork()) {
-            log.info("Unable to merge pull request [{}] with base on a forked repository [{}]", pr.getUrl(), pr.getHead().getRepository());
+            log.info("Unable to merge pull request [{}] with base on a forked repository [{}]", pr, pr.getHead().getRepository());
             return pr;
         }
 
@@ -166,11 +166,11 @@ public class GitHubTemplate implements GitHubOperations {
 
         final ResponseEntity response = this.rest.exchange(new RequestEntity(body, HttpMethod.POST, uri), Map.class);
         if (response.getStatusCode() == HttpStatus.NO_CONTENT) {
-            log.debug("Pull request [{}] already contains the [{}]; nothing to mergeWithBase", targetBranch, pr.getUrl());
+            log.debug("Pull request [{}] already contains the [{}]; nothing to mergeWithBase", targetBranch, pr);
         } else if (response.getStatusCode() == HttpStatus.CONFLICT) {
-            log.warn("Pull request [{}] has a mergeWithBase conflict and cannot be merged with [{}]", pr.getUrl(), targetBranch);
+            log.warn("Pull request [{}] has a mergeWithBase conflict and cannot be merged with [{}]", pr, targetBranch);
         } else if (response.getStatusCode() == HttpStatus.CREATED) {
-            log.info("Pull request [{}] is successfully merged with head [{}]", pr.getUrl(), targetBranch);
+            log.info("Pull request [{}] is successfully merged with head [{}]", pr, targetBranch);
         } else {
             log.warn("Unable to handle merge with base; message [{}], status [{}]", response.getBody(), response.getStatusCode().getReasonPhrase());
         }
@@ -251,6 +251,24 @@ public class GitHubTemplate implements GitHubOperations {
         return new Issue(issue.getUrl(), issue.getCommentsUrl(), issue.getEventsUrl(),
             issue.getLabelsUrl(), issue.getUser(), Arrays.asList(response.getBody()),
             issue.getMilestone(), issue.getPullRequest());
+    }
+
+    @Override
+    public void removeLabel(final PullRequest pullRequest, final String label) {
+        final String encodedName;
+        try {
+            encodedName = new URI(null, null, label, null).toString();
+        } catch (final URISyntaxException ex) {
+            throw new RuntimeException(ex);
+        }
+        final ResponseEntity<Label[]> response = this.rest.exchange(
+            new RequestEntity<Void>(HttpMethod.DELETE, URI.create(
+                pullRequest.getLabelsUrl().replace("{/name}", '/' + encodedName))),
+            Label[].class);
+        if (response.getStatusCode() != HttpStatus.OK) {
+            log.warn("Failed to remove label from pull request. Response status: "
+                + response.getStatusCode());
+        }
     }
 
     @Override
