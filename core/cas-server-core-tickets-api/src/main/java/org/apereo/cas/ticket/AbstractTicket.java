@@ -10,6 +10,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import javax.persistence.Column;
@@ -41,6 +42,7 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"id"})
 @Setter
+@Slf4j
 public abstract class AbstractTicket implements Ticket, TicketState {
 
     private static final long serialVersionUID = -8506442397878267555L;
@@ -105,15 +107,34 @@ public abstract class AbstractTicket implements Ticket, TicketState {
 
     @Override
     public void update() {
-        this.previousTimeUsed = this.lastTimeUsed;
-        this.lastTimeUsed = ZonedDateTime.now(ZoneOffset.UTC);
-        this.countOfUses++;
+        updateTicketState();
+        updateTicketGrantingTicketState();
+    }
 
+    /**
+     * Update ticket granting ticket state.
+     */
+    protected void updateTicketGrantingTicketState() {
         val ticketGrantingTicket = getTicketGrantingTicket();
         if (ticketGrantingTicket != null && !ticketGrantingTicket.isExpired()) {
             val state = TicketState.class.cast(ticketGrantingTicket);
             state.update();
         }
+    }
+
+    /**
+     * Update ticket state.
+     */
+    protected void updateTicketState() {
+        LOGGER.trace("Before updating ticket [{}]\n\tPrevious time used: [{}]\n\tLast time used: [{}]\n\tUsage count: [{}]",
+            getId(), this.previousTimeUsed, this.lastTimeUsed, this.countOfUses);
+
+        this.previousTimeUsed = ZonedDateTime.from(this.lastTimeUsed);
+        this.lastTimeUsed = ZonedDateTime.now(ZoneOffset.UTC);
+        this.countOfUses++;
+
+        LOGGER.trace("After updating ticket [{}]\n\tPrevious time used: [{}]\n\tLast time used: [{}]\n\tUsage count: [{}]",
+            getId(), this.previousTimeUsed, this.lastTimeUsed, this.countOfUses);
     }
 
     @Override
