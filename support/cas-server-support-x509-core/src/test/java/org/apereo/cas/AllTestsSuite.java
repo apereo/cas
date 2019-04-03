@@ -8,6 +8,7 @@ import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCred
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CommonNameEDIPIPrincipalResolverTests;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SerialNumberAndIssuerDNPrincipalResolverTests;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SerialNumberPrincipalResolverTests;
+import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectAlternativeNameRFC822EmailPrincipalResolverTests;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectAlternativeNameUPNPrincipalResolverTests;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectDNPrincipalResolverTests;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectPrincipalResolverTests;
@@ -15,7 +16,7 @@ import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectPrincipa
 import org.junit.platform.suite.api.SelectClasses;
 
 /**
- * The {@link AllLdapTestsSuite} is responsible for
+ * The {@link AllTestsSuite} is responsible for
  * running all cas test cases.
  *
  * @author Misagh Moayyed
@@ -26,6 +27,7 @@ import org.junit.platform.suite.api.SelectClasses;
     X509SerialNumberPrincipalResolverTests.class,
     X509SubjectDNPrincipalResolverTests.class,
     X509CommonNameEDIPIPrincipalResolverTests.class,
+    X509SubjectAlternativeNameRFC822EmailPrincipalResolverTests.class,
     X509SubjectAlternativeNameUPNPrincipalResolverTests.class,
     X509SubjectPrincipalResolverTests.class,
     ResourceCRLRevocationCheckerTests.class,
