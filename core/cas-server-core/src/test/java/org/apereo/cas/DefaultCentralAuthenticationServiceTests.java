@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.exceptions.MixedPrincipalException;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.config.CasCommonComponents;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.UnauthorizedServiceException;
@@ -416,11 +417,15 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
                 return null;
             });
         registry.addTicket(tgt);
-        val cas = new DefaultCentralAuthenticationService(
-            mock(ApplicationEventPublisher.class), registry, null, logoutManager,
-            null, null,
-            null, null, null,
-            mock(AuditableExecution.class));
+        val commonComponents = new CasCommonComponents(
+                mock(AuditableExecution.class), null, registry, null,
+                logoutManager, null, null,null);
+
+        val cas = new DefaultCentralAuthenticationService(commonComponents,
+                null, null);
+
+        cas.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
+
         cas.destroyTicketGrantingTicket(tgt.getId());
     }
 }

@@ -1,7 +1,6 @@
 package org.apereo.cas;
 
 import org.apereo.cas.audit.AuditableContext;
-import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.authentication.AuthenticationException;
@@ -11,14 +10,12 @@ import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.exceptions.MixedPrincipalException;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.logout.LogoutManager;
+import org.apereo.cas.config.CasCommonComponents;
 import org.apereo.cas.logout.slo.SingleLogoutRequest;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServiceContext;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedProxyingException;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
 import org.apereo.cas.support.events.ticket.CasProxyGrantingTicketCreatedEvent;
@@ -31,7 +28,6 @@ import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketFactory;
-import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
 import org.apereo.cas.ticket.UnrecognizableServiceForServiceTicketValidationException;
@@ -39,7 +35,6 @@ import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicketFactory;
-import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.DefaultAssertionBuilder;
@@ -47,7 +42,6 @@ import org.apereo.cas.validation.DefaultAssertionBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -72,19 +66,11 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
 
     private final transient Object serviceTicketValidationLock = new Object();
 
-    public DefaultCentralAuthenticationService(final ApplicationEventPublisher applicationEventPublisher,
-                                               final TicketRegistry ticketRegistry,
-                                               final ServicesManager servicesManager,
-                                               final LogoutManager logoutManager,
-                                               final TicketFactory ticketFactory,
+    public DefaultCentralAuthenticationService(final CasCommonComponents casCommonComponents,
                                                final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
-                                               final ContextualAuthenticationPolicyFactory<ServiceContext> serviceContextAuthenticationPolicyFactory,
-                                               final PrincipalFactory principalFactory,
-                                               final CipherExecutor<String, String> cipherExecutor,
-                                               final AuditableExecution registeredServiceAccessStrategyEnforcer) {
-        super(applicationEventPublisher, ticketRegistry, servicesManager, logoutManager, ticketFactory,
-            authenticationRequestServiceSelectionStrategies, serviceContextAuthenticationPolicyFactory,
-            principalFactory, cipherExecutor, registeredServiceAccessStrategyEnforcer);
+                                               final ContextualAuthenticationPolicyFactory<ServiceContext> serviceContextAuthenticationPolicyFactory
+                                               ) {
+        super(casCommonComponents, authenticationRequestServiceSelectionStrategies, serviceContextAuthenticationPolicyFactory);
     }
 
     @Audit(

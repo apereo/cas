@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.config.CasCommonComponents;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceContext;
@@ -19,7 +20,6 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
-import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.Synchronized;
@@ -47,7 +47,6 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Setter
-@AllArgsConstructor
 public abstract class AbstractCentralAuthenticationService implements CentralAuthenticationService, Serializable, ApplicationEventPublisherAware {
 
     private static final long serialVersionUID = -7572316677901391166L;
@@ -102,6 +101,22 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * since the access strategy is not usually managed as a Spring bean.
      */
     protected final AuditableExecution registeredServiceAccessStrategyEnforcer;
+
+    @SuppressWarnings("Unchecked")
+    public AbstractCentralAuthenticationService(final CasCommonComponents casCommonComponents,
+                                                final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
+                                                final ContextualAuthenticationPolicyFactory<ServiceContext> serviceContextAuthenticationPolicyFactory) {
+
+        this.ticketRegistry = casCommonComponents.getTicketRegistry();
+        this.servicesManager = casCommonComponents.getServicesManager();
+        this.logoutManager = casCommonComponents.getLogoutManager();
+        this.ticketFactory = casCommonComponents.getTicketFactory();
+        this.authenticationRequestServiceSelectionStrategies = authenticationRequestServiceSelectionStrategies;
+        this.serviceContextAuthenticationPolicyFactory = serviceContextAuthenticationPolicyFactory;
+        this.principalFactory = casCommonComponents.getPrincipalFactory();
+        this.cipherExecutor = casCommonComponents.getProtocolTicketCipherExecutor();
+        this.registeredServiceAccessStrategyEnforcer = casCommonComponents.getRegisteredServiceAccessStrategyEnforcer();
+    }
 
     /**
      * Publish CAS events.

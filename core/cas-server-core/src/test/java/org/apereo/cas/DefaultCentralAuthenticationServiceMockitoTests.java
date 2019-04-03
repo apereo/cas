@@ -14,6 +14,7 @@ import org.apereo.cas.authentication.policy.AcceptAnyAuthenticationPolicyFactory
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.config.CasCommonComponents;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
@@ -175,18 +176,22 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
         val authenticationRequestServiceSelectionStrategies = new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy());
         val enforcer = mock(AuditableExecution.class);
         when(enforcer.execute(any())).thenReturn(new AuditableExecutionResult());
+        val eventPublisher = mock(ApplicationEventPublisher.class);
+        val common = new CasCommonComponents(
+                enforcer,
+                eventPublisher,
+                ticketRegMock,
+                smMock,
+                mock(LogoutManager.class),
+                factory,
+                new DefaultPrincipalFactory(),
+                CipherExecutor.noOpOfStringToString());
+
         this.cas = new DefaultCentralAuthenticationService(
-            mock(ApplicationEventPublisher.class),
-            ticketRegMock,
-            smMock,
-            mock(LogoutManager.class),
-            factory,
-            authenticationRequestServiceSelectionStrategies,
-            new AcceptAnyAuthenticationPolicyFactory(),
-            new DefaultPrincipalFactory(),
-            CipherExecutor.noOpOfStringToString(),
-            enforcer);
-        this.cas.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
+                common,
+                authenticationRequestServiceSelectionStrategies,
+                new AcceptAnyAuthenticationPolicyFactory());
+        this.cas.setApplicationEventPublisher(eventPublisher);
     }
 
     private static TicketFactory getTicketFactory() {
