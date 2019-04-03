@@ -7,6 +7,7 @@ import org.apereo.cas.adaptors.x509.authentication.ldap.LdaptiveResourceCRLFetch
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CommonNameEDIPIPrincipalResolver;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SerialNumberAndIssuerDNPrincipalResolver;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SerialNumberPrincipalResolver;
+import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectAlternativeNameRFC822EmailPrincipalResolver;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectAlternativeNameUPNPrincipalResolver;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectDNPrincipalResolver;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectPrincipalResolver;
@@ -243,6 +244,26 @@ public class X509AuthenticationConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "x509SubjectAlternativeNameRFC822EmailPrincipalResolver")
+    public PrincipalResolver x509SubjectAlternativeNameRFC822EmailPrincipalResolver() {
+        val x509 = casProperties.getAuthn().getX509();
+        val personDirectory = casProperties.getPersonDirectory();
+        val rfc822EmailProperties = x509.getRfc822Email();
+        val principal = x509.getPrincipal();
+        val principalAttribute = StringUtils.defaultIfBlank(principal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
+        return new X509SubjectAlternativeNameRFC822EmailPrincipalResolver(
+            attributeRepository.getIfAvailable(),
+            x509PrincipalFactory(),
+            principal.isReturnNull() || personDirectory.isReturnNull(),
+            principalAttribute,
+            rfc822EmailProperties.getAlternatePrincipalAttribute(),
+            principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId(),
+            principal.isAttributeResolutionEnabled(),
+            org.springframework.util.StringUtils.commaDelimitedListToSet(principal.getActiveAttributeRepositoryIds()));
+    }
+
+    @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "x509SerialNumberPrincipalResolver")
     public PrincipalResolver x509SerialNumberPrincipalResolver() {
         val x509 = casProperties.getAuthn().getX509();
@@ -320,6 +341,9 @@ public class X509AuthenticationConfiguration {
         }
         if (type == X509Properties.PrincipalTypes.SUBJECT_ALT_NAME) {
             return x509SubjectAlternativeNameUPNPrincipalResolver();
+        }
+        if (type == X509Properties.PrincipalTypes.RFC822_EMAIL) {
+            return x509SubjectAlternativeNameRFC822EmailPrincipalResolver();
         }
         if (type == X509Properties.PrincipalTypes.CN_EDIPI) {
             return x509CommonNameEDIPIPrincipalResolver();
