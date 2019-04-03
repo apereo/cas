@@ -1,6 +1,7 @@
 package org.apereo.cas.validation;
 
-import lombok.NoArgsConstructor;
+import org.apereo.cas.services.ServicesManager;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -13,20 +14,18 @@ import lombok.extern.slf4j.Slf4j;
  * @since 3.0.0
  */
 @Slf4j
-@NoArgsConstructor
 public class Cas20ProtocolValidationSpecification extends AbstractCasProtocolValidationSpecification {
-    /**
-     * Instantiates a new cas20 protocol validation specification.
-     *
-     * @param renew the renew
-     */
-    public Cas20ProtocolValidationSpecification(final boolean renew) {
-        super(renew);
+    public Cas20ProtocolValidationSpecification(final ServicesManager servicesManager) {
+        super(servicesManager);
+    }
+
+    public Cas20ProtocolValidationSpecification(final ServicesManager servicesManager, final boolean renew) {
+        super(servicesManager, renew);
     }
 
     @Override
     protected boolean isSatisfiedByInternal(final Assertion assertion) {
-        LOGGER.debug("Assertion is always satisfied");
+        LOGGER.trace("Assertion is always satisfied");
         return true;
     }
 }

@@ -1,11 +1,14 @@
 package org.apereo.cas.validation;
 
+import org.apereo.cas.services.ServicesManager;
+
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Scott Battaglia
@@ -17,7 +20,7 @@ public class Cas20WithoutProxyingValidationSpecificationTests {
 
     @BeforeEach
     public void initialize() {
-        this.validationSpecification = new Cas20WithoutProxyingValidationSpecification();
+        this.validationSpecification = new Cas20WithoutProxyingValidationSpecification(mock(ServicesManager.class));
     }
 
     @Test
@@ -44,8 +47,7 @@ public class Cas20WithoutProxyingValidationSpecificationTests {
 
     @Test
     public void verifySettingRenew() {
-        val validation = new Cas20WithoutProxyingValidationSpecification(
-            true);
+        val validation = new Cas20WithoutProxyingValidationSpecification(mock(ServicesManager.class), true);
         assertTrue(validation.isRenew());
     }
 }
