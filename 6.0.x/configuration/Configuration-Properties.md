@@ -1856,29 +1856,27 @@ Principal resolution and Person Directory settings for this feature are availabl
 ### System Settings
 
 ```properties
-# cas.authn.spnego.kerberosConf=
-# cas.authn.spnego.loginConf=
-# cas.authn.spnego.kerberosRealm=EXAMPLE.COM
-# cas.authn.spnego.kerberosDebug=true
-# cas.authn.spnego.useSubjectCredsOnly=false
-# cas.authn.spnego.kerberosKdc=172.10.1.10
+# cas.authn.spnego.system.kerberosConf=
+# cas.authn.spnego.system.loginConf=
+# cas.authn.spnego.system.kerberosRealm=EXAMPLE.COM
+# cas.authn.spnego.system.kerberosDebug=true
+# cas.authn.spnego.system.useSubjectCredsOnly=false
+# cas.authn.spnego.system.kerberosKdc=172.10.1.10
 ```
 
 ### Spnego Authentication Settings
 
 ```properties
-# cas.authn.spnego[0].cachePolicy=600
-# cas.authn.spnego[0].jcifsDomainController=
-# cas.authn.spnego[0].jcifsDomain=
-# cas.authn.spnego[0].jcifsPassword=
-# cas.authn.spnego[0].jcifsUsername=
-# cas.authn.spnego[0].jcifsServicePassword=
-# cas.authn.spnego[0].timeout=300000
-# cas.authn.spnego[0].jcifsServicePrincipal=HTTP/cas.example.com@EXAMPLE.COM
-# cas.authn.spnego[0].jcifsNetbiosWins=
+# cas.authn.spnego.properties[0].cachePolicy=600
+# cas.authn.spnego.properties[0].jcifsDomainController=
+# cas.authn.spnego.properties[0].jcifsDomain=
+# cas.authn.spnego.properties[0].jcifsPassword=
+# cas.authn.spnego.properties[0].jcifsUsername=
+# cas.authn.spnego.properties[0].jcifsServicePassword=
+# cas.authn.spnego.properties[0].timeout=300000
+# cas.authn.spnego.properties[0].jcifsServicePrincipal=HTTP/cas.example.com@EXAMPLE.COM
+# cas.authn.spnego.properties[0].jcifsNetbiosWins=
 
-# cas.authn.spnego[0].name=
-# cas.authn.spnego[0].order=
 ```
 
 ### SPNEGO Client Selection Strategy
