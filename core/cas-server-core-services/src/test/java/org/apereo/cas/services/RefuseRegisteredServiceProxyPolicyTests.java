@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class RefuseRegisteredServiceProxyPolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "refuseRegisteredServiceProxyPolicy.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     @Test
     public void verifySerializeARefuseRegisteredServiceProxyPolicyToJson() throws IOException {
