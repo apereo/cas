@@ -2,6 +2,9 @@ package org.apereo.cas.adaptors.redis.services;
 
 import org.apereo.cas.services.AbstractServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
+import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
+import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
 
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +42,7 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
         try {
             val redisKey = getRegisteredServiceRedisKey(rs);
             this.template.boundValueOps(redisKey).set(rs);
+            publishEvent(new CasRegisteredServiceSavedEvent(this, rs));
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -50,6 +54,7 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
         try {
             val redisKey = getRegisteredServiceRedisKey(registeredService);
             this.template.delete(redisKey);
+            publishEvent(new CasRegisteredServiceDeletedEvent(this, registeredService));
             return true;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -70,10 +75,12 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
     @Override
     public Collection<RegisteredService> load() {
         try {
-            return getRegisteredServiceKeys()
+            val list = getRegisteredServiceKeys()
                 .stream()
                 .map(redisKey -> this.template.boundValueOps(redisKey).get())
                 .filter(Objects::nonNull).collect(Collectors.toList());
+            list.forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));
+            return list;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
