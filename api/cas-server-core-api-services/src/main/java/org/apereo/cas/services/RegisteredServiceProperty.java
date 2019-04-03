@@ -132,23 +132,7 @@ public interface RegisteredServiceProperty extends Serializable {
         /**
          * Whether CAS should inject xss protection headers into the response when this service is in process.
          */
-        HTTP_HEADER_ENABLE_XSS_PROTECTION("httpHeaderEnableXSSProtection", "true"),
-        /**
-         * Control the number of times a proxy ticket may be used via a custom expiration policy for a service.
-         */
-        PROXY_TICKET_EXPIRATION_POLICY_NUMBER_OF_USES("proxyTicketExpirationPolicyNumberOfUses", StringUtils.EMPTY),
-        /**
-         * Control the ttl for a proxy ticket via a custom expiration policy for a service.
-         */
-        PROXY_TICKET_EXPIRATION_POLICY_TIME_TO_LIVE("proxyTicketExpirationPolicyTimeToLive", StringUtils.EMPTY),
-        /**
-         * Control the number of times a service ticket may be used via a custom expiration policy for a service.
-         */
-        SERVICE_TICKET_EXPIRATION_POLICY_NUMBER_OF_USES("serviceTicketExpirationPolicyNumberOfUses", StringUtils.EMPTY),
-        /**
-         * Control the ttl for a service ticket via a custom expiration policy for a service.
-         */
-        SERVICE_TICKET_EXPIRATION_POLICY_TIME_TO_LIVE("serviceTicketExpirationPolicyTimeToLive", StringUtils.EMPTY);
+        HTTP_HEADER_ENABLE_XSS_PROTECTION("httpHeaderEnableXSSProtection", "true");
 
         private final String propertyName;
         private final String defaultValue;
