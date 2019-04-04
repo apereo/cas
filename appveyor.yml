@@ -24,4 +24,4 @@ build_script:
   - ./gradlew gradleHome downloadDependencies --parallel --refresh-dependencies --stacktrace --build-cache --configure-on-demand --no-daemon 
   - ./gradlew build -x test --parallel --stacktrace --build-cache --configure-on-demand --no-daemon
 test_script:
-  - ./gradlew test --parallel -x javadoc -x check --fail-fast --build-cache --configure-on-demand --no-daemon
+  - ./gradlew test --parallel -x javadoc -x check --build-cache --configure-on-demand --no-daemon
