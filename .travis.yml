@@ -11,6 +11,10 @@ sudo: required
 dist: trusty
 services:
 - docker
+os:
+  - linux
+  - osx
+  - windows
 branches:
   only:
   - master
