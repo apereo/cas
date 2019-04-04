@@ -29,7 +29,7 @@ component by the same name hosted here, with support for a plethora of additiona
 If you have already identified an enhancement or a bug, it is STRONGLY recommended that you simply submit a pull request to address the case.
 There is no need for special ceremony to create separate issues. The pull request IS the issue and it will be tracked and tagged as such.
 
-## Documentation [![Javadoc](https://img.shields.io/badge/Documentation-Javadoc-ff69b4.svg)](https://www.javadoc.io/doc/org.apereo.cas/cas-server)
+## Documentation [![Javadoc](https://img.shields.io/badge/Documentation-Javadoc-ff69b4.svg)](https://www.javadoc.io/doc/org.apereo.cas/cas-server-core)
 
 | Version         | Reference
 |------------|-----------------------------------
@@ -51,6 +51,7 @@ Additional resources are available as follows:
 [![Open Pull Requests](https://img.shields.io/github/issues-pr/apereo/cas.svg?style=flat)][contribute]
 [![codecov](https://codecov.io/gh/apereo/cas/branch/master/graph/badge.svg)](https://codecov.io/gh/apereo/cas)
 [![Build Status](https://api.travis-ci.org/apereo/cas.png?branch=master)](http://travis-ci.org/apereo/cas)
+[![Build status](https://ci.appveyor.com/api/projects/status/0tl79vsqd2ei9bng?svg=true)](https://ci.appveyor.com/project/apereo/cas)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server-core/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server-core)
 [![Github Releases](https://img.shields.io/github/release/apereo/cas.svg)](https://github.com/apereo/cas/releases)
 
