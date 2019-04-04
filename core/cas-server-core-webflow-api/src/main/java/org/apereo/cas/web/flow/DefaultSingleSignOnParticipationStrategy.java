@@ -24,7 +24,7 @@ import org.springframework.webflow.execution.RequestContext;
 @Getter
 public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnParticipationStrategy {
     private final ServicesManager servicesManager;
-    private final boolean createSsoSessionCookieOnRenewAuthentications;
+    private final boolean createCookieOnRenewedAuthentication;
     private final boolean renewEnabled;
 
     @Setter
@@ -57,10 +57,5 @@ public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnPar
         }
 
         return true;
-    }
-
-    @Override
-    public boolean isCreateCookieOnRenewedAuthentication() {
-        return createSsoSessionCookieOnRenewAuthentications;
     }
 }

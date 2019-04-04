@@ -14,6 +14,8 @@ environment:
   matrix:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       JAVA_HOME: "C:\\Program Files\\Java\\jdk11"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu1804
+      JAVA_HOME: "/usr/lib/jvm/java-11-openjdk-amd64"
 image:
   - Ubuntu1804
   - Visual Studio 2017
@@ -22,6 +24,4 @@ clone_depth: 2
 stack: jdk 11,docker
 build_script:
   - ./gradlew gradleHome downloadDependencies --parallel --refresh-dependencies --stacktrace --build-cache --configure-on-demand --no-daemon 
-  - ./gradlew build -x test --parallel --stacktrace --build-cache --configure-on-demand --no-daemon
-test_script:
-  - ./gradlew test --parallel -x javadoc -x check --build-cache --configure-on-demand --no-daemon
+  - ./gradlew build -x test --parallel --stacktrace --build-cache --configure-on-demand --no-daemon -x check
