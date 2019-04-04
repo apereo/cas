@@ -55,7 +55,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
 
         if (StringUtils.isBlank(this.usernameAttribute)) {
             LOGGER.warn("No username attribute is defined for service [{}]. CAS will fall back onto using the default principal id. "
-                + "This is likely a mistake if the configuration of the registered service definition.", registeredService.getName());
+                + "This is likely a mistake if the configuration ofgps the registered service definition.", registeredService.getName());
         } else if (releasePolicyAttributes.containsKey(this.usernameAttribute)) {
             LOGGER.debug("Attribute release policy for registered service [{}] contains an attribute for [{}]",
                 registeredService.getServiceId(), this.usernameAttribute);
