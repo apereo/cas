@@ -11,10 +11,6 @@ sudo: required
 dist: trusty
 services:
 - docker
-os:
-  - linux
-  - osx
-  - windows
 branches:
   only:
   - master
@@ -23,13 +19,6 @@ before_cache:
 - rm -rf $HOME/.gradle/caches/4.*/
 - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 - find ~/.gradle/caches/ -name "*.lock" -type f -delete
-# Remove once Travis CI fixes JDK setup
-before_script:
- - unset -v _JAVA_OPTIONS
- - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
- - chmod +x install-jdk.sh
- - export JAVA_HOME=$(./install-jdk.sh --emit-java-home -F 11 -c | tail --lines 1)
- - echo $JAVA_HOME
 cache:
   bundler: false
   cargo: false
@@ -62,9 +51,14 @@ env:
   - secure: "EoYJdh2vb3BIqkfS6UTiVjDci1CMDOgBba8dijE7ebG44rA7BTv/Y9rwi5wSds+bW0m3LvojyxKwD+47tLlRPw7AuuifZJfZvb7cGG+6vXdagU8NNaOuoRc0jMk4R/VlQ4uCN4X7/30FUyFfQl1+BPR/v2Q5YsyBz5kp4romnp8="
   - secure: "KplfTU6f4kYxX3vP1aE5IbLDroK0AznP+jhzM95vqab+tGRodq/6oXjV8dGH3CuolC4E0+zaG2HktUpFIUD85vhUSijK49k4tEJVx5DetDc1JYUb4OniwOaNX+BKOUwbnic1za12MWJF0ZmSZqsRdNulsSevcnGiV/TxhOmnYOk="
   - secure: "A0B1HJoHzvYGT4pPWPW1bQDS3Ne755vZ/VZ20OtVRgJHTTQfK13eKgH0VbYpEyZKJAFIexmaDVQ0XUdNukzrAoI6rKSm5vwam6qjELrvrKH2ovMgd1xvS2a5a1no5OT3QP3TXKKlmOTdS+Q5ZspjslBxpay3q7aKA9GMNvzChko="
+jdk:
+  - openjdk11
 before_install:
-- mkdir -p ~/.gradle && echo "org.gradle.daemon=false" >> ~/.gradle/gradle.properties
 - unset _JAVA_OPTIONS
+- wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
+- chmod +x install-jdk.sh
+- export JAVA_HOME=$(./install-jdk.sh --emit-java-home -F 11 -c | tail --lines 1) && echo $JAVA_HOME
+- mkdir -p ~/.gradle && echo "org.gradle.daemon=false" >> ~/.gradle/gradle.properties
 - chmod -R 777 ./ci/*.sh
 - ./ci/init-travis-build.sh
 install: true
