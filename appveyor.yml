@@ -3,11 +3,17 @@ branches:
   only:
   - master
 skip_tags: true
+cache:
+  - $HOME/.m2
+  - $HOME/.gradle/caches/
+  - $HOME/.gradle/wrapper/
 image:
-  - Ubuntu1804
+  #- Ubuntu1804
   - Visual Studio 2017
-clone_depth: 1
+clone_depth: 2
 stack: jdk 11,docker
 build_script:
   - ./gradlew gradleHome downloadDependencies --parallel --refresh-dependencies --stacktrace --build-cache --configure-on-demand --no-daemon 
   - ./gradlew build -x test -x javadoc -x check --parallel --stacktrace --build-cache --configure-on-demand --no-daemon
+test_script:
+  - ./gradlew test jacocoRootReport --parallel -x javadoc -x check -DskipGradleLint=true -DskipNestedConfigMetadataGen=true --fail-fast --build-cache --configure-on-demand --no-daemon
