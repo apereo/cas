@@ -7,6 +7,11 @@ cache:
   - $HOME/.m2
   - $HOME/.gradle/caches/
   - $HOME/.gradle/wrapper/
+environment:
+  matrix:
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      JAVA_HOME: "C:\Program Files\Java\jdk11"
+      PATH: "%JAVA_HOME%/bin;%PATH%"
 image:
   #- Ubuntu1804
   - Visual Studio 2017
