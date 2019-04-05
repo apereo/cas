@@ -18,7 +18,7 @@
         <Logger name="org.apereo" level="trace">
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="org.springframework.data" level="trace">
+        <Logger name="org.springframework.data" level="info">
             <AppenderRef ref="console"/>
         </Logger>
         <Root level="off">
