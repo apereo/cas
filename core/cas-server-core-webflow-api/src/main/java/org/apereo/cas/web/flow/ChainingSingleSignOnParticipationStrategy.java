@@ -40,13 +40,28 @@ public class ChainingSingleSignOnParticipationStrategy implements SingleSignOnPa
 
     @Override
     public boolean isParticipating(final RequestContext context) {
-        val supporters = providers.stream()
-            .filter(p -> p.supports(context))
-            .collect(Collectors.toList());
-
+        val supporters = getSupportingSingleSignOnParticipationStrategies(context);
         if (supporters.isEmpty()) {
             return SingleSignOnParticipationStrategy.alwaysParticipating().isParticipating(context);
         }
         return supporters.stream().allMatch(p -> p.isParticipating(context));
     }
+
+    @Override
+    public boolean isCreateCookieOnRenewedAuthentication(final RequestContext context) {
+        val supporters = getSupportingSingleSignOnParticipationStrategies(context);
+        return supporters.stream().allMatch(p -> p.isCreateCookieOnRenewedAuthentication(context));
+    }
+
+    @Override
+    public boolean supports(final RequestContext context) {
+        return providers.stream().anyMatch(p -> p.supports(context));
+    }
+
+    private List<SingleSignOnParticipationStrategy> getSupportingSingleSignOnParticipationStrategies(final RequestContext context) {
+        return providers.stream()
+            .filter(p -> p.supports(context))
+            .collect(Collectors.toList());
+    }
+
 }

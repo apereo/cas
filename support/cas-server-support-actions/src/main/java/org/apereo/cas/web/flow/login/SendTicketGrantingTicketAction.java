@@ -42,7 +42,7 @@ public class SendTicketGrantingTicketAction extends AbstractAction {
         if (WebUtils.isAuthenticatingAtPublicWorkstation(context)) {
             LOGGER.info("Authentication is at a public workstation. SSO cookie will not be generated. Requests will be challenged for authentication.");
         } else if (this.renewalStrategy.supports(context)) {
-            val createCookie = renewalStrategy.isCreateCookieOnRenewedAuthentication() || this.renewalStrategy.isParticipating(context);
+            val createCookie = renewalStrategy.isCreateCookieOnRenewedAuthentication(context) || this.renewalStrategy.isParticipating(context);
             if (createCookie) {
                 LOGGER.debug("Setting ticket-granting cookie for current session linked to [{}].", ticketGrantingTicketId);
                 this.ticketGrantingTicketCookieGenerator.addCookie(context, ticketGrantingTicketId);
