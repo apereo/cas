@@ -34,7 +34,7 @@ public class DefaultSingleSignOnParticipationStrategyTests {
         val strategy = new DefaultSingleSignOnParticipationStrategy(mgr, true, true);
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         request.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
-        assertTrue(strategy.isParticipating(context) || strategy.isCreateCookieOnRenewedAuthentication());
+        assertTrue(strategy.isParticipating(context) || strategy.isCreateCookieOnRenewedAuthentication(context));
     }
 
     @Test
