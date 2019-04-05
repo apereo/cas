@@ -21,13 +21,17 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @Slf4j
 @RequiredArgsConstructor
-@Getter
 public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnParticipationStrategy {
+    @Getter
     private final ServicesManager servicesManager;
+
     private final boolean createCookieOnRenewedAuthentication;
+
+    @Getter
     private final boolean renewEnabled;
 
     @Setter
+    @Getter
     private int order = Ordered.LOWEST_PRECEDENCE;
 
     @Override
@@ -57,5 +61,10 @@ public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnPar
         }
 
         return true;
+    }
+
+    @Override
+    public boolean isCreateCookieOnRenewedAuthentication(final RequestContext context) {
+        return this.createCookieOnRenewedAuthentication;
     }
 }
