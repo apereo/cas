@@ -40,8 +40,10 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
     @Override
     public RegisteredService save(final RegisteredService rs) {
         try {
+            LOGGER.trace("Saving registered service [{}]", rs);
             val redisKey = getRegisteredServiceRedisKey(rs);
             this.template.boundValueOps(redisKey).set(rs);
+            LOGGER.trace("Saved registered service [{}]", rs);
             publishEvent(new CasRegisteredServiceSavedEvent(this, rs));
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -52,8 +54,10 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
     @Override
     public boolean delete(final RegisteredService registeredService) {
         try {
+            LOGGER.trace("Deleting registered service [{}]", registeredService);
             val redisKey = getRegisteredServiceRedisKey(registeredService);
             this.template.delete(redisKey);
+            LOGGER.trace("Deleted registered service [{}]", registeredService);
             publishEvent(new CasRegisteredServiceDeletedEvent(this, registeredService));
             return true;
         } catch (final Exception e) {
@@ -78,7 +82,9 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
             val list = getRegisteredServiceKeys()
                 .stream()
                 .map(redisKey -> this.template.boundValueOps(redisKey).get())
-                .filter(Objects::nonNull).collect(Collectors.toList());
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+            LOGGER.trace("Loaded registered services [{}]", list);
             list.forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));
             return list;
         } catch (final Exception e) {
@@ -91,16 +97,21 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
     public RegisteredService findServiceById(final long id) {
         try {
             val redisKey = getRegisteredServiceRedisKey(id);
-            return this.template.boundValueOps(redisKey).get();
+            val ops = this.template.boundValueOps(redisKey);
+            LOGGER.trace("Locating service by identifier [{}] using key [{}]", id, redisKey);
+            return ops.get();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
+        LOGGER.trace("Registered service by identifier [{}] cannot be found", id);
         return null;
     }
 
     @Override
     public RegisteredService findServiceById(final String id) {
-        return load().stream().filter(r -> r.matches(id)).findFirst().orElse(null);
+        val registeredService = load().stream().filter(r -> r.matches(id)).findFirst().orElse(null);
+        LOGGER.trace("Registered service by identifier [{}] is [{}]", id, registeredService);
+        return registeredService;
     }
 
     private static String getRegisteredServiceRedisKey(final RegisteredService registeredService) {
