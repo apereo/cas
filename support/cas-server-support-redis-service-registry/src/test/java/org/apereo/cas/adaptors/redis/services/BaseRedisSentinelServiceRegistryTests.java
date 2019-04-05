@@ -53,7 +53,7 @@ public abstract class BaseRedisSentinelServiceRegistryTests extends AbstractServ
          */
         @EventListener
         public void onCasRegisteredServiceSaved(final CasRegisteredServiceSavedEvent event) throws Exception {
-            Thread.sleep(5000);
+            Thread.sleep(3000);
         }
     }
 }
