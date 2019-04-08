@@ -131,7 +131,7 @@ public class OidcIdTokenGeneratorService {
         final OidcProperties oidc = casProperties.getAuthn().getOidc();
 
         final JwtClaims claims = new JwtClaims();
-        claims.setJwtId(getOAuthServiceTicket(accessTokenId.getTicketGrantingTicket()).getKey());
+        claims.setJwtId(getOAuthServiceTicket(accessTokenId.getTicketGrantingTicket()));
         claims.setIssuer(oidc.getIssuer());
         claims.setAudience(service.getClientId());
 
@@ -169,14 +169,18 @@ public class OidcIdTokenGeneratorService {
         return claims;
     }
 
-    private Entry<String, Service> getOAuthServiceTicket(final TicketGrantingTicket tgt) {
+    private String getOAuthServiceTicket(final TicketGrantingTicket tgt) {
         final Optional<Entry<String, Service>> oAuthServiceTicket = Stream.concat(
             tgt.getServices().entrySet().stream(),
             tgt.getProxyGrantingTickets().entrySet().stream())
             .filter(e -> servicesManager.findServiceBy(e.getValue()).getServiceId().equals(oAuthCallbackUrl))
             .findFirst();
-        Preconditions.checkState(oAuthServiceTicket.isPresent(), "Cannot find service ticket issued to " + oAuthCallbackUrl + " as part of the authentication context");
-        return oAuthServiceTicket.get();
+
+        if (oAuthServiceTicket.isPresent()) {
+            return oAuthServiceTicket.get().getKey();
+        } else {
+            return tgt.getId();
+        }
     }
 
     private String generateAccessTokenHash(final AccessToken accessTokenId,
