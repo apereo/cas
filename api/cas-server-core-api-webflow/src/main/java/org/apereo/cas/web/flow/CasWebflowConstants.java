@@ -144,6 +144,11 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_ENROLL = "enroll";
 
     /**
+     * Renew transition id.
+     */
+    String TRANSITION_ID_RENEW = "renew";
+
+    /**
      * The transition state 'successWithWarnings'.
      */
     String TRANSITION_ID_SUCCESS_WITH_WARNINGS = "successWithWarnings";
@@ -369,6 +374,11 @@ public interface CasWebflowConstants {
     String STATE_ID_FINISH_LOGOUT = "finishLogout";
 
     /**
+     * Delegated authentication state id.
+     */
+    String STATE_ID_DELEGATED_AUTHENTICATION = "delegatedAuthenticationAction";
+
+    /**
      * State id 'frontLogout'.
      */
     String STATE_ID_FRONT_LOGOUT = "frontLogout";
@@ -417,11 +427,6 @@ public interface CasWebflowConstants {
      * State id to check for do change password manual flag "checkDoChangePassword".
      */
     String STATE_ID_CHECK_DO_CHANGE_PASSWORD = "checkDoChangePassword";
-
-    /**
-     * Delegated authentication state id.
-     */
-    String STATE_ID_DELEGATED_AUTHENTICATION = "delegatedAuthenticationAction";
 
     /**
      * State to check if the MFA provider is available.
@@ -679,7 +684,12 @@ public interface CasWebflowConstants {
     String ACTION_ID_CREATE_TICKET_GRANTING_TICKET = "createTicketGrantingTicketAction";
 
     /**
-     * Delegated authentication action id.
+     * Action id `delegatedAuthenticationAction`.
      */
     String ACTION_ID_DELEGATED_AUTHENTICATION = "delegatedAuthenticationAction";
+
+    /**
+     * Action id `renewAuthenticationRequestCheckAction`.
+     */
+    String ACTION_ID_RENEW_AUTHN_REQUEST = "renewAuthenticationRequestCheckAction";
 }

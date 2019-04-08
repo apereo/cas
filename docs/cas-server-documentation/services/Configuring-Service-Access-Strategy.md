@@ -20,7 +20,7 @@ The default strategy allows one to configure a service with the following proper
 | Field                             | Description
 |-----------------------------------|---------------------------------------------------------------------------------
 | `enabled`                         | Flag to toggle whether the entry is active; a disabled entry produces behavior equivalent to a non-existent entry.
-| `ssoEnabled`                      | Set to `false` to force users to authenticate to the service regardless of protocol flags (e.g. `renew=true`). This flag provides some support for centralized application of security policy.
+| `ssoEnabled`                      | Set to `false` to force users to authenticate to the service regardless of protocol flags (e.g. `renew=true`).
 | `requiredAttributes`              | A `Map` of required principal attribute names along with the set of values for each attribute. These attributes **MUST** be available to the authenticated Principal and resolved before CAS can proceed, providing an option for role-based access control from the CAS perspective. If no required attributes are presented, the check will be entirely ignored.
 | `requireAllAttributes`            | Flag to toggle to control the behavior of required attributes. Default is `true`, which means all required attribute names must be present. Otherwise, at least one matching attribute name may suffice. Note that this flag only controls which and how many of the attribute **names** must be present. If attribute names satisfy the CAS configuration, at the next step at least one matching attribute value is required for the access strategy to proceed successfully.
 | `unauthorizedRedirectUrl`         | Optional url to redirect the flow in case service access is not allowed.
@@ -51,24 +51,6 @@ Service is not allowed to use CAS:
     "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
     "enabled" : false,
     "ssoEnabled" : true
-  }
-}
-```
-
-#### Disable Service SSO Access
-
-Service will be challenged to present credentials every time, thereby not using SSO:
-
-```json
-{
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
-  "serviceId" : "testId",
-  "name" : "testId",
-  "id" : 1,
-  "accessStrategy" : {
-    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
-    "enabled" : true,
-    "ssoEnabled" : false
   }
 }
 ```

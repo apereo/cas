@@ -1,11 +1,10 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.validation.Assertion;
+import org.apereo.cas.ticket.TicketState;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.springframework.core.Ordered;
 
 import java.io.Serializable;
 
@@ -23,11 +22,20 @@ import java.io.Serializable;
  * @since 6.1.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public interface RegisteredServiceSingleSignOnParticipationPolicy extends Serializable {
-    
-    @JsonIgnore
-    boolean shouldParticipateInSso(TicketGrantingTicket ticketGrantingTicket);
+@FunctionalInterface
+public interface RegisteredServiceSingleSignOnParticipationPolicy extends Serializable, Ordered {
 
+    /**
+     * Should registered service participate in sso?
+     *
+     * @param ticketState the ticket state
+     * @return true/false
+     */
     @JsonIgnore
-    boolean isAcceptableForSso(Assertion authentication);
+    boolean shouldParticipateInSso(TicketState ticketState);
+
+    @Override
+    default int getOrder() {
+        return 0;
+    }
 }

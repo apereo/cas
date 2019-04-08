@@ -141,6 +141,13 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
     RegisteredServiceServiceTicketExpirationPolicy getServiceTicketExpirationPolicy();
 
     /**
+     * Gets SSO participation strategy.
+     *
+     * @return the service ticket expiration policy
+     */
+    RegisteredServiceSingleSignOnParticipationPolicy getSingleSignOnParticipationPolicy();
+
+    /**
      * Gets the set of handler names that must successfully authenticate credentials in order to access the service.
      * An empty set indicates that there are no requirements on particular authentication handlers; any will suffice.
      *

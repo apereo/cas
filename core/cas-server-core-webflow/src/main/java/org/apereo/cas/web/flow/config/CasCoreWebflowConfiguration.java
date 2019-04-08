@@ -31,6 +31,7 @@ import org.apereo.cas.web.flow.actions.CheckWebAuthenticationRequestAction;
 import org.apereo.cas.web.flow.actions.ClearWebflowCredentialAction;
 import org.apereo.cas.web.flow.actions.InjectResponseHeadersAction;
 import org.apereo.cas.web.flow.actions.RedirectToServiceAction;
+import org.apereo.cas.web.flow.actions.RenewAuthenticationRequestCheckAction;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.ServiceTicketRequestWebflowEventResolver;
 
@@ -168,6 +169,13 @@ public class CasCoreWebflowConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "renewAuthenticationRequestCheckAction")
+    @RefreshScope
+    public Action renewAuthenticationRequestCheckAction() {
+        return new RenewAuthenticationRequestCheckAction(singleSignOnParticipationStrategy());
+    }
+
+    @Bean
     @ConditionalOnMissingBean(name = "redirectToServiceAction")
     @RefreshScope
     public Action redirectToServiceAction() {
@@ -195,7 +203,8 @@ public class CasCoreWebflowConfiguration {
         val sso = casProperties.getSso();
         val defaultStrategy = new DefaultSingleSignOnParticipationStrategy(servicesManager.getIfAvailable(),
             sso.isCreateSsoCookieOnRenewAuthn(),
-            sso.isRenewAuthnEnabled());
+            sso.isRenewAuthnEnabled(),
+            ticketRegistrySupport.getIfAvailable());
 
         chain.addStrategy(defaultStrategy);
         return chain;
