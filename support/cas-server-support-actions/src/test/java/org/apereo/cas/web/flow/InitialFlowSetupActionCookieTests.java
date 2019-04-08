@@ -6,10 +6,13 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.cookie.CookieGenerationContext;
 import org.apereo.cas.web.flow.login.InitialFlowSetupAction;
 import org.apereo.cas.web.support.ArgumentExtractor;
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
+import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -48,16 +51,33 @@ public class InitialFlowSetupActionCookieTests extends AbstractWebflowActionsTes
     private AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 
     private InitialFlowSetupAction action;
-    private CookieRetrievingCookieGenerator warnCookieGenerator;
-    private CookieRetrievingCookieGenerator tgtCookieGenerator;
+    private CasCookieBuilder warnCookieGenerator;
+    private CasCookieBuilder tgtCookieGenerator;
 
     @BeforeEach
     public void initialize() throws Exception {
-        this.warnCookieGenerator = new CookieRetrievingCookieGenerator("warn", "", 2,
-            false, null, false);
+
+        val warn = CookieGenerationContext.builder()
+            .name("warn")
+            .path(StringUtils.EMPTY)
+            .maxAge(2)
+            .domain(null)
+            .secure(false)
+            .httpOnly(false)
+            .build();
+
+        val tgt = CookieGenerationContext.builder()
+            .name("tgt")
+            .path(StringUtils.EMPTY)
+            .maxAge(2)
+            .domain(null)
+            .secure(false)
+            .httpOnly(false)
+            .build();
+
+        this.warnCookieGenerator = new CookieRetrievingCookieGenerator(warn);
         this.warnCookieGenerator.setCookiePath(StringUtils.EMPTY);
-        this.tgtCookieGenerator = new CookieRetrievingCookieGenerator("tgt", "", 2,
-            false, null, false);
+        this.tgtCookieGenerator = new CookieRetrievingCookieGenerator(tgt);
         this.tgtCookieGenerator.setCookiePath(StringUtils.EMPTY);
 
         val argExtractors = Collections.<ArgumentExtractor>singletonList(new DefaultArgumentExtractor(new WebApplicationServiceFactory()));
@@ -65,7 +85,9 @@ public class InitialFlowSetupActionCookieTests extends AbstractWebflowActionsTes
         when(servicesManager.findServiceBy(any(Service.class))).thenReturn(RegisteredServiceTestUtils.getRegisteredService("test"));
         this.action = new InitialFlowSetupAction(argExtractors, servicesManager,
             authenticationRequestServiceSelectionStrategies, tgtCookieGenerator,
-            warnCookieGenerator, casProperties, authenticationEventExecutionPlan);
+            warnCookieGenerator, casProperties, authenticationEventExecutionPlan,
+            new DefaultSingleSignOnParticipationStrategy(servicesManager, true, true),
+            mock(TicketRegistrySupport.class));
 
         this.action.afterPropertiesSet();
     }

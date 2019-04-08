@@ -1952,29 +1952,27 @@ Principal resolution and Person Directory settings for this feature are availabl
 ### System Settings
 
 ```properties
-# cas.authn.spnego.kerberosConf=
-# cas.authn.spnego.loginConf=
-# cas.authn.spnego.kerberosRealm=EXAMPLE.COM
-# cas.authn.spnego.kerberosDebug=true
-# cas.authn.spnego.useSubjectCredsOnly=false
-# cas.authn.spnego.kerberosKdc=172.10.1.10
+# cas.authn.spnego.system.kerberosConf=
+# cas.authn.spnego.system.loginConf=
+# cas.authn.spnego.system.kerberosRealm=EXAMPLE.COM
+# cas.authn.spnego.system.kerberosDebug=true
+# cas.authn.spnego.system.useSubjectCredsOnly=false
+# cas.authn.spnego.system.kerberosKdc=172.10.1.10
 ```
 
 ### Spnego Authentication Settings
 
 ```properties
-# cas.authn.spnego[0].cachePolicy=600
-# cas.authn.spnego[0].jcifsDomainController=
-# cas.authn.spnego[0].jcifsDomain=
-# cas.authn.spnego[0].jcifsPassword=
-# cas.authn.spnego[0].jcifsUsername=
-# cas.authn.spnego[0].jcifsServicePassword=
-# cas.authn.spnego[0].timeout=300000
-# cas.authn.spnego[0].jcifsServicePrincipal=HTTP/cas.example.com@EXAMPLE.COM
-# cas.authn.spnego[0].jcifsNetbiosWins=
+# cas.authn.spnego.properties[0].cachePolicy=600
+# cas.authn.spnego.properties[0].jcifsDomainController=
+# cas.authn.spnego.properties[0].jcifsDomain=
+# cas.authn.spnego.properties[0].jcifsPassword=
+# cas.authn.spnego.properties[0].jcifsUsername=
+# cas.authn.spnego.properties[0].jcifsServicePassword=
+# cas.authn.spnego.properties[0].timeout=300000
+# cas.authn.spnego.properties[0].jcifsServicePrincipal=HTTP/cas.example.com@EXAMPLE.COM
+# cas.authn.spnego.properties[0].jcifsNetbiosWins=
 
-# cas.authn.spnego[0].name=
-# cas.authn.spnego[0].order=
 ```
 
 ### SPNEGO Client Selection Strategy
@@ -2184,15 +2182,16 @@ X.509 principal resolution can act on the following principal types:
 | `SERIAL_NO`             | Resolve the principal by the serial number with a configurable <strong>radix</strong>, ranging from 2 to 36. If <code>radix</code> is <code>16</code>, then the serial number could be filled with leading zeros to even the number of digits.
 | `SERIAL_NO_DN`          | Resolve the principal by serial number and issuer dn.
 | `SUBJECT`               | Resolve the principal by extracting one or more attribute values from the certificate subject DN and combining them with intervening delimiters.
-| `SUBJECT_ALT_NAME`      | Resolve the principal by the subject alternative name extension.
+| `SUBJECT_ALT_NAME`      | Resolve the principal by the subject alternative name extension. (type: otherName)
 | `SUBJECT_DN`            | The default type; Resolve the principal by the certificate's subject dn.
 | `CN_EDIPI`              | Resolve the principal by the Electronic Data Interchange Personal Identifier (EDIPI) from the Common Name.
+| `RFC822_EMAIL`          | Resolve the principal by the [RFC822 Name](https://tools.ietf.org/html/rfc5280#section-4.2.1.6) (aka E-mail address) type of subject alternative name field. 
 
-For the ```CN_EDIPI``` and ```SUBJECT_ALT_NAME``` principal resolvers, since not all certificates have those attributes, 
+For the ```CN_EDIPI```,```SUBJECT_ALT_NAME```, and ```RFC822_EMAIL``` principal resolvers, since not all certificates have those attributes, 
 you may specify the following property in order to have a different attribute from the certificate used as the principal.  
 If no alternative attribute is specified then the principal will be null and CAS will fail auth or use a different authenticator.
 ```properties
-# cas.authn.x509.alternatePrincipalAttribute=subjectDn|sigAlgOid|subjectX500Principal
+# cas.authn.x509.alternatePrincipalAttribute=subjectDn|sigAlgOid|subjectX500Principal|x509Rfc822Email
 ```
 
 ### CRL Fetching / Revocation
@@ -2274,10 +2273,13 @@ To fetch CRLs, the following options are available:
 # cas.authn.x509.serialNo.principalHexSNZeroPadding=false
 
 # SUBJECT_ALT_NAME
-# cas.authn.x509.subjectAltName.alternatePrincipalAttribute=[sigAlgOid|subjectDn|subjectX500Principal]
+# cas.authn.x509.subjectAltName.alternatePrincipalAttribute=[sigAlgOid|subjectDn|subjectX500Principal|x509Rfc822Email]
 
 # CN_EDIPI 
-# cas.authn.x509.cnEdipi.alternatePrincipalAttribute=[sigAlgOid|subjectDn|subjectX500Principal]
+# cas.authn.x509.cnEdipi.alternatePrincipalAttribute=[sigAlgOid|subjectDn|subjectX500Principal|x509Rfc822Email]
+
+# RFC822_EMAIL 
+# cas.authn.x509.rfc822Email.alternatePrincipalAttribute=[sigAlgOid|subjectDn|subjectX500Principal]
 ```
 
 ### X509 Certificate Extraction
@@ -2801,6 +2803,8 @@ To learn more about this topic, [please review this guide](../installation/Confi
 # cas.authn.samlIdp.authenticationContextClassMappings[0]=urn:oasis:names:tc:SAML:2.0:ac:classes:SomeClassName->mfa-duo
 # cas.authn.samlIdp.authenticationContextClassMappings[1]=https://refeds.org/profile/mfa->mfa-gauth
 
+# cas.authn.samlIdp.attributeFriendlyNames[0]=urn:oid:1.3.6.1.4.1.5923.1.1.1.6->eduPersonPrincipalName
+  
 # cas.authn.samlIdp.attributeQueryProfileEnabled=true
 ```
 
@@ -2934,56 +2938,74 @@ To learn more about this topic, [please review this guide](../integration/Config
 
 Configuration settings for all SAML2 service providers are [available here](Configuration-Properties-Common.html#saml2-service-provider-integrations).
 
-| Service Provider                       | Configuration Key | Attributes
-|---------------------------|----------------------------------------------------------
-| Gitlab                | `cas.samlSp.gitlab` | `last_name`,`first_name`,`name`
-| Hipchat               | `cas.samlSp.hipchat` | `last_name`,`first_name`,`title`
-| Dropbox               | `cas.samlSp.dropbox` | `mail`
-| OpenAthens            | `cas.samlSp.openAthens` | `email`, `eduPersonPrincipalName`
-| Egnyte                | `cas.samlSp.egnyte` | N/A
-| EverBridge            | `cas.samlSp.everBridge` | N/A
-| Simplicity            | `cas.samlSp.simplicity` | N/A
-| App Dynamics          | `cas.samlSp.appDynamics` | `User.OpenIDName`, `User.email`, `User.fullName`, `AccessControl`, `Groups-Membership`
-| Yuja                  | `cas.samlSp.yuja` | N/A
-| Simplicity            | `cas.samlSp.simplicity` | N/A
-| New Relic             | `cas.samlSp.newRelic` | N/A
-| Sunshine State Education and Research Computing Alliance               | `cas.samlSp.sserca` | N/A
-| CherWell               | `cas.samlSp.cherWell` | N/A
-| FAMIS                 | `cas.samlSp.famis` | N/A
-| Bynder                | `cas.samlSp.bynder` | N/A
-| Web Advisor           | `cas.samlSp.webAdvisor` | `uid`
-| Adobe Creative Cloud  | `cas.samlSp.adobeCloud` | `firstName`, `lastName`, `email`
-| Securing The Human    | `cas.samlSp.sansSth` | `firstName`, `lastName`, `scopedUserId`, `department`, `reference`, `email`
-| Easy IEP              | `cas.samlSp.easyIep` | `employeeId`
-| Infinite Campus       | `cas.samlSp.infiniteCampus` | `employeeId`
-| Slack                 | `cas.samlSp.slack` | `User.Email`, `User.Username`, `first_name`, `last_name`, `employeeId`
-| Zendesk               | `cas.samlSp.zendesk` | `organization`, `tags`, `phone`, `role`, `email`
-| Gartner               | `cas.samlSp.gartner` | `urn:oid:2.5.4.42`, `urn:oid:2.5.4.4`, `urn:oid:0.9.2342.19200300.100.1.3`
-| Arc GIS               | `cas.samlSp.arcGIS` | `arcNameId`, `mail`, `givenName`
+| Service Provider      | Configuration Key     | Attributes
+|-----------------------|----------------------------------------------------------
+| Gitlab                | `cas.samlSp.gitlab`   | `last_name`,`first_name`,`name`
+| Hipchat               | `cas.samlSp.hipchat`  | `last_name`,`first_name`,`title`
+| Dropbox               | `cas.samlSp.dropbox`  | `mail`
+| OpenAthens            | `cas.samlSp.openAthens`   | `email`, `eduPersonPrincipalName`
+| Egnyte                | `cas.samlSp.egnyte`       | N/A
+| EverBridge            | `cas.samlSp.everBridge`   | N/A
+| Simplicity            | `cas.samlSp.simplicity`   | N/A
+| App Dynamics          | `cas.samlSp.appDynamics`  | `User.OpenIDName`, `User.email`, `User.fullName`, `AccessControl`, `Groups-Membership`
+| Yuja                  | `cas.samlSp.yuja`         | N/A
+| Simplicity            | `cas.samlSp.simplicity`   | N/A
+| New Relic             | `cas.samlSp.newRelic`     | N/A
+| Sunshine State Education & Research Computing Alliance | `cas.samlSp.sserca` | N/A
+| CherWell              | `cas.samlSp.cherWell`         | N/A
+| FAMIS                 | `cas.samlSp.famis`            | N/A
+| Bynder                | `cas.samlSp.bynder`           | N/A
+| Web Advisor           | `cas.samlSp.webAdvisor`       | `uid`
+| Adobe Creative Cloud  | `cas.samlSp.adobeCloud`       | `firstName`, `lastName`, `email`
+| Securing The Human    | `cas.samlSp.sansSth`          | `firstName`, `lastName`, `scopedUserId`, `department`, `reference`, `email`
+| Easy IEP              | `cas.samlSp.easyIep`          | `employeeId`
+| Infinite Campus       | `cas.samlSp.infiniteCampus`   | `employeeId`
+| Slack                 | `cas.samlSp.slack`        | `User.Email`, `User.Username`, `first_name`, `last_name`, `employeeId`
+| Zendesk               | `cas.samlSp.zendesk`      | `organization`, `tags`, `phone`, `role`, `email`
+| Gartner               | `cas.samlSp.gartner`      | `urn:oid:2.5.4.42`, `urn:oid:2.5.4.4`, `urn:oid:0.9.2342.19200300.100.1.3`
+| Arc GIS               | `cas.samlSp.arcGIS`       | `arcNameId`, `mail`, `givenName`
 | Benefit Focus         | `cas.samlSp.benefitFocus` | `benefitFocusUniqueId`
-| Office365             | `cas.samlSp.office365` | `IDPEmail`, `ImmutableID`, `scopedImmutableID`
-| SAManage              | `cas.samlSp.saManage` | `mail`
-| Salesforce            | `cas.samlSp.salesforce` | `eduPersonPrincipalName`
-| Workday               | `cas.samlSp.workday` | N/A
-| Academic Works            | `cas.samlSp.academicWorks` | `displayName`
-| ZOOM                      | `cas.samlSp.zoom` | `mail`, `sn`, `givenName`
-| Evernote                  | `cas.samlSp.evernote` | `email`
-| Tableau                   | `cas.samlSp.tableau` | `username`
-| Asana                     | `cas.samlSp.asana` | `email`
-| Box                       | `cas.samlSp.box` | `email`, `firstName`, `lastName`
-| Service Now               | `cas.samlSp.serviceNow` | `eduPersonPrincipalName`
-| Net Partner               | `cas.samlSp.netPartner` | `studentId`
-| Webex                     | `cas.samlSp.webex` | `firstName`, `lastName`
-| InCommon                  |  `cas.samlSp.inCommon` | `eduPersonPrincipalName`
-| Amazon                    |  `cas.samlSp.amazon` | `awsRoles`, `awsRoleSessionName`
-| Concur Solutions          | `cas.samlSp.concurSolutions` | `email`
-| PollEverywhere            | `cas.samlSp.pollEverywhere` | `email`
-| BlackBaud                 | `cas.samlSp.blackBaud` | `email`, `eduPersonPrincipalName`
-| GiveCampus                | `cas.samlSp.giveCampus` | `email`, `givenName`, `surname`, `displayName`
-| WarpWire                  | `cas.samlSp.warpWire` | `email`, `givenName`, `eduPersonPrincipalName`, `surname`, `eduPersonScopedAffiliation`, `employeeNumber`
-| WarpWire                  | `cas.samlSp.rocketChat` | `email`, `cn`, `username`
-
-**Note**: For InCommon and other metadata aggregates, multiple entity ids can be specified to filter [the InCommon metadata](https://spaces.internet2.edu/display/InCFederation/Metadata+Aggregates). EntityIds can be regular expression patterns and are mapped to CAS' `serviceId` field in the registry. The signature location MUST BE the public key used to sign the metadata.
+| Office365             | `cas.samlSp.office365`    | `IDPEmail`, `ImmutableID`
+| SAManage              | `cas.samlSp.saManage`     | `mail`
+| Salesforce            | `cas.samlSp.salesforce`   | `eduPersonPrincipalName`
+| Workday               | `cas.samlSp.workday`      | N/A
+| Academic Works            | `cas.samlSp.academicWorks`    | `displayName`
+| ZOOM                      | `cas.samlSp.zoom`             | `mail`, `sn`, `givenName`
+| Evernote                  | `cas.samlSp.evernote`         | `email`
+| Tableau                   | `cas.samlSp.tableau`          | `username`
+| Asana                     | `cas.samlSp.asana`            | `email`
+| Box                       | `cas.samlSp.box`              | `email`, `firstName`, `lastName`
+| Service Now               | `cas.samlSp.serviceNow`   | `eduPersonPrincipalName`
+| Net Partner               | `cas.samlSp.netPartner`   | `studentId`
+| Webex                     | `cas.samlSp.webex`        | `firstName`, `lastName`
+| InCommon                  | `cas.samlSp.inCommon`     | `eduPersonPrincipalName`
+| Amazon                    | `cas.samlSp.amazon`       | `awsRoles`, `awsRoleSessionName`
+| Concur Solutions          | `cas.samlSp.concurSolutions`  | `email`
+| PollEverywhere            | `cas.samlSp.pollEverywhere`   | `email`
+| DocuSign                  | `cas.samlSp.docuSign`   | `email`, `givenName`, `surname`, `employeeNumber`
+| SafariOnline              | `cas.samlSp.safariOnline`   | `email`, `givenName`, `surname`, `employeeNumber`,`eduPersonAffiliation`
+| BlackBaud                 | `cas.samlSp.blackBaud`    | `email`, `eduPersonPrincipalName`
+| GiveCampus                | `cas.samlSp.giveCampus`   | `email`, `givenName`, `surname`, `displayName`
+| WarpWire                  | `cas.samlSp.warpWire`     | `email`, `givenName`, `eduPersonPrincipalName`, `surname`, `eduPersonScopedAffiliation`, `employeeNumber`
+| RocketChat                | `cas.samlSp.rocketChat`   | `email`, `cn`, `username`
+| ArmsSoftware              | `cas.samlSp.armsSoftware` | `email`, `uid`, `eduPersonPrincipalName`
+| TopHat                    | `cas.samlSp.topHat` | `email`, `eduPersonPrincipalName`
+| Academic HealthPlans      | `cas.samlSp.academicHealthPlans` | `email`, `givenName`, `surname`, `studentId`
+| Confluence                | `cas.samlSp.confluence` | `email`, `givenName`, `surname`, `uid`, `displayName`
+| JIRA                      | `cas.samlSp.jira` | `email`, `givenName`, `surname`, `uid`, `displayName`
+| CrashPlan                 | `cas.samlSp.crashPlan` | `email`, `givenName`, `surname`
+| Emma                      | `cas.samlSp.emma` | `email`, `givenName`, `surname`
+| Qualtrics                 | `cas.samlSp.qualtrics` | `email`, `givenName`, `surname`, `employeeNumber`, `eduPersonPrincipalName`
+| NeoGov                    | `cas.samlSp.neoGov` | `email`, `ImmutableID`
+| Zimbra                    | `cas.samlSp.zimbra` | `email`
+| PagerDuty                 | `cas.samlSp.pagerDuty` | `email`
+| CraniumCafe               | `cas.samlSp.craniumCafe` | `email`, `eduPersonPrincipalName`, `displayName`, `eduPersonScopedAffiliation`, `studentId`
+| CCC Central               | `cas.samlSp.cccco` | `email`, `eduPersonPrincipalName`, `displayName`, `eduPersonScopedAffiliation`, `uid`, `givenName`, `commonName`, `surname`, `eduPersonPrimaryffiliation`
+                                
+**Note**: For InCommon and other metadata aggregates, multiple entity ids can be specified to 
+filter [the InCommon metadata](https://spaces.internet2.edu/display/InCFederation/Metadata+Aggregates). EntityIds 
+can be regular expression patterns and are mapped to 
+CAS' `serviceId` field in the registry. The signature location MUST BE the public key used to sign the metadata.
 
 ## OpenID Connect
 
@@ -3068,11 +3090,6 @@ The following external identity providers share [common blocks of settings](Conf
 | HiOrg-Server              | `cas.authn.pac4j.hiOrgServer`
 
 See below for other identity providers such as CAS, SAML2 and more.
-
-### Signing & Encryption
-
-The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
-The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under `${configurationKey}.cookie`.
 
 ### Provisioning
 

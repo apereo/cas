@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * This is {@link SamlServiceProviderProperties}.
@@ -25,6 +26,38 @@ public class SamlServiceProviderProperties implements Serializable {
      * Settings related to ConcurSolutions acting as a SAML service provider.
      */
     private ConcurSolutions concurSolutions = new ConcurSolutions();
+    /**
+     * Settings related to Qualtrics acting as a SAML service provider.
+     */
+    private Qualtrics qualtrics = new Qualtrics();
+    /**
+     * Settings related to Emma acting as a SAML service provider.
+     */
+    private Emma emma = new Emma();
+    /**
+     * Settings related to CrashPlan acting as a SAML service provider.
+     */
+    private CrashPlan crashPlan = new CrashPlan();
+    /**
+     * Settings related to SafariOnline acting as a SAML service provider.
+     */
+    private SafariOnline safariOnline = new SafariOnline();
+    /**
+     * Settings related to TopHat acting as a SAML service provider.
+     */
+    private TopHat topHat = new TopHat();
+    /**
+     * Settings related to DocuSign acting as a SAML service provider.
+     */
+    private DocuSign docuSign = new DocuSign();
+    /**
+     * Settings related to PagerDuty acting as a SAML service provider.
+     */
+    private PagerDuty pagerDuty = new PagerDuty();
+    /**
+     * Settings related to JIRA acting as a SAML service provider.
+     */
+    private Jira jira = new Jira();
     /**
      * Settings related to PollEverywhere acting as a SAML service provider.
      */
@@ -73,7 +106,6 @@ public class SamlServiceProviderProperties implements Serializable {
      * Settings related to Office365 acting as a SAML service provider.
      */
     private Office365 office365 = new Office365();
-
     /**
      * Settings related to InCommon acting as a SAML service provider.
      */
@@ -175,6 +207,14 @@ public class SamlServiceProviderProperties implements Serializable {
      */
     private Yuja yuja = new Yuja();
     /**
+     * Settings related to Confluence acting as a SAML service provider.
+     */
+    private Confluence confluence = new Confluence();
+    /**
+     * Settings related to Zimbra acting as a SAML service provider.
+     */
+    private Zimbra zimbra = new Zimbra();
+    /**
      * Settings related to Symplicity acting as a SAML service provider.
      */
     private Symplicity symplicity = new Symplicity();
@@ -202,6 +242,26 @@ public class SamlServiceProviderProperties implements Serializable {
      * Settings related to RocketChat acting as a SAML service provider.
      */
     private RocketChat rocketChat = new RocketChat();
+    /**
+     * Settings related to ArmsSoftware acting as a SAML service provider.
+     */
+    private ArmsSoftware armsSoftware = new ArmsSoftware();
+    /**
+     * Settings related to Academic HealthPlans acting as a SAML service provider.
+     */
+    private AcademicHealthPlans academicHealthPlans = new AcademicHealthPlans();
+    /**
+     * Settings related to NeoGov acting as a SAML service provider.
+     */
+    private NeoGov neoGov = new NeoGov();
+    /**
+     * Settings related to Cranium Cafe acting as a SAML service provider.
+     */
+    private CraniumCafe craniumCafe = new CraniumCafe();
+    /**
+     * Settings related to CCC acting as a SAML service provider.
+     */
+    private CaliforniaCommunityColleges cccco = new CaliforniaCommunityColleges();
 
     @Getter
     private enum CommonAttributeNames {
@@ -209,6 +269,14 @@ public class SamlServiceProviderProperties implements Serializable {
          * Attribute name.
          */
         EDU_PERSON_PRINCIPAL_NAME("eduPersonPrincipalName"),
+        /**
+         * Attribute name.
+         */
+        EDU_PERSON_PRIMARY_AFFILIATION("eduPersonPrimaryAffiliation"),
+        /**
+         * Attribute name.
+         */
+        EDU_PERSON_AFFILIATION("eduPersonAffiliation"),
         /**
          * Attribute name.
          */
@@ -229,6 +297,10 @@ public class SamlServiceProviderProperties implements Serializable {
          * Attribute name.
          */
         UID("uid"),
+        /**
+         * Attribute name.
+         */
+        COMMON_NAME("commonName"),
         /**
          * Attribute name.
          */
@@ -253,6 +325,19 @@ public class SamlServiceProviderProperties implements Serializable {
          * Attribute name.
          */
         MAIL("mail"),
+        /**
+         * Attribute name.
+         */
+        EMPLOYEE_NUMBER("employeeNumber"),
+        /**
+         * Attribute name.
+         */
+        STUDENT_ID("studentId"),
+        /**
+         * Attribute name.
+         */
+        IMMUTABLE_ID("ImmutableID"),
+
         /**
          * Attribute name.
          */
@@ -359,7 +444,7 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = 5262806306575955633L;
 
         public NetPartner() {
-            setNameIdAttribute("studentId");
+            setNameIdAttribute(CommonAttributeNames.STUDENT_ID.getAttributeName());
         }
     }
 
@@ -372,7 +457,7 @@ public class SamlServiceProviderProperties implements Serializable {
 
         public Office365() {
             setNameIdAttribute("objectGUID");
-            addAttributes("IDPEmail", "ImmutableID");
+            addAttributes("IDPEmail", CommonAttributeNames.IMMUTABLE_ID.getAttributeName());
             setSignResponses(false);
             setSignAssertions(true);
         }
@@ -451,9 +536,11 @@ public class SamlServiceProviderProperties implements Serializable {
 
         private static final long serialVersionUID = -6336757169059216490L;
 
+        /**
+         * InCommon metadata should
+         * be available <a href="http://md.incommon.org/InCommon/InCommon-metadata.xml">here</a>.
+         */
         public InCommon() {
-            // setMetadata("http://md.incommon.org/InCommon/InCommon-metadata.xml");
-            // setSignatureLocation("/etc/cas/config/certs/inc-md-cert.pem");
             addAttributes(CommonAttributeNames.EDU_PERSON_PRINCIPAL_NAME.getAttributeName());
         }
     }
@@ -811,9 +898,222 @@ public class SamlServiceProviderProperties implements Serializable {
             addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
                 CommonAttributeNames.SURNAME.getAttributeName(),
                 CommonAttributeNames.GIVEN_NAME.getAttributeName(),
-                "employeeNumber",
+                CommonAttributeNames.EMPLOYEE_NUMBER.getAttributeName(),
                 CommonAttributeNames.EDU_PERSON_SCOPED_AFFILIATION.getAttributeName(),
                 CommonAttributeNames.EDU_PERSON_PRINCIPAL_NAME.getAttributeName());
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class ArmsSoftware extends AbstractSamlSPProperties {
+
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public ArmsSoftware() {
+            setEntityIds(List.of("https://sso.armssoftware.com/sp/shibboleth"));
+
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
+                CommonAttributeNames.UID.getAttributeName(),
+                CommonAttributeNames.EDU_PERSON_PRINCIPAL_NAME.getAttributeName());
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class AcademicHealthPlans extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public AcademicHealthPlans() {
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
+                CommonAttributeNames.SURNAME.getAttributeName(),
+                CommonAttributeNames.STUDENT_ID.getAttributeName(),
+                CommonAttributeNames.GIVEN_NAME.getAttributeName());
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class NeoGov extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public NeoGov() {
+            setEntityIds(List.of("https://login.neogov.com/"));
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
+                CommonAttributeNames.IMMUTABLE_ID.getAttributeName());
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class CraniumCafe extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public CraniumCafe() {
+            setEntityIds(List.of("https://my.craniumcafe.com/login/saml2"));
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
+                CommonAttributeNames.EDU_PERSON_PRINCIPAL_NAME.getAttributeName(),
+                CommonAttributeNames.EDU_PERSON_SCOPED_AFFILIATION.getAttributeName(),
+                CommonAttributeNames.STUDENT_ID.getAttributeName(),
+                CommonAttributeNames.DISPLAY_NAME.getAttributeName());
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class CaliforniaCommunityColleges extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public CaliforniaCommunityColleges() {
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
+                CommonAttributeNames.UID.getAttributeName(),
+                CommonAttributeNames.GIVEN_NAME.getAttributeName(),
+                CommonAttributeNames.COMMON_NAME.getAttributeName(),
+                CommonAttributeNames.SURNAME.getAttributeName(),
+                CommonAttributeNames.EDU_PERSON_PRINCIPAL_NAME.getAttributeName(),
+                CommonAttributeNames.EDU_PERSON_PRIMARY_AFFILIATION.getAttributeName(),
+                CommonAttributeNames.EDU_PERSON_SCOPED_AFFILIATION.getAttributeName(),
+                CommonAttributeNames.DISPLAY_NAME.getAttributeName());
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class Confluence extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public Confluence() {
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
+                CommonAttributeNames.UID.getAttributeName(),
+                CommonAttributeNames.GIVEN_NAME.getAttributeName(),
+                CommonAttributeNames.SURNAME.getAttributeName(),
+                CommonAttributeNames.DISPLAY_NAME.getAttributeName());
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class Jira extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public Jira() {
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
+                CommonAttributeNames.UID.getAttributeName(),
+                CommonAttributeNames.GIVEN_NAME.getAttributeName(),
+                CommonAttributeNames.SURNAME.getAttributeName(),
+                CommonAttributeNames.DISPLAY_NAME.getAttributeName());
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class CrashPlan extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public CrashPlan() {
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
+                CommonAttributeNames.GIVEN_NAME.getAttributeName(),
+                CommonAttributeNames.SURNAME.getAttributeName());
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class DocuSign extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public DocuSign() {
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
+                CommonAttributeNames.GIVEN_NAME.getAttributeName(),
+                CommonAttributeNames.EMPLOYEE_NUMBER.getAttributeName(),
+                CommonAttributeNames.SURNAME.getAttributeName());
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class SafariOnline extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public SafariOnline() {
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
+                CommonAttributeNames.GIVEN_NAME.getAttributeName(),
+                CommonAttributeNames.EMPLOYEE_NUMBER.getAttributeName(),
+                CommonAttributeNames.EDU_PERSON_AFFILIATION.getAttributeName(),
+                CommonAttributeNames.SURNAME.getAttributeName());
+        }
+    }
+
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class PagerDuty extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public PagerDuty() {
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName());
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class Zimbra extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public Zimbra() {
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName());
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class TopHat extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public TopHat() {
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
+                CommonAttributeNames.EDU_PERSON_PRINCIPAL_NAME.getAttributeName());
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class Emma extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public Emma() {
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
+                CommonAttributeNames.SURNAME.getAttributeName(),
+                CommonAttributeNames.GIVEN_NAME.getAttributeName());
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class Qualtrics extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public Qualtrics() {
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
+                CommonAttributeNames.SURNAME.getAttributeName(),
+                CommonAttributeNames.EDU_PERSON_PRINCIPAL_NAME.getAttributeName(),
+                CommonAttributeNames.EMPLOYEE_NUMBER.getAttributeName(),
+                CommonAttributeNames.GIVEN_NAME.getAttributeName());
         }
     }
 }

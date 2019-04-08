@@ -480,6 +480,7 @@ More advanced Hazelcast configuration settings are listed below, given the compo
 # ${configurationKey}.cluster.tcpipEnabled=true
 
 # ${configurationKey}.cluster.partitionMemberGroupType=HOST_AWARE|CUSTOM|PER_MEMBER|ZONE_AWARE|SPI
+# ${configurationKey}.cluster.mapMergePolicy=com.hazelcast.map.merge.PutIfAbsentMapMergePolicy
 
 # ${configurationKey}.cluster.evictionPolicy=LRU
 # ${configurationKey}.cluster.maxNoHeartbeatSeconds=300
@@ -740,6 +741,7 @@ The following options related to Redis support in CAS apply equally to a number 
 # ${configurationKey}.redis.password=
 # ${configurationKey}.redis.timeout=2000
 # ${configurationKey}.redis.useSsl=false
+# ${configurationKey}.redis.readFrom=MASTER
 
 # ${configurationKey}.redis.pool.max-active=20
 # ${configurationKey}.redis.pool.maxIdle=8
@@ -1085,6 +1087,9 @@ The following  options apply  to features that integrate with an LDAP server (i.
 #${configurationKey}.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
 #${configurationKey}.connectTimeout=PT5S
 #${configurationKey}.trustCertificates=
+#${configurationKey}.trustStore=
+#${configurationKey}.trustStorePassword=
+#${configurationKey}.trustStoreType=JKS|JCEKS|PKCS12
 #${configurationKey}.keystore=
 #${configurationKey}.keystorePassword=
 #${configurationKey}.keystoreType=JKS|JCEKS|PKCS12

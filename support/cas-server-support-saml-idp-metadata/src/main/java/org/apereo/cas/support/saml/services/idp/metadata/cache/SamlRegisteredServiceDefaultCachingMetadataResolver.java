@@ -4,9 +4,9 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 
 /**
@@ -35,12 +35,14 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
     }
 
     @Override
-    public MetadataResolver resolve(final SamlRegisteredService service) {
+    public MetadataResolver resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
         LOGGER.debug("Resolving metadata for [{}] at [{}].", service.getName(), service.getMetadataLocation());
-        val cacheKey = new SamlRegisteredServiceCacheKey(service);
+        val cacheKey = new SamlRegisteredServiceCacheKey(service, criteriaSet);
         LOGGER.trace("Locating cached metadata resolver using key [{}] for service [{}]", cacheKey.getId(), service.getName());
-        @NonNull
         val resolver = this.cache.get(cacheKey);
+        if (resolver == null) {
+            throw new IllegalArgumentException("Unable to determine and load metadata resolver");
+        }
         LOGGER.debug("Loaded and cached SAML metadata [{}] from [{}]", resolver.getId(), service.getMetadataLocation());
         return resolver;
     }
@@ -52,9 +54,9 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
     }
 
     @Override
-    public void invalidate(final SamlRegisteredService service) {
+    public void invalidate(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
         LOGGER.trace("Invalidating cache for [{}].", service.getName());
-        val k = new SamlRegisteredServiceCacheKey(service);
+        val k = new SamlRegisteredServiceCacheKey(service, criteriaSet);
         this.cache.invalidate(k);
     }
 }

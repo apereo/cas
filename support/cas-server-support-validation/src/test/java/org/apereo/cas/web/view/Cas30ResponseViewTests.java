@@ -17,7 +17,8 @@ import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.validation.DefaultServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.AbstractServiceValidateController;
 import org.apereo.cas.web.AbstractServiceValidateControllerTests;
-import org.apereo.cas.web.ServiceValidateController;
+import org.apereo.cas.web.ServiceValidationViewFactory;
+import org.apereo.cas.web.v2.ServiceValidateController;
 import org.apereo.cas.web.view.attributes.DefaultCas30ProtocolAttributesRenderer;
 
 import lombok.SneakyThrows;
@@ -65,20 +66,12 @@ import static org.junit.jupiter.api.Assertions.*;
 public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
 
     @Autowired
+    @Qualifier("serviceValidationViewFactory")
+    protected ServiceValidationViewFactory serviceValidationViewFactory;
+
+    @Autowired
     @Qualifier("servicesManager")
     protected ServicesManager servicesManager;
-
-    @Autowired
-    @Qualifier("cas3ServiceJsonView")
-    private View cas3ServiceJsonView;
-
-    @Autowired
-    @Qualifier("cas3SuccessView")
-    private View cas3SuccessView;
-
-    @Autowired
-    @Qualifier("cas3ServiceFailureView")
-    private View cas3ServiceFailureView;
 
     @Override
     public AbstractServiceValidateController getServiceValidateControllerInstance() {
@@ -90,12 +83,10 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
             getProxyHandler(),
             getArgumentExtractor(),
             (assertion, request) -> Pair.of(Boolean.TRUE, Optional.empty()),
-            cas3ServiceJsonView,
-            cas3SuccessView,
-            cas3ServiceFailureView,
             "authenticationContext",
             new DefaultServiceTicketValidationAuthorizersExecutionPlan(),
-            true
+            true,
+            serviceValidationViewFactory
         );
     }
 
@@ -159,7 +150,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
     @Test
     public void verifyProxyGrantingTicketAsAuthenticationAttributeCanDecrypt() throws Exception {
         val attributes = renderView();
-        LOGGER.warn("Attributes are [{}]", attributes.keySet());
+        LOGGER.trace("Attributes are [{}]", attributes.keySet());
         assertTrue(attributes.containsKey(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET));
 
         val encodedPgt = (String) attributes.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET);

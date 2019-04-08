@@ -30,7 +30,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.params.provider.Arguments.*;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 
 /**
@@ -80,8 +80,10 @@ public class CRLDistributionPointRevocationCheckerTests extends BaseCRLRevocatio
         val defaultPolicy = new ThresholdExpiredCRLRevocationPolicy(0);
         val zeroThresholdPolicy = new ThresholdExpiredCRLRevocationPolicy(0);
 
-        // Test case #0
-        // Valid certificate on valid CRL data with encoded url
+        /*
+         * Test case #0
+         * Valid certificate on valid CRL data with encoded url
+         */
         cache = new Cache("crlCache-0", 100, false, false, 20, 10);
         CacheManager.getInstance().addCache(cache);
         params.add(arguments(
@@ -91,8 +93,10 @@ public class CRLDistributionPointRevocationCheckerTests extends BaseCRLRevocatio
             null
         ));
 
-        // Test case #1
-        // Valid certificate on valid CRL data
+        /*
+         * Test case #1
+         * Valid certificate on valid CRL data
+         */
         cache = new Cache("crlCache-1", 100, false, false, 20, 10);
         CacheManager.getInstance().addCache(cache);
         params.add(arguments(
@@ -103,8 +107,9 @@ public class CRLDistributionPointRevocationCheckerTests extends BaseCRLRevocatio
         ));
 
 
-        // Test case #2
-        // Revoked certificate on valid CRL data
+        /* Test case #2
+         * Revoked certificate on valid CRL data
+         */
         cache = new Cache("crlCache-2", 100, false, false, 20, 10);
         CacheManager.getInstance().addCache(cache);
         params.add(arguments(
@@ -114,8 +119,9 @@ public class CRLDistributionPointRevocationCheckerTests extends BaseCRLRevocatio
             new RevokedCertificateException(ZonedDateTime.now(ZoneOffset.UTC), new BigInteger("1"))
         ));
 
-        // Test case #3
-        // Valid certificate on expired CRL data
+        /* Test case #3
+         * Valid certificate on expired CRL data
+         */
         cache = new Cache("crlCache-3", 100, false, false, 20, 10);
         CacheManager.getInstance().addCache(cache);
         params.add(arguments(
@@ -125,9 +131,10 @@ public class CRLDistributionPointRevocationCheckerTests extends BaseCRLRevocatio
             new ExpiredCRLException("test", ZonedDateTime.now(ZoneOffset.UTC))
         ));
 
-        // Test case #4
-        // Valid certificate on expired CRL data with custom expiration
-        // policy to always allow expired CRL data
+        /* Test case #4
+         * Valid certificate on expired CRL data with custom expiration
+         * policy to always allow expired CRL data
+         */
         cache = new Cache("crlCache-4", 100, false, false, 20, 10);
         CacheManager.getInstance().addCache(cache);
         params.add(arguments(
@@ -138,9 +145,10 @@ public class CRLDistributionPointRevocationCheckerTests extends BaseCRLRevocatio
             null
         ));
 
-        // Test case #5
-        // Valid certificate with no CRL distribution points defined but with
-        // "AllowRevocationPolicy" set to allow unavailable CRL data
+        /* Test case #5
+         * Valid certificate with no CRL distribution points defined but with
+         * "AllowRevocationPolicy" set to allow unavailable CRL data
+         */
         cache = new Cache("crlCache-5", 100, false, false, 20, 10);
         CacheManager.getInstance().addCache(cache);
         params.add(arguments(
@@ -150,12 +158,13 @@ public class CRLDistributionPointRevocationCheckerTests extends BaseCRLRevocatio
             null
         ));
 
-        // Test case #6
-        // EJBCA test case
-        // Revoked certificate with CRL distribution point URI that is technically
-        // not a valid URI since the issuer DN in the query string is not encoded per
-        // the escaping of reserved characters in RFC 2396.
-        // Make sure we can convert given URI to valid URI and confirm it's revoked
+        /* Test case #6
+         * EJBCA test case
+         * Revoked certificate with CRL distribution point URI that is technically
+         * not a valid URI since the issuer DN in the query string is not encoded per
+         * the escaping of reserved characters in RFC 2396.
+         * Make sure we can convert given URI to valid URI and confirm it's revoked
+         */
         cache = new Cache("crlCache-6", 100, false, false, 20, 10);
         CacheManager.getInstance().addCache(cache);
         params.add(arguments(

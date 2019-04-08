@@ -9,8 +9,8 @@ import org.junit.platform.suite.api.SelectClasses;
  * @since 5.3.0
  */
 @SelectClasses({
-    JWTServiceTicketResourceEntityResponseFactoryTests.class,
-    JWTTicketGrantingTicketResourceEntityResponseFactoryTests.class
+    JwtServiceTicketResourceEntityResponseFactoryTests.class,
+    JwtTicketGrantingTicketResourceEntityResponseFactoryTests.class
 })
 public class AllTicketResourceEntityResponseFactoryTestsSuite {
 }

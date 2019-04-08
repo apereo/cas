@@ -35,7 +35,6 @@ publishing {
 }
 
 apply from: rootProject.file("gradle/springboot.gradle")
-apply from: rootProject.file("gradle/node.gradle")
 
 dependencies {
     implementation project(":core:cas-server-core")

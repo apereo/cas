@@ -30,28 +30,28 @@ public class X509SubjectAlternativeNameUPNPrincipalResolverTests {
      */
     public static Stream<Arguments> getTestParameters() {
         return Stream.of(
-            // test with cert with UPN and no alternate
+            /* test with cert with UPN and no alternate */
             arguments(
                 "/x509-san-upn-resolver.crt",
                 "test-user@some-company-domain",
                 null
             ),
 
-            // test with alternate parameter and cert with UPN
+            /* test with alternate parameter and cert with UPN */
             arguments(
                 "/x509-san-upn-resolver.crt",
                 "test-user@some-company-domain",
                 "subjectDn"
             ),
 
-            // test with alternate parameter and cert without UPN
+            /* test with alternate parameter and cert without UPN */
             arguments(
                 "/user-valid.crt",
                 "CN=Alice, OU=CAS, O=Jasig, L=Westminster, ST=Colorado, C=US",
                 "subjectDn"
             ),
 
-            // test with bad alternate parameter and cert without UPN
+            /* test with bad alternate parameter and cert without UPN */
             arguments(
                 "/user-valid.crt",
                 null,

@@ -47,7 +47,7 @@ public class SamlSPUtilsTests extends BaseSamlIdPConfigurationTests {
         val resolver = mock(SamlRegisteredServiceCachingMetadataResolver.class);
         val metadata = mock(MetadataResolver.class);
         when(metadata.resolveSingle(any(CriteriaSet.class))).thenReturn(entity);
-        when(resolver.resolve(any(SamlRegisteredService.class))).thenReturn(metadata);
+        when(resolver.resolve(any(SamlRegisteredService.class), any(CriteriaSet.class))).thenReturn(metadata);
         val sp = new SamlServiceProviderProperties.Dropbox();
         sp.setMetadata("https://metadata.dropbox.com");
         sp.setEntityIds(CollectionUtils.wrap(entity.getEntityID()));

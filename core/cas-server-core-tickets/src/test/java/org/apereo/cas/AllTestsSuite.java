@@ -5,12 +5,15 @@ import org.apereo.cas.ticket.ServiceTicketImplTests;
 import org.apereo.cas.ticket.TicketGrantingTicketImplTests;
 import org.apereo.cas.ticket.TicketSerializersTests;
 import org.apereo.cas.ticket.UnrecognizableServiceForServiceTicketValidationExceptionTests;
+import org.apereo.cas.ticket.factory.DefaultProxyTicketFactoryTests;
+import org.apereo.cas.ticket.factory.DefaultServiceTicketFactoryTests;
 import org.apereo.cas.ticket.proxy.support.Cas10ProxyHandlerTests;
 import org.apereo.cas.ticket.proxy.support.Cas20ProxyHandlerTests;
 import org.apereo.cas.ticket.registry.CachingTicketRegistryTests;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistryCleanerTests;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistryTests;
 import org.apereo.cas.ticket.registry.DistributedTicketRegistryTests;
+import org.apereo.cas.ticket.serialization.DefaultTicketStringSerializationManagerTests;
 import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicyTests;
 import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicyTests;
 import org.apereo.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicyTests;
@@ -31,8 +34,11 @@ import org.junit.platform.suite.api.SelectClasses;
  * @since 5.0.0
  */
 @SelectClasses({
+    DefaultServiceTicketFactoryTests.class,
+    DefaultProxyTicketFactoryTests.class,
     InvalidTicketExceptionTests.class,
     ServiceTicketImplTests.class,
+    DefaultTicketStringSerializationManagerTests.class,
     TicketGrantingTicketImplTests.class,
     UnrecognizableServiceForServiceTicketValidationExceptionTests.class,
     MultiTimeUseOrTimeoutExpirationPolicyTests.class,

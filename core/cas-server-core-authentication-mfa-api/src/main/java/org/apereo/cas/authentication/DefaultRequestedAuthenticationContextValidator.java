@@ -2,7 +2,7 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.validation.Assertion;
-import org.apereo.cas.validation.RequestedContextValidator;
+import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,7 @@ import java.util.Optional;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class DefaultRequestedAuthenticationContextValidator implements RequestedContextValidator<MultifactorAuthenticationProvider> {
+public class DefaultRequestedAuthenticationContextValidator implements RequestedAuthenticationContextValidator<MultifactorAuthenticationProvider> {
     private final ServicesManager servicesManager;
     private final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
     private final MultifactorAuthenticationContextValidator authenticationContextValidator;

@@ -17,7 +17,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObj
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicket;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -40,7 +40,7 @@ import java.util.LinkedHashMap;
 public class Saml2AttributeQueryProfileHandlerController extends AbstractSamlProfileHandlerController {
 
     private final TicketRegistry ticketRegistry;
-    private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
     private final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory;
     private final SamlProfileObjectBuilder<? extends SAMLObject> samlFaultResponseBuilder;
 
@@ -56,7 +56,7 @@ public class Saml2AttributeQueryProfileHandlerController extends AbstractSamlPro
                                                        final SamlObjectSignatureValidator samlObjectSignatureValidator,
                                                        final TicketRegistry ticketRegistry,
                                                        final SamlProfileObjectBuilder<? extends SAMLObject> samlFaultResponseBuilder,
-                                                       final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
+                                                       final CasCookieBuilder ticketGrantingTicketCookieGenerator,
                                                        final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
                                                        final Service callbackService) {
         super(samlObjectSigner, authenticationSystemSupport, servicesManager,

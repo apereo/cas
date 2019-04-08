@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.util.RegisteredServicePublicKeyCipherExecutor;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -33,16 +32,6 @@ public abstract class AbstractProtocolAttributeEncoder implements ProtocolAttrib
     protected final ServicesManager servicesManager;
 
     private final RegisteredServiceCipherExecutor cipherExecutor;
-
-    /**
-     * Instantiates a new attribute encoder with the default
-     * cipher as {@link RegisteredServicePublicKeyCipherExecutor}.
-     *
-     * @param servicesManager the services manager
-     */
-    public AbstractProtocolAttributeEncoder(final ServicesManager servicesManager) {
-        this(servicesManager, new RegisteredServicePublicKeyCipherExecutor());
-    }
 
     @Override
     public Map<String, Object> encodeAttributes(final Map<String, Object> attributes, final RegisteredService registeredService) {
@@ -83,17 +72,20 @@ public abstract class AbstractProtocolAttributeEncoder implements ProtocolAttrib
      */
     protected Map<String, String> initialize(final Map<String, Object> attributes) {
         val cachedAttributesToEncode = new HashMap<String, String>();
-        val messageFormat = "Removed [{}] as an authentication attribute and cached it locally.";
-        Collection<?> collection = (Collection<?>) attributes.remove(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
-        if (collection != null && collection.size() == 1) {
-            cachedAttributesToEncode.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL, collection.iterator().next().toString());
-            LOGGER.debug(messageFormat, CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
-        }
-        collection = (Collection<?>) attributes.remove(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET);
-        if (collection != null && collection.size() == 1) {
-            cachedAttributesToEncode.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, collection.iterator().next().toString());
-            LOGGER.debug(messageFormat, CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET);
-        }
+        removeAttributeAndCacheForEncoding(attributes, cachedAttributesToEncode, CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
+        removeAttributeAndCacheForEncoding(attributes, cachedAttributesToEncode, CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET);
+        removeAttributeAndCacheForEncoding(attributes, cachedAttributesToEncode, CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET_IOU);
         return cachedAttributesToEncode;
+    }
+
+    private static void removeAttributeAndCacheForEncoding(final Map<String, Object> attributes,
+                                                           final Map<String, String> cachedAttributesToEncode,
+                                                           final String attributeName) {
+        val messageFormat = "Removed [{}] as an authentication attribute and cached it locally.";
+        val collection = (Collection<?>) attributes.remove(attributeName);
+        if (collection != null && collection.size() == 1) {
+            cachedAttributesToEncode.put(attributeName, collection.iterator().next().toString());
+            LOGGER.debug(messageFormat, attributeName);
+        }
     }
 }

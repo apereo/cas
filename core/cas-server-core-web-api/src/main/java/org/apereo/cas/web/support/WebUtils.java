@@ -20,6 +20,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.NonNull;
@@ -30,7 +31,6 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
@@ -445,7 +445,7 @@ public class WebUtils {
      * @param warnCookieGenerator the warn cookie generator
      * @param context             the context
      */
-    public static void putWarnCookieIfRequestParameterPresent(final CookieGenerator warnCookieGenerator, final RequestContext context) {
+    public static void putWarnCookieIfRequestParameterPresent(final CasCookieBuilder warnCookieGenerator, final RequestContext context) {
         if (warnCookieGenerator != null) {
             LOGGER.trace("Evaluating request to determine if warning cookie should be generated");
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
@@ -966,8 +966,8 @@ public class WebUtils {
      * @param context the context
      * @param client  the client
      */
-    public static void putDelegatedAuthenticationProviderDominant(final RequestContext context, final Object client) {
-        context.getFlowScope().put("delegatedAuthenticationProviderDominant", client);
+    public static void putDelegatedAuthenticationProviderPrimary(final RequestContext context, final Object client) {
+        context.getFlowScope().put("delegatedAuthenticationProviderPrimary", client);
     }
 
     /**
@@ -998,5 +998,35 @@ public class WebUtils {
      */
     public static void putCustomLoginFormFields(final RequestContext context, final Map customLoginFormFields) {
         context.getFlowScope().put("customLoginFormFields", customLoginFormFields);
+    }
+
+    /**
+     * Put initial http request post parameters.
+     *
+     * @param context the context
+     */
+    public static void putInitialHttpRequestPostParameters(final RequestContext context) {
+        val request = getHttpServletRequestFromExternalWebflowContext(context);
+        context.getFlashScope().put("httpRequestInitialPostParameters", request.getParameterMap());
+    }
+
+    /**
+     * Put existing single sign on session available.
+     *
+     * @param context the context
+     * @param value   the value
+     */
+    public static void putExistingSingleSignOnSessionAvailable(final RequestContext context, final boolean value) {
+        context.getFlowScope().put("existingSingleSignOnSessionAvailable", value);
+    }
+
+    /**
+     * Put existing single sign on session principal.
+     *
+     * @param context the context
+     * @param value   the value
+     */
+    public static void putExistingSingleSignOnSessionPrincipal(final RequestContext context, final Principal value) {
+        context.getFlashScope().put("existingSingleSignOnSessionPrincipal", value);
     }
 }

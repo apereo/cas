@@ -11,7 +11,7 @@ import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.device.DeviceTokenFactory;
 import org.apereo.cas.ticket.device.DeviceUserCode;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -46,10 +46,11 @@ public class OAuth20DeviceUserCodeApprovalEndpointController extends BaseOAuth20
                                                            final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
                                                            final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
                                                            final CasConfigurationProperties casProperties,
-                                                           final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
+                                                           final CasCookieBuilder ticketGrantingTicketCookieGenerator,
                                                            final DeviceTokenFactory deviceTokenFactory) {
         super(servicesManager, ticketRegistry, accessTokenFactory, principalFactory,
-            webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties, ticketGrantingTicketCookieGenerator);
+            webApplicationServiceServiceFactory, scopeToAttributesFilter,
+            casProperties, ticketGrantingTicketCookieGenerator);
         this.deviceTokenFactory = deviceTokenFactory;
     }
 

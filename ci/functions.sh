@@ -44,7 +44,7 @@ currentChangeSetAffectsDocumentation() {
 }
 
 currentChangeSetAffectsDependencies() {
-    currentChangeSetContains "\.(gradle|properties|java)"
+    currentChangeSetContains "\.(gradle|properties|java|yml)"
     return `(expr "$?" + 0)`
 }
 

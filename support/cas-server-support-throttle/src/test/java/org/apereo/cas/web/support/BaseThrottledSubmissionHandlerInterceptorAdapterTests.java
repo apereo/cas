@@ -75,13 +75,13 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
     @Test
     @SneakyThrows
     public void verifyThrottle() {
-        // Ensure that repeated logins BELOW threshold rate are allowed
+        /* Ensure that repeated logins BELOW threshold rate are allowed */
         failLoop(3, 1000, HttpStatus.SC_UNAUTHORIZED);
 
-        // Ensure that repeated logins ABOVE threshold rate are throttled
+        /* Ensure that repeated logins ABOVE threshold rate are throttled */
         failLoop(3, 200, HttpStatus.SC_LOCKED);
 
-        // Ensure that slowing down relieves throttle
+        /* Ensure that slowing down relieves throttle  */
         getThrottle().decrement();
         Thread.sleep(1000);
         failLoop(3, 1000, HttpStatus.SC_UNAUTHORIZED);
@@ -89,7 +89,7 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
 
     @SneakyThrows
     protected void failLoop(final int trials, final int period, final int expected) {
-        // Seed with something to compare against
+        /* Seed with something to compare against */
         loginUnsuccessfully("mog", "1.2.3.4");
 
         IntStream.range(0, trials).forEach(i -> {

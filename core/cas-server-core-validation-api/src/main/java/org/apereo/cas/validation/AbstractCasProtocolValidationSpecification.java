@@ -1,13 +1,15 @@
 package org.apereo.cas.validation;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.services.ServicesManager;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,13 +22,14 @@ import javax.servlet.http.HttpServletRequest;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Scope(value = "prototype")
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
 @Setter
-@NoArgsConstructor
+@RequiredArgsConstructor
 @AllArgsConstructor
 @Getter
 public abstract class AbstractCasProtocolValidationSpecification implements CasProtocolValidationSpecification {
+    private final ServicesManager servicesManager;
 
     /**
      * Denotes whether we should always authenticate or not.

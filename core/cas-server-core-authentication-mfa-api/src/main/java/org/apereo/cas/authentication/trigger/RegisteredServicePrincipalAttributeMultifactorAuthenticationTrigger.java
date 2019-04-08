@@ -42,7 +42,8 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
     @Override
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
                                                                    final RegisteredService registeredService,
-                                                                   final HttpServletRequest httpServletRequest, final Service service) {
+                                                                   final HttpServletRequest httpServletRequest,
+                                                                   final Service service) {
         if (authentication == null || registeredService == null) {
             LOGGER.debug("No authentication or service is available to determine event for principal");
             return Optional.empty();
@@ -50,7 +51,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
 
         val policy = registeredService.getMultifactorPolicy();
         if (policy == null || registeredService.getMultifactorPolicy().getMultifactorAuthenticationProviders().isEmpty()) {
-            LOGGER.debug("Authentication policy is absent or does not contain any multifactor authentication providers");
+            LOGGER.trace("Authentication policy is absent or does not contain any multifactor authentication providers");
             return Optional.empty();
         }
 

@@ -13,7 +13,7 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileEndpointCont
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +37,7 @@ public class OidcUserProfileEndpointController extends OAuth20UserProfileEndpoin
                                              final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
                                              final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
                                              final CasConfigurationProperties casProperties,
-                                             final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
+                                             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
                                              final OAuth20UserProfileViewRenderer userProfileViewRenderer,
                                              final OAuth20UserProfileDataCreator userProfileDataCreator) {
         super(servicesManager, ticketRegistry, accessTokenFactory,

@@ -12,7 +12,7 @@ import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilte
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -41,7 +41,7 @@ public class OidcWellKnownEndpointController extends BaseOAuth20Controller {
                                            final OidcServerDiscoverySettings discovery,
                                            final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
                                            final CasConfigurationProperties casProperties,
-                                           final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
+                                           final CasCookieBuilder ticketGrantingTicketCookieGenerator,
                                            final OidcWebFingerDiscoveryService webFingerDiscoveryService) {
         super(servicesManager, ticketRegistry, accessTokenFactory,
             principalFactory, webApplicationServiceServiceFactory,

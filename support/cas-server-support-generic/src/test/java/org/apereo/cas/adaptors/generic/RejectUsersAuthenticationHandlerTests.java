@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -28,7 +29,7 @@ public class RejectUsersAuthenticationHandlerTests {
         users.add("dima");
         users.add("bill");
 
-        this.authenticationHandler = new RejectUsersAuthenticationHandler("", null, null, users);
+        this.authenticationHandler = new RejectUsersAuthenticationHandler(StringUtils.EMPTY, null, null, users);
     }
 
     @Test

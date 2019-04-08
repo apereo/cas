@@ -47,20 +47,20 @@ public class GlibcCryptPasswordEncoderTests {
 
     private boolean testEncodingRoundtrip(final String algorithm) {
         val encoder = new GlibcCryptPasswordEncoder(algorithm, 0, null);
-        // Encode
+
         val passwordHash = encoder.encode(PASSWORD_CLEAR);
         LOGGER.debug("Password [{}] was encoded by algorithm [{}] to hash [{}]", PASSWORD_CLEAR, algorithm, passwordHash);
-        // Match
+
         val match = encoder.matches(PASSWORD_CLEAR, passwordHash);
-        LOGGER.debug("Does password [{}] match original password [{}]: {}", passwordHash, PASSWORD_CLEAR, match);
-        // Check
+        LOGGER.debug("Does password [{}] match original password [{}]: [{}]", passwordHash, PASSWORD_CLEAR, match);
+
         return match;
     }
 
     private boolean testMatchWithDifferentSalt(final String algorithm, final String encodedPassword) {
         val encoder = new GlibcCryptPasswordEncoder(algorithm, 0, null);
         val match = encoder.matches(PASSWORD_CLEAR, encodedPassword);
-        LOGGER.debug("Does password [{}] match original password [{}]: {}", encodedPassword, PASSWORD_CLEAR, match);
+        LOGGER.debug("Does password [{}] match original password [{}]: [{}]", encodedPassword, PASSWORD_CLEAR, match);
         return match;
     }
 

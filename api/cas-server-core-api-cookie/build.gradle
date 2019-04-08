@@ -1,0 +1,6 @@
+description = "Apereo CAS Cookie API"
+dependencies {
+    api project(":api:cas-server-core-api-authentication")
+    api project(":api:cas-server-core-api-util")
+    api project(":api:cas-server-core-api-webflow")
+}

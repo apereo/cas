@@ -4,6 +4,7 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.AbstractTicket;
@@ -49,7 +50,8 @@ import static org.junit.jupiter.api.Assumptions.*;
 @Slf4j
 @SpringBootTest(classes = {
     CasCoreTicketsConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class
+    CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketsSerializationConfiguration.class
 })
 public abstract class BaseTicketRegistryTests {
 
@@ -319,13 +321,13 @@ public abstract class BaseTicketRegistryTests {
     @RepeatedTest(2)
     public void verifyExpiration() {
         val authn = CoreAuthenticationTestUtils.getAuthentication();
-        LOGGER.trace("Adding ticket {}", ticketGrantingTicketId);
+        LOGGER.trace("Adding ticket [{}]", ticketGrantingTicketId);
         ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId, authn, new NeverExpiresExpirationPolicy()));
-        LOGGER.trace("Getting ticket {}", ticketGrantingTicketId);
+        LOGGER.trace("Getting ticket [{}]", ticketGrantingTicketId);
         val tgt = ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
         assertNotNull(tgt, "Ticket-granting ticket " + ticketGrantingTicketId + " cannot be fetched");
         val service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
-        LOGGER.trace("Granting service ticket {}", serviceTicketId);
+        LOGGER.trace("Granting service ticket [{}]", serviceTicketId);
         val ticket = (AbstractTicket) tgt.grantServiceTicket(serviceTicketId, service,
             new NeverExpiresExpirationPolicy(), false, true);
         assertNotNull(ticket, "Service ticket cannot be null");

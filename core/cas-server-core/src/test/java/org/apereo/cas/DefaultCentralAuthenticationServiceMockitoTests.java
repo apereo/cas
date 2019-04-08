@@ -153,7 +153,10 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
         when(tgtMock.getProxiedBy()).thenReturn(getService("proxiedBy"));
 
         val authnListMock = mock(List.class);
-        // Size is required to be 2, so that we can simulate proxying capabilities
+        /*
+         * Size is required to be 2, so that
+         * we can simulate proxying capabilities
+         */
         when(authnListMock.size()).thenReturn(2);
         when(authnListMock.toArray()).thenReturn(new Object[]{this.authentication, this.authentication});
         when(authnListMock.get(anyInt())).thenReturn(this.authentication);
@@ -189,13 +192,16 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
     private static TicketFactory getTicketFactory() {
         val factory = new DefaultTicketFactory();
         factory.addTicketFactory(ProxyGrantingTicket.class,
-            new DefaultProxyGrantingTicketFactory(null, null, null));
+            new DefaultProxyGrantingTicketFactory(null,
+                null, CipherExecutor.noOpOfStringToString()));
         factory.addTicketFactory(TicketGrantingTicket.class,
-            new DefaultTicketGrantingTicketFactory(null, null, null));
+            new DefaultTicketGrantingTicketFactory(null,
+                null, CipherExecutor.noOpOfSerializableToString()));
         factory.addTicketFactory(ServiceTicket.class,
-            new DefaultServiceTicketFactory(new NeverExpiresExpirationPolicy(), new HashMap<>(0), false, null));
+            new DefaultServiceTicketFactory(new NeverExpiresExpirationPolicy(), new HashMap<>(0), false, CipherExecutor.noOpOfStringToString(), mock(ServicesManager.class)));
         factory.addTicketFactory(ProxyTicket.class,
-            new DefaultProxyTicketFactory(null, new HashMap<>(0), null, true));
+            new DefaultProxyTicketFactory(null, new HashMap<>(0),
+                CipherExecutor.noOpOfStringToString(), true, mock(ServicesManager.class)));
         factory.addTicketFactory(TransientSessionTicket.class,
             new DefaultTransientSessionTicketFactory(new NeverExpiresExpirationPolicy()));
         return factory;

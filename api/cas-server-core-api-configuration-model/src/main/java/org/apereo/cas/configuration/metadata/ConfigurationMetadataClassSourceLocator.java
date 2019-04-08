@@ -25,7 +25,6 @@ public class ConfigurationMetadataClassSourceLocator {
 
     private static ConfigurationMetadataClassSourceLocator INSTANCE;
 
-
     private final Map<String, Class> cachedPropertiesClasses = new HashMap<>();
 
     /**
@@ -66,13 +65,13 @@ public class ConfigurationMetadataClassSourceLocator {
         val packageName = ConfigurationMetadataGenerator.class.getPackage().getName();
         val reflections =
             new Reflections(new ConfigurationBuilder()
-                .filterInputsBy(s -> s.contains(type.getNameAsString()))
+                .filterInputsBy(s -> s != null && s.contains(type.getNameAsString()))
                 .setUrls(ClasspathHelper.forPackage(packageName))
                 .setScanners(new TypeElementsScanner()
                         .includeFields(false)
                         .includeMethods(false)
                         .includeAnnotations(false)
-                        .filterResultsBy(s -> s.endsWith(type.getNameAsString())),
+                        .filterResultsBy(s -> s != null && s.endsWith(type.getNameAsString())),
                     new SubTypesScanner(false)));
         val clz = reflections.getSubTypesOf(Serializable.class).stream()
             .filter(c -> c.getSimpleName().equalsIgnoreCase(type.getNameAsString()))

@@ -20,7 +20,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.gen.RandomStringGenerator;
 import org.apereo.cas.util.serialization.StringSerializer;
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -60,7 +60,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
                                                            final RandomStringGenerator clientSecretGenerator,
                                                            final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
                                                            final CasConfigurationProperties casProperties,
-                                                           final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
+                                                           final CasCookieBuilder ticketGrantingTicketCookieGenerator) {
         super(servicesManager, ticketRegistry, accessTokenFactory,
             principalFactory, webApplicationServiceServiceFactory,
             scopeToAttributesFilter, casProperties, ticketGrantingTicketCookieGenerator);

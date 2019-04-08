@@ -15,8 +15,8 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRelyingPartyTokenProducer;
@@ -58,7 +58,7 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
                                                          final HttpClient httpClient,
                                                          final SecurityTokenTicketFactory securityTokenTicketFactory,
                                                          final TicketRegistry ticketRegistry,
-                                                         final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
+                                                         final CasCookieBuilder ticketGrantingTicketCookieGenerator,
                                                          final TicketRegistrySupport ticketRegistrySupport,
                                                          final TicketValidator ticketValidator,
                                                          final Service callbackService,

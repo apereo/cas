@@ -37,22 +37,13 @@
                     </thead>
                     <tbody>
                     <tr th:each="attribute : ${principal.attributes}">
-                        <td><code><span th:utext="${attribute.key}"/></code></td>
-                        <td><code><span th:utext="${attribute.value}"/></code></td>
+                        <td class="col-auto"><code><span th:utext="${attribute.key}"/></code></td>
+                        <td class="col-auto"><code><span th:utext="${attribute.value}"/></code></td>
                     </tr>
                     </tbody>
                 </table>
             </div>
-
-
         </div>
-
-        <div id="notices" class="col-md mt-3 mt-md-0">
-            <div th:replace="fragments/cas-resources-list :: cas-resource-list">
-                <a href="fragments/cas-resources-list.html">cas-resource</a> list fragment
-            </div>
-        </div>
-
 </main>
 </body>
 </html>

@@ -21,6 +21,7 @@ import com.esotericsoftware.kryo.KryoException;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -89,7 +90,7 @@ public class CasKryoTranscoderTests {
         bldr.addCredential(new BasicCredentialMetaData(userPassCredential));
         bldr.addFailure("error", new AccountNotFoundException());
         bldr.addSuccess("authn", new DefaultAuthenticationHandlerExecutionResult(
-            new AcceptUsersAuthenticationHandler(""),
+            new AcceptUsersAuthenticationHandler(StringUtils.EMPTY),
             new BasicCredentialMetaData(userPassCredential)));
 
         val authentication = bldr.build();
@@ -241,7 +242,7 @@ public class CasKryoTranscoderTests {
         val tgt = new MockTicketGrantingTicket(USERNAME);
         val expectedST = new MockServiceTicket(ST_ID, RegisteredServiceTestUtils.getService(), tgt);
         val step = new MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy(1, 600);
-        expectedST.setExpiration(step);
+        expectedST.setExpirationPolicy(step);
         val result = transcoder.encode(expectedST);
         assertEquals(expectedST, transcoder.decode(result));
         assertEquals(expectedST, transcoder.decode(result));
@@ -253,7 +254,7 @@ public class CasKryoTranscoderTests {
         val expectedST = new MockServiceTicket(ST_ID, RegisteredServiceTestUtils.getService(), tgt);
 
         val step = new UnregisteredServiceTicketExpirationPolicy(1, 600);
-        expectedST.setExpiration(step);
+        expectedST.setExpirationPolicy(step);
         try {
             transcoder.encode(expectedST);
             throw new AssertionError("Unregistered class is not allowed by Kryo");

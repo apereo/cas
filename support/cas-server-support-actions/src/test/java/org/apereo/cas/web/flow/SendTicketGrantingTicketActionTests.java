@@ -1,7 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -39,7 +39,7 @@ public class SendTicketGrantingTicketActionTests extends AbstractWebflowActionsT
 
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")
-    private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    private CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
     private MockRequestContext context;
 

@@ -23,6 +23,15 @@ public interface TransientSessionTicketFactory extends TicketFactory {
     TransientSessionTicket create(Service service, Map<String, Serializable> properties);
 
     /**
+     * Create transient session ticket.
+     *
+     * @param id         the id
+     * @param properties the properties
+     * @return the transient session ticket
+     */
+    TransientSessionTicket create(String id, Map<String, Serializable> properties);
+
+    /**
      * Create delegated authentication request ticket.
      *
      * @param service the service
@@ -30,5 +39,15 @@ public interface TransientSessionTicketFactory extends TicketFactory {
      */
     default TransientSessionTicket create(final Service service) {
         return create(service, new LinkedHashMap<>());
+    }
+
+    /**
+     * Normalize ticket id string.
+     *
+     * @param id the id
+     * @return the string
+     */
+    static String normalizeTicketId(final String id) {
+        return TransientSessionTicket.PREFIX + '-' + id;
     }
 }

@@ -261,15 +261,22 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      */
     protected String extractPrincipalId(final Credential credential, final Optional<Principal> currentPrincipal) {
         LOGGER.debug("Extracting credential id based on existing credential [{}]", credential);
+        val id = credential.getId();
         if (currentPrincipal != null && currentPrincipal.isPresent()) {
             val principal = currentPrincipal.get();
-            LOGGER.debug("Principal is currently resolved is [{}]", principal);
+            LOGGER.debug("Principal is currently resolved as [{}]", principal);
             if (useCurrentPrincipalId) {
                 LOGGER.debug("Using the existing resolved principal id [{}]", principal.getId());
                 return principal.getId();
+            } else {
+                LOGGER.debug("CAS will NOT be using the identifier from the resolved principal [{}] as it's not "
+                    + "configured to use the currently-resolved principal id and will fall back onto using the identifier "
+                    + "for the credential, that is [{}], for principal resolution", principal, id);
             }
+        } else {
+            LOGGER.debug("No principal is currently resolved and available. Falling back onto using the identifier "
+                + " for the credential, that is [{}], for principal resolution", id);
         }
-        val id = credential.getId();
         LOGGER.debug("Extracted principal id [{}]", id);
         return id;
     }

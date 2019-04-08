@@ -40,6 +40,19 @@ public class GlibcCryptPasswordEncoder implements PasswordEncoder {
         return Crypt.crypt(password.toString(), generateCryptSalt());
     }
 
+    /**
+     * Special note on DES UnixCrypt:
+     * In DES UnixCrypt, so first two characters of the encoded password are the salt.
+     * <p>
+     * When you change your password, the {@code /bin/passwd} program selects a salt based on the time of day.
+     * The salt is converted into a two-character string and is stored in the {@code /etc/passwd} file along with the
+     * encrypted {@code "password."[10]} In this manner, when you type your password at login time, the same salt is used again.
+     * UNIX stores the salt as the first two characters of the encrypted password.
+     *
+     * @param rawPassword     the raw password as it was provided
+     * @param encodedPassword the encoded password.
+     * @return true/false
+     */
     @Override
     public boolean matches(final CharSequence rawPassword, final String encodedPassword) {
         if (StringUtils.isBlank(encodedPassword)) {
@@ -49,11 +62,9 @@ public class GlibcCryptPasswordEncoder implements PasswordEncoder {
         var providedSalt = StringUtils.EMPTY;
         val lastDollarIndex = encodedPassword.lastIndexOf('$');
         if (lastDollarIndex == -1) {
-            // DES UnixCrypt, so first two letters are the salt
             providedSalt = encodedPassword.substring(0, 2);
             LOGGER.debug("Assuming DES UnixCrypt as no delimiter could be found in the encoded password provided");
         } else {
-            // Other algorithms
             providedSalt = encodedPassword.substring(0, lastDollarIndex);
             LOGGER.debug("Encoded password uses algorithm [{}]", providedSalt.charAt(1));
         }
@@ -73,17 +84,17 @@ public class GlibcCryptPasswordEncoder implements PasswordEncoder {
             LOGGER.debug("Encoding with MD5 algorithm");
         } else if ("5".equals(this.encodingAlgorithm) || "SHA-256".equals(this.encodingAlgorithm.toUpperCase())) {
             cryptSalt.append("$5$rounds=").append(this.strength).append('$');
-            LOGGER.debug("Encoding with SHA-256 algorithm and {} rounds", this.strength);
+            LOGGER.debug("Encoding with SHA-256 algorithm and [{}] rounds", this.strength);
         } else if ("6".equals(this.encodingAlgorithm) || "SHA-512".equals(this.encodingAlgorithm.toUpperCase())) {
             cryptSalt.append("$6$rounds=").append(this.strength).append('$');
-            LOGGER.debug("Encoding with SHA-512 algorithm and {} rounds", this.strength);
+            LOGGER.debug("Encoding with SHA-512 algorithm and [{}] rounds", this.strength);
         } else {
             cryptSalt.append(this.encodingAlgorithm);
             LOGGER.debug("Encoding with DES UnixCrypt algorithm as no indicator for another algorithm was found.");
         }
 
         if (StringUtils.isBlank(this.secret)) {
-            LOGGER.debug("No secret was found. Generating a salt with length {}", SALT_LENGTH);
+            LOGGER.debug("No secret was found. Generating a salt with length [{}]", SALT_LENGTH);
             val keygen = new HexRandomStringGenerator(SALT_LENGTH);
             this.secret = keygen.getNewString();
         } else {

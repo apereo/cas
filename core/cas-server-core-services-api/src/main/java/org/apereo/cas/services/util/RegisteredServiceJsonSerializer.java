@@ -37,7 +37,7 @@ public class RegisteredServiceJsonSerializer extends AbstractJacksonBackedString
     }
 
     @Override
-    protected Class<RegisteredService> getTypeToSerialize() {
+    public Class<RegisteredService> getTypeToSerialize() {
         return RegisteredService.class;
     }
 

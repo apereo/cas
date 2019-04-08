@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 
 /**
@@ -17,10 +18,11 @@ public interface SamlRegisteredServiceCachingMetadataResolver {
     /**
      * Resolve chaining metadata resolver.
      *
-     * @param service the service
+     * @param service     the service
+     * @param criteriaSet the criteria set
      * @return the chaining metadata resolver
      */
-    MetadataResolver resolve(SamlRegisteredService service);
+    MetadataResolver resolve(SamlRegisteredService service, CriteriaSet criteriaSet);
 
     /**
      * Invalid and clean the result of all previous operations.
@@ -36,7 +38,8 @@ public interface SamlRegisteredServiceCachingMetadataResolver {
      * resolution of the metadata for all follow-up requests that apply to the given service (relying party),
      * disregarding any and all cached results.
      *
-     * @param service the service
+     * @param service     the service
+     * @param criteriaSet the criteria set
      */
-    void invalidate(SamlRegisteredService service);
+    void invalidate(SamlRegisteredService service, CriteriaSet criteriaSet);
 }

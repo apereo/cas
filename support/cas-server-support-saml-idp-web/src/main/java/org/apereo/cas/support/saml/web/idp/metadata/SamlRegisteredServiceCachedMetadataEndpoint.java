@@ -68,7 +68,10 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasActuator
             cachingMetadataResolver.invalidate();
         } else {
             val registeredService = findRegisteredService(serviceId);
-            cachingMetadataResolver.invalidate(registeredService);
+            val criteriaSet = new CriteriaSet();
+            criteriaSet.add(new EntityIdCriterion(serviceId));
+            criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
+            cachingMetadataResolver.invalidate(registeredService, criteriaSet);
         }
     }
 
@@ -83,11 +86,11 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasActuator
     public Map<String, Object> getCachedMetadataObject(final String serviceId, @Nullable final String entityId) {
         try {
             val registeredService = findRegisteredService(serviceId);
-            val metadataResolver = cachingMetadataResolver.resolve(registeredService);
-            val criteriaSet = new CriteriaSet();
             val issuer = StringUtils.defaultIfBlank(entityId, registeredService.getServiceId());
+            val criteriaSet = new CriteriaSet();
             criteriaSet.add(new EntityIdCriterion(issuer));
             criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
+            val metadataResolver = cachingMetadataResolver.resolve(registeredService, criteriaSet);
             val iteration = metadataResolver.resolve(criteriaSet).spliterator();
             return StreamSupport.stream(iteration, false)
                 .map(entity -> Pair.of(entity.getEntityID(), SamlUtils.transformSamlObject(openSamlConfigBean, entity).toString()))

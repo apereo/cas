@@ -7,14 +7,14 @@ import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
-import org.apereo.cas.validation.RequestedContextValidator;
+import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.AbstractServiceValidateController;
+import org.apereo.cas.web.ServiceValidationViewFactory;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,14 +34,15 @@ public class SamlValidateController extends AbstractServiceValidateController {
                                   final CentralAuthenticationService centralAuthenticationService,
                                   final ProxyHandler proxyHandler,
                                   final ArgumentExtractor argumentExtractor,
-                                  final RequestedContextValidator requestedContextValidator,
-                                  final View jsonView, final View successView, final View failureView,
+                                  final RequestedAuthenticationContextValidator requestedContextValidator,
                                   final String authnContextAttribute,
                                   final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers,
-                                  final boolean renewEnabled) {
+                                  final boolean renewEnabled,
+                                  final ServiceValidationViewFactory validationViewFactory) {
         super(CollectionUtils.wrapSet(validationSpecification), validationAuthorizers,
             authenticationSystemSupport, servicesManager, centralAuthenticationService, proxyHandler,
-            successView, failureView, argumentExtractor, requestedContextValidator, jsonView, authnContextAttribute, renewEnabled);
+            argumentExtractor, requestedContextValidator,
+            authnContextAttribute, renewEnabled, validationViewFactory);
     }
 
     /**

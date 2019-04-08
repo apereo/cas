@@ -12,6 +12,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -49,9 +50,15 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
         LOGGER.debug("Original principal attributes available for selection of username attribute [{}] are [{}].", this.usernameAttribute, originalPrincipalAttributes);
         val releasePolicyAttributes = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
         releasePolicyAttributes.putAll(getPrincipalAttributesFromReleasePolicy(principal, service, registeredService));
-        LOGGER.debug("Attributes resolved by the release policy available for selection of username attribute [{}] are [{}].", this.usernameAttribute, releasePolicyAttributes);
-        if (releasePolicyAttributes.containsKey(this.usernameAttribute)) {
-            LOGGER.debug("Attribute release policy for registered service [{}] contains an attribute for [{}]", registeredService.getServiceId(), this.usernameAttribute);
+        LOGGER.debug("Attributes resolved by the release policy available for selection of username attribute [{}] are [{}].",
+            this.usernameAttribute, releasePolicyAttributes);
+
+        if (StringUtils.isBlank(this.usernameAttribute)) {
+            LOGGER.warn("No username attribute is defined for service [{}]. CAS will fall back onto using the default principal id. "
+                + "This is likely a mistake in the configuration of the registered service definition.", registeredService.getName());
+        } else if (releasePolicyAttributes.containsKey(this.usernameAttribute)) {
+            LOGGER.debug("Attribute release policy for registered service [{}] contains an attribute for [{}]",
+                registeredService.getServiceId(), this.usernameAttribute);
             val value = releasePolicyAttributes.get(this.usernameAttribute);
             principalId = CollectionUtils.wrap(value).get(0).toString();
         } else if (originalPrincipalAttributes.containsKey(this.usernameAttribute)) {

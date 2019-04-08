@@ -27,10 +27,9 @@ echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-gradleBuild="$gradleBuild javadoc -x test -x check -DskipNpmLint=true \
-     -DskipGradleLint=true -DskipSass=true \
-     -DskipNestedConfigMetadataGen=true --parallel \
-     -DskipNodeModulesCleanUp=true -DskipNpmCache=true "
+gradleBuild="$gradleBuild javadoc -x test -x check \
+     -DskipGradleLint=true \
+     -DskipNestedConfigMetadataGen=true --parallel "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
     gradleBuild="$gradleBuild -DshowStandardStreams=true "

@@ -62,7 +62,7 @@ public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLo
             })
             .map(r -> {
                 LOGGER.trace("Metadata resolver [{}] has started to process metadata for [{}]", r.getName(), service.getName());
-                return r.resolve(service);
+                return r.resolve(service, cacheKey.getCriteriaSet());
             })
             .forEach(metadataResolvers::addAll);
 

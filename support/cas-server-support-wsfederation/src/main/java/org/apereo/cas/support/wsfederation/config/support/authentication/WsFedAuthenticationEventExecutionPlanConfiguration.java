@@ -16,7 +16,8 @@ import org.apereo.cas.support.wsfederation.authentication.handler.support.WsFede
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredentialsToPrincipalResolver;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieCipherExecutor;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieGenerator;
-import org.apereo.cas.web.support.DefaultCasCookieValueManager;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -97,7 +98,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
         return WsFederationAttributeMutator.noOp();
     }
 
-    private static WsFederationCookieGenerator getCookieGeneratorForWsFederationConfig(final WsFederationDelegationProperties wsfed) {
+    private static CasCookieBuilder getCookieGeneratorForWsFederationConfig(final WsFederationDelegationProperties wsfed) {
         val cookie = wsfed.getCookie();
         val cipher = getCipherExecutorForWsFederationConfig(cookie);
         return new WsFederationCookieGenerator(new DefaultCasCookieValueManager(cipher, cookie), cookie);

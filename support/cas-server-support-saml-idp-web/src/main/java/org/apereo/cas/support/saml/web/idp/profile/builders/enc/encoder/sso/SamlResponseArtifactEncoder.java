@@ -4,7 +4,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSe
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.BaseHttpServletAwareSamlObjectEncoder;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.val;
 import org.apache.velocity.app.VelocityEngine;
@@ -32,7 +32,7 @@ public class SamlResponseArtifactEncoder extends BaseHttpServletAwareSamlObjectE
     private final SamlArtifactTicketFactory samlArtifactTicketFactory;
     private final RequestAbstractType authnRequest;
     private final SAMLArtifactMap samlArtifactMap;
-    private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
     public SamlResponseArtifactEncoder(final VelocityEngine velocityEngineFactory,
                                        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
@@ -40,7 +40,7 @@ public class SamlResponseArtifactEncoder extends BaseHttpServletAwareSamlObjectE
                                        final HttpServletResponse httpResponse, final RequestAbstractType authnRequest,
                                        final TicketRegistry ticketRegistry,
                                        final SamlArtifactTicketFactory samlArtifactTicketFactory,
-                                       final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
+                                       final CasCookieBuilder ticketGrantingTicketCookieGenerator,
                                        final SAMLArtifactMap samlArtifactMap) {
         super(velocityEngineFactory, adaptor, httpResponse, httpRequest);
         this.ticketRegistry = ticketRegistry;

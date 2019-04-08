@@ -50,6 +50,8 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
 
     private final SPSSODescriptor ssoDescriptor;
     private final EntityDescriptor entityDescriptor;
+
+    @Getter
     private final MetadataResolver metadataResolver;
 
     /**
@@ -85,10 +87,10 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
                                                                                     final SamlRegisteredService registeredService,
                                                                                     final String entityID,
                                                                                     final CriteriaSet criterions) {
-        LOGGER.debug("Adapting SAML metadata for CAS service [{}] issued by [{}]", registeredService.getName(), entityID);
+        LOGGER.trace("Adapting SAML metadata for CAS service [{}] issued by [{}]", registeredService.getName(), entityID);
         criterions.add(new EntityIdCriterion(entityID), true);
         LOGGER.debug("Locating metadata for entityID [{}] by attempting to run through the metadata chain...", entityID);
-        val chainingMetadataResolver = resolver.resolve(registeredService);
+        val chainingMetadataResolver = resolver.resolve(registeredService, criterions);
         LOGGER.info("Resolved metadata chain from [{}]. Filtering the chain by entity ID [{}]",
             registeredService.getMetadataLocation(), entityID);
 
@@ -259,9 +261,6 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
         return getAssertionConsumerService(SAMLConstants.SAML2_ARTIFACT_BINDING_URI);
     }
 
-    public MetadataResolver getMetadataResolver() {
-        return this.metadataResolver;
-    }
 
     /**
      * Contains assertion consumer services ?

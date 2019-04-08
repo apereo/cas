@@ -37,7 +37,6 @@ public class TicketGrantingTicketImplTests {
 
     @BeforeEach
     public void initialize() {
-        // needed in order to serialize ZonedDateTime class
         mapper = Jackson2ObjectMapperBuilder.json()
             .featuresToDisable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
             .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)

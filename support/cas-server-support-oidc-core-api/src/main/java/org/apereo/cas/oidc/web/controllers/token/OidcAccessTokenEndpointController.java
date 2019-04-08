@@ -16,7 +16,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20Acc
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,7 +43,7 @@ public class OidcAccessTokenEndpointController extends OAuth20AccessTokenEndpoin
                                              final OAuth20AccessTokenResponseGenerator accessTokenResponseGenerator,
                                              final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
                                              final CasConfigurationProperties casProperties,
-                                             final CookieRetrievingCookieGenerator cookieGenerator,
+                                             final CasCookieBuilder cookieGenerator,
                                              final ExpirationPolicy accessTokenExpirationPolicy,
                                              final ExpirationPolicy deviceTokenExpirationPolicy,
                                              final Collection<OAuth20TokenRequestValidator> accessTokenGrantRequestValidators,

@@ -13,7 +13,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 
@@ -45,7 +45,7 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
         final HttpClient httpClient,
         final SecurityTokenTicketFactory securityTokenTicketFactory,
         final TicketRegistry ticketRegistry,
-        final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
+        final CasCookieBuilder ticketGrantingTicketCookieGenerator,
         final TicketRegistrySupport ticketRegistrySupport,
         final Service callbackService) {
         super(servicesManager,

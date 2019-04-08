@@ -16,6 +16,7 @@ import org.apereo.cas.util.Pac4jUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.pac4j.core.context.session.J2ESessionStore;
 import org.pac4j.core.profile.AnonymousProfile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,7 +33,8 @@ public class AccessTokenDeviceCodeResponseRequestExtractor extends BaseAccessTok
     private final OAuth20CasAuthenticationBuilder authenticationBuilder;
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
 
-    public AccessTokenDeviceCodeResponseRequestExtractor(final ServicesManager servicesManager, final TicketRegistry ticketRegistry,
+    public AccessTokenDeviceCodeResponseRequestExtractor(final ServicesManager servicesManager,
+                                                         final TicketRegistry ticketRegistry,
                                                          final CentralAuthenticationService centralAuthenticationService,
                                                          final OAuthProperties oAuthProperties,
                                                          final OAuth20CasAuthenticationBuilder authenticationBuilder,
@@ -52,7 +54,7 @@ public class AccessTokenDeviceCodeResponseRequestExtractor extends BaseAccessTok
 
         val deviceCode = request.getParameter(OAuth20Constants.CODE);
 
-        val context = Pac4jUtils.getPac4jJ2EContext(request, response);
+        val context = Pac4jUtils.getPac4jJ2EContext(request, response, new J2ESessionStore());
         val service = this.authenticationBuilder.buildService(registeredService, context, false);
 
         LOGGER.debug("Authenticating the OAuth request indicated by [{}]", service);

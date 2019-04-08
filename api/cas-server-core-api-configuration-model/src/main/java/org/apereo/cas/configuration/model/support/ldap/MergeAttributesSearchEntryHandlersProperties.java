@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,5 +27,5 @@ public class MergeAttributesSearchEntryHandlersProperties implements Serializabl
     /**
      * The Attribute names.
      */
-    private List<String> attributeNames;
+    private List<String> attributeNames = new ArrayList<>();
 }

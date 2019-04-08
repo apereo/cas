@@ -45,6 +45,11 @@ import java.nio.file.Files;
 @Getter
 @RequiredArgsConstructor
 public abstract class AbstractJacksonBackedStringSerializer<T> implements StringSerializer<T> {
+    /**
+     * Minimal pretty printer instance.
+     */
+    protected static final PrettyPrinter MINIMAL_PRETTY_PRINTER = new MinimalPrettyPrinter();
+
     private static final long serialVersionUID = -8415599777321259365L;
 
     private final ObjectMapper objectMapper;
@@ -214,13 +219,6 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     protected JsonFactory getJsonFactory() {
         return null;
     }
-
-    /**
-     * Gets type to serialize.
-     *
-     * @return the type to serialize
-     */
-    protected abstract Class<T> getTypeToSerialize();
 
     /**
      * Read object from json.

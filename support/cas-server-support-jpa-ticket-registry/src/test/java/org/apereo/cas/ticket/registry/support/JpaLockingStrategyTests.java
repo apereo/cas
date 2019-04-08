@@ -283,7 +283,6 @@ public class JpaLockingStrategyTests {
                     jpaLock.entityManager.flush();
                     LOGGER.debug("Performed [{}] on [{}]", method.getName(), jpaLock);
                     return result;
-                    // Force result of transaction to database
                 } catch (final Exception e) {
                     throw new IllegalArgumentException("Transactional method invocation failed.", e);
                 }
