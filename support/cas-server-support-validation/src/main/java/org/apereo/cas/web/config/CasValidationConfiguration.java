@@ -249,15 +249,17 @@ public class CasValidationConfiguration {
 
         viewFactory.registerView(ServiceValidationViewTypes.JSON, cas3ServiceJsonView());
 
-        viewFactory.registerView(V3ServiceValidateController.class, Pair.of(cas3ServiceSuccessView(), cas3ServiceFailureView.getIfAvailable()));
-        viewFactory.registerView(V3ProxyValidateController.class, Pair.of(cas3ServiceSuccessView(), cas3ServiceFailureView.getIfAvailable()));
+        val successViewV3 = cas3ServiceSuccessView();
+        viewFactory.registerView(V3ServiceValidateController.class, Pair.of(successViewV3, cas3ServiceFailureView.getIfAvailable()));
+        viewFactory.registerView(V3ProxyValidateController.class, Pair.of(successViewV3, cas3ServiceFailureView.getIfAvailable()));
 
         if (casProperties.getView().getCas2().isV3ForwardCompatible()) {
-            viewFactory.registerView(ProxyValidateController.class, Pair.of(cas3ServiceSuccessView(), cas3ServiceFailureView.getIfAvailable()));
-            viewFactory.registerView(ServiceValidateController.class, Pair.of(cas3ServiceSuccessView(), cas3ServiceFailureView.getIfAvailable()));
+            viewFactory.registerView(ProxyValidateController.class, Pair.of(successViewV3, cas3ServiceFailureView.getIfAvailable()));
+            viewFactory.registerView(ServiceValidateController.class, Pair.of(successViewV3, cas3ServiceFailureView.getIfAvailable()));
         } else {
-            viewFactory.registerView(ProxyValidateController.class, Pair.of(cas2ServiceSuccessView(), cas2ServiceFailureView.getIfAvailable()));
-            viewFactory.registerView(ServiceValidateController.class, Pair.of(cas2ServiceSuccessView(), cas2ServiceFailureView.getIfAvailable()));
+            val successViewV2 = cas2ServiceSuccessView();
+            viewFactory.registerView(ProxyValidateController.class, Pair.of(successViewV2, cas2ServiceFailureView.getIfAvailable()));
+            viewFactory.registerView(ServiceValidateController.class, Pair.of(successViewV2, cas2ServiceFailureView.getIfAvailable()));
         }
 
         viewFactory.registerView(LegacyValidateController.class, Pair.of(cas1ServiceSuccessView(), cas1ServiceFailureView()));
