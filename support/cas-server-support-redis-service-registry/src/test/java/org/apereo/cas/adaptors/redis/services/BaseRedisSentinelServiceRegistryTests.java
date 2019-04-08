@@ -4,16 +4,13 @@ import org.apereo.cas.config.RedisServiceRegistryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.ServiceRegistry;
-import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
 
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
@@ -24,7 +21,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  */
 @SpringBootTest(classes = {
     RedisServiceRegistryConfiguration.class,
-    BaseRedisSentinelServiceRegistryTests.SentinelServerServiceRegistryTestConfiguration.class,
     RefreshAutoConfiguration.class
 })
 @EnableScheduling
@@ -38,22 +34,5 @@ public abstract class BaseRedisSentinelServiceRegistryTests extends AbstractServ
     @Override
     public ServiceRegistry getNewServiceRegistry() {
         return this.dao;
-    }
-
-
-    @TestConfiguration
-    public static class SentinelServerServiceRegistryTestConfiguration {
-        /**
-         * Introduce an artificial delay on save operations
-         * for tests to allow redis to catch up with the transaction
-         * and let CAS proceed with the next step and lookup.
-         *
-         * @param event the event
-         * @throws Exception the exception
-         */
-        @EventListener
-        public void onCasRegisteredServiceSaved(final CasRegisteredServiceSavedEvent event) throws Exception {
-            Thread.sleep(3000);
-        }
     }
 }

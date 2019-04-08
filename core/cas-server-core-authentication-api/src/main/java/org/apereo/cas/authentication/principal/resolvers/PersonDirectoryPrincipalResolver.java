@@ -183,11 +183,11 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
             LOGGER.debug("Retrieved [{}] attribute(s) from the repository", attributes.size());
             val pair = convertPersonAttributesToPrincipal(principalId, attributes);
             val principal = this.principalFactory.createPrincipal(pair.getKey(), pair.getValue());
-            LOGGER.info("Final resolved principal by [{}] is [{}]", getName(), principal);
+            LOGGER.debug("Final resolved principal by [{}] is [{}]", getName(), principal);
             return principal;
         }
         val principal = this.principalFactory.createPrincipal(principalId);
-        LOGGER.info("Final resolved principal by [{}] without resolving attributes is [{}]", getName(), principal);
+        LOGGER.debug("Final resolved principal by [{}] without resolving attributes is [{}]", getName(), principal);
         return principal;
     }
 
