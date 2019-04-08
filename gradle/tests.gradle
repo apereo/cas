@@ -210,7 +210,7 @@ tasks.withType(Test) {
     ignoreFailures = Boolean.getBoolean("ignoreTestFailures")
 
     doFirst {
-        maxParallelForks = project.ext.properties.get("maxParallelForksForTests", 2)
+        maxParallelForks = project.ext.properties.get("maxParallelForksForTests", 4)
         if (maxParallelForks != 2) {
             println "Maximum number of parallel forks is set to ${maxParallelForks}"
         }
