@@ -13,8 +13,8 @@ ext["infinispanVersion"] = "9.4.1.Final"
 
 ext["springVersion"] = "5.1.6.RELEASE"
 ext["springBootTomcatVersion"] = "9.0.17"
-ext["springSessionVersion"] = "2.1.4.RELEASE"
-ext["springSessionMongoVersion"] = "2.1.2.RELEASE"
+ext["springSessionVersion"] = "2.1.5.RELEASE"
+ext["springSessionMongoVersion"] = "2.1.3.RELEASE"
 
 ext["jacksonVersion"] = "2.9.8"
 ext["thymeleafVersion"] = "3.0.11.RELEASE"
@@ -31,7 +31,7 @@ ext["couchbaseVersion"] = "2.7.4"
 
 ext["mysqlVersion"] = "8.0.15"
 ext["postgresqlVersion"] = "42.2.5"
-ext["mariaDbVersion"] = "2.4.0"
+ext["mariaDbVersion"] = "2.4.1"
 ext["jtdsVersion"] = "1.3.1"
 ext["mssqlServerVersion"] = "7.2.1.jre11"
 

@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.configurer;
 
-import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
 import org.apereo.cas.authentication.credential.RememberMeUsernamePasswordCredential;
@@ -16,7 +15,6 @@ import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.val;
@@ -442,7 +440,7 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
         createWarnDecisionState(flow);
         createGatewayRequestCheckDecisionState(flow);
         createHasServiceCheckDecisionState(flow);
-        createRenewCheckDecisionState(flow);
+        createRenewCheckActionState(flow);
     }
 
     /**
@@ -507,22 +505,15 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
     }
 
     /**
-     * Create renew check decision state.
+     * Create renew check state.
      *
      * @param flow the flow
      */
-    protected void createRenewCheckDecisionState(final Flow flow) {
-        val renewTestCondition = FunctionUtils.doIf(casProperties.getSso().isRenewAuthnEnabled(),
-            () -> {
-                val renewParam = "requestParameters." + CasProtocolConstants.PARAMETER_RENEW;
-                return renewParam + " != '' and " + renewParam + " != null";
-            },
-            () -> "true").get();
-
-        createDecisionState(flow, CasWebflowConstants.STATE_ID_RENEW_REQUEST_CHECK,
-            renewTestCondition,
-            CasWebflowConstants.STATE_ID_SERVICE_AUTHZ_CHECK,
-            CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET);
+    protected void createRenewCheckActionState(final Flow flow) {
+        val action = createActionState(flow, CasWebflowConstants.STATE_ID_RENEW_REQUEST_CHECK, CasWebflowConstants.ACTION_ID_RENEW_AUTHN_REQUEST);
+        createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_PROCEED, CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET);
+        createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_RENEW, CasWebflowConstants.STATE_ID_SERVICE_AUTHZ_CHECK);
+        createStateDefaultTransition(action, CasWebflowConstants.STATE_ID_SERVICE_AUTHZ_CHECK);
     }
 }
 

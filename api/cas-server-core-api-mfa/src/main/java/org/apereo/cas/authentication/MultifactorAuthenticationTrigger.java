@@ -14,6 +14,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+@FunctionalInterface
 public interface MultifactorAuthenticationTrigger extends Ordered {
 
     /**
