@@ -124,6 +124,10 @@ public class MonitoredRepository implements InitializingBean {
         this.gitHub.removeLabel(pr, labelName.getTitle());
     }
 
+    public void close(final PullRequest pr) {
+        this.gitHub.closePullRequest(this.getOrganization(), getName(), pr.getNumber());
+    }
+
     public List<PullRequestFile> getPullRequestFiles(final PullRequest pr) {
         List<PullRequestFile> files = new ArrayList<>();
         Page<PullRequestFile> pages = this.gitHub.getPullRequestFiles(getOrganization(), getName(), pr.getNumber());

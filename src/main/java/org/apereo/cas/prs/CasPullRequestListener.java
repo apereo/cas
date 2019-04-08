@@ -67,6 +67,7 @@ public class CasPullRequestListener implements PullRequestListener {
                 log.info("{} is targeted at a branch {} that is no longer maintained. See maintenance policy", pr, pr.getBase());
                 repository.labelPullRequestAs(pr, CasLabels.LABEL_SEE_MAINTENANCE_POLICY);
                 repository.labelPullRequestAs(pr, CasLabels.LABEL_PROPOSAL_DECLINED);
+                repository.close(pr);
                 return true;
             }
         }

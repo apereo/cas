@@ -107,7 +107,7 @@ public class GitHubTemplate implements GitHubOperations {
 
     @Override
     public Page<Issue> getIssues(final String organization, final String repository) {
-        final String url = "https://api.github.com/repos/" + organization + "/" + repository
+        final String url = "https://api.github.com/repos/" + organization + '/' + repository
             + "/issues";
         return getPage(url, Issue[].class);
     }
@@ -122,6 +122,20 @@ public class GitHubTemplate implements GitHubOperations {
     public PullRequest getPullRequest(final String organization, final String repository, final String number) {
         final String url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + number;
         return getSinglePage(url, PullRequest.class);
+    }
+
+    @Override
+    public void closePullRequest(final String organization, final String repository, final String number) {
+        final String url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + number;
+        final URI uri = URI.create(url);
+        log.info("Closing to pull request {}", uri);
+
+        final Map<String, String> body = new HashMap<>();
+        body.put("state", "closed");
+        final ResponseEntity response = this.rest.exchange(new RequestEntity(body, HttpMethod.PATCH, uri), PullRequest.class);
+        if (response.getStatusCode() != HttpStatus.OK) {
+            log.warn("Failed to close to pull request. Response status: " + response.getStatusCode());
+        }
     }
 
     @Override
@@ -357,14 +371,14 @@ public class GitHubTemplate implements GitHubOperations {
 
         BasicAuthorizationInterceptor(final String username, final String password) {
             this.username = username;
-            this.password = (password == null ? "" : password);
+            this.password = password == null ? "" : password;
         }
 
         @Override
         public ClientHttpResponse intercept(final HttpRequest request, final byte[] body,
                                             final ClientHttpRequestExecution execution) throws IOException {
             final String token = Base64Utils.encodeToString(
-                (this.username + ":" + this.password).getBytes(UTF_8));
+                (this.username + ':' + this.password).getBytes(UTF_8));
             request.getHeaders().add("Authorization", "Basic " + token);
             return execution.execute(request, body);
         }
