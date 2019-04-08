@@ -1,8 +1,8 @@
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
-  "serviceId" : "^(https|imaps)://.*",
-  "name" : "HTTPS and IMAPS",
-  "id" : 10000001,
-  "description" : "This service definition authorizes all application urls that support HTTPS and IMAPS protocols.",
-  "evaluationOrder" : 10000
+  "@class": "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId": "^(https|imaps)://.*",
+  "name": "HTTPS and IMAPS",
+  "id": 10000001,
+  "description": "This service definition authorizes all application urls that support HTTPS and IMAPS protocols.",
+  "evaluationOrder": 10000
 }

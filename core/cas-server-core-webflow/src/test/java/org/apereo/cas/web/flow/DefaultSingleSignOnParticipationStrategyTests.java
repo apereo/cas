@@ -4,6 +4,7 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -31,7 +32,7 @@ public class DefaultSingleSignOnParticipationStrategyTests {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
-        val strategy = new DefaultSingleSignOnParticipationStrategy(mgr, true, true);
+        val strategy = new DefaultSingleSignOnParticipationStrategy(mgr, true, true, mock(TicketRegistrySupport.class));
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         request.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
         assertTrue(strategy.isParticipating(context) || strategy.isCreateCookieOnRenewedAuthentication(context));
@@ -44,7 +45,7 @@ public class DefaultSingleSignOnParticipationStrategyTests {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
-        val strategy = new DefaultSingleSignOnParticipationStrategy(mgr, false, true);
+        val strategy = new DefaultSingleSignOnParticipationStrategy(mgr, false, true, mock(TicketRegistrySupport.class));
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         request.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
         assertFalse(strategy.isParticipating(context));
@@ -61,7 +62,7 @@ public class DefaultSingleSignOnParticipationStrategyTests {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
-        val strategy = new DefaultSingleSignOnParticipationStrategy(mgr, false, true);
+        val strategy = new DefaultSingleSignOnParticipationStrategy(mgr, false, true, mock(TicketRegistrySupport.class));
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());

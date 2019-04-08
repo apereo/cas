@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -9,6 +10,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,7 +26,9 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 public class RegexRegisteredServiceTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "regexRegisteredService.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = new ObjectMapper()
+        .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+        .findAndRegisterModules();
 
     public static Stream<Arguments> getParameters() {
         val domainCatchallHttp = "https*://([A-Za-z0-9_-]+\\.)+vt\\.edu/.*";
@@ -76,8 +81,14 @@ public class RegexRegisteredServiceTests {
     private static RegexRegisteredService newService(final String id) {
         val service = new RegexRegisteredService();
         service.setServiceId(id);
+        service.setLogoutType(RegisteredServiceLogoutType.FRONT_CHANNEL);
         service.setServiceTicketExpirationPolicy(new DefaultRegisteredServiceServiceTicketExpirationPolicy(100, 100));
         service.setProxyTicketExpirationPolicy(new DefaultRegisteredServiceProxyTicketExpirationPolicy(100, 100));
+        val policy = new ChainingRegisteredServiceSingleSignOnParticipationPolicy();
+        policy.addPolicies(Arrays.asList(
+            new LastUsedTimeRegisteredServiceSingleSignOnParticipationPolicy(TimeUnit.SECONDS, 100, 1),
+            new AuthenticationDateRegisteredServiceSingleSignOnParticipationPolicy(TimeUnit.SECONDS, 100, 1)));
+        service.setSingleSignOnParticipationPolicy(policy);
         return service;
     }
 
@@ -92,9 +103,9 @@ public class RegexRegisteredServiceTests {
 
     @ParameterizedTest
     @MethodSource("getParameters")
-    public void verifySerializeARegexRegisteredServiceToJson(final RegexRegisteredService service,
-                                                             final String serviceToMatch,
-                                                             final boolean expectedResult) throws IOException {
+    public void verifySerialization(final RegexRegisteredService service,
+                                    final String serviceToMatch,
+                                    final boolean expectedResult) throws IOException {
         MAPPER.writeValue(JSON_FILE, service);
         val serviceRead = MAPPER.readValue(JSON_FILE, RegexRegisteredService.class);
         assertEquals(service, serviceRead);
@@ -102,16 +113,4 @@ public class RegexRegisteredServiceTests {
         assertEquals(expectedResult, serviceRead.matches(testService));
     }
 
-    @ParameterizedTest
-    @MethodSource("getParameters")
-    public void verifySerializeRegexRegisteredServiceWithLogoutToJson(final RegexRegisteredService service,
-                                                                      final String serviceToMatch,
-                                                                      final boolean expectedResult) throws IOException {
-        service.setLogoutType(RegisteredServiceLogoutType.FRONT_CHANNEL);
-        MAPPER.writeValue(JSON_FILE, service);
-        val serviceRead = MAPPER.readValue(JSON_FILE, RegexRegisteredService.class);
-        assertEquals(service, serviceRead);
-        val testService = serviceToMatch == null ? null : RegisteredServiceTestUtils.getService(serviceToMatch);
-        assertEquals(expectedResult, serviceRead.matches(testService));
-    }
 }

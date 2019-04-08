@@ -101,14 +101,10 @@ public class InitialFlowSetupAction extends AbstractAction {
                 new UnauthorizedServiceException("screen.service.required.message", "Service is required"));
         }
         WebUtils.putServiceIntoFlowScope(context, service);
-    }
-
-    private void configureWebflowContext(final RequestContext context) {
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
 
         val ticketGrantingTicketId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
         WebUtils.putTicketGrantingTicketInScopes(context, ticketGrantingTicketId);
-
+        
         val ssoParticipation = this.renewalStrategy.supports(context) && this.renewalStrategy.isParticipating(context);
         if (!ssoParticipation && StringUtils.isNotBlank(ticketGrantingTicketId)) {
             val auth = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicketId);
@@ -120,7 +116,10 @@ public class InitialFlowSetupAction extends AbstractAction {
                 WebUtils.putExistingSingleSignOnSessionPrincipal(context, NullPrincipal.getInstance());
             }
         }
+    }
 
+    private void configureWebflowContext(final RequestContext context) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         WebUtils.putWarningCookie(context, Boolean.valueOf(this.warnCookieGenerator.retrieveCookieValue(request)));
 
         WebUtils.putGoogleAnalyticsTrackingIdIntoFlowScope(context, casProperties.getGoogleAnalytics().getGoogleAnalyticsTrackingId());
