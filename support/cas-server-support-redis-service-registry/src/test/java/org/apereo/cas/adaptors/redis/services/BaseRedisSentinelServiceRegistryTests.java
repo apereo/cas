@@ -19,7 +19,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * @author Julien Gribonvald
  * @since 6.1.0
  */
-@SpringBootTest(classes = {RedisServiceRegistryConfiguration.class, RefreshAutoConfiguration.class})
+@SpringBootTest(classes = {
+    RedisServiceRegistryConfiguration.class,
+    RefreshAutoConfiguration.class
+})
 @EnableScheduling
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Redis")

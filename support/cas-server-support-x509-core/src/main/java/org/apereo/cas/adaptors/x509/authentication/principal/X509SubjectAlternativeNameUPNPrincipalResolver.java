@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.util.function.FunctionUtils;
 
@@ -22,9 +21,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -93,7 +90,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
      * @param sanItem subject alternative name value encoded as a two elements List with elem(0) representing object id and elem(1)
      *                representing object (subject alternative name) itself.
      * @return ASN1Sequence abstraction representing subject alternative name or null if the passed in
-     * List doesn't contain at least to elements
+     * List doesn't contain at least two elements.
      * as expected to be returned by implementation of {@code X509Certificate.html#getSubjectAlternativeNames}
      * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/security/cert/X509Certificate.html#getSubjectAlternativeNames()">
      * X509Certificate#getSubjectAlternativeNames</a>
@@ -150,13 +147,4 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
 
         return getAlternatePrincipal(certificate);
     }
-
-    @Override
-    protected Map<String, List<Object>> retrievePersonAttributes(final String principalId, final Credential credential) {
-        val attributes = new LinkedHashMap<String, List<Object>>(super.retrievePersonAttributes(principalId, credential));
-        val certificate = ((X509CertificateCredential) credential).getCertificate();
-        attributes.putAll(extractPersonAttributes(certificate));
-        return attributes;
-    }
-
 }

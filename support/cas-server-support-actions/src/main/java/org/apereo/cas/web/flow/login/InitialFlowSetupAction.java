@@ -3,11 +3,14 @@ package org.apereo.cas.web.flow.login;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -51,6 +54,8 @@ public class InitialFlowSetupAction extends AbstractAction {
     private final CasCookieBuilder warnCookieGenerator;
     private final CasConfigurationProperties casProperties;
     private final AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
+    private final SingleSignOnParticipationStrategy renewalStrategy;
+    private final TicketRegistrySupport ticketRegistrySupport;
 
     @Override
     public Event doExecute(final RequestContext context) {
@@ -100,7 +105,22 @@ public class InitialFlowSetupAction extends AbstractAction {
 
     private void configureWebflowContext(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        WebUtils.putTicketGrantingTicketInScopes(context, this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request));
+
+        val ticketGrantingTicketId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
+        WebUtils.putTicketGrantingTicketInScopes(context, ticketGrantingTicketId);
+
+        val ssoParticipation = this.renewalStrategy.supports(context) && this.renewalStrategy.isParticipating(context);
+        if (!ssoParticipation && StringUtils.isNotBlank(ticketGrantingTicketId)) {
+            val auth = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicketId);
+            if (auth != null) {
+                WebUtils.putExistingSingleSignOnSessionAvailable(context, true);
+                WebUtils.putExistingSingleSignOnSessionPrincipal(context, auth.getPrincipal());
+            } else {
+                WebUtils.putExistingSingleSignOnSessionAvailable(context, false);
+                WebUtils.putExistingSingleSignOnSessionPrincipal(context, NullPrincipal.getInstance());
+            }
+        }
+
         WebUtils.putWarningCookie(context, Boolean.valueOf(this.warnCookieGenerator.retrieveCookieValue(request)));
 
         WebUtils.putGoogleAnalyticsTrackingIdIntoFlowScope(context, casProperties.getGoogleAnalytics().getGoogleAnalyticsTrackingId());

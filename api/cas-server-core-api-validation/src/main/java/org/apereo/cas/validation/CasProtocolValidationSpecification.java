@@ -1,5 +1,7 @@
 package org.apereo.cas.validation;
 
+import org.springframework.core.Ordered;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -10,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
  * @since 3.0.0
  */
 @FunctionalInterface
-public interface CasProtocolValidationSpecification {
+public interface CasProtocolValidationSpecification extends Ordered {
 
     /**
      * Is satisfied?
@@ -25,5 +27,10 @@ public interface CasProtocolValidationSpecification {
      * Reset.
      */
     default void reset() {
+    }
+
+    @Override
+    default int getOrder() {
+        return 0;
     }
 }

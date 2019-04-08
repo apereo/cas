@@ -1,9 +1,11 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.Service;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.util.List;
@@ -81,14 +83,16 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
      *
      * @return the description of the service.
      */
-    String getDescription();
+    default String getDescription() {
+        return StringUtils.EMPTY;
+    }
 
     /**
      * Response determines how CAS should contact the matching service
      * typically with a ticket id. By default, the strategy is a 302 redirect.
      *
      * @return the response type
-     * @see org.apereo.cas.authentication.principal.Response.ResponseType
+     * @see Response.ResponseType
      */
     String getResponseType();
 
@@ -116,11 +120,25 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
     RegisteredServiceUsernameAttributeProvider getUsernameAttributeProvider();
 
     /**
-     * Gets authentication policy.
+     * Gets multifactor authentication policy.
      *
      * @return the authentication policy
      */
     RegisteredServiceMultifactorPolicy getMultifactorPolicy();
+
+    /**
+     * Gets proxy ticket expiration policy.
+     *
+     * @return the proxy ticket expiration policy
+     */
+    RegisteredServiceProxyTicketExpirationPolicy getProxyTicketExpirationPolicy();
+
+    /**
+     * Gets service ticket expiration policy.
+     *
+     * @return the service ticket expiration policy
+     */
+    RegisteredServiceServiceTicketExpirationPolicy getServiceTicketExpirationPolicy();
 
     /**
      * Gets the set of handler names that must successfully authenticate credentials in order to access the service.

@@ -21,13 +21,17 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @Slf4j
 @RequiredArgsConstructor
-@Getter
 public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnParticipationStrategy {
+    @Getter
     private final ServicesManager servicesManager;
-    private final boolean createSsoSessionCookieOnRenewAuthentications;
+
+    private final boolean createCookieOnRenewedAuthentication;
+
+    @Getter
     private final boolean renewEnabled;
 
     @Setter
+    @Getter
     private int order = Ordered.LOWEST_PRECEDENCE;
 
     @Override
@@ -35,7 +39,7 @@ public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnPar
         if (renewEnabled && ctx.getRequestParameters().contains(CasProtocolConstants.PARAMETER_RENEW)) {
             LOGGER.debug("[{}] is specified for the request. The authentication session will be considered renewed.",
                 CasProtocolConstants.PARAMETER_RENEW);
-            return this.createSsoSessionCookieOnRenewAuthentications;
+            return false;
         }
 
         val authentication = WebUtils.getAuthentication(ctx);
@@ -57,5 +61,10 @@ public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnPar
         }
 
         return true;
+    }
+
+    @Override
+    public boolean isCreateCookieOnRenewedAuthentication(final RequestContext context) {
+        return this.createCookieOnRenewedAuthentication;
     }
 }
