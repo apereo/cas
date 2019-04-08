@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.RequestedContextValidator;
 
@@ -35,6 +36,18 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
         if (requestedContext.isEmpty()) {
             LOGGER.debug("No particular authentication context is required for this request");
             return Pair.of(Boolean.TRUE, Optional.empty());
+        }
+
+        val providerId = requestedContext.get();
+        val provider = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(providerId, ApplicationContextProvider.getApplicationContext());
+
+        if (provider.isPresent()) {
+            val bypassEvaluator = provider.get().getBypassEvaluator();
+            if (!bypassEvaluator.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider.get(), request)) {
+                LOGGER.debug("MFA provider [{}] was determined that it should be bypassed for this service request [{}]", providerId, assertion.getService());
+                bypassEvaluator.updateAuthenticationToRememberBypass(authentication, provider.get());
+                return Pair.of(Boolean.TRUE, Optional.empty());
+            }
         }
 
         return authenticationContextValidator.validate(authentication, requestedContext.get(), registeredService);
