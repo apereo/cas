@@ -1,0 +1,4 @@
+description = "Apereo CAS JavaMelody Support"
+dependencies {
+    implementation libraries.javamelody
+}

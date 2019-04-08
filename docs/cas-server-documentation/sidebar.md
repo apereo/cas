@@ -179,6 +179,7 @@ layout: null
 * [Monitoring & Statistics](#monitoroverview)
     *   [Overview](/$version/monitoring/Monitoring-Statistics.html) 
     *   [Administration Server](/$version/monitoring/Configuring-Monitoring-Administration.html)
+    *   [JavaMelody](/$version/monitoring/Configuring-Monitoring-JavaMelody.html)
     *   [Metrics](/$version/monitoring/Configuring-Metrics.html)
     *   [Monitors](/$version/monitoring/Configuring-Monitoring.html)
         
