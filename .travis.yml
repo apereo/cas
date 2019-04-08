@@ -77,8 +77,8 @@ stages:
 jobs:
   include:
   - stage: initialize
-    script: ./ci/download-dependencies.sh
-    name: "Initialize Build System"
+    script: ./ci/tests/redis/run-tests-redis.sh
+    name: "Redis Tests"
     ############################################
   - stage: build
     script: ./ci/build.sh
@@ -188,9 +188,6 @@ jobs:
   - stage: test
     script: ./ci/tests/mongodb/run-tests-mongodb.sh
     name: "MongoDb Tests"
-  - stage: test
-    script: ./ci/tests/redis/run-tests-redis.sh
-    name: "Redis Tests"
   - stage: spotbugs
     script: ./ci/analyze-bugs-main.sh
     name: "Spotbugs Main Analysis"
