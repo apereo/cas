@@ -13,6 +13,7 @@ import org.apereo.cas.ticket.registry.support.JpaLockingStrategy;
 import org.apereo.cas.ticket.registry.support.LockingStrategy;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.InetAddressUtils;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -26,6 +27,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -54,6 +56,9 @@ public class JpaTicketRegistryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
     @Bean
     public List<String> ticketPackagesToScan() {
         val reflections =
@@ -70,6 +75,7 @@ public class JpaTicketRegistryConfiguration {
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean ticketEntityManagerFactory() {
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
         return JpaBeans.newHibernateEntityManagerFactoryBean(
             new JpaConfigDataHolder(
                 JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc()),
