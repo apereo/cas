@@ -12,10 +12,10 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
-import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
@@ -143,7 +143,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
      * @param ticketGrantingTicket the ticket granting ticket
      * @return result map
      */
-    @WriteOperation
+    @DeleteOperation
     public Map<String, Object> destroySsoSession(@Selector final String ticketGrantingTicket) {
 
         val sessionsMap = new HashMap<String, Object>(1);
@@ -166,7 +166,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
      * @param type the type
      * @return the map
      */
-    @WriteOperation
+    @DeleteOperation
     public Map<String, Object> destroySsoSessions(final String type) {
 
         val sessionsMap = new HashMap<String, Object>();
