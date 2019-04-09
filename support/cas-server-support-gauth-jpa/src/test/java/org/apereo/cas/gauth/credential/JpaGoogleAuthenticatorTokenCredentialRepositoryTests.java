@@ -1,5 +1,6 @@
 package org.apereo.cas.gauth.credential;
 
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -68,7 +69,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class,
-    CasCoreWebConfiguration.class},
+    CasCoreWebConfiguration.class,
+        CasCommonComponentsConfiguration.class},
     properties = "cas.authn.mfa.gauth.crypto.enabled=false")
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)

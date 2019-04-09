@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -60,7 +61,8 @@ import org.springframework.webflow.execution.Action;
     CasCoreAuthenticationMetadataConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationHandlersConfiguration.class,
-    CasCoreHttpConfiguration.class})
+    CasCoreHttpConfiguration.class,
+        CasCommonComponentsConfiguration.class})
 public abstract class AbstractSpnegoTests {
     @Autowired
     @Qualifier("ldapSpnegoClientAction")

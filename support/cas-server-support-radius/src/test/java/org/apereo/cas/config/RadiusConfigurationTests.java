@@ -43,7 +43,8 @@ import static org.junit.jupiter.api.Assertions.*;
     RadiusConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreUtilConfiguration.class,
-    RefreshAutoConfiguration.class
+    RefreshAutoConfiguration.class,
+        CasCommonComponentsConfiguration.class
 })
 @TestPropertySource(properties = {
     "cas.authn.radius.client.sharedSecret=NoSecret",

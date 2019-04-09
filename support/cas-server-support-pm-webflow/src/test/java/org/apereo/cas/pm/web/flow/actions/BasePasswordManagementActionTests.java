@@ -2,6 +2,7 @@ package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
@@ -66,7 +67,8 @@ import org.springframework.webflow.execution.Action;
     CasCoreWebConfiguration.class,
     CasCoreWebflowConfiguration.class,
     CasCoreHttpConfiguration.class,
-    CasWebflowContextConfiguration.class
+    CasWebflowContextConfiguration.class,
+        CasCommonComponentsConfiguration.class
 })
 @TestPropertySource(locations = "classpath:cas-pm-webflow.properties")
 @EnableConfigurationProperties(CasConfigurationProperties.class)

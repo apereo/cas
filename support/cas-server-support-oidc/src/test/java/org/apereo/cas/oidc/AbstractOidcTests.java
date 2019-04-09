@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc;
 
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -100,7 +101,8 @@ import java.util.Optional;
     CasOAuthThrottleConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class,
     CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+        CasCommonComponentsConfiguration.class
 })
 @DirtiesContext
 @Tag("FileSystem")

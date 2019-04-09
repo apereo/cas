@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -75,7 +76,8 @@ import org.springframework.test.annotation.DirtiesContext;
     CasPersonDirectoryTestConfiguration.class,
     CasCoreWebflowConfiguration.class,
     CasCoreValidationConfiguration.class,
-    AdaptiveMultifactorAuthenticationPolicyEventResolverTests.GeoLocationServiceTestConfiguration.class
+    AdaptiveMultifactorAuthenticationPolicyEventResolverTests.GeoLocationServiceTestConfiguration.class,
+        CasCommonComponentsConfiguration.class
 })
 @EnableAspectJAutoProxy
 @DirtiesContext

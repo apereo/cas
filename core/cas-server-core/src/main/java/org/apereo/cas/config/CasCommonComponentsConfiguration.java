@@ -30,9 +30,6 @@ public class CasCommonComponentsConfiguration {
     private ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
     @Qualifier("ticketRegistry")
     private ObjectProvider<TicketRegistry> ticketRegistry;
 
