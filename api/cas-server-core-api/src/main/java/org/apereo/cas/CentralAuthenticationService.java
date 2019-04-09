@@ -57,7 +57,6 @@ public interface CentralAuthenticationService {
     TicketGrantingTicket createTicketGrantingTicket(AuthenticationResult authenticationResult)
         throws AuthenticationException, AbstractTicketException;
 
-
     /**
      * Updates the ticket instance in the underlying storage mechanism.
      * The properties of a given ticket, such as its authentication attributes
