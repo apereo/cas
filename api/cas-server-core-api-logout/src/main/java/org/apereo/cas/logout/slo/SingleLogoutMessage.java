@@ -18,7 +18,7 @@ import java.io.Serializable;
 public class SingleLogoutMessage<T> implements Serializable {
     private static final long serialVersionUID = -7763669015027355811L;
 
-    private String payload;
+    private final String payload;
 
-    private transient T message;
+    private final transient T message;
 }

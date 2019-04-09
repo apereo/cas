@@ -14,7 +14,8 @@ import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.services.SamlIdPServiceRegistry;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.HttpServletRequestXMLMessageDecodersMap;
-import org.apereo.cas.support.saml.web.idp.profile.IdPInitiatedProfileHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.IdentityProviderInitiatedProfileHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
 import org.apereo.cas.support.saml.web.idp.profile.artifact.Saml1ArtifactResolutionProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
@@ -39,7 +40,6 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
-import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostSimpleSignDecoder;
@@ -56,9 +56,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpMethod;
-
-import java.util.EnumMap;
-import java.util.Map;
 
 /**
  * This is {@link SamlIdPEndpointsConfiguration}.
@@ -198,19 +195,22 @@ public class SamlIdPEndpointsConfiguration {
     @Bean
     @RefreshScope
     public SSOSamlPostProfileHandlerController ssoPostProfileHandlerController() {
-        return new SSOSamlPostProfileHandlerController(
-            samlObjectSigner.getObject(),
-            authenticationSystemSupport.getObject(),
-            servicesManager.getObject(),
-            webApplicationServiceFactory.getIfAvailable(),
-            defaultSamlRegisteredServiceCachingMetadataResolver.getObject(),
-            openSamlConfigBean.getObject(),
-            samlProfileSamlResponseBuilder.getObject(),
-            casProperties,
-            samlObjectSignatureValidator(),
-            ssoSamlHttpRequestExtractor(),
-            samlIdPCallbackService(),
-            ssoPostProfileHandlerDecoders());
+        val context = SamlProfileHandlerConfigurationContext.builder()
+            .samlObjectSigner(samlObjectSigner.getObject())
+            .authenticationSystemSupport(authenticationSystemSupport.getObject())
+            .servicesManager(servicesManager.getIfAvailable())
+            .webApplicationServiceFactory(webApplicationServiceFactory.getIfAvailable())
+            .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver.getIfAvailable())
+            .openSamlConfigBean(openSamlConfigBean.getIfAvailable())
+            .responseBuilder(samlProfileSamlResponseBuilder.getIfAvailable())
+            .casProperties(casProperties)
+            .samlObjectSignatureValidator(samlObjectSignatureValidator())
+            .samlHttpRequestExtractor(ssoSamlHttpRequestExtractor())
+            .callbackService(samlIdPCallbackService())
+            .samlMessageDecoders(ssoPostProfileHandlerDecoders())
+            .build();
+
+        return new SSOSamlPostProfileHandlerController(context);
     }
 
     @Bean
@@ -226,19 +226,22 @@ public class SamlIdPEndpointsConfiguration {
     @Bean
     @RefreshScope
     public SSOSamlPostSimpleSignProfileHandlerController ssoPostSimpleSignProfileHandlerController() {
-        return new SSOSamlPostSimpleSignProfileHandlerController(
-            samlObjectSigner.getObject(),
-            authenticationSystemSupport.getIfAvailable(),
-            servicesManager.getIfAvailable(),
-            webApplicationServiceFactory.getIfAvailable(),
-            defaultSamlRegisteredServiceCachingMetadataResolver.getIfAvailable(),
-            openSamlConfigBean.getIfAvailable(),
-            samlProfileSamlResponseBuilder.getObject(),
-            casProperties,
-            samlObjectSignatureValidator(),
-            ssoSamlHttpRequestExtractor(),
-            samlIdPCallbackService(),
-            ssoPostSimpleSignProfileHandlerDecoders());
+        val context = SamlProfileHandlerConfigurationContext.builder()
+            .samlObjectSigner(samlObjectSigner.getObject())
+            .authenticationSystemSupport(authenticationSystemSupport.getObject())
+            .servicesManager(servicesManager.getIfAvailable())
+            .webApplicationServiceFactory(webApplicationServiceFactory.getIfAvailable())
+            .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver.getIfAvailable())
+            .openSamlConfigBean(openSamlConfigBean.getIfAvailable())
+            .responseBuilder(samlProfileSamlResponseBuilder.getIfAvailable())
+            .casProperties(casProperties)
+            .samlObjectSignatureValidator(samlObjectSignatureValidator())
+            .samlHttpRequestExtractor(ssoSamlHttpRequestExtractor())
+            .callbackService(samlIdPCallbackService())
+            .samlMessageDecoders(ssoPostSimpleSignProfileHandlerDecoders())
+            .build();
+
+        return new SSOSamlPostSimpleSignProfileHandlerController(context);
     }
 
     @Bean
@@ -253,25 +256,27 @@ public class SamlIdPEndpointsConfiguration {
     @Bean
     @RefreshScope
     public SLOSamlRedirectProfileHandlerController sloRedirectProfileHandlerController() {
-        return new SLOSamlRedirectProfileHandlerController(
-            samlObjectSigner.getIfAvailable(),
-            authenticationSystemSupport.getIfAvailable(),
-            servicesManager.getIfAvailable(),
-            webApplicationServiceFactory.getIfAvailable(),
-            defaultSamlRegisteredServiceCachingMetadataResolver.getIfAvailable(),
-            openSamlConfigBean.getIfAvailable(),
-            samlProfileSamlResponseBuilder.getObject(),
-            casProperties,
-            samlObjectSignatureValidator(),
-            ssoSamlHttpRequestExtractor(),
-            samlIdPCallbackService(),
-            sloRedirectProfileHandlerDecoders());
+        val context = SamlProfileHandlerConfigurationContext.builder()
+            .samlObjectSigner(samlObjectSigner.getObject())
+            .authenticationSystemSupport(authenticationSystemSupport.getObject())
+            .servicesManager(servicesManager.getIfAvailable())
+            .webApplicationServiceFactory(webApplicationServiceFactory.getIfAvailable())
+            .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver.getIfAvailable())
+            .openSamlConfigBean(openSamlConfigBean.getIfAvailable())
+            .responseBuilder(samlProfileSamlResponseBuilder.getIfAvailable())
+            .casProperties(casProperties)
+            .samlObjectSignatureValidator(samlObjectSignatureValidator())
+            .samlHttpRequestExtractor(ssoSamlHttpRequestExtractor())
+            .callbackService(samlIdPCallbackService())
+            .samlMessageDecoders(sloRedirectProfileHandlerDecoders())
+            .build();
+        return new SLOSamlRedirectProfileHandlerController(context);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "sloPostProfileHandlerDecoders")
-    public Map<HttpMethod, BaseHttpServletRequestXMLMessageDecoder> sloPostProfileHandlerDecoders() {
-        val decoders = new EnumMap<HttpMethod, BaseHttpServletRequestXMLMessageDecoder>(HttpMethod.class);
+    public HttpServletRequestXMLMessageDecodersMap sloPostProfileHandlerDecoders() {
+        val decoders = new HttpServletRequestXMLMessageDecodersMap(HttpMethod.class);
         decoders.put(HttpMethod.POST, new HTTPPostDecoder());
         return decoders;
     }
@@ -279,108 +284,126 @@ public class SamlIdPEndpointsConfiguration {
     @Bean
     @RefreshScope
     public SLOSamlPostProfileHandlerController sloPostProfileHandlerController() {
-        return new SLOSamlPostProfileHandlerController(
-            samlObjectSigner.getIfAvailable(),
-            authenticationSystemSupport.getIfAvailable(),
-            servicesManager.getIfAvailable(),
-            webApplicationServiceFactory.getIfAvailable(),
-            defaultSamlRegisteredServiceCachingMetadataResolver.getIfAvailable(),
-            openSamlConfigBean.getIfAvailable(),
-            samlProfileSamlResponseBuilder.getObject(),
-            casProperties,
-            samlObjectSignatureValidator(),
-            ssoSamlHttpRequestExtractor(),
-            samlIdPCallbackService(),
-            sloPostProfileHandlerDecoders());
+        val context = SamlProfileHandlerConfigurationContext.builder()
+            .samlObjectSigner(samlObjectSigner.getObject())
+            .authenticationSystemSupport(authenticationSystemSupport.getObject())
+            .servicesManager(servicesManager.getIfAvailable())
+            .webApplicationServiceFactory(webApplicationServiceFactory.getIfAvailable())
+            .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver.getIfAvailable())
+            .openSamlConfigBean(openSamlConfigBean.getIfAvailable())
+            .responseBuilder(samlProfileSamlResponseBuilder.getIfAvailable())
+            .casProperties(casProperties)
+            .samlObjectSignatureValidator(samlObjectSignatureValidator())
+            .samlHttpRequestExtractor(ssoSamlHttpRequestExtractor())
+            .callbackService(samlIdPCallbackService())
+            .samlMessageDecoders(sloPostProfileHandlerDecoders())
+            .build();
+
+        return new SLOSamlPostProfileHandlerController(context);
     }
 
     @Bean
     @RefreshScope
-    public IdPInitiatedProfileHandlerController idPInitiatedSamlProfileHandlerController() {
-        return new IdPInitiatedProfileHandlerController(
-            samlObjectSigner.getIfAvailable(),
-            authenticationSystemSupport.getIfAvailable(),
-            servicesManager.getIfAvailable(),
-            webApplicationServiceFactory.getIfAvailable(),
-            defaultSamlRegisteredServiceCachingMetadataResolver.getIfAvailable(),
-            openSamlConfigBean.getIfAvailable(),
-            samlProfileSamlResponseBuilder.getObject(),
-            casProperties,
-            samlIdPObjectSignatureValidator(),
-            samlIdPCallbackService());
+    public IdentityProviderInitiatedProfileHandlerController idpInitiatedSamlProfileHandlerController() {
+        val context = SamlProfileHandlerConfigurationContext.builder()
+            .samlObjectSigner(samlObjectSigner.getObject())
+            .authenticationSystemSupport(authenticationSystemSupport.getObject())
+            .servicesManager(servicesManager.getIfAvailable())
+            .webApplicationServiceFactory(webApplicationServiceFactory.getIfAvailable())
+            .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver.getIfAvailable())
+            .openSamlConfigBean(openSamlConfigBean.getIfAvailable())
+            .responseBuilder(samlProfileSamlResponseBuilder.getIfAvailable())
+            .casProperties(casProperties)
+            .samlObjectSignatureValidator(samlIdPObjectSignatureValidator())
+            .samlHttpRequestExtractor(ssoSamlHttpRequestExtractor())
+            .callbackService(samlIdPCallbackService())
+            .build();
+        return new IdentityProviderInitiatedProfileHandlerController(context);
     }
 
     @Bean
     @RefreshScope
     public SSOSamlProfileCallbackHandlerController ssoPostProfileCallbackHandlerController() {
-        return new SSOSamlProfileCallbackHandlerController(
-            samlObjectSigner.getIfAvailable(),
-            authenticationSystemSupport.getIfAvailable(),
-            servicesManager.getIfAvailable(),
-            webApplicationServiceFactory.getIfAvailable(),
-            defaultSamlRegisteredServiceCachingMetadataResolver.getIfAvailable(),
-            openSamlConfigBean.getIfAvailable(),
-            samlProfileSamlResponseBuilder.getObject(),
-            casProperties,
-            samlObjectSignatureValidator(),
-            casClientTicketValidator.getIfAvailable(),
-            samlIdPCallbackService());
+        val context = SamlProfileHandlerConfigurationContext.builder()
+            .samlObjectSigner(samlObjectSigner.getObject())
+            .authenticationSystemSupport(authenticationSystemSupport.getObject())
+            .servicesManager(servicesManager.getIfAvailable())
+            .webApplicationServiceFactory(webApplicationServiceFactory.getIfAvailable())
+            .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver.getIfAvailable())
+            .openSamlConfigBean(openSamlConfigBean.getIfAvailable())
+            .responseBuilder(samlProfileSamlResponseBuilder.getIfAvailable())
+            .casProperties(casProperties)
+            .samlObjectSignatureValidator(samlObjectSignatureValidator())
+            .samlHttpRequestExtractor(ssoSamlHttpRequestExtractor())
+            .callbackService(samlIdPCallbackService())
+            .ticketValidator(casClientTicketValidator.getIfAvailable())
+            .build();
+        return new SSOSamlProfileCallbackHandlerController(context);
     }
 
     @Bean
     @RefreshScope
     public ECPProfileHandlerController ecpProfileHandlerController() {
-        return new ECPProfileHandlerController(samlObjectSigner.getIfAvailable(),
-            authenticationSystemSupport.getIfAvailable(),
-            servicesManager.getIfAvailable(),
-            webApplicationServiceFactory.getIfAvailable(),
-            defaultSamlRegisteredServiceCachingMetadataResolver.getIfAvailable(),
-            openSamlConfigBean.getIfAvailable(),
-            samlProfileSamlSoap11ResponseBuilder,
-            samlProfileSamlSoap11FaultResponseBuilder,
-            casProperties,
-            samlObjectSignatureValidator(),
-            samlIdPCallbackService());
+        val context = SamlProfileHandlerConfigurationContext.builder()
+            .samlObjectSigner(samlObjectSigner.getObject())
+            .authenticationSystemSupport(authenticationSystemSupport.getObject())
+            .servicesManager(servicesManager.getIfAvailable())
+            .webApplicationServiceFactory(webApplicationServiceFactory.getIfAvailable())
+            .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver.getIfAvailable())
+            .openSamlConfigBean(openSamlConfigBean.getIfAvailable())
+            .responseBuilder(samlProfileSamlSoap11ResponseBuilder)
+            .samlFaultResponseBuilder(samlProfileSamlSoap11FaultResponseBuilder)
+            .casProperties(casProperties)
+            .samlObjectSignatureValidator(samlObjectSignatureValidator())
+            .samlHttpRequestExtractor(ssoSamlHttpRequestExtractor())
+            .callbackService(samlIdPCallbackService())
+            .build();
+
+        return new ECPProfileHandlerController(context);
     }
 
     @Bean
     @RefreshScope
     public Saml1ArtifactResolutionProfileHandlerController saml1ArtifactResolutionController() {
-        return new Saml1ArtifactResolutionProfileHandlerController(
-            samlObjectSigner.getIfAvailable(),
-            authenticationSystemSupport.getIfAvailable(),
-            servicesManager.getIfAvailable(),
-            webApplicationServiceFactory.getIfAvailable(),
-            defaultSamlRegisteredServiceCachingMetadataResolver.getIfAvailable(),
-            openSamlConfigBean.getIfAvailable(),
-            samlProfileSamlArtifactResponseBuilder,
-            casProperties,
-            samlObjectSignatureValidator(),
-            ticketRegistry.getIfAvailable(),
-            samlArtifactTicketFactory.getIfAvailable(),
-            samlProfileSamlArtifactFaultResponseBuilder,
-            samlIdPCallbackService());
+        val context = SamlProfileHandlerConfigurationContext.builder()
+            .samlObjectSigner(samlObjectSigner.getObject())
+            .authenticationSystemSupport(authenticationSystemSupport.getObject())
+            .servicesManager(servicesManager.getIfAvailable())
+            .webApplicationServiceFactory(webApplicationServiceFactory.getIfAvailable())
+            .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver.getIfAvailable())
+            .openSamlConfigBean(openSamlConfigBean.getIfAvailable())
+            .responseBuilder(samlProfileSamlArtifactResponseBuilder)
+            .samlFaultResponseBuilder(samlProfileSamlArtifactFaultResponseBuilder)
+            .casProperties(casProperties)
+            .samlObjectSignatureValidator(samlObjectSignatureValidator())
+            .ticketRegistry(ticketRegistry.getIfAvailable())
+            .artifactTicketFactory(samlArtifactTicketFactory.getIfAvailable())
+            .build();
+
+        return new Saml1ArtifactResolutionProfileHandlerController(context);
     }
 
     @ConditionalOnProperty(prefix = "cas.authn.samlIdp", name = "attributeQueryProfileEnabled", havingValue = "true")
     @Bean
     @RefreshScope
     public Saml2AttributeQueryProfileHandlerController saml2AttributeQueryProfileHandlerController() {
-        return new Saml2AttributeQueryProfileHandlerController(
-            samlObjectSigner.getIfAvailable(),
-            authenticationSystemSupport.getIfAvailable(),
-            servicesManager.getIfAvailable(),
-            webApplicationServiceFactory.getIfAvailable(),
-            defaultSamlRegisteredServiceCachingMetadataResolver.getIfAvailable(),
-            openSamlConfigBean.getIfAvailable(),
-            samlProfileSamlAttributeQueryResponseBuilder,
-            casProperties,
-            samlObjectSignatureValidator(),
-            ticketRegistry.getIfAvailable(),
-            samlProfileSamlAttributeQueryFaultResponseBuilder,
-            ticketGrantingTicketCookieGenerator.getIfAvailable(),
-            samlAttributeQueryTicketFactory.getIfAvailable(),
-            samlIdPCallbackService());
+        val context = SamlProfileHandlerConfigurationContext.builder()
+            .samlObjectSigner(samlObjectSigner.getObject())
+            .authenticationSystemSupport(authenticationSystemSupport.getObject())
+            .servicesManager(servicesManager.getIfAvailable())
+            .webApplicationServiceFactory(webApplicationServiceFactory.getIfAvailable())
+            .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver.getIfAvailable())
+            .openSamlConfigBean(openSamlConfigBean.getIfAvailable())
+            .responseBuilder(samlProfileSamlAttributeQueryResponseBuilder)
+            .samlFaultResponseBuilder(samlProfileSamlAttributeQueryFaultResponseBuilder)
+            .casProperties(casProperties)
+            .samlObjectSignatureValidator(samlObjectSignatureValidator())
+            .ticketRegistry(ticketRegistry.getIfAvailable())
+            .artifactTicketFactory(samlArtifactTicketFactory.getIfAvailable())
+            .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator.getIfAvailable())
+            .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory.getIfAvailable())
+            .build();
+        return new Saml2AttributeQueryProfileHandlerController(context);
     }
 
     @Bean

@@ -1,19 +1,8 @@
 package org.apereo.cas.support.saml.web.idp.profile;
 
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
-import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
-import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
-import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -33,7 +22,6 @@ import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
-import org.opensaml.saml.saml2.core.Response;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,29 +29,16 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.concurrent.TimeUnit;
 
 /**
- * This is {@link IdPInitiatedProfileHandlerController}.
+ * This is {@link IdentityProviderInitiatedProfileHandlerController}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @Slf4j
-public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHandlerController {
+public class IdentityProviderInitiatedProfileHandlerController extends AbstractSamlProfileHandlerController {
 
-    public IdPInitiatedProfileHandlerController(final SamlIdPObjectSigner samlObjectSigner,
-                                                final AuthenticationSystemSupport authenticationSystemSupport,
-                                                final ServicesManager servicesManager,
-                                                final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-                                                final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
-                                                final OpenSamlConfigBean configBean,
-                                                final SamlProfileObjectBuilder<Response> responseBuilder,
-                                                final CasConfigurationProperties casProperties,
-                                                final SamlObjectSignatureValidator samlObjectSignatureValidator,
-                                                final Service callbackService) {
-        super(samlObjectSigner, authenticationSystemSupport,
-            servicesManager, webApplicationServiceFactory,
-            samlRegisteredServiceCachingMetadataResolver,
-            configBean, responseBuilder, casProperties,
-            samlObjectSignatureValidator, callbackService);
+    public IdentityProviderInitiatedProfileHandlerController(final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
+        super(samlProfileHandlerConfigurationContext);
     }
 
     /**
@@ -113,17 +88,20 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
 
         val time = CommonUtils.safeGetParameter(request, SamlIdPConstants.TIME);
 
-        val builder = (SAMLObjectBuilder) configBean.getBuilderFactory().getBuilder(AuthnRequest.DEFAULT_ELEMENT_NAME);
+        val builder = (SAMLObjectBuilder) getSamlProfileHandlerConfigurationContext()
+            .getOpenSamlConfigBean().getBuilderFactory().getBuilder(AuthnRequest.DEFAULT_ELEMENT_NAME);
         val authnRequest = (AuthnRequest) builder.buildObject();
         authnRequest.setAssertionConsumerServiceURL(shire);
 
-        val isBuilder = (SAMLObjectBuilder) configBean.getBuilderFactory().getBuilder(Issuer.DEFAULT_ELEMENT_NAME);
+        val isBuilder = (SAMLObjectBuilder) getSamlProfileHandlerConfigurationContext()
+            .getOpenSamlConfigBean().getBuilderFactory().getBuilder(Issuer.DEFAULT_ELEMENT_NAME);
         val issuer = (Issuer) isBuilder.buildObject();
         issuer.setValue(providerId);
         authnRequest.setIssuer(issuer);
 
         authnRequest.setProtocolBinding(SAMLConstants.SAML2_POST_BINDING_URI);
-        val pBuilder = (SAMLObjectBuilder) configBean.getBuilderFactory().getBuilder(NameIDPolicy.DEFAULT_ELEMENT_NAME);
+        val pBuilder = (SAMLObjectBuilder) getSamlProfileHandlerConfigurationContext()
+            .getOpenSamlConfigBean().getBuilderFactory().getBuilder(NameIDPolicy.DEFAULT_ELEMENT_NAME);
         val nameIDPolicy = (NameIDPolicy) pBuilder.buildObject();
         nameIDPolicy.setAllowCreate(Boolean.TRUE);
         authnRequest.setNameIDPolicy(nameIDPolicy);
@@ -143,7 +121,7 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
         ctx.setAutoCreateSubcontexts(true);
 
         if (facade.isAuthnRequestsSigned()) {
-            samlObjectSigner.encode(authnRequest, registeredService,
+            getSamlProfileHandlerConfigurationContext().getSamlObjectSigner().encode(authnRequest, registeredService,
                 facade, response, request, SAMLConstants.SAML2_POST_BINDING_URI, authnRequest);
         }
         ctx.setMessage(authnRequest);
