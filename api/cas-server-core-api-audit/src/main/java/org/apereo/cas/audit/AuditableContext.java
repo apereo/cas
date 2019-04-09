@@ -23,45 +23,21 @@ import java.util.Optional;
 @Builder
 public class AuditableContext {
 
-    /**
-     * Service.
-     */
-    private Service service;
+    private final Service service;
 
-    /**
-     * RegisteredService.
-     */
-    private RegisteredService registeredService;
+    private final RegisteredService registeredService;
 
-    /**
-     * Authentication.
-     */
-    private Authentication authentication;
+    private final Authentication authentication;
 
-    /**
-     * ServiceTicket.
-     */
-    private ServiceTicket serviceTicket;
+    private final ServiceTicket serviceTicket;
 
-    /**
-     * AuthenticationResult.
-     */
-    private AuthenticationResult authenticationResult;
+    private final AuthenticationResult authenticationResult;
 
-    /**
-     * TicketGrantingTicket.
-     */
-    private TicketGrantingTicket ticketGrantingTicket;
+    private final TicketGrantingTicket ticketGrantingTicket;
 
-    /**
-     * Http request.
-     */
-    private Object httpRequest;
+    private final Object httpRequest;
 
-    /**
-     * Http response.
-     */
-    private Object httpResponse;
+    private final Object httpResponse;
 
     /**
      * retrievePrincipalAttributesFromReleasePolicy.

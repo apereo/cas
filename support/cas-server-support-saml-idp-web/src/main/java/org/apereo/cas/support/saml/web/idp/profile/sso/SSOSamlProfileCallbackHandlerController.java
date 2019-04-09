@@ -1,34 +1,22 @@
 package org.apereo.cas.support.saml.web.idp.profile.sso;
 
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
-import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlProfileHandlerController;
-import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
+import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jasig.cas.client.util.CommonUtils;
-import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
-import org.opensaml.saml.saml2.core.Response;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,30 +32,8 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public class SSOSamlProfileCallbackHandlerController extends AbstractSamlProfileHandlerController {
 
-    private final AbstractUrlBasedTicketValidator ticketValidator;
-
-    public SSOSamlProfileCallbackHandlerController(final SamlIdPObjectSigner samlObjectSigner,
-                                                   final AuthenticationSystemSupport authenticationSystemSupport,
-                                                   final ServicesManager servicesManager,
-                                                   final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-                                                   final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
-                                                   final OpenSamlConfigBean configBean,
-                                                   final SamlProfileObjectBuilder<Response> responseBuilder,
-                                                   final CasConfigurationProperties casProperties,
-                                                   final SamlObjectSignatureValidator samlObjectSignatureValidator,
-                                                   final AbstractUrlBasedTicketValidator ticketValidator,
-                                                   final Service callbackService) {
-        super(samlObjectSigner,
-            authenticationSystemSupport,
-            servicesManager,
-            webApplicationServiceFactory,
-            samlRegisteredServiceCachingMetadataResolver,
-            configBean,
-            responseBuilder,
-            casProperties,
-            samlObjectSignatureValidator,
-            callbackService);
-        this.ticketValidator = ticketValidator;
+    public SSOSamlProfileCallbackHandlerController(final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
+        super(samlProfileHandlerConfigurationContext);
     }
 
     /**
@@ -126,10 +92,10 @@ public class SSOSamlProfileCallbackHandlerController extends AbstractSamlProfile
                                                           final Pair<AuthnRequest, MessageContext> pair) throws Exception {
         val authnRequest = pair.getKey();
         val ticket = CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET);
-        this.ticketValidator.setRenew(authnRequest.isForceAuthn());
+        getSamlProfileHandlerConfigurationContext().getTicketValidator().setRenew(authnRequest.isForceAuthn());
         val serviceUrl = constructServiceUrl(request, response, pair);
         LOGGER.trace("Created service url for validation: [{}]", serviceUrl);
-        val assertion = this.ticketValidator.validate(ticket, serviceUrl);
+        val assertion = getSamlProfileHandlerConfigurationContext().getTicketValidator().validate(ticket, serviceUrl);
         logCasValidationAssertion(assertion);
         return assertion;
     }

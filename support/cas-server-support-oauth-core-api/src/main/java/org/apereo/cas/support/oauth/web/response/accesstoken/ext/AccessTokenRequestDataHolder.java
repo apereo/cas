@@ -26,17 +26,17 @@ import java.util.Set;
 @Builder
 public class AccessTokenRequestDataHolder {
 
-    private Service service;
+    private final Service service;
 
-    private Authentication authentication;
+    private final Authentication authentication;
 
-    private OAuthToken token;
+    private final OAuthToken token;
 
-    private boolean generateRefreshToken;
+    private final boolean generateRefreshToken;
 
-    private OAuthRegisteredService registeredService;
+    private final OAuthRegisteredService registeredService;
 
-    private TicketGrantingTicket ticketGrantingTicket;
+    private final TicketGrantingTicket ticketGrantingTicket;
 
     @Builder.Default
     private OAuth20GrantTypes grantType = OAuth20GrantTypes.NONE;
@@ -47,12 +47,12 @@ public class AccessTokenRequestDataHolder {
     @Builder.Default
     private OAuth20ResponseTypes responseType = OAuth20ResponseTypes.NONE;
 
-    private String deviceCode;
+    private final String deviceCode;
 
-    private String codeChallenge;
+    private final String codeChallenge;
 
     @Builder.Default
     private String codeChallengeMethod = "plain";
 
-    private String codeVerifier;
+    private final String codeVerifier;
 }
