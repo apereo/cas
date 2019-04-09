@@ -88,7 +88,7 @@ public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
         val finalizeInterrupt = createActionState(flow, STATE_ID_FINALIZE_INTERRUPT_ACTION,
             createEvaluateAction(STATE_ID_FINALIZE_INTERRUPT_ACTION));
         createTransitionForState(finalizeInterrupt, CasWebflowConstants.TRANSITION_ID_SUCCESS, target);
-        createTransitionForState(finalizeInterrupt, CasWebflowConstants.STATE_ID_STOP_WEBFLOW, STATE_ID_FINISHED_INTERRUPT);
+        createTransitionForState(finalizeInterrupt, CasWebflowConstants.TRANSITION_ID_STOP, STATE_ID_FINISHED_INTERRUPT);
         createEndState(flow, STATE_ID_FINISHED_INTERRUPT);
     }
 

@@ -32,7 +32,7 @@ public class FinalizeInterruptFlowAction extends AbstractAction {
                 val externalContext = requestContext.getExternalContext();
                 externalContext.requestExternalRedirect(url);
                 externalContext.recordResponseComplete();
-                return new EventFactorySupport().event(this, CasWebflowConstants.STATE_ID_STOP_WEBFLOW);
+                return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_STOP);
             }
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Denied");
         }
