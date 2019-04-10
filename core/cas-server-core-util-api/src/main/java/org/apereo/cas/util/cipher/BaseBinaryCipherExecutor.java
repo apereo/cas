@@ -93,8 +93,7 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
             if (LOGGER.isTraceEnabled()) {
                 throw new DecryptionException(e);
             }
-            //noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
-            throw new DecryptionException(); //NOPMD
+            throw new DecryptionException();
         }
     }
 

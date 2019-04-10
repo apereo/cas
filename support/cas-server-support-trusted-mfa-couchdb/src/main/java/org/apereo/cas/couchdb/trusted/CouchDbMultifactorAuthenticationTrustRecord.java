@@ -29,7 +29,7 @@ public class CouchDbMultifactorAuthenticationTrustRecord extends MultifactorAuth
     private String rev;
 
     @JsonCreator
-    public CouchDbMultifactorAuthenticationTrustRecord(@JsonProperty("_id") final String cid, //NOPMD
+    public CouchDbMultifactorAuthenticationTrustRecord(@JsonProperty("_id") final String cid,
                                                        @JsonProperty("_rev") final String rev,
                                                        @JsonProperty("id") final long id,
                                                        @JsonProperty("principal") final @NonNull String principal,

@@ -67,6 +67,7 @@ import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilte
 import org.apereo.cas.support.oauth.profile.OAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ControllerConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
@@ -80,6 +81,7 @@ import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.ticket.OAuthTokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
+import org.apereo.cas.ticket.device.DeviceTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.token.JwtBuilder;
@@ -251,6 +253,10 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
     private ObjectProvider<AccessTokenFactory> defaultAccessTokenFactory;
 
     @Autowired
+    @Qualifier("defaultDeviceTokenFactory")
+    private ObjectProvider<DeviceTokenFactory> defaultDeviceTokenFactory;
+
+    @Autowired
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
 
@@ -370,69 +376,29 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
     @RefreshScope
     @Bean
     public OidcIntrospectionEndpointController oidcIntrospectionEndpointController() {
-        return new OidcIntrospectionEndpointController(
-            servicesManager.getIfAvailable(),
-            ticketRegistry.getIfAvailable(),
-            defaultAccessTokenFactory.getIfAvailable(),
-            oidcPrincipalFactory(),
-            webApplicationServiceFactory.getIfAvailable(),
-            profileScopeToAttributesFilter(),
-            casProperties,
-            ticketGrantingTicketCookieGenerator.getIfAvailable(),
-            centralAuthenticationService.getIfAvailable(),
-            registeredServiceAccessStrategyEnforcer.getIfAvailable());
+        val context = buildConfigurationContext();
+        return new OidcIntrospectionEndpointController(context);
     }
 
     @RefreshScope
     @Bean
     public OidcLogoutEndpointController oidcLogoutEndpointController() {
-        return new OidcLogoutEndpointController(
-            servicesManager.getIfAvailable(),
-            ticketRegistry.getIfAvailable(),
-            defaultAccessTokenFactory.getIfAvailable(),
-            oidcPrincipalFactory(),
-            webApplicationServiceFactory.getIfAvailable(),
-            profileScopeToAttributesFilter(),
-            casProperties,
-            ticketGrantingTicketCookieGenerator.getIfAvailable(),
-            registeredServiceAccessStrategyEnforcer.getIfAvailable(),
-            oidcTokenSigningAndEncryptionService(),
-            singleLogoutServiceLogoutUrlBuilder.getIfAvailable());
+        val context = buildConfigurationContext();
+        return new OidcLogoutEndpointController(context);
     }
 
     @RefreshScope
     @Bean
     public OidcRevocationEndpointController oidcRevocationEndpointController() {
-        return new OidcRevocationEndpointController(
-            servicesManager.getIfAvailable(),
-            ticketRegistry.getIfAvailable(),
-            defaultAccessTokenFactory.getIfAvailable(),
-            oidcPrincipalFactory(),
-            webApplicationServiceFactory.getIfAvailable(),
-            profileScopeToAttributesFilter(),
-            casProperties,
-            ticketGrantingTicketCookieGenerator.getIfAvailable(),
-            registeredServiceAccessStrategyEnforcer.getIfAvailable());
+        val context = buildConfigurationContext();
+        return new OidcRevocationEndpointController(context);
     }
 
     @RefreshScope
     @Bean
     public OidcAccessTokenEndpointController oidcAccessTokenController() {
-        return new OidcAccessTokenEndpointController(
-            servicesManager.getIfAvailable(),
-            ticketRegistry.getIfAvailable(),
-            defaultAccessTokenFactory.getIfAvailable(),
-            oidcPrincipalFactory(),
-            webApplicationServiceFactory.getIfAvailable(),
-            oauthTokenGenerator.getIfAvailable(),
-            oidcAccessTokenResponseGenerator(),
-            profileScopeToAttributesFilter(),
-            casProperties,
-            ticketGrantingTicketCookieGenerator.getIfAvailable(),
-            accessTokenExpirationPolicy.getIfAvailable(),
-            deviceTokenExpirationPolicy.getIfAvailable(),
-            oauthTokenRequestValidators.getIfAvailable(),
-            accessTokenGrantAuditableRequestExtractor.getIfAvailable());
+        val context = buildConfigurationContext();
+        return new OidcAccessTokenEndpointController(context);
     }
 
     @ConditionalOnMissingBean(name = "clientRegistrationRequestSerializer")
@@ -444,47 +410,24 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
     @RefreshScope
     @Bean
     public OidcDynamicClientRegistrationEndpointController oidcDynamicClientRegistrationEndpointController() {
-        return new OidcDynamicClientRegistrationEndpointController(
-            servicesManager.getIfAvailable(),
-            ticketRegistry.getIfAvailable(),
-            defaultAccessTokenFactory.getIfAvailable(),
-            oidcPrincipalFactory(),
-            webApplicationServiceFactory.getIfAvailable(),
-            clientRegistrationRequestSerializer(),
-            new DefaultRandomStringGenerator(),
-            new DefaultRandomStringGenerator(),
-            profileScopeToAttributesFilter(),
-            casProperties,
-            ticketGrantingTicketCookieGenerator.getIfAvailable());
+        val context = buildConfigurationContext();
+        return new OidcDynamicClientRegistrationEndpointController(context);
     }
 
     @RefreshScope
     @Bean
     public OidcJwksEndpointController oidcJwksController() {
-        return new OidcJwksEndpointController(servicesManager.getIfAvailable(),
-            ticketRegistry.getIfAvailable(),
-            defaultAccessTokenFactory.getIfAvailable(),
-            oidcPrincipalFactory(),
-            webApplicationServiceFactory.getIfAvailable(),
-            profileScopeToAttributesFilter(),
-            casProperties,
-            ticketGrantingTicketCookieGenerator.getIfAvailable());
+        val context = buildConfigurationContext();
+        return new OidcJwksEndpointController(context);
     }
 
     @Autowired
     @RefreshScope
     @Bean
     public OidcWellKnownEndpointController oidcWellKnownController(@Qualifier("oidcServerDiscoverySettingsFactory") final OidcServerDiscoverySettings discoverySettings) {
-        return new OidcWellKnownEndpointController(servicesManager.getIfAvailable(),
-            ticketRegistry.getIfAvailable(),
-            defaultAccessTokenFactory.getIfAvailable(),
-            oidcPrincipalFactory(),
-            webApplicationServiceFactory.getIfAvailable(),
-            discoverySettings,
-            profileScopeToAttributesFilter(),
-            casProperties,
-            ticketGrantingTicketCookieGenerator.getIfAvailable(),
-            new OidcWebFingerDiscoveryService(oidcWebFingerUserInfoRepository(), discoverySettings));
+        val context = buildConfigurationContext();
+        return new OidcWellKnownEndpointController(
+            context, new OidcWebFingerDiscoveryService(oidcWebFingerUserInfoRepository(), discoverySettings));
     }
 
     @Bean
@@ -510,16 +453,8 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
     @RefreshScope
     @Bean
     public OidcUserProfileEndpointController oidcProfileController() {
-        return new OidcUserProfileEndpointController(servicesManager.getIfAvailable(),
-            ticketRegistry.getIfAvailable(),
-            defaultAccessTokenFactory.getIfAvailable(),
-            oidcPrincipalFactory(),
-            webApplicationServiceFactory.getIfAvailable(),
-            profileScopeToAttributesFilter(),
-            casProperties,
-            ticketGrantingTicketCookieGenerator.getIfAvailable(),
-            oauthUserProfileViewRenderer.getIfAvailable(),
-            oidcUserProfileDataCreator());
+        val context = buildConfigurationContext();
+        return new OidcUserProfileEndpointController(context);
     }
 
     @Bean
@@ -530,20 +465,8 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
     @RefreshScope
     @Bean
     public OidcAuthorizeEndpointController oidcAuthorizeController() {
-        return new OidcAuthorizeEndpointController(servicesManager.getIfAvailable(),
-            ticketRegistry.getIfAvailable(),
-            defaultAccessTokenFactory.getIfAvailable(),
-            oidcPrincipalFactory(),
-            webApplicationServiceFactory.getIfAvailable(),
-            defaultOAuthCodeFactory.getIfAvailable(),
-            consentApprovalViewResolver(),
-            profileScopeToAttributesFilter(),
-            casProperties,
-            ticketGrantingTicketCookieGenerator.getIfAvailable(),
-            authenticationBuilder.getIfAvailable(),
-            oauthAuthorizationResponseBuilders.getIfAvailable(),
-            oauthRequestValidators.getIfAvailable(),
-            registeredServiceAccessStrategyEnforcer.getIfAvailable());
+        val context = buildConfigurationContext();
+        return new OidcAuthorizeEndpointController(context);
     }
 
     @Bean
@@ -689,5 +612,42 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
     @Override
     public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
         plan.registerWebflowConfigurer(oidcWebflowConfigurer());
+    }
+
+    private OAuth20ControllerConfigurationContext buildConfigurationContext() {
+        return OAuth20ControllerConfigurationContext.builder()
+            .servicesManager(servicesManager.getIfAvailable())
+            .ticketRegistry(ticketRegistry.getIfAvailable())
+            .accessTokenFactory(defaultAccessTokenFactory.getIfAvailable())
+            .deviceTokenFactory(defaultDeviceTokenFactory.getIfAvailable())
+            .clientRegistrationRequestSerializer(clientRegistrationRequestSerializer())
+            .clientIdGenerator(new DefaultRandomStringGenerator())
+            .clientSecretGenerator(new DefaultRandomStringGenerator())
+            .principalFactory(oidcPrincipalFactory())
+            .webApplicationServiceServiceFactory(webApplicationServiceFactory.getIfAvailable())
+            .casProperties(casProperties)
+            .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator.getIfAvailable())
+            .resourceLoader(resourceLoader)
+            .oauthConfig(oauthSecConfig.getIfAvailable())
+            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getIfAvailable())
+            .centralAuthenticationService(centralAuthenticationService.getIfAvailable())
+            .callbackAuthorizeViewResolver(callbackAuthorizeViewResolver())
+            .profileScopeToAttributesFilter(profileScopeToAttributesFilter())
+            .accessTokenGenerator(oauthTokenGenerator.getIfAvailable())
+            .accessTokenResponseGenerator(oidcAccessTokenResponseGenerator())
+            .accessTokenExpirationPolicy(accessTokenExpirationPolicy.getIfAvailable())
+            .deviceTokenExpirationPolicy(deviceTokenExpirationPolicy.getIfAvailable())
+            .accessTokenGrantRequestValidators(oauthTokenRequestValidators.getIfAvailable())
+            .accessTokenGrantAuditableRequestExtractor(accessTokenGrantAuditableRequestExtractor.getIfAvailable())
+            .userProfileDataCreator(oidcUserProfileDataCreator())
+            .userProfileViewRenderer(oauthUserProfileViewRenderer.getIfAvailable())
+            .oAuthCodeFactory(defaultOAuthCodeFactory.getIfAvailable())
+            .consentApprovalViewResolver(consentApprovalViewResolver())
+            .authenticationBuilder(authenticationBuilder.getIfAvailable())
+            .oauthAuthorizationResponseBuilders(oauthAuthorizationResponseBuilders.getIfAvailable())
+            .oauthRequestValidators(oauthRequestValidators.getIfAvailable())
+            .singleLogoutServiceLogoutUrlBuilder(singleLogoutServiceLogoutUrlBuilder.getIfAvailable())
+            .idTokenSigningAndEncryptionService(oidcTokenSigningAndEncryptionService())
+            .build();
     }
 }

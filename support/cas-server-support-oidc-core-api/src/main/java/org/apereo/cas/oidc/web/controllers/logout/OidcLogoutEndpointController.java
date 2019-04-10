@@ -1,22 +1,11 @@
 package org.apereo.cas.oidc.web.controllers.logout;
 
 import org.apereo.cas.audit.AuditableContext;
-import org.apereo.cas.audit.AuditableExecution;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
-import org.apereo.cas.ticket.OAuthTokenSigningAndEncryptionService;
-import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
-import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ControllerConfigurationContext;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -40,25 +29,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Slf4j
 public class OidcLogoutEndpointController extends BaseOAuth20Controller {
-    private final AuditableExecution registeredServiceAccessStrategyEnforcer;
-    private final OAuthTokenSigningAndEncryptionService idTokenSigningAndEncryptionService;
-    private final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
-
-    public OidcLogoutEndpointController(final ServicesManager servicesManager, final TicketRegistry ticketRegistry,
-                                        final AccessTokenFactory accessTokenFactory,
-                                        final PrincipalFactory principalFactory,
-                                        final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
-                                        final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
-                                        final CasConfigurationProperties casProperties,
-                                        final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-                                        final AuditableExecution registeredServiceAccessStrategyEnforcer,
-                                        final OAuthTokenSigningAndEncryptionService idTokenSigningAndEncryptionService,
-                                        final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder) {
-        super(servicesManager, ticketRegistry, accessTokenFactory, principalFactory, webApplicationServiceServiceFactory,
-            scopeToAttributesFilter, casProperties, ticketGrantingTicketCookieGenerator);
-        this.registeredServiceAccessStrategyEnforcer = registeredServiceAccessStrategyEnforcer;
-        this.idTokenSigningAndEncryptionService = idTokenSigningAndEncryptionService;
-        this.singleLogoutServiceLogoutUrlBuilder = singleLogoutServiceLogoutUrlBuilder;
+    public OidcLogoutEndpointController(final OAuth20ControllerConfigurationContext oAuthConfigurationContext) {
+        super(oAuthConfigurationContext);
     }
 
     /**
@@ -79,22 +51,22 @@ public class OidcLogoutEndpointController extends BaseOAuth20Controller {
                                       final HttpServletRequest request, final HttpServletResponse response) {
 
         if (StringUtils.isNotBlank(idToken)) {
-            val claims = this.idTokenSigningAndEncryptionService.validate(idToken);
+            val claims = getOAuthConfigurationContext().getIdTokenSigningAndEncryptionService().validate(idToken);
 
             val clientId = claims.getStringClaimValue(OAuth20Constants.CLIENT_ID);
 
-            val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
-            val service = webApplicationServiceServiceFactory.createService(clientId);
+            val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getOAuthConfigurationContext().getServicesManager(), clientId);
+            val service = getOAuthConfigurationContext().getWebApplicationServiceServiceFactory().createService(clientId);
 
             val audit = AuditableContext.builder()
                 .service(service)
                 .registeredService(registeredService)
                 .retrievePrincipalAttributesFromReleasePolicy(Boolean.FALSE)
                 .build();
-            val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+            val accessResult = getOAuthConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
             accessResult.throwExceptionIfNeeded();
 
-            val urls = singleLogoutServiceLogoutUrlBuilder.determineLogoutUrl(registeredService, service);
+            val urls = getOAuthConfigurationContext().getSingleLogoutServiceLogoutUrlBuilder().determineLogoutUrl(registeredService, service);
             if (StringUtils.isNotBlank(postLogoutRedirectUrl)) {
                 val matchResult = urls.stream().anyMatch(url -> url.getUrl().equalsIgnoreCase(postLogoutRedirectUrl));
                 if (matchResult) {
@@ -112,9 +84,9 @@ public class OidcLogoutEndpointController extends BaseOAuth20Controller {
     }
 
     private View getLogoutRedirectView(final String state, final String redirectUrl) {
-        val builder = UriComponentsBuilder.fromHttpUrl(casProperties.getServer().getLogoutUrl());
+        val builder = UriComponentsBuilder.fromHttpUrl(getOAuthConfigurationContext().getCasProperties().getServer().getLogoutUrl());
         if (StringUtils.isNotBlank(redirectUrl)) {
-            builder.queryParam(casProperties.getLogout().getRedirectParameter(), redirectUrl);
+            builder.queryParam(getOAuthConfigurationContext().getCasProperties().getLogout().getRedirectParameter(), redirectUrl);
         }
         if (StringUtils.isNotBlank(state)) {
             builder.queryParam(OAuth20Constants.STATE, redirectUrl);

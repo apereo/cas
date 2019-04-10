@@ -1,31 +1,17 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
 import org.apereo.cas.audit.AuditableContext;
-import org.apereo.cas.audit.AuditableExecution;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.device.InvalidOAuth20DeviceTokenException;
 import org.apereo.cas.support.oauth.validator.token.device.ThrottledOAuth20DeviceUserCodeApprovalException;
 import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20DeviceUserCodeException;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
-import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
-import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
-import org.apereo.cas.ticket.ExpirationPolicy;
-import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
-import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.Pac4jUtils;
-import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import com.google.common.base.Supplier;
 import lombok.SneakyThrows;
@@ -40,7 +26,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collection;
 
 /**
  * This controller returns an access token according to the given
@@ -54,42 +39,8 @@ import java.util.Collection;
  */
 @Slf4j
 public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller {
-    private final OAuth20TokenGenerator accessTokenGenerator;
-    private final OAuth20AccessTokenResponseGenerator accessTokenResponseGenerator;
-    private final ExpirationPolicy accessTokenExpirationPolicy;
-    private final Collection<OAuth20TokenRequestValidator> accessTokenGrantRequestValidators;
-    private final ExpirationPolicy deviceTokenExpirationPolicy;
-    private final AuditableExecution accessTokenGrantAuditableRequestExtractor;
-
-    public OAuth20AccessTokenEndpointController(final ServicesManager servicesManager,
-                                                final TicketRegistry ticketRegistry,
-                                                final AccessTokenFactory accessTokenFactory,
-                                                final PrincipalFactory principalFactory,
-                                                final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
-                                                final OAuth20TokenGenerator accessTokenGenerator,
-                                                final OAuth20AccessTokenResponseGenerator accessTokenResponseGenerator,
-                                                final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
-                                                final CasConfigurationProperties casProperties,
-                                                final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-                                                final ExpirationPolicy accessTokenExpirationPolicy,
-                                                final ExpirationPolicy deviceTokenExpirationPolicy,
-                                                final Collection<OAuth20TokenRequestValidator> accessTokenGrantRequestValidators,
-                                                final AuditableExecution accessTokenGrantAuditableRequestExtractor) {
-        super(servicesManager,
-            ticketRegistry,
-            accessTokenFactory,
-            principalFactory,
-            webApplicationServiceServiceFactory,
-            scopeToAttributesFilter,
-            casProperties,
-            ticketGrantingTicketCookieGenerator);
-
-        this.accessTokenGenerator = accessTokenGenerator;
-        this.accessTokenResponseGenerator = accessTokenResponseGenerator;
-        this.accessTokenExpirationPolicy = accessTokenExpirationPolicy;
-        this.deviceTokenExpirationPolicy = deviceTokenExpirationPolicy;
-        this.accessTokenGrantRequestValidators = accessTokenGrantRequestValidators;
-        this.accessTokenGrantAuditableRequestExtractor = accessTokenGrantAuditableRequestExtractor;
+    public OAuth20AccessTokenEndpointController(final OAuth20ControllerConfigurationContext oauthConfigurationContext) {
+        super(oauthConfigurationContext);
     }
 
     /**
@@ -119,7 +70,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
             val requestHolder = examineAndExtractAccessTokenGrantRequest(request, response);
             LOGGER.debug("Creating access token for [{}]", requestHolder);
             val context = Pac4jUtils.getPac4jJ2EContext(request, response, new J2ESessionStore());
-            val tokenResult = accessTokenGenerator.generate(requestHolder);
+            val tokenResult = getOAuthConfigurationContext().getAccessTokenGenerator().generate(requestHolder);
             LOGGER.debug("Access token generated result is: [{}]", tokenResult);
             return generateAccessTokenResponse(request, response, requestHolder, context, tokenResult);
         } catch (final InvalidOAuth20DeviceTokenException e) {
@@ -168,18 +119,19 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
                                                        final OAuth20TokenGeneratedResult result) {
         LOGGER.debug("Generating access token response for [{}]", result);
 
-        val deviceRefreshInterval = Beans.newDuration(casProperties.getAuthn().getOauth().getDeviceToken().getRefreshInterval()).getSeconds();
+        val deviceRefreshInterval = Beans.newDuration(getOAuthConfigurationContext().getCasProperties()
+            .getAuthn().getOauth().getDeviceToken().getRefreshInterval()).getSeconds();
         val tokenResult = OAuth20AccessTokenResponseResult.builder()
             .registeredService(requestHolder.getRegisteredService())
             .service(requestHolder.getService())
-            .accessTokenTimeout(accessTokenExpirationPolicy.getTimeToLive())
+            .accessTokenTimeout(getOAuthConfigurationContext().getAccessTokenExpirationPolicy().getTimeToLive())
             .deviceRefreshInterval(deviceRefreshInterval)
-            .deviceTokenTimeout(deviceTokenExpirationPolicy.getTimeToLive())
+            .deviceTokenTimeout(getOAuthConfigurationContext().getDeviceTokenExpirationPolicy().getTimeToLive())
             .responseType(result.getResponseType().isPresent() ? result.getResponseType().get() : OAuth20ResponseTypes.NONE)
-            .casProperties(casProperties)
+            .casProperties(getOAuthConfigurationContext().getCasProperties())
             .generatedToken(result)
             .build();
-        return this.accessTokenResponseGenerator.generate(request, response, tokenResult);
+        return getOAuthConfigurationContext().getAccessTokenResponseGenerator().generate(request, response, tokenResult);
     }
 
     private AccessTokenRequestDataHolder examineAndExtractAccessTokenGrantRequest(final HttpServletRequest request,
@@ -188,7 +140,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
             .httpRequest(request)
             .httpResponse(response)
             .build();
-        val accessResult = this.accessTokenGrantAuditableRequestExtractor.execute(audit);
+        val accessResult = getOAuthConfigurationContext().getAccessTokenGrantAuditableRequestExtractor().execute(audit);
         val execResult = accessResult.getExecutionResult();
         if (execResult.isPresent()) {
             return (AccessTokenRequestDataHolder) execResult.get();
@@ -204,12 +156,13 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
      * @return true, if successful
      */
     private boolean verifyAccessTokenRequest(final HttpServletRequest request, final HttpServletResponse response) {
-        if (accessTokenGrantRequestValidators.isEmpty()) {
+        val validators = getOAuthConfigurationContext().getAccessTokenGrantRequestValidators();
+        if (validators.isEmpty()) {
             LOGGER.warn("No validators are defined to examine the access token request for eligibility");
             return false;
         }
         val context = new J2EContext(request, response);
-        return this.accessTokenGrantRequestValidators.stream()
+        return validators.stream()
             .filter(ext -> ext.supports(context))
             .findFirst()
             .orElseThrow((Supplier<RuntimeException>) () -> new UnsupportedOperationException("Access token request is not supported"))

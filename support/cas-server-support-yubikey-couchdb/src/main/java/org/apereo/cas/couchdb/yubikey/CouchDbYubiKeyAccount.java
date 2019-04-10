@@ -25,7 +25,7 @@ public class CouchDbYubiKeyAccount extends YubiKeyAccount {
     private String rev;
 
     @JsonCreator
-    public CouchDbYubiKeyAccount(@JsonProperty("_id") final String cid, //NOPMD
+    public CouchDbYubiKeyAccount(@JsonProperty("_id") final String cid,
                                  @JsonProperty("_rev") final String rev,
                                  @JsonProperty("id") final long id,
                                  @JsonProperty("publicId") final @NonNull String publicId,

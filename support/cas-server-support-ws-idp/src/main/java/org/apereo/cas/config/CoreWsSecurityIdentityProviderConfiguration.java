@@ -25,6 +25,7 @@ import org.apereo.cas.ws.idp.metadata.WSFederationMetadataController;
 import org.apereo.cas.ws.idp.services.DefaultRelyingPartyTokenProducer;
 import org.apereo.cas.ws.idp.services.WSFederationRelyingPartyTokenProducer;
 import org.apereo.cas.ws.idp.services.WSFederationServiceRegistry;
+import org.apereo.cas.ws.idp.web.WSFederationRequestConfigurationContext;
 import org.apereo.cas.ws.idp.web.WSFederationValidateRequestCallbackController;
 import org.apereo.cas.ws.idp.web.WSFederationValidateRequestController;
 
@@ -102,35 +103,17 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
     @ConditionalOnMissingBean(name = "federationValidateRequestController")
     @Bean
     public WSFederationValidateRequestController federationValidateRequestController() {
-        return new WSFederationValidateRequestController(servicesManager.getIfAvailable(),
-            webApplicationServiceFactory.getIfAvailable(),
-            casProperties,
-            wsFederationAuthenticationServiceSelectionStrategy(),
-            httpClient.getIfAvailable(),
-            securityTokenTicketFactory.getIfAvailable(),
-            ticketRegistry.getIfAvailable(),
-            ticketGrantingTicketCookieGenerator.getIfAvailable(),
-            ticketRegistrySupport.getIfAvailable(),
-            wsFederationCallbackService());
+        return new WSFederationValidateRequestController(getConfigurationContext().build());
     }
 
     @Autowired
     @Bean
     public WSFederationValidateRequestCallbackController federationValidateRequestCallbackController(
         @Qualifier("wsFederationRelyingPartyTokenProducer") final WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer) {
-        return new WSFederationValidateRequestCallbackController(servicesManager.getIfAvailable(),
-            webApplicationServiceFactory.getIfAvailable(),
-            casProperties,
-            wsFederationRelyingPartyTokenProducer,
-            wsFederationAuthenticationServiceSelectionStrategy(),
-            httpClient.getIfAvailable(),
-            securityTokenTicketFactory.getIfAvailable(),
-            ticketRegistry.getIfAvailable(),
-            ticketGrantingTicketCookieGenerator.getIfAvailable(),
-            ticketRegistrySupport.getIfAvailable(),
-            casClientTicketValidator.getIfAvailable(),
-            wsFederationCallbackService(),
-            securityTokenServiceTokenFetcher.getIfAvailable());
+        val context = getConfigurationContext()
+            .relyingPartyTokenProducer(wsFederationRelyingPartyTokenProducer)
+            .build();
+        return new WSFederationValidateRequestCallbackController(context);
     }
 
     @Bean
@@ -186,5 +169,21 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
                 plan.registerServiceRegistry(new WSFederationServiceRegistry(eventPublisher, service));
             }
         };
+    }
+
+    private WSFederationRequestConfigurationContext.WSFederationRequestConfigurationContextBuilder getConfigurationContext() {
+        return WSFederationRequestConfigurationContext.builder()
+            .servicesManager(servicesManager.getIfAvailable())
+            .webApplicationServiceFactory(webApplicationServiceFactory.getIfAvailable())
+            .casProperties(casProperties)
+            .ticketValidator(casClientTicketValidator.getIfAvailable())
+            .securityTokenServiceTokenFetcher(securityTokenServiceTokenFetcher.getIfAvailable())
+            .serviceSelectionStrategy(wsFederationAuthenticationServiceSelectionStrategy())
+            .httpClient(httpClient.getIfAvailable())
+            .securityTokenTicketFactory(securityTokenTicketFactory.getIfAvailable())
+            .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator.getIfAvailable())
+            .ticketRegistry(ticketRegistry.getIfAvailable())
+            .ticketRegistrySupport(ticketRegistrySupport.getIfAvailable())
+            .callbackService(wsFederationCallbackService());
     }
 }

@@ -9,12 +9,14 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.ChainingCasProtocolValidationSpecification;
 import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
+import org.apereo.cas.web.ServiceValidateConfigurationContext;
 import org.apereo.cas.web.ServiceValidationViewFactory;
 import org.apereo.cas.web.ServiceValidationViewFactoryConfigurer;
 import org.apereo.cas.web.ServiceValidationViewTypes;
@@ -282,19 +284,11 @@ public class CasValidationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "v3ServiceValidateController")
     public V3ServiceValidateController v3ServiceValidateController() {
-        return new V3ServiceValidateController(
-            v3ServiceValidateControllerValidationSpecification(),
-            authenticationSystemSupport.getIfAvailable(),
-            servicesManager.getIfAvailable(),
-            centralAuthenticationService.getIfAvailable(),
-            proxy20Handler.getIfAvailable(),
-            argumentExtractor.getIfAvailable(),
-            requestedContextValidator.getIfAvailable(),
-            casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
-            serviceValidationAuthorizers.getIfAvailable(),
-            casProperties.getSso().isRenewAuthnEnabled(),
-            serviceValidationViewFactory()
-        );
+        val context = getServiceValidateConfigurationContextBuilder()
+            .validationSpecifications(CollectionUtils.wrapSet(v3ServiceValidateControllerValidationSpecification()))
+            .proxyHandler(proxy20Handler.getIfAvailable())
+            .build();
+        return new V3ServiceValidateController(context);
     }
 
     @Bean
@@ -310,19 +304,11 @@ public class CasValidationConfiguration {
     @ConditionalOnMissingBean(name = "v3ProxyValidateController")
     @ConditionalOnProperty(prefix = "cas.sso", name = "proxyAuthnEnabled", havingValue = "true", matchIfMissing = true)
     public V3ProxyValidateController v3ProxyValidateController() {
-        return new V3ProxyValidateController(
-            v3ProxyValidateControllerValidationSpecification(),
-            authenticationSystemSupport.getIfAvailable(),
-            servicesManager.getIfAvailable(),
-            centralAuthenticationService.getIfAvailable(),
-            proxy20Handler.getIfAvailable(),
-            argumentExtractor.getIfAvailable(),
-            requestedContextValidator.getIfAvailable(),
-            casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
-            serviceValidationAuthorizers.getIfAvailable(),
-            casProperties.getSso().isRenewAuthnEnabled(),
-            serviceValidationViewFactory()
-        );
+        val context = getServiceValidateConfigurationContextBuilder()
+            .validationSpecifications(CollectionUtils.wrapSet(v3ProxyValidateControllerValidationSpecification()))
+            .proxyHandler(proxy20Handler.getIfAvailable())
+            .build();
+        return new V3ProxyValidateController(context);
     }
 
     @Bean
@@ -336,19 +322,11 @@ public class CasValidationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "proxyValidateController")
     public ProxyValidateController proxyValidateController() {
-        return new ProxyValidateController(
-            proxyValidateControllerValidationSpecification(),
-            authenticationSystemSupport.getIfAvailable(),
-            servicesManager.getIfAvailable(),
-            centralAuthenticationService.getIfAvailable(),
-            proxy20Handler.getIfAvailable(),
-            argumentExtractor.getIfAvailable(),
-            requestedContextValidator.getIfAvailable(),
-            casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
-            serviceValidationAuthorizers.getIfAvailable(),
-            casProperties.getSso().isRenewAuthnEnabled(),
-            serviceValidationViewFactory()
-        );
+        val context = getServiceValidateConfigurationContextBuilder()
+            .validationSpecifications(CollectionUtils.wrapSet(proxyValidateControllerValidationSpecification()))
+            .proxyHandler(proxy20Handler.getIfAvailable())
+            .build();
+        return new ProxyValidateController(context);
     }
 
     @Bean
@@ -362,19 +340,11 @@ public class CasValidationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "legacyValidateController")
     public LegacyValidateController legacyValidateController() {
-        return new LegacyValidateController(
-            legacyValidateControllerValidationSpecification(),
-            authenticationSystemSupport.getIfAvailable(),
-            servicesManager.getIfAvailable(),
-            centralAuthenticationService.getIfAvailable(),
-            proxy10Handler.getIfAvailable(),
-            argumentExtractor.getIfAvailable(),
-            requestedContextValidator.getIfAvailable(),
-            casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
-            serviceValidationAuthorizers.getIfAvailable(),
-            casProperties.getSso().isRenewAuthnEnabled(),
-            serviceValidationViewFactory()
-        );
+        val context = getServiceValidateConfigurationContextBuilder()
+            .validationSpecifications(CollectionUtils.wrapSet(legacyValidateControllerValidationSpecification()))
+            .proxyHandler(proxy10Handler.getIfAvailable())
+            .build();
+        return new LegacyValidateController(context);
     }
 
     @Bean
@@ -388,18 +358,23 @@ public class CasValidationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "serviceValidateController")
     public ServiceValidateController serviceValidateController() {
-        return new ServiceValidateController(
-            serviceValidateControllerValidationSpecification(),
-            authenticationSystemSupport.getIfAvailable(),
-            servicesManager.getIfAvailable(),
-            centralAuthenticationService.getIfAvailable(),
-            proxy20Handler.getIfAvailable(),
-            argumentExtractor.getIfAvailable(),
-            requestedContextValidator.getIfAvailable(),
-            casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
-            serviceValidationAuthorizers.getIfAvailable(),
-            casProperties.getSso().isRenewAuthnEnabled(),
-            serviceValidationViewFactory()
-        );
+        val context = getServiceValidateConfigurationContextBuilder()
+            .validationSpecifications(CollectionUtils.wrapSet(serviceValidateControllerValidationSpecification()))
+            .proxyHandler(proxy20Handler.getIfAvailable())
+            .build();
+        return new ServiceValidateController(context);
+    }
+
+    private ServiceValidateConfigurationContext.ServiceValidateConfigurationContextBuilder getServiceValidateConfigurationContextBuilder() {
+        return ServiceValidateConfigurationContext.builder()
+            .authenticationSystemSupport(authenticationSystemSupport.getIfAvailable())
+            .servicesManager(servicesManager.getIfAvailable())
+            .centralAuthenticationService(centralAuthenticationService.getIfAvailable())
+            .argumentExtractor(argumentExtractor.getIfAvailable())
+            .requestedContextValidator(requestedContextValidator.getIfAvailable())
+            .authnContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute())
+            .validationAuthorizers(serviceValidationAuthorizers.getIfAvailable())
+            .renewEnabled(casProperties.getSso().isRenewAuthnEnabled())
+            .validationViewFactory(serviceValidationViewFactory());
     }
 }

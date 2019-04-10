@@ -1,32 +1,17 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
 import org.apereo.cas.audit.AuditableContext;
-import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.PrincipalException;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
-import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
-import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
-import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
-import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
-import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
-import org.apereo.cas.ticket.code.OAuthCodeFactory;
-import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.Pac4jUtils;
-import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.CookieUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +28,6 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * This controller is in charge of responding to the authorize call in OAuth v2 protocol.
@@ -54,60 +38,8 @@ import java.util.Set;
  */
 @Slf4j
 public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
-    /**
-     * The code factory instance.
-     */
-    protected final OAuthCodeFactory oAuthCodeFactory;
-
-    /**
-     * The Consent approval view resolver.
-     */
-    protected final ConsentApprovalViewResolver consentApprovalViewResolver;
-
-    /**
-     * The Authentication builder.
-     */
-    protected final OAuth20CasAuthenticationBuilder authenticationBuilder;
-
-    /**
-     * Collection of response builders.
-     */
-    protected final Set<OAuth20AuthorizationResponseBuilder> oauthAuthorizationResponseBuilders;
-
-    /**
-     * Collection of request validators.
-     */
-    protected final Set<OAuth20AuthorizationRequestValidator> oauthRequestValidators;
-
-    /**
-     * Access strategy enforcer.
-     */
-    protected final AuditableExecution registeredServiceAccessStrategyEnforcer;
-
-    public OAuth20AuthorizeEndpointController(final ServicesManager servicesManager,
-                                              final TicketRegistry ticketRegistry,
-                                              final AccessTokenFactory accessTokenFactory,
-                                              final PrincipalFactory principalFactory,
-                                              final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
-                                              final OAuthCodeFactory oAuthCodeFactory,
-                                              final ConsentApprovalViewResolver consentApprovalViewResolver,
-                                              final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
-                                              final CasConfigurationProperties casProperties,
-                                              final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-                                              final OAuth20CasAuthenticationBuilder authenticationBuilder,
-                                              final Set<OAuth20AuthorizationResponseBuilder> oauthAuthorizationResponseBuilders,
-                                              final Set<OAuth20AuthorizationRequestValidator> oauthRequestValidators,
-                                              final AuditableExecution registeredServiceAccessStrategyEnforcer) {
-        super(servicesManager, ticketRegistry, accessTokenFactory, principalFactory,
-            webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties,
-            ticketGrantingTicketCookieGenerator);
-
-        this.oAuthCodeFactory = oAuthCodeFactory;
-        this.consentApprovalViewResolver = consentApprovalViewResolver;
-        this.authenticationBuilder = authenticationBuilder;
-        this.oauthAuthorizationResponseBuilders = oauthAuthorizationResponseBuilders;
-        this.oauthRequestValidators = oauthRequestValidators;
-        this.registeredServiceAccessStrategyEnforcer = registeredServiceAccessStrategyEnforcer;
+    public OAuth20AuthorizeEndpointController(final OAuth20ControllerConfigurationContext oAuthConfigurationContext) {
+        super(oAuthConfigurationContext);
     }
 
     private static boolean isRequestAuthenticated(final ProfileManager manager, final J2EContext context) {
@@ -143,7 +75,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
             return OAuth20Utils.produceUnauthorizedErrorView();
         }
 
-        val mv = this.consentApprovalViewResolver.resolve(context, registeredService);
+        val mv = getOAuthConfigurationContext().getConsentApprovalViewResolver().resolve(context, registeredService);
         if (!mv.isEmpty() && mv.hasView()) {
             return mv;
         }
@@ -171,7 +103,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
      * @return the registered service by client id
      */
     protected OAuthRegisteredService getRegisteredServiceByClientId(final String clientId) {
-        return OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
+        return OAuth20Utils.getRegisteredOAuthServiceByClientId(getOAuthConfigurationContext().getServicesManager(), clientId);
     }
 
     /**
@@ -193,10 +125,10 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
             return OAuth20Utils.produceUnauthorizedErrorView();
         }
 
-        val service = this.authenticationBuilder.buildService(registeredService, context, false);
+        val service = getOAuthConfigurationContext().getAuthenticationBuilder().buildService(registeredService, context, false);
         LOGGER.debug("Created service [{}] based on registered service [{}]", service, registeredService);
 
-        val authentication = this.authenticationBuilder.build(profile.get(), registeredService, context, service);
+        val authentication = getOAuthConfigurationContext().getAuthenticationBuilder().build(profile.get(), registeredService, context, service);
         LOGGER.debug("Created OAuth authentication [{}] for service [{}]", service, authentication);
 
         try {
@@ -206,7 +138,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
                 .registeredService(registeredService)
                 .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)
                 .build();
-            val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+            val accessResult = getOAuthConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
             accessResult.throwExceptionIfNeeded();
         } catch (final UnauthorizedServiceException | PrincipalException e) {
             LOGGER.error(e.getMessage(), e);
@@ -235,14 +167,15 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
                                                         final J2EContext context,
                                                         final String clientId, final Service service,
                                                         final Authentication authentication) {
-        val builder = this.oauthAuthorizationResponseBuilders
+        val builder = getOAuthConfigurationContext().getOauthAuthorizationResponseBuilders()
             .stream()
             .filter(b -> b.supports(context))
             .findFirst()
             .orElseThrow(() -> new IllegalArgumentException("Could not build the callback url. Response type likely not supported"));
 
         val ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
-            ticketGrantingTicketCookieGenerator, this.ticketRegistry, context.getRequest());
+            getOAuthConfigurationContext().getTicketGrantingTicketCookieGenerator(),
+            getOAuthConfigurationContext().getTicketRegistry(), context.getRequest());
 
         val grantType = StringUtils.defaultIfEmpty(context.getRequestParameter(OAuth20Constants.GRANT_TYPE),
             OAuth20GrantTypes.AUTHORIZATION_CODE.getType()).toUpperCase();
@@ -273,7 +206,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
      * @return whether the authorize request is valid
      */
     private boolean verifyAuthorizeRequest(final J2EContext context) {
-        val validator = this.oauthRequestValidators
+        val validator = getOAuthConfigurationContext().getOauthRequestValidators()
             .stream()
             .filter(b -> b.supports(context))
             .findFirst()

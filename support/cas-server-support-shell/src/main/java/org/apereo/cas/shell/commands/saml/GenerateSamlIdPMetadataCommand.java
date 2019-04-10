@@ -1,6 +1,8 @@
 package org.apereo.cas.shell.commands.saml;
 
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.support.saml.idp.metadata.generator.FileSystemSamlIdPMetadataGenerator;
+import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
 import org.apereo.cas.support.saml.idp.metadata.locator.FileSystemSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.writer.DefaultSamlIdPCertificateAndKeyWriter;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -57,7 +59,17 @@ public class GenerateSamlIdPMetadataCommand {
 
         val locator = new FileSystemSamlIdPMetadataLocator(new File(metadataLocation));
         val writer = new DefaultSamlIdPCertificateAndKeyWriter();
-        val generator = new FileSystemSamlIdPMetadataGenerator(locator, writer, entityId, this.resourceLoader, serverPrefix, scope);
+
+        val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
+            .samlIdPMetadataLocator(locator)
+            .samlIdPCertificateAndKeyWriter(writer)
+            .entityId(entityId)
+            .resourceLoader(resourceLoader)
+            .casServerPrefix(serverPrefix)
+            .scope(scope)
+            .metadataCipherExecutor(CipherExecutor.noOpOfStringToString())
+            .build();
+        val generator = new FileSystemSamlIdPMetadataGenerator(context);
 
         val generateMetadata = FunctionUtils.doIf(locator.exists(),
             () -> Boolean.TRUE,

@@ -1,10 +1,8 @@
 package org.apereo.cas.support.saml.idp.metadata.generator;
 
-import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
-import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyWriter;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +10,6 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.core.io.ResourceLoader;
 
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
@@ -25,35 +22,18 @@ import java.nio.charset.StandardCharsets;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Getter
 public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGenerator {
     private static final String BEGIN_CERTIFICATE = "-----BEGIN CERTIFICATE-----";
     private static final String END_CERTIFICATE = "-----END CERTIFICATE-----";
 
-    /**
-     * Metadata locator.
-     */
-    protected final SamlIdPMetadataLocator samlIdPMetadataLocator;
-
-    /**
-     * Metadata certificate writer.
-     */
-    protected final SamlIdPCertificateAndKeyWriter samlIdPCertificateAndKeyWriter;
-
-    /**
-     * Cipher to encrypt metadata.
-     */
-    protected final CipherExecutor<String, String> metadataCipherExecutor;
-
-    private final String entityId;
-    private final ResourceLoader resourceLoader;
-    private final String casServerPrefix;
-    private final String scope;
+    private final SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext;
 
     @Override
     @SneakyThrows
     public SamlIdPMetadataDocument generate() {
-        LOGGER.debug("Preparing to generate metadata for entityId [{}]", this.entityId);
-        if (!samlIdPMetadataLocator.exists()) {
+        LOGGER.debug("Preparing to generate metadata for entityId [{}]", samlIdPMetadataGeneratorConfigurationContext.getEntityId());
+        if (!samlIdPMetadataGeneratorConfigurationContext.getSamlIdPMetadataLocator().exists()) {
             LOGGER.trace("Metadata does not exist. Creating...");
 
             LOGGER.info("Creating self-signed certificate for signing...");
@@ -74,7 +54,7 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
             return finalizeMetadataDocument(doc);
         }
 
-        return samlIdPMetadataLocator.fetch();
+        return samlIdPMetadataGeneratorConfigurationContext.getSamlIdPMetadataLocator().fetch();
     }
 
     /**
@@ -88,7 +68,7 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
     }
 
     private String getIdPEndpointUrl() {
-        return this.casServerPrefix.concat("/idp");
+        return samlIdPMetadataGeneratorConfigurationContext.getCasServerPrefix().concat("/idp");
     }
 
     /**
@@ -115,7 +95,7 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
      */
     @SneakyThrows
     private String buildMetadataGeneratorParameters(final Pair<String, String> signing, final Pair<String, String> encryption) {
-        val template = this.resourceLoader.getResource("classpath:/template-idp-metadata.xml");
+        val template = samlIdPMetadataGeneratorConfigurationContext.getResourceLoader().getResource("classpath:/template-idp-metadata.xml");
 
         var signingCert = signing.getKey();
         signingCert = StringUtils.remove(signingCert, BEGIN_CERTIFICATE);
@@ -128,8 +108,8 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
         try (val writer = new StringWriter()) {
             IOUtils.copy(template.getInputStream(), writer, StandardCharsets.UTF_8);
             val metadata = writer.toString()
-                .replace("${entityId}", this.entityId)
-                .replace("${scope}", this.scope)
+                .replace("${entityId}", samlIdPMetadataGeneratorConfigurationContext.getEntityId())
+                .replace("${scope}", samlIdPMetadataGeneratorConfigurationContext.getScope())
                 .replace("${idpEndpointUrl}", getIdPEndpointUrl())
                 .replace("${encryptionKey}", encryptionCert)
                 .replace("${signingKey}", signingCert);
@@ -157,8 +137,8 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
     @SneakyThrows
     protected Pair<String, String> generateCertificateAndKey() {
         try (val certWriter = new StringWriter(); val keyWriter = new StringWriter()) {
-            this.samlIdPCertificateAndKeyWriter.writeCertificateAndKey(keyWriter, certWriter);
-            val encryptionKey = metadataCipherExecutor.encode(keyWriter.toString());
+            samlIdPMetadataGeneratorConfigurationContext.getSamlIdPCertificateAndKeyWriter().writeCertificateAndKey(keyWriter, certWriter);
+            val encryptionKey = samlIdPMetadataGeneratorConfigurationContext.getMetadataCipherExecutor().encode(keyWriter.toString());
             return Pair.of(certWriter.toString(), encryptionKey);
         }
     }

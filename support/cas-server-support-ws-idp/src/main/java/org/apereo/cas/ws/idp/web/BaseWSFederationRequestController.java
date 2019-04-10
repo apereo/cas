@@ -1,26 +1,18 @@
 package org.apereo.cas.ws.idp.web;
 
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.ticket.SecurityTokenTicket;
-import org.apereo.cas.ticket.SecurityTokenTicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -44,81 +36,10 @@ import java.util.concurrent.TimeUnit;
  */
 @Controller
 @Slf4j
+@Getter
+@RequiredArgsConstructor
 public abstract class BaseWSFederationRequestController {
-
-
-    /**
-     * The Services manager.
-     */
-    protected final ServicesManager servicesManager;
-
-    /**
-     * The Web application service factory.
-     */
-    protected final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
-
-    /**
-     * The Callback service.
-     */
-    protected final Service callbackService;
-
-    /**
-     * The CAS properties.
-     */
-    protected final CasConfigurationProperties casProperties;
-
-    /**
-     * The Service selection strategy.
-     */
-    protected final AuthenticationServiceSelectionStrategy serviceSelectionStrategy;
-
-    /**
-     * The Http client.
-     */
-    protected final HttpClient httpClient;
-
-    /**
-     * The Security token ticket factory.
-     */
-    protected final SecurityTokenTicketFactory securityTokenTicketFactory;
-
-    /**
-     * The Ticket registry.
-     */
-    protected final TicketRegistry ticketRegistry;
-
-    /**
-     * The Ticket granting ticket cookie generator.
-     */
-    protected final CasCookieBuilder ticketGrantingTicketCookieGenerator;
-
-    /**
-     * The Ticket registry support.
-     */
-    protected final TicketRegistrySupport ticketRegistrySupport;
-
-    public BaseWSFederationRequestController(
-        final ServicesManager servicesManager,
-        final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-        final CasConfigurationProperties casProperties,
-        final AuthenticationServiceSelectionStrategy serviceSelectionStrategy,
-        final HttpClient httpClient,
-        final SecurityTokenTicketFactory securityTokenTicketFactory,
-        final TicketRegistry ticketRegistry,
-        final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-        final TicketRegistrySupport ticketRegistrySupport,
-        final Service callbackService) {
-        this.servicesManager = servicesManager;
-        this.webApplicationServiceFactory = webApplicationServiceFactory;
-        this.casProperties = casProperties;
-        this.serviceSelectionStrategy = serviceSelectionStrategy;
-        this.httpClient = httpClient;
-        this.securityTokenTicketFactory = securityTokenTicketFactory;
-        this.ticketRegistry = ticketRegistry;
-        this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
-        this.ticketRegistrySupport = ticketRegistrySupport;
-        this.callbackService = callbackService;
-    }
+    private final WSFederationRequestConfigurationContext wsFederationRequestConfigurationContext;
 
     /**
      * Construct service url string.
@@ -131,7 +52,7 @@ public abstract class BaseWSFederationRequestController {
     protected String constructServiceUrl(final HttpServletRequest request, final HttpServletResponse response,
                                          final WSFederationRequest wsfedRequest) {
         try {
-            val builder = new URIBuilder(this.callbackService.getId());
+            val builder = new URIBuilder(wsFederationRequestConfigurationContext.getCallbackService().getId());
 
             builder.addParameter(WSFederationConstants.WA, wsfedRequest.getWa());
             builder.addParameter(WSFederationConstants.WREPLY, wsfedRequest.getWreply());
@@ -154,7 +75,7 @@ public abstract class BaseWSFederationRequestController {
 
             LOGGER.trace("Built service callback url [{}]", url);
             return org.jasig.cas.client.util.CommonUtils.constructServiceUrl(request, response,
-                url.toString(), casProperties.getServer().getName(),
+                url.toString(), wsFederationRequestConfigurationContext.getCasProperties().getServer().getName(),
                 CasProtocolConstants.PARAMETER_SERVICE,
                 CasProtocolConstants.PARAMETER_TICKET, false);
         } catch (final Exception e) {
@@ -169,16 +90,16 @@ public abstract class BaseWSFederationRequestController {
      * @return the security token from request
      */
     protected SecurityToken getSecurityTokenFromRequest(final HttpServletRequest request) {
-        val cookieValue = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
+        val cookieValue = wsFederationRequestConfigurationContext.getTicketGrantingTicketCookieGenerator().retrieveCookieValue(request);
         if (StringUtils.isNotBlank(cookieValue)) {
-            val tgt = this.ticketRegistry.getTicket(cookieValue, TicketGrantingTicket.class);
+            val tgt = wsFederationRequestConfigurationContext.getTicketRegistry().getTicket(cookieValue, TicketGrantingTicket.class);
             if (tgt != null) {
                 val sts = tgt.getDescendantTickets().stream()
                     .filter(t -> t.startsWith(SecurityTokenTicket.PREFIX))
                     .findFirst()
                     .orElse(null);
                 if (StringUtils.isNotBlank(sts)) {
-                    val stt = ticketRegistry.getTicket(sts, SecurityTokenTicket.class);
+                    val stt = wsFederationRequestConfigurationContext.getTicketRegistry().getTicket(sts, SecurityTokenTicket.class);
                     if (stt == null || stt.isExpired()) {
                         LOGGER.warn("Security token ticket [{}] is not found or has expired", sts);
                         return null;
@@ -240,7 +161,7 @@ public abstract class BaseWSFederationRequestController {
                                                                                                  final WSFederationRequest fedRequest) {
         val svc = getWsFederationRegisteredService(targetService);
 
-        val idp = casProperties.getAuthn().getWsfedIdp().getIdp();
+        val idp = wsFederationRequestConfigurationContext.getCasProperties().getAuthn().getWsfedIdp().getIdp();
         if (StringUtils.isBlank(fedRequest.getWtrealm()) || !StringUtils.equals(fedRequest.getWtrealm(), svc.getRealm())) {
             LOGGER.warn("Realm [{}] is not authorized for matching service [{}]", fedRequest.getWtrealm(), svc);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
@@ -260,7 +181,7 @@ public abstract class BaseWSFederationRequestController {
      * @return the ws federation registered service
      */
     protected WSFederationRegisteredService getWsFederationRegisteredService(final Service targetService) {
-        val svc = this.servicesManager.findServiceBy(targetService, WSFederationRegisteredService.class);
+        val svc = wsFederationRequestConfigurationContext.getServicesManager().findServiceBy(targetService, WSFederationRegisteredService.class);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(targetService, svc);
         return svc;
     }

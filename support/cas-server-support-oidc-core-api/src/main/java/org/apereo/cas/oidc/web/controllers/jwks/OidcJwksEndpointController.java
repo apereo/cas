@@ -1,19 +1,10 @@
 package org.apereo.cas.oidc.web.controllers.jwks;
 
-import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.OidcRegisteredService;
-import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
-import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
-import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ControllerConfigurationContext;
 
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -21,9 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -42,23 +31,11 @@ import java.nio.charset.StandardCharsets;
  */
 @Slf4j
 public class OidcJwksEndpointController extends BaseOAuth20Controller {
-    private final @NonNull Resource jwksFile;
+    private final Resource jwksFile;
 
-    @Autowired
-    private ResourceLoader resourceLoader;
-
-    public OidcJwksEndpointController(final ServicesManager servicesManager,
-                                      final TicketRegistry ticketRegistry,
-                                      final AccessTokenFactory accessTokenFactory,
-                                      final PrincipalFactory principalFactory,
-                                      final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
-                                      final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
-                                      final CasConfigurationProperties casProperties,
-                                      final CasCookieBuilder ticketGrantingTicketCookieGenerator) {
-        super(servicesManager, ticketRegistry, accessTokenFactory, principalFactory,
-            webApplicationServiceServiceFactory, scopeToAttributesFilter,
-            casProperties, ticketGrantingTicketCookieGenerator);
-        this.jwksFile = casProperties.getAuthn().getOidc().getJwksFile();
+    public OidcJwksEndpointController(final OAuth20ControllerConfigurationContext oAuthConfigurationContext) {
+        super(oAuthConfigurationContext);
+        this.jwksFile = oAuthConfigurationContext.getCasProperties().getAuthn().getOidc().getJwksFile();
     }
 
     /**
@@ -77,13 +54,13 @@ public class OidcJwksEndpointController extends BaseOAuth20Controller {
             val jsonJwks = IOUtils.toString(this.jwksFile.getInputStream(), StandardCharsets.UTF_8);
             val jsonWebKeySet = new JsonWebKeySet(jsonJwks);
 
-            this.servicesManager.getAllServices()
+            getOAuthConfigurationContext().getServicesManager().getAllServices()
                 .stream()
                 .filter(s -> s instanceof OidcRegisteredService && StringUtils.isNotBlank(((OidcRegisteredService) s).getJwks()))
                 .forEach(
                     Unchecked.consumer(s -> {
                         val service = (OidcRegisteredService) s;
-                        val resource = this.resourceLoader.getResource(service.getJwks());
+                        val resource = getOAuthConfigurationContext().getResourceLoader().getResource(service.getJwks());
                         val set = new JsonWebKeySet(IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8));
                         set.getJsonWebKeys().forEach(jsonWebKeySet::addJsonWebKey);
                     }));

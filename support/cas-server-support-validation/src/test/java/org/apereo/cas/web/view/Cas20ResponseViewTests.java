@@ -5,9 +5,11 @@ import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.DefaultAuthenticationAttributeReleasePolicy;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.support.NoOpProtocolAttributeEncoder;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.DefaultServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.AbstractServiceValidateController;
 import org.apereo.cas.web.AbstractServiceValidateControllerTests;
+import org.apereo.cas.web.ServiceValidateConfigurationContext;
 import org.apereo.cas.web.ServiceValidationViewFactory;
 import org.apereo.cas.web.v2.ServiceValidateController;
 import org.apereo.cas.web.view.attributes.NoOpProtocolAttributesRenderer;
@@ -45,18 +47,20 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
 
     @Override
     public AbstractServiceValidateController getServiceValidateControllerInstance() {
-        return new ServiceValidateController(
-            getValidationSpecification(),
-            getAuthenticationSystemSupport(), getServicesManager(),
-            getCentralAuthenticationService(),
-            getProxyHandler(),
-            getArgumentExtractor(),
-            (assertion, request) -> Pair.of(Boolean.TRUE, Optional.empty()),
-            "authenticationContext",
-            new DefaultServiceTicketValidationAuthorizersExecutionPlan(),
-            true,
-            serviceValidationViewFactory
-        );
+        val context = ServiceValidateConfigurationContext.builder()
+            .validationSpecifications(CollectionUtils.wrapSet(getValidationSpecification()))
+            .authenticationSystemSupport(getAuthenticationSystemSupport())
+            .servicesManager(getServicesManager())
+            .centralAuthenticationService(getCentralAuthenticationService())
+            .argumentExtractor(getArgumentExtractor())
+            .proxyHandler(getProxyHandler())
+            .requestedContextValidator((assertion, request) -> Pair.of(Boolean.TRUE, Optional.empty()))
+            .authnContextAttribute("authenticationContext")
+            .validationAuthorizers(new DefaultServiceTicketValidationAuthorizersExecutionPlan())
+            .renewEnabled(true)
+            .validationViewFactory(serviceValidationViewFactory)
+            .build();
+        return new ServiceValidateController(context);
     }
 
     @Test
