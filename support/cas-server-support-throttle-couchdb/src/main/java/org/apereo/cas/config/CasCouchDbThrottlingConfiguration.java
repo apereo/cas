@@ -6,6 +6,7 @@ import org.apereo.cas.couchdb.audit.AuditActionContextCouchDbRepository;
 import org.apereo.cas.throttle.ThrottledRequestExecutor;
 import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
 import org.apereo.cas.web.support.CouchDbThrottledSubmissionHandlerInterceptorAdapter;
+import org.apereo.cas.web.support.ThrottledSubmissionHandlerConfigurationContext;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -54,14 +55,17 @@ public class CasCouchDbThrottlingConfiguration {
     public CouchDbThrottledSubmissionHandlerInterceptorAdapter authenticationThrottle() {
         val throttle = casProperties.getAuthn().getThrottle();
         val failure = throttle.getFailure();
-        return new CouchDbThrottledSubmissionHandlerInterceptorAdapter(failure.getThreshold(),
-            failure.getRangeSeconds(),
-            throttle.getUsernameParameter(),
-            failure.getCode(),
-            auditTrailManager.getIfAvailable(),
-            throttle.getAppCode(),
-            couchDbRepository.getIfAvailable(),
-            throttledRequestResponseHandler.getIfAvailable(),
-            throttledRequestExecutor.getIfAvailable());
+        val context = ThrottledSubmissionHandlerConfigurationContext.builder()
+            .failureThreshold(failure.getThreshold())
+            .failureRangeInSeconds(failure.getRangeSeconds())
+            .usernameParameter(throttle.getUsernameParameter())
+            .authenticationFailureCode(failure.getCode())
+            .auditTrailExecutionPlan(auditTrailManager.getIfAvailable())
+            .applicationCode(throttle.getAppCode())
+            .throttledRequestResponseHandler(throttledRequestResponseHandler.getIfAvailable())
+            .throttledRequestExecutor(throttledRequestExecutor.getIfAvailable())
+            .build();
+
+        return new CouchDbThrottledSubmissionHandlerInterceptorAdapter(context, couchDbRepository.getIfAvailable());
     }
 }
