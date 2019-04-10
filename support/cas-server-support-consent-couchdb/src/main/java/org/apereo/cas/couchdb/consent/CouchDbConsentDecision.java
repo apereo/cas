@@ -22,6 +22,8 @@ import java.time.temporal.ChronoUnit;
 @Getter
 @Setter
 public class CouchDbConsentDecision extends ConsentDecision {
+    private static final long serialVersionUID = -685282558102325489L;
+
     @JsonProperty("_rev")
     private String rev;
 

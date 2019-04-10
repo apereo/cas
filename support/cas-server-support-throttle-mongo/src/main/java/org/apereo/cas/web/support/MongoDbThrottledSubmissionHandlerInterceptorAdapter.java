@@ -1,9 +1,5 @@
 package org.apereo.cas.web.support;
 
-import org.apereo.cas.audit.AuditTrailExecutionPlan;
-import org.apereo.cas.throttle.ThrottledRequestExecutor;
-import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
@@ -27,19 +23,10 @@ public class MongoDbThrottledSubmissionHandlerInterceptorAdapter extends Abstrac
     private final transient MongoTemplate mongoTemplate;
     private final String collectionName;
 
-    public MongoDbThrottledSubmissionHandlerInterceptorAdapter(final int failureThreshold,
-                                                               final int failureRangeInSeconds,
-                                                               final String usernameParameter,
-                                                               final AuditTrailExecutionPlan auditTrailExecutionPlan,
+    public MongoDbThrottledSubmissionHandlerInterceptorAdapter(final ThrottledSubmissionHandlerConfigurationContext configurationContext,
                                                                final MongoTemplate mongoTemplate,
-                                                               final String authenticationFailureCode,
-                                                               final String applicationCode,
-                                                               final String collectionName,
-                                                               final ThrottledRequestResponseHandler throttledRequestResponseHandler,
-                                                               final ThrottledRequestExecutor throttledRequestExecutor) {
-        super(failureThreshold, failureRangeInSeconds, usernameParameter,
-            authenticationFailureCode, auditTrailExecutionPlan, applicationCode,
-            throttledRequestResponseHandler, throttledRequestExecutor);
+                                                               final String collectionName) {
+        super(configurationContext);
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;
     }
@@ -52,8 +39,8 @@ public class MongoDbThrottledSubmissionHandlerInterceptorAdapter extends Abstrac
         val query = new Query()
             .addCriteria(Criteria.where("clientIpAddress").is(remoteAddress)
                 .and("principal").is(getUsernameParameterFromRequest(request))
-                .and("actionPerformed").is(getAuthenticationFailureCode())
-                .and("applicationCode").is(getApplicationCode())
+                .and("actionPerformed").is(getConfigurationContext().getAuthenticationFailureCode())
+                .and("applicationCode").is(getConfigurationContext().getApplicationCode())
                 .and("whenActionWasPerformed").gte(getFailureInRangeCutOffDate()));
 
         query.with(new Sort(Sort.Direction.DESC, "whenActionWasPerformed"));
