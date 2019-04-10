@@ -1,21 +1,12 @@
 package org.apereo.cas.oidc.web.controllers.token;
 
 import org.apereo.cas.audit.AuditableContext;
-import org.apereo.cas.audit.AuditableExecution;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
-import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
-import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ControllerConfigurationContext;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.Pac4jUtils;
-import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -36,21 +27,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Slf4j
 public class OidcRevocationEndpointController extends BaseOAuth20Controller {
-    private final AuditableExecution registeredServiceAccessStrategyEnforcer;
-
-    public OidcRevocationEndpointController(final ServicesManager servicesManager,
-                                            final TicketRegistry ticketRegistry,
-                                            final AccessTokenFactory accessTokenFactory,
-                                            final PrincipalFactory principalFactory,
-                                            final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
-                                            final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
-                                            final CasConfigurationProperties casProperties,
-                                            final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-                                            final AuditableExecution registeredServiceAccessStrategyEnforcer) {
-        super(servicesManager, ticketRegistry, accessTokenFactory, principalFactory,
-            webApplicationServiceServiceFactory, scopeToAttributesFilter,
-            casProperties, ticketGrantingTicketCookieGenerator);
-        this.registeredServiceAccessStrategyEnforcer = registeredServiceAccessStrategyEnforcer;
+    public OidcRevocationEndpointController(final OAuth20ControllerConfigurationContext oAuthConfigurationContext) {
+        super(oAuthConfigurationContext);
     }
 
     /**
@@ -70,21 +48,23 @@ public class OidcRevocationEndpointController extends BaseOAuth20Controller {
                 throw new IllegalArgumentException("No credentials are provided to verify revocation of the token");
             }
 
-            val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, credentials.getUsername());
-            val service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
+            val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
+                getOAuthConfigurationContext().getServicesManager(),
+                credentials.getUsername());
+            val service = getOAuthConfigurationContext().getWebApplicationServiceServiceFactory().createService(registeredService.getServiceId());
 
             val audit = AuditableContext.builder()
                 .service(service)
                 .registeredService(registeredService)
                 .build();
-            val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+            val accessResult = getOAuthConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
 
             if (!accessResult.isExecutionFailure()
                 && HttpRequestUtils.doesParameterExist(request, OidcConstants.TOKEN)
                 && OAuth20Utils.checkClientSecret(registeredService, credentials.getPassword())) {
                 val token = request.getParameter(OidcConstants.TOKEN);
                 LOGGER.debug("Located token [{}] in the revocation request", token);
-                this.ticketRegistry.deleteTicket(token);
+                getOAuthConfigurationContext().getTicketRegistry().deleteTicket(token);
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

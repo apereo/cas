@@ -37,7 +37,7 @@ public class CouchDbCasEvent extends CasEvent {
     private String rev;
 
     @JsonCreator
-    public CouchDbCasEvent(@JsonProperty("_id") final String cid, //NOPMD
+    public CouchDbCasEvent(@JsonProperty("_id") final String cid,
                            @JsonProperty("_rev") final String rev,
                            @JsonProperty("id") final long id,
                            @JsonProperty("type") final @NonNull String type,

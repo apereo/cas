@@ -2,9 +2,7 @@ package org.apereo.cas.web;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationException;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.PrincipalException;
@@ -12,7 +10,6 @@ import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedProxyingException;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.AbstractTicketException;
@@ -21,16 +18,12 @@ import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationContextTicketValidationException;
-import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
-import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
-import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.validation.UnauthorizedServiceTicketValidationException;
-import org.apereo.cas.web.support.ArgumentExtractor;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -43,10 +36,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * Process the /validate , /serviceValidate , and /proxyValidate URL requests.
@@ -62,26 +53,10 @@ import java.util.Set;
  * @since 3.0.0
  */
 @Slf4j
-@Setter
-@AllArgsConstructor
+@Getter
+@RequiredArgsConstructor
 public abstract class AbstractServiceValidateController extends AbstractDelegateController {
-
-    private Set<CasProtocolValidationSpecification> validationSpecifications = new LinkedHashSet<>();
-
-    private final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers;
-    private final AuthenticationSystemSupport authenticationSystemSupport;
-    private final ServicesManager servicesManager;
-    private final CentralAuthenticationService centralAuthenticationService;
-
-    private ProxyHandler proxyHandler;
-
-    private final ArgumentExtractor argumentExtractor;
-    private final RequestedAuthenticationContextValidator<MultifactorAuthenticationProvider> requestedContextValidator;
-    private final String authnContextAttribute;
-    private boolean renewEnabled = true;
-
-    @Getter
-    private final ServiceValidationViewFactory validationViewFactory;
+    private final ServiceValidateConfigurationContext serviceValidateConfigurationContext;
 
     /**
      * Ensure that the service is found and enabled in the service registry.
@@ -116,7 +91,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         val pgtUrl = request.getParameter(CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL);
         if (StringUtils.isNotBlank(pgtUrl)) {
             try {
-                val registeredService = this.servicesManager.findServiceBy(service);
+                val registeredService = serviceValidateConfigurationContext.getServicesManager().findServiceBy(service);
                 verifyRegisteredServiceProperties(registeredService, service);
                 return new HttpBasedServiceCredential(new URL(pgtUrl), registeredService);
             } catch (final Exception e) {
@@ -133,7 +108,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @param binder  the binder
      */
     protected void initBinder(final HttpServletRequest request, final ServletRequestDataBinder binder) {
-        if (this.renewEnabled) {
+        if (serviceValidateConfigurationContext.isRenewEnabled()) {
             binder.setRequiredFields(CasProtocolConstants.PARAMETER_RENEW);
         }
     }
@@ -149,16 +124,18 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      */
     public TicketGrantingTicket handleProxyGrantingTicketDelivery(final String serviceTicketId, final Credential credential)
         throws AuthenticationException, AbstractTicketException {
-        val serviceTicket = this.centralAuthenticationService.getTicket(serviceTicketId, ServiceTicket.class);
-        val authenticationResult = this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(serviceTicket.getService(), credential);
-        val proxyGrantingTicketId = this.centralAuthenticationService.createProxyGrantingTicket(serviceTicketId, authenticationResult);
+        val serviceTicket = serviceValidateConfigurationContext.getCentralAuthenticationService().getTicket(serviceTicketId, ServiceTicket.class);
+        val authenticationResult = serviceValidateConfigurationContext.getAuthenticationSystemSupport()
+            .handleAndFinalizeSingleAuthenticationTransaction(serviceTicket.getService(), credential);
+        val proxyGrantingTicketId = serviceValidateConfigurationContext.getCentralAuthenticationService()
+            .createProxyGrantingTicket(serviceTicketId, authenticationResult);
         LOGGER.debug("Generated proxy-granting ticket [{}] off of service ticket [{}] and credential [{}]", proxyGrantingTicketId.getId(), serviceTicketId, credential);
         return proxyGrantingTicketId;
     }
 
     @Override
     public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        val service = this.argumentExtractor.extractService(request);
+        val service = serviceValidateConfigurationContext.getArgumentExtractor().extractService(request);
         val serviceTicketId = service != null ? service.getArtifactId() : null;
         if (service == null || StringUtils.isBlank(serviceTicketId)) {
             LOGGER.debug("Could not identify service and/or service ticket for service: [{}]", service);
@@ -219,19 +196,20 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_TICKET, new Object[]{serviceTicketId}, request, service);
         }
 
-        val ctxResult = requestedContextValidator.validateAuthenticationContext(assertion, request);
+        val ctxResult = serviceValidateConfigurationContext.getRequestedContextValidator().validateAuthenticationContext(assertion, request);
         if (!ctxResult.getKey()) {
             throw new UnsatisfiedAuthenticationContextTicketValidationException(assertion.getService());
         }
 
         var proxyIou = StringUtils.EMPTY;
-        if (serviceCredential != null && this.proxyHandler != null && this.proxyHandler.canHandle(serviceCredential)) {
+        val proxyHandler = serviceValidateConfigurationContext.getProxyHandler();
+        if (serviceCredential != null && proxyHandler != null && proxyHandler.canHandle(serviceCredential)) {
             proxyIou = handleProxyIouDelivery(serviceCredential, proxyGrantingTicketId);
             if (StringUtils.isEmpty(proxyIou)) {
                 return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK, new Object[]{serviceCredential.getId()}, request, service);
             }
         } else {
-            LOGGER.debug("No service credentials specified, and/or the proxy handler [{}] cannot handle credentials", this.proxyHandler);
+            LOGGER.debug("No service credentials specified, and/or the proxy handler [{}] cannot handle credentials", proxyHandler);
         }
         onSuccessfulValidation(serviceTicketId, assertion);
         LOGGER.debug("Successfully validated service ticket [{}] for service [{}]", serviceTicketId, service.getId());
@@ -246,11 +224,11 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @return the assertion
      */
     protected Assertion validateServiceTicket(final WebApplicationService service, final String serviceTicketId) {
-        return this.centralAuthenticationService.validateServiceTicket(serviceTicketId, service);
+        return serviceValidateConfigurationContext.getCentralAuthenticationService().validateServiceTicket(serviceTicketId, service);
     }
 
     private String handleProxyIouDelivery(final Credential serviceCredential, final TicketGrantingTicket proxyGrantingTicketId) {
-        return this.proxyHandler.handle(serviceCredential, proxyGrantingTicketId);
+        return serviceValidateConfigurationContext.getProxyHandler().handle(serviceCredential, proxyGrantingTicketId);
     }
 
     /**
@@ -263,7 +241,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @return true/false
      */
     private boolean validateAssertion(final HttpServletRequest request, final String serviceTicketId, final Assertion assertion, final Service service) {
-        for (val spec : this.validationSpecifications) {
+        for (val spec : serviceValidateConfigurationContext.getValidationSpecifications()) {
             spec.reset();
             val binder = new ServletRequestDataBinder(spec, "validationSpecification");
             initBinder(request, binder);
@@ -296,7 +274,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @return the model and view
      */
     private ModelAndView generateErrorView(final String code, final Object[] args, final HttpServletRequest request, final WebApplicationService service) {
-        val modelAndView = validationViewFactory.getModelAndView(request, false, service, getClass());
+        val modelAndView = serviceValidateConfigurationContext.getValidationViewFactory().getModelAndView(request, false, service, getClass());
         val convertedDescription = this.applicationContext.getMessage(code, args, code, request.getLocale());
         modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ERROR_CODE, StringEscapeUtils.escapeHtml4(code));
         modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ERROR_DESCRIPTION, StringEscapeUtils.escapeHtml4(convertedDescription));
@@ -318,7 +296,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                                              final WebApplicationService service, final HttpServletRequest request,
                                              final Optional<MultifactorAuthenticationProvider> contextProvider,
                                              final TicketGrantingTicket proxyGrantingTicket) {
-        val modelAndView = validationViewFactory.getModelAndView(request, true, service, getClass());
+        val modelAndView = serviceValidateConfigurationContext.getValidationViewFactory().getModelAndView(request, true, service, getClass());
         modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ASSERTION, assertion);
         modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_SERVICE, service);
         if (StringUtils.isNotBlank(proxyIou)) {
@@ -327,7 +305,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         if (proxyGrantingTicket != null) {
             modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, proxyGrantingTicket.getId());
         }
-        contextProvider.ifPresent(provider -> modelAndView.addObject(this.authnContextAttribute, provider.getId()));
+        contextProvider.ifPresent(provider -> modelAndView.addObject(serviceValidateConfigurationContext.getAuthnContextAttribute(), provider.getId()));
         val augmentedModelObjects = augmentSuccessViewModelObjects(assertion);
         modelAndView.addAllObjects(augmentedModelObjects);
         return modelAndView;
@@ -341,7 +319,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @param assertion the assertion
      */
     protected void enforceTicketValidationAuthorizationFor(final HttpServletRequest request, final Service service, final Assertion assertion) {
-        val authorizers = this.validationAuthorizers.getAuthorizers();
+        val authorizers = serviceValidateConfigurationContext.getValidationAuthorizers().getAuthorizers();
         for (val a : authorizers) {
             try {
                 a.authorize(request, service, assertion);
@@ -375,6 +353,6 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @param validationSpecification the validation specification
      */
     public void addValidationSpecification(final CasProtocolValidationSpecification validationSpecification) {
-        this.validationSpecifications.add(validationSpecification);
+        serviceValidateConfigurationContext.getValidationSpecifications().add(validationSpecification);
     }
 }

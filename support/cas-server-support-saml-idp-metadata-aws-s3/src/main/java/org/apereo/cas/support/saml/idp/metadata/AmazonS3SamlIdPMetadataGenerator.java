@@ -1,9 +1,7 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.support.saml.idp.metadata.generator.BaseSamlIdPMetadataGenerator;
-import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
-import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyWriter;
+import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 
 import com.amazonaws.services.s3.AmazonS3;
@@ -13,7 +11,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.MediaType;
 
 import java.io.ByteArrayInputStream;
@@ -31,17 +28,10 @@ public class AmazonS3SamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerat
 
     private final String bucketName;
 
-    public AmazonS3SamlIdPMetadataGenerator(final SamlIdPMetadataLocator samlIdPMetadataLocator,
-                                            final SamlIdPCertificateAndKeyWriter samlIdPCertificateAndKeyWriter,
-                                            final String entityId,
-                                            final ResourceLoader resourceLoader,
-                                            final String casServerPrefix,
-                                            final String scope,
-                                            final CipherExecutor metadataCipherExecutor,
+    public AmazonS3SamlIdPMetadataGenerator(final SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext,
                                             final AmazonS3 s3Client,
                                             final String bucketName) {
-        super(samlIdPMetadataLocator, samlIdPCertificateAndKeyWriter, metadataCipherExecutor,
-            entityId, resourceLoader, casServerPrefix, scope);
+        super(samlIdPMetadataGeneratorConfigurationContext);
         this.s3Client = s3Client;
         this.bucketName = bucketName;
     }

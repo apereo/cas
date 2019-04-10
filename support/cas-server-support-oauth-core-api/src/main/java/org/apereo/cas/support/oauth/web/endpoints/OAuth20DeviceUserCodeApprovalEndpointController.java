@@ -1,17 +1,7 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
-import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
-import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
-import org.apereo.cas.ticket.device.DeviceTokenFactory;
 import org.apereo.cas.ticket.device.DeviceUserCode;
-import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -37,21 +27,8 @@ public class OAuth20DeviceUserCodeApprovalEndpointController extends BaseOAuth20
      */
     public static final String PARAMETER_USER_CODE = "usercode";
 
-    private final DeviceTokenFactory deviceTokenFactory;
-
-    public OAuth20DeviceUserCodeApprovalEndpointController(final ServicesManager servicesManager,
-                                                           final TicketRegistry ticketRegistry,
-                                                           final AccessTokenFactory accessTokenFactory,
-                                                           final PrincipalFactory principalFactory,
-                                                           final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
-                                                           final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
-                                                           final CasConfigurationProperties casProperties,
-                                                           final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-                                                           final DeviceTokenFactory deviceTokenFactory) {
-        super(servicesManager, ticketRegistry, accessTokenFactory, principalFactory,
-            webApplicationServiceServiceFactory, scopeToAttributesFilter,
-            casProperties, ticketGrantingTicketCookieGenerator);
-        this.deviceTokenFactory = deviceTokenFactory;
+    public OAuth20DeviceUserCodeApprovalEndpointController(final OAuth20ControllerConfigurationContext oAuthConfigurationContext) {
+        super(oAuthConfigurationContext);
     }
 
     /**
@@ -81,8 +58,8 @@ public class OAuth20DeviceUserCodeApprovalEndpointController extends BaseOAuth20
         if (StringUtils.isBlank(userCode)) {
             return codeNotfound;
         }
-        val codeId = deviceTokenFactory.generateDeviceUserCode(userCode);
-        val deviceUserCode = this.ticketRegistry.getTicket(codeId, DeviceUserCode.class);
+        val codeId = getOAuthConfigurationContext().getDeviceTokenFactory().generateDeviceUserCode(userCode);
+        val deviceUserCode = getOAuthConfigurationContext().getTicketRegistry().getTicket(codeId, DeviceUserCode.class);
         if (deviceUserCode == null) {
             return codeNotfound;
         }
@@ -93,7 +70,7 @@ public class OAuth20DeviceUserCodeApprovalEndpointController extends BaseOAuth20
             return getModelAndViewForFailure("codeapproved");
         }
         deviceUserCode.approveUserCode();
-        this.ticketRegistry.updateTicket(deviceUserCode);
+        getOAuthConfigurationContext().getTicketRegistry().updateTicket(deviceUserCode);
         return new ModelAndView(OAuth20Constants.DEVICE_CODE_APPROVED_VIEW, HttpStatus.OK);
     }
 

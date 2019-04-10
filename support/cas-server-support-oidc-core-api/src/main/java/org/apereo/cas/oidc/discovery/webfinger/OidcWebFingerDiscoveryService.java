@@ -4,6 +4,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.util.CollectionUtils;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -25,6 +26,7 @@ import java.util.regex.Pattern;
  */
 @RequiredArgsConstructor
 @Slf4j
+@Getter
 public class OidcWebFingerDiscoveryService {
     private static final Pattern RESOURCE_NORMALIZED_PATTERN = Pattern.compile('^'
         + "((https|acct|http|mailto|tel|device):(//)?)?"

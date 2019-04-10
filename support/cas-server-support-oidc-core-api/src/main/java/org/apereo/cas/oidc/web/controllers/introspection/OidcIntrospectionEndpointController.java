@@ -1,21 +1,11 @@
 package org.apereo.cas.oidc.web.controllers.introspection;
 
-import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.audit.AuditableExecution;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ControllerConfigurationContext;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20IntrospectionEndpointController;
 import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionAccessTokenResponse;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
-import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
-import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.val;
 import org.springframework.http.MediaType;
@@ -33,19 +23,8 @@ import javax.servlet.http.HttpServletResponse;
  * @since 5.2.0
  */
 public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEndpointController {
-    public OidcIntrospectionEndpointController(final ServicesManager servicesManager,
-                                               final TicketRegistry ticketRegistry,
-                                               final AccessTokenFactory accessTokenFactory,
-                                               final PrincipalFactory principalFactory,
-                                               final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
-                                               final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
-                                               final CasConfigurationProperties casProperties,
-                                               final CasCookieBuilder cookieGenerator,
-                                               final CentralAuthenticationService centralAuthenticationService,
-                                               final AuditableExecution registeredServiceAccessStrategyEnforcer) {
-        super(servicesManager, ticketRegistry, accessTokenFactory, principalFactory,
-            webApplicationServiceServiceFactory, scopeToAttributesFilter,
-            casProperties, cookieGenerator, centralAuthenticationService, registeredServiceAccessStrategyEnforcer);
+    public OidcIntrospectionEndpointController(final OAuth20ControllerConfigurationContext oAuthConfigurationContext) {
+        super(oAuthConfigurationContext);
     }
 
     /**
