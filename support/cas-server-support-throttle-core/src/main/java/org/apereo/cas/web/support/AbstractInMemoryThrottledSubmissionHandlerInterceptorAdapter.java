@@ -1,9 +1,5 @@
 package org.apereo.cas.web.support;
 
-import org.apereo.cas.audit.AuditTrailExecutionPlan;
-import org.apereo.cas.throttle.ThrottledRequestExecutor;
-import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -27,19 +23,11 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
 
     private final ConcurrentMap<String, ZonedDateTime> ipMap;
 
-    public AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter(final int failureThreshold,
-                                                                        final int failureRangeInSeconds,
-                                                                        final String usernameParameter,
-                                                                        final String authenticationFailureCode,
-                                                                        final AuditTrailExecutionPlan auditTrailExecutionPlan,
-                                                                        final String applicationCode,
-                                                                        final ThrottledRequestResponseHandler throttledRequestResponseHandler,
-                                                                        final ConcurrentMap map,
-                                                                        final ThrottledRequestExecutor throttledRequestExecutor) {
-        super(failureThreshold, failureRangeInSeconds, usernameParameter,
-            authenticationFailureCode, auditTrailExecutionPlan, applicationCode,
-            throttledRequestResponseHandler, throttledRequestExecutor);
-        this.ipMap = map;
+    public AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter(
+        final ThrottledSubmissionHandlerConfigurationContext configurationContext,
+        final ConcurrentMap<String, ZonedDateTime> ipMap) {
+        super(configurationContext);
+        this.ipMap = ipMap;
     }
 
     /**

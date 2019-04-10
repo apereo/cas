@@ -6,6 +6,7 @@ import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.throttle.ThrottledRequestExecutor;
 import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
 import org.apereo.cas.web.support.MongoDbThrottledSubmissionHandlerInterceptorAdapter;
+import org.apereo.cas.web.support.ThrottledSubmissionHandlerConfigurationContext;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
 
 import lombok.val;
@@ -51,15 +52,17 @@ public class CasMongoDbThrottlingConfiguration {
         val mongoTemplate = factory.buildMongoTemplate(mongo);
         factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
 
-        return new MongoDbThrottledSubmissionHandlerInterceptorAdapter(failure.getThreshold(),
-            failure.getRangeSeconds(),
-            throttle.getUsernameParameter(),
-            auditTrailExecutionPlan,
-            mongoTemplate,
-            failure.getCode(),
-            throttle.getAppCode(),
-            mongo.getCollection(),
-            throttledRequestResponseHandler.getIfAvailable(),
-            throttledRequestExecutor.getIfAvailable());
+        val context = ThrottledSubmissionHandlerConfigurationContext.builder()
+            .failureThreshold(failure.getThreshold())
+            .failureRangeInSeconds(failure.getRangeSeconds())
+            .usernameParameter(throttle.getUsernameParameter())
+            .authenticationFailureCode(failure.getCode())
+            .auditTrailExecutionPlan(auditTrailExecutionPlan)
+            .applicationCode(throttle.getAppCode())
+            .throttledRequestResponseHandler(throttledRequestResponseHandler.getIfAvailable())
+            .throttledRequestExecutor(throttledRequestExecutor.getIfAvailable())
+            .build();
+
+        return new MongoDbThrottledSubmissionHandlerInterceptorAdapter(context, mongoTemplate, mongo.getCollection());
     }
 }

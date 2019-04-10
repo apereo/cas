@@ -100,11 +100,19 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
      */
     protected String staticSalt;
 
-    public QueryAndEncodeDatabaseAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
-                                                       final Integer order, final DataSource dataSource,
-                                                       final String algorithmName, final String sql, final String passwordFieldName,
-                                                       final String saltFieldName, final String expiredFieldName, final String disabledFieldName,
-                                                       final String numberOfIterationsFieldName, final int numberOfIterations,
+    public QueryAndEncodeDatabaseAuthenticationHandler(final String name,
+                                                       final ServicesManager servicesManager,
+                                                       final PrincipalFactory principalFactory,
+                                                       final Integer order,
+                                                       final DataSource dataSource,
+                                                       final String algorithmName,
+                                                       final String sql,
+                                                       final String passwordFieldName,
+                                                       final String saltFieldName,
+                                                       final String expiredFieldName,
+                                                       final String disabledFieldName,
+                                                       final String numberOfIterationsFieldName,
+                                                       final int numberOfIterations,
                                                        final String staticSalt) {
         super(name, servicesManager, principalFactory, order, dataSource);
         this.algorithmName = algorithmName;

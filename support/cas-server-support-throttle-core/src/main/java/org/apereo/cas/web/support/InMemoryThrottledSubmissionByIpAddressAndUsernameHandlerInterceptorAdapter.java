@@ -1,14 +1,11 @@
 package org.apereo.cas.web.support;
 
-import org.apereo.cas.audit.AuditTrailExecutionPlan;
-import org.apereo.cas.throttle.ThrottledRequestExecutor;
-import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.ZonedDateTime;
 import java.util.concurrent.ConcurrentMap;
 
 /**
@@ -21,23 +18,14 @@ import java.util.concurrent.ConcurrentMap;
 public class InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter
     extends AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter {
 
-    public InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(final int failureThreshold,
-                                                                                      final int failureRangeInSeconds,
-                                                                                      final String usernameParameter,
-                                                                                      final String authenticationFailureCode,
-                                                                                      final AuditTrailExecutionPlan auditTrailExecutionPlan,
-                                                                                      final String applicationCode,
-                                                                                      final ThrottledRequestResponseHandler throttledRequestResponseHandler,
-                                                                                      final ConcurrentMap map,
-                                                                                      final ThrottledRequestExecutor throttledRequestExecutor) {
-        super(failureThreshold, failureRangeInSeconds, usernameParameter,
-            authenticationFailureCode, auditTrailExecutionPlan, applicationCode,
-            throttledRequestResponseHandler, map, throttledRequestExecutor);
+    public InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(final ThrottledSubmissionHandlerConfigurationContext configurationContext,
+                                                                                      final ConcurrentMap<String, ZonedDateTime> ipMap) {
+        super(configurationContext, ipMap);
     }
 
     @Override
     public String constructKey(final HttpServletRequest request) {
-        val username = request.getParameter(getUsernameParameter());
+        val username = request.getParameter(getConfigurationContext().getUsernameParameter());
 
         if (StringUtils.isBlank(username)) {
             return request.getRemoteAddr();

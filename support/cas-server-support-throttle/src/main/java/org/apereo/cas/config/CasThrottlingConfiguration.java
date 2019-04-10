@@ -11,6 +11,7 @@ import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionCleaner;
+import org.apereo.cas.web.support.ThrottledSubmissionHandlerConfigurationContext;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -84,30 +85,23 @@ public class CasThrottlingConfiguration {
             return ThrottledSubmissionHandlerInterceptor.noOp();
         }
 
+        val context = ThrottledSubmissionHandlerConfigurationContext.builder()
+            .failureThreshold(throttle.getFailure().getThreshold())
+            .failureRangeInSeconds(throttle.getFailure().getRangeSeconds())
+            .usernameParameter(throttle.getUsernameParameter())
+            .authenticationFailureCode(throttle.getFailure().getCode())
+            .auditTrailExecutionPlan(auditTrailExecutionPlan.getIfAvailable())
+            .applicationCode(throttle.getAppCode())
+            .throttledRequestResponseHandler(throttledRequestResponseHandler())
+            .throttledRequestExecutor(throttledRequestExecutor())
+            .build();
+
         if (StringUtils.isNotBlank(throttle.getUsernameParameter())) {
             LOGGER.trace("Activating authentication throttling based on IP address and username...");
-            return new InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(
-                throttle.getFailure().getThreshold(),
-                throttle.getFailure().getRangeSeconds(),
-                throttle.getUsernameParameter(),
-                throttle.getFailure().getCode(),
-                auditTrailExecutionPlan.getIfAvailable(),
-                throttle.getAppCode(),
-                throttledRequestResponseHandler(),
-                throttleSubmissionMap(),
-                throttledRequestExecutor());
+            return new InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(context, throttleSubmissionMap());
         }
         LOGGER.trace("Activating authentication throttling based on IP address...");
-        return new InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter(
-            throttle.getFailure().getThreshold(),
-            throttle.getFailure().getRangeSeconds(),
-            throttle.getUsernameParameter(),
-            throttle.getFailure().getCode(),
-            auditTrailExecutionPlan.getIfAvailable(),
-            throttle.getAppCode(),
-            throttledRequestResponseHandler(),
-            throttleSubmissionMap(),
-            throttledRequestExecutor());
+        return new InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter(context, throttleSubmissionMap());
     }
 
     @Autowired

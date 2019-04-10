@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.throttle.ThrottledRequestExecutor;
 import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
 import org.apereo.cas.web.support.JdbcThrottledSubmissionHandlerInterceptorAdapter;
+import org.apereo.cas.web.support.ThrottledSubmissionHandlerConfigurationContext;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
 
 import lombok.val;
@@ -57,16 +58,19 @@ public class CasJdbcThrottlingConfiguration {
     public ThrottledSubmissionHandlerInterceptor authenticationThrottle() {
         val throttle = casProperties.getAuthn().getThrottle();
         val failure = throttle.getFailure();
-        return new JdbcThrottledSubmissionHandlerInterceptorAdapter(
-            failure.getThreshold(),
-            failure.getRangeSeconds(),
-            throttle.getUsernameParameter(),
-            auditTrailManager.getIfAvailable(),
-            inspektrThrottleDataSource(),
-            throttle.getAppCode(),
-            throttle.getJdbc().getAuditQuery(),
-            failure.getCode(),
-            throttledRequestResponseHandler.getIfAvailable(),
-            throttledRequestExecutor.getIfAvailable());
+
+        val context = ThrottledSubmissionHandlerConfigurationContext.builder()
+            .failureThreshold(failure.getThreshold())
+            .failureRangeInSeconds(failure.getRangeSeconds())
+            .usernameParameter(throttle.getUsernameParameter())
+            .authenticationFailureCode(failure.getCode())
+            .auditTrailExecutionPlan(auditTrailManager.getIfAvailable())
+            .applicationCode(throttle.getAppCode())
+            .throttledRequestResponseHandler(throttledRequestResponseHandler.getIfAvailable())
+            .throttledRequestExecutor(throttledRequestExecutor.getIfAvailable())
+            .build();
+
+        return new JdbcThrottledSubmissionHandlerInterceptorAdapter(context, inspektrThrottleDataSource(),
+            throttle.getJdbc().getAuditQuery());
     }
 }

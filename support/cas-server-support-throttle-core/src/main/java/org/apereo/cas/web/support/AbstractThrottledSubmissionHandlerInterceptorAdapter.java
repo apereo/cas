@@ -1,9 +1,6 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.audit.AuditTrailExecutionPlan;
-import org.apereo.cas.throttle.ThrottledRequestExecutor;
-import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
 import org.apereo.cas.util.DateTimeUtils;
 
 import lombok.Getter;
@@ -49,26 +46,13 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
      */
     private static final double NUMBER_OF_MILLISECONDS_IN_SECOND = 1000.0;
 
-    private final int failureThreshold;
-
-    private final int failureRangeInSeconds;
-
-    private final String usernameParameter;
-    private final String authenticationFailureCode;
-
-    private final AuditTrailExecutionPlan auditTrailExecutionPlan;
-
-    private final String applicationCode;
+    private final ThrottledSubmissionHandlerConfigurationContext configurationContext;
 
     private double thresholdRate = -1;
 
-    private final ThrottledRequestResponseHandler throttledRequestResponseHandler;
-
-    private final ThrottledRequestExecutor throttledRequestExecutor;
-
     @Override
     public void afterPropertiesSet() {
-        this.thresholdRate = (double) this.failureThreshold / this.failureRangeInSeconds;
+        this.thresholdRate = (double) configurationContext.getFailureThreshold() / configurationContext.getFailureRangeInSeconds();
         LOGGER.trace("Calculated threshold rate as [{}]", this.thresholdRate);
     }
 
@@ -84,10 +68,10 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
         if (throttled) {
             LOGGER.warn("Throttling submission from [{}]. More than [{}] failed login attempts within [{}] seconds. "
                     + "Authentication attempt exceeds the failure threshold [{}]", request.getRemoteAddr(),
-                this.failureThreshold, this.failureRangeInSeconds, this.failureThreshold);
+                this.thresholdRate, configurationContext.getFailureRangeInSeconds(), configurationContext.getFailureThreshold());
 
             recordThrottle(request);
-            return throttledRequestResponseHandler.handle(request, response);
+            return configurationContext.getThrottledRequestResponseHandler().handle(request, response);
         }
         return true;
     }
@@ -100,7 +84,8 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
      * @return true if the request is throttled. False otherwise, letting it proceed.
      */
     protected boolean throttleRequest(final HttpServletRequest request, final HttpServletResponse response) {
-        return throttledRequestExecutor != null && throttledRequestExecutor.throttle(request, response);
+        return configurationContext.getThrottledRequestExecutor() != null
+            && configurationContext.getThrottledRequestExecutor().throttle(request, response);
     }
 
     @Override
@@ -174,7 +159,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
      * @return the string
      */
     protected String getUsernameParameterFromRequest(final HttpServletRequest request) {
-        return request.getParameter(StringUtils.defaultString(usernameParameter, "username"));
+        return request.getParameter(StringUtils.defaultString(configurationContext.getUsernameParameter(), "username"));
     }
 
     /**
@@ -183,7 +168,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
      * @return the failure in range cut off date
      */
     protected Date getFailureInRangeCutOffDate() {
-        val cutoff = ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(getFailureRangeInSeconds());
+        val cutoff = ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(configurationContext.getFailureRangeInSeconds());
         return DateTimeUtils.timestampOf(cutoff);
     }
 
@@ -201,11 +186,11 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
             userToUse,
             resource,
             actionName,
-            this.applicationCode,
+            configurationContext.getApplicationCode(),
             DateTimeUtils.dateOf(ZonedDateTime.now(ZoneOffset.UTC)),
             clientInfo.getClientIpAddress(),
             clientInfo.getServerIpAddress());
         LOGGER.debug("Recording throttled audit action [{}}", context);
-        this.auditTrailExecutionPlan.record(context);
+        configurationContext.getAuditTrailExecutionPlan().record(context);
     }
 }

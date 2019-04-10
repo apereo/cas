@@ -1,9 +1,6 @@
 package org.apereo.cas.web.support;
 
-import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.couchdb.audit.AuditActionContextCouchDbRepository;
-import org.apereo.cas.throttle.ThrottledRequestExecutor;
-import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
 
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
@@ -26,18 +23,9 @@ public class CouchDbThrottledSubmissionHandlerInterceptorAdapter extends Abstrac
 
     private final AuditActionContextCouchDbRepository repository;
 
-    public CouchDbThrottledSubmissionHandlerInterceptorAdapter(final int failureThreshold,
-                                                               final int failureRangeInSeconds,
-                                                               final String usernameParameter,
-                                                               final String authenticationFailureCode,
-                                                               final AuditTrailExecutionPlan auditTrailManager,
-                                                               final String applicationCode,
-                                                               final AuditActionContextCouchDbRepository repository,
-                                                               final ThrottledRequestResponseHandler throttledRequestResponseHandler,
-                                                               final ThrottledRequestExecutor throttledRequestExecutor) {
-        super(failureThreshold, failureRangeInSeconds, usernameParameter,
-            authenticationFailureCode, auditTrailManager, applicationCode,
-            throttledRequestResponseHandler, throttledRequestExecutor);
+    public CouchDbThrottledSubmissionHandlerInterceptorAdapter(final ThrottledSubmissionHandlerConfigurationContext configurationContext,
+                                                               final AuditActionContextCouchDbRepository repository) {
+        super(configurationContext);
         this.repository = repository;
     }
 
@@ -48,9 +36,9 @@ public class CouchDbThrottledSubmissionHandlerInterceptorAdapter extends Abstrac
 
         val failures = repository.findByThrottleParams(remoteAddress,
             getUsernameParameterFromRequest(request),
-            getAuthenticationFailureCode(),
-            getApplicationCode(),
-            LocalDateTime.now(ZoneOffset.UTC).minusSeconds(getFailureRangeInSeconds()))
+            getConfigurationContext().getAuthenticationFailureCode(),
+            getConfigurationContext().getApplicationCode(),
+            LocalDateTime.now(ZoneOffset.UTC).minusSeconds(getConfigurationContext().getFailureRangeInSeconds()))
             .stream().map(AuditActionContext::getWhenActionWasPerformed).collect(Collectors.toList());
 
         return calculateFailureThresholdRateAndCompare(failures);

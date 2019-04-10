@@ -1,21 +1,17 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.velocity.app.VelocityEngine;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.messaging.context.MessageContext;
@@ -36,37 +32,15 @@ import javax.servlet.http.HttpServletResponse;
  * @since 4.2
  */
 @Slf4j
+@Getter
 public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder {
     private static final long serialVersionUID = -1891703354216174875L;
-    /**
-     * The Velocity engine factory.
-     */
-    protected final VelocityEngine velocityEngineFactory;
-    /**
-     * The Saml object encoder.
-     */
-    protected final SamlIdPObjectSigner samlObjectSigner;
-    /**
-     * CAS settings.
-     */
-    protected final CasConfigurationProperties casProperties;
 
-    private final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder;
+    private final transient SamlProfileSamlResponseBuilderConfigurationContext samlResponseBuilderConfigurationContext;
 
-    private final SamlIdPObjectEncrypter samlObjectEncrypter;
-
-    public BaseSamlProfileSamlResponseBuilder(final OpenSamlConfigBean openSamlConfigBean,
-                                              final SamlIdPObjectSigner samlObjectSigner,
-                                              final VelocityEngine velocityEngineFactory,
-                                              final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
-                                              final SamlIdPObjectEncrypter samlObjectEncrypter,
-                                              final CasConfigurationProperties casProperties) {
-        super(openSamlConfigBean);
-        this.samlObjectSigner = samlObjectSigner;
-        this.velocityEngineFactory = velocityEngineFactory;
-        this.samlProfileSamlAssertionBuilder = samlProfileSamlAssertionBuilder;
-        this.samlObjectEncrypter = samlObjectEncrypter;
-        this.casProperties = casProperties;
+    public BaseSamlProfileSamlResponseBuilder(final SamlProfileSamlResponseBuilderConfigurationContext samlResponseBuilderConfigurationContext) {
+        super(samlResponseBuilderConfigurationContext.getOpenSamlConfigBean());
+        this.samlResponseBuilderConfigurationContext = samlResponseBuilderConfigurationContext;
     }
 
     @Audit(
@@ -146,8 +120,8 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
                                            final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                            final String binding,
                                            final MessageContext messageContext) {
-        return this.samlProfileSamlAssertionBuilder.build(authnRequest, request, response,
-            casAssertion, service, adaptor, binding, messageContext);
+        return samlResponseBuilderConfigurationContext.getSamlProfileSamlAssertionBuilder()
+            .build(authnRequest, request, response, casAssertion, service, adaptor, binding, messageContext);
     }
 
     /**
@@ -232,7 +206,7 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
 
         if (service.isEncryptAssertions()) {
             LOGGER.debug("SAML service [{}] requires assertions to be encrypted", adaptor.getEntityId());
-            return this.samlObjectEncrypter.encode(assertion, service, adaptor);
+            return samlResponseBuilderConfigurationContext.getSamlObjectEncrypter().encode(assertion, service, adaptor);
         }
         LOGGER.debug("SAML registered service [{}] does not require assertions to be encrypted", adaptor.getEntityId());
         return assertion;
