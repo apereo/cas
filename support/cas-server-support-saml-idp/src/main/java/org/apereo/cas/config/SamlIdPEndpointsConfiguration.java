@@ -115,27 +115,27 @@ public class SamlIdPEndpointsConfiguration {
 
     @Autowired
     @Qualifier("samlProfileSamlSoap11ResponseBuilder")
-    private SamlProfileObjectBuilder<org.opensaml.saml.saml2.ecp.Response> samlProfileSamlSoap11ResponseBuilder;
+    private ObjectProvider<SamlProfileObjectBuilder<org.opensaml.saml.saml2.ecp.Response>> samlProfileSamlSoap11ResponseBuilder;
 
     @Autowired
     @Qualifier("samlProfileSamlSoap11FaultResponseBuilder")
-    private SamlProfileObjectBuilder<org.opensaml.saml.saml2.ecp.Response> samlProfileSamlSoap11FaultResponseBuilder;
+    private ObjectProvider<SamlProfileObjectBuilder<org.opensaml.saml.saml2.ecp.Response>> samlProfileSamlSoap11FaultResponseBuilder;
 
     @Autowired
     @Qualifier("samlProfileSamlArtifactResponseBuilder")
-    private SamlProfileObjectBuilder<Response> samlProfileSamlArtifactResponseBuilder;
+    private ObjectProvider<SamlProfileObjectBuilder<Response>> samlProfileSamlArtifactResponseBuilder;
 
     @Autowired
     @Qualifier("samlProfileSamlArtifactFaultResponseBuilder")
-    private SamlProfileObjectBuilder<Response> samlProfileSamlArtifactFaultResponseBuilder;
+    private ObjectProvider<SamlProfileObjectBuilder<Response>> samlProfileSamlArtifactFaultResponseBuilder;
 
     @Autowired
     @Qualifier("samlProfileSamlAttributeQueryResponseBuilder")
-    private SamlProfileObjectBuilder<Response> samlProfileSamlAttributeQueryResponseBuilder;
+    private ObjectProvider<SamlProfileObjectBuilder<Response>> samlProfileSamlAttributeQueryResponseBuilder;
 
     @Autowired
     @Qualifier("samlProfileSamlAttributeQueryFaultResponseBuilder")
-    private SamlProfileObjectBuilder<Response> samlProfileSamlAttributeQueryFaultResponseBuilder;
+    private ObjectProvider<SamlProfileObjectBuilder<Response>> samlProfileSamlAttributeQueryFaultResponseBuilder;
 
     @Autowired
     @Qualifier("samlAttributeQueryTicketFactory")
@@ -351,8 +351,8 @@ public class SamlIdPEndpointsConfiguration {
             .webApplicationServiceFactory(webApplicationServiceFactory.getIfAvailable())
             .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver.getIfAvailable())
             .openSamlConfigBean(openSamlConfigBean.getIfAvailable())
-            .responseBuilder(samlProfileSamlSoap11ResponseBuilder)
-            .samlFaultResponseBuilder(samlProfileSamlSoap11FaultResponseBuilder)
+            .responseBuilder(samlProfileSamlSoap11ResponseBuilder.getIfAvailable())
+            .samlFaultResponseBuilder(samlProfileSamlSoap11FaultResponseBuilder.getIfAvailable())
             .casProperties(casProperties)
             .samlObjectSignatureValidator(samlObjectSignatureValidator())
             .samlHttpRequestExtractor(ssoSamlHttpRequestExtractor())
@@ -372,8 +372,8 @@ public class SamlIdPEndpointsConfiguration {
             .webApplicationServiceFactory(webApplicationServiceFactory.getIfAvailable())
             .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver.getIfAvailable())
             .openSamlConfigBean(openSamlConfigBean.getIfAvailable())
-            .responseBuilder(samlProfileSamlArtifactResponseBuilder)
-            .samlFaultResponseBuilder(samlProfileSamlArtifactFaultResponseBuilder)
+            .responseBuilder(samlProfileSamlArtifactResponseBuilder.getIfAvailable())
+            .samlFaultResponseBuilder(samlProfileSamlArtifactFaultResponseBuilder.getIfAvailable())
             .casProperties(casProperties)
             .samlObjectSignatureValidator(samlObjectSignatureValidator())
             .ticketRegistry(ticketRegistry.getIfAvailable())
@@ -394,8 +394,8 @@ public class SamlIdPEndpointsConfiguration {
             .webApplicationServiceFactory(webApplicationServiceFactory.getIfAvailable())
             .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver.getIfAvailable())
             .openSamlConfigBean(openSamlConfigBean.getIfAvailable())
-            .responseBuilder(samlProfileSamlAttributeQueryResponseBuilder)
-            .samlFaultResponseBuilder(samlProfileSamlAttributeQueryFaultResponseBuilder)
+            .responseBuilder(samlProfileSamlAttributeQueryResponseBuilder.getIfAvailable())
+            .samlFaultResponseBuilder(samlProfileSamlAttributeQueryFaultResponseBuilder.getIfAvailable())
             .casProperties(casProperties)
             .samlObjectSignatureValidator(samlObjectSignatureValidator())
             .ticketRegistry(ticketRegistry.getIfAvailable())
