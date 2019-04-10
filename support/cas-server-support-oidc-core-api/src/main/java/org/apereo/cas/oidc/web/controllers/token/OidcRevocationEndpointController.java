@@ -4,7 +4,7 @@ import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20ControllerConfigurationContext;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.Pac4jUtils;
 
@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Slf4j
 public class OidcRevocationEndpointController extends BaseOAuth20Controller {
-    public OidcRevocationEndpointController(final OAuth20ControllerConfigurationContext oAuthConfigurationContext) {
+    public OidcRevocationEndpointController(final OAuth20ConfigurationContext oAuthConfigurationContext) {
         super(oAuthConfigurationContext);
     }
 

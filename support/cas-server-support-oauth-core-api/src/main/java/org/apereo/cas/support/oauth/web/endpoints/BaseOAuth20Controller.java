@@ -14,5 +14,5 @@ import org.springframework.stereotype.Controller;
 @RequiredArgsConstructor
 @Getter
 public abstract class BaseOAuth20Controller {
-    private final OAuth20ControllerConfigurationContext oAuthConfigurationContext;
+    private final OAuth20ConfigurationContext oAuthConfigurationContext;
 }

@@ -33,6 +33,7 @@ import org.apereo.cas.web.flow.actions.InjectResponseHeadersAction;
 import org.apereo.cas.web.flow.actions.RedirectToServiceAction;
 import org.apereo.cas.web.flow.actions.RenewAuthenticationRequestCheckAction;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.flow.resolver.impl.ServiceTicketRequestWebflowEventResolver;
 
 import lombok.extern.slf4j.Slf4j;
@@ -116,16 +117,19 @@ public class CasCoreWebflowConfiguration {
     @Bean
     @RefreshScope
     public CasWebflowEventResolver serviceTicketRequestWebflowEventResolver() {
-        return new ServiceTicketRequestWebflowEventResolver(authenticationSystemSupport.getIfAvailable(),
-            centralAuthenticationService.getIfAvailable(),
-            servicesManager.getIfAvailable(),
-            ticketRegistrySupport.getIfAvailable(),
-            warnCookieGenerator.getIfAvailable(),
-            authenticationServiceSelectionPlan.getIfAvailable(),
-            registeredServiceAccessStrategyEnforcer.getIfAvailable(),
-            casProperties,
-            applicationEventPublisher,
-            applicationContext);
+        val context = CasWebflowEventResolutionConfigurationContext.builder()
+            .authenticationSystemSupport(authenticationSystemSupport.getIfAvailable())
+            .centralAuthenticationService(centralAuthenticationService.getIfAvailable())
+            .servicesManager(servicesManager.getIfAvailable())
+            .ticketRegistrySupport(ticketRegistrySupport.getIfAvailable())
+            .warnCookieGenerator(warnCookieGenerator.getIfAvailable())
+            .authenticationRequestServiceSelectionStrategies(authenticationServiceSelectionPlan.getIfAvailable())
+            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getIfAvailable())
+            .casProperties(casProperties)
+            .eventPublisher(applicationEventPublisher)
+            .applicationContext(applicationContext)
+            .build();
+        return new ServiceTicketRequestWebflowEventResolver(context);
     }
 
     @Bean

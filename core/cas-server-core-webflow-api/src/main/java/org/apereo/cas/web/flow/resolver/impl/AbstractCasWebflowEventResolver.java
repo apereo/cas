@@ -1,25 +1,18 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
-import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.binding.message.MessageBuilder;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.AttributeMap;
@@ -38,44 +31,14 @@ import java.util.Set;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Getter
 public abstract class AbstractCasWebflowEventResolver implements CasWebflowEventResolver {
 
     private static final String RESOLVED_AUTHENTICATION_EVENTS = "resolvedAuthenticationEvents";
 
     private static final String DEFAULT_MESSAGE_BUNDLE_PREFIX = "authenticationFailure.";
 
-    /**
-     * The Authentication system support.
-     */
-    protected final AuthenticationSystemSupport authenticationSystemSupport;
-    /**
-     * The Central authentication service.
-     */
-    protected final CentralAuthenticationService centralAuthenticationService;
-    /**
-     * The Services manager.
-     */
-    protected final ServicesManager servicesManager;
-    /**
-     * Ticket registry support.
-     */
-    protected final TicketRegistrySupport ticketRegistrySupport;
-    /**
-     * Warn cookie generator.
-     */
-    protected final CasCookieBuilder warnCookieGenerator;
-    /**
-     * Extract the service specially in the event that it's proxied by a callback.
-     */
-    protected final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
-    /**
-     * CAS event publisher.
-     */
-    protected final ApplicationEventPublisher eventPublisher;
-    /**
-     * The Application context.
-     */
-    protected final ConfigurableApplicationContext applicationContext;
+    private final CasWebflowEventResolutionConfigurationContext webflowEventResolutionConfigurationContext;
 
     /**
      * New event based on the id, which contains an error attribute referring to the exception occurred.
@@ -139,7 +102,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     @Override
     public Set<Event> resolve(final RequestContext context) {
         LOGGER.trace("Attempting to resolve authentication event using resolver [{}]", getName());
-        WebUtils.putWarnCookieIfRequestParameterPresent(this.warnCookieGenerator, context);
+        WebUtils.putWarnCookieIfRequestParameterPresent(webflowEventResolutionConfigurationContext.getWarnCookieGenerator(), context);
         WebUtils.putPublicWorkstationToFlowIfRequestParameterPresent(context);
         return resolveInternal(context);
     }
@@ -172,7 +135,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @return the service
      */
     protected Service resolveServiceFromAuthenticationRequest(final Service service) {
-        return this.authenticationRequestServiceSelectionStrategies.resolveService(service);
+        return webflowEventResolutionConfigurationContext.getAuthenticationRequestServiceSelectionStrategies().resolveService(service);
     }
 
     /**
@@ -210,7 +173,8 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
 
             LOGGER.debug("Handling authentication transaction for credential [{}]", credential);
             val service = WebUtils.getService(context);
-            val builder = this.authenticationSystemSupport.handleAuthenticationTransaction(service, builderResult, credential);
+            val builder = webflowEventResolutionConfigurationContext.getAuthenticationSystemSupport()
+                .handleAuthenticationTransaction(service, builderResult, credential);
 
             LOGGER.debug("Issuing ticket-granting tickets for service [{}]", service);
             return CollectionUtils.wrapSet(grantTicketGrantingTicketToAuthenticationResult(context, builder, service));

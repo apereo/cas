@@ -1,28 +1,20 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.api.AuthenticationRiskEvaluator;
 import org.apereo.cas.api.AuthenticationRiskMitigator;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.events.authentication.adaptive.CasRiskBasedAuthenticationEvaluationStartedEvent;
 import org.apereo.cas.support.events.authentication.adaptive.CasRiskBasedAuthenticationMitigationStartedEvent;
 import org.apereo.cas.support.events.authentication.adaptive.CasRiskyAuthenticationDetectedEvent;
 import org.apereo.cas.support.events.authentication.adaptive.CasRiskyAuthenticationMitigatedEvent;
-import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -42,22 +34,13 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
     private final AuthenticationRiskMitigator authenticationRiskMitigator;
     private final double threshold;
 
-    public RiskAwareAuthenticationWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
-                                                       final CentralAuthenticationService centralAuthenticationService,
-                                                       final ServicesManager servicesManager,
-                                                       final TicketRegistrySupport ticketRegistrySupport,
-                                                       final CasCookieBuilder warnCookieGenerator,
-                                                       final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
+    public RiskAwareAuthenticationWebflowEventResolver(final CasWebflowEventResolutionConfigurationContext webflowEventResolutionConfigurationContext,
                                                        final AuthenticationRiskEvaluator authenticationRiskEvaluator,
-                                                       final AuthenticationRiskMitigator authenticationRiskMitigator,
-                                                       final CasConfigurationProperties casProperties,
-                                                       final ApplicationEventPublisher eventPublisher,
-                                                       final ConfigurableApplicationContext applicationContext) {
-        super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport, warnCookieGenerator,
-            authenticationSelectionStrategies, eventPublisher, applicationContext);
+                                                       final AuthenticationRiskMitigator authenticationRiskMitigator) {
+        super(webflowEventResolutionConfigurationContext);
         this.authenticationRiskEvaluator = authenticationRiskEvaluator;
         this.authenticationRiskMitigator = authenticationRiskMitigator;
-        threshold = casProperties.getAuthn().getAdaptive().getRisk().getThreshold();
+        threshold = webflowEventResolutionConfigurationContext.getCasProperties().getAuthn().getAdaptive().getRisk().getThreshold();
     }
 
     @Override
@@ -85,22 +68,26 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
     protected Set<Event> handlePossibleSuspiciousAttempt(final HttpServletRequest request, final Authentication authentication,
                                                          final RegisteredService service) {
 
-        this.eventPublisher.publishEvent(new CasRiskBasedAuthenticationEvaluationStartedEvent(this, authentication, service));
+        getWebflowEventResolutionConfigurationContext().getEventPublisher()
+            .publishEvent(new CasRiskBasedAuthenticationEvaluationStartedEvent(this, authentication, service));
 
         LOGGER.debug("Evaluating possible suspicious authentication attempt for [{}]", authentication.getPrincipal());
         val score = authenticationRiskEvaluator.eval(authentication, service, request);
 
         if (score.isRiskGreaterThan(threshold)) {
-            this.eventPublisher.publishEvent(new CasRiskyAuthenticationDetectedEvent(this, authentication, service, score));
+            getWebflowEventResolutionConfigurationContext().getEventPublisher()
+                .publishEvent(new CasRiskyAuthenticationDetectedEvent(this, authentication, service, score));
 
             LOGGER.debug("Calculated risk score [{}] for authentication request by [{}] is above the risk threshold [{}].",
                 score.getScore(),
                 authentication.getPrincipal(),
                 threshold);
 
-            this.eventPublisher.publishEvent(new CasRiskBasedAuthenticationMitigationStartedEvent(this, authentication, service, score));
+            getWebflowEventResolutionConfigurationContext().getEventPublisher()
+                .publishEvent(new CasRiskBasedAuthenticationMitigationStartedEvent(this, authentication, service, score));
             val res = authenticationRiskMitigator.mitigate(authentication, service, score, request);
-            this.eventPublisher.publishEvent(new CasRiskyAuthenticationMitigatedEvent(this, authentication, service, res));
+            getWebflowEventResolutionConfigurationContext().getEventPublisher()
+                .publishEvent(new CasRiskyAuthenticationMitigatedEvent(this, authentication, service, res));
 
             return CollectionUtils.wrapSet(res.getResult());
         }

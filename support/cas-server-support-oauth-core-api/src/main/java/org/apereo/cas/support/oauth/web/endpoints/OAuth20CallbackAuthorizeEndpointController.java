@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since 3.5.0
  */
 public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Controller {
-    public OAuth20CallbackAuthorizeEndpointController(final OAuth20ControllerConfigurationContext oAuthConfigurationContext) {
+    public OAuth20CallbackAuthorizeEndpointController(final OAuth20ConfigurationContext oAuthConfigurationContext) {
         super(oAuthConfigurationContext);
     }
 

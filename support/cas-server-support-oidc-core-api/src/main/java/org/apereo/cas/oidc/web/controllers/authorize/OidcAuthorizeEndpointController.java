@@ -4,7 +4,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointController;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20ControllerConfigurationContext;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Slf4j
 public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointController {
-    public OidcAuthorizeEndpointController(final OAuth20ControllerConfigurationContext oAuthConfigurationContext) {
+    public OidcAuthorizeEndpointController(final OAuth20ConfigurationContext oAuthConfigurationContext) {
         super(oAuthConfigurationContext);
     }
 

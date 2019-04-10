@@ -38,7 +38,7 @@ import java.util.Optional;
  */
 @Slf4j
 public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
-    public OAuth20AuthorizeEndpointController(final OAuth20ControllerConfigurationContext oAuthConfigurationContext) {
+    public OAuth20AuthorizeEndpointController(final OAuth20ConfigurationContext oAuthConfigurationContext) {
         super(oAuthConfigurationContext);
     }
 

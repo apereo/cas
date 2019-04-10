@@ -1,24 +1,15 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
-import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -38,17 +29,9 @@ import java.util.Set;
  */
 @Slf4j
 public class SelectiveMultifactorAuthenticationProviderWebflowEventEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
-    public SelectiveMultifactorAuthenticationProviderWebflowEventEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
-                                                                               final CentralAuthenticationService centralAuthenticationService,
-                                                                               final ServicesManager servicesManager,
-                                                                               final TicketRegistrySupport ticketRegistrySupport,
-                                                                               final CasCookieBuilder warnCookieGenerator,
-                                                                               final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
-                                                                               final MultifactorAuthenticationProviderSelector selector,
-                                                                               final ApplicationEventPublisher eventPublisher,
-                                                                               final ConfigurableApplicationContext applicationContext) {
-        super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport, warnCookieGenerator,
-            authenticationSelectionStrategies, selector, eventPublisher, applicationContext);
+    public SelectiveMultifactorAuthenticationProviderWebflowEventEventResolver(
+        final CasWebflowEventResolutionConfigurationContext webflowEventResolutionConfigurationContext) {
+        super(webflowEventResolutionConfigurationContext);
     }
 
     @Override
@@ -98,7 +81,8 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventEventResolver
         final Set<Event> resolveEvents, final Authentication authentication,
         final RegisteredService registeredService, final HttpServletRequest request) {
         LOGGER.debug("Locating multifactor providers to determine support for this authentication sequence");
-        val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
+        val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(
+            getWebflowEventResolutionConfigurationContext().getApplicationContext());
 
         if (providers.isEmpty()) {
             LOGGER.debug("No providers are available to honor this request. Moving on...");

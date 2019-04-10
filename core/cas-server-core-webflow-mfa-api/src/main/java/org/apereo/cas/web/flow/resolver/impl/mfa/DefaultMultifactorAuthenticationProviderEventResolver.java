@@ -1,23 +1,15 @@
 package org.apereo.cas.web.flow.resolver.impl.mfa;
 
-import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
-import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -34,20 +26,9 @@ import java.util.Set;
 public class DefaultMultifactorAuthenticationProviderEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
     private final MultifactorAuthenticationTrigger multifactorAuthenticationTrigger;
 
-    public DefaultMultifactorAuthenticationProviderEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
-                                                                 final CentralAuthenticationService centralAuthenticationService,
-                                                                 final ServicesManager servicesManager,
-                                                                 final TicketRegistrySupport ticketRegistrySupport,
-                                                                 final CasCookieBuilder warnCookieGenerator,
-                                                                 final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
-                                                                 final MultifactorAuthenticationProviderSelector selector,
-                                                                 final MultifactorAuthenticationTrigger multifactorAuthenticationTrigger,
-                                                                 final ApplicationEventPublisher eventPublisher,
-                                                                 final ConfigurableApplicationContext applicationContext) {
-        super(authenticationSystemSupport, centralAuthenticationService,
-            servicesManager, ticketRegistrySupport, warnCookieGenerator,
-            authenticationSelectionStrategies, selector,
-            eventPublisher, applicationContext);
+    public DefaultMultifactorAuthenticationProviderEventResolver(final CasWebflowEventResolutionConfigurationContext webflowEventResolutionConfigurationContext,
+                                                                 final MultifactorAuthenticationTrigger multifactorAuthenticationTrigger) {
+        super(webflowEventResolutionConfigurationContext);
         this.multifactorAuthenticationTrigger = multifactorAuthenticationTrigger;
     }
 

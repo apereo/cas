@@ -1,19 +1,11 @@
 package org.apereo.cas.adaptors.radius.web.flow;
 
-import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
-import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -31,19 +23,10 @@ public class RadiusAuthenticationWebflowEventResolver extends BaseMultifactorAut
     private static final String FLOW_SCOPE_ATTR_TOTAL_AUTHENTICATION_ATTEMPTS = "totalAuthenticationAttempts";
     private final long allowedAuthenticationAttempts;
 
-    public RadiusAuthenticationWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
-                                                    final CentralAuthenticationService centralAuthenticationService,
-                                                    final ServicesManager servicesManager,
-                                                    final TicketRegistrySupport ticketRegistrySupport,
-                                                    final CasCookieBuilder warnCookieGenerator,
-                                                    final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
-                                                    final MultifactorAuthenticationProviderSelector selector,
-                                                    final long allowedAuthenticationAttempts,
-                                                    final ApplicationEventPublisher eventPublisher,
-                                                    final ConfigurableApplicationContext applicationContext) {
-        super(authenticationSystemSupport, centralAuthenticationService,
-            servicesManager, ticketRegistrySupport, warnCookieGenerator,
-            authenticationSelectionStrategies, selector, eventPublisher, applicationContext);
+    public RadiusAuthenticationWebflowEventResolver(
+        final CasWebflowEventResolutionConfigurationContext webflowEventResolutionConfigurationContext,
+        final long allowedAuthenticationAttempts) {
+        super(webflowEventResolutionConfigurationContext);
         this.allowedAuthenticationAttempts = allowedAuthenticationAttempts;
     }
 

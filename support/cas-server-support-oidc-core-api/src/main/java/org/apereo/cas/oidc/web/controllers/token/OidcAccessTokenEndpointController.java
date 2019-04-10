@@ -3,7 +3,7 @@ package org.apereo.cas.oidc.web.controllers.token;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20ControllerConfigurationContext;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class OidcAccessTokenEndpointController extends OAuth20AccessTokenEndpointController {
 
-    public OidcAccessTokenEndpointController(final OAuth20ControllerConfigurationContext oauthConfigurationContext) {
+    public OidcAccessTokenEndpointController(final OAuth20ConfigurationContext oauthConfigurationContext) {
         super(oauthConfigurationContext);
     }
 

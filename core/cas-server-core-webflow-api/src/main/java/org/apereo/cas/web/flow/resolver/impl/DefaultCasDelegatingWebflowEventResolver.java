@@ -1,28 +1,18 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableContext;
-import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationException;
-import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.AbstractTicketException;
-import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -45,26 +35,15 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 @Slf4j
-@Setter
 public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflowEventResolver implements CasDelegatingWebflowEventResolver {
 
     private final List<CasWebflowEventResolver> orderedResolvers = new ArrayList<>();
-    private final AuditableExecution registeredServiceAccessStrategyEnforcer;
-    private CasWebflowEventResolver selectiveResolver;
+    private final CasWebflowEventResolver selectiveResolver;
 
-    public DefaultCasDelegatingWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
-                                                    final CentralAuthenticationService centralAuthenticationService,
-                                                    final ServicesManager servicesManager,
-                                                    final TicketRegistrySupport ticketRegistrySupport,
-                                                    final CasCookieBuilder warnCookieGenerator,
-                                                    final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
-                                                    final AuditableExecution registeredServiceAccessStrategyEnforcer,
-                                                    final ApplicationEventPublisher eventPublisher,
-                                                    final ConfigurableApplicationContext applicationContext) {
-        super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport,
-            warnCookieGenerator, authenticationSelectionStrategies, eventPublisher, applicationContext);
-        this.registeredServiceAccessStrategyEnforcer = registeredServiceAccessStrategyEnforcer;
-
+    public DefaultCasDelegatingWebflowEventResolver(final CasWebflowEventResolutionConfigurationContext webflowEventResolutionConfigurationContext,
+                                                    final CasWebflowEventResolver selectiveResolver) {
+        super(webflowEventResolutionConfigurationContext);
+        this.selectiveResolver = selectiveResolver;
     }
 
     @Override
@@ -73,7 +52,8 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
             val credential = getCredentialFromContext(context);
             val service = WebUtils.getService(context);
             if (credential != null) {
-                val builder = this.authenticationSystemSupport.handleInitialAuthenticationTransaction(service, credential);
+                val builder = getWebflowEventResolutionConfigurationContext().getAuthenticationSystemSupport()
+                    .handleInitialAuthenticationTransaction(service, credential);
                 if (builder.getInitialAuthentication().isPresent()) {
                     WebUtils.putAuthenticationResultBuilder(builder, context);
                     WebUtils.putAuthentication(builder.getInitialAuthentication().get(), context);
@@ -118,7 +98,7 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
         }
 
         LOGGER.trace("Locating service [{}] in service registry to determine authentication policy", service);
-        val registeredService = this.servicesManager.findServiceBy(service);
+        val registeredService = getWebflowEventResolutionConfigurationContext().getServicesManager().findServiceBy(service);
         LOGGER.trace("Locating authentication event in the request context...");
         val authn = WebUtils.getAuthentication(context);
         if (authn == null) {
@@ -136,7 +116,7 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
             .registeredService(registeredService)
             .retrievePrincipalAttributesFromReleasePolicy(Boolean.FALSE)
             .build();
-        val result = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+        val result = getWebflowEventResolutionConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
         result.throwExceptionIfNeeded();
         return registeredService;
     }

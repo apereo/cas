@@ -40,7 +40,7 @@ import java.util.Collection;
 import java.util.Set;
 
 /**
- * This is {@link OAuth20ControllerConfigurationContext}.
+ * This is {@link OAuth20ConfigurationContext}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
@@ -49,7 +49,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Builder
-public class OAuth20ControllerConfigurationContext {
+public class OAuth20ConfigurationContext {
     private final ServicesManager servicesManager;
 
     private final TicketRegistry ticketRegistry;
