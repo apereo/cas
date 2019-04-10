@@ -39,7 +39,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Slf4j
 public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller {
-    public OAuth20AccessTokenEndpointController(final OAuth20ControllerConfigurationContext oauthConfigurationContext) {
+    public OAuth20AccessTokenEndpointController(final OAuth20ConfigurationContext oauthConfigurationContext) {
         super(oauthConfigurationContext);
     }
 

@@ -4,7 +4,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryService;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20ControllerConfigurationContext;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,7 +24,7 @@ public class OidcWellKnownEndpointController extends BaseOAuth20Controller {
 
     private final OidcWebFingerDiscoveryService webFingerDiscoveryService;
 
-    public OidcWellKnownEndpointController(final OAuth20ControllerConfigurationContext oAuthConfigurationContext,
+    public OidcWellKnownEndpointController(final OAuth20ConfigurationContext oAuthConfigurationContext,
                                            final OidcWebFingerDiscoveryService webFingerDiscoveryService) {
         super(oAuthConfigurationContext);
         this.webFingerDiscoveryService = webFingerDiscoveryService;
