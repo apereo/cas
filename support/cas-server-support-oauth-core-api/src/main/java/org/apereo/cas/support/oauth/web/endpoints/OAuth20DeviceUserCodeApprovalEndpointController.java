@@ -27,7 +27,7 @@ public class OAuth20DeviceUserCodeApprovalEndpointController extends BaseOAuth20
      */
     public static final String PARAMETER_USER_CODE = "usercode";
 
-    public OAuth20DeviceUserCodeApprovalEndpointController(final OAuth20ControllerConfigurationContext oAuthConfigurationContext) {
+    public OAuth20DeviceUserCodeApprovalEndpointController(final OAuth20ConfigurationContext oAuthConfigurationContext) {
         super(oAuthConfigurationContext);
     }
 

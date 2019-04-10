@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller {
     private final ResponseEntity expiredAccessTokenResponseEntity;
 
-    public OAuth20UserProfileEndpointController(final OAuth20ControllerConfigurationContext configurationContext) {
+    public OAuth20UserProfileEndpointController(final OAuth20ConfigurationContext configurationContext) {
         super(configurationContext);
         this.expiredAccessTokenResponseEntity = buildUnauthorizedResponseEntity(OAuth20Constants.EXPIRED_ACCESS_TOKEN);
     }

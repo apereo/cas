@@ -28,7 +28,6 @@ import java.util.function.Predicate;
 public class DefaultMultifactorAuthenticationProviderResolver implements MultifactorAuthenticationProviderResolver {
     private final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector;
 
-
     @Override
     public Set<Event> resolveEventViaAuthenticationAttribute(final Authentication authentication,
                                                              final Collection<String> attributeNames,
