@@ -1,17 +1,14 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.couchdb.saml.CouchDbSamlIdPMetadataDocument;
 import org.apereo.cas.couchdb.saml.SamlIdPMetadataCouchDbRepository;
 import org.apereo.cas.support.saml.idp.metadata.generator.BaseSamlIdPMetadataGenerator;
-import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
-import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyWriter;
+import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.core.io.ResourceLoader;
 
 /**
  * This is {@link CouchDbSamlIdPMetadataGenerator}.
@@ -23,12 +20,8 @@ public class CouchDbSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerato
 
     private final SamlIdPMetadataCouchDbRepository couchDb;
 
-    public CouchDbSamlIdPMetadataGenerator(final SamlIdPMetadataLocator samlIdPMetadataLocator,
-                                           final SamlIdPCertificateAndKeyWriter samlIdPCertificateAndKeyWriter, final String entityId,
-                                           final ResourceLoader resourceLoader, final String casServerPrefix,
-                                           final String scope, final CipherExecutor metadataCipherExecutor, final SamlIdPMetadataCouchDbRepository couchDb) {
-        super(samlIdPMetadataLocator, samlIdPCertificateAndKeyWriter, metadataCipherExecutor,
-            entityId, resourceLoader, casServerPrefix, scope);
+    public CouchDbSamlIdPMetadataGenerator(final SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext, final SamlIdPMetadataCouchDbRepository couchDb) {
+        super(samlIdPMetadataGeneratorConfigurationContext);
         this.couchDb = couchDb;
     }
 

@@ -29,16 +29,16 @@ public class CouchDbConsentDecision extends ConsentDecision {
     private String cid;
 
     @JsonCreator
-    public CouchDbConsentDecision(@JsonProperty("_id") final String cid, //NOPMD
-                                        @JsonProperty("_rev") final String rev,
-                                        @JsonProperty("id") final long id,
-                                        @JsonProperty("principal") final String principal,
-                                        @JsonProperty("service") final String service,
-                                        @JsonProperty("createdDate") final LocalDateTime createdDate,
-                                        @JsonProperty("options") final ConsentReminderOptions options,
-                                        @JsonProperty("reminder") final long reminder,
-                                        @JsonProperty("reminderTimeUnit") final ChronoUnit reminderTimeUnit,
-                                        @JsonProperty("attributes") final String attributes) {
+    public CouchDbConsentDecision(@JsonProperty("_id") final String cid,
+                                  @JsonProperty("_rev") final String rev,
+                                  @JsonProperty("id") final long id,
+                                  @JsonProperty("principal") final String principal,
+                                  @JsonProperty("service") final String service,
+                                  @JsonProperty("createdDate") final LocalDateTime createdDate,
+                                  @JsonProperty("options") final ConsentReminderOptions options,
+                                  @JsonProperty("reminder") final long reminder,
+                                  @JsonProperty("reminderTimeUnit") final ChronoUnit reminderTimeUnit,
+                                  @JsonProperty("attributes") final String attributes) {
         this.cid = cid;
         this.rev = rev;
         setId(id);
@@ -53,6 +53,7 @@ public class CouchDbConsentDecision extends ConsentDecision {
 
     /**
      * Copy constructor.
+     *
      * @param c Consent decision to copy from.
      */
     public CouchDbConsentDecision(final ConsentDecision c) {
@@ -71,6 +72,7 @@ public class CouchDbConsentDecision extends ConsentDecision {
 
     /**
      * Copy consent details to this instance.
+     *
      * @param other decision to copy details from.
      * @return CouchDb capable consent decision.
      */

@@ -8,6 +8,7 @@ import org.apereo.cas.support.saml.idp.metadata.CouchDbSamlIdPMetadataCipherExec
 import org.apereo.cas.support.saml.idp.metadata.CouchDbSamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.CouchDbSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
+import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyWriter;
 
@@ -53,16 +54,8 @@ public class CouchDbSamlIdPMetadataConfiguration {
     private ObjectProvider<CouchDbConnectorFactory> samlMetadataCouchDbFactory;
 
     @Autowired
-    @Qualifier("couchDbSamlIdPMetadataCipherExecutor")
-    private CipherExecutor<String, String> cipherExecutor;
-
-    @Autowired
     @Qualifier("samlIdPMetadataCouchDbRepository")
     private ObjectProvider<SamlIdPMetadataCouchDbRepository> samlIdPMetadataRepository;
-
-    @Autowired
-    @Qualifier("samlIdPMetadataLocator")
-    private ObjectProvider<SamlIdPMetadataLocator> metadataLocator;
 
     @ConditionalOnMissingBean(name = "samlIdPMetadataCouchDbInstance")
     @RefreshScope
@@ -114,21 +107,23 @@ public class CouchDbSamlIdPMetadataConfiguration {
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
         val idp = casProperties.getAuthn().getSamlIdp();
 
-        return new CouchDbSamlIdPMetadataGenerator(
-            metadataLocator.getIfAvailable(),
-            samlSelfSignedCertificateWriter.getIfAvailable(),
-            idp.getEntityId(),
-            resourceLoader,
-            casProperties.getServer().getPrefix(),
-            idp.getScope(),
-            cipherExecutor,
-            samlIdPMetadataRepository.getIfAvailable());
+        val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
+            .samlIdPMetadataLocator(samlIdPMetadataLocator())
+            .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter.getIfAvailable())
+            .entityId(idp.getEntityId())
+            .resourceLoader(resourceLoader)
+            .casServerPrefix(casProperties.getServer().getPrefix())
+            .scope(idp.getScope())
+            .metadataCipherExecutor(couchDbSamlIdPMetadataCipherExecutor())
+            .build();
+
+        return new CouchDbSamlIdPMetadataGenerator(context, samlIdPMetadataRepository.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "couchDbSamlIdPMetadataLocator")
     @Bean
     @SneakyThrows
     public SamlIdPMetadataLocator samlIdPMetadataLocator() {
-        return new CouchDbSamlIdPMetadataLocator(cipherExecutor, samlIdPMetadataRepository.getIfAvailable());
+        return new CouchDbSamlIdPMetadataLocator(couchDbSamlIdPMetadataCipherExecutor(), samlIdPMetadataRepository.getIfAvailable());
     }
 }

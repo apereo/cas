@@ -6,6 +6,7 @@ import org.apereo.cas.support.saml.idp.metadata.AmazonS3SamlIdPMetadataCipherExe
 import org.apereo.cas.support.saml.idp.metadata.AmazonS3SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.AmazonS3SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
+import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyWriter;
 
@@ -73,14 +74,17 @@ public class AmazonS3SamlIdPMetadataConfiguration {
     @SneakyThrows
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
         val idp = casProperties.getAuthn().getSamlIdp();
-        return new AmazonS3SamlIdPMetadataGenerator(
-            samlIdPMetadataLocator(),
-            samlSelfSignedCertificateWriter.getIfAvailable(),
-            idp.getEntityId(),
-            resourceLoader,
-            casProperties.getServer().getPrefix(),
-            idp.getScope(),
-            amazonS3SamlIdPMetadataCipherExecutor(),
+        val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
+            .samlIdPMetadataLocator(samlIdPMetadataLocator())
+            .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter.getIfAvailable())
+            .entityId(idp.getEntityId())
+            .resourceLoader(resourceLoader)
+            .casServerPrefix(casProperties.getServer().getPrefix())
+            .scope(idp.getScope())
+            .metadataCipherExecutor(amazonS3SamlIdPMetadataCipherExecutor())
+            .build();
+
+        return new AmazonS3SamlIdPMetadataGenerator(context,
             amazonS3Client.getIfAvailable(),
             idp.getMetadata().getAmazonS3().getIdpMetadataBucketName());
     }

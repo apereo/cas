@@ -1,18 +1,10 @@
 package org.apereo.cas.oidc.web.controllers.discovery;
 
-import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryService;
-import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
-import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
-import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ControllerConfigurationContext;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -30,23 +22,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Slf4j
 public class OidcWellKnownEndpointController extends BaseOAuth20Controller {
 
-    private final OidcServerDiscoverySettings discovery;
     private final OidcWebFingerDiscoveryService webFingerDiscoveryService;
 
-    public OidcWellKnownEndpointController(final ServicesManager servicesManager,
-                                           final TicketRegistry ticketRegistry,
-                                           final AccessTokenFactory accessTokenFactory,
-                                           final PrincipalFactory principalFactory,
-                                           final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
-                                           final OidcServerDiscoverySettings discovery,
-                                           final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
-                                           final CasConfigurationProperties casProperties,
-                                           final CasCookieBuilder ticketGrantingTicketCookieGenerator,
+    public OidcWellKnownEndpointController(final OAuth20ControllerConfigurationContext oAuthConfigurationContext,
                                            final OidcWebFingerDiscoveryService webFingerDiscoveryService) {
-        super(servicesManager, ticketRegistry, accessTokenFactory,
-            principalFactory, webApplicationServiceServiceFactory,
-            scopeToAttributesFilter, casProperties, ticketGrantingTicketCookieGenerator);
-        this.discovery = discovery;
+        super(oAuthConfigurationContext);
         this.webFingerDiscoveryService = webFingerDiscoveryService;
     }
 
@@ -57,7 +37,7 @@ public class OidcWellKnownEndpointController extends BaseOAuth20Controller {
      */
     @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + "/.well-known", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OidcServerDiscoverySettings> getWellKnownDiscoveryConfiguration() {
-        return new ResponseEntity(this.discovery, HttpStatus.OK);
+        return new ResponseEntity(this.webFingerDiscoveryService.getDiscovery(), HttpStatus.OK);
     }
 
     /**
