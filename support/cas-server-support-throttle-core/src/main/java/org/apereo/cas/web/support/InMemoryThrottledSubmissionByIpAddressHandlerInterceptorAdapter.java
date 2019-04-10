@@ -1,12 +1,9 @@
 package org.apereo.cas.web.support;
 
-import org.apereo.cas.audit.AuditTrailExecutionPlan;
-import org.apereo.cas.throttle.ThrottledRequestExecutor;
-import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
-
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.ZonedDateTime;
 import java.util.concurrent.ConcurrentMap;
 
 /**
@@ -18,18 +15,9 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter extends AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter {
 
-    public InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter(final int failureThreshold,
-                                                                           final int failureRangeInSeconds,
-                                                                           final String usernameParameter,
-                                                                           final String authenticationFailureCode,
-                                                                           final AuditTrailExecutionPlan auditTrailExecutionPlan,
-                                                                           final String applicationCode,
-                                                                           final ThrottledRequestResponseHandler throttledRequestResponseHandler,
-                                                                           final ConcurrentMap map,
-                                                                           final ThrottledRequestExecutor throttledRequestExecutor) {
-        super(failureThreshold, failureRangeInSeconds, usernameParameter,
-            authenticationFailureCode, auditTrailExecutionPlan, applicationCode,
-            throttledRequestResponseHandler, map, throttledRequestExecutor);
+    public InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter(final ThrottledSubmissionHandlerConfigurationContext configurationContext,
+                                                                           final ConcurrentMap<String, ZonedDateTime> ipMap) {
+        super(configurationContext, ipMap);
     }
 
     @Override
