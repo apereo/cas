@@ -7,6 +7,7 @@ import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.adaptors.radius.authentication.handler.support.RadiusAuthenticationHandler;
 import org.apereo.cas.adaptors.radius.server.AbstractRadiusServer;
 import org.apereo.cas.adaptors.radius.server.NonBlockingRadiusServer;
+import org.apereo.cas.adaptors.radius.server.RadiusServerConfigurationContext;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusAccessChallengedMultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -59,8 +60,6 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class RadiusConfiguration {
-
-
     @Autowired
     @Qualifier("multifactorAuthenticationProviderResolver")
     private ObjectProvider<MultifactorAuthenticationProviderResolver> multifactorAuthenticationProviderResolver;
@@ -199,15 +198,25 @@ public class RadiusConfiguration {
         return r;
     }
 
-    private static AbstractRadiusServer getSingleRadiusServer(final RadiusClientProperties client, final RadiusServerProperties server, final String clientInetAddress) {
+    private static AbstractRadiusServer getSingleRadiusServer(final RadiusClientProperties client,
+                                                              final RadiusServerProperties server,
+                                                              final String clientInetAddress) {
         val factory = new RadiusClientFactory(client.getAccountingPort(), client.getAuthenticationPort(),
             client.getSocketTimeout(), clientInetAddress, client.getSharedSecret());
 
         val protocol = RadiusProtocol.valueOf(server.getProtocol());
-
-        return new NonBlockingRadiusServer(protocol, factory, server.getRetries(),
-            server.getNasIpAddress(), server.getNasIpv6Address(), server.getNasPort(),
-            server.getNasPortId(), server.getNasIdentifier(), server.getNasRealPort(),
-            server.getNasPortType());
+        val context = RadiusServerConfigurationContext.builder()
+            .protocol(protocol)
+            .radiusClientFactory(factory)
+            .retries(server.getRetries())
+            .nasIpAddress(server.getNasIpAddress())
+            .nasIpv6Address(server.getNasIpv6Address())
+            .nasPort(server.getNasPort())
+            .nasPortId(server.getNasPortId())
+            .nasIdentifier(server.getNasIdentifier())
+            .nasRealPort(server.getNasRealPort())
+            .nasPortType(server.getNasPortType())
+            .build();
+        return new NonBlockingRadiusServer(context);
     }
 }

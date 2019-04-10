@@ -23,6 +23,7 @@ import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.AbstractDelegateController;
 import org.apereo.cas.web.DelegatingController;
+import org.apereo.cas.web.ServiceValidateConfigurationContext;
 import org.apereo.cas.web.ServiceValidationViewFactory;
 import org.apereo.cas.web.ServiceValidationViewFactoryConfigurer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -136,7 +137,7 @@ public class OpenIdConfiguration {
         manager.setOPEndpointUrl(casProperties.getServer().getLoginUrl());
         manager.setEnforceRpId(casProperties.getAuthn().getOpenid().isEnforceRpId());
         manager.setSharedAssociations(new InMemoryServerAssociationStore());
-        LOGGER.info("Creating openid server manager with OP endpoint [{}]", casProperties.getServer().getLoginUrl());
+        LOGGER.trace("Creating openid server manager with OP endpoint [{}]", casProperties.getServer().getLoginUrl());
         return manager;
     }
 
@@ -147,13 +148,12 @@ public class OpenIdConfiguration {
         return new OpenIdServiceResponseBuilder(openIdPrefixUrl, serverManager(), centralAuthenticationService.getIfAvailable(), servicesManager.getIfAvailable());
     }
 
-
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "yadisController")
     public YadisController yadisController() {
         return new YadisController();
     }
-
 
     @Bean
     @RefreshScope
@@ -177,19 +177,21 @@ public class OpenIdConfiguration {
 
     @Bean
     public OpenIdPostUrlHandlerMapping openIdPostUrlHandlerMapping() {
-        val c = new OpenIdValidateController(cas20WithoutProxyProtocolValidationSpecification.getIfAvailable(),
-            authenticationSystemSupport.getIfAvailable(),
-            servicesManager.getIfAvailable(),
-            centralAuthenticationService.getIfAvailable(),
-            proxy20Handler.getIfAvailable(),
-            argumentExtractor.getIfAvailable(),
-            requestedContextValidator.getIfAvailable(),
-            casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
-            serverManager(),
-            validationAuthorizers.getIfAvailable(),
-            casProperties.getSso().isRenewAuthnEnabled(),
-            serviceValidationViewFactory.getIfAvailable());
+        val context = ServiceValidateConfigurationContext.builder()
+            .validationSpecifications(CollectionUtils.wrapSet(cas20WithoutProxyProtocolValidationSpecification.getIfAvailable()))
+            .authenticationSystemSupport(authenticationSystemSupport.getIfAvailable())
+            .servicesManager(servicesManager.getIfAvailable())
+            .centralAuthenticationService(centralAuthenticationService.getIfAvailable())
+            .argumentExtractor(argumentExtractor.getIfAvailable())
+            .proxyHandler(proxy20Handler.getIfAvailable())
+            .requestedContextValidator(requestedContextValidator.getIfAvailable())
+            .authnContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute())
+            .validationAuthorizers(validationAuthorizers.getIfAvailable())
+            .renewEnabled(casProperties.getSso().isRenewAuthnEnabled())
+            .validationViewFactory(serviceValidationViewFactory.getIfAvailable())
+            .build();
 
+        val c = new OpenIdValidateController(context, serverManager());
         val controller = new DelegatingController();
         controller.setDelegates(CollectionUtils.wrapList(smartOpenIdAssociationController(), c));
 

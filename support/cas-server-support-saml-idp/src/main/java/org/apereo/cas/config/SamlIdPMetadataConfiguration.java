@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -11,6 +12,7 @@ import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.metadata.generator.FileSystemSamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
+import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
 import org.apereo.cas.support.saml.idp.metadata.locator.FileSystemSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.writer.DefaultSamlIdPCertificateAndKeyWriter;
@@ -134,10 +136,16 @@ public class SamlIdPMetadataConfiguration {
     @SneakyThrows
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
         val idp = casProperties.getAuthn().getSamlIdp();
-        return new FileSystemSamlIdPMetadataGenerator(samlIdPMetadataLocator(),
-            samlSelfSignedCertificateWriter(),
-            idp.getEntityId(), this.resourceLoader,
-            casProperties.getServer().getPrefix(), idp.getScope());
+        val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
+            .samlIdPMetadataLocator(samlIdPMetadataLocator())
+            .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter())
+            .entityId(idp.getEntityId())
+            .resourceLoader(resourceLoader)
+            .casServerPrefix(casProperties.getServer().getPrefix())
+            .scope(idp.getScope())
+            .metadataCipherExecutor(CipherExecutor.noOpOfStringToString())
+            .build();
+        return new FileSystemSamlIdPMetadataGenerator(context);
     }
 
     @ConditionalOnMissingBean(name = "samlSelfSignedCertificateWriter")

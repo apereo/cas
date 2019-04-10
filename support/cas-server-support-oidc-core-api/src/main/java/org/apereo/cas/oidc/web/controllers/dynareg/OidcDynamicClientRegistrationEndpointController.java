@@ -1,26 +1,16 @@
 package org.apereo.cas.oidc.web.controllers.dynareg;
 
-import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequest;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationResponse;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.OidcSubjectTypes;
 import org.apereo.cas.services.PairwiseOidcRegisteredServiceUsernameAttributeProvider;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
-import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
-import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ControllerConfigurationContext;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.gen.RandomStringGenerator;
-import org.apereo.cas.util.serialization.StringSerializer;
-import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -46,27 +36,9 @@ import java.util.LinkedHashSet;
  */
 @Slf4j
 public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20Controller {
-    private final StringSerializer<OidcClientRegistrationRequest> clientRegistrationRequestSerializer;
-    private final RandomStringGenerator clientIdGenerator;
-    private final RandomStringGenerator clientSecretGenerator;
 
-    public OidcDynamicClientRegistrationEndpointController(final ServicesManager servicesManager,
-                                                           final TicketRegistry ticketRegistry,
-                                                           final AccessTokenFactory accessTokenFactory,
-                                                           final PrincipalFactory principalFactory,
-                                                           final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
-                                                           final StringSerializer<OidcClientRegistrationRequest> clientRegistrationRequestSerializer,
-                                                           final RandomStringGenerator clientIdGenerator,
-                                                           final RandomStringGenerator clientSecretGenerator,
-                                                           final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
-                                                           final CasConfigurationProperties casProperties,
-                                                           final CasCookieBuilder ticketGrantingTicketCookieGenerator) {
-        super(servicesManager, ticketRegistry, accessTokenFactory,
-            principalFactory, webApplicationServiceServiceFactory,
-            scopeToAttributesFilter, casProperties, ticketGrantingTicketCookieGenerator);
-        this.clientRegistrationRequestSerializer = clientRegistrationRequestSerializer;
-        this.clientIdGenerator = clientIdGenerator;
-        this.clientSecretGenerator = clientSecretGenerator;
+    public OidcDynamicClientRegistrationEndpointController(final OAuth20ControllerConfigurationContext oAuthConfigurationContext) {
+        super(oAuthConfigurationContext);
     }
 
     /**
@@ -83,7 +55,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
                                                                                 final HttpServletRequest request,
                                                                                 final HttpServletResponse response) {
         try {
-            val registrationRequest = this.clientRegistrationRequestSerializer.from(jsonInput);
+            val registrationRequest = (OidcClientRegistrationRequest) getOAuthConfigurationContext().getClientRegistrationRequestSerializer().from(jsonInput);
             LOGGER.debug("Received client registration request [{}]", registrationRequest);
 
             if (registrationRequest.getScopes().isEmpty()) {
@@ -109,12 +81,12 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
             val uri = registrationRequest.getRedirectUris().stream().findFirst().get();
             registeredService.setServiceId(uri);
 
-            registeredService.setClientId(clientIdGenerator.getNewString());
-            registeredService.setClientSecret(clientSecretGenerator.getNewString());
+            registeredService.setClientId(getOAuthConfigurationContext().getClientIdGenerator().getNewString());
+            registeredService.setClientSecret(getOAuthConfigurationContext().getClientSecretGenerator().getNewString());
             registeredService.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
             registeredService.setLogoutUrl(org.springframework.util.StringUtils.collectionToCommaDelimitedString(registrationRequest.getPostLogoutRedirectUris()));
 
-            val supportedScopes = new HashSet<String>(casProperties.getAuthn().getOidc().getScopes());
+            val supportedScopes = new HashSet<String>(getOAuthConfigurationContext().getCasProperties().getAuthn().getOidc().getScopes());
             supportedScopes.retainAll(registrationRequest.getScopes());
             val clientResponse = getClientRegistrationResponse(registrationRequest, registeredService);
             registeredService.setScopes(supportedScopes);
@@ -129,7 +101,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
                 .concat(" and response types ")
                 .concat(String.join(",", clientResponse.getResponseTypes())));
             registeredService.setDynamicallyRegistered(true);
-            scopeToAttributesFilter.reconcile(registeredService);
+            getOAuthConfigurationContext().getProfileScopeToAttributesFilter().reconcile(registeredService);
 
             return new ResponseEntity<>(clientResponse, HttpStatus.CREATED);
         } catch (final Exception e) {

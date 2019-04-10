@@ -19,10 +19,12 @@ import org.apereo.cas.support.saml.web.SamlValidateEndpoint;
 import org.apereo.cas.support.saml.web.view.Saml10FailureResponseView;
 import org.apereo.cas.support.saml.web.view.Saml10SuccessResponseView;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
+import org.apereo.cas.web.ServiceValidateConfigurationContext;
 import org.apereo.cas.web.ServiceValidationViewFactory;
 import org.apereo.cas.web.ServiceValidationViewFactoryConfigurer;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -70,7 +72,7 @@ public class SamlConfiguration {
     @Autowired
     @Qualifier("casAttributeEncoder")
     private ObjectProvider<ProtocolAttributeEncoder> protocolAttributeEncoder;
-    
+
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
     private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationServiceSelectionPlan;
@@ -167,17 +169,21 @@ public class SamlConfiguration {
 
     @Bean
     public SamlValidateController samlValidateController() {
-        return new SamlValidateController(cas20WithoutProxyProtocolValidationSpecification.getIfAvailable(),
-            authenticationSystemSupport.getIfAvailable(),
-            servicesManager.getIfAvailable(),
-            centralAuthenticationService.getIfAvailable(),
-            proxy20Handler.getIfAvailable(),
-            argumentExtractor.getIfAvailable(),
-            requestedContextValidator.getIfAvailable(),
-            casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
-            validationAuthorizers.getIfAvailable(),
-            casProperties.getSso().isRenewAuthnEnabled(),
-            serviceValidationViewFactory.getIfAvailable());
+        val context = ServiceValidateConfigurationContext.builder()
+            .validationSpecifications(CollectionUtils.wrapSet(cas20WithoutProxyProtocolValidationSpecification.getIfAvailable()))
+            .authenticationSystemSupport(authenticationSystemSupport.getIfAvailable())
+            .servicesManager(servicesManager.getIfAvailable())
+            .centralAuthenticationService(centralAuthenticationService.getIfAvailable())
+            .argumentExtractor(argumentExtractor.getIfAvailable())
+            .proxyHandler(proxy20Handler.getIfAvailable())
+            .requestedContextValidator(requestedContextValidator.getIfAvailable())
+            .authnContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute())
+            .validationAuthorizers(validationAuthorizers.getIfAvailable())
+            .renewEnabled(casProperties.getSso().isRenewAuthnEnabled())
+            .validationViewFactory(serviceValidationViewFactory.getIfAvailable())
+            .build();
+
+        return new SamlValidateController(context);
     }
 
     @Bean

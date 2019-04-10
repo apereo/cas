@@ -1,27 +1,16 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableContext;
-import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationManager;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionAccessTokenResponse;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
-import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
-import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.Pac4jUtils;
-import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -51,23 +40,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class OAuth20IntrospectionEndpointController extends BaseOAuth20Controller {
 
-    private final CentralAuthenticationService centralAuthenticationService;
-    private final AuditableExecution registeredServiceAccessStrategyEnforcer;
-
-    public OAuth20IntrospectionEndpointController(final ServicesManager servicesManager,
-                                                  final TicketRegistry ticketRegistry,
-                                                  final AccessTokenFactory accessTokenFactory,
-                                                  final PrincipalFactory principalFactory,
-                                                  final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
-                                                  final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
-                                                  final CasConfigurationProperties casProperties,
-                                                  final CasCookieBuilder cookieGenerator,
-                                                  final CentralAuthenticationService centralAuthenticationService,
-                                                  final AuditableExecution registeredServiceAccessStrategyEnforcer) {
-        super(servicesManager, ticketRegistry, accessTokenFactory, principalFactory,
-            webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties, cookieGenerator);
-        this.centralAuthenticationService = centralAuthenticationService;
-        this.registeredServiceAccessStrategyEnforcer = registeredServiceAccessStrategyEnforcer;
+    public OAuth20IntrospectionEndpointController(final OAuth20ControllerConfigurationContext oAuthConfigurationContext) {
+        super(oAuthConfigurationContext);
     }
 
     /**
@@ -104,18 +78,18 @@ public class OAuth20IntrospectionEndpointController extends BaseOAuth20Controlle
             if (credentials == null) {
                 result = buildUnauthorizedResponseEntity(OAuth20Constants.INVALID_CLIENT, true);
             } else {
-                val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, credentials.getUsername());
+                val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(getOAuthConfigurationContext().getServicesManager(), credentials.getUsername());
                 val validationError = validateIntrospectionRequest(service, credentials, request);
                 if (validationError.isPresent()) {
                     result = validationError.get();
                 } else {
                     val accessToken = StringUtils.defaultIfBlank(request.getParameter(OAuth20Constants.TOKEN),
-                            request.getParameter(OAuth20Constants.ACCESS_TOKEN));
+                        request.getParameter(OAuth20Constants.ACCESS_TOKEN));
 
                     LOGGER.debug("Located access token [{}] in the request", accessToken);
                     var ticket = (AccessToken) null;
                     try {
-                        ticket = this.centralAuthenticationService.getTicket(accessToken, AccessToken.class);
+                        ticket = getOAuthConfigurationContext().getCentralAuthenticationService().getTicket(accessToken, AccessToken.class);
                     } catch (final InvalidTicketException e) {
                         LOGGER.info("Unable to fetch access token [{}]: [{}]", accessToken, e.getMessage());
                     }
@@ -132,8 +106,8 @@ public class OAuth20IntrospectionEndpointController extends BaseOAuth20Controlle
     }
 
     private Optional<ResponseEntity<OAuth20IntrospectionAccessTokenResponse>> validateIntrospectionRequest(final OAuthRegisteredService registeredService,
-                                                 final UsernamePasswordCredentials credentials,
-                                                 final HttpServletRequest request) {
+                                                                                                           final UsernamePasswordCredentials credentials,
+                                                                                                           final HttpServletRequest request) {
         val tokenExists = HttpRequestUtils.doesParameterExist(request, OAuth20Constants.TOKEN)
             || HttpRequestUtils.doesParameterExist(request, OAuth20Constants.ACCESS_TOKEN);
 
@@ -142,12 +116,12 @@ public class OAuth20IntrospectionEndpointController extends BaseOAuth20Controlle
         }
 
         if (OAuth20Utils.checkClientSecret(registeredService, credentials.getPassword())) {
-            val service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
+            val service = getOAuthConfigurationContext().getWebApplicationServiceServiceFactory().createService(registeredService.getServiceId());
             val audit = AuditableContext.builder()
                 .service(service)
                 .registeredService(registeredService)
                 .build();
-            val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+            val accessResult = getOAuthConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
             return accessResult.isExecutionFailure() ? Optional.of(buildUnauthorizedResponseEntity(OAuth20Constants.UNAUTHORIZED_CLIENT, false)) : Optional.empty();
         }
         return Optional.of(buildUnauthorizedResponseEntity(OAuth20Constants.INVALID_CLIENT, true));
@@ -165,7 +139,7 @@ public class OAuth20IntrospectionEndpointController extends BaseOAuth20Controlle
         introspect.setClientId(service.getClientId());
         introspect.setScope("CAS");
         introspect.setAud(service.getServiceId());
-        introspect.setIss(casProperties.getAuthn().getOidc().getIssuer());
+        introspect.setIss(getOAuthConfigurationContext().getCasProperties().getAuthn().getOidc().getIssuer());
 
         if (ticket != null) {
             introspect.setActive(true);

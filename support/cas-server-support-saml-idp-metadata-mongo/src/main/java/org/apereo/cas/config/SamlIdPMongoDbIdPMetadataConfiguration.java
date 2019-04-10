@@ -7,6 +7,7 @@ import org.apereo.cas.support.saml.idp.metadata.MongoDbSamlIdPMetadataCipherExec
 import org.apereo.cas.support.saml.idp.metadata.MongoDbSamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.MongoDbSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
+import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyWriter;
 
@@ -82,16 +83,17 @@ public class SamlIdPMongoDbIdPMetadataConfiguration {
     @SneakyThrows
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
         val idp = casProperties.getAuthn().getSamlIdp();
-        return new MongoDbSamlIdPMetadataGenerator(
-            samlIdPMetadataLocator(),
-            samlSelfSignedCertificateWriter.getIfAvailable(),
-            idp.getEntityId(),
-            resourceLoader,
-            casProperties.getServer().getPrefix(),
-            idp.getScope(),
-            mongoDbSamlIdPMetadataTemplate(),
-            idp.getMetadata().getMongo().getIdpMetadataCollection(),
-            mongoDbSamlIdPMetadataCipherExecutor());
+        val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
+            .samlIdPMetadataLocator(samlIdPMetadataLocator())
+            .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter.getIfAvailable())
+            .entityId(idp.getEntityId())
+            .resourceLoader(resourceLoader)
+            .casServerPrefix(casProperties.getServer().getPrefix())
+            .scope(idp.getScope())
+            .metadataCipherExecutor(mongoDbSamlIdPMetadataCipherExecutor())
+            .build();
+        return new MongoDbSamlIdPMetadataGenerator(context, mongoDbSamlIdPMetadataTemplate(),
+            idp.getMetadata().getMongo().getIdpMetadataCollection());
     }
 
     @Bean
