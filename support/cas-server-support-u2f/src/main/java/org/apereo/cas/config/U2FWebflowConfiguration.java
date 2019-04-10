@@ -9,9 +9,9 @@ import org.apereo.cas.adaptors.u2f.web.flow.U2FAuthenticationWebflowEventResolve
 import org.apereo.cas.adaptors.u2f.web.flow.U2FMultifactorWebflowConfigurer;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FStartAuthenticationAction;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FStartRegistrationAction;
+import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -19,8 +19,8 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
-import org.apereo.cas.web.flow.authentication.RankedMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -89,13 +89,12 @@ public class U2FWebflowConfiguration implements CasWebflowExecutionPlanConfigure
     private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
-    @Qualifier("multifactorAuthenticationProviderSelector")
-    private ObjectProvider<MultifactorAuthenticationProviderSelector> multifactorAuthenticationProviderSelector;
+    @Qualifier("registeredServiceAccessStrategyEnforcer")
+    private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
 
     @Autowired
     @Qualifier("warnCookieGenerator")
     private ObjectProvider<CasCookieBuilder> warnCookieGenerator;
-
 
     @Bean
     public FlowDefinitionRegistry u2fFlowRegistry() {
@@ -146,15 +145,20 @@ public class U2FWebflowConfiguration implements CasWebflowExecutionPlanConfigure
     @ConditionalOnMissingBean(name = "u2fAuthenticationWebflowEventResolver")
     @Bean
     public CasWebflowEventResolver u2fAuthenticationWebflowEventResolver() {
-        return new U2FAuthenticationWebflowEventResolver(authenticationSystemSupport.getIfAvailable(),
-            centralAuthenticationService.getIfAvailable(),
-            servicesManager.getIfAvailable(),
-            ticketRegistrySupport.getIfAvailable(),
-            warnCookieGenerator.getIfAvailable(),
-            authenticationRequestServiceSelectionStrategies.getIfAvailable(),
-            multifactorAuthenticationProviderSelector.getIfAvailable(RankedMultifactorAuthenticationProviderSelector::new),
-            applicationEventPublisher,
-            applicationContext);
+        val context = CasWebflowEventResolutionConfigurationContext.builder()
+            .authenticationSystemSupport(authenticationSystemSupport.getIfAvailable())
+            .centralAuthenticationService(centralAuthenticationService.getIfAvailable())
+            .servicesManager(servicesManager.getIfAvailable())
+            .ticketRegistrySupport(ticketRegistrySupport.getIfAvailable())
+            .warnCookieGenerator(warnCookieGenerator.getIfAvailable())
+            .authenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies.getIfAvailable())
+            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getIfAvailable())
+            .casProperties(casProperties)
+            .eventPublisher(applicationEventPublisher)
+            .applicationContext(applicationContext)
+            .build();
+
+        return new U2FAuthenticationWebflowEventResolver(context);
     }
 
     @Override

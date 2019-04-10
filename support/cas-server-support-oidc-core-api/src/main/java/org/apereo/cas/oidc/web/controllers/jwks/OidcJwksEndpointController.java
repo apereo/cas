@@ -3,7 +3,7 @@ package org.apereo.cas.oidc.web.controllers.jwks;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20ControllerConfigurationContext;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -33,7 +33,7 @@ import java.nio.charset.StandardCharsets;
 public class OidcJwksEndpointController extends BaseOAuth20Controller {
     private final Resource jwksFile;
 
-    public OidcJwksEndpointController(final OAuth20ControllerConfigurationContext oAuthConfigurationContext) {
+    public OidcJwksEndpointController(final OAuth20ConfigurationContext oAuthConfigurationContext) {
         super(oAuthConfigurationContext);
         this.jwksFile = oAuthConfigurationContext.getCasProperties().getAuthn().getOidc().getJwksFile();
     }

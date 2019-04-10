@@ -53,7 +53,7 @@ import org.apereo.cas.support.oauth.web.audit.OAuth20UserProfileDataAuditResourc
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20CallbackAuthorizeEndpointController;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20ControllerConfigurationContext;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20DeviceUserCodeApprovalEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20IntrospectionEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileEndpointController;
@@ -768,8 +768,8 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
         return CipherExecutor.noOp();
     }
 
-    private OAuth20ControllerConfigurationContext buildConfigurationContext() {
-        return OAuth20ControllerConfigurationContext.builder()
+    private OAuth20ConfigurationContext buildConfigurationContext() {
+        return OAuth20ConfigurationContext.builder()
             .servicesManager(servicesManager.getIfAvailable())
             .ticketRegistry(ticketRegistry.getIfAvailable())
             .accessTokenFactory(defaultAccessTokenFactory())

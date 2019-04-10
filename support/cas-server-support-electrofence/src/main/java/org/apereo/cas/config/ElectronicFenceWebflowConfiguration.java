@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.api.AuthenticationRiskEvaluator;
 import org.apereo.cas.api.AuthenticationRiskMitigator;
+import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -16,6 +17,7 @@ import org.apereo.cas.web.flow.RiskAwareAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.RiskAwareAuthenticationWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -93,6 +95,10 @@ public class ElectronicFenceWebflowConfiguration implements CasWebflowExecutionP
     private ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver;
 
     @Autowired
+    @Qualifier("registeredServiceAccessStrategyEnforcer")
+    private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
+
+    @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
     private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
@@ -100,17 +106,22 @@ public class ElectronicFenceWebflowConfiguration implements CasWebflowExecutionP
     @Bean
     @RefreshScope
     public CasWebflowEventResolver riskAwareAuthenticationWebflowEventResolver() {
-        val r = new RiskAwareAuthenticationWebflowEventResolver(authenticationSystemSupport.getIfAvailable(),
-            centralAuthenticationService.getIfAvailable(),
-            servicesManager.getIfAvailable(),
-            ticketRegistrySupport.getIfAvailable(),
-            warnCookieGenerator.getIfAvailable(),
-            authenticationRequestServiceSelectionStrategies.getIfAvailable(),
+        val context = CasWebflowEventResolutionConfigurationContext.builder()
+            .authenticationSystemSupport(authenticationSystemSupport.getIfAvailable())
+            .centralAuthenticationService(centralAuthenticationService.getIfAvailable())
+            .servicesManager(servicesManager.getIfAvailable())
+            .ticketRegistrySupport(ticketRegistrySupport.getIfAvailable())
+            .warnCookieGenerator(warnCookieGenerator.getIfAvailable())
+            .authenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies.getIfAvailable())
+            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getIfAvailable())
+            .casProperties(casProperties)
+            .eventPublisher(applicationEventPublisher)
+            .applicationContext(applicationContext)
+            .build();
+
+        val r = new RiskAwareAuthenticationWebflowEventResolver(context,
             authenticationRiskEvaluator.getIfAvailable(),
-            authenticationRiskMitigator.getIfAvailable(),
-            casProperties,
-            applicationEventPublisher,
-            applicationContext);
+            authenticationRiskMitigator.getIfAvailable());
         this.initialAuthenticationAttemptWebflowEventResolver.getIfAvailable().addDelegate(r, 0);
         return r;
     }

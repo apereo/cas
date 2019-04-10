@@ -24,7 +24,6 @@ import org.apereo.cas.validation.UnauthorizedServiceTicketValidationException;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;

@@ -67,7 +67,7 @@ import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilte
 import org.apereo.cas.support.oauth.profile.OAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20ControllerConfigurationContext;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
@@ -94,6 +94,7 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.flow.resolver.impl.mfa.DefaultMultifactorAuthenticationProviderEventResolver;
 
 import com.github.benmanes.caffeine.cache.CacheLoader;
@@ -478,17 +479,20 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
     @RefreshScope
     @Bean
     public CasWebflowEventResolver oidcAuthenticationContextWebflowEventResolver() {
-        val r = new DefaultMultifactorAuthenticationProviderEventResolver(
-            authenticationSystemSupport.getIfAvailable(),
-            centralAuthenticationService.getIfAvailable(),
-            servicesManager.getIfAvailable(),
-            ticketRegistrySupport.getIfAvailable(),
-            warnCookieGenerator.getIfAvailable(),
-            authenticationRequestServiceSelectionStrategies.getIfAvailable(),
-            multifactorAuthenticationProviderSelector.getIfAvailable(),
-            oidcMultifactorAuthenticationTrigger(),
-            applicationEventPublisher,
-            applicationContext);
+        val context = CasWebflowEventResolutionConfigurationContext.builder()
+            .authenticationSystemSupport(authenticationSystemSupport.getIfAvailable())
+            .centralAuthenticationService(centralAuthenticationService.getIfAvailable())
+            .servicesManager(servicesManager.getIfAvailable())
+            .ticketRegistrySupport(ticketRegistrySupport.getIfAvailable())
+            .warnCookieGenerator(warnCookieGenerator.getIfAvailable())
+            .authenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies.getIfAvailable())
+            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getIfAvailable())
+            .casProperties(casProperties)
+            .eventPublisher(applicationEventPublisher)
+            .applicationContext(applicationContext)
+            .build();
+
+        val r = new DefaultMultifactorAuthenticationProviderEventResolver(context, oidcMultifactorAuthenticationTrigger());
         this.initialAuthenticationAttemptWebflowEventResolver.getIfAvailable().addDelegate(r);
         return r;
     }
@@ -614,8 +618,8 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
         plan.registerWebflowConfigurer(oidcWebflowConfigurer());
     }
 
-    private OAuth20ControllerConfigurationContext buildConfigurationContext() {
-        return OAuth20ControllerConfigurationContext.builder()
+    private OAuth20ConfigurationContext buildConfigurationContext() {
+        return OAuth20ConfigurationContext.builder()
             .servicesManager(servicesManager.getIfAvailable())
             .ticketRegistry(ticketRegistry.getIfAvailable())
             .accessTokenFactory(defaultAccessTokenFactory.getIfAvailable())
