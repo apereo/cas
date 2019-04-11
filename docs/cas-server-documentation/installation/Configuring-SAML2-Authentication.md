@@ -139,6 +139,7 @@ The following fields are available for SAML services:
 | `metadataLocation`                   | Location of service metadata defined from system files, classpath, directories or URL resources.
 | `metadataSignatureLocation`          | Location of the metadata signing certificate/public key to validate the metadata which must be defined from system files or classpath. If defined, will enforce the `SignatureValidationFilter` validation filter on metadata.
 | `metadataExpirationDuration`         | If defined, will expire metadata in the cache after the indicated duration which will force CAS to retrieve and resolve the metadata again.
+| `requireSignedRoot`                  | Whether incoming metadata's root element is required to be signed. Default is `true`.
 | `signAssertions`                     | Whether assertions should be signed. Default is `false`.
 | `signResponses`                      | Whether responses should be signed. Default is `true`.
 | `encryptAssertions`                  | Whether assertions should be encrypted. Default is `false`.

@@ -224,6 +224,7 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
                                                                  final List<MetadataFilter> metadataFilterList,
                                                                  final String metadataSignatureResource) throws Exception {
         val signatureValidationFilter = SamlUtils.buildSignatureValidationFilter(metadataSignatureResource);
+        signatureValidationFilter.setRequireSignedRoot(service.isRequireSignedRoot());
         addSignatureValidationFilterIfNeeded(service, signatureValidationFilter, metadataFilterList);
     }
 
