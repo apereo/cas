@@ -53,5 +53,5 @@ public class SamlProfileSamlResponseBuilderConfigurationContext {
 
     private final transient SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory;
 
-    private final SamlProfileObjectBuilder<? extends SAMLObject> samlSoapResponseBuilder;
+    private final transient SamlProfileObjectBuilder<? extends SAMLObject> samlSoapResponseBuilder;
 }

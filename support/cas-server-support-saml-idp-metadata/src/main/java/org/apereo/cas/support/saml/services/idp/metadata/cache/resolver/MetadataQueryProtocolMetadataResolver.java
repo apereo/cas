@@ -5,6 +5,8 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
+import org.apereo.cas.support.saml.SamlUtils;
+import org.apereo.cas.support.saml.StaticXmlObjectMetadataResolver;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.HttpRequestUtils;
@@ -16,12 +18,15 @@ import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
+import org.apache.http.util.EntityUtils;
 import org.opensaml.core.criterion.EntityIdCriterion;
+import org.opensaml.core.xml.XMLObject;
+import org.opensaml.core.xml.util.XMLObjectSource;
 import org.opensaml.saml.metadata.resolver.impl.AbstractMetadataResolver;
 import org.springframework.http.HttpStatus;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 /**
@@ -57,8 +62,8 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
         headers.put("Accept", "*/*");
 
         LOGGER.debug("Fetching dynamic metadata via MDQ for [{}]", metadataLocation);
-        val response = HttpUtils.getViaBasicAuth(metadataLocation, metadata.getBasicAuthnUsername(),
-            samlIdPProperties.getMetadata().getBasicAuthnPassword(), headers);
+        val response = HttpUtils.executeGet(metadataLocation, metadata.getBasicAuthnUsername(),
+            samlIdPProperties.getMetadata().getBasicAuthnPassword(), new HashMap<>(), headers);
         if (response == null) {
             LOGGER.error("Unable to fetch metadata from [{}]", metadataLocation);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
@@ -91,11 +96,13 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
         if (response.getStatusLine().getStatusCode() == HttpStatus.NOT_MODIFIED.value()) {
             return new InMemoryResourceMetadataResolver(backupFile, this.configBean);
         }
-
-        val ins = response.getEntity().getContent();
+        val entity = response.getEntity();
+        val ins = entity.getContent();
         val source = ByteStreams.toByteArray(ins);
-        val bais = new ByteArrayInputStream(source);
-        return new InMemoryResourceMetadataResolver(bais, this.configBean);
+        val xmlObject = SamlUtils.transformSamlObject(configBean, source, XMLObject.class);
+        xmlObject.getObjectMetadata().put(new XMLObjectSource(source));
+        EntityUtils.consume(entity);
+        return new StaticXmlObjectMetadataResolver(xmlObject);
     }
 
     @Override

@@ -70,7 +70,7 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
                                                          final Map<String, Object> attributesToRelease,
                                                          final Matcher matcherFile, final String key) {
         try {
-            LOGGER.debug("Found groovy script to execute for attribute mapping [{}]", key);
+            LOGGER.trace("Found groovy script to execute for attribute mapping [{}]", key);
             val file = new File(matcherFile.group(2));
             val script = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
             val result = getGroovyAttributeValue(script, resolvedAttributes);
@@ -88,7 +88,7 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
     private static void processInlineGroovyAttribute(final Map<String, Object> resolvedAttributes,
                                                      final Map<String, Object> attributesToRelease,
                                                      final Matcher matcherInline, final String attributeName) {
-        LOGGER.debug("Found inline groovy script to execute for attribute mapping [{}]", attributeName);
+        LOGGER.trace("Found inline groovy script to execute for attribute mapping [{}]", attributeName);
         val result = getGroovyAttributeValue(matcherInline.group(1), resolvedAttributes);
         if (result != null) {
             LOGGER.debug("Mapped attribute [{}] to [{}] from script", attributeName, result);
@@ -141,7 +141,7 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
          */
         getAllowedAttributes().forEach((attributeName, value) -> {
             val mappedAttributes = CollectionUtils.wrap(value);
-            LOGGER.debug("Attempting to map allowed attribute name [{}]", attributeName);
+            LOGGER.trace("Attempting to map allowed attribute name [{}]", attributeName);
             val attributeValue = resolvedAttributes.get(attributeName);
             mappedAttributes.forEach(mapped -> {
                 val mappedAttributeName = mapped.toString();
