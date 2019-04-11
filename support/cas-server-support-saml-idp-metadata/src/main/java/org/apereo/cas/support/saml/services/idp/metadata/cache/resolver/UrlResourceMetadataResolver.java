@@ -26,6 +26,7 @@ import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
+import org.apache.http.util.EntityUtils;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.AbstractMetadataResolver;
 import org.springframework.core.io.AbstractResource;
@@ -123,13 +124,15 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
      * @throws Exception the exception
      */
     protected AbstractMetadataResolver getMetadataResolverFromResponse(final HttpResponse response, final File backupFile) throws Exception {
-        val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+        val entity = response.getEntity();
+        val result = IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8);
         val path = backupFile.toPath();
         LOGGER.trace("Writing metadata to file at [{}]", path);
         try (val output = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
             IOUtils.write(result, output);
             output.flush();
         }
+        EntityUtils.consume(entity);
         return new InMemoryResourceMetadataResolver(backupFile, configBean);
     }
 
