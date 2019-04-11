@@ -180,7 +180,7 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @Bean
     @RefreshScope
     public SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlResponseBuilder() {
-        return new SamlProfileSaml2ResponseBuilder(getSamlResponseBuilderConfigurationContext());
+        return new SamlProfileSaml2ResponseBuilder(getSamlResponseBuilderConfigurationContextBuilder().build());
     }
 
     @ConditionalOnMissingBean(name = "samlArtifactTicketFactory")
@@ -222,14 +222,20 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @Bean
     @RefreshScope
     public SamlProfileObjectBuilder<Response> samlProfileSamlSoap11FaultResponseBuilder() {
-        return new SamlProfileSamlSoap11FaultResponseBuilder(getSamlResponseBuilderConfigurationContext());
+        val context = getSamlResponseBuilderConfigurationContextBuilder()
+            .samlSoapResponseBuilder(samlProfileSamlResponseBuilder())
+            .build();
+        return new SamlProfileSamlSoap11FaultResponseBuilder(context);
     }
 
     @ConditionalOnMissingBean(name = "samlProfileSamlSoap11ResponseBuilder")
     @Bean
     @RefreshScope
     public SamlProfileObjectBuilder<Response> samlProfileSamlSoap11ResponseBuilder() {
-        return new SamlProfileSamlSoap11ResponseBuilder(getSamlResponseBuilderConfigurationContext());
+        val context = getSamlResponseBuilderConfigurationContextBuilder()
+            .samlSoapResponseBuilder(samlProfileSamlResponseBuilder())
+            .build();
+        return new SamlProfileSamlSoap11ResponseBuilder(context);
     }
 
 
@@ -237,14 +243,20 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @Bean
     @RefreshScope
     public SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlArtifactFaultResponseBuilder() {
-        return new SamlProfileArtifactFaultResponseBuilder(getSamlResponseBuilderConfigurationContext());
+        val context = getSamlResponseBuilderConfigurationContextBuilder()
+            .samlSoapResponseBuilder(samlProfileSamlResponseBuilder())
+            .build();
+        return new SamlProfileArtifactFaultResponseBuilder(context);
     }
 
     @ConditionalOnMissingBean(name = "samlProfileSamlArtifactResponseBuilder")
     @Bean
     @RefreshScope
     public SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlArtifactResponseBuilder() {
-        return new SamlProfileArtifactResponseBuilder(getSamlResponseBuilderConfigurationContext());
+        val context = getSamlResponseBuilderConfigurationContextBuilder()
+            .samlSoapResponseBuilder(samlProfileSamlResponseBuilder())
+            .build();
+        return new SamlProfileArtifactResponseBuilder(context);
     }
 
     @ConditionalOnMissingBean(name = "samlProfileSamlNameIdBuilder")
@@ -330,14 +342,20 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @Bean
     @RefreshScope
     public SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlAttributeQueryFaultResponseBuilder() {
-        return new SamlProfileAttributeQueryFaultResponseBuilder(getSamlResponseBuilderConfigurationContext());
+        val context = getSamlResponseBuilderConfigurationContextBuilder()
+            .samlSoapResponseBuilder(samlProfileSamlResponseBuilder())
+            .build();
+        return new SamlProfileAttributeQueryFaultResponseBuilder(context);
     }
 
     @ConditionalOnMissingBean(name = "samlProfileSamlAttributeQueryResponseBuilder")
     @Bean
     @RefreshScope
     public SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlAttributeQueryResponseBuilder() {
-        return new SamlProfileAttributeQueryResponseBuilder(getSamlResponseBuilderConfigurationContext());
+        val context = getSamlResponseBuilderConfigurationContextBuilder()
+            .samlSoapResponseBuilder(samlProfileSamlResponseBuilder())
+            .build();
+        return new SamlProfileAttributeQueryResponseBuilder(context);
     }
 
     @ConditionalOnMissingBean(name = "samlAttributeQueryTicketFactory")
@@ -376,20 +394,18 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
             new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED, AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
     }
 
-    private SamlProfileSamlResponseBuilderConfigurationContext getSamlResponseBuilderConfigurationContext() {
+    private SamlProfileSamlResponseBuilderConfigurationContext.SamlProfileSamlResponseBuilderConfigurationContextBuilder getSamlResponseBuilderConfigurationContextBuilder() {
         return SamlProfileSamlResponseBuilderConfigurationContext.builder()
             .openSamlConfigBean(openSamlConfigBean.getIfAvailable())
             .samlObjectSigner(samlObjectSigner())
             .velocityEngineFactory(velocityEngineFactory.getIfAvailable())
             .samlProfileSamlAssertionBuilder(samlProfileSamlAssertionBuilder())
-            .samlSoapResponseBuilder(samlProfileSamlResponseBuilder())
             .samlObjectEncrypter(samlObjectEncrypter())
             .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator.getIfAvailable())
             .ticketRegistry(ticketRegistry.getIfAvailable())
             .samlArtifactTicketFactory(samlArtifactTicketFactory())
             .samlArtifactMap(samlArtifactMap())
             .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory())
-            .casProperties(casProperties)
-            .build();
+            .casProperties(casProperties);
     }
 }

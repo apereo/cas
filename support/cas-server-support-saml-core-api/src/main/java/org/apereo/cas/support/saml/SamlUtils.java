@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.idp.profile.spring.factory.BasicResourceCredentialFactoryBean;
 import net.shibboleth.idp.profile.spring.factory.BasicX509CredentialFactoryBean;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl.SignatureValidationCriteriaSetFactoryBean;
 import org.cryptacular.util.CertUtil;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.metadata.resolver.filter.impl.SignatureValidationFilter;
@@ -82,7 +83,21 @@ public class SamlUtils {
      */
     public static <T extends XMLObject> T transformSamlObject(final OpenSamlConfigBean configBean, final String xml,
                                                               final Class<T> clazz) {
-        try (InputStream in = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8))) {
+        return transformSamlObject(configBean, xml.getBytes(StandardCharsets.UTF_8), clazz);
+    }
+
+    /**
+     * Transform saml object t.
+     *
+     * @param <T>        the type parameter
+     * @param configBean the config bean
+     * @param data       the data
+     * @param clazz      the clazz
+     * @return the type
+     */
+    public static <T extends XMLObject> T transformSamlObject(final OpenSamlConfigBean configBean, final byte[] data,
+                                                              final Class<T> clazz) {
+        try (InputStream in = new ByteArrayInputStream(data)) {
             val document = configBean.getParserPool().parse(in);
             val root = document.getDocumentElement();
             val marshaller = configBean.getUnmarshallerFactory().getUnmarshaller(root);
@@ -194,7 +209,9 @@ public class SamlUtils {
 
         LOGGER.debug("Adding signature validation filter based on the configured trust engine");
         val signatureValidationFilter = new SignatureValidationFilter(trustEngine);
-        signatureValidationFilter.setRequireSignedRoot(false);
+        signatureValidationFilter.setRequireSignedRoot(true);
+        signatureValidationFilter.setDefaultCriteria(new SignatureValidationCriteriaSetFactoryBean().getObject());
+
         LOGGER.debug("Added metadata SignatureValidationFilter with signature from [{}]", signatureResourceLocation);
         return signatureValidationFilter;
     }
@@ -215,8 +232,7 @@ public class SamlUtils {
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);
 
-            LOGGER.debug("Credential cannot be extracted from [{}] via X.509. Treating it as a public key to locate credential...",
-                resource);
+            LOGGER.debug("Credential cannot be extracted from [{}] via X.509. Treating it as a public key to locate credential...", resource);
             val credentialFactoryBean = new BasicResourceCredentialFactoryBean();
             credentialFactoryBean.setPublicKeyInfo(resource);
             credentialFactoryBean.afterPropertiesSet();

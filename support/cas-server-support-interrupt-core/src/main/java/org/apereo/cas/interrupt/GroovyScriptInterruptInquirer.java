@@ -31,14 +31,15 @@ public class GroovyScriptInterruptInquirer extends BaseInterruptInquirer {
     @Override
     public InterruptResponse inquireInternal(final Authentication authentication,
                                              final RegisteredService registeredService,
-                                             final Service service, final Credential credential,
+                                             final Service service,
+                                             final Credential credential,
                                              final RequestContext requestContext) {
         if (ResourceUtils.doesResourceExist(watchableScript.getResource())) {
             val principal = authentication.getPrincipal();
             val attributes = new HashMap<String, Object>(principal.getAttributes());
             attributes.putAll(authentication.getAttributes());
-            val args = new Object[]{principal.getId(), attributes, service != null ? service.getId() : null, LOGGER};
-            LOGGER.debug("Invoking Groovy script with attributes=[{}], service=[{}] and default logger", attributes, service != null ? service.getId() : "null");
+            val args = new Object[]{principal, attributes, service, registeredService, requestContext, LOGGER};
+            LOGGER.trace("Invoking Groovy script with attributes=[{}], service=[{}] and default logger", attributes, service != null ? service.getId() : "null");
             return watchableScript.execute(args, InterruptResponse.class);
         }
         return InterruptResponse.none();
