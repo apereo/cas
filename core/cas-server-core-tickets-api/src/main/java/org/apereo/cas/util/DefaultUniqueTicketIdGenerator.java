@@ -103,7 +103,9 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
     public String getNewTicketId(final String prefix) {
         val number = this.numericGenerator.getNextNumberAsString();
         val ticketBody = this.randomStringGenerator.getNewString().replace('_', '-');
-        return prefix + '-' + number + '-' + ticketBody + StringUtils.defaultString(this.suffix);
+        val origSuffix = StringUtils.defaultString(this.suffix);
+        val finalizedSuffix = StringUtils.isEmpty(origSuffix) ? origSuffix : '-' + origSuffix;
+        return prefix + '-' + number + '-' + ticketBody + finalizedSuffix;
     }
 
     /**
