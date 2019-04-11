@@ -107,13 +107,7 @@ public abstract class BaseMultifactorAuthenticationProviderBypass implements Mul
             return false;
         }
 
-        val names = attributes.entrySet()
-            .stream()
-            .filter(e -> {
-                LOGGER.debug("Attempting to match [{}] against [{}]", attrName, e.getKey());
-                return e.getKey().matches(attrName);
-            })
-            .collect(Collectors.toSet());
+        val names = findNames(attributes, attrName);
 
         LOGGER.debug("Found [{}] attributes relevant for multifactor authentication bypass", names.size());
 
@@ -138,6 +132,17 @@ public abstract class BaseMultifactorAuthenticationProviderBypass implements Mul
 
         LOGGER.debug("Matching attribute values remaining are [{}]", values);
         return !values.isEmpty();
+    }
+
+    private static val findNames(final Map<String, Object> attributes, String attrName) {
+        val names = attributes.entrySet()
+                .stream()
+                .filter(e -> {
+                    LOGGER.debug("Attempting to match [{}] against [{}]", attrName, e.getKey());
+                    return e.getKey().matches(attrName);
+                })
+                .collect(Collectors.toSet());
+        return names;
     }
 
 
