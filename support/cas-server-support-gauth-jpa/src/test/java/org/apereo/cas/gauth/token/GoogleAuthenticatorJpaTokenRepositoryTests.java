@@ -1,6 +1,5 @@
 package org.apereo.cas.gauth.token;
 
-import org.apereo.cas.config.CasCommonComponents;
 import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
