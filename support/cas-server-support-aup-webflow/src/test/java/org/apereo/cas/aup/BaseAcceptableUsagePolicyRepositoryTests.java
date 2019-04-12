@@ -3,6 +3,7 @@ package org.apereo.cas.aup;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasAcceptableUsagePolicyWebflowConfiguration;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
@@ -65,7 +66,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasWebApplicationServiceFactoryConfiguration.class,
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class
+    CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCommonComponentsConfiguration.class
 })
 public abstract class BaseAcceptableUsagePolicyRepositoryTests {
     @Autowired

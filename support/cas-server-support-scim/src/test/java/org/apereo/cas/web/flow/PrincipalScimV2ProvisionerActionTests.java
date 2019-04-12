@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
@@ -51,7 +52,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    RefreshAutoConfiguration.class
+    RefreshAutoConfiguration.class,
+        CasCommonComponentsConfiguration.class
 })
 @TestPropertySource(properties = "cas.scim.target=http://localhost:8218")
 public class PrincipalScimV2ProvisionerActionTests {

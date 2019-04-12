@@ -1,6 +1,7 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -59,7 +60,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
     CasCoreHttpConfiguration.class,
     CasCoreWebConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class})
+    CasWebApplicationServiceFactoryConfiguration.class,
+        CasCommonComponentsConfiguration.class})
 @Getter
 public class InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapterTests
     extends BaseThrottledSubmissionHandlerInterceptorAdapterTests {

@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -118,7 +119,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuditConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     AopAutoConfiguration.class,
-    RefreshAutoConfiguration.class
+    RefreshAutoConfiguration.class,
+        CasCommonComponentsConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAspectJAutoProxy(proxyTargetClass = true)

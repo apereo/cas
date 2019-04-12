@@ -2,6 +2,7 @@ package org.apereo.cas.support.openid;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -83,7 +84,8 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     OpenIdUniqueTicketIdGeneratorConfiguration.class,
     OpenIdServiceFactoryConfiguration.class,
     OpenIdAuthenticationEventExecutionPlanConfiguration.class,
-    ThymeleafAutoConfiguration.class
+    ThymeleafAutoConfiguration.class,
+        CasCommonComponentsConfiguration.class
 })
 public class AbstractOpenIdTests {
     @Autowired

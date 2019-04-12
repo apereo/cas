@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
@@ -62,7 +63,8 @@ import java.util.ArrayList;
     CasCoreLogoutConfiguration.class,
     CasOAuthComponentSerializationConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-    CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class
+    CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class,
+        CasCommonComponentsConfiguration.class
 })
 public abstract class BaseOAuthExpirationPolicyTests {
     protected static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "oAuthTokenExpirationPolicy.json");

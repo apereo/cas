@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.config.CasAcceptableUsagePolicyWebflowConfiguration;
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
@@ -43,7 +44,8 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCoreTicketCatalogConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
-    CasPersonDirectoryTestConfiguration.class
+    CasPersonDirectoryTestConfiguration.class,
+        CasCommonComponentsConfiguration.class
 })
 public abstract class BaseAcceptableUsagePolicyActionTests {
     public abstract void verifyAction() throws Exception;

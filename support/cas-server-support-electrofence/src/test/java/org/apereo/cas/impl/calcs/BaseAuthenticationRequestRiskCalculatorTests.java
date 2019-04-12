@@ -3,6 +3,7 @@ package org.apereo.cas.impl.calcs;
 import org.apereo.cas.api.AuthenticationRiskEvaluator;
 import org.apereo.cas.api.AuthenticationRiskNotifier;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -79,7 +80,8 @@ import org.springframework.test.annotation.DirtiesContext;
     CasCoreUtilConfiguration.class,
     CasCoreAuditConfiguration.class,
     CasEventsInMemoryRepositoryConfiguration.class,
-    CasCoreEventsConfiguration.class})
+    CasCoreEventsConfiguration.class,
+        CasCommonComponentsConfiguration.class})
 @DirtiesContext
 @EnableScheduling
 public abstract class BaseAuthenticationRequestRiskCalculatorTests {

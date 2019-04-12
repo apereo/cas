@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml;
 
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -79,7 +80,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreLogoutConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    CasCoreConfiguration.class
+    CasCoreConfiguration.class,
+        CasCommonComponentsConfiguration.class
 })
 public abstract class AbstractOpenSamlTests {
     protected static final String SAML_REQUEST = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"

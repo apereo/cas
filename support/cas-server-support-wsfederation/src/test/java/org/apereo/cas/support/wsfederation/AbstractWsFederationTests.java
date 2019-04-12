@@ -1,5 +1,6 @@
 package org.apereo.cas.support.wsfederation;
 
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -80,7 +81,8 @@ import java.util.Collection;
     CasCoreConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasPersonDirectoryConfiguration.class,
-    CasCoreUtilConfiguration.class})
+    CasCoreUtilConfiguration.class,
+        CasCommonComponentsConfiguration.class})
 @TestPropertySource(locations = {"classpath:/wsfed.properties"})
 @ContextConfiguration(locations = {"classpath:/applicationContext.xml"})
 public class AbstractWsFederationTests extends AbstractOpenSamlTests {

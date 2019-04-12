@@ -1,6 +1,7 @@
 package org.apereo.cas.services.web;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
@@ -55,7 +56,8 @@ import static org.mockito.Mockito.*;
     CasCoreConfiguration.class,
     CasCoreUtilConfiguration.class,
     ThymeleafAutoConfiguration.class,
-    RefreshAutoConfiguration.class
+    RefreshAutoConfiguration.class,
+        CasCommonComponentsConfiguration.class
 })
 @TestPropertySource(properties = "cas.theme.defaultThemeName=test")
 public class ServiceThemeResolverTests {

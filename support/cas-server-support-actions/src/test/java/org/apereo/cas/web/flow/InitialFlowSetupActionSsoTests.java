@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -78,7 +79,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class,
     CasCookieConfiguration.class,
     RefreshAutoConfiguration.class,
-    CasCoreServicesConfiguration.class
+    CasCoreServicesConfiguration.class,
+        CasCommonComponentsConfiguration.class
 })
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @TestPropertySource(properties = "cas.sso.allowMissingServiceParameter=false")

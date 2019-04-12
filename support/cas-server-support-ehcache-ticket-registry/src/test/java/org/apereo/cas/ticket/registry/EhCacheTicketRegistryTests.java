@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -62,7 +63,8 @@ import static org.mockito.Mockito.*;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreWebConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class})
+    CasWebApplicationServiceFactoryConfiguration.class,
+        CasCommonComponentsConfiguration.class})
 public class EhCacheTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired

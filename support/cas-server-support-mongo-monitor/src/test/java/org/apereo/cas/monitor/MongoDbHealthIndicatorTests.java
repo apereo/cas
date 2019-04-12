@@ -1,5 +1,6 @@
 package org.apereo.cas.monitor;
 
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -69,7 +70,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreServicesConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCoreWebConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class
+    CasWebApplicationServiceFactoryConfiguration.class,
+        CasCommonComponentsConfiguration.class
 })
 @TestPropertySource(properties = {
     "cas.monitor.mongo.userId=root",

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.metadata.resolver;
 
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -98,7 +99,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CoreSamlConfiguration.class,
     CasPersonDirectoryConfiguration.class,
-    CasCoreUtilConfiguration.class})
+    CasCoreUtilConfiguration.class,
+        CasCommonComponentsConfiguration.class})
 @TestPropertySource(properties = {
     "cas.authn.samlIdp.metadata.rest.url=http://localhost:8078",
     "cas.authn.samlIdp.metadata.location=file:/tmp"

@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasConsentCoreConfiguration;
 import org.apereo.cas.config.CasConsentWebflowConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
@@ -42,7 +43,8 @@ import org.springframework.webflow.execution.Action;
     CasCoreWebConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreUtilConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+        CasCommonComponentsConfiguration.class
 })
 public abstract class BaseConsentActionTests {
     @Autowired

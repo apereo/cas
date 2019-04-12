@@ -1,5 +1,6 @@
 package org.apereo.cas.gauth.credential;
 
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
@@ -38,7 +39,8 @@ import java.io.File;
     CasCoreTicketsConfiguration.class,
     CasCookieConfiguration.class,
     CasCoreConfiguration.class,
-    CasCoreUtilConfiguration.class
+    CasCoreUtilConfiguration.class,
+        CasCommonComponentsConfiguration.class
     },
     properties = {"cas.authn.mfa.gauth.json.location=classpath:/repository.json"})
 @Getter

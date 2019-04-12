@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.surrogate;
 
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -78,7 +79,8 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCoreLogoutConfiguration.class,
     CasCookieConfiguration.class,
     CasThemesConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+        CasCommonComponentsConfiguration.class
     }, properties = {
     "cas.authn.surrogate.couchDb.dbName=surrogate_profile",
     "cas.authn.surrogate.couchDb.profileBased=true",

@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -81,7 +82,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasPersonDirectoryConfiguration.class,
     ThymeleafAutoConfiguration.class,
     AopAutoConfiguration.class,
-    RefreshAutoConfiguration.class
+    RefreshAutoConfiguration.class,
+        CasCommonComponentsConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @WebAppConfiguration

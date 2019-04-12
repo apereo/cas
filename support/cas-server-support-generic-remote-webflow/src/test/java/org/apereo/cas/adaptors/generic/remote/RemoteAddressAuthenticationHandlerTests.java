@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.generic.remote;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
@@ -66,7 +67,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasWebApplicationServiceFactoryConfiguration.class,
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class
+    CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCommonComponentsConfiguration.class
 },
     properties = "cas.authn.remoteAddress.ipAddressRange=192.168.1.0/255.255.255.0")
 public class RemoteAddressAuthenticationHandlerTests {

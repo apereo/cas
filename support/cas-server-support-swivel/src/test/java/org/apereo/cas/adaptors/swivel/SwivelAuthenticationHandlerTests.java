@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.swivel;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -84,7 +85,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasThemesConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     SwivelConfiguration.class,
-    SwivelAuthenticationEventExecutionPlanConfiguration.class})
+    SwivelAuthenticationEventExecutionPlanConfiguration.class,
+        CasCommonComponentsConfiguration.class})
 @TestPropertySource(properties = {
     "cas.authn.mfa.swivel.swivelUrl=http://localhost:9191",
     "cas.authn.mfa.swivel.sharedSecret=$ecret",

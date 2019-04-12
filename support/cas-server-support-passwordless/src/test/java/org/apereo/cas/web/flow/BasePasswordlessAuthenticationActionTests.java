@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -60,7 +61,8 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasWebApplicationServiceFactoryConfiguration.class,
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class
+    CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCommonComponentsConfiguration.class
 })
 public class BasePasswordlessAuthenticationActionTests {
 }

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.flow;
 
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -80,7 +81,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreServicesAuthenticationConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class,
-    CasOAuthWebflowConfiguration.class})
+    CasOAuthWebflowConfiguration.class,
+        CasCommonComponentsConfiguration.class})
 public class OAuth20RegisteredServiceUIActionTests {
     @Autowired
     @Qualifier("oauth20RegisteredServiceUIAction")

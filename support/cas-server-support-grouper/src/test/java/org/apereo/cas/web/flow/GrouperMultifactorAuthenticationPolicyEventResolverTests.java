@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
@@ -74,7 +75,8 @@ import static org.mockito.Mockito.*;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreUtilConfiguration.class,
     GrouperMultifactorAuthenticationPolicyEventResolverTests.GrouperTestConfiguration.class,
-    GrouperMultifactorAuthenticationConfiguration.class
+    GrouperMultifactorAuthenticationConfiguration.class,
+        CasCommonComponentsConfiguration.class
 })
 @TestPropertySource(properties = "cas.authn.mfa.grouperGroupField=name")
 public class GrouperMultifactorAuthenticationPolicyEventResolverTests {

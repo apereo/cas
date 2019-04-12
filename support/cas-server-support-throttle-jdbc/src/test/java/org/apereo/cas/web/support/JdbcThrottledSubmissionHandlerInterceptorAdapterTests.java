@@ -2,6 +2,7 @@ package org.apereo.cas.web.support;
 
 import org.apereo.cas.audit.config.CasSupportJdbcAuditConfiguration;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -62,7 +63,8 @@ import org.springframework.test.context.TestPropertySource;
     CasSupportJdbcAuditConfiguration.class,
     CasCoreWebConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class})
+    CasWebApplicationServiceFactoryConfiguration.class,
+        CasCommonComponentsConfiguration.class})
 @TestPropertySource(properties = {
     "cas.authn.throttle.usernameParameter=username",
     "cas.authn.throttle.failure.code=AUTHENTICATION_FAILED",

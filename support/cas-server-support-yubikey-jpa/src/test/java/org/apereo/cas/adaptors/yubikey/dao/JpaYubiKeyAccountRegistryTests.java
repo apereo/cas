@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.yubikey.dao;
 
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
@@ -71,7 +72,8 @@ import static org.junit.jupiter.api.Assertions.*;
         CasCoreTicketCatalogConfiguration.class,
         CasDefaultServiceTicketIdGeneratorsConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
-        RefreshAutoConfiguration.class
+        RefreshAutoConfiguration.class,
+            CasCommonComponentsConfiguration.class
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @TestPropertySource(locations = {"classpath:/yubikey-jpa.properties"})

@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
@@ -62,7 +63,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationSupportConfiguration.class,
     WsFedAuthenticationEventExecutionPlanConfiguration.class,
     WsFederationAuthenticationWebflowConfiguration.class,
-    WsFederationAuthenticationConfiguration.class
+    WsFederationAuthenticationConfiguration.class,
+        CasCommonComponentsConfiguration.class
 })
 @TestPropertySource(locations = "classpath:wsfedauthn.properties")
 public class WsFederationActionTests {

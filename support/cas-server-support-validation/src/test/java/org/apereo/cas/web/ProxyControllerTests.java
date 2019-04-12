@@ -3,6 +3,7 @@ package org.apereo.cas.web;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
@@ -59,7 +60,8 @@ import static org.junit.jupiter.api.Assertions.*;
     AopAutoConfiguration.class,
     ProxyControllerTests.ProxyTestConfiguration.class,
     CasProtocolViewsConfiguration.class,
-    CasValidationConfiguration.class
+    CasValidationConfiguration.class,
+        CasCommonComponentsConfiguration.class
 })
 public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTests {
 

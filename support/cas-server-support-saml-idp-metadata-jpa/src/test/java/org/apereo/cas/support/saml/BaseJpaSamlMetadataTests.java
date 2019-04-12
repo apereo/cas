@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml;
 
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -83,7 +84,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CoreSamlConfiguration.class,
     CasPersonDirectoryConfiguration.class,
-    CasCoreUtilConfiguration.class})
+    CasCoreUtilConfiguration.class,
+        CasCommonComponentsConfiguration.class})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
 public abstract class BaseJpaSamlMetadataTests {

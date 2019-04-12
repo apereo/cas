@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -139,7 +140,8 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCoreUtilConfiguration.class,
-    CasCoreWebConfiguration.class})
+    CasCoreWebConfiguration.class,
+        CasCommonComponentsConfiguration.class})
 @DirtiesContext
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)

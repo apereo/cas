@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
@@ -55,7 +56,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasWebApplicationServiceFactoryConfiguration.class,
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class
+    CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCommonComponentsConfiguration.class
 },
     properties = {"cas.authn.couchbase.password=password", "cas.authn.couchbase.bucket=testbucket"})
 public class CouchbaseAuthenticationHandlerTests {

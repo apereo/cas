@@ -1,5 +1,6 @@
 package org.apereo.cas.otp.repository.token;
 
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -56,7 +57,8 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class,
-    CasCoreWebConfiguration.class
+    CasCoreWebConfiguration.class,
+        CasCommonComponentsConfiguration.class
 })
 @Getter
 public class CachingOneTimeTokenRepositoryTests extends BaseOneTimeTokenRepositoryTests {

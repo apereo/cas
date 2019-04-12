@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry.queue;
 
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -52,7 +53,8 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class,
-    CasCoreWebConfiguration.class})
+    CasCoreWebConfiguration.class,
+        CasCommonComponentsConfiguration.class})
 public abstract class AbstractTicketMessageQueueCommandTests {
     @Autowired
     @Qualifier("ticketRegistry")

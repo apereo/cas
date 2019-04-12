@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow.action;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
@@ -68,7 +69,8 @@ import org.springframework.test.context.TestPropertySource;
     CasCookieConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+        CasCommonComponentsConfiguration.class
 })
 @TestPropertySource(properties = {"cas.authn.surrogate.simple.surrogates.casuser=cassurrogate"})
 public class BaseSurrogateInitialAuthenticationActionTests {

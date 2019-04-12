@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -78,7 +79,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreWebConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class
+    CasWebApplicationServiceFactoryConfiguration.class,
+        CasCommonComponentsConfiguration.class
 })
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @Transactional(transactionManager = "ticketTransactionManager", isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)

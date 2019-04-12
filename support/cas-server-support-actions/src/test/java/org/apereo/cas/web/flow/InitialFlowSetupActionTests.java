@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
@@ -57,7 +58,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreWebConfiguration.class,
     CasCoreWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,
-    RefreshAutoConfiguration.class
+    RefreshAutoConfiguration.class,
+        CasCommonComponentsConfiguration.class
 })
 public class InitialFlowSetupActionTests extends AbstractWebflowActionsTests {
     @Autowired

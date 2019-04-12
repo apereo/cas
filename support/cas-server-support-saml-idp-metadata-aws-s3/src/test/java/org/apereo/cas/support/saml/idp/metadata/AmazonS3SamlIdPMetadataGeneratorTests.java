@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.idp.metadata;
 
 import org.apereo.cas.config.AmazonS3SamlIdPMetadataConfiguration;
 import org.apereo.cas.config.AmazonS3SamlMetadataConfiguration;
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
@@ -59,7 +60,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class,
     AmazonS3SamlMetadataConfiguration.class,
     AmazonS3SamlIdPMetadataConfiguration.class,
-    SamlIdPMetadataConfiguration.class
+    SamlIdPMetadataConfiguration.class,
+        CasCommonComponentsConfiguration.class
 })
 @TestPropertySource(properties = {
     "cas.authn.samlIdp.metadata.amazonS3.idpMetadataBucketName=thebucket",

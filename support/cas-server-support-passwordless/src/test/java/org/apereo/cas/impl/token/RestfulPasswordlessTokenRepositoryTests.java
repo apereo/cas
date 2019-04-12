@@ -2,6 +2,7 @@ package org.apereo.cas.impl.token;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.api.PasswordlessTokenRepository;
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -76,7 +77,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreLogoutConfiguration.class,
     CasCookieConfiguration.class,
     CasThemesConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+        CasCommonComponentsConfiguration.class
 })
 @TestPropertySource(properties = "cas.authn.passwordless.tokens.rest.url=http://localhost:9293")
 @Tag("RestfulApi")

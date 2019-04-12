@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry.support;
 
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
@@ -86,7 +87,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreTicketCatalogConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasCoreWebConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class})
+    CasWebApplicationServiceFactoryConfiguration.class,
+        CasCommonComponentsConfiguration.class})
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @DirtiesContext
 @Slf4j

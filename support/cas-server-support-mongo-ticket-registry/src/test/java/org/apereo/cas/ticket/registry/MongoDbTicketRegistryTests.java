@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -65,7 +66,8 @@ import org.springframework.test.context.TestPropertySource;
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketsSerializationConfiguration.class,
     CasCoreWebConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class
+    CasWebApplicationServiceFactoryConfiguration.class,
+        CasCommonComponentsConfiguration.class
 })
 @EnableScheduling
 @TestPropertySource(properties = {

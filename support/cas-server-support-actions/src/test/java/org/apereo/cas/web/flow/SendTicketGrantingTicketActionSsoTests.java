@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
@@ -67,7 +68,8 @@ import static org.mockito.Mockito.*;
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    CasCoreUtilConfiguration.class
+    CasCoreUtilConfiguration.class,
+        CasCommonComponentsConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @TestPropertySource(properties = "cas.sso.createSsoCookieOnRenewAuthn=false")

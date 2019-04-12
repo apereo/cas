@@ -1,5 +1,6 @@
 package org.apereo.cas.gauth.credential;
 
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -71,7 +72,8 @@ import org.springframework.test.context.ContextConfiguration;
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CasCoreUtilConfiguration.class,
         RefreshAutoConfiguration.class,
-        CasCoreWebConfiguration.class},
+        CasCoreWebConfiguration.class,
+            CasCommonComponentsConfiguration.class},
     properties = {
         "cas.authn.mfa.gauth.crypto.enabled=false",
         "cas.authn.mfa.gauth.couchDb.username=cas",

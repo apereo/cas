@@ -4,6 +4,7 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
@@ -81,7 +82,8 @@ import java.util.List;
     CasWebApplicationServiceFactoryConfiguration.class,
     CasRestTokensConfiguration.class,
     CasRestConfiguration.class,
-    CasCoreTicketsConfiguration.class
+    CasCoreTicketsConfiguration.class,
+        CasCommonComponentsConfiguration.class
 })
 public abstract class BaseTicketResourceEntityResponseFactoryTests {
     @Autowired

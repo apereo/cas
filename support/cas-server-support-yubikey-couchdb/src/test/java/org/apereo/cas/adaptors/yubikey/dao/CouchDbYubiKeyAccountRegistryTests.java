@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.yubikey.dao;
 
 import org.apereo.cas.adaptors.yubikey.AbstractYubiKeyAccountRegistryTests;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
@@ -74,7 +75,8 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
         CasCoreTicketCatalogConfiguration.class,
         CasDefaultServiceTicketIdGeneratorsConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
-        RefreshAutoConfiguration.class
+        RefreshAutoConfiguration.class,
+            CasCommonComponentsConfiguration.class
     },
     properties = {
         "cas.authn.mfa.yubikey.clientId=18423",

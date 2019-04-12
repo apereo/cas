@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -62,7 +63,8 @@ import org.springframework.webflow.execution.Action;
     RefreshAutoConfiguration.class,
     CasCookieConfiguration.class,
     CasCoreHttpConfiguration.class,
-    CasCoreUtilConfiguration.class
+    CasCoreUtilConfiguration.class,
+        CasCommonComponentsConfiguration.class
 })
 @TestPropertySource(properties = "cas.authn.gua.resource.location=classpath:image.jpg")
 public abstract class AbstractGraphicalAuthenticationActionTests {
