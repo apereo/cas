@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,7 +33,7 @@ public interface PrincipalAttributesRepository extends Serializable {
      * @param registeredService the registered service
      * @return the attributes
      */
-    Map<String, Object> getAttributes(Principal principal, RegisteredService registeredService);
+    Map<String, List<Object>> getAttributes(Principal principal, RegisteredService registeredService);
 
     /**
      * Gets attribute repository ids that should be used to

@@ -22,6 +22,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -69,9 +70,9 @@ public class PersonDirectoryPrincipalResolverLdaptiveTests {
         val resolver = new PersonDirectoryPrincipalResolver(this.attributeRepository);
         val chain = new ChainingPrincipalResolver();
         chain.setChain(Arrays.asList(new EchoingPrincipalResolver(), resolver));
-        val attributes = new HashMap<String, Object>(2);
-        attributes.put("a1", "v1");
-        attributes.put("a2", "v2");
+        val attributes = new HashMap<String, List<Object>>(2);
+        attributes.put("a1", List.of("v1"));
+        attributes.put("a2", List.of("v2"));
         val p = chain.resolve(new UsernamePasswordCredential("admin", "password"),
             Optional.of(CoreAuthenticationTestUtils.getPrincipal("admin", attributes)),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));

@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -159,8 +160,10 @@ public class OAuth20IntrospectionEndpointController extends BaseOAuth20Controlle
             introspect.setRealmName(realmNames);
             introspect.setTokenType(OAuth20Constants.TOKEN_TYPE_BEARER);
 
-            val grant = authentication.getAttributes().getOrDefault(OAuth20Constants.GRANT_TYPE, StringUtils.EMPTY).toString().toLowerCase();
-            introspect.setGrantType(grant);
+            val grant = authentication.getAttributes().getOrDefault(OAuth20Constants.GRANT_TYPE, new ArrayList<>());
+            if (!grant.isEmpty()) {
+                introspect.setGrantType(grant.get(0).toString().toLowerCase());
+            }
         } else {
             introspect.setActive(false);
         }

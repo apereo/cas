@@ -19,6 +19,7 @@ import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.UserProfile;
 
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Optional;
@@ -125,7 +126,7 @@ public class OidcAuthorizationRequestSupport {
                                                                        final ZonedDateTime authenticationDate) {
         val maxAge = getOidcMaxAgeFromAuthorizationRequest(context);
         if (maxAge.isPresent() && maxAge.get() > 0) {
-            val now = ZonedDateTime.now().toEpochSecond();
+            val now = ZonedDateTime.now(ZoneOffset.UTC).toEpochSecond();
             val authTime = authenticationDate.toEpochSecond();
             val diffInSeconds = now - authTime;
             if (diffInSeconds > maxAge.get()) {

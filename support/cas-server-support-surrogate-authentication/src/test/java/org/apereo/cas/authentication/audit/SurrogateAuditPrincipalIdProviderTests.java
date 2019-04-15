@@ -9,6 +9,8 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -25,9 +27,9 @@ public class SurrogateAuditPrincipalIdProviderTests {
 
         val auth = CoreAuthenticationTestUtils.getAuthentication(
             CoreAuthenticationTestUtils.getPrincipal(),
-            CollectionUtils.wrap(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, "true",
-                SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL, "principal",
-                SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_USER, "surrogateUser")
+            CollectionUtils.wrap(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, List.of("true"),
+                SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL, List.of("principal"),
+                SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_USER, List.of("surrogateUser"))
         );
         assertTrue(p.supports(auth, new Object(), new SurrogateAuthenticationException("error")));
         assertNotNull(p.getPrincipalIdFrom(auth, new Object(), new SurrogateAuthenticationException("error")));

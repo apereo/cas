@@ -88,9 +88,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.nio.charset.StandardCharsets;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -202,10 +202,10 @@ public abstract class AbstractOAuth20Tests {
     protected TicketRegistry ticketRegistry;
 
     protected static Principal createPrincipal() {
-        val map = new HashMap<String, Object>();
-        map.put(NAME, VALUE);
-        val list = Arrays.asList(VALUE, VALUE);
-        map.put(NAME2, list);
+        val map = new HashMap<String, List<Object>>();
+        map.put(NAME, List.of(VALUE));
+        val list = List.of(VALUE, VALUE);
+        map.put(NAME2, (List) list);
 
         return CoreAuthenticationTestUtils.getPrincipal(ID, map);
     }
@@ -259,7 +259,7 @@ public abstract class AbstractOAuth20Tests {
 
         return DefaultAuthenticationBuilder.newInstance()
             .setPrincipal(principal)
-            .setAuthenticationDate(ZonedDateTime.now())
+            .setAuthenticationDate(ZonedDateTime.now(ZoneOffset.UTC))
             .addCredential(metadata)
             .addSuccess(principal.getClass().getCanonicalName(), handlerResult)
             .build();

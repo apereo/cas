@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,7 +33,7 @@ public class DefaultPrincipalElectionStrategy implements PrincipalElectionStrate
 
     @Override
     public Principal nominate(final Collection<Authentication> authentications,
-                              final Map<String, Object> principalAttributes) {
+                              final Map<String, List<Object>> principalAttributes) {
         val principal = getPrincipalFromAuthentication(authentications);
         val attributes = getPrincipalAttributesForPrincipal(principal, principalAttributes);
         val finalPrincipal = principalFactory.createPrincipal(principal.getId(), attributes);
@@ -47,7 +48,7 @@ public class DefaultPrincipalElectionStrategy implements PrincipalElectionStrate
      * @param principalAttributes the principal attributes
      * @return the principal attributes for principal
      */
-    protected Map<String, Object> getPrincipalAttributesForPrincipal(final Principal principal, final Map<String, Object> principalAttributes) {
+    protected Map<String, List<Object>> getPrincipalAttributesForPrincipal(final Principal principal, final Map<String, List<Object>> principalAttributes) {
         return principalAttributes;
     }
 

@@ -64,7 +64,8 @@ public class SyncopeAuthenticationHandlerTests {
         user.setUsername("casuser");
         @Cleanup("stop")
         val webserver = startMockSever(user);
-        assertDoesNotThrow(() -> syncopeAuthenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser")));
+        assertDoesNotThrow(() ->
+            syncopeAuthenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser")));
     }
 
     @Test

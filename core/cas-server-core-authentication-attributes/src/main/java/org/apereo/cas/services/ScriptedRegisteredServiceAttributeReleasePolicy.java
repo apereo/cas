@@ -15,6 +15,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 
@@ -35,7 +36,7 @@ public class ScriptedRegisteredServiceAttributeReleasePolicy extends AbstractReg
 
     private String scriptFile;
 
-    private static Map<String, Object> getAttributesFromInlineGroovyScript(final Map<String, Object> attributes, final Matcher matcherInline) {
+    private static Map<String, List<Object>> getAttributesFromInlineGroovyScript(final Map<String, List<Object>> attributes, final Matcher matcherInline) {
         val script = matcherInline.group(1).trim();
         val args = CollectionUtils.wrap("attributes", attributes, "logger", LOGGER);
         val map = ScriptingUtils.executeGroovyScriptEngine(script, args, Map.class);
@@ -43,7 +44,7 @@ public class ScriptedRegisteredServiceAttributeReleasePolicy extends AbstractReg
     }
 
     @Override
-    public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attributes,
+    public Map<String, List<Object>> getAttributesInternal(final Principal principal, final Map<String, List<Object>> attributes,
                                                      final RegisteredService service, final Service selectedService) {
         try {
             if (StringUtils.isBlank(this.scriptFile)) {
@@ -60,7 +61,7 @@ public class ScriptedRegisteredServiceAttributeReleasePolicy extends AbstractReg
         return new HashMap<>(0);
     }
 
-    private Map<String, Object> getScriptedAttributesFromFile(final Map<String, Object> attributes) {
+    private Map<String, List<Object>> getScriptedAttributesFromFile(final Map<String, List<Object>> attributes) {
         val args = new Object[]{attributes, LOGGER};
         val map = ScriptingUtils.executeScriptEngine(this.scriptFile, args, Map.class);
         return ObjectUtils.defaultIfNull(map, new HashMap<>());

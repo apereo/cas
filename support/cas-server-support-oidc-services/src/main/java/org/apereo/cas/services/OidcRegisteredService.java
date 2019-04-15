@@ -14,6 +14,7 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -92,7 +93,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
      */
     public void setDynamicallyRegistered(final boolean dynamicallyRegistered) {
         if (dynamicallyRegistered && !this.dynamicallyRegistered && dynamicRegistrationDateTime == null) {
-            setDynamicRegistrationDateTime(ZonedDateTime.now());
+            setDynamicRegistrationDateTime(ZonedDateTime.now(ZoneOffset.UTC));
         }
         this.dynamicallyRegistered = dynamicallyRegistered;
     }

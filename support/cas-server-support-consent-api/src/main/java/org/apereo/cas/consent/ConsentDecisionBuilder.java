@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,7 +22,7 @@ public interface ConsentDecisionBuilder extends Serializable {
      * @param attributes the attributes
      * @return the consent decision
      */
-    ConsentDecision update(ConsentDecision consent, Map<String, Object> attributes);
+    ConsentDecision update(ConsentDecision consent, Map<String, List<Object>> attributes);
 
     /**
      * Build consent decision consent decision.
@@ -35,7 +36,7 @@ public interface ConsentDecisionBuilder extends Serializable {
     ConsentDecision build(Service service,
                           RegisteredService registeredService,
                           String principalId,
-                          Map<String, Object> attributes);
+                          Map<String, List<Object>> attributes);
 
     /**
      * Is consent decision valid for attributes?
@@ -45,7 +46,7 @@ public interface ConsentDecisionBuilder extends Serializable {
      * @return true /false
      */
     boolean doesAttributeReleaseRequireConsent(ConsentDecision decision,
-                                               Map<String, Object> attributes);
+                                               Map<String, List<Object>> attributes);
 
     /**
      * Gets consentable attributes from the consent decision.
@@ -55,5 +56,5 @@ public interface ConsentDecisionBuilder extends Serializable {
      * @param decision the decision
      * @return the consentable attributes
      */
-    Map<String, Object> getConsentableAttributesFrom(ConsentDecision decision);
+    Map<String, List<Object>> getConsentableAttributesFrom(ConsentDecision decision);
 }

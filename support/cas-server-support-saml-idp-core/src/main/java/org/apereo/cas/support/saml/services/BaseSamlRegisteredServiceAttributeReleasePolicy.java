@@ -21,6 +21,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,10 +35,10 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
     private static final long serialVersionUID = -3301632236702329694L;
 
     @Override
-    public Map<String, Object> getAttributesInternal(final Principal principal,
-                                                     final Map<String, Object> attributes,
-                                                     final RegisteredService registeredService,
-                                                     final Service selectedService) {
+    public Map<String, List<Object>> getAttributesInternal(final Principal principal,
+                                                           final Map<String, List<Object>> attributes,
+                                                           final RegisteredService registeredService,
+                                                           final Service selectedService) {
         if (registeredService instanceof SamlRegisteredService) {
             val samlRegisteredService = (SamlRegisteredService) registeredService;
             val request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
@@ -108,12 +109,12 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
      * @param selectedService    the selected service
      * @return the attributes for saml registered service
      */
-    protected abstract Map<String, Object> getAttributesForSamlRegisteredService(Map<String, Object> attributes,
-                                                                                 SamlRegisteredService registeredService,
-                                                                                 ApplicationContext applicationContext,
-                                                                                 SamlRegisteredServiceCachingMetadataResolver resolver,
-                                                                                 SamlRegisteredServiceServiceProviderMetadataFacade facade,
-                                                                                 EntityDescriptor entityDescriptor,
-                                                                                 Principal principal,
-                                                                                 Service selectedService);
+    protected abstract Map<String, List<Object>> getAttributesForSamlRegisteredService(Map<String, List<Object>> attributes,
+                                                                                       SamlRegisteredService registeredService,
+                                                                                       ApplicationContext applicationContext,
+                                                                                       SamlRegisteredServiceCachingMetadataResolver resolver,
+                                                                                       SamlRegisteredServiceServiceProviderMetadataFacade facade,
+                                                                                       EntityDescriptor entityDescriptor,
+                                                                                       Principal principal,
+                                                                                       Service selectedService);
 }

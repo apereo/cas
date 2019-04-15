@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,7 +33,7 @@ public abstract class BaseConsentRepositoryTests {
     protected static final Service SVC = RegisteredServiceTestUtils.getService();
     protected static final AbstractRegisteredService REG_SVC = RegisteredServiceTestUtils.getRegisteredService(SVC.getId());
 
-    protected static final Map<String, Object> ATTR = CollectionUtils.wrap("attribute", "value");
+    protected static final Map<String, List<Object>> ATTR = CollectionUtils.wrap("attribute", List.of("value"));
     protected static final String CASUSER_2 = "casuser2";
 
     public abstract ConsentRepository getRepository();

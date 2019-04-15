@@ -8,6 +8,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,13 +26,13 @@ public class DefaultPrincipalAttributesRepository extends AbstractPrincipalAttri
     private static final long serialVersionUID = -4535358847021241725L;
 
     @Override
-    protected void addPrincipalAttributes(final String id, final Map<String, Object> attributes,
+    protected void addPrincipalAttributes(final String id, final Map<String, List<Object>> attributes,
                                           final RegisteredService registeredService) {
         LOGGER.debug("Using [{}], no caching takes place for [{}] to add attributes.", id, this.getClass().getSimpleName());
     }
 
     @Override
-    public Map<String, Object> getAttributes(final Principal principal, final RegisteredService registeredService) {
+    public Map<String, List<Object>> getAttributes(final Principal principal, final RegisteredService registeredService) {
         val mergeStrategy = determineMergingStrategy();
         val principalAttributes = getPrincipalAttributes(principal);
 

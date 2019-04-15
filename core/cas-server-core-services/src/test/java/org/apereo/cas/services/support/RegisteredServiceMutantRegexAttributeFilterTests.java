@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,7 +41,7 @@ public class RegisteredServiceMutantRegexAttributeFilterTests {
     @Mock
     private RegisteredService registeredService;
 
-    private Map<String, Object> givenAttributesMap;
+    private Map<String, List<Object>> givenAttributesMap;
 
     @BeforeEach
     public void initialize() {
@@ -50,7 +51,7 @@ public class RegisteredServiceMutantRegexAttributeFilterTests {
         this.filter = new RegisteredServiceMutantRegexAttributeFilter();
 
         this.givenAttributesMap = new HashMap<>();
-        this.givenAttributesMap.put("employeeId", "E1234");
+        this.givenAttributesMap.put("employeeId", List.of("E1234"));
         this.givenAttributesMap.put("memberOf", Arrays.asList("math101", "science", "chemistry", "marathon101"));
     }
 

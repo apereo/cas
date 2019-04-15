@@ -17,6 +17,7 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.context.ApplicationContext;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,15 +40,15 @@ public class MetadataRequestedAttributesAttributeReleasePolicy extends BaseSamlR
     private boolean useFriendlyName;
 
     @Override
-    protected Map<String, Object> getAttributesForSamlRegisteredService(final Map<String, Object> attributes,
-                                                                        final SamlRegisteredService registeredService,
-                                                                        final ApplicationContext applicationContext,
-                                                                        final SamlRegisteredServiceCachingMetadataResolver resolver,
-                                                                        final SamlRegisteredServiceServiceProviderMetadataFacade facade,
-                                                                        final EntityDescriptor entityDescriptor,
-                                                                        final Principal principal,
-                                                                        final Service selectedService) {
-        val releaseAttributes = new HashMap<String, Object>();
+    protected Map<String, List<Object>> getAttributesForSamlRegisteredService(final Map<String, List<Object>> attributes,
+                                                                              final SamlRegisteredService registeredService,
+                                                                              final ApplicationContext applicationContext,
+                                                                              final SamlRegisteredServiceCachingMetadataResolver resolver,
+                                                                              final SamlRegisteredServiceServiceProviderMetadataFacade facade,
+                                                                              final EntityDescriptor entityDescriptor,
+                                                                              final Principal principal,
+                                                                              final Service selectedService) {
+        val releaseAttributes = new HashMap<String, List<Object>>();
         val sso = facade.getSsoDescriptor();
         if (sso != null) {
             sso.getAttributeConsumingServices().forEach(svc -> svc.getRequestAttributes().stream().filter(attr -> {
