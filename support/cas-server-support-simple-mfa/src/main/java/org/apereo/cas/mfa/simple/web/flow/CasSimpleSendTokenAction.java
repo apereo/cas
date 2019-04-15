@@ -53,8 +53,7 @@ public class CasSimpleSendTokenAction extends AbstractAction {
             ? String.format(emailProperties.getText(), token.getId())
             : token.getId();
 
-        if (communicationsManager.email(principal, emailProperties.getAttributeName(), body, emailProperties.getFrom(),
-            emailProperties.getSubject(), emailProperties.getCc(), emailProperties.getBcc())) {
+        if (communicationsManager.email(principal, emailProperties.getAttributeName(), emailProperties, body)) {
             ticketRegistry.addTicket(token);
             LOGGER.debug("Successfully submitted token via SMS to [{}]", principal.getId());
             return success();
