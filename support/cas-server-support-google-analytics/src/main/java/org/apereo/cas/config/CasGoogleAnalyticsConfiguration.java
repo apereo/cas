@@ -1,10 +1,13 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.web.CasGoogleAnalyticsCookieGenerator;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasGoogleAnalyticsWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.support.CookieUtils;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -46,13 +49,20 @@ public class CasGoogleAnalyticsConfiguration implements CasWebflowExecutionPlanC
     @Autowired
     private ApplicationContext applicationContext;
 
+    @ConditionalOnMissingBean(name = "casGoogleAnalyticsCookieGenerator")
+    @Bean
+    public CasCookieBuilder casGoogleAnalyticsCookieGenerator() {
+        val props = casProperties.getGoogleAnalytics().getCookie();
+        return new CasGoogleAnalyticsCookieGenerator(CookieUtils.buildCookieGenerationContext(props));
+    }
+
     @ConditionalOnMissingBean(name = "casGoogleAnalyticsWebflowConfigurer")
     @Bean
     @DependsOn({"defaultWebflowConfigurer", "defaultLogoutWebflowConfigurer"})
     public CasWebflowConfigurer casGoogleAnalyticsWebflowConfigurer() {
         val cfg = new CasGoogleAnalyticsWebflowConfigurer(flowBuilderServices,
             loginFlowDefinitionRegistry.getIfAvailable(),
-            applicationContext, casProperties);
+            applicationContext, casProperties, casGoogleAnalyticsCookieGenerator());
         cfg.setLogoutFlowDefinitionRegistry(logoutFlowDefinitionRegistry.getIfAvailable());
         return cfg;
     }
