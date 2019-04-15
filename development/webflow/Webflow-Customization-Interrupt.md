@@ -92,10 +92,12 @@ The script may be defined as:
 import org.apereo.cas.interrupt.InterruptResponse
 
 def run(final Object... args) {
-    def uid = args[0]
+    def principal = args[0]
     def attributes = args[1]
     def service = args[2]
-    def logger = args[3]
+    def registeredService = args[3]
+    def requestContext = args[4]
+    def logger = args[5]
 
     ...
     def block = false
@@ -111,9 +113,11 @@ The following parameters are passed to the script:
 
 | Parameter             | Description
 |------------------------------------------------------------------------------------------------------------------------
-| `uid`                 | Authenticated principal id.
+| `principal`           | Authenticated principal.
 | `attributes`          | A map of type `Map<String, Object>` that contains both principal and authentication attributes. 
-| `service`             | The identifier (i.e. URL) of the requesting application.
+| `service`             | The `Service` object representing the requesting application.
+| `registeredService`   | The `RegisteredService` object representing the service definition in the registry.
+| `requestContext`      | The object representing the Spring Webflow `RequestContext`.
 | `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
 
 ### REST
