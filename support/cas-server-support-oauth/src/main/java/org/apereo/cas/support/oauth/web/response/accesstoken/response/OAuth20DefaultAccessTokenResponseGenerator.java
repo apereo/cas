@@ -6,7 +6,6 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
@@ -15,6 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import static java.util.stream.Collectors.joining;
 
 /**
  * This is {@link OAuth20DefaultAccessTokenResponseGenerator}.
@@ -112,7 +113,7 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
         val generatedToken = result.getGeneratedToken();
         generatedToken.getAccessToken().ifPresent(t -> {
             model.put(OAuth20Constants.ACCESS_TOKEN, t.getId());
-            model.put(OAuth20Constants.SCOPE, StringUtils.join(t.getScopes(), " "));
+            model.put(OAuth20Constants.SCOPE, t.getScopes().stream().collect(joining(" ")));
         });
         generatedToken.getRefreshToken().ifPresent(t -> model.put(OAuth20Constants.REFRESH_TOKEN, t.getId()));
         model.put(OAuth20Constants.TOKEN_TYPE, OAuth20Constants.TOKEN_TYPE_BEARER);
