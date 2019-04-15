@@ -284,7 +284,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             LOGGER.debug("Attribute policy [{}] is associated with service [{}]", attributePolicy, registeredService);
 
             val attributesToRelease = attributePolicy != null
-                ? attributePolicy.getAttributes(principal, selectedService, registeredService) : new HashMap<String, Object>();
+                ? attributePolicy.getAttributes(principal, selectedService, registeredService) : new HashMap<String, List<Object>>();
 
             LOGGER.debug("Calculated attributes for release per the release policy are [{}]", attributesToRelease.keySet());
 
@@ -309,8 +309,8 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                 .with(serviceTicket.getTicketGrantingTicket().getChainedAuthentications())
                 .with(serviceTicket.isFromNewLogin())
                 .build();
-            doPublishEvent(new CasServiceTicketValidatedEvent(this, serviceTicket, assertion));
 
+            doPublishEvent(new CasServiceTicketValidatedEvent(this, serviceTicket, assertion));
             return assertion;
         } finally {
             if (serviceTicket.isExpired()) {

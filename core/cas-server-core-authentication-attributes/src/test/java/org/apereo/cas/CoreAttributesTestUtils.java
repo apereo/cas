@@ -8,6 +8,7 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategy;
 
 import lombok.val;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.mockito.Mockito.*;
@@ -23,7 +24,7 @@ public class CoreAttributesTestUtils {
     public static final String CONST_USERNAME = "test";
     private static final String CONST_TEST_URL = "https://google.com";
 
-    public static Principal getPrincipal(final String name, final Map<String, Object> attributes) {
+    public static Principal getPrincipal(final String name, final Map<String, List<Object>> attributes) {
         return PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(name, attributes);
     }
 

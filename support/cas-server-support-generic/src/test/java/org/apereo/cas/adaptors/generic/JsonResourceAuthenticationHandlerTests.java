@@ -46,37 +46,49 @@ public class JsonResourceAuthenticationHandlerTests {
         var acct = new CasUserAccount();
         acct.setPassword("Mellon");
         acct.setExpirationDate(LocalDate.now(ZoneOffset.UTC).plusWeeks(2));
-        acct.setAttributes(CollectionUtils.wrap("firstName", "Apereo", "lastName", "CAS"));
+        acct.setAttributes(CollectionUtils.wrap("firstName",
+            CollectionUtils.wrapList("Apereo"), "lastName",
+            CollectionUtils.wrapList("CAS")));
         accounts.put("casexpiring", acct);
 
         acct = new CasUserAccount();
         acct.setPassword("Mellon");
         acct.setStatus(CasUserAccount.AccountStatus.OK);
-        acct.setAttributes(CollectionUtils.wrap("firstName", "Apereo", "lastName", "CAS"));
+        acct.setAttributes(CollectionUtils.wrap("firstName",
+            CollectionUtils.wrapList("Apereo"), "lastName",
+            CollectionUtils.wrapList("CAS")));
         accounts.put("casuser", acct);
 
         acct = new CasUserAccount();
         acct.setPassword("Mellon");
         acct.setStatus(CasUserAccount.AccountStatus.DISABLED);
-        acct.setAttributes(CollectionUtils.wrap("firstName", "Apereo", "lastName", "CAS"));
+        acct.setAttributes(CollectionUtils.wrap("firstName",
+            CollectionUtils.wrapList("Apereo"), "lastName",
+            CollectionUtils.wrapList("CAS")));
         accounts.put("casdisabled", acct);
 
         acct = new CasUserAccount();
         acct.setPassword("Mellon");
         acct.setStatus(CasUserAccount.AccountStatus.MUST_CHANGE_PASSWORD);
-        acct.setAttributes(CollectionUtils.wrap("firstName", "Apereo", "lastName", "CAS"));
+        acct.setAttributes(CollectionUtils.wrap("firstName",
+            CollectionUtils.wrapList("Apereo"), "lastName",
+            CollectionUtils.wrapList("CAS")));
         accounts.put("casmustchange", acct);
 
         acct = new CasUserAccount();
         acct.setPassword("Mellon");
         acct.setStatus(CasUserAccount.AccountStatus.LOCKED);
-        acct.setAttributes(CollectionUtils.wrap("firstName", "Apereo", "lastName", "CAS"));
+        acct.setAttributes(CollectionUtils.wrap("firstName",
+            CollectionUtils.wrapList("Apereo"), "lastName",
+            CollectionUtils.wrapList("CAS")));
         accounts.put("caslocked", acct);
 
         acct = new CasUserAccount();
         acct.setPassword("Mellon");
         acct.setStatus(CasUserAccount.AccountStatus.EXPIRED);
-        acct.setAttributes(CollectionUtils.wrap("firstName", "Apereo", "lastName", "CAS"));
+        acct.setAttributes(CollectionUtils.wrap("firstName",
+            CollectionUtils.wrapList("Apereo"), "lastName",
+            CollectionUtils.wrapList("CAS")));
         accounts.put("casexpired", acct);
 
         val resource = new FileSystemResource(File.createTempFile("account", ".json"));
@@ -100,7 +112,8 @@ public class JsonResourceAuthenticationHandlerTests {
     @Test
     @SneakyThrows
     public void verifyExpiringAccount() {
-        val result = handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casexpiring", "Mellon"));
+        val result = handler.authenticate(
+            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casexpiring", "Mellon"));
         assertFalse(result.getWarnings().isEmpty());
     }
 

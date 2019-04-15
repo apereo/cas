@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.radius.authentication.handler.support;
 import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.adaptors.radius.RadiusUtils;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -25,8 +26,7 @@ import java.util.Optional;
  */
 @Slf4j
 public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
-
-
+    
     /**
      * Array of RADIUS servers to authenticate against.
      */
@@ -61,8 +61,9 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
             val result = RadiusUtils.authenticate(username, credential.getPassword(), this.servers,
                 this.failoverOnAuthenticationFailure, this.failoverOnException, Optional.empty());
             if (result.getKey()) {
+                val attributes = CoreAuthenticationUtils.convertAttributeValuesToMultiValuedObjects(result.getValue().get());
                 return createHandlerResult(credential,
-                    principalFactory.createPrincipal(username, result.getValue().get()),
+                    principalFactory.createPrincipal(username, attributes),
                     new ArrayList<>());
             }
             throw new FailedLoginException("Radius authentication failed for user " + username);

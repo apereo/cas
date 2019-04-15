@@ -20,6 +20,8 @@ import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
 import org.springframework.webflow.test.MockRequestContext;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -55,7 +57,7 @@ public class AuthenticationAttributeMultifactorAuthenticationPolicyEventResolver
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
 
         val authn = RegisteredServiceTestUtils.getAuthentication();
-        authn.getAttributes().put("authn-method-dummy", "mfa-dummy");
+        authn.getAttributes().put("authn-method-dummy", List.of("mfa-dummy"));
         WebUtils.putAuthentication(authn, context);
 
         results = authenticationAttributeMultifactorAuthenticationPolicyEventResolver.resolve(context);

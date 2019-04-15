@@ -22,6 +22,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -76,8 +77,8 @@ public class SamlResponseBuilder {
      */
     public void prepareSuccessfulResponse(final Response response, final Service service,
                                           final Authentication authentication, final Principal principal,
-                                          final Map<String, Object> authnAttributes,
-                                          final Map<String, Object> principalAttributes) {
+                                          final Map<String, List<Object>> authnAttributes,
+                                          final Map<String, List<Object>> principalAttributes) {
 
         val issuedAt = DateTimeUtils.zonedDateTimeOf(response.getIssueInstant());
         LOGGER.debug("Preparing SAML response for service [{}]", service);
@@ -116,8 +117,8 @@ public class SamlResponseBuilder {
     }
 
     private Map<String, Object> prepareSamlAttributes(final Service service,
-                                                      final Map<String, Object> authnAttributes,
-                                                      final Map<String, Object> principalAttributes) {
+                                                      final Map<String, List<Object>> authnAttributes,
+                                                      final Map<String, List<Object>> principalAttributes) {
         val registeredService = this.servicesManager.findServiceBy(service);
 
         LOGGER.debug("Retrieved authentication attributes [{}] from the model", authnAttributes);

@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -42,7 +43,7 @@ public class DefaultPrincipalAttributesRepositoryTests extends BaseCasCoreTests 
 
     @Test
     public void checkInitialAttributes() {
-        val p = this.principalFactory.getIfAvailable().createPrincipal("uid", Collections.singletonMap("mail", "final@example.com"));
+        val p = this.principalFactory.getIfAvailable().createPrincipal("uid", Collections.singletonMap("mail", List.of("final@example.com")));
         val rep = new DefaultPrincipalAttributesRepository();
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         assertEquals(1, rep.getAttributes(p, registeredService).size());

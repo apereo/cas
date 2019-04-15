@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,8 +25,8 @@ public class SimplePrincipalTests {
     @Test
     @SneakyThrows
     public void verifySerializeACompletePrincipalToJson() {
-        val attributes = new HashMap<String, Object>();
-        attributes.put("attribute", "value");
+        val attributes = new HashMap<String, List<Object>>();
+        attributes.put("attribute", List.of("value"));
         val principalWritten = new SimplePrincipal("id", attributes);
         MAPPER.writeValue(JSON_FILE, principalWritten);
         val principalRead = MAPPER.readValue(JSON_FILE, SimplePrincipal.class);

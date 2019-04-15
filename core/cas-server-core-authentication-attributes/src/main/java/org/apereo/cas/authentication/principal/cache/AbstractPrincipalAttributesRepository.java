@@ -68,7 +68,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
     private boolean ignoreResolvedAttributes;
 
     @Override
-    public abstract Map<String, Object> getAttributes(Principal principal, RegisteredService registeredService);
+    public abstract Map<String, List<Object>> getAttributes(Principal principal, RegisteredService registeredService);
 
     /**
      * Convert attributes to principal attributes and cache.
@@ -78,9 +78,9 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      * @param registeredService the registered service
      * @return the map
      */
-    protected Map<String, Object> convertAttributesToPrincipalAttributesAndCache(final Principal principal,
-                                                                                 final Map<String, List<Object>> sourceAttributes,
-                                                                                 final RegisteredService registeredService) {
+    protected Map<String, List<Object>> convertAttributesToPrincipalAttributesAndCache(final Principal principal,
+                                                                                       final Map<String, List<Object>> sourceAttributes,
+                                                                                       final RegisteredService registeredService) {
         val finalAttributes = convertPersonAttributesToPrincipalAttributes(sourceAttributes);
         addPrincipalAttributes(principal.getId(), finalAttributes, registeredService);
         return finalAttributes;
@@ -94,7 +94,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      * @param registeredService the registered service
      * @since 4.2
      */
-    protected abstract void addPrincipalAttributes(String id, Map<String, Object> attributes, RegisteredService registeredService);
+    protected abstract void addPrincipalAttributes(String id, Map<String, List<Object>> attributes, RegisteredService registeredService);
 
     /**
      * Gets attribute repository.
@@ -153,9 +153,10 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      * @param attributes person attributes
      * @return principal attributes
      */
-    protected static Map<String, Object> convertPersonAttributesToPrincipalAttributes(final Map<String, List<Object>> attributes) {
-        return attributes.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().size() == 1
-            ? entry.getValue().get(0) : entry.getValue(), (e, f) -> f == null ? e : f));
+    protected static Map<String, List<Object>> convertPersonAttributesToPrincipalAttributes(final Map<String, List<Object>> attributes) {
+        return attributes.entrySet()
+            .stream()
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     /**

@@ -6,6 +6,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.val;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,7 +34,7 @@ public class SurrogatePrincipalElectionStrategy extends DefaultPrincipalElection
     }
 
     @Override
-    protected Map<String, Object> getPrincipalAttributesForPrincipal(final Principal principal, final Map<String, Object> principalAttributes) {
+    protected Map<String, List<Object>> getPrincipalAttributesForPrincipal(final Principal principal, final Map<String, List<Object>> principalAttributes) {
         return principal.getAttributes();
     }
 }

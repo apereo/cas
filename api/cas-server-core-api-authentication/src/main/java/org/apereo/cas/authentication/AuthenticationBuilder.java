@@ -81,6 +81,15 @@ public interface AuthenticationBuilder extends Serializable {
      * @param value Authentication attribute value.
      * @return This builder instance.
      */
+    AuthenticationBuilder addAttribute(String key, List<Object> value);
+
+    /**
+     * Adds an authentication metadata attribute key-value pair.
+     *
+     * @param key   Authentication attribute key.
+     * @param value Authentication attribute value.
+     * @return This builder instance.
+     */
     AuthenticationBuilder addAttribute(String key, Object value);
 
     /**
@@ -171,7 +180,7 @@ public interface AuthenticationBuilder extends Serializable {
      * @param attributes Non-null map of authentication metadata attributes.
      * @return This builder instance.
      */
-    AuthenticationBuilder setAttributes(Map<String, Object> attributes);
+    AuthenticationBuilder setAttributes(Map<String, List<Object>> attributes);
 
     /**
      * Merge attribute.
@@ -181,6 +190,15 @@ public interface AuthenticationBuilder extends Serializable {
      * @return the authentication builder
      */
     AuthenticationBuilder mergeAttribute(String key, Object value);
+
+    /**
+     * Merge attribute.
+     *
+     * @param key   the key
+     * @param value the value
+     * @return the authentication builder
+     */
+    AuthenticationBuilder mergeAttribute(String key, List<Object> value);
 
     /**
      * Has attribute boolean.

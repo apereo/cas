@@ -35,10 +35,7 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +54,22 @@ import java.util.stream.Collectors;
 @Slf4j
 @UtilityClass
 public class CoreAuthenticationUtils {
+
+    /**
+     * Convert attribute values to multi valued objects.
+     *
+     * @param attributes the attributes
+     * @return the map of attributes to return
+     */
+    public static Map<String, List<Object>> convertAttributeValuesToMultiValuedObjects(final Map<String, Object> attributes) {
+        val entries = attributes.entrySet();
+        return entries
+            .stream()
+            .collect(Collectors.toMap(Map.Entry::getKey, entry -> {
+                val value = entry.getValue();
+                return CollectionUtils.toCollection(value, ArrayList.class);
+            }));
+    }
 
     /**
      * Retrieve attributes from attribute repository and return map.
@@ -124,27 +137,9 @@ public class CoreAuthenticationUtils {
      * @return true if remember-me, false if otherwise.
      */
     public static boolean isRememberMeAuthentication(final Authentication model, final Assertion assertion) {
-        val authnAttributes = convertAttributeValuesToMultiValuedObjects(model.getAttributes());
-        val authnMethod = (Collection) authnAttributes.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
+        val authnAttributes = model.getAttributes();
+        val authnMethod = authnAttributes.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
         return authnMethod != null && authnMethod.contains(Boolean.TRUE) && assertion.isFromNewLogin();
-    }
-
-    /**
-     * Convert attribute values to multi valued objects.
-     *
-     * @param attributes the attributes
-     * @return the map of attributes to return
-     */
-    public static Map<String, Object> convertAttributeValuesToMultiValuedObjects(final Map<String, Object> attributes) {
-        val entries = attributes.entrySet();
-        return entries.stream()
-            .collect(Collectors.toMap(Map.Entry::getKey, entry -> {
-                val value = entry.getValue();
-                if (value instanceof Collection || value instanceof Map || value instanceof Object[] || value instanceof Iterator || value instanceof Enumeration) {
-                    return value;
-                }
-                return CollectionUtils.wrap(value);
-            }));
     }
 
     /**
@@ -154,7 +149,7 @@ public class CoreAuthenticationUtils {
      * @param attributesToMerge the attributes to merge
      * @return the map
      */
-    public static Map<String, Object> mergeAttributes(final Map<String, Object> currentAttributes, final Map<String, Object> attributesToMerge) {
+    public static Map<String, List<Object>> mergeAttributes(final Map<String, List<Object>> currentAttributes, final Map<String, List<Object>> attributesToMerge) {
         val merger = new MultivaluedAttributeMerger();
 
         val toModify = currentAttributes.entrySet()

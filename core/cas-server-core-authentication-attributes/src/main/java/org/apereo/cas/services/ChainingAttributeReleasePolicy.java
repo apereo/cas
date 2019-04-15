@@ -39,11 +39,11 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
     private int order;
 
     @Override
-    public Map<String, Object> getAttributes(final Principal p, final Service selectedService, final RegisteredService service) {
+    public Map<String, List<Object>> getAttributes(final Principal p, final Service selectedService, final RegisteredService service) {
         AnnotationAwareOrderComparator.sortIfNecessary(policies);
 
         val merger = CoreAuthenticationUtils.getAttributeMerger(mergingPolicy);
-        val attributes = new HashMap<String, Object>();
+        val attributes = new HashMap<String, List<Object>>();
         policies.forEach(policy -> {
             LOGGER.trace("Fetching attributes from policy [{}] for principal [{}]", policy.getName(), p.getId());
             val policyAttributes = (Map) policy.getAttributes(p, selectedService, service);
@@ -54,11 +54,11 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
     }
 
     @Override
-    public Map<String, Object> getConsentableAttributes(final Principal principal, final Service selectedService, final RegisteredService service) {
+    public Map<String, List<Object>> getConsentableAttributes(final Principal principal, final Service selectedService, final RegisteredService service) {
         AnnotationAwareOrderComparator.sortIfNecessary(policies);
 
         val merger = CoreAuthenticationUtils.getAttributeMerger(mergingPolicy);
-        val attributes = new HashMap<String, Object>();
+        val attributes = new HashMap<String, List<Object>>();
         policies.forEach(policy -> {
             LOGGER.trace("Fetching consentable attributes from policy [{}] for principal [{}]", policy.getName(), principal.getId());
             val policyAttributes = (Map) policy.getConsentableAttributes(principal, selectedService, service);

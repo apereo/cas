@@ -20,6 +20,7 @@ import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * This is {@link SoapAuthenticationHandler}.
@@ -48,8 +49,8 @@ public class SoapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         val response = soapAuthenticationClient.sendRequest(request);
 
         if (response.getStatus() == HttpStatus.OK.value()) {
-            val attributes = new LinkedHashMap<String, Object>();
-            response.getAttributes().forEach(item -> attributes.put(item.getKey().toString(), CollectionUtils.toCollection(item.getValue())));
+            val attributes = new LinkedHashMap<String, List<Object>>();
+            response.getAttributes().forEach(item -> attributes.put(item.getKey().toString(), CollectionUtils.toCollection(item.getValue(), ArrayList.class)));
             val principal = principalFactory.createPrincipal(response.getUsername(), attributes);
             return createHandlerResult(credential, principal, new ArrayList<>());
         }

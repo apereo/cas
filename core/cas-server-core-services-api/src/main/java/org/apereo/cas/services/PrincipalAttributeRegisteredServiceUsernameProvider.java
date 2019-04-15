@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -90,7 +91,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
      * @param registeredService the registered service
      * @return the principal attributes
      */
-    protected Map<String, Object> getPrincipalAttributesFromReleasePolicy(final Principal p, final Service service, final RegisteredService registeredService) {
+    protected Map<String, List<Object>> getPrincipalAttributesFromReleasePolicy(final Principal p, final Service service, final RegisteredService registeredService) {
         if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             LOGGER.debug("Located service [{}] in the registry. Attempting to resolve attributes for [{}]", registeredService, p.getId());
             if (registeredService.getAttributeReleasePolicy() == null) {

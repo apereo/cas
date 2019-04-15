@@ -5,7 +5,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +16,8 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -59,30 +60,33 @@ public class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAc
 
     @Test
     public void verifyRepositoryActionWithAdvancedConfig() {
-        verifyRepositoryAction("casuser", CollectionUtils.wrap("aupAccepted", "false", "email", "CASuser@example.org"));
+        verifyRepositoryAction("casuser",
+            CollectionUtils.wrap("aupAccepted", List.of("false"), "email", List.of("CASuser@example.org")));
     }
     
     @Test
     public void determinePrincipalIdWithAdvancedConfig() {
-        val principalId = determinePrincipalId("casuser", CollectionUtils.wrap("aupAccepted", "false", "email", "CASuser@example.org"));
+        val principalId = determinePrincipalId("casuser",
+            CollectionUtils.wrap("aupAccepted", List.of("false"), "email", List.of("CASuser@example.org")));
         assertEquals("CASuser@example.org", principalId);
     }
     
     @Test
     public void raiseMissingPrincipalAttributeError() {
         val exception = assertThrows(IllegalStateException.class,
-            () -> raiseException(CollectionUtils.wrap("aupAccepted", "false", "wrong-attribute", "CASuser@example.org")));
+            () -> raiseException(CollectionUtils.wrap("aupAccepted", List.of("false"), "wrong-attribute",
+                List.of("CASuser@example.org"))));
         assertTrue(exception.getMessage().contains("cannot be found"));
     }
     
     @Test
     public void raiseEmptyPrincipalAttributeError() {
         val exception = assertThrows(IllegalStateException.class,
-            () -> raiseException(CollectionUtils.wrap("aupAccepted", "false", "email", StringUtils.EMPTY)));
+            () -> raiseException(CollectionUtils.wrap("aupAccepted", List.of("false"), "email", new ArrayList<>())));
         assertTrue(exception.getMessage().contains("empty or multi-valued with an empty element"));
     }
     
-    private void raiseException(final Map<String, Object> profileAttributes) {
+    private void raiseException(final Map<String, List<Object>> profileAttributes) {
         val aupProperties = casProperties.getAcceptableUsagePolicy();
         val jdbcAupRepository = new JdbcAcceptableUsagePolicyRepository(ticketRegistrySupport,
                 aupProperties.getAupAttributeName(), acceptableUsagePolicyDataSource, aupProperties);

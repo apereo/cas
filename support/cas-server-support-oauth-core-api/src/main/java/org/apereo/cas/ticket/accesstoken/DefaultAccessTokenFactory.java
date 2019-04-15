@@ -16,6 +16,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 
@@ -56,9 +57,10 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
 
         val registeredService = (OAuthRegisteredService) this.jwtBuilder.getServicesManager().findServiceBy(service);
         if (registeredService != null && registeredService.isJwtAccessToken()) {
-            val dt = ZonedDateTime.now().plusSeconds(this.expirationPolicy.getTimeToLive());
+            val dt = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(this.expirationPolicy.getTimeToLive());
             val builder = JwtBuilder.JwtRequest.builder();
-            val request = builder.serviceAudience(service.getId())
+            val request = builder
+                .serviceAudience(service.getId())
                 .issueDate(DateTimeUtils.dateOf(authentication.getAuthenticationDate()))
                 .jwtId(accessTokenId)
                 .subject(authentication.getPrincipal().getId())

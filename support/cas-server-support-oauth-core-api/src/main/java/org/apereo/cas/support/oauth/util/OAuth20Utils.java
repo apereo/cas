@@ -420,7 +420,8 @@ public class OAuth20Utils {
      */
     public static String getClientIdFromAuthenticatedProfile(final CommonProfile profile) {
         if (profile.containsAttribute(OAuth20Constants.CLIENT_ID)) {
-            return (String) profile.getAttribute(OAuth20Constants.CLIENT_ID);
+            val attribute = profile.getAttribute(OAuth20Constants.CLIENT_ID);
+            return CollectionUtils.toCollection(attribute, ArrayList.class).get(0).toString();
         }
         return null;
     }

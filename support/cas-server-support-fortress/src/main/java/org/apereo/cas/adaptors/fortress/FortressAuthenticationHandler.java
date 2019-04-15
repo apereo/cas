@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Fortress authentication handler, this class will delegate the authentication to call fortress rest authentication.
@@ -67,8 +69,8 @@ public class FortressAuthenticationHandler extends AbstractUsernamePasswordAuthe
                 marshaller.marshal(fortressSession, writer);
                 val fortressXmlSession = writer.toString();
                 LOGGER.debug("Fortress session result: [{}]", fortressXmlSession);
-                val attributes = new HashMap<String, Object>();
-                attributes.put(FORTRESS_SESSION_KEY, fortressXmlSession);
+                val attributes = new HashMap<String, List<Object>>();
+                attributes.put(FORTRESS_SESSION_KEY, CollectionUtils.wrapList(fortressXmlSession));
                 return createHandlerResult(c, principalFactory.createPrincipal(username, attributes));
             }
             LOGGER.warn("Could not establish a fortress session or session cannot authenticate");

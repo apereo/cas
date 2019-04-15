@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.Closeable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
@@ -28,7 +29,7 @@ public class PrincipalAttributesRepositoryCache implements Closeable {
 
     private static final String DEFAULT_CACHE_EXPIRATION_UNIT = TimeUnit.HOURS.name();
 
-    private final Map<String, Cache<String, Map<String, Object>>> registeredServicesCache = new HashMap<>();
+    private final Map<String, Cache<String, Map<String, List<Object>>>> registeredServicesCache = new HashMap<>();
 
     @Override
     public void close() {
@@ -50,9 +51,9 @@ public class PrincipalAttributesRepositoryCache implements Closeable {
      * @param principal         the principal
      * @return the cached attributes for
      */
-    public Map<String, Object> getCachedAttributesFor(final RegisteredService registeredService,
-                                                      final CachingPrincipalAttributesRepository repository,
-                                                      final Principal principal) {
+    public Map<String, List<Object>> getCachedAttributesFor(final RegisteredService registeredService,
+                                                            final CachingPrincipalAttributesRepository repository,
+                                                            final Principal principal) {
         val cache = getRegisteredServiceCacheInstance(registeredService, repository);
         return cache.get(principal.getId(), s -> {
             LOGGER.debug("No cached attributes could be found for [{}]", principal.getId());
@@ -70,7 +71,7 @@ public class PrincipalAttributesRepositoryCache implements Closeable {
      */
     public void putCachedAttributesFor(final RegisteredService registeredService,
                                        final CachingPrincipalAttributesRepository repository,
-                                       final String id, final Map<String, Object> attributes) {
+                                       final String id, final Map<String, List<Object>> attributes) {
         val cache = getRegisteredServiceCacheInstance(registeredService, repository);
         cache.put(id, attributes);
     }
@@ -93,8 +94,8 @@ public class PrincipalAttributesRepositoryCache implements Closeable {
      * @param repository        the repository
      * @return the registered service cache instance
      */
-    private Cache<String, Map<String, Object>> getRegisteredServiceCacheInstance(final RegisteredService registeredService,
-                                                                                 final CachingPrincipalAttributesRepository repository) {
+    private Cache<String, Map<String, List<Object>>> getRegisteredServiceCacheInstance(final RegisteredService registeredService,
+                                                                                       final CachingPrincipalAttributesRepository repository) {
         val key = buildRegisteredServiceCacheKey(registeredService);
         if (registeredServicesCache.containsKey(key)) {
             return registeredServicesCache.get(key);
@@ -110,7 +111,7 @@ public class PrincipalAttributesRepositoryCache implements Closeable {
      * @param repository the repository
      * @return the cache
      */
-    private static Cache<String, Map<String, Object>> initializeCache(final CachingPrincipalAttributesRepository repository) {
+    private static Cache<String, Map<String, List<Object>>> initializeCache(final CachingPrincipalAttributesRepository repository) {
         val unit = TimeUnit.valueOf(StringUtils.defaultString(repository.getTimeUnit(), DEFAULT_CACHE_EXPIRATION_UNIT));
         return Caffeine.newBuilder()
             .initialCapacity(DEFAULT_MAXIMUM_CACHE_SIZE)

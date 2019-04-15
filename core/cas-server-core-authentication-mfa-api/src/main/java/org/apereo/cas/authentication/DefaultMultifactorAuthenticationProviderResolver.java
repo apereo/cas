@@ -11,6 +11,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -41,7 +42,7 @@ public class DefaultMultifactorAuthenticationProviderResolver implements Multifa
 
     @Override
     public Set<Event> resolveEventViaAttribute(final Principal principal,
-                                               final Map<String, Object> attributesToExamine,
+                                               final Map<String, List<Object>> attributesToExamine,
                                                final Collection<String> attributeNames,
                                                final RegisteredService service,
                                                final Optional<RequestContext> context,
