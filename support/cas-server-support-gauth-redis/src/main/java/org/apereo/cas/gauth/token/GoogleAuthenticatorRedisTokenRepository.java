@@ -16,12 +16,12 @@ import java.util.concurrent.TimeUnit;
  * This is {@link GoogleAuthenticatorRedisTokenRepository}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 6.1.0
  */
 @Slf4j
 @RequiredArgsConstructor
 public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRepository {
-    private static final String KEY_SEPERATOR = ":";
+    private static final String KEY_SEPARATOR = ":";
     private static final String CAS_PREFIX = GoogleAuthenticatorRedisTokenRepository.class.getSimpleName();
 
     private final RedisTemplate<String, GoogleAuthenticatorToken> template;
@@ -135,19 +135,19 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
     }
 
     private static String getGoogleAuthenticatorTokenRedisKey(final String username, final Integer otp) {
-        return CAS_PREFIX + KEY_SEPERATOR + username + KEY_SEPERATOR + otp;
+        return CAS_PREFIX + KEY_SEPARATOR + username + KEY_SEPARATOR + otp;
     }
 
     private static String getGoogleAuthenticatorTokenRedisKey(final String username) {
-        return CAS_PREFIX + KEY_SEPERATOR + username + KEY_SEPERATOR + '*';
+        return CAS_PREFIX + KEY_SEPARATOR + username + KEY_SEPARATOR + '*';
     }
 
     private static String getGoogleAuthenticatorTokenRedisKey(final Integer otp) {
-        return CAS_PREFIX + KEY_SEPERATOR + '*' + KEY_SEPERATOR + otp;
+        return CAS_PREFIX + KEY_SEPARATOR + '*' + KEY_SEPARATOR + otp;
     }
 
     private static String getPatternGoogleAuthenticatorTokenRedisKey() {
-        return CAS_PREFIX + KEY_SEPERATOR + '*';
+        return CAS_PREFIX + KEY_SEPARATOR + '*';
     }
 
     private Set<String> getGoogleAuthenticatorTokenKeys() {
