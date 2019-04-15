@@ -41,7 +41,9 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
      */
     private static Long getTimeout(final Ticket ticket) {
         val ttl = ticket.getExpirationPolicy().getTimeToLive();
-        if (ttl <= 0) {
+        if (ttl > Integer.MAX_VALUE) {
+            return (long) Integer.MAX_VALUE;
+        } else if (ttl <= 0) {
             return 1L;
         }
         return ttl;
