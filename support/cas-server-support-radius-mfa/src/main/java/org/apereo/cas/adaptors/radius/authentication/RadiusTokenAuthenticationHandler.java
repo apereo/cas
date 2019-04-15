@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.radius.authentication;
 import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.adaptors.radius.RadiusUtils;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -86,7 +87,8 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
             val result = RadiusUtils.authenticate(username, password, this.servers,
                 this.failoverOnAuthenticationFailure, this.failoverOnException, state);
             if (result.getKey()) {
-                val finalPrincipal = this.principalFactory.createPrincipal(username, result.getValue().get());
+                val radiusAttributes = CoreAuthenticationUtils.convertAttributeValuesToMultiValuedObjects(result.getValue().get());
+                val finalPrincipal = this.principalFactory.createPrincipal(username, radiusAttributes);
                 return createHandlerResult(credential, finalPrincipal, new ArrayList<>());
             }
             throw new FailedLoginException("Radius authentication failed for user " + username);

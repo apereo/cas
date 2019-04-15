@@ -30,8 +30,8 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -114,10 +114,10 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyOK() throws Exception {
-        val map = new HashMap<String, Object>();
-        map.put(NAME, VALUE);
-        val list = Arrays.asList(VALUE, VALUE);
-        map.put(NAME2, list);
+        val map = new HashMap<String, List<Object>>();
+        map.put(NAME, List.of(VALUE));
+        val list = List.of(VALUE, VALUE);
+        map.put(NAME2, (List) list);
 
         val principal = CoreAuthenticationTestUtils.getPrincipal(ID, map);
         val authentication = getAuthentication(principal);
@@ -142,16 +142,16 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         val expectedAttributes = expectedObj.get(ATTRIBUTES_PARAM);
         val receivedAttributes = receivedObj.get(ATTRIBUTES_PARAM);
 
-        assertEquals(expectedAttributes.findValue(NAME).asText(), receivedAttributes.findValue(NAME).asText());
+        assertEquals(expectedAttributes.findValue(NAME).asText(), receivedAttributes.findValue(NAME).get(0).asText());
         assertEquals(expectedAttributes.findValues(NAME2), receivedAttributes.findValues(NAME2));
     }
 
     @Test
     public void verifyOKWithExpiredTicketGrantingTicket() throws Exception {
-        val map = new HashMap<String, Object>();
-        map.put(NAME, VALUE);
-        val list = Arrays.asList(VALUE, VALUE);
-        map.put(NAME2, list);
+        val map = new HashMap<String, List<Object>>();
+        map.put(NAME, List.of(VALUE));
+        val list = List.of(VALUE, VALUE);
+        map.put(NAME2, (List) list);
 
         val principal = CoreAuthenticationTestUtils.getPrincipal(ID, map);
         val authentication = getAuthentication(principal);
@@ -184,16 +184,16 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         val expectedAttributes = expectedObj.get(ATTRIBUTES_PARAM);
         val receivedAttributes = receivedObj.get(ATTRIBUTES_PARAM);
 
-        assertEquals(expectedAttributes.findValue(NAME).asText(), receivedAttributes.findValue(NAME).asText());
+        assertEquals(expectedAttributes.findValue(NAME).asText(), receivedAttributes.findValue(NAME).get(0).asText());
         assertEquals(expectedAttributes.findValues(NAME2), receivedAttributes.findValues(NAME2));
     }
 
     @Test
     public void verifyOKWithAuthorizationHeader() throws Exception {
-        val map = new HashMap<String, Object>();
-        map.put(NAME, VALUE);
-        val list = Arrays.asList(VALUE, VALUE);
-        map.put(NAME2, list);
+        val map = new HashMap<String, List<Object>>();
+        map.put(NAME, List.of(VALUE));
+        val list = List.of(VALUE, VALUE);
+        map.put(NAME2, (List) list);
 
         val principal = CoreAuthenticationTestUtils.getPrincipal(ID, map);
         val authentication = getAuthentication(principal);
@@ -217,7 +217,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         val expectedAttributes = expectedObj.get(ATTRIBUTES_PARAM);
         val receivedAttributes = receivedObj.get(ATTRIBUTES_PARAM);
 
-        assertEquals(expectedAttributes.findValue(NAME).asText(), receivedAttributes.findValue(NAME).asText());
+        assertEquals(expectedAttributes.findValue(NAME).asText(), receivedAttributes.findValue(NAME).get(0).asText());
         assertEquals(expectedAttributes.findValues(NAME2), receivedAttributes.findValues(NAME2));
     }
 }

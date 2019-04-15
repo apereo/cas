@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -68,7 +69,7 @@ public class AnonymousRegisteredServiceUsernameAttributeProviderTests {
         gen.setAttribute("employeeId");
         val provider = new AnonymousRegisteredServiceUsernameAttributeProvider(gen);
         val result = provider.resolveUsername(CoreAuthenticationTestUtils.getPrincipal("anyuser",
-            CollectionUtils.wrap("employeeId", "T911327")),
+            CollectionUtils.wrap("employeeId", List.of("T911327"))),
             CoreAuthenticationTestUtils.getService("https://cas.example.org/app"),
             CoreAuthenticationTestUtils.getRegisteredService());
         assertEquals("ujWTRNKPPso8S+4geOvcOZtv778=", result);

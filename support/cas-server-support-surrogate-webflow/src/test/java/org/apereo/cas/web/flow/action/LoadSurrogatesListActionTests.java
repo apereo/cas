@@ -21,6 +21,7 @@ import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -59,8 +60,8 @@ public class LoadSurrogatesListActionTests extends BaseSurrogateInitialAuthentic
         val context = new MockRequestContext();
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
 
-        val attributes = new LinkedHashMap<String, Object>();
-        attributes.put(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, true);
+        val attributes = new LinkedHashMap<String, List<Object>>();
+        attributes.put(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, List.of(true));
         attributes.putAll(CoreAuthenticationTestUtils.getAttributeRepository().getBackingMap());
 
         val p = CoreAuthenticationTestUtils.getPrincipal("casuser", attributes);
@@ -89,8 +90,8 @@ public class LoadSurrogatesListActionTests extends BaseSurrogateInitialAuthentic
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
         WebUtils.putRequestSurrogateAuthentication(context, Boolean.TRUE);
 
-        val attributes = new LinkedHashMap<String, Object>();
-        attributes.put(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, true);
+        val attributes = new LinkedHashMap<String, List<Object>>();
+        attributes.put(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, List.of(true));
         attributes.putAll(CoreAuthenticationTestUtils.getAttributeRepository().getBackingMap());
 
         val p = CoreAuthenticationTestUtils.getPrincipal("someuser", attributes);

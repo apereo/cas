@@ -30,6 +30,7 @@ import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * This is {@link AmazonCognitoAuthenticationAuthenticationHandler}.
@@ -89,7 +90,7 @@ public class AmazonCognitoAuthenticationAuthenticationHandler extends AbstractUs
                 .withUserPoolId(properties.getUserPoolId());
 
             val userResult = cognitoIdentityProvider.adminGetUser(userRequest);
-            val attributes = new LinkedHashMap<String, Object>();
+            val attributes = new LinkedHashMap<String, List<Object>>();
             attributes.put("userStatus", CollectionUtils.wrap(userResult.getUserStatus()));
             attributes.put("userCreatedDate", CollectionUtils.wrap(userResult.getUserCreateDate()));
             attributes.put("userModifiedDate", CollectionUtils.wrap(userResult.getUserLastModifiedDate()));

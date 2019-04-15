@@ -29,6 +29,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -179,7 +180,7 @@ public class RegisteredServiceTestUtils {
         return getPrincipal(name, new HashMap<>(0));
     }
 
-    public static Principal getPrincipal(final String name, final Map<String, Object> attributes) {
+    public static Principal getPrincipal(final String name, final Map<String, List<Object>> attributes) {
         return PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(name, attributes);
     }
 
@@ -195,7 +196,7 @@ public class RegisteredServiceTestUtils {
         return getAuthentication(principal, new HashMap<>(0));
     }
 
-    public static Authentication getAuthentication(final Principal principal, final Map<String, Object> attributes) {
+    public static Authentication getAuthentication(final Principal principal, final Map<String, List<Object>> attributes) {
         val handler = new SimpleTestUsernamePasswordAuthenticationHandler();
         val meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
         return new DefaultAuthenticationBuilder(principal)

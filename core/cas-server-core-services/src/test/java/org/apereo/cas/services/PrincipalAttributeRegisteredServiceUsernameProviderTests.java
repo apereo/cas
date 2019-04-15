@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -27,18 +28,17 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
 
     @Test
     public void verifyUsernameByPrincipalAttributeWithMapping() {
-        val provider =
-            new PrincipalAttributeRegisteredServiceUsernameProvider("email");
+        val provider = new PrincipalAttributeRegisteredServiceUsernameProvider("email");
 
         val allowedAttributes = ArrayListMultimap.<String, Object>create();
         val mappedAttribute = "urn:oid:0.9.2342.19200300.100.1.3";
-        allowedAttributes.put("email", mappedAttribute);
+        allowedAttributes.put("email", List.of(mappedAttribute));
         val policy = new ReturnMappedAttributeReleasePolicy(CollectionUtils.wrap(allowedAttributes));
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         registeredService.setAttributeReleasePolicy(policy);
 
-        val principalAttributes = new HashMap<String, Object>();
-        principalAttributes.put("email", "user@example.org");
+        val principalAttributes = new HashMap<String, List<Object>>();
+        principalAttributes.put("email", List.of("user@example.org"));
         val p = mock(Principal.class);
         when(p.getId()).thenReturn("person");
         when(p.getAttributes()).thenReturn(principalAttributes);
@@ -52,7 +52,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
         val provider =
             new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
 
-        val attrs = new HashMap<String, Object>();
+        val attrs = new HashMap<String, List<Object>>();
         attrs.put("userid", CollectionUtils.wrap("u1"));
         attrs.put("cn", CollectionUtils.wrap("TheName"));
 
@@ -67,12 +67,11 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
 
     @Test
     public void verifyUsernameByPrincipalAttribute() {
-        val provider =
-            new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
+        val provider = new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
 
-        val attrs = new HashMap<String, Object>();
-        attrs.put("userid", "u1");
-        attrs.put("cn", "TheName");
+        val attrs = new HashMap<String, List<Object>>();
+        attrs.put("userid", List.of("u1"));
+        attrs.put("cn", List.of("TheName"));
 
         val p = mock(Principal.class);
         when(p.getId()).thenReturn("person");
@@ -85,11 +84,10 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
 
     @Test
     public void verifyUsernameByPrincipalAttributeNotFound() {
-        val provider =
-            new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
+        val provider = new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
 
-        val attrs = new HashMap<String, Object>();
-        attrs.put("userid", "u1");
+        val attrs = new HashMap<String, List<Object>>();
+        attrs.put("userid", List.of("u1"));
 
         val p = mock(Principal.class);
         when(p.getId()).thenReturn("person");
@@ -102,17 +100,14 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
 
     @Test
     public void verifyEquality() {
-        val provider =
-            new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
-        val provider2 =
-            new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
+        val provider = new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
+        val provider2 = new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
         assertEquals(provider, provider2);
     }
 
     @Test
     public void verifySerializeAPrincipalAttributeRegisteredServiceUsernameProviderToJson() throws IOException {
-        val providerWritten =
-            new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
+        val providerWritten = new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
         MAPPER.writeValue(JSON_FILE, providerWritten);
         val providerRead = MAPPER.readValue(JSON_FILE, PrincipalAttributeRegisteredServiceUsernameProvider.class);
         assertEquals(providerWritten, providerRead);

@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -53,7 +54,7 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
     }
 
     @Override
-    public Map<String, Object> getAttributes(final Principal principal, final RegisteredService registeredService) {
+    public Map<String, List<Object>> getAttributes(final Principal principal, final RegisteredService registeredService) {
         val mergeStrategy = determineMergingStrategy();
         LOGGER.trace("Determined merging strategy as [{}]", mergeStrategy);
 
@@ -78,7 +79,7 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
     }
 
     @Override
-    protected void addPrincipalAttributes(final String id, final Map<String, Object> attributes,
+    protected void addPrincipalAttributes(final String id, final Map<String, List<Object>> attributes,
                                           final RegisteredService registeredService) {
         try {
             val cache = getCacheInstanceFromApplicationContext();
@@ -97,7 +98,7 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
      * @return the cached principal attributes
      */
     @JsonIgnore
-    protected Map<String, Object> getCachedPrincipalAttributes(final Principal principal, final RegisteredService registeredService) {
+    protected Map<String, List<Object>> getCachedPrincipalAttributes(final Principal principal, final RegisteredService registeredService) {
         try {
             val cache = getCacheInstanceFromApplicationContext();
             return cache.getCachedAttributesFor(registeredService, this, principal);

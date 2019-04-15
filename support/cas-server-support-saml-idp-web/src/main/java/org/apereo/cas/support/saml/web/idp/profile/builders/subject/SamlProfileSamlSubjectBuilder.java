@@ -89,7 +89,7 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
             service.isSkipGeneratingSubjectConfirmationRecipient() ? null : location,
             service.isSkipGeneratingSubjectConfirmationNotOnOrAfter() ? null : validFromDate.plusSeconds(this.skewAllowance),
             service.isSkipGeneratingSubjectConfirmationInResponseTo() ? null : authnRequest.getID(),
-            service.isSkipGeneratingSubjectConfirmationNotBefore() ? null : ZonedDateTime.now());
+            service.isSkipGeneratingSubjectConfirmationNotBefore() ? null : ZonedDateTime.now(ZoneOffset.UTC));
 
         if (NameIDType.ENCRYPTED.equalsIgnoreCase(subjectNameId.getFormat())) {
             subject.setNameID(null);

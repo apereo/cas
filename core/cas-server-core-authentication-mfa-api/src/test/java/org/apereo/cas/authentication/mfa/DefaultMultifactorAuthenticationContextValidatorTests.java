@@ -12,6 +12,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -55,7 +57,7 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
             "OPEN", "trusted_authn", applicationContext);
         val authentication = MultifactorAuthenticationTestUtils.getAuthentication(
             MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
-            CollectionUtils.wrap("authn_method", "mfa-dummy"));
+            CollectionUtils.wrap("authn_method", List.of("mfa-dummy")));
         val result = v.validate(authentication,
             "mfa-dummy", MultifactorAuthenticationTestUtils.getRegisteredService());
         assertTrue(result.getKey());
@@ -68,7 +70,7 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
             "OPEN", "trusted_authn", applicationContext);
         val authentication = MultifactorAuthenticationTestUtils.getAuthentication(
             MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
-            CollectionUtils.wrap("authn_method", "mfa-other", "trusted_authn", "mfa-dummy"));
+            CollectionUtils.wrap("authn_method", List.of("mfa-other"), "trusted_authn", List.of("mfa-dummy")));
         val result = v.validate(authentication,
             "mfa-dummy", MultifactorAuthenticationTestUtils.getRegisteredService());
         assertTrue(result.getKey());
@@ -81,9 +83,9 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
             "OPEN", "trusted_authn", applicationContext);
         val authentication = MultifactorAuthenticationTestUtils.getAuthentication(
             MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
-            CollectionUtils.wrap("authn_method", "mfa-other",
-                MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, true,
-                MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER, "mfa-dummy"));
+            CollectionUtils.wrap("authn_method", List.of("mfa-other"),
+                MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, List.of(true),
+                MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER, List.of("mfa-dummy")));
         val result = v.validate(authentication,
             "mfa-dummy", MultifactorAuthenticationTestUtils.getRegisteredService());
         assertFalse(result.getKey());
@@ -96,9 +98,9 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
             "OPEN", "trusted_authn", applicationContext);
         val authentication = MultifactorAuthenticationTestUtils.getAuthentication(
             MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
-            CollectionUtils.wrap("authn_method", "mfa-other",
-                MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, true,
-                MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER, "mfa-other"));
+            CollectionUtils.wrap("authn_method", List.of("mfa-other"),
+                MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, List.of(true),
+                MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER, List.of("mfa-other")));
         val result = v.validate(authentication,
             "mfa-dummy", MultifactorAuthenticationTestUtils.getRegisteredService());
         assertFalse(result.getKey());

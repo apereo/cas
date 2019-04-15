@@ -20,6 +20,8 @@ import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.pac4j.core.exception.CredentialsException;
 import org.pac4j.core.profile.CommonProfile;
 
+import java.util.Map;
+
 /**
  * Authenticator for user credentials authentication.
  *
@@ -69,7 +71,7 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator<Usern
             LOGGER.debug("Created profile id [{}]", id);
 
             profile.setId(id);
-            profile.addAttributes(attributes);
+            profile.addAttributes((Map) attributes);
             LOGGER.debug("Authenticated user profile [{}]", profile);
             credentials.setUserProfile(profile);
         } catch (final Exception e) {

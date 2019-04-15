@@ -26,6 +26,6 @@ public class AuthenticationCredentialTypeMetaDataPopulatorTests {
         val auth = builder.build();
         assertEquals(
             credentials.getClass().getSimpleName(),
-            auth.getAttributes().get(Credential.CREDENTIAL_TYPE_ATTRIBUTE));
+            auth.getAttributes().get(Credential.CREDENTIAL_TYPE_ATTRIBUTE).get(0));
     }
 }

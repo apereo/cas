@@ -11,6 +11,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -60,7 +61,7 @@ public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
     }
 
     @Override
-    public Map<String, Object> getPrincipalAttributesFrom(final String ticketGrantingTicketId) {
+    public Map<String, List<Object>> getPrincipalAttributesFrom(final String ticketGrantingTicketId) {
         val principal = getAuthenticatedPrincipalFrom(ticketGrantingTicketId);
         return principal == null ? null : principal.getAttributes();
     }

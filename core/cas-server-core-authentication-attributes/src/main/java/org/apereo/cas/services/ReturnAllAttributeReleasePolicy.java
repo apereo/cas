@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.Service;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,7 +22,7 @@ public class ReturnAllAttributeReleasePolicy extends AbstractRegisteredServiceAt
     private static final long serialVersionUID = 5519257723778012771L;
 
     @Override
-    public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> resolvedAttributes,
+    public Map<String, List<Object>> getAttributesInternal(final Principal principal, final Map<String, List<Object>> resolvedAttributes,
                                                      final RegisteredService registeredService, final Service selectedService) {
         return resolvedAttributes;
     }

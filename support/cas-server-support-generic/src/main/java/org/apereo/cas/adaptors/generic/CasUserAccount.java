@@ -7,6 +7,7 @@ import lombok.Setter;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,7 +23,7 @@ public class CasUserAccount implements Serializable {
 
     private static final long serialVersionUID = 7579594722197541062L;
     private String password;
-    private Map<String, Object> attributes = new LinkedHashMap<>();
+    private Map<String, List<Object>> attributes = new LinkedHashMap<>();
     private AccountStatus status = AccountStatus.OK;
     private LocalDate expirationDate;
 
