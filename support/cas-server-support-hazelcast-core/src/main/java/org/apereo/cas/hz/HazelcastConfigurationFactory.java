@@ -108,6 +108,18 @@ public class HazelcastConfigurationFactory {
 
         config.setLicenseKey(hz.getLicenseKey());
 
+        val networkConfig = new NetworkConfig()
+            .setPort(cluster.getPort())
+            .setPortAutoIncrement(cluster.isPortAutoIncrement());
+
+        if (StringUtils.hasText(hz.getCluster().getLocalAddress())) {
+            config.setProperty(BaseHazelcastProperties.HAZELCAST_LOCAL_ADDRESS_PROP, hz.getCluster().getLocalAddress());
+        }
+        if (StringUtils.hasText(hz.getCluster().getPublicAddress())) {
+            config.setProperty(BaseHazelcastProperties.HAZELCAST_PUBLIC_ADDRESS_PROP, hz.getCluster().getPublicAddress());
+            networkConfig.setPublicAddress(hz.getCluster().getPublicAddress());
+        }
+
         if (cluster.getWanReplication().isEnabled()) {
             if (!StringUtils.hasText(hz.getLicenseKey())) {
                 throw new IllegalArgumentException("Cannot activate WAN replication, a Hazelcast enterprise feature, without a license key");
@@ -116,10 +128,6 @@ public class HazelcastConfigurationFactory {
                 + "have acquired the proper license, SDK and tooling from Hazelcast before activating this feature.");
             buildWanReplicationSettingsForConfig(hz, config);
         }
-
-        val networkConfig = new NetworkConfig()
-            .setPort(cluster.getPort())
-            .setPortAutoIncrement(cluster.isPortAutoIncrement());
 
         val joinConfig = cluster.getDiscovery().isEnabled()
             ? createDiscoveryJoinConfig(config, hz.getCluster(), networkConfig)

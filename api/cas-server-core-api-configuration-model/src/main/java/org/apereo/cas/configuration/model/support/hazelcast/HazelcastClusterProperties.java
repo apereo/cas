@@ -227,6 +227,15 @@ public class HazelcastClusterProperties implements Serializable {
      */
     private int multicastTimeToLive = 32;
 
+    /**
+     * If this property is set, then this is the address where the server socket is bound to.
+     */
+    private String localAddress;
+
+    /**
+     * The default public address to be advertised to other cluster members and clients.
+     */
+    private String publicAddress;
 
     /**
      * Describe discovery strategies for Hazelcast.

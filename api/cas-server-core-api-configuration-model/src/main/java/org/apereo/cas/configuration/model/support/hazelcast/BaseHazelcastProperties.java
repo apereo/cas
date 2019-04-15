@@ -40,6 +40,18 @@ public class BaseHazelcastProperties implements Serializable {
     public static final String HAZELCAST_DISCOVERY_ENABLED_PROP = "hazelcast.discovery.enabled";
 
     /**
+     * It is an overrider property for the default server socket listener's IP address.
+     * If this property is set, then this is the address where the server socket is bound to.
+     */
+    public static final String HAZELCAST_LOCAL_ADDRESS_PROP = "hazelcast.local.localAddress";
+
+    /**
+     * It is an overrider property for the default public address
+     * to be advertised to other cluster members and clients.
+     */
+    public static final String HAZELCAST_PUBLIC_ADDRESS_PROP = "hazelcast.local.publicAddress";
+
+    /**
      * Max num of seconds for heartbeat property name.
      */
     public static final String MAX_HEARTBEAT_SECONDS_PROP = "hazelcast.max.no.heartbeat.seconds";

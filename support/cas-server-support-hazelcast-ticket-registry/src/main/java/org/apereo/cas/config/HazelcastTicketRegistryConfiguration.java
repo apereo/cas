@@ -53,11 +53,12 @@ public class HazelcastTicketRegistryConfiguration {
     public TicketRegistry ticketRegistry() {
         val hz = casProperties.getTicket().getRegistry().getHazelcast();
         val factory = new HazelcastConfigurationFactory();
-        ticketCatalog.getIfAvailable().findAll().stream()
-                .map(TicketDefinition::getProperties)
-                .peek(p -> LOGGER.debug("Created Hazelcast map configuration for [{}]", p))
-                .map(p -> factory.buildMapConfig(hz, p.getStorageName(), p.getStorageTimeout()))
-                .forEach(m -> hazelcastInstance.getIfAvailable().getConfig().addMapConfig(m));
+        ticketCatalog.getIfAvailable().findAll()
+            .stream()
+            .map(TicketDefinition::getProperties)
+            .peek(p -> LOGGER.debug("Created Hazelcast map configuration for [{}]", p))
+            .map(p -> factory.buildMapConfig(hz, p.getStorageName(), p.getStorageTimeout()))
+            .forEach(m -> hazelcastInstance.getIfAvailable().getConfig().addMapConfig(m));
         val r = new HazelcastTicketRegistry(hazelcastInstance.getIfAvailable(),
             ticketCatalog.getIfAvailable(),
             hz.getPageSize());

@@ -491,6 +491,9 @@ More advanced Hazelcast configuration settings are listed below, given the compo
 # ${configurationKey}.cluster.asyncBackupCount=0
 # ${configurationKey}.cluster.maxSizePolicy=USED_HEAP_PERCENTAGE
 # ${configurationKey}.cluster.timeout=5
+
+# ${configurationKey}.cluster.localAddress=
+# ${configurationKey}.cluster.publicAddress=
 ```
 
 ### Static WAN Replication
