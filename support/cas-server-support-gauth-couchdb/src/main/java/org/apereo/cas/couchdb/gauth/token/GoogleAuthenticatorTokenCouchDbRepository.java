@@ -25,6 +25,7 @@ public class GoogleAuthenticatorTokenCouchDbRepository extends CouchDbRepository
 
     /**
      * Find first by uid, otp pair.
+     *
      * @param uid uid to search
      * @param otp otp to search
      * @return token for uid, otp pair
@@ -37,6 +38,7 @@ public class GoogleAuthenticatorTokenCouchDbRepository extends CouchDbRepository
 
     /**
      * Find by issued date.
+     *
      * @param localDateTime time to search for tokens before
      * @return tokens issued before given date
      */
@@ -48,6 +50,7 @@ public class GoogleAuthenticatorTokenCouchDbRepository extends CouchDbRepository
 
     /**
      * Find tokens by user id.
+     *
      * @param userId user id to search for
      * @return tokens belonging to use id
      */
@@ -58,26 +61,37 @@ public class GoogleAuthenticatorTokenCouchDbRepository extends CouchDbRepository
 
     /**
      * Token count for a user.
+     *
      * @param userId user to count tokens for
      * @return count of the user's tokens
      */
     @View(name = "count_by_userId", map = "function(doc) { if(doc.token && doc.userId) { emit(doc.userId, doc) } }", reduce = "_count")
     public long countByUserId(final String userId) {
         val view = createQuery("count_by_userId").key(userId);
-        return db.queryView(view).getRows().get(0).getValueAsInt();
+        val rows = db.queryView(view).getRows();
+        if (rows.isEmpty()) {
+            return 0;
+        }
+        return rows.get(0).getValueAsInt();
     }
 
     /**
      * Total number of tokens stored.
+     *
      * @return number of tokens in database
      */
     @View(name = "count", map = "function(doc) { if(doc.token && doc.userId) { emit(doc._id, doc) } }", reduce = "_count")
     public long count() {
-        return db.queryView(createQuery("count")).getRows().get(0).getValueAsInt();
+        val rows = db.queryView(createQuery("count")).getRows();
+        if (rows.isEmpty()) {
+            return 0;
+        }
+        return rows.get(0).getValueAsInt();
     }
 
     /**
      * Delete record, ignoring rev.
+     *
      * @param token token to delete
      */
     @UpdateHandler(name = "delete_token", file = "CouchDbOneTimeToken_delete.js")
@@ -88,6 +102,7 @@ public class GoogleAuthenticatorTokenCouchDbRepository extends CouchDbRepository
 
     /**
      * Find all by uid, otp pair.
+     *
      * @param uid uid to search
      * @param otp otp to search
      * @return token for uid, otp pair
@@ -98,6 +113,7 @@ public class GoogleAuthenticatorTokenCouchDbRepository extends CouchDbRepository
 
     /**
      * Find by token.
+     *
      * @param otp token to search for
      * @return token for the otp
      */
