@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.token;
 
+import com.google.common.base.Preconditions;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
@@ -130,7 +131,7 @@ public class OidcIdTokenGeneratorService {
         final OidcProperties oidc = casProperties.getAuthn().getOidc();
 
         final JwtClaims claims = new JwtClaims();
-        claims.setJwtId(getOAuthServiceTicket(accessTokenId.getTicketGrantingTicket()));
+        claims.setJwtId(getJwtId(accessTokenId.getTicketGrantingTicket()));
         claims.setIssuer(oidc.getIssuer());
         claims.setAudience(service.getClientId());
 
@@ -168,7 +169,7 @@ public class OidcIdTokenGeneratorService {
         return claims;
     }
 
-    private String getOAuthServiceTicket(final TicketGrantingTicket tgt) {
+    private String getJwtId(final TicketGrantingTicket tgt) {
         final Optional<Entry<String, Service>> oAuthServiceTicket = Stream.concat(
             tgt.getServices().entrySet().stream(),
             tgt.getProxyGrantingTickets().entrySet().stream())
