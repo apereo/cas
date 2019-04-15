@@ -41,7 +41,6 @@ public abstract class BaseOneTimeTokenRepositoryTests {
 
     @Test
     public void verifyTokensWithUniqueIdsSave() {
-
         val token = new GoogleAuthenticatorToken(1111, CASUSER);
         oneTimeTokenAuthenticatorTokenRepository.store(token);
 
@@ -55,6 +54,41 @@ public abstract class BaseOneTimeTokenRepositoryTests {
         assertTrue(t2.getId() > 0);
         assertNotEquals(token.getId(), token2.getId());
         assertEquals(1111, (int) t1.getToken());
+    }
+
+    @Test
+    public void verifyRemoveByUserAndCode() {
+        val token = new GoogleAuthenticatorToken(1984, CASUSER);
+        oneTimeTokenAuthenticatorTokenRepository.store(token);
+        var newToken = oneTimeTokenAuthenticatorTokenRepository.get(CASUSER, 1984);
+        assertNotNull(newToken);
+        assertTrue(newToken.getId() > 0);
+        oneTimeTokenAuthenticatorTokenRepository.remove(CASUSER, 1984);
+        newToken = oneTimeTokenAuthenticatorTokenRepository.get(CASUSER, 1984);
+        assertNull(newToken);
+    }
+
+    @Test
+    public void verifyRemoveByCode() {
+        val token = new GoogleAuthenticatorToken(51984, "someone");
+        oneTimeTokenAuthenticatorTokenRepository.store(token);
+        var newToken = oneTimeTokenAuthenticatorTokenRepository.get(token.getUserId(), token.getToken());
+        assertNotNull(newToken);
+        assertTrue(newToken.getId() > 0);
+        oneTimeTokenAuthenticatorTokenRepository.remove(token.getToken());
+        newToken = oneTimeTokenAuthenticatorTokenRepository.get(token.getUserId(), token.getToken());
+        assertNull(newToken);
+    }
+
+    @Test
+    public void verifySize() {
+        assertEquals(oneTimeTokenAuthenticatorTokenRepository.count(), 0);
+        val token = new GoogleAuthenticatorToken(916984, "sample");
+        oneTimeTokenAuthenticatorTokenRepository.store(token);
+        assertEquals(1, oneTimeTokenAuthenticatorTokenRepository.count());
+        assertEquals(1, oneTimeTokenAuthenticatorTokenRepository.count("sample"));
+        oneTimeTokenAuthenticatorTokenRepository.removeAll();
+        assertEquals(0, oneTimeTokenAuthenticatorTokenRepository.count(), "Repository is not empty");
     }
 
     @TestConfiguration
