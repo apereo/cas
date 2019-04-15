@@ -27,7 +27,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
- * This is {@link CasWebApplication}.
+ * This is {@link CasWebApplication} that houses the main method.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
