@@ -108,7 +108,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 ### MongoDb
 
-Registration records and tokens may be kept inside a mongo db instance, via the following module:
+Registration records and tokens may be kept inside a MongoDb instance, via the following module:
 
 ```xml
 <dependency>
@@ -119,6 +119,20 @@ Registration records and tokens may be kept inside a mongo db instance, via the 
 ```
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#google-authenticator-mongodb).
+
+### Redis
+
+Registration records and tokens may be kept inside a Redis instance, via the following module:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-support-gauth-redis</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#google-authenticator-redis).
 
 ### REST
 
