@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.config.CasCommonComponentsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
@@ -33,7 +34,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreServicesConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
     CasCoreUtilConfiguration.class,
-    SoapAuthenticationConfiguration.class
+    SoapAuthenticationConfiguration.class,
+        CasCommonComponentsConfiguration.class
 },
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestPropertySource(properties = {"server.port=8080", "cas.authn.soap.url=http://localhost:8080/ws/users"})
