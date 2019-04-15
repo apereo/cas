@@ -33,7 +33,7 @@ import java.util.List;
  */
 @MappedSuperclass
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@ToString
+@ToString(exclude = {"secretKey", "scratchCodes"})
 @Getter
 @Setter
 @EqualsAndHashCode
