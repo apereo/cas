@@ -4,8 +4,8 @@
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}" />
         </Console>
-        <RollingFile name="file" fileName="build/gauthmongo.log" append="true"
-                     filePattern="gauthmongo-%d{yyyy-MM-dd-HH}-%i.log.gz">
+        <RollingFile name="file" fileName="build/gauthredis.log" append="true"
+                     filePattern="gauthredis-%d{yyyy-MM-dd-HH}-%i.log.gz">
             <PatternLayout pattern="%highlight{%d %p [%c] - %m%n}" />
             <Policies>
                 <OnStartupTriggeringPolicy />
@@ -15,7 +15,10 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="off" additivity="false">
+        <Logger name="org.apereo" level="off" additivity="error">
+            <AppenderRef ref="console"/>
+        </Logger>
+        <Logger name="org.springframework.data" level="error" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
         <Root level="off">

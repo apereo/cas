@@ -51,7 +51,7 @@ public class CassandraAuthenticationHandler extends AbstractUsernamePasswordAuth
         }
 
         LOGGER.debug("Located account attributes [{}] for [{}]", attributes.keySet(), username);
-        val userPassword = attributes.get(cassandraAuthenticationProperties.getPasswordAttribute()).toString();
+        val userPassword = attributes.get(cassandraAuthenticationProperties.getPasswordAttribute()).get(0).toString();
         if (!password.equals(userPassword)) {
             LOGGER.warn("Account password on record for [{}] does not match the given password", username);
             throw new FailedLoginException();

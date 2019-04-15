@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.support.couchdb.BaseCouchDbProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
+import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
@@ -96,6 +97,11 @@ public class GoogleAuthenticatorMultifactorProperties extends BaseMultifactorPro
     private CouchDb couchDb = new CouchDb();
 
     /**
+     * Store google authenticator devices via Redis.
+     */
+    private Redis redis = new Redis();
+
+    /**
      * Crypto settings that sign/encrypt the records.
      */
     @NestedConfigurationProperty
@@ -134,6 +140,7 @@ public class GoogleAuthenticatorMultifactorProperties extends BaseMultifactorPro
 
     @Getter
     @Setter
+    @RequiresModule(name = "cas-server-support-gauth-mongo")
     public static class MongoDb extends SingleCollectionMongoDbProperties {
 
         private static final long serialVersionUID = -200556119517414696L;
@@ -150,6 +157,8 @@ public class GoogleAuthenticatorMultifactorProperties extends BaseMultifactorPro
     }
 
     @RequiresModule(name = "cas-server-support-gauth-couchdb")
+    @Getter
+    @Setter
     public static class CouchDb extends BaseCouchDbProperties {
 
         private static final long serialVersionUID = -6260683393319585262L;
@@ -157,6 +166,13 @@ public class GoogleAuthenticatorMultifactorProperties extends BaseMultifactorPro
         public CouchDb() {
             setDbName("gauth_multifactor");
         }
+    }
+
+    @RequiresModule(name = "cas-server-support-gauth-redis")
+    @Getter
+    @Setter
+    public static class Redis extends BaseRedisProperties {
+        private static final long serialVersionUID = -1260683393319585262L;
     }
 
     @Getter

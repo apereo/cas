@@ -2606,6 +2606,12 @@ Configuration settings for this feature are available [here](Configuration-Prope
 # cas.authn.mfa.gauth.mongo.tokenCollection=MongoDbGoogleAuthenticatorTokenRepository
 ```
 
+#### Google Authenticator Redis
+
+ Configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) 
+ under the configuration key `cas.authn.mfa.gauth`.  
+ 
+ 
 #### Google Authenticator JPA
 
 Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.mfa.gauth.jpa`.

@@ -240,6 +240,16 @@ public class DateTimeUtils {
     }
 
     /**
+     * Date of local date time.
+     *
+     * @param time the time
+     * @return the date
+     */
+    public static Date dateOf(final LocalDateTime time) {
+        return dateOf(time.toInstant(ZoneOffset.UTC));
+    }
+
+    /**
      * Gets Date for Instant.
      *
      * @param time Time object to be converted.

@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.support.events.authentication.surrogate.CasSurrogateAuthenticationFailureEvent;
 import org.apereo.cas.support.events.authentication.surrogate.CasSurrogateAuthenticationSuccessfulEvent;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.io.CommunicationsManager;
 
 import lombok.RequiredArgsConstructor;
@@ -63,10 +64,10 @@ public class SurrogateAuthenticationEventListener {
         if (communicationsManager.isMailSenderDefined()) {
             val mail = casProperties.getAuthn().getSurrogate().getMail();
             val emailAttribute = mail.getAttributeName();
-            val to = principal.getAttributes().get(emailAttribute);
+            val to = CollectionUtils.firstElement(emailAttribute).toString();
             if (to != null) {
                 val text = mail.getText().concat("\n").concat(eventDetails);
-                this.communicationsManager.email(text, mail.getFrom(), mail.getSubject(), to.toString(), mail.getCc(), mail.getBcc());
+                this.communicationsManager.email(mail, to, text);
             } else {
                 LOGGER.trace("The principal has no [{}] attribute, cannot send email notification", emailAttribute);
             }
