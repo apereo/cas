@@ -48,7 +48,6 @@ public interface CasCookieBuilder {
      */
     String retrieveCookieValue(HttpServletRequest request);
 
-
     /**
      * Remove cookie.
      *
