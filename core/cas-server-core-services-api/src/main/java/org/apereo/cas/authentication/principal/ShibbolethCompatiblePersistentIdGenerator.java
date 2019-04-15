@@ -18,6 +18,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -87,7 +88,7 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
      * @param attributes the attributes
      * @return the string
      */
-    public String determinePrincipalIdFromAttributes(final String defaultId, final Map<String, Object> attributes) {
+    public String determinePrincipalIdFromAttributes(final String defaultId, final Map<String, List<Object>> attributes) {
         return FunctionUtils.doIf(
             StringUtils.isNotBlank(this.attribute) && attributes.containsKey(this.attribute),
             () -> {

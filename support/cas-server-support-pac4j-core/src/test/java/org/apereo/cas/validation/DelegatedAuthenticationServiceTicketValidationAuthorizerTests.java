@@ -12,6 +12,8 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -33,11 +35,12 @@ public class DelegatedAuthenticationServiceTicketValidationAuthorizerTests {
         when(servicesManager.findServiceBy(any(Service.class))).thenReturn(registeredService);
         val assertion = mock(Assertion.class);
         val principal = CoreAuthenticationTestUtils
-            .getPrincipal("casuser", CollectionUtils.wrap(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME, "CasClient"));
+            .getPrincipal("casuser", CollectionUtils.wrap(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME, List.of("CasClient")));
         when(assertion.getPrimaryAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication(principal, principal.getAttributes()));
 
         val az = new DelegatedAuthenticationServiceTicketValidationAuthorizer(servicesManager,
             new RegisteredServiceDelegatedAuthenticationPolicyAuditableEnforcer());
-        assertThrows(UnauthorizedServiceException.class, () -> az.authorize(new MockHttpServletRequest(), CoreAuthenticationTestUtils.getService(), assertion));
+        assertThrows(UnauthorizedServiceException.class,
+            () -> az.authorize(new MockHttpServletRequest(), CoreAuthenticationTestUtils.getService(), assertion));
     }
 }

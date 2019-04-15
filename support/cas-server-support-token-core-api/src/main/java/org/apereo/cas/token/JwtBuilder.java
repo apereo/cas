@@ -20,6 +20,7 @@ import org.hjson.Stringify;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -90,13 +91,13 @@ public class JwtBuilder {
     @Builder
     @Getter
     public static class JwtRequest {
-        private String jwtId;
-        private String serviceAudience;
-        private Date issueDate;
-        private String subject;
-        private Date validUntilDate;
+        private final String jwtId;
+        private final String serviceAudience;
+        private final Date issueDate;
+        private final String subject;
+        private final Date validUntilDate;
 
         @Builder.Default
-        private Map<String, Object> attributes = new LinkedHashMap<>();
+        private final Map<String, List<Object>> attributes = new LinkedHashMap<>();
     }
 }

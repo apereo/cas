@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -39,7 +40,7 @@ public class RegisteredServiceMappedRegexAttributeFilterTests {
     private static final String UID = "uid";
 
     private final RegisteredServiceMappedRegexAttributeFilter filter;
-    private final Map<String, Object> givenAttributesMap;
+    private final Map<String, List<Object>> givenAttributesMap;
 
     @Mock
     private RegisteredService registeredService;
@@ -48,20 +49,13 @@ public class RegisteredServiceMappedRegexAttributeFilterTests {
         this.filter = new RegisteredServiceMappedRegexAttributeFilter();
 
         this.givenAttributesMap = new HashMap<>();
-        this.givenAttributesMap.put(UID, "loggedInTestUid");
-        this.givenAttributesMap.put(PHONE, "1290");
-        this.givenAttributesMap.put(FAMILY_NAME, "Smith");
-        this.givenAttributesMap.put(GIVEN_NAME, "John");
-        this.givenAttributesMap.put("employeeId", "E1234");
+        this.givenAttributesMap.put(UID, List.of("loggedInTestUid"));
+        this.givenAttributesMap.put(PHONE, List.of("1290"));
+        this.givenAttributesMap.put(FAMILY_NAME, List.of("Smith"));
+        this.givenAttributesMap.put(GIVEN_NAME, List.of("John"));
+        this.givenAttributesMap.put("employeeId", List.of("E1234"));
         this.givenAttributesMap.put("memberOf", Arrays.asList("math", "science", "chemistry", "marathon"));
-        this.givenAttributesMap.put("arrayAttribute", new String[]{"math", "science", "chemistry"});
-        this.givenAttributesMap.put("setAttribute", Stream.of("math", "science", "chemistry").collect(Collectors.toSet()));
-
-        val mapAttributes = new HashMap<String, String>();
-        mapAttributes.put(UID, "loggedInTestUid");
-        mapAttributes.put(PHONE, "890");
-        mapAttributes.put(FAMILY_NAME, "Smith");
-        this.givenAttributesMap.put("mapAttribute", mapAttributes);
+        this.givenAttributesMap.put("setAttribute", Stream.of("math", "science", "chemistry").collect(Collectors.toList()));
     }
 
     @BeforeEach

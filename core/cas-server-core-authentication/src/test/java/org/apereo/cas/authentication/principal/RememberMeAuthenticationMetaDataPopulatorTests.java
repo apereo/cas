@@ -33,7 +33,7 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
         val builder = newBuilder(c);
         val auth = builder.build();
 
-        assertEquals(true, auth.getAttributes().get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME));
+        assertEquals(true, auth.getAttributes().get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME).get(0));
     }
 
     @Test

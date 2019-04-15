@@ -16,6 +16,7 @@ import lombok.val;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 
@@ -80,7 +81,7 @@ public abstract class BaseAuthenticationRequestRiskCalculator implements Authent
         val type = CasTicketGrantingTicketCreatedEvent.class.getName();
         LOGGER.debug("Retrieving events of type [{}] for [{}]", type, principal);
 
-        val date = ZonedDateTime.now()
+        val date = ZonedDateTime.now(ZoneOffset.UTC)
             .minusDays(casProperties.getAuthn().getAdaptive().getRisk().getDaysInRecentHistory());
         return casEventRepository.getEventsOfTypeForPrincipal(type, principal, date);
     }

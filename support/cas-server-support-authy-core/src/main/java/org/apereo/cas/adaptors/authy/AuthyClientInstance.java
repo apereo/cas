@@ -78,14 +78,16 @@ public class AuthyClientInstance {
      */
     @SneakyThrows
     public User getOrCreateUser(final Principal principal) {
-        val email = (String) principal.getAttributes().get(this.mailAttribute);
-        if (StringUtils.isBlank(email)) {
+        val attributes = principal.getAttributes();
+        if (!attributes.containsKey(this.mailAttribute)) {
             throw new IllegalArgumentException("No email address found for " + principal.getId());
         }
-        val phone = (String) principal.getAttributes().get(this.phoneAttribute);
-        if (StringUtils.isBlank(phone)) {
+        if (!attributes.containsKey(this.phoneAttribute)) {
             throw new IllegalArgumentException("No phone number found for " + principal.getId());
         }
+
+        val email = attributes.get(this.mailAttribute).get(0).toString();
+        val phone = attributes.get(this.phoneAttribute).get(0).toString();
         return this.authyUsers.createUser(email, phone, this.countryCode);
     }
 }

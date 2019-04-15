@@ -62,8 +62,8 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         policy.setAllowedAttributes(CollectionUtils.wrap(mappedAttr));
 
         val p = mock(Principal.class);
-        val map = new HashMap<String, Object>();
-        map.put("ATTR1", VALUE_1);
+        val map = new HashMap<String, List<Object>>();
+        map.put("ATTR1", List.of(VALUE_1));
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn(PRINCIPAL_ID);
 
@@ -84,9 +84,9 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         policy.setAllowedAttributes(attrs);
 
         val p = mock(Principal.class);
-        val map = new HashMap<String, Object>();
-        map.put("ATTR1", VALUE_1);
-        map.put("ATTR2", VALUE_2);
+        val map = new HashMap<String, List<Object>>();
+        map.put("ATTR1", List.of(VALUE_1));
+        map.put("ATTR2", List.of(VALUE_2));
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn(PRINCIPAL_ID);
 
@@ -106,9 +106,9 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         policy.setAllowedAttributes(CollectionUtils.wrap(mappedAttr));
         val p = mock(Principal.class);
 
-        val map = new HashMap<String, Object>();
-        map.put(ATTR_1, VALUE_1);
-        map.put(ATTR_2, VALUE_2);
+        val map = new HashMap<String, List<Object>>();
+        map.put(ATTR_1, List.of(VALUE_1));
+        map.put(ATTR_2, List.of(VALUE_2));
         map.put(ATTR_3, Arrays.asList("v3", "v4"));
 
         when(p.getAttributes()).thenReturn(map);
@@ -131,9 +131,9 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         policy.setAllowedAttributes(Arrays.asList(ATTR_1, ATTR_3));
         val p = mock(Principal.class);
 
-        val map = new HashMap<String, Object>();
-        map.put(ATTR_1, VALUE_1);
-        map.put(ATTR_2, VALUE_2);
+        val map = new HashMap<String, List<Object>>();
+        map.put(ATTR_1, List.of(VALUE_1));
+        map.put(ATTR_2, List.of(VALUE_2));
         map.put(ATTR_3, Arrays.asList("v3", "v4"));
 
         when(p.getAttributes()).thenReturn(map);
@@ -156,9 +156,9 @@ public class RegisteredServiceAttributeReleasePolicyTests {
     public void verifyServiceAttributeDenyAllAttributes() {
         val policy = new DenyAllAttributeReleasePolicy();
         val p = mock(Principal.class);
-        val map = new HashMap<String, Object>();
-        map.put("ATTR1", VALUE_1);
-        map.put("ATTR2", VALUE_2);
+        val map = new HashMap<String, List<Object>>();
+        map.put("ATTR1", List.of(VALUE_1));
+        map.put("ATTR2", List.of(VALUE_2));
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn(PRINCIPAL_ID);
 
@@ -171,9 +171,9 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         val policy = new ReturnAllAttributeReleasePolicy();
         val p = mock(Principal.class);
 
-        val map = new HashMap<String, Object>();
-        map.put(ATTR_1, VALUE_1);
-        map.put(ATTR_2, VALUE_2);
+        val map = new HashMap<String, List<Object>>();
+        map.put(ATTR_1, List.of(VALUE_1));
+        map.put(ATTR_2, List.of(VALUE_2));
         map.put(ATTR_3, Arrays.asList("v3", "v4"));
 
         when(p.getAttributes()).thenReturn(map);
@@ -210,7 +210,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
 
         val repository = new CachingPrincipalAttributesRepository(TimeUnit.MILLISECONDS.name(), 100);
         repository.setAttributeRepositoryIds(Set.of(stub.getId()));
-        val p = new DefaultPrincipalFactory().createPrincipal("uid", Collections.singletonMap("mail", "final@example.com"));
+        val p = new DefaultPrincipalFactory().createPrincipal("uid", Collections.singletonMap("mail", List.of("final@example.com")));
 
         policy.setPrincipalAttributesRepository(repository);
 
@@ -241,7 +241,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
 
         ApplicationContextProvider.registerBeanIntoApplicationContext(this.applicationContext, dao, "attributeRepository");
         val repository = new CachingPrincipalAttributesRepository(TimeUnit.MILLISECONDS.name(), 0);
-        val p = new DefaultPrincipalFactory().createPrincipal("uid", Collections.singletonMap("mail", "final@example.com"));
+        val p = new DefaultPrincipalFactory().createPrincipal("uid", Collections.singletonMap("mail", List.of("final@example.com")));
 
         repository.setAttributeRepositoryIds(CollectionUtils.wrapSet("SampleStubRepository".toUpperCase()));
         policy.setPrincipalAttributesRepository(repository);

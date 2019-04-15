@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.apereo.cas.util.CollectionUtils;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,7 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.context.ApplicationContext;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -49,7 +51,7 @@ public class EduPersonTargetedIdAttributeReleasePolicy extends BaseSamlRegistere
     private String attribute;
 
     @Override
-    protected Map<String, Object> getAttributesForSamlRegisteredService(final Map<String, Object> attributes,
+    protected Map<String, List<Object>> getAttributesForSamlRegisteredService(final Map<String, List<Object>> attributes,
                                                                         final SamlRegisteredService service,
                                                                         final ApplicationContext applicationContext,
                                                                         final SamlRegisteredServiceCachingMetadataResolver resolver,
@@ -57,14 +59,14 @@ public class EduPersonTargetedIdAttributeReleasePolicy extends BaseSamlRegistere
                                                                         final EntityDescriptor entityDescriptor,
                                                                         final Principal principal,
                                                                         final Service selectedService) {
-        val releaseAttributes = new HashMap<String, Object>();
+        val releaseAttributes = new HashMap<String, List<Object>>();
         val persistentIdGenerator = new ShibbolethCompatiblePersistentIdGenerator(this.salt);
         persistentIdGenerator.setAttribute(this.attribute);
         val principalId = persistentIdGenerator.determinePrincipalIdFromAttributes(principal.getId(), attributes);
         LOGGER.debug("Selected principal id [{}] to generate [{}] for service [{}]",
             principalId, ATTRIBUTE_NAME_EDU_PERSON_TARGETED_ID, selectedService);
         val result = persistentIdGenerator.generate(principalId, selectedService);
-        releaseAttributes.put(ATTRIBUTE_NAME_EDU_PERSON_TARGETED_ID, result);
+        releaseAttributes.put(ATTRIBUTE_NAME_EDU_PERSON_TARGETED_ID, CollectionUtils.wrapList(result));
         LOGGER.debug("Calculated [{}] attribute as [{}}", ATTRIBUTE_NAME_EDU_PERSON_TARGETED_ID, result);
         return releaseAttributes;
     }

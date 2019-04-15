@@ -39,8 +39,8 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
     private List<String> allowedAttributes = new ArrayList<>();
 
     @Override
-    public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attrs,
-                                                     final RegisteredService registeredService, final Service selectedService) {
+    public Map<String, List<Object>> getAttributesInternal(final Principal principal, final Map<String, List<Object>> attrs,
+                                                           final RegisteredService registeredService, final Service selectedService) {
         return authorizeReleaseOfAllowedAttributes(principal, attrs, registeredService, selectedService);
     }
 
@@ -53,13 +53,13 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
      * @param selectedService   the selected service
      * @return the map
      */
-    protected Map<String, Object> authorizeReleaseOfAllowedAttributes(final Principal principal,
-                                                                      final Map<String, Object> attrs,
-                                                                      final RegisteredService registeredService,
-                                                                      final Service selectedService) {
-        val resolvedAttributes = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
+    protected Map<String, List<Object>> authorizeReleaseOfAllowedAttributes(final Principal principal,
+                                                                            final Map<String, List<Object>> attrs,
+                                                                            final RegisteredService registeredService,
+                                                                            final Service selectedService) {
+        val resolvedAttributes = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attrs);
-        val attributesToRelease = new HashMap<String, Object>();
+        val attributesToRelease = new HashMap<String, List<Object>>();
         getAllowedAttributes()
             .stream()
             .filter(resolvedAttributes::containsKey)

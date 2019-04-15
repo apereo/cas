@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -35,7 +36,7 @@ public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
     private final transient CipherExecutor<Serializable, String> consentCipherExecutor;
 
     @Override
-    public ConsentDecision update(final ConsentDecision consent, final Map<String, Object> attributes) {
+    public ConsentDecision update(final ConsentDecision consent, final Map<String, List<Object>> attributes) {
         val encodedNames = buildAndEncodeConsentAttributes(attributes);
         consent.setAttributes(encodedNames);
         consent.setCreatedDate(LocalDateTime.now());
@@ -46,7 +47,7 @@ public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
     public ConsentDecision build(final Service service,
                                  final RegisteredService registeredService,
                                  final String principalId,
-                                 final Map<String, Object> attributes) {
+                                 final Map<String, List<Object>> attributes) {
         val consent = new ConsentDecision();
         consent.setPrincipal(principalId);
         consent.setService(service.getId());
@@ -55,7 +56,7 @@ public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
 
     @Override
     public boolean doesAttributeReleaseRequireConsent(final ConsentDecision decision,
-                                                      final Map<String, Object> attributes) {
+                                                      final Map<String, List<Object>> attributes) {
         val consentAttributes = getConsentableAttributesFrom(decision);
 
         if (decision.getOptions() == ConsentReminderOptions.ATTRIBUTE_NAME) {
@@ -78,7 +79,7 @@ public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
     }
 
     @Override
-    public Map<String, Object> getConsentableAttributesFrom(final ConsentDecision decision) {
+    public Map<String, List<Object>> getConsentableAttributesFrom(final ConsentDecision decision) {
         try {
             val result = this.consentCipherExecutor.decode(decision.getAttributes());
             if (StringUtils.isBlank(result)) {
@@ -92,12 +93,12 @@ public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
         }
     }
 
-    private static String sha512ConsentAttributeNames(final Map<String, Object> attributes) {
+    private static String sha512ConsentAttributeNames(final Map<String, List<Object>> attributes) {
         val allNames = String.join("|", attributes.keySet());
         return DigestUtils.sha512(allNames);
     }
 
-    private static String sha512ConsentAttributeValues(final Map<String, Object> attributes) {
+    private static String sha512ConsentAttributeValues(final Map<String, List<Object>> attributes) {
         val allValues = attributes.values().stream()
             .map(CollectionUtils::toCollection)
             .map(c -> c.stream().map(Object::toString).collect(Collectors.joining()))
@@ -111,7 +112,7 @@ public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
      * @param attributes the attributes
      * @return the string
      */
-    protected String buildAndEncodeConsentAttributes(final Map<String, Object> attributes) {
+    protected String buildAndEncodeConsentAttributes(final Map<String, List<Object>> attributes) {
         try {
             val json = MAPPER.writer(new MinimalPrettyPrinter()).writeValueAsString(attributes);
             val base64 = EncodingUtils.encodeBase64(json);

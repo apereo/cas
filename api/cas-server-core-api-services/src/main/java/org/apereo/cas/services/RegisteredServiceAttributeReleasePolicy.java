@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.springframework.core.Ordered;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -74,7 +75,7 @@ public interface RegisteredServiceAttributeReleasePolicy extends Serializable, O
      * @param service         the service
      * @return the attributes
      */
-    Map<String, Object> getAttributes(Principal p, Service selectedService, RegisteredService service);
+    Map<String, List<Object>> getAttributes(Principal p, Service selectedService, RegisteredService service);
 
     /**
      * Gets the attributes that qualify for consent.
@@ -84,8 +85,8 @@ public interface RegisteredServiceAttributeReleasePolicy extends Serializable, O
      * @param service         the service
      * @return the attributes
      */
-    default Map<String, Object> getConsentableAttributes(final Principal p, final Service selectedService,
-                                                         final RegisteredService service) {
+    default Map<String, List<Object>> getConsentableAttributes(final Principal p, final Service selectedService,
+                                                               final RegisteredService service) {
         return getAttributes(p, selectedService, service);
     }
 

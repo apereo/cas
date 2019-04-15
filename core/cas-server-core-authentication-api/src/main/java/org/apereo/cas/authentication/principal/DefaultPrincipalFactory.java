@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.principal;
 
 import lombok.EqualsAndHashCode;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -15,7 +16,7 @@ public class DefaultPrincipalFactory implements PrincipalFactory {
     private static final long serialVersionUID = -3999695695604948495L;
 
     @Override
-    public Principal createPrincipal(final String id, final Map<String, Object> attributes) {
+    public Principal createPrincipal(final String id, final Map<String, List<Object>> attributes) {
         return new SimplePrincipal(id, attributes);
     }
 }

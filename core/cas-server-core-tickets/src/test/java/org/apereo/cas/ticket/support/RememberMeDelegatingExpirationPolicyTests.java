@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -56,7 +57,7 @@ public class RememberMeDelegatingExpirationPolicyTests {
     public void verifyTicketExpirationWithRememberMe() {
         val authentication = CoreAuthenticationTestUtils.getAuthentication(
             this.principalFactory.createPrincipal("test"),
-            Collections.singletonMap(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, true));
+            Collections.singletonMap(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, List.of(true)));
         val t = new TicketGrantingTicketImpl("111", authentication, this.expirationPolicy);
         assertFalse(t.isExpired());
         t.grantServiceTicket("55", RegisteredServiceTestUtils.getService(), this.expirationPolicy, false, true);
@@ -93,7 +94,7 @@ public class RememberMeDelegatingExpirationPolicyTests {
         val authentication = CoreAuthenticationTestUtils.getAuthentication(
             this.principalFactory.createPrincipal("test"),
             Collections.singletonMap(
-                RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, true));
+                RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, List.of(true)));
         val t = new TicketGrantingTicketImpl("111", authentication, this.expirationPolicy);
         assertEquals(REMEMBER_ME_TTL, expirationPolicy.getTimeToLive(t));
     }

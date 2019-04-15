@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -111,9 +112,9 @@ public class AbstractRegisteredServiceTests {
         prepareService();
         this.r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         val p = mock(Principal.class);
-        val map = new HashMap<String, Object>();
-        map.put(ATTR_1, "value1");
-        map.put(ATTR_2, "value2");
+        val map = new HashMap<String, List<Object>>();
+        map.put(ATTR_1, List.of("value1"));
+        map.put(ATTR_2, List.of("value2"));
         map.put(ATTR_3, Arrays.asList("v3", "v4"));
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
@@ -129,9 +130,9 @@ public class AbstractRegisteredServiceTests {
         policy.setAllowedAttributes(Arrays.asList(ATTR_1, ATTR_3));
         this.r.setAttributeReleasePolicy(policy);
         val p = mock(Principal.class);
-        val map = new HashMap<String, Object>();
-        map.put(ATTR_1, "value1");
-        map.put(ATTR_2, "value2");
+        val map = new HashMap<String, List<Object>>();
+        map.put(ATTR_1, List.of("value1"));
+        map.put(ATTR_2, List.of("value2"));
         map.put(ATTR_3, Arrays.asList("v3", "v4"));
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
@@ -151,9 +152,9 @@ public class AbstractRegisteredServiceTests {
         policy.setAllowedAttributes(CollectionUtils.wrap(mappedAttr));
         this.r.setAttributeReleasePolicy(policy);
         val p = mock(Principal.class);
-        val map = new HashMap<String, Object>();
-        map.put(ATTR_1, "value1");
-        map.put(ATTR_2, "value2");
+        val map = new HashMap<String, List<Object>>();
+        map.put(ATTR_1, List.of("value1"));
+        map.put(ATTR_2, List.of("value2"));
         map.put(ATTR_3, Arrays.asList("v3", "v4"));
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");

@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -55,7 +56,7 @@ public class ChainingPrincipalResolverTests {
         val resolver2 = mock(PrincipalResolver.class);
         when(resolver2.supports(any(Credential.class))).thenReturn(true);
         when(resolver2.resolve(any(Credential.class), any(Optional.class), any(Optional.class)))
-            .thenReturn(principalFactory.createPrincipal("output", Collections.singletonMap("mail", "final@example.com")));
+            .thenReturn(principalFactory.createPrincipal("output", Collections.singletonMap("mail", List.of("final@example.com"))));
 
         val resolver = new ChainingPrincipalResolver();
         resolver.setChain(Arrays.asList(resolver1, resolver2));

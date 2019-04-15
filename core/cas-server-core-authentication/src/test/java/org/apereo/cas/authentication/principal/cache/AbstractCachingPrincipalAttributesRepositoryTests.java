@@ -86,7 +86,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
             repoAttrs = repository.getAttributes(this.principal, svc);
             assertEquals(1, repoAttrs.size());
             assertFalse(repoAttrs.containsKey("uid"));
-            assertEquals("final@school.com", repoAttrs.get(MAIL));
+            assertEquals("final@school.com", repoAttrs.get(MAIL).get(0));
         }
     }
 
@@ -111,7 +111,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
             repository.setAttributeRepositoryIds(Collections.singleton("Stub"));
             val repositoryAttributes = repository.getAttributes(this.principal, svc);
             assertTrue(repositoryAttributes.containsKey(MAIL));
-            assertEquals("final@school.com", repositoryAttributes.get(MAIL).toString());
+            assertEquals("final@school.com", repositoryAttributes.get(MAIL).get(0).toString());
         }
     }
 
@@ -124,7 +124,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
             repository.setMergingStrategy(AttributeMergingStrategy.REPLACE);
             val repositoryAttributes = repository.getAttributes(this.principal, svc);
             assertTrue(repositoryAttributes.containsKey(MAIL));
-            assertEquals("final@example.com", repositoryAttributes.get(MAIL).toString());
+            assertEquals("final@example.com", repositoryAttributes.get(MAIL).get(0).toString());
         }
     }
 
@@ -136,10 +136,8 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
             repository.setMergingStrategy(AttributeMergingStrategy.MULTIVALUED);
             val repoAttr = repository.getAttributes(this.principal, CoreAuthenticationTestUtils.getRegisteredService());
             val mailAttr = repoAttr.get(MAIL);
-            assertTrue(mailAttr instanceof List);
-            val values = (List) mailAttr;
-            assertTrue(values.contains("final@example.com"));
-            assertTrue(values.contains("final@school.com"));
+            assertTrue(mailAttr.contains("final@example.com"));
+            assertTrue(mailAttr.contains("final@school.com"));
         }
     }
 }

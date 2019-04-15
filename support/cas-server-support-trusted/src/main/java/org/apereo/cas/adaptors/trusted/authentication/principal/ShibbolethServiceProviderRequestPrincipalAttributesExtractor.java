@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -21,7 +22,7 @@ public class ShibbolethServiceProviderRequestPrincipalAttributesExtractor implem
     private static final String PREFIX = "AJP_";
 
     @Override
-    public Map<String, Object> getAttributes(final HttpServletRequest request) {
+    public Map<String, List<Object>> getAttributes(final HttpServletRequest request) {
         return Collections.list(request
             .getHeaderNames())
             .stream()

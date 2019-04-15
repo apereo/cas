@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.claims.mapping.OidcAttributeToScopeClaimMapper;
 import org.apereo.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -18,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -49,16 +51,16 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
     }
 
     @Override
-    public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attributes,
-                                                     final RegisteredService registeredService, final Service selectedService) {
+    public Map<String, List<Object>> getAttributesInternal(final Principal principal, final Map<String, List<Object>> attributes,
+                                                           final RegisteredService registeredService, final Service selectedService) {
         val applicationContext = ApplicationContextProvider.getApplicationContext();
         if (applicationContext == null) {
             LOGGER.warn("Could not locate the application context to process attributes");
             return new HashMap<>();
         }
-        val resolvedAttributes = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
+        val resolvedAttributes = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attributes);
-        val attributesToRelease = Maps.<String, Object>newHashMapWithExpectedSize(attributes.size());
+        val attributesToRelease = Maps.<String, List<Object>>newHashMapWithExpectedSize(attributes.size());
         LOGGER.debug("Attempting to map and filter claims based on resolved attributes [{}]", resolvedAttributes);
         val properties = applicationContext.getBean(CasConfigurationProperties.class);
         val supportedClaims = properties.getAuthn().getOidc().getClaims();
@@ -70,11 +72,11 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
         allowedClaims.stream()
             .map(claim -> mapClaimToAttribute(claim, resolvedAttributes))
             .filter(p -> p.getValue() != null)
-            .forEach(p -> attributesToRelease.put(p.getKey(), p.getValue()));
+            .forEach(p -> attributesToRelease.put(p.getKey(), CollectionUtils.toCollection(p.getValue(), ArrayList.class)));
         return attributesToRelease;
     }
 
-    private static Pair<String, Object> mapClaimToAttribute(final String claim, final Map<String, Object> resolvedAttributes) {
+    private static Pair<String, Object> mapClaimToAttribute(final String claim, final Map<String, List<Object>> resolvedAttributes) {
         val applicationContext = ApplicationContextProvider.getApplicationContext();
         val attributeToScopeClaimMapper =
             applicationContext.getBean("oidcAttributeToScopeClaimMapper", OidcAttributeToScopeClaimMapper.class);

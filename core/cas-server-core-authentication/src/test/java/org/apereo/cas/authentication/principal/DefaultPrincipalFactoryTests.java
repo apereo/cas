@@ -4,6 +4,7 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,7 +29,7 @@ public class DefaultPrincipalFactoryTests {
     @Test
     public void checkCreatingSimplePrincipalWithAttributes() {
         val f = new DefaultPrincipalFactory();
-        val p = f.createPrincipal(UID, Collections.singletonMap("mail", "final@example.com"));
+        val p = f.createPrincipal(UID, Collections.singletonMap("mail", List.of("final@example.com")));
         assertEquals(UID, p.getId());
         assertEquals(1, p.getAttributes().size());
         assertTrue(p.getAttributes().containsKey("mail"));

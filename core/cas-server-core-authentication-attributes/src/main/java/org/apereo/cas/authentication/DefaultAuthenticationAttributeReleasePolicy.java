@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,17 +38,17 @@ public class DefaultAuthenticationAttributeReleasePolicy implements Authenticati
 
 
     @Override
-    public Map<String, Object> getAuthenticationAttributesForRelease(final Authentication authentication,
-                                                                     final Assertion assertion,
-                                                                     final Map<String, Object> model,
-                                                                     final RegisteredService service) {
+    public Map<String, List<Object>> getAuthenticationAttributesForRelease(final Authentication authentication,
+                                                                           final Assertion assertion,
+                                                                           final Map<String, Object> model,
+                                                                           final RegisteredService service) {
 
         if (!service.getAttributeReleasePolicy().isAuthorizedToReleaseAuthenticationAttributes()) {
             LOGGER.debug("Attribute release policy for service [{}] is configured to never release any attributes", service);
             return new LinkedHashMap<>(0);
         }
 
-        val attrs = new LinkedHashMap<String, Object>(authentication.getAttributes());
+        val attrs = new LinkedHashMap<String, List<Object>>(authentication.getAttributes());
         attrs.keySet().removeAll(neverReleaseAttributes);
 
         if (onlyReleaseAttributes != null && !onlyReleaseAttributes.isEmpty()) {
@@ -101,7 +102,7 @@ public class DefaultAuthenticationAttributeReleasePolicy implements Authenticati
      * @param authentication the authentication
      * @param service        the service
      */
-    protected void decideIfCredentialPasswordShouldBeReleasedAsAttribute(final Map<String, Object> attributes, final Authentication authentication,
+    protected void decideIfCredentialPasswordShouldBeReleasedAsAttribute(final Map<String, List<Object>> attributes, final Authentication authentication,
                                                                          final RegisteredService service) {
         val policy = service.getAttributeReleasePolicy();
         val isAuthorized = policy != null && policy.isAuthorizedToReleaseCredentialPassword();
@@ -122,7 +123,7 @@ public class DefaultAuthenticationAttributeReleasePolicy implements Authenticati
      * @param model      the model
      * @param service    the service
      */
-    protected void decideIfProxyGrantingTicketShouldBeReleasedAsAttribute(final Map<String, Object> attributes,
+    protected void decideIfProxyGrantingTicketShouldBeReleasedAsAttribute(final Map<String, List<Object>> attributes,
                                                                           final Map<String, Object> model, final RegisteredService service) {
         val policy = service.getAttributeReleasePolicy();
         val isAuthorized = policy != null && policy.isAuthorizedToReleaseProxyGrantingTicket();
@@ -144,7 +145,7 @@ public class DefaultAuthenticationAttributeReleasePolicy implements Authenticati
      * @param service                  the service
      * @param doesAttributePolicyAllow does attribute policy allow release of this attribute?
      */
-    protected void decideAttributeReleaseBasedOnServiceAttributePolicy(final Map<String, Object> attributes, final String attributeValue,
+    protected void decideAttributeReleaseBasedOnServiceAttributePolicy(final Map<String, List<Object>> attributes, final String attributeValue,
                                                                        final String attributeName, final RegisteredService service,
                                                                        final boolean doesAttributePolicyAllow) {
         if (StringUtils.isNotBlank(attributeValue)) {

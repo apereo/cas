@@ -20,7 +20,7 @@ import org.apereo.services.persondir.support.StubPersonAttributeDao;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.ZonedDateTime;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -117,7 +117,7 @@ public class CoreAuthenticationTestUtils {
         return getPrincipal(CONST_USERNAME);
     }
 
-    public static Principal getPrincipal(final Map<String, Object> attributes) {
+    public static Principal getPrincipal(final Map<String, List<Object>> attributes) {
         return getPrincipal(CONST_USERNAME, attributes);
     }
 
@@ -126,7 +126,7 @@ public class CoreAuthenticationTestUtils {
         return getPrincipal(name, (Map) backingMap);
     }
 
-    public static Principal getPrincipal(final String name, final Map<String, Object> attributes) {
+    public static Principal getPrincipal(final String name, final Map<String, List<Object>> attributes) {
         return PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(name, attributes);
     }
 
@@ -138,7 +138,7 @@ public class CoreAuthenticationTestUtils {
         return getAuthentication(getPrincipal(name));
     }
 
-    public static Authentication getAuthentication(final String name, final Map<String, Object> attributes) {
+    public static Authentication getAuthentication(final String name, final Map<String, List<Object>> attributes) {
         return getAuthentication(getPrincipal(name), attributes, null);
     }
 
@@ -150,11 +150,11 @@ public class CoreAuthenticationTestUtils {
         return getAuthentication(principal, new HashMap<>(0));
     }
 
-    public static Authentication getAuthentication(final Principal principal, final Map<String, Object> attributes) {
+    public static Authentication getAuthentication(final Principal principal, final Map<String, List<Object>> attributes) {
         return getAuthentication(principal, attributes, null);
     }
 
-    public static Authentication getAuthentication(final Principal principal, final Map<String, Object> attributes, final ZonedDateTime authnDate) {
+    public static Authentication getAuthentication(final Principal principal, final Map<String, List<Object>> attributes, final ZonedDateTime authnDate) {
         val handler = new SimpleTestUsernamePasswordAuthenticationHandler();
         val meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
         return new DefaultAuthenticationBuilder(principal)
@@ -222,8 +222,8 @@ public class CoreAuthenticationTestUtils {
     }
 
     public static Principal mockPrincipal(final String attrName, final String... attrValues) {
-        return PRINCIPAL_FACTORY.createPrincipal("user",
-            Collections.singletonMap(attrName, attrValues.length == 1 ? attrValues[0] : Arrays.asList(attrValues)));
+        val attributes = (Map) Collections.singletonMap(attrName, CollectionUtils.toCollection(attrValues, ArrayList.class));
+        return PRINCIPAL_FACTORY.createPrincipal("user", attributes);
     }
 
     public static AuthenticationBuilder getAuthenticationBuilder() {

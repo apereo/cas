@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,8 +34,7 @@ public class SurrogatePrincipal implements Principal {
     }
 
     @Override
-    public Map<String, Object> getAttributes() {
+    public Map<String, List<Object>> getAttributes() {
         return surrogate.getAttributes();
     }
-
 }

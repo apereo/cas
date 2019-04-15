@@ -3,6 +3,7 @@ package org.apereo.cas.otp.repository.token;
 import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.time.ZonedDateTime;
 
@@ -22,8 +23,9 @@ public class OneTimeTokenRepositoryCleaner {
      */
     @Synchronized
     public void clean() {
-        LOGGER.debug("Starting to clean previously used authenticator tokens from [{}] at [{}]", this.tokenRepository, ZonedDateTime.now());
+        val now = ZonedDateTime.now();
+        LOGGER.debug("Starting to clean previously used authenticator tokens from [{}] at [{}]", this.tokenRepository, now);
         tokenRepository.clean();
-        LOGGER.info("Finished cleaning authenticator tokens at [{}]", ZonedDateTime.now());
+        LOGGER.info("Finished cleaning authenticator tokens at [{}]", now);
     }
 }

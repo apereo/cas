@@ -11,6 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.http.HttpStatus;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -29,7 +31,7 @@ public class AuthyClientInstanceTests {
         val client = new AuthyClientInstance("apikey", "https://api.authy.com",
             "mail", "phone", "1");
         val user = client.getOrCreateUser(CoreAuthenticationTestUtils.getPrincipal("casuser",
-            CollectionUtils.wrap("mail", "casuser@example.org", "phone", "123-456-6789")));
+            CollectionUtils.wrap("mail", List.of("casuser@example.org"), "phone", List.of("123-456-6789"))));
         assertNotNull(user);
         assertTrue(user.getId() <= 0);
         assertTrue(HttpStatus.valueOf(user.getStatus()).isError());

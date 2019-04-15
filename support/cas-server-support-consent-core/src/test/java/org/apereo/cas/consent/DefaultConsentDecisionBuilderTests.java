@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -44,15 +46,18 @@ public class DefaultConsentDecisionBuilderTests {
     @Test
     public void verifyAttributesRequireConsent() {
         val consentDecision = getConsentDecision();
-        assertTrue(consentDecisionBuilder.doesAttributeReleaseRequireConsent(consentDecision, CollectionUtils.wrap("attr2", "value2")));
-        assertFalse(consentDecisionBuilder.doesAttributeReleaseRequireConsent(consentDecision, CollectionUtils.wrap("attr1", "something")));
+        assertTrue(consentDecisionBuilder.doesAttributeReleaseRequireConsent(consentDecision,
+            CollectionUtils.wrap("attr2", List.of("value2"))));
+        assertFalse(consentDecisionBuilder.doesAttributeReleaseRequireConsent(consentDecision,
+            CollectionUtils.wrap("attr1", List.of("something"))));
     }
 
     @Test
     public void verifyAttributeValuesRequireConsent() {
         val consentDecision = getConsentDecision();
         consentDecision.setOptions(ConsentReminderOptions.ATTRIBUTE_VALUE);
-        assertTrue(consentDecisionBuilder.doesAttributeReleaseRequireConsent(consentDecision, CollectionUtils.wrap("attr1", "value2")));
+        assertTrue(consentDecisionBuilder.doesAttributeReleaseRequireConsent(consentDecision,
+            CollectionUtils.wrap("attr1", List.of("value2"))));
     }
 
     @Test
@@ -60,13 +65,13 @@ public class DefaultConsentDecisionBuilderTests {
         val consentDecision = getConsentDecision();
         val attrs = consentDecisionBuilder.getConsentableAttributesFrom(consentDecision);
         assertTrue(attrs.containsKey("attr1"));
-        assertEquals("value1", attrs.get("attr1"));
+        assertEquals("value1", attrs.get("attr1").get(0));
     }
 
     private ConsentDecision getConsentDecision() {
         return consentDecisionBuilder.build(RegisteredServiceTestUtils.getService(),
             RegisteredServiceTestUtils.getRegisteredService("test"),
-            "casuser", CollectionUtils.wrap("attr1", "value1"));
+            "casuser", CollectionUtils.wrap("attr1", List.of("value1")));
     }
 
 }

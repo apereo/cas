@@ -35,6 +35,7 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -83,7 +84,7 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
         return false;
     }
 
-    public void verifyRepositoryAction(final String actualPrincipalId, final Map<String, Object> profileAttributes) {
+    public void verifyRepositoryAction(final String actualPrincipalId, final Map<String, List<Object>> profileAttributes) {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));

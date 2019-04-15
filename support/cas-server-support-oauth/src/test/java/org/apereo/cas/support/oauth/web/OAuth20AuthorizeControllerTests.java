@@ -10,6 +10,7 @@ import org.apereo.cas.ticket.code.OAuthCode;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.utils.URIBuilder;
 import org.junit.jupiter.api.Test;
 import org.pac4j.cas.profile.CasProfile;
 import org.pac4j.core.context.Pac4jConstants;
@@ -189,16 +190,21 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         assertTrue(view instanceof RedirectView);
         val redirectView = (RedirectView) view;
         val redirectUrl = redirectView.getUrl();
-        assertTrue(redirectUrl.startsWith(REDIRECT_URI + "?code=OC-"));
+        assertNotNull(redirectUrl);
+        assertTrue(redirectUrl.startsWith(REDIRECT_URI + "?code=" + OAuthCode.PREFIX));
 
-        val code = StringUtils.substringAfter(redirectUrl, "?code=");
+        val builder = new URIBuilder(redirectUrl);
+        val code = builder.getQueryParams()
+            .stream()
+            .filter(a -> a.getName().equalsIgnoreCase("code"))
+            .findFirst().get().getValue();
         val oAuthCode = (OAuthCode) this.ticketRegistry.getTicket(code);
         assertNotNull(oAuthCode);
         val principal = oAuthCode.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
         val principalAttributes = principal.getAttributes();
         assertEquals(attributes.size(), principalAttributes.size());
-        assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE));
+        assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).get(0));
     }
 
     @Test
@@ -234,6 +240,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         assertTrue(view instanceof RedirectView);
         val redirectView = (RedirectView) view;
         val redirectUrl = redirectView.getUrl();
+        assertNotNull(redirectUrl);
         assertTrue(redirectUrl.startsWith(REDIRECT_URI + "#access_token="));
 
         val code = StringUtils.substringBetween(redirectUrl, "#access_token=", "&token_type=bearer");
@@ -243,7 +250,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         assertEquals(ID, principal.getId());
         val principalAttributes = principal.getAttributes();
         assertEquals(attributes.size(), principalAttributes.size());
-        assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE));
+        assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).get(0));
     }
 
     @Test
@@ -280,16 +287,24 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         assertTrue(view instanceof RedirectView);
         val redirectView = (RedirectView) view;
         val redirectUrl = redirectView.getUrl();
-        assertTrue(redirectUrl.startsWith(REDIRECT_URI + "?code=OC-"));
+        assertNotNull(redirectUrl);
+        assertTrue(redirectUrl.startsWith(REDIRECT_URI + "?code=" + OAuthCode.PREFIX));
 
-        val code = StringUtils.substringBefore(StringUtils.substringAfter(redirectUrl, "?code="), "&state=");
+        val builder = new URIBuilder(redirectUrl);
+        val code = builder.getQueryParams()
+            .stream()
+            .filter(a -> a.getName().equalsIgnoreCase("code"))
+            .findFirst()
+            .get()
+            .getValue();
+
         val oAuthCode = (OAuthCode) this.ticketRegistry.getTicket(code);
         assertNotNull(oAuthCode);
         val principal = oAuthCode.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
         val principalAttributes = principal.getAttributes();
         assertEquals(attributes.size(), principalAttributes.size());
-        assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE));
+        assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).get(0));
     }
 
     @Test
@@ -325,18 +340,21 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         val view = modelAndView.getView();
         assertTrue(view instanceof RedirectView);
         val redirectView = (RedirectView) view;
-        val redirectUrl = redirectView.getUrl();
+        var redirectUrl = redirectView.getUrl();
+        assertNotNull(redirectUrl);
+        redirectUrl += "&";
         assertTrue(redirectUrl.startsWith(REDIRECT_URI + "#access_token="));
-        assertTrue(redirectUrl.contains('&' + OAuth20Constants.STATE + '=' + STATE));
 
-        val code = StringUtils.substringBetween(redirectUrl, "#access_token=", "&token_type=bearer");
+        val code = StringUtils.substringBetween(redirectUrl, "#access_token=", "&");
+        val state = StringUtils.substringBetween(redirectUrl, "state=", "&");
         val accessToken = (AccessToken) this.ticketRegistry.getTicket(code);
         assertNotNull(accessToken);
+        assertEquals(state, OAuth20Constants.STATE);
         val principal = accessToken.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
         val principalAttributes = principal.getAttributes();
         assertEquals(attributes.size(), principalAttributes.size());
-        assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE));
+        assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).get(0));
     }
 
     @Test
@@ -373,16 +391,23 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         assertTrue(view instanceof RedirectView);
         val redirectView = (RedirectView) view;
         val redirectUrl = redirectView.getUrl();
+        assertNotNull(redirectUrl);
         assertTrue(redirectUrl.startsWith(REDIRECT_URI + "?code=OC-"));
 
-        val code = StringUtils.substringAfter(redirectUrl, "?code=");
+        val builder = new URIBuilder(redirectUrl);
+        val code = builder.getQueryParams()
+            .stream()
+            .filter(a -> a.getName().equalsIgnoreCase("code"))
+            .findFirst()
+            .get()
+            .getValue();
         val oAuthCode = (OAuthCode) this.ticketRegistry.getTicket(code);
         assertNotNull(oAuthCode);
         val principal = oAuthCode.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
         val principalAttributes = principal.getAttributes();
         assertEquals(attributes.size(), principalAttributes.size());
-        assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE));
+        assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).get(0));
     }
 
     @Test
@@ -419,6 +444,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         assertTrue(view instanceof RedirectView);
         val redirectView = (RedirectView) view;
         val redirectUrl = redirectView.getUrl();
+        assertNotNull(redirectUrl);
         assertTrue(redirectUrl.startsWith(REDIRECT_URI + "#access_token="));
 
         val code = StringUtils.substringBetween(redirectUrl, "#access_token=", "&token_type=bearer");
@@ -428,7 +454,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         assertEquals(ID, principal.getId());
         val principalAttributes = principal.getAttributes();
         assertEquals(attributes.size(), principalAttributes.size());
-        assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE));
+        assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).get(0));
     }
 
     @Test

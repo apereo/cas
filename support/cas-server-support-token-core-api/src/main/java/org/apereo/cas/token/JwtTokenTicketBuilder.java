@@ -1,5 +1,6 @@
 package org.apereo.cas.token;
 
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -13,8 +14,10 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jasig.cas.client.validation.TicketValidator;
 
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * This is {@link JwtTokenTicketBuilder}.
@@ -34,20 +37,21 @@ public class JwtTokenTicketBuilder implements TokenTicketBuilder {
     @SneakyThrows
     public String build(final String serviceTicketId, final Service service) {
         val assertion = this.ticketValidator.validate(serviceTicketId, service.getId());
-        val attributes = new HashMap<String, Object>(assertion.getAttributes());
-        attributes.putAll(assertion.getPrincipal().getAttributes());
+        val attributes = CoreAuthenticationUtils.convertAttributeValuesToMultiValuedObjects(assertion.getAttributes());
+        attributes.putAll(CoreAuthenticationUtils.convertAttributeValuesToMultiValuedObjects(assertion.getPrincipal().getAttributes()));
 
         val validUntilDate = FunctionUtils.doIf(
             assertion.getValidUntilDate() != null,
             assertion::getValidUntilDate,
             () -> {
-                val dt = ZonedDateTime.now().plusSeconds(expirationPolicy.getTimeToLive());
+                val dt = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(expirationPolicy.getTimeToLive());
                 return DateTimeUtils.dateOf(dt);
             })
             .get();
 
         val builder = JwtBuilder.JwtRequest.builder();
-        val request = builder.serviceAudience(service.getId())
+        val request = builder
+            .serviceAudience(service.getId())
             .issueDate(assertion.getAuthenticationDate())
             .jwtId(serviceTicketId)
             .subject(assertion.getPrincipal().getName())
@@ -61,10 +65,10 @@ public class JwtTokenTicketBuilder implements TokenTicketBuilder {
     @SneakyThrows
     public String build(final TicketGrantingTicket ticketGrantingTicket) {
         val authentication = ticketGrantingTicket.getAuthentication();
-        val attributes = new HashMap<String, Object>(authentication.getAttributes());
+        val attributes = new HashMap<String, List<Object>>(authentication.getAttributes());
         attributes.putAll(authentication.getPrincipal().getAttributes());
 
-        val dt = ZonedDateTime.now().plusSeconds(expirationPolicy.getTimeToLive());
+        val dt = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(expirationPolicy.getTimeToLive());
         val validUntilDate = DateTimeUtils.dateOf(dt);
 
         val builder = JwtBuilder.JwtRequest.builder();

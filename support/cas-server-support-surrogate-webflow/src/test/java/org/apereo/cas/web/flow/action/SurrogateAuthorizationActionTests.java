@@ -20,6 +20,7 @@ import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -59,8 +60,8 @@ public class SurrogateAuthorizationActionTests extends BaseSurrogateInitialAuthe
         val context = new MockRequestContext();
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
 
-        val attributes = new LinkedHashMap<String, Object>();
-        attributes.put(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, true);
+        val attributes = new LinkedHashMap<String, List<Object>>();
+        attributes.put(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, List.of(true));
         attributes.putAll(CoreAuthenticationTestUtils.getAttributeRepository().getBackingMap());
 
         val p = CoreAuthenticationTestUtils.getPrincipal("casuser", attributes);

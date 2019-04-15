@@ -8,8 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.Map;
-
 /**
  * Null principal implementation that allows us to construct {@link Authentication}s in the event that no
  * principal is resolved during the authentication process.
@@ -35,9 +33,7 @@ public class NullPrincipal implements Principal {
      * The singleton instance.
      **/
     private static NullPrincipal INSTANCE;
-
-    private Map<String, Object> attributes;
-
+    
     /**
      * Returns the single instance of this class. Will create
      * one if none exists.

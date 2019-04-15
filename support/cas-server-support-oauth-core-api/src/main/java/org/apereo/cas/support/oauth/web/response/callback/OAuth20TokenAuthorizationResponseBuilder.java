@@ -71,8 +71,8 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
                                                         final RefreshToken refreshToken,
                                                         final J2EContext context) throws Exception {
         val attributes = holder.getAuthentication().getAttributes();
-        val state = attributes.get(OAuth20Constants.STATE).toString();
-        val nonce = attributes.get(OAuth20Constants.NONCE).toString();
+        val state = attributes.get(OAuth20Constants.STATE).get(0).toString();
+        val nonce = attributes.get(OAuth20Constants.NONCE).get(0).toString();
 
         val builder = new URIBuilder(redirectUri);
         val stringBuilder = new StringBuilder();

@@ -9,6 +9,8 @@ import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.AssertionImpl;
 import org.jasig.cas.client.validation.TicketValidator;
 
+import java.util.Map;
+
 /**
  * This is a ticket validator for pac4j client that uses CAS back channels to validate ST.
  *
@@ -24,7 +26,7 @@ public class CasServerApiBasedTicketValidator implements TicketValidator {
         val assertion = centralAuthenticationService.validateServiceTicket(ticketId, () -> service);
         val authn = assertion.getPrimaryAuthentication();
         val principal = authn.getPrincipal();
-        val attrPrincipal = new AttributePrincipalImpl(principal.getId(), principal.getAttributes());
-        return new AssertionImpl(attrPrincipal, authn.getAttributes());
+        val attrPrincipal = new AttributePrincipalImpl(principal.getId(), (Map) principal.getAttributes());
+        return new AssertionImpl(attrPrincipal, (Map) authn.getAttributes());
     }
 }

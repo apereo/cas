@@ -8,6 +8,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.impl.auth.DigestScheme;
 
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
 /**
@@ -25,7 +26,7 @@ public class DigestAuthenticationUtils {
      * @return the nonce
      */
     public static String createNonce() {
-        val fmtDate = ZonedDateTime.now().toString();
+        val fmtDate = ZonedDateTime.now(ZoneOffset.UTC).toString();
         val rand = RandomUtils.getNativeInstance();
         val randomInt = rand.nextInt();
         return DigestUtils.md5Hex(fmtDate + randomInt);

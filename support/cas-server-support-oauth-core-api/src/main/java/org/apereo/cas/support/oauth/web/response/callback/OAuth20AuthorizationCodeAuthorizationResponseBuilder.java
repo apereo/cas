@@ -67,8 +67,8 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAu
     protected ModelAndView buildCallbackViewViaRedirectUri(final J2EContext context, final String clientId,
                                                            final Authentication authentication, final OAuthCode code) {
         val attributes = authentication.getAttributes();
-        val state = attributes.get(OAuth20Constants.STATE).toString();
-        val nonce = attributes.get(OAuth20Constants.NONCE).toString();
+        val state = attributes.get(OAuth20Constants.STATE).get(0).toString();
+        val nonce = attributes.get(OAuth20Constants.NONCE).get(0).toString();
 
         val redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI);
         LOGGER.debug("Authorize request verification successful for client [{}] with redirect uri [{}]", clientId, redirectUri);

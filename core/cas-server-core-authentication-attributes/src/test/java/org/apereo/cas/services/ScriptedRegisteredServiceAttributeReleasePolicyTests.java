@@ -6,6 +6,7 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,7 +23,7 @@ public class ScriptedRegisteredServiceAttributeReleasePolicyTests {
         val p = new ScriptedRegisteredServiceAttributeReleasePolicy();
         p.setScriptFile("groovy { return attributes }");
         val principal = CoreAttributesTestUtils.getPrincipal("cas",
-            Collections.singletonMap("attribute", "value"));
+            Collections.singletonMap("attribute", List.of("value")));
         val attrs = p.getAttributes(principal,
             CoreAttributesTestUtils.getService(),
             CoreAttributesTestUtils.getRegisteredService());

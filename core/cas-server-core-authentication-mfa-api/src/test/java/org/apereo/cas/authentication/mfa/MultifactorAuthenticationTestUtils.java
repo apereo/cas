@@ -13,6 +13,7 @@ import lombok.experimental.UtilityClass;
 import lombok.val;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.mockito.Mockito.*;
@@ -36,7 +37,7 @@ public class MultifactorAuthenticationTestUtils {
         return getPrincipal(id, new HashMap<>());
     }
 
-    public static Principal getPrincipal(final String id, final Map<String, Object> attributes) {
+    public static Principal getPrincipal(final String id, final Map<String, List<Object>> attributes) {
         val principal = mock(Principal.class);
         when(principal.getAttributes()).thenReturn(attributes);
         when(principal.getId()).thenReturn(id);
@@ -51,7 +52,7 @@ public class MultifactorAuthenticationTestUtils {
         return getAuthentication(principal, new HashMap<>());
     }
 
-    public static Authentication getAuthentication(final Principal principal, final Map<String, Object> attributes) {
+    public static Authentication getAuthentication(final Principal principal, final Map<String, List<Object>> attributes) {
         val authentication = mock(Authentication.class);
         when(authentication.getAttributes()).thenReturn(attributes);
         when(authentication.getPrincipal()).thenReturn(principal);

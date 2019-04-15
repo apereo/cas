@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredService;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,7 +24,7 @@ public interface AuthenticationAttributeReleasePolicy {
      * @param service        the service
      * @return The attributes to be released
      */
-    Map<String, Object> getAuthenticationAttributesForRelease(Authentication authentication, Assertion assertion, Map<String, Object> model, RegisteredService service);
+    Map<String, List<Object>> getAuthenticationAttributesForRelease(Authentication authentication, Assertion assertion, Map<String, Object> model, RegisteredService service);
 
     /**
      * NoOp authentication attribute release policy.

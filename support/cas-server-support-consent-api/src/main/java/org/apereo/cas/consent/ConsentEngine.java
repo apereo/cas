@@ -6,6 +6,7 @@ import org.apereo.cas.services.RegisteredService;
 
 import java.io.Serializable;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -54,9 +55,9 @@ public interface ConsentEngine extends Serializable {
      * @param registeredService the registered service
      * @return the consentable attributes
      */
-    Map<String, Object> resolveConsentableAttributesFrom(Authentication authentication,
-                                                         Service service,
-                                                         RegisteredService registeredService);
+    Map<String, List<Object>> resolveConsentableAttributesFrom(Authentication authentication,
+                                                               Service service,
+                                                               RegisteredService registeredService);
 
     /**
      * Gets consentable attributes from an existing consent decision.
@@ -66,7 +67,7 @@ public interface ConsentEngine extends Serializable {
      * @param decision the decision
      * @return the consentable attributes
      */
-    Map<String, Object> resolveConsentableAttributesFrom(ConsentDecision decision);
+    Map<String, List<Object>> resolveConsentableAttributesFrom(ConsentDecision decision);
 
     /**
      * Is consent required?

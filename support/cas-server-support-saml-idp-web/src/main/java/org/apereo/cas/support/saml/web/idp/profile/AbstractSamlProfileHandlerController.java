@@ -47,8 +47,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -157,15 +159,15 @@ public abstract class AbstractSamlProfileHandlerController {
     protected Assertion buildCasAssertion(final Authentication authentication,
                                           final Service service,
                                           final RegisteredService registeredService,
-                                          final Map<String, Object> attributesToCombine) {
+                                          final Map<String, List<Object>> attributesToCombine) {
         val attributes = registeredService.getAttributeReleasePolicy().getAttributes(authentication.getPrincipal(), service, registeredService);
         val principalId = registeredService.getUsernameAttributeProvider().resolveUsername(authentication.getPrincipal(), service, registeredService);
-        val principal = new AttributePrincipalImpl(principalId, attributes);
+        val principal = new AttributePrincipalImpl(principalId, (Map) attributes);
         val authnAttrs = new LinkedHashMap<>(authentication.getAttributes());
         authnAttrs.putAll(attributesToCombine);
         return new AssertionImpl(principal, DateTimeUtils.dateOf(authentication.getAuthenticationDate()),
             null, DateTimeUtils.dateOf(authentication.getAuthenticationDate()),
-            authnAttrs);
+            (Map) authnAttrs);
     }
 
     /**
@@ -180,8 +182,8 @@ public abstract class AbstractSamlProfileHandlerController {
                                           final RegisteredService registeredService,
                                           final Map<String, Object> attributes) {
         val p = new AttributePrincipalImpl(principal, attributes);
-        return new AssertionImpl(p, DateTimeUtils.dateOf(ZonedDateTime.now()),
-            null, DateTimeUtils.dateOf(ZonedDateTime.now()), attributes);
+        return new AssertionImpl(p, DateTimeUtils.dateOf(ZonedDateTime.now(ZoneOffset.UTC)),
+            null, DateTimeUtils.dateOf(ZonedDateTime.now(ZoneOffset.UTC)), attributes);
     }
 
 

@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -114,11 +115,11 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
         return principal;
     }
 
-    private Map<String, Object> filterAttributesByScope(final Collection<String> scopes,
-                                                        final Principal principal,
-                                                        final Service service,
-                                                        final RegisteredService registeredService,
-                                                        final AccessToken accessToken) {
+    private Map<String, List<Object>> filterAttributesByScope(final Collection<String> scopes,
+                                                              final Principal principal,
+                                                              final Service service,
+                                                              final RegisteredService registeredService,
+                                                              final AccessToken accessToken) {
         if (scopes.isEmpty()) {
             val attributes = principal.getAttributes();
             LOGGER.trace("No defined scopes are available to instruct attribute release policies for [{}]. "
@@ -127,7 +128,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
             return attributes;
         }
 
-        val attributes = new LinkedHashMap<String, Object>();
+        val attributes = new LinkedHashMap<String, List<Object>>();
         scopes
             .stream()
             .distinct()

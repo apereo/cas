@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,7 +32,7 @@ public interface Principal extends Serializable {
     /**
      * @return the map of configured attributes for this principal
      */
-    default Map<String, Object> getAttributes() {
+    default Map<String, List<Object>> getAttributes() {
         return new LinkedHashMap<>(0);
     }
 }

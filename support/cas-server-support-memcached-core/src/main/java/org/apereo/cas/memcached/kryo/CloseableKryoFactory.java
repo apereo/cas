@@ -20,6 +20,8 @@ import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdG
 import org.apereo.cas.authentication.principal.SimplePrincipal;
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
+import org.apereo.cas.memcached.kryo.serial.ImmutableNativeJavaListSerializer;
+import org.apereo.cas.memcached.kryo.serial.ImmutableNativeJavaSetSerializer;
 import org.apereo.cas.memcached.kryo.serial.RegisteredServiceSerializer;
 import org.apereo.cas.memcached.kryo.serial.SimpleWebApplicationServiceSerializer;
 import org.apereo.cas.memcached.kryo.serial.ThrowableSerializer;
@@ -101,6 +103,7 @@ import de.javakaffee.kryoserializers.guava.ImmutableSetSerializer;
 import de.javakaffee.kryoserializers.jodatime.JodaDateTimeSerializer;
 import de.javakaffee.kryoserializers.jodatime.JodaLocalDateSerializer;
 import de.javakaffee.kryoserializers.jodatime.JodaLocalDateTimeSerializer;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -131,6 +134,9 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.UUID;
@@ -144,26 +150,38 @@ import java.util.regex.Pattern;
  */
 @Slf4j
 @Setter
+@RequiredArgsConstructor
 public class CloseableKryoFactory implements KryoFactory {
 
     private final CasKryoPool kryoPool;
+
     private Collection<Class> classesToRegister = new ArrayList<>();
     private boolean warnUnregisteredClasses = true;
     private boolean registrationRequired;
     private boolean replaceObjectsByReferences;
     private boolean autoReset;
 
-    public CloseableKryoFactory(final CasKryoPool kryoPool) {
-        this.kryoPool = kryoPool;
-    }
 
     private static void registerImmutableOrEmptyCollectionsWithKryo(final Kryo kryo) {
         LOGGER.debug("Registering immutable/empty collections with Kryo");
 
         UnmodifiableCollectionsSerializer.registerSerializers(kryo);
+
         ImmutableListSerializer.registerSerializers(kryo);
+        kryo.register(List.of().getClass(), new ImmutableNativeJavaListSerializer());
+        kryo.register(List.of("1", "2").getClass(), new ImmutableNativeJavaListSerializer());
+        kryo.register(List.of("1", "2", "3", "4").getClass(), new ImmutableNativeJavaListSerializer());
+
         ImmutableSetSerializer.registerSerializers(kryo);
+        kryo.register(Set.of().getClass(), new ImmutableNativeJavaSetSerializer());
+        kryo.register(Set.of("1", "2").getClass(), new ImmutableNativeJavaSetSerializer());
+        kryo.register(Set.of("1", "2", "3", "4").getClass(), new ImmutableNativeJavaSetSerializer());
+
         ImmutableMapSerializer.registerSerializers(kryo);
+        kryo.register(Map.of().getClass(), new ImmutableMapSerializer());
+        kryo.register(Map.of("1", "2").getClass(), new ImmutableMapSerializer());
+        kryo.register(Map.of("1", "2", "3", "4", "5", "6").getClass(), new ImmutableMapSerializer());
+
         ImmutableMultimapSerializer.registerSerializers(kryo);
 
         kryo.register(Collections.EMPTY_LIST.getClass(), new CollectionsEmptyListSerializer());

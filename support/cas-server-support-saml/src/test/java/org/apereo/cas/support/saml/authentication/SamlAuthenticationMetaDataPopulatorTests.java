@@ -34,7 +34,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
         val auth = builder.build();
 
         assertEquals(SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_PASSWORD,
-            auth.getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD));
+            auth.getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD).get(0));
     }
 
     @Test
@@ -43,7 +43,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
         this.populator.populateAttributes(builder, DefaultAuthenticationTransaction.of(credentials));
         val auth = builder.build();
-        assertNotNull(auth.getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD));
+        assertNotNull(auth.getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD).get(0));
     }
 
     @Test
@@ -61,7 +61,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
 
         assertEquals(
             "FF",
-            auth.getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD));
+            auth.getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD).get(0));
     }
 
     private static class CustomCredential implements Credential {

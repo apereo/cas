@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.principal;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,5 +30,5 @@ public interface PrincipalFactory extends Serializable {
      * @param attributes the attributes
      * @return the principal
      */
-    Principal createPrincipal(String id, Map<String, Object> attributes);
+    Principal createPrincipal(String id, Map<String, List<Object>> attributes);
 }

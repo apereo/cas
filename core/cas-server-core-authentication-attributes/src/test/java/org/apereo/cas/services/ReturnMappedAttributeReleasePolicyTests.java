@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -40,9 +41,9 @@ public class ReturnMappedAttributeReleasePolicyTests {
         val policyRead = MAPPER.readValue(JSON_FILE, ReturnMappedAttributeReleasePolicy.class);
         assertEquals(policyWritten, policyRead);
 
-        val mapValues = new HashMap<String, Object>();
-        mapValues.put("test1", "AttributeValue1");
-        mapValues.put("test2", "AttributeValue2");
+        val mapValues = new HashMap<String, List<Object>>();
+        mapValues.put("test1", List.of("AttributeValue1"));
+        mapValues.put("test2", List.of("AttributeValue2"));
 
         val principal = CoreAttributesTestUtils.getPrincipal("user", mapValues);
         val registeredService = CoreAttributesTestUtils.getRegisteredService();
@@ -69,18 +70,18 @@ public class ReturnMappedAttributeReleasePolicyTests {
     @Test
     public void verifyInlinedGroovyAttributes() {
         val allowedAttributes = ArrayListMultimap.<String, Object>create();
-        allowedAttributes.put("attr1", "groovy { logger.debug('Running script...'); return 'DOMAIN\\\\' + attributes['uid'] }");
+        allowedAttributes.put("attr1", "groovy { logger.debug('Running script...'); return 'DOMAIN\\\\' + attributes['uid'][0] }");
         val wrap = CollectionUtils.<String, Object>wrap(allowedAttributes);
         val policyWritten = new ReturnMappedAttributeReleasePolicy(wrap);
         val registeredService = CoreAttributesTestUtils.getRegisteredService();
         when(registeredService.getAttributeReleasePolicy()).thenReturn(policyWritten);
-        val principalAttributes = new HashMap<String, Object>();
-        principalAttributes.put("uid", CoreAttributesTestUtils.CONST_USERNAME);
+        val principalAttributes = new HashMap<String, List<Object>>();
+        principalAttributes.put("uid", List.of(CoreAttributesTestUtils.CONST_USERNAME));
         val result = policyWritten.getAttributes(
             CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, principalAttributes),
             CoreAttributesTestUtils.getService(), registeredService);
         assertTrue(result.containsKey("attr1"));
-        assertTrue(result.containsValue("DOMAIN\\" + CoreAttributesTestUtils.CONST_USERNAME));
+        assertTrue(result.containsValue(List.of("DOMAIN\\" + CoreAttributesTestUtils.CONST_USERNAME)));
     }
 
     @Test
@@ -91,8 +92,8 @@ public class ReturnMappedAttributeReleasePolicyTests {
         val policyWritten = new ReturnMappedAttributeReleasePolicy(wrap);
         val registeredService = CoreAttributesTestUtils.getRegisteredService();
         when(registeredService.getAttributeReleasePolicy()).thenReturn(policyWritten);
-        val principalAttributes = new HashMap<String, Object>();
-        principalAttributes.put("uid", CoreAttributesTestUtils.CONST_USERNAME);
+        val principalAttributes = new HashMap<String, List<Object>>();
+        principalAttributes.put("uid", List.of(CoreAttributesTestUtils.CONST_USERNAME));
         val result = policyWritten.getAttributes(
             CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, principalAttributes),
             CoreAttributesTestUtils.getService(), registeredService);
@@ -103,20 +104,22 @@ public class ReturnMappedAttributeReleasePolicyTests {
     @Test
     public void verifyExternalGroovyAttributes() throws Exception {
         val file = new File(FileUtils.getTempDirectoryPath(), "script.groovy");
-        FileUtils.write(file, "logger.debug('Running script...'); return 'DOMAIN\\\\' + attributes['uid']", StandardCharsets.UTF_8);
+        FileUtils.write(file, "logger.debug('Running'); return ['DOMAIN\\\\' + attributes['uid'][0], 'testing']", StandardCharsets.UTF_8);
         val allowedAttributes = ArrayListMultimap.<String, Object>create();
         allowedAttributes.put("attr1", "file:" + file.getCanonicalPath());
         val wrap = CollectionUtils.<String, Object>wrap(allowedAttributes);
         val policyWritten = new ReturnMappedAttributeReleasePolicy(wrap);
         val registeredService = CoreAttributesTestUtils.getRegisteredService();
         when(registeredService.getAttributeReleasePolicy()).thenReturn(policyWritten);
-        val principalAttributes = new HashMap<String, Object>();
-        principalAttributes.put("uid", CoreAttributesTestUtils.CONST_USERNAME);
+        val principalAttributes = new HashMap<String, List<Object>>();
+        principalAttributes.put("uid", List.of(CoreAttributesTestUtils.CONST_USERNAME));
         val result = policyWritten.getAttributes(
             CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, principalAttributes),
             CoreAttributesTestUtils.getService(), registeredService);
         assertTrue(result.containsKey("attr1"));
-        assertTrue(result.containsValue("DOMAIN\\" + CoreAttributesTestUtils.CONST_USERNAME));
+        val attr1 = result.get("attr1");
+        assertTrue(attr1.contains("DOMAIN\\" + CoreAttributesTestUtils.CONST_USERNAME));
+        assertTrue(attr1.contains("testing"));
     }
 
 
@@ -128,19 +131,19 @@ public class ReturnMappedAttributeReleasePolicyTests {
         val policy = new ReturnMappedAttributeReleasePolicy(CollectionUtils.wrap(allowedAttributes));
         val registeredService = CoreAttributesTestUtils.getRegisteredService();
         when(registeredService.getAttributeReleasePolicy()).thenReturn(policy);
-        val principalAttributes = new HashMap<String, Object>();
-        principalAttributes.put("uid", CoreAttributesTestUtils.CONST_USERNAME);
+        val principalAttributes = new HashMap<String, List<Object>>();
+        principalAttributes.put("uid", List.of(CoreAttributesTestUtils.CONST_USERNAME));
         var result = policy.getAttributes(
             CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, principalAttributes),
             CoreAttributesTestUtils.getService(), registeredService);
         assertTrue(result.isEmpty());
 
-        principalAttributes.put("uid", CoreAttributesTestUtils.CONST_USERNAME);
-        principalAttributes.put("email", "user@example.org");
+        principalAttributes.put("uid", List.of(CoreAttributesTestUtils.CONST_USERNAME));
+        principalAttributes.put("email", List.of("user@example.org"));
         result = policy.getAttributes(
             CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, principalAttributes),
             CoreAttributesTestUtils.getService(), registeredService);
         assertTrue(result.containsKey(mappedAttribute));
-        assertEquals("user@example.org", result.get(mappedAttribute));
+        assertEquals(List.of("user@example.org"), result.get(mappedAttribute));
     }
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.springframework.core.Ordered;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,7 +24,7 @@ public interface RegisteredServiceAttributeFilter extends Serializable, Ordered 
      * @param givenAttributes the map for the original given attributes
      * @return a map that contains the filtered attributes.
      */
-    Map<String, Object> filter(Map<String, Object> givenAttributes);
+    Map<String, List<Object>> filter(Map<String, List<Object>> givenAttributes);
 
     @Override
     default int getOrder() {

@@ -17,6 +17,7 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.context.ApplicationContext;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,14 +38,14 @@ public class GroovySamlRegisteredServiceAttributeReleasePolicy extends BaseSamlR
     private String groovyScript;
 
     @Override
-    protected Map<String, Object> getAttributesForSamlRegisteredService(final Map<String, Object> attributes,
-                                                                        final SamlRegisteredService registeredService,
-                                                                        final ApplicationContext applicationContext,
-                                                                        final SamlRegisteredServiceCachingMetadataResolver resolver,
-                                                                        final SamlRegisteredServiceServiceProviderMetadataFacade facade,
-                                                                        final EntityDescriptor entityDescriptor,
-                                                                        final Principal principal,
-                                                                        final Service selectedService) {
+    protected Map<String, List<Object>> getAttributesForSamlRegisteredService(final Map<String, List<Object>> attributes,
+                                                                              final SamlRegisteredService registeredService,
+                                                                              final ApplicationContext applicationContext,
+                                                                              final SamlRegisteredServiceCachingMetadataResolver resolver,
+                                                                              final SamlRegisteredServiceServiceProviderMetadataFacade facade,
+                                                                              final EntityDescriptor entityDescriptor,
+                                                                              final Principal principal,
+                                                                              final Service selectedService) {
         try {
             val args = new Object[] {attributes, registeredService, resolver, facade, entityDescriptor, applicationContext, LOGGER};
             val resource = ResourceUtils.getResourceFrom(this.groovyScript);

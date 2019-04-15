@@ -1,5 +1,6 @@
 package org.apereo.cas.clouddirectory;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,5 +18,5 @@ public interface CloudDirectoryRepository {
      * @param username the username
      * @return the user account map
      */
-    Map<String, Object> getUser(String username);
+    Map<String, List<Object>> getUser(String username);
 }

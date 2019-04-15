@@ -1,6 +1,7 @@
 package org.apereo.cas.couchdb.core;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.util.CollectionUtils;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
@@ -12,7 +13,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.ektorp.support.CouchDbDocument;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -45,10 +48,10 @@ public class CouchDbProfileDocument extends CouchDbDocument implements Principal
      `* Map for storing extra properties when AUP support uses shared database (e.g., user database).
      */
     @JsonAnySetter
-    private Map<String, Object> attributes = new LinkedHashMap<>(0);
+    private Map<String, List<Object>> attributes = new LinkedHashMap<>(0);
 
     @JsonAnyGetter
-    public Map<String, Object> getAttributes() {
+    public Map<String, List<Object>> getAttributes() {
         return attributes;
     }
 
@@ -69,6 +72,6 @@ public class CouchDbProfileDocument extends CouchDbDocument implements Principal
      */
     @JsonIgnore
     public void setAttribute(final String key, final Object value) {
-        attributes.put(key, value);
+        attributes.put(key, CollectionUtils.toCollection(value, ArrayList.class));
     }
 }

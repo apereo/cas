@@ -13,8 +13,10 @@ import org.springframework.util.MultiValueMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -92,6 +94,16 @@ public class CollectionUtils {
                 c.addAll(Arrays.stream((Object[]) obj).collect(Collectors.toSet()));
             }
             LOGGER.trace("Converting array element [{}]", obj);
+        } else if (obj instanceof Iterator) {
+            val it = (Iterator) obj;
+            while (it.hasNext()) {
+                c.add(it.next());
+            }
+        } else if (obj instanceof Enumeration) {
+            val it = (Enumeration) obj;
+            while (it.hasMoreElements()) {
+                c.add(it.nextElement());
+            }
         } else {
             c.add(obj);
             LOGGER.trace("Converting element [{}]", obj);
@@ -478,6 +490,7 @@ public class CollectionUtils {
             .forEach(p -> mappings.put(p.getKey(), p.getValue()));
         return mappings;
     }
+
     private static <T> void addToCollection(final Collection<T> list, final T[] source) {
         if (source != null) {
             Arrays.stream(source).forEach(s -> {

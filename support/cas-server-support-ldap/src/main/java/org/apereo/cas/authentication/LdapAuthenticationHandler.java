@@ -28,6 +28,7 @@ import java.security.GeneralSecurityException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -161,8 +162,8 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @param username  the username
      * @return the map
      */
-    protected Map<String, Object> collectAttributesForLdapEntry(final LdapEntry ldapEntry, final String username) {
-        val attributeMap = Maps.<String, Object>newHashMapWithExpectedSize(this.principalAttributeMap.size());
+    protected Map<String, List<Object>> collectAttributesForLdapEntry(final LdapEntry ldapEntry, final String username) {
+        val attributeMap = Maps.<String, List<Object>>newHashMapWithExpectedSize(this.principalAttributeMap.size());
         LOGGER.debug("The following attributes are requested to be retrieved and mapped: [{}]", attributeMap.keySet());
         this.principalAttributeMap.forEach((key, attributeNames) -> {
             val attr = ldapEntry.getAttribute(key);
@@ -184,7 +185,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         });
         if (this.collectDnAttribute) {
             LOGGER.debug("Recording principal DN attribute as [{}]", this.principalDnAttributeName);
-            attributeMap.put(this.principalDnAttributeName, ldapEntry.getDn());
+            attributeMap.put(this.principalDnAttributeName, CollectionUtils.wrapList(ldapEntry.getDn()));
         }
         return attributeMap;
     }

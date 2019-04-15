@@ -14,6 +14,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -43,11 +44,11 @@ public class CustomNamespaceWSFederationClaimsReleasePolicy extends AbstractRegi
     }
 
     @Override
-    public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attrs,
-                                                     final RegisteredService registeredService, final Service selectedService) {
-        val resolvedAttributes = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
+    public Map<String, List<Object>> getAttributesInternal(final Principal principal, final Map<String, List<Object>> attrs,
+                                                           final RegisteredService registeredService, final Service selectedService) {
+        val resolvedAttributes = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attrs);
-        val attributesToRelease = Maps.<String, Object>newHashMapWithExpectedSize(resolvedAttributes.size());
+        val attributesToRelease = Maps.<String, List<Object>>newHashMapWithExpectedSize(resolvedAttributes.size());
         getAllowedAttributes().forEach((key, value) -> {
             if (resolvedAttributes.containsKey(value)) {
                 val attributeValue = resolvedAttributes.get(value);

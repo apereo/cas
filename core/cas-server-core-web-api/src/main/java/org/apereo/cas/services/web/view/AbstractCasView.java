@@ -4,7 +4,6 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
-import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
@@ -22,6 +21,7 @@ import org.springframework.web.servlet.view.AbstractView;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -150,8 +150,8 @@ public abstract class AbstractCasView extends AbstractView {
      * @return the attributes
      * @since 4.1.0
      */
-    protected Map<String, Object> getPrincipalAttributesAsMultiValuedAttributes(final Map<String, Object> model) {
-        return CoreAuthenticationUtils.convertAttributeValuesToMultiValuedObjects(getPrincipal(model).getAttributes());
+    protected Map<String, List<Object>> getPrincipalAttributesAsMultiValuedAttributes(final Map<String, Object> model) {
+        return getPrincipal(model).getAttributes();
     }
 
 
@@ -202,7 +202,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @param registeredService the registered service
      * @return the cas authentication attributes
      */
-    protected Map<String, Object> getCasProtocolAuthenticationAttributes(final Map<String, Object> model,
+    protected Map<String, List<Object>> getCasProtocolAuthenticationAttributes(final Map<String, Object> model,
                                                                          final RegisteredService registeredService) {
         val authn = getPrimaryAuthenticationFrom(model);
         val assertion = getAssertionFrom(model);
@@ -251,7 +251,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @param registeredService the registered service
      * @return the cas principal attributes
      */
-    protected Map<String, Object> getCasPrincipalAttributes(final Map<String, Object> model, final RegisteredService registeredService) {
+    protected Map<String, List<Object>> getCasPrincipalAttributes(final Map<String, Object> model, final RegisteredService registeredService) {
         return getPrincipalAttributesAsMultiValuedAttributes(model);
     }
 

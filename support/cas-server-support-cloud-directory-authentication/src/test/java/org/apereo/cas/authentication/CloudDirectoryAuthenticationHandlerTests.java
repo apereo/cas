@@ -15,6 +15,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -37,7 +39,8 @@ public class CloudDirectoryAuthenticationHandlerTests {
     @Test
     public void verifyAction() throws Exception {
         val repository = mock(CloudDirectoryRepository.class);
-        when(repository.getUser(anyString())).thenReturn(CollectionUtils.wrap("username", "casuser", "password", "Mellon"));
+        when(repository.getUser(anyString())).thenReturn(CollectionUtils.wrap("username",
+            List.of("casuser"), "password", List.of("Mellon")));
         val h = new CloudDirectoryAuthenticationHandler(StringUtils.EMPTY, mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), repository, casProperties.getAuthn().getCloudDirectory());
         assertNotNull(h.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon")));

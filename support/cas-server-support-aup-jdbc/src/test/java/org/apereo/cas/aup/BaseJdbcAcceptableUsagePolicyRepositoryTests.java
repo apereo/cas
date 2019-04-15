@@ -18,6 +18,7 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 import javax.sql.DataSource;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -49,7 +50,7 @@ public abstract class BaseJdbcAcceptableUsagePolicyRepositoryTests extends BaseA
         return false;
     }
     
-    protected String determinePrincipalId(final String actualPrincipalId, final Map<String, Object> profileAttributes) {
+    protected String determinePrincipalId(final String actualPrincipalId, final Map<String, List<Object>> profileAttributes) {
         val aupProperties = casProperties.getAcceptableUsagePolicy();
         val jdbcAupRepository = new JdbcAcceptableUsagePolicyRepository(ticketRegistrySupport,
                 aupProperties.getAupAttributeName(), acceptableUsagePolicyDataSource, aupProperties);

@@ -66,7 +66,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
             LOGGER.warn("None of the principal resolvers in the chain were able to produce a principal");
             return NullPrincipal.getInstance();
         }
-        val attributes = new HashMap<String, Object>();
+        val attributes = new HashMap<String, List<Object>>();
         principals.forEach(p -> {
             if (p != null) {
                 LOGGER.debug("Resolved principal [{}]", p);

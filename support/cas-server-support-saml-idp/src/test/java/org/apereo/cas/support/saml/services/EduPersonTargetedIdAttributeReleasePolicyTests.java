@@ -15,6 +15,7 @@ import org.springframework.core.io.FileSystemResource;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -43,8 +44,7 @@ public class EduPersonTargetedIdAttributeReleasePolicyTests extends BaseSamlIdPC
         val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal("casuser"),
             CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"), registeredService);
         assertTrue(attributes.containsKey(EduPersonTargetedIdAttributeReleasePolicy.ATTRIBUTE_NAME_EDU_PERSON_TARGETED_ID));
-        assertTrue(attributes.get(EduPersonTargetedIdAttributeReleasePolicy.ATTRIBUTE_NAME_EDU_PERSON_TARGETED_ID)
-            .equals("bhb1if0QzFdkKSS5xkcNCALXtGE="));
+        assertTrue(attributes.get(EduPersonTargetedIdAttributeReleasePolicy.ATTRIBUTE_NAME_EDU_PERSON_TARGETED_ID).equals(List.of("bhb1if0QzFdkKSS5xkcNCALXtGE=")));
     }
 
     @Test
@@ -77,6 +77,6 @@ public class EduPersonTargetedIdAttributeReleasePolicyTests extends BaseSamlIdPC
             CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"), registeredService);
 
         assertTrue(attributes.get(EduPersonTargetedIdAttributeReleasePolicy.ATTRIBUTE_NAME_EDU_PERSON_TARGETED_ID)
-            .equals("bhb1if0QzFdkKSS5xkcNCALXtGE="));
+            .equals(List.of("bhb1if0QzFdkKSS5xkcNCALXtGE=")));
     }
 }

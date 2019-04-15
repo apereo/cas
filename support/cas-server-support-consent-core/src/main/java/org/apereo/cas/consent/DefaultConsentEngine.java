@@ -14,6 +14,7 @@ import org.apereo.inspektr.audit.annotation.Audit;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -109,16 +110,16 @@ public class DefaultConsentEngine implements ConsentEngine {
     }
 
     @Override
-    public Map<String, Object> resolveConsentableAttributesFrom(final ConsentDecision decision) {
+    public Map<String, List<Object>> resolveConsentableAttributesFrom(final ConsentDecision decision) {
         LOGGER.debug("Retrieving consentable attributes from existing decision made by [{}] for [{}]",
             decision.getPrincipal(), decision.getService());
         return this.consentDecisionBuilder.getConsentableAttributesFrom(decision);
     }
 
     @Override
-    public Map<String, Object> resolveConsentableAttributesFrom(final Authentication authentication,
-                                                                final Service service,
-                                                                final RegisteredService registeredService) {
+    public Map<String, List<Object>> resolveConsentableAttributesFrom(final Authentication authentication,
+                                                                      final Service service,
+                                                                      final RegisteredService registeredService) {
         LOGGER.debug("Retrieving consentable attributes for [{}]", registeredService);
         val policy = registeredService.getAttributeReleasePolicy();
         if (policy != null) {

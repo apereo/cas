@@ -31,19 +31,19 @@ public class RegisteredServiceMutantRegexAttributeFilter extends RegisteredServi
     private static final long serialVersionUID = 543145306984660628L;
 
     @Override
-    public Map<String, Object> filter(final Map<String, Object> givenAttributes) {
-        val attributesToRelease = new HashMap<String, Object>();
+    public Map<String, List<Object>> filter(final Map<String, List<Object>> givenAttributes) {
+        val attributesToRelease = new HashMap<String, List<Object>>();
         givenAttributes.entrySet().stream().filter(filterProvidedGivenAttributes()).forEach(entry -> {
             val attributeName = entry.getKey();
             if (getPatterns().containsKey(attributeName)) {
                 val attributeValues = CollectionUtils.toCollection(entry.getValue());
-                LOGGER.debug("Found attribute [{}] in pattern definitions with value(s) [{}]", attributeName, attributeValues);
+                LOGGER.trace("Found attribute [{}] in pattern definitions with value(s) [{}]", attributeName, attributeValues);
                 val patterns = createPatternsAndReturnValue(attributeName);
                 var finalValues = patterns
                     .stream()
                     .map(patternDefinition -> {
                         val pattern = patternDefinition.getLeft();
-                        LOGGER.debug("Found attribute [{}] in the pattern definitions. Processing pattern [{}]", attributeName, pattern.pattern());
+                        LOGGER.trace("Found attribute [{}] in the pattern definitions. Processing pattern [{}]", attributeName, pattern.pattern());
                         var filteredValues = filterAndMapAttributeValuesByPattern(attributeValues, pattern, patternDefinition.getValue());
                         LOGGER.debug("Filtered attribute values for [{}] are [{}]", attributeName, filteredValues);
                         return filteredValues;
@@ -51,7 +51,7 @@ public class RegisteredServiceMutantRegexAttributeFilter extends RegisteredServi
                     .flatMap(Collection::stream)
                     .collect(Collectors.toList());
                 if (finalValues.isEmpty()) {
-                    LOGGER.debug("Attribute [{}] has no values remaining and shall be excluded", attributeName);
+                    LOGGER.trace("Attribute [{}] has no values remaining and shall be excluded", attributeName);
                 } else {
                     collectAttributeWithFilteredValues(attributesToRelease, attributeName, finalValues);
                 }

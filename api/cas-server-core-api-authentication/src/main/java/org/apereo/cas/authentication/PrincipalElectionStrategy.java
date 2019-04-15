@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.Principal;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,5 +24,5 @@ public interface PrincipalElectionStrategy extends Serializable {
      * @param principalAttributes the principal attributes
      * @return the principal
      */
-    Principal nominate(Collection<Authentication> authentications, Map<String, Object> principalAttributes);
+    Principal nominate(Collection<Authentication> authentications, Map<String, List<Object>> principalAttributes);
 }

@@ -70,6 +70,6 @@ public class FortressAuthenticationHandlerTests {
         val writer = new StringWriter();
         marshaller.marshal(session, writer);
         assertEquals(writer.toString(), handlerResult.getPrincipal()
-            .getAttributes().get(FortressAuthenticationHandler.FORTRESS_SESSION_KEY));
+            .getAttributes().get(FortressAuthenticationHandler.FORTRESS_SESSION_KEY).get(0));
     }
 }

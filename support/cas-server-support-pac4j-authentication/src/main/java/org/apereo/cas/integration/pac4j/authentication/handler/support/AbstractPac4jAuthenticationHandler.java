@@ -1,6 +1,7 @@
 package org.apereo.cas.integration.pac4j.authentication.handler.support;
 
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
@@ -20,7 +21,6 @@ import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 
 /**
  * Abstract pac4j authentication handler which builds the CAS handler result from the pac4j user profile.
@@ -60,7 +60,8 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
         }
         credentials.setUserProfile(profile);
         credentials.setTypedIdUsed(isTypedIdUsed);
-        val principal = this.principalFactory.createPrincipal(id, new LinkedHashMap<>(profile.getAttributes()));
+        val attributes = CoreAuthenticationUtils.convertAttributeValuesToMultiValuedObjects(profile.getAttributes());
+        val principal = this.principalFactory.createPrincipal(id, attributes);
         LOGGER.debug("Constructed authenticated principal [{}] based on user profile [{}]", principal, profile);
         return finalizeAuthenticationHandlerResult(credentials, principal, profile, client);
     }

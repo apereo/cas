@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -85,7 +86,7 @@ public abstract class BaseMultifactorAuthenticationProviderBypass implements Mul
      * @return true/false
      */
     protected static boolean locateMatchingAttributeValue(final String attrName, final String attrValue,
-                                                          final Map<String, Object> attributes) {
+                                                          final Map<String, List<Object>> attributes) {
         return locateMatchingAttributeValue(attrName, attrValue, attributes, true);
     }
 
@@ -99,7 +100,7 @@ public abstract class BaseMultifactorAuthenticationProviderBypass implements Mul
      * @return true a matching attribute name/value is found
      */
     protected static boolean locateMatchingAttributeValue(final String attrName, final String attrValue,
-                                                          final Map<String, Object> attributes,
+                                                          final Map<String, List<Object>> attributes,
                                                           final boolean matchIfNoValueProvided) {
         LOGGER.debug("Locating matching attribute [{}] with value [{}] amongst the attribute collection [{}]", attrName, attrValue, attributes);
         if (StringUtils.isBlank(attrName)) {

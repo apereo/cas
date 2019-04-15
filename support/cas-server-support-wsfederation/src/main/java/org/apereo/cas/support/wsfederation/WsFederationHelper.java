@@ -61,6 +61,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.security.Security;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -163,7 +164,7 @@ public class WsFederationHelper {
      * @return an equivalent credential.
      */
     public WsFederationCredential createCredentialFromToken(final Assertion assertion) {
-        val retrievedOn = ZonedDateTime.now();
+        val retrievedOn = ZonedDateTime.now(ZoneOffset.UTC);
         LOGGER.debug("Retrieved on [{}]", retrievedOn);
         val credential = new WsFederationCredential();
         credential.setRetrievedOn(retrievedOn);

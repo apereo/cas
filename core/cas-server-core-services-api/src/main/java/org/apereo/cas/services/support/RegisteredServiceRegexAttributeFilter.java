@@ -1,7 +1,6 @@
 package org.apereo.cas.services.support;
 
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -73,8 +72,8 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
      * </ul>
      */
     @Override
-    public Map<String, Object> filter(final Map<String, Object> givenAttributes) {
-        val attributesToRelease = new HashMap<String, Object>();
+    public Map<String, List<Object>> filter(final Map<String, List<Object>> givenAttributes) {
+        val attributesToRelease = new HashMap<String, List<Object>>();
         givenAttributes.entrySet()
             .stream()
             .filter(entry -> {
@@ -86,47 +85,14 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
             .forEach(entry -> {
                 val attributeName = entry.getKey();
                 val attributeValue = entry.getValue();
-                if (attributeValue instanceof Collection) {
-                    LOGGER.trace("Attribute value [{}] is a collection", attributeValue);
-                    val filteredAttributes = filterAttributes((Collection<String>) attributeValue, attributeName);
-                    if (!filteredAttributes.isEmpty()) {
-                        attributesToRelease.put(attributeName, filteredAttributes);
-                    }
-                } else if (attributeValue.getClass().isArray()) {
-                    LOGGER.trace("Attribute value [{}] is an array", attributeValue);
-                    val filteredAttributes = filterAttributes(CollectionUtils.wrapList((String[]) attributeValue), attributeName);
-                    if (!filteredAttributes.isEmpty()) {
-                        attributesToRelease.put(attributeName, filteredAttributes);
-                    }
-                } else if (attributeValue instanceof Map) {
-                    LOGGER.trace("Attribute value [{}] is a map", attributeValue);
-                    val filteredAttributes = filterAttributes((Map<String, String>) attributeValue);
-                    if (!filteredAttributes.isEmpty()) {
-                        attributesToRelease.put(attributeName, filteredAttributes);
-                    }
-                } else {
-                    LOGGER.trace("Attribute value [{}] is a string", attributeValue);
-                    val attrValue = attributeValue.toString();
-                    if (patternMatchesAttributeValue(attrValue)) {
-                        logReleasedAttributeEntry(attributeName, attrValue);
-                        attributesToRelease.put(attributeName, attrValue);
-                    }
+                LOGGER.trace("Attribute value [{}] is a collection", attributeValue);
+                val filteredAttributes = filterAttributes(attributeValue, attributeName);
+                if (!filteredAttributes.isEmpty()) {
+                    attributesToRelease.put(attributeName, filteredAttributes);
                 }
             });
         LOGGER.debug("Received [{}] attributes. Filtered and released [{}]", givenAttributes.size(), attributesToRelease.size());
         return attributesToRelease;
-    }
-
-    /**
-     * Filter map attributes based on the values given.
-     *
-     * @param valuesToFilter the values to filter
-     * @return the map
-     */
-    private Map<String, String> filterAttributes(final Map<String, String> valuesToFilter) {
-        return valuesToFilter.entrySet().stream().filter(entry -> patternMatchesAttributeValue(entry.getValue()))
-            .peek(entry -> logReleasedAttributeEntry(entry.getKey(), entry.getValue()))
-            .collect(Collectors.toMap(Map.Entry::getKey, entry -> valuesToFilter.get(entry.getKey()), (e, f) -> f == null ? e : f));
     }
 
     /**
@@ -136,8 +102,10 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
      * @param attributeName  the attribute name
      * @return the string[]
      */
-    private List filterAttributes(final Collection<String> valuesToFilter, final String attributeName) {
-        return valuesToFilter.stream().filter(this::patternMatchesAttributeValue)
+    private List filterAttributes(final List<Object> valuesToFilter, final String attributeName) {
+        return valuesToFilter
+            .stream()
+            .filter(this::patternMatchesAttributeValue)
             .peek(attributeValue -> logReleasedAttributeEntry(attributeName, attributeValue))
             .collect(Collectors.toList());
     }
@@ -148,8 +116,10 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
      * @param value the value
      * @return true, if successful
      */
-    private boolean patternMatchesAttributeValue(final String value) {
-        return this.compiledPattern.matcher(value).matches();
+    private boolean patternMatchesAttributeValue(final Object value) {
+        val matcher = value.toString();
+        LOGGER.trace("Compiling a pattern matcher for [{}]", matcher);
+        return this.compiledPattern.matcher(matcher).matches();
     }
 
     /**
@@ -158,7 +128,7 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
      * @param attributeName  the attribute name
      * @param attributeValue the attribute value
      */
-    private void logReleasedAttributeEntry(final String attributeName, final String attributeValue) {
+    private void logReleasedAttributeEntry(final String attributeName, final Object attributeValue) {
         LOGGER.debug("The attribute value [{}] for attribute name [{}] matches the pattern [{}]. Releasing attribute...",
             attributeValue, attributeName, this.compiledPattern.pattern());
     }

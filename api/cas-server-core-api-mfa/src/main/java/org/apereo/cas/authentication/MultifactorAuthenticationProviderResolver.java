@@ -9,6 +9,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -64,7 +65,7 @@ public interface MultifactorAuthenticationProviderResolver {
      * @return the set
      */
     Set<Event> resolveEventViaAttribute(Principal principal,
-                                        Map<String, Object> attributesToExamine,
+                                        Map<String, List<Object>> attributesToExamine,
                                         Collection<String> attributeNames,
                                         RegisteredService service,
                                         Optional<RequestContext> context,

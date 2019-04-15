@@ -23,6 +23,7 @@ import org.apache.http.HttpStatus;
 
 import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -47,7 +48,7 @@ public class ReturnRestfulAttributeReleasePolicy extends AbstractRegisteredServi
     private String endpoint;
 
     @Override
-    public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attributes,
+    public Map<String, List<Object>> getAttributesInternal(final Principal principal, final Map<String, List<Object>> attributes,
                                                      final RegisteredService registeredService, final Service selectedService) {
         HttpResponse response = null;
         try (val writer = new StringWriter()) {

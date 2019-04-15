@@ -38,7 +38,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.Map;
 
 /**
  * This is {@link SSOSamlPostProfileHandlerEndpoint}.
@@ -138,12 +140,13 @@ public class SSOSamlPostProfileHandlerEndpoint extends BaseCasActuatorEndpoint {
             selectedService,
             registeredService,
             authentication);
+
         val finalAuthentication = builder.build();
         val authnPrincipal = finalAuthentication.getPrincipal();
-        val p = new AttributePrincipalImpl(authnPrincipal.getId(),
-            authnPrincipal.getAttributes());
-        return new AssertionImpl(p, DateTimeUtils.dateOf(ZonedDateTime.now()),
-            null, DateTimeUtils.dateOf(ZonedDateTime.now()),
-            finalAuthentication.getAttributes());
+        val p = new AttributePrincipalImpl(authnPrincipal.getId(), (Map) authnPrincipal.getAttributes());
+
+        return new AssertionImpl(p, DateTimeUtils.dateOf(ZonedDateTime.now(ZoneOffset.UTC)),
+            null, DateTimeUtils.dateOf(ZonedDateTime.now(ZoneOffset.UTC)),
+            (Map) finalAuthentication.getAttributes());
     }
 }

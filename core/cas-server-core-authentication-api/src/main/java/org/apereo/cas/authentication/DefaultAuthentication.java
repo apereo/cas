@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.util.CollectionUtils;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
@@ -54,7 +55,7 @@ public class DefaultAuthentication implements Authentication {
     /**
      * Authentication metadata attributes.
      */
-    private Map<String, Object> attributes = new LinkedHashMap<>();
+    private Map<String, List<Object>> attributes = new LinkedHashMap<>();
 
     /**
      * Map of handler name to handler authentication success event.
@@ -69,7 +70,7 @@ public class DefaultAuthentication implements Authentication {
     public DefaultAuthentication(
         final @NonNull ZonedDateTime date,
         final @NonNull Principal principal,
-        final @NonNull Map<String, Object> attributes,
+        final @NonNull Map<String, List<Object>> attributes,
         final @NonNull Map<String, AuthenticationHandlerExecutionResult> successes,
         final @NonNull List<MessageDescriptor> warnings) {
 
@@ -86,7 +87,7 @@ public class DefaultAuthentication implements Authentication {
         final @NonNull ZonedDateTime date,
         final @NonNull List<CredentialMetaData> credentials,
         final @NonNull Principal principal,
-        final @NonNull Map<String, Object> attributes,
+        final @NonNull Map<String, List<Object>> attributes,
         final @NonNull Map<String, AuthenticationHandlerExecutionResult> successes,
         final @NonNull Map<String, Throwable> failures,
         final @NonNull List<MessageDescriptor> warnings) {
@@ -110,6 +111,6 @@ public class DefaultAuthentication implements Authentication {
 
     @Override
     public void addAttribute(final String name, final Object value) {
-        this.attributes.put(name, value);
+        this.attributes.put(name, CollectionUtils.toCollection(value, ArrayList.class));
     }
 }

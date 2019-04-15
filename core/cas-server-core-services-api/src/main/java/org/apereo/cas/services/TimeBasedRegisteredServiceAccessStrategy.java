@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
 /**
@@ -64,15 +65,17 @@ public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredS
         if (this.endingDateTime != null) {
             val et = DateTimeUtils.zonedDateTimeOf(this.endingDateTime);
             if (et != null) {
-                if (ZonedDateTime.now().isAfter(et)) {
-                    LOGGER.warn("Service access not allowed because it ended at [{}]. Now is [{}]", this.endingDateTime, ZonedDateTime.now());
+                val now = ZonedDateTime.now(ZoneOffset.UTC);
+                if (now.isAfter(et)) {
+                    LOGGER.warn("Service access not allowed because it ended at [{}]. Now is [{}]", this.endingDateTime, now);
                     return false;
                 }
             } else {
                 val etLocal = DateTimeUtils.localDateTimeOf(this.endingDateTime);
                 if (etLocal != null) {
-                    if (LocalDateTime.now().isAfter(etLocal)) {
-                        LOGGER.warn("Service access not allowed because it ended at [{}]. Now is [{}]", this.endingDateTime, LocalDateTime.now());
+                    val now = LocalDateTime.now(ZoneOffset.UTC);
+                    if (now.isAfter(etLocal)) {
+                        LOGGER.warn("Service access not allowed because it ended at [{}]. Now is [{}]", this.endingDateTime, now);
                         return false;
                     }
                 }
@@ -90,15 +93,17 @@ public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredS
         if (this.startingDateTime != null) {
             val st = DateTimeUtils.zonedDateTimeOf(this.startingDateTime);
             if (st != null) {
-                if (ZonedDateTime.now().isBefore(st)) {
-                    LOGGER.warn("Service access not allowed because it starts at [{}]. Zoned now is [{}]", this.startingDateTime, ZonedDateTime.now());
+                val now = ZonedDateTime.now(ZoneOffset.UTC);
+                if (now.isBefore(st)) {
+                    LOGGER.warn("Service access not allowed because it starts at [{}]. Zoned now is [{}]", this.startingDateTime, now);
                     return false;
                 }
             } else {
                 val stLocal = DateTimeUtils.localDateTimeOf(this.startingDateTime);
                 if (stLocal != null) {
-                    if (LocalDateTime.now().isBefore(stLocal)) {
-                        LOGGER.warn("Service access not allowed because it starts at [{}]. Local now is [{}]", this.startingDateTime, ZonedDateTime.now());
+                    val now = LocalDateTime.now(ZoneOffset.UTC);
+                    if (now.isBefore(stLocal)) {
+                        LOGGER.warn("Service access not allowed because it starts at [{}]. Local now is [{}]", this.startingDateTime, now);
                         return false;
                     }
                 }

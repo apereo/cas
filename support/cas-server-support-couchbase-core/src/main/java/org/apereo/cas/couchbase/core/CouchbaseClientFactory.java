@@ -1,5 +1,7 @@
 package org.apereo.cas.couchbase.core;
 
+import org.apereo.cas.util.CollectionUtils;
+
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.CouchbaseCluster;
@@ -21,6 +23,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -167,12 +170,12 @@ public class CouchbaseClientFactory {
      * @param filter          the filter
      * @return the map
      */
-    public Map<String, Object> collectAttributesFromEntity(final JsonObject couchbaseEntity, final Predicate<String> filter) {
+    public Map<String, List<Object>> collectAttributesFromEntity(final JsonObject couchbaseEntity, final Predicate<String> filter) {
         return couchbaseEntity.getNames()
             .stream()
             .filter(filter)
             .map(name -> Pair.of(name, couchbaseEntity.get(name)))
-            .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+            .collect(Collectors.toMap(Pair::getKey, s -> CollectionUtils.wrapList(s.getValue())));
     }
 
     private void initializeBucket() {

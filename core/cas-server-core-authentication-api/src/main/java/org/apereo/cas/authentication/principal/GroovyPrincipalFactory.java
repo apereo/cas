@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,7 +26,7 @@ public class GroovyPrincipalFactory extends DefaultPrincipalFactory {
     }
 
     @Override
-    public Principal createPrincipal(final String id, final Map<String, Object> attributes) {
+    public Principal createPrincipal(final String id, final Map<String, List<Object>> attributes) {
         return watchableScript.execute(new Object[]{id, attributes, LOGGER}, Principal.class);
     }
 }

@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -54,7 +55,7 @@ public class CasKryoTranscoderTests {
 
     private final CasKryoTranscoder transcoder;
 
-    private final Map<String, Object> principalAttributes;
+    private final Map<String, List<Object>> principalAttributes;
 
     public CasKryoTranscoderTests() {
         val classesToRegister = new ArrayList<Class>();
@@ -62,7 +63,7 @@ public class CasKryoTranscoderTests {
         classesToRegister.add(MockTicketGrantingTicket.class);
         this.transcoder = new CasKryoTranscoder(new CasKryoPool(classesToRegister));
         this.principalAttributes = new HashMap<>();
-        this.principalAttributes.put(NICKNAME_KEY, NICKNAME_VALUE);
+        this.principalAttributes.put(NICKNAME_KEY, List.of(NICKNAME_VALUE));
     }
 
     @Test

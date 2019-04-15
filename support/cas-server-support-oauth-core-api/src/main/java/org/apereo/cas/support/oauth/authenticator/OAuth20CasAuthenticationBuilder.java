@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.authenticator;
 
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
@@ -23,9 +24,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.UserProfile;
 
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 
 /**
@@ -92,7 +93,7 @@ public class OAuth20CasAuthenticationBuilder {
                                 final J2EContext context,
                                 final Service service) {
 
-        val profileAttributes = new LinkedHashMap<String, Object>(profile.getAttributes());
+        val profileAttributes = CoreAuthenticationUtils.convertAttributeValuesToMultiValuedObjects(profile.getAttributes());
         val newPrincipal = this.principalFactory.createPrincipal(profile.getId(), profileAttributes);
         LOGGER.debug("Created final principal [{}] after filtering attributes based on [{}]", newPrincipal, registeredService);
 
@@ -119,7 +120,7 @@ public class OAuth20CasAuthenticationBuilder {
             .addAttribute(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
             .addCredential(metadata)
             .setPrincipal(newPrincipal)
-            .setAuthenticationDate(ZonedDateTime.now())
+            .setAuthenticationDate(ZonedDateTime.now(ZoneOffset.UTC))
             .addSuccess(profile.getClass().getCanonicalName(), handlerResult)
             .build();
     }
