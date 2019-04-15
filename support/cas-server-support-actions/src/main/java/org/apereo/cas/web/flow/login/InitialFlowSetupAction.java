@@ -151,7 +151,7 @@ public class InitialFlowSetupAction extends AbstractAction {
                 LOGGER.debug("Setting path for cookies for warn cookie generator to: [{}]", cookiePath);
                 this.warnCookieGenerator.setCookiePath(cookiePath);
             } else {
-                LOGGER.trace("Warning cookie domain is set to [{}] with path [{}]", this.warnCookieGenerator.getCookieDomain(), path);
+                LOGGER.trace("Warning cookie is set to [{}] with path [{}]", this.warnCookieGenerator.getCookieDomain(), path);
             }
         }
 
@@ -161,7 +161,7 @@ public class InitialFlowSetupAction extends AbstractAction {
                 LOGGER.debug("Setting path for cookies for TGC cookie generator to: [{}]", cookiePath);
                 this.ticketGrantingTicketCookieGenerator.setCookiePath(cookiePath);
             } else {
-                LOGGER.trace("TGC cookie domain is [{}] with path [{}]", this.ticketGrantingTicketCookieGenerator.getCookieDomain(), path);
+                LOGGER.trace("Ticket-granting cookie domain is [{}] with path [{}]", this.ticketGrantingTicketCookieGenerator.getCookieDomain(), path);
             }
         }
     }

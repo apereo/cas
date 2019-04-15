@@ -4277,12 +4277,21 @@ Display Google's reCAPTCHA widget on the CAS login page.
 # cas.googleRecaptcha.position=bottomright
 ```
 
-## Google Analytics Integration
+## Google Analytics
 
 To learn more about this topic, [please review this guide](../integration/Configuring-Google-Analytics.html).
 
 ```properties
 # cas.googleAnalytics.googleAnalyticsTrackingId=
+```
+
+### Google Analytics Cookie
+
+The common cookie settings applicable to this feature are [available here](Configuration-Properties-Common.html#cookie-properties) 
+under the configuration key `cas.googleAnalytics.cookie`.
+
+```properties
+cas.googleAnalytics.cookie.attributeName=
 ```
 
 ## Spring Webflow

@@ -87,7 +87,6 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         super.addCookie(response, theCookieValue);
     }
 
-
     @Override
     public String retrieveCookieValue(final HttpServletRequest request) {
         try {
