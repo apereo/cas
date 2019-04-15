@@ -142,7 +142,7 @@ public class DelegatedClientAuthenticationActionTests {
 
         val strategy = new DefaultRegisteredServiceAccessStrategy();
         strategy.setDelegatedAuthenticationPolicy(
-            new DefaultRegisteredServiceDelegatedAuthenticationPolicy(CollectionUtils.wrapList(facebookClient.getName())));
+            new DefaultRegisteredServiceDelegatedAuthenticationPolicy(CollectionUtils.wrapList(facebookClient.getName()), true));
 
         val event = getDelegatedClientAction(facebookClient, service, clients, mockRequest, strategy).execute(mockRequestContext);
         assertEquals("error", event.getId());
@@ -244,7 +244,7 @@ public class DelegatedClientAuthenticationActionTests {
 
         val strategy = new DefaultRegisteredServiceAccessStrategy();
         strategy.setDelegatedAuthenticationPolicy(
-            new DefaultRegisteredServiceDelegatedAuthenticationPolicy(CollectionUtils.wrapList(facebookClient.getName())));
+            new DefaultRegisteredServiceDelegatedAuthenticationPolicy(CollectionUtils.wrapList(facebookClient.getName()), true));
 
         val event = getDelegatedClientAction(facebookClient, service, clients, mockRequest, strategy).execute(mockRequestContext);
         assertEquals("success", event.getId());

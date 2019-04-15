@@ -2,6 +2,7 @@ package org.apereo.cas.util.io;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
@@ -16,6 +17,8 @@ import org.springframework.boot.autoconfigure.mail.MailSenderValidatorAutoConfig
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -45,13 +48,18 @@ public class CommunicationsManagerTests {
     @Test
     public void verifyMailSender() {
         assertTrue(communicationsManager.isMailSenderDefined());
-        assertTrue(communicationsManager.email("Test Body", "cas@example.org", "Subject", "sample@example.org"));
+
+        var props = new EmailProperties();
+        props.setText("Test Body");
+        props.setSubject("Subject");
+        props.setFrom("cas@example.org");
+        props.setCc("cc@example.org");
+        props.setBcc("bcc@example.org");
+
+        assertTrue(communicationsManager.email(props, "sample@example.org", props.getText()));
         val p = mock(Principal.class);
         when(p.getId()).thenReturn("casuser");
-        when(p.getAttributes()).thenReturn(CollectionUtils.wrap("email", "cas@example.org"));
-        assertTrue(communicationsManager.email(p, "email", "Body",
-            "cas@example.org", "Test Subject", "cc@example.org", "bcc@example.org"));
-        assertTrue(communicationsManager.email("Test Body", "cas@example.org", "Subject",
-            "sample@example.org", "cc@example.org", "bcc@example.org"));
+        when(p.getAttributes()).thenReturn(CollectionUtils.wrap("email", List.of("cas@example.org")));
+        assertTrue(communicationsManager.email(p, "email", props, props.getText()));
     }
 }

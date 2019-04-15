@@ -35,6 +35,7 @@ We recommend reading the following documentation in order to plan and execute a 
 * [Getting Started](planning/Getting-Started.html)
 * [Installation Requirements](planning/Installation-Requirements.html)
 * [Installation](installation/WAR-Overlay-Installation.html)
+* [Blog](https://apereo.github.io)
 
 ## Demos
 

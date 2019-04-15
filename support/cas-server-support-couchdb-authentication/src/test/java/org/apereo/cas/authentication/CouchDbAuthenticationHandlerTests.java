@@ -125,7 +125,7 @@ public class CouchDbAuthenticationHandlerTests {
         val result = this.authenticationHandler.authenticate(CoreAuthenticationTestUtils
             .getCredentialsWithDifferentUsernameAndPassword("u1", "p1"));
         assertEquals("u1", result.getPrincipal().getId());
-        assertEquals("Chicago", result.getPrincipal().getAttributes().get("loc"));
-        assertEquals("Illinois", result.getPrincipal().getAttributes().get("state"));
+        assertEquals("Chicago", result.getPrincipal().getAttributes().get("loc").get(0));
+        assertEquals("Illinois", result.getPrincipal().getAttributes().get("state").get(0));
     }
 }

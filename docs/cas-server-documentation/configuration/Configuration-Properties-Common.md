@@ -1015,6 +1015,10 @@ The following options are shared and apply when CAS is configured to send email 
 # ${configurationKey}.mail.subject=
 # ${configurationKey}.mail.cc=
 # ${configurationKey}.mail.bcc=
+# ${configurationKey}.mail.replyTo=
+# ${configurationKey}.mail.validateAddresses=false
+# ${configurationKey}.mail.html=false
+
 # ${configurationKey}.mail.attributeName=mail
 ```
 

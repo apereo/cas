@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.RequiredProperty;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 
@@ -53,4 +54,28 @@ public class EmailProperties implements Serializable {
      * Email BCC address, if any.
      */
     private String bcc;
+
+    /**
+     * Email Reply-To address, if any.
+     */
+    private String replyTo;
+
+    /**
+     * Indicate whether the message body
+     * should be evaluated as HTML text.
+     */
+    private boolean html;
+
+    /**
+     * Set whether to validate all addresses which get passed to this helper.
+     */
+    private boolean validateAddresses;
+    /**
+     * Indicate whether email settings are defined.
+     *
+     * @return true if undefined, false otherwise.
+     */
+    public boolean undefined() {
+        return StringUtils.isBlank(text) || StringUtils.isBlank(from) || StringUtils.isBlank(subject);
+    }
 }
