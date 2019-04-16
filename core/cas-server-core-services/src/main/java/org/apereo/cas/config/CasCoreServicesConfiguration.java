@@ -51,6 +51,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.env.Environment;
@@ -165,6 +166,7 @@ public class CasCoreServicesConfiguration {
     }
 
     @Bean
+    @Lazy(false)
     public ServiceRegistryExecutionPlan serviceRegistryExecutionPlan() {
         val configurers = ObjectUtils.defaultIfNull(serviceRegistryDaoConfigurers.getIfAvailable(),
             new ArrayList<ServiceRegistryExecutionPlanConfigurer>(0));
@@ -194,6 +196,7 @@ public class CasCoreServicesConfiguration {
     @ConditionalOnMissingBean(name = "serviceRegistry")
     @Bean
     @RefreshScope
+    @Lazy(false)
     public ServiceRegistry serviceRegistry() {
         val plan = serviceRegistryExecutionPlan();
         val filter = (Predicate) Predicates.not(Predicates.instanceOf(ImmutableServiceRegistry.class));
