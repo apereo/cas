@@ -47,7 +47,7 @@ public class RegisteredServicesEventListener {
 
         val serviceName = StringUtils.defaultIfBlank(registeredService.getName(), registeredService.getServiceId());
         if (communicationsManager.isMailSenderDefined()) {
-            val message = String.format(mail.getText(), serviceName);
+            val message = mail.getFormattedBody(serviceName);
             contacts
                 .stream()
                 .filter(c -> StringUtils.isNotBlank(c.getEmail()))

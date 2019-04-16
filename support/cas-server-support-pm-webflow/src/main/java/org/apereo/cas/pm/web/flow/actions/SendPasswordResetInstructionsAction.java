@@ -136,7 +136,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
      */
     protected boolean sendPasswordResetEmailToAccount(final String to, final String url) {
         val reset = casProperties.getAuthn().getPm().getReset().getMail();
-        val text = String.format(reset.getText(), url);
+        val text = reset.getFormattedBody(url);
         return this.communicationsManager.email(reset, to, text);
     }
 

@@ -56,10 +56,10 @@ public class CommunicationsManagerTests {
         props.setCc("cc@example.org");
         props.setBcc("bcc@example.org");
 
-        assertTrue(communicationsManager.email(props, "sample@example.org", props.getText()));
+        assertTrue(communicationsManager.email(props, "sample@example.org", props.getFormattedBody()));
         val p = mock(Principal.class);
         when(p.getId()).thenReturn("casuser");
         when(p.getAttributes()).thenReturn(CollectionUtils.wrap("email", List.of("cas@example.org")));
-        assertTrue(communicationsManager.email(p, "email", props, props.getText()));
+        assertTrue(communicationsManager.email(p, "email", props, props.getFormattedBody()));
     }
 }

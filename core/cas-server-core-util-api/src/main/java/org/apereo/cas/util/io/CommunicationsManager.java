@@ -66,7 +66,7 @@ public class CommunicationsManager {
      */
     public boolean email(final EmailProperties emailProperties, final String to, final String body) {
         try {
-            if (!isMailSenderDefined() || emailProperties.undefined() || StringUtils.isBlank(to)) {
+            if (!isMailSenderDefined() || emailProperties.isUndefined() || StringUtils.isBlank(to)) {
                 LOGGER.warn("Could not send email to [{}] because either no from/to/subject/text is defined or email settings are not configured.", to);
                 return false;
             }

@@ -66,7 +66,7 @@ public class SurrogateAuthenticationEventListener {
             val emailAttribute = mail.getAttributeName();
             val to = CollectionUtils.firstElement(emailAttribute).toString();
             if (to != null) {
-                val text = mail.getText().concat("\n").concat(eventDetails);
+                val text = mail.getFormattedBody(eventDetails);
                 this.communicationsManager.email(mail, to, text);
             } else {
                 LOGGER.trace("The principal has no [{}] attribute, cannot send email notification", emailAttribute);

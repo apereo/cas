@@ -49,9 +49,7 @@ public class CasSimpleSendTokenAction extends AbstractAction {
         }
 
         val emailProperties = properties.getMail();
-        val body = StringUtils.isNotBlank(emailProperties.getText())
-            ? String.format(emailProperties.getText(), token.getId())
-            : token.getId();
+        val body = emailProperties.getFormattedBody(token.getId());
 
         if (communicationsManager.email(principal, emailProperties.getAttributeName(), emailProperties, body)) {
             ticketRegistry.addTicket(token);

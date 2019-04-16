@@ -72,7 +72,7 @@ public class SendForgotUsernameInstructionsAction extends AbstractAction {
 
     private boolean sendForgotUsernameEmailToAccount(final String email, final String username) {
         val reset = casProperties.getAuthn().getPm().getForgotUsername().getMail();
-        val text = String.format(reset.getText(), username);
+        val text = reset.getFormattedBody(username);
         return this.communicationsManager.email(reset, email, text);
     }
 
