@@ -27,6 +27,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -63,6 +64,7 @@ public class CasServiceRegistryInitializationConfiguration {
     @Qualifier("serviceRegistry")
     private ObjectProvider<ServiceRegistry> serviceRegistry;
 
+    @Lazy(false)
     @Bean
     public ServiceRegistryInitializer serviceRegistryInitializer() {
         val serviceRegistryInstance = serviceRegistry.getIfAvailable();
@@ -84,6 +86,7 @@ public class CasServiceRegistryInitializationConfiguration {
     @RefreshScope
     @Bean
     @SneakyThrows
+    @Lazy(false)
     public ServiceRegistry embeddedJsonServiceRegistry() {
         val location = getServiceRegistryInitializerServicesDirectoryResource();
         return new EmbeddedResourceBasedServiceRegistry(eventPublisher, location);
