@@ -533,6 +533,7 @@ ext.libraries = [
         ],
         guava                   : [
                 dependencies.create("com.google.guava:guava:$guavaVersion") {
+                    exclude(group: "com.google.errorprone", module: "error_prone_annotations")
                     force = true
                 },
                 dependencies.create("org.reflections:reflections:$reflectionsVersion") {
@@ -2510,6 +2511,7 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.springframework", module: "spring-context-support")
                     exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.aspectj", module: "aspectjweaver")
                     force = true
                 },
                 dependencies.create("org.springframework.boot:spring-boot-starter-web:$springBootVersion") {
@@ -3437,6 +3439,7 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-expression")
                     exclude(group: "org.springframework", module: "spring-web")
                     exclude(group: "org.springframework", module: "spring-tx")
+                    exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
                     exclude(group: "org.springframework.security", module: "spring-security-crypto")
                     force = true
                 },
@@ -3461,6 +3464,7 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-jdbc")
                     exclude(group: "org.springframework", module: "spring-test")
                     exclude(group: "org.springframework", module: "spring-tx")
+                    exclude(group: "org.springframework", module: "spring-web")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "junit", module: "junit")
                     exclude(group: "org.mockito", module: "mockito-core")
