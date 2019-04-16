@@ -38,10 +38,10 @@ public interface OneTimeTokenRepository {
      * Get one time token.
      *
      * @param uid the uid
-     * @param opt the opt
+     * @param otp the opt
      * @return the one time token
      */
-    OneTimeToken get(String uid, Integer opt);
+    OneTimeToken get(String uid, Integer otp);
 
     /**
      * Remove the token.

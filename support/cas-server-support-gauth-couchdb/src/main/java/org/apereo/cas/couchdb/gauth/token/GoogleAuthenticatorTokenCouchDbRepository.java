@@ -107,8 +107,10 @@ public class GoogleAuthenticatorTokenCouchDbRepository extends CouchDbRepository
      * @param otp otp to search
      * @return token for uid, otp pair
      */
+    @View(name = "by_uid_otp", map = "function(doc) { if(doc.token && doc.userId) { emit([doc.userId, doc.token], doc) } }")
     public List<CouchDbGoogleAuthenticatorToken> findByUidForOtp(final String uid, final Integer otp) {
-        return queryView("by_uid_otp", ComplexKey.of());
+        val view = createQuery("by_uid_otp").key(ComplexKey.of(uid, otp));
+        return db.queryView(view, CouchDbGoogleAuthenticatorToken.class);
     }
 
     /**
