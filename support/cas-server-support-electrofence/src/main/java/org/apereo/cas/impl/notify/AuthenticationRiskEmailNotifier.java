@@ -32,6 +32,6 @@ public class AuthenticationRiskEmailNotifier extends BaseAuthenticationRiskNotif
             return;
         }
         val to = principal.getAttributes().get(mail.getAttributeName()).toString();
-        this.communicationsManager.email(mail, to, mail.getText());
+        this.communicationsManager.email(mail, to, mail.getFormattedBody());
     }
 }
