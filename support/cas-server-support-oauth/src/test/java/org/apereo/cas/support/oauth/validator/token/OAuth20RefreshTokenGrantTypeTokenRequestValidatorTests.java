@@ -14,6 +14,7 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.Pac4jConstants;
@@ -30,6 +31,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+@Tag("OAuth")
 public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests {
     private static final String SUPPORTING_SERVICE_TICKET = "RT-SUPPORTING";
     private static final String NON_SUPPORTING_SERVICE_TICKET = "RT-NON-SUPPORTING";

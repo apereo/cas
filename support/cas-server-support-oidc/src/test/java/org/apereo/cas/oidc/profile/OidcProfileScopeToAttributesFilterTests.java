@@ -8,6 +8,7 @@ import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.J2EContext;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -22,6 +23,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Tag("OIDC")
 public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
 
     @Test
@@ -67,7 +69,6 @@ public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
     public void verifyOperationRecon() {
         val service = getOidcRegisteredService();
         service.getScopes().add(OidcConstants.StandardScopes.ADDRESS.getScope());
-        service.getScopes().add(OidcConstants.StandardScopes.CUSTOM.getScope());
         service.getScopes().add(OidcConstants.StandardScopes.EMAIL.getScope());
         service.getScopes().add(OidcConstants.StandardScopes.OFFLINE_ACCESS.getScope());
         service.getScopes().add(OidcConstants.StandardScopes.OPENID.getScope());
@@ -77,6 +78,6 @@ public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
         val policy = service.getAttributeReleasePolicy();
         assertTrue(policy instanceof ChainingAttributeReleasePolicy);
         val chain = (ChainingAttributeReleasePolicy) policy;
-        assertEquals(5, chain.size());
+        assertEquals(4, chain.size());
     }
 }

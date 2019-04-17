@@ -119,8 +119,12 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
         }
 
         claims.setStringClaim(OAuth20Constants.CLIENT_ID, service.getClientId());
-        claims.setClaim(OAuth20Constants.STATE, attributes.get(OAuth20Constants.STATE).get(0));
-        claims.setClaim(OAuth20Constants.NONCE, attributes.get(OAuth20Constants.NONCE).get(0));
+        if (attributes.containsKey(OAuth20Constants.STATE)) {
+            claims.setClaim(OAuth20Constants.STATE, attributes.get(OAuth20Constants.STATE).get(0));
+        }
+        if (attributes.containsKey(OAuth20Constants.NONCE)) {
+            claims.setClaim(OAuth20Constants.NONCE, attributes.get(OAuth20Constants.NONCE).get(0));
+        }
         claims.setClaim(OidcConstants.CLAIM_AT_HASH, generateAccessTokenHash(accessTokenId, service));
 
         LOGGER.trace("Comparing principal attributes [{}] with supported claims [{}]", principal.getAttributes(), oidc.getClaims());

@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.refreshtoken;
 import org.apereo.cas.ticket.BaseOAuthExpirationPolicyTests;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
@@ -13,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @since 5.3.0
  */
+@Tag("OAuth")
 @TestPropertySource(properties = "cas.logout.removeDescendantTickets=false")
 public class OAuthRefreshTokenSovereignExpirationPolicyTests extends BaseOAuthExpirationPolicyTests {
     @Test
