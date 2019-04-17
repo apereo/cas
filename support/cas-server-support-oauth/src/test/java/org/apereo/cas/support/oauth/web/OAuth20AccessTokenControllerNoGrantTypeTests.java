@@ -5,10 +5,10 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 
 import java.util.HashSet;
 import java.util.Set;
-
 
 /**
  * This class tests the {@link OAuth20AccessTokenEndpointController} class.
@@ -22,6 +22,7 @@ import java.util.Set;
  * @author Kirill Gagarski
  * @since 5.3.3
  */
+@Tag("OAuth")
 public class OAuth20AccessTokenControllerNoGrantTypeTests extends OAuth20AccessTokenControllerTests {
     @Override
     protected OAuthRegisteredService getRegisteredService(final String serviceId, final String secret,

@@ -194,13 +194,32 @@ if (hasTestsOfCategory(project, "Redis")) {
     }
 }
 
+if (hasTestsOfCategory(project, "OAuth")) {
+    task testOAuth(type: Test) {
+        enabled = shouldTest(project, "OAuth")
+        useJUnitPlatform {
+            includeTags "OAuth"
+        }
+    }
+}
+
+if (hasTestsOfCategory(project, "OIDC")) {
+    task testOIDC(type: Test) {
+        enabled = shouldTest(project, "OIDC")
+        useJUnitPlatform {
+            includeTags "OIDC"
+        }
+    }
+}
+
 test {
     useJUnitPlatform {
         excludeTags "Cassandra", "CosmosDb", "Couchbase", "DynamoDb",
                 "FileSystem", "Ignite", "InfluxDb", "CouchDb",
                 "Ldap", "Mail", "MariaDb", "Memcached",
                 "MongoDb", "MsSqlServer", "MySQL", "Postgres", "Redis",
-                "Radius", "AmazonWebServicesS3", "RestfulApi", "Groovy"
+                "Radius", "AmazonWebServicesS3", "RestfulApi", "Groovy",
+                "OAuth", "OIDC"
     }
     enabled = "SIMPLE".equalsIgnoreCase(rootProject.testCategoryType) && !Boolean.getBoolean("skipTests")
 }

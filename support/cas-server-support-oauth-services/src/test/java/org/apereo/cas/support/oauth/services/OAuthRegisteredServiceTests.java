@@ -10,6 +10,7 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.ClassPathResource;
@@ -23,6 +24,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Tag("OAuth")
 public class OAuthRegisteredServiceTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "oAuthRegisteredService.json");

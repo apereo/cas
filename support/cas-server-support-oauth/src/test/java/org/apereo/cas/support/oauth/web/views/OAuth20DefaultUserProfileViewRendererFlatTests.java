@@ -6,6 +6,7 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.hjson.JsonValue;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,6 +23,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Tag("OAuth")
 @TestPropertySource(properties = "cas.authn.oauth.userProfileViewType=FLAT")
 public class OAuth20DefaultUserProfileViewRendererFlatTests extends AbstractOAuth20Tests {
 

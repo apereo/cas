@@ -6,6 +6,7 @@ import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Jerome Leleu
  * @since 3.5.2
  */
+@Tag("OAuth")
 public class OAuth20RefreshTokenTests extends AbstractOAuth20Tests {
 
     @BeforeEach

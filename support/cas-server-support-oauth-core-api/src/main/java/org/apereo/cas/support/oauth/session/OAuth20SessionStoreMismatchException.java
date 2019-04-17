@@ -11,7 +11,7 @@ import org.apereo.cas.authentication.RootCasException;
 public class OAuth20SessionStoreMismatchException extends RootCasException {
     private static final long serialVersionUID = -893364906643103618L;
 
-    public static final String CODE = "OAUTH_BAD_SESSION_REQUEST";
+    private static final String CODE = "OAUTH_BAD_SESSION_REQUEST";
 
     public OAuth20SessionStoreMismatchException(final String msg) {
         super(CODE, msg);

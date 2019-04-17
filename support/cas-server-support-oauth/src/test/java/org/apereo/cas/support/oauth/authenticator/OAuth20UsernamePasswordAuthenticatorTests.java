@@ -6,6 +6,7 @@ import org.apereo.cas.util.HttpUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
@@ -22,6 +23,7 @@ import static org.springframework.http.HttpHeaders.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+@Tag("OAuth")
 public class OAuth20UsernamePasswordAuthenticatorTests extends BaseOAuth20AuthenticatorTests {
     protected OAuth20UsernamePasswordAuthenticator authenticator;
 

@@ -19,6 +19,7 @@ import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 import org.apereo.cas.token.JwtBuilder;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -41,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Jerome Leleu
  * @since 3.5.2
  */
+@Tag("OAuth")
 public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
 
     @Autowired

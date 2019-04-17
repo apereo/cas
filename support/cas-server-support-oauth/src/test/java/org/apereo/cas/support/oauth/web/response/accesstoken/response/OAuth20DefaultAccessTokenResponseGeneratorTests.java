@@ -17,6 +17,7 @@ import org.apereo.cas.token.JwtBuilder;
 import com.nimbusds.jwt.JWTParser;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -35,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
+@Tag("OAuth")
 public class OAuth20DefaultAccessTokenResponseGeneratorTests extends AbstractOAuth20Tests {
 
     @BeforeEach
