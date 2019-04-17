@@ -5,6 +5,7 @@ import org.apereo.cas.oidc.web.controllers.discovery.OidcWellKnownEndpointContro
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -17,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Tag("OIDC")
 public class OidcWellKnownEndpointControllerTests extends AbstractOidcTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 

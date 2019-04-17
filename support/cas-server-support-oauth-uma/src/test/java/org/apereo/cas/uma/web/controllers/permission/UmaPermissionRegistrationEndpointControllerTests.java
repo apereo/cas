@@ -3,6 +3,7 @@ package org.apereo.cas.uma.web.controllers.permission;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointControllerTests;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
@@ -16,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-
+@Tag("OAuth")
 public class UmaPermissionRegistrationEndpointControllerTests extends BaseUmaEndpointControllerTests {
     @Test
     public void verifyPermissionRegistrationOperation() throws Exception {

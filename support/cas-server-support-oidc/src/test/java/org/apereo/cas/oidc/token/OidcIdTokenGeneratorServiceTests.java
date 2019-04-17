@@ -11,11 +11,14 @@ import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -26,6 +29,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Tag("OIDC")
 public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
     @Test
     public void verifyTokenGeneration() {
@@ -44,10 +48,13 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
 
         val service = new WebApplicationServiceFactory().createService(callback);
         when(tgt.getServices()).thenReturn(CollectionUtils.wrap("service", service));
-        when(tgt.getAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
+        var authentication = CoreAuthenticationTestUtils.getAuthentication("casuser",
+            CollectionUtils.wrap(OAuth20Constants.STATE, List.of("some-state"),
+                OAuth20Constants.NONCE, List.of("some-nonce")));
+        when(tgt.getAuthentication()).thenReturn(authentication);
 
         val accessToken = mock(AccessToken.class);
-        when(accessToken.getAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication("casuser"));
+        when(accessToken.getAuthentication()).thenReturn(authentication);
         when(accessToken.getTicketGrantingTicket()).thenReturn(tgt);
         when(accessToken.getId()).thenReturn(getClass().getSimpleName());
 
