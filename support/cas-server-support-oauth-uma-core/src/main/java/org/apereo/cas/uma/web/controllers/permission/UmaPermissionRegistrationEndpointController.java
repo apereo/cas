@@ -1,10 +1,7 @@
 package org.apereo.cas.uma.web.controllers.permission;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.uma.ticket.permission.UmaPermissionTicketFactory;
-import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
+import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -29,15 +26,8 @@ import javax.servlet.http.HttpServletResponse;
 @Controller("umaPermissionRegistrationEndpointController")
 @Slf4j
 public class UmaPermissionRegistrationEndpointController extends BaseUmaEndpointController {
-
-    private final TicketRegistry ticketRegistry;
-
-    public UmaPermissionRegistrationEndpointController(final UmaPermissionTicketFactory umaPermissionTicketFactory,
-                                                       final ResourceSetRepository umaResourceSetRepository,
-                                                       final CasConfigurationProperties casProperties,
-                                                       final TicketRegistry ticketRegistry) {
-        super(umaPermissionTicketFactory, umaResourceSetRepository, casProperties);
-        this.ticketRegistry = ticketRegistry;
+    public UmaPermissionRegistrationEndpointController(final UmaConfigurationContext umaConfigurationContext) {
+        super(umaConfigurationContext);
     }
 
     /**
@@ -61,7 +51,7 @@ public class UmaPermissionRegistrationEndpointController extends BaseUmaEndpoint
                 return new ResponseEntity(model, model, HttpStatus.BAD_REQUEST);
             }
 
-            val resourceSetResult = umaResourceSetRepository.getById(umaRequest.getResourceId());
+            val resourceSetResult = getUmaConfigurationContext().getUmaResourceSetRepository().getById(umaRequest.getResourceId());
             if (resourceSetResult.isEmpty()) {
                 val model = buildResponseEntityErrorModel(HttpStatus.NOT_FOUND, "Requested resource-set cannot be found");
                 return new ResponseEntity(model, model, HttpStatus.BAD_REQUEST);
@@ -73,10 +63,11 @@ public class UmaPermissionRegistrationEndpointController extends BaseUmaEndpoint
                 return new ResponseEntity(model, model, HttpStatus.BAD_REQUEST);
             }
 
-            val permission = umaPermissionTicketFactory.create(resourceSet, umaRequest.getScopes(), umaRequest.getClaims());
+            val permission = getUmaConfigurationContext().getUmaPermissionTicketFactory()
+                .create(resourceSet, umaRequest.getScopes(), umaRequest.getClaims());
 
             if (permission != null) {
-                ticketRegistry.addTicket(permission);
+                getUmaConfigurationContext().getTicketRegistry().addTicket(permission);
 
                 val model = CollectionUtils.wrap("ticket", permission.getId(), "code", HttpStatus.CREATED);
                 return new ResponseEntity(model, HttpStatus.OK);

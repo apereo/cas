@@ -1,9 +1,7 @@
 package org.apereo.cas.uma.web.controllers.policy;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.uma.ticket.permission.UmaPermissionTicketFactory;
-import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
+import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -30,11 +28,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @Controller("umaDeletePolicyForResourceSetEndpointController")
 public class UmaDeletePolicyForResourceSetEndpointController extends BaseUmaEndpointController {
-
-    public UmaDeletePolicyForResourceSetEndpointController(final UmaPermissionTicketFactory umaPermissionTicketFactory,
-                                                           final ResourceSetRepository umaResourceSetRepository,
-                                                           final CasConfigurationProperties casProperties) {
-        super(umaPermissionTicketFactory, umaResourceSetRepository, casProperties);
+    public UmaDeletePolicyForResourceSetEndpointController(final UmaConfigurationContext umaConfigurationContext) {
+        super(umaConfigurationContext);
     }
 
     /**
@@ -50,12 +45,12 @@ public class UmaDeletePolicyForResourceSetEndpointController extends BaseUmaEndp
         consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity deletePoliciesForResourceSet(@PathVariable(value = "resourceId") final long resourceId,
-                                                    @PathVariable(value = "policyId") final long policyId,
-                                                    final HttpServletRequest request,
-                                                    final HttpServletResponse response) {
+                                                       @PathVariable(value = "policyId") final long policyId,
+                                                       final HttpServletRequest request,
+                                                       final HttpServletResponse response) {
         try {
             val profileResult = getAuthenticatedProfile(request, response, OAuth20Constants.UMA_PROTECTION_SCOPE);
-            val resourceSetResult = umaResourceSetRepository.getById(resourceId);
+            val resourceSetResult = getUmaConfigurationContext().getUmaResourceSetRepository().getById(resourceId);
             if (resourceSetResult.isEmpty()) {
                 val model = buildResponseEntityErrorModel(HttpStatus.NOT_FOUND, "Requested resource-set cannot be found");
                 return new ResponseEntity(model, model, HttpStatus.BAD_REQUEST);
@@ -65,7 +60,7 @@ public class UmaDeletePolicyForResourceSetEndpointController extends BaseUmaEndp
 
             val policies = resourceSet.getPolicies().stream().filter(p -> p.getId() != policyId).collect(Collectors.toSet());
             resourceSet.setPolicies(new HashSet<>(policies));
-            val saved = umaResourceSetRepository.save(resourceSet);
+            val saved = getUmaConfigurationContext().getUmaResourceSetRepository().save(resourceSet);
 
             val model = CollectionUtils.wrap("entity", saved, "code", HttpStatus.OK);
             return new ResponseEntity(model, HttpStatus.OK);

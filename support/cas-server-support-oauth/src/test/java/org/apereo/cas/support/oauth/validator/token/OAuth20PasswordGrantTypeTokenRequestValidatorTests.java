@@ -8,6 +8,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -36,8 +37,6 @@ public class OAuth20PasswordGrantTypeTokenRequestValidatorTests {
 
     @BeforeEach
     public void before() {
-        val service = RegisteredServiceTestUtils.getService();
-
         val serviceManager = mock(ServicesManager.class);
         supportingService = RequestValidatorTestUtils.getService(
                 RegisteredServiceTestUtils.CONST_TEST_URL,
@@ -60,8 +59,12 @@ public class OAuth20PasswordGrantTypeTokenRequestValidatorTests {
         when(serviceManager.getAllServices()).thenReturn(CollectionUtils.wrapList(
                 supportingService, nonSupportingService, promiscuousService));
 
-        this.validator = new OAuth20PasswordGrantTypeTokenRequestValidator(new RegisteredServiceAccessStrategyAuditableEnforcer(),
-            serviceManager, new WebApplicationServiceFactory());
+        val context = OAuth20ConfigurationContext.builder()
+            .servicesManager(serviceManager)
+            .webApplicationServiceServiceFactory(new WebApplicationServiceFactory())
+            .registeredServiceAccessStrategyEnforcer(new RegisteredServiceAccessStrategyAuditableEnforcer())
+            .build();
+        this.validator = new OAuth20PasswordGrantTypeTokenRequestValidator(context);
     }
 
     @Test
@@ -76,6 +79,7 @@ public class OAuth20PasswordGrantTypeTokenRequestValidatorTests {
         profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
         profile.setId(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID);
         val session = request.getSession(true);
+        assertNotNull(session);
         session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
 
         request.setParameter(OAuth20Constants.GRANT_TYPE, getGrantType().getType());

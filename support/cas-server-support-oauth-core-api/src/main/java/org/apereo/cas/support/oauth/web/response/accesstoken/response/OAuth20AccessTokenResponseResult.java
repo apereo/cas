@@ -20,13 +20,13 @@ import org.springframework.core.io.ResourceLoader;
 @Getter
 public class OAuth20AccessTokenResponseResult {
 
-    private ResourceLoader resourceLoader;
-    private OAuthRegisteredService registeredService;
-    private Service service;
-    private OAuth20TokenGeneratedResult generatedToken;
-    private long accessTokenTimeout;
-    private long deviceTokenTimeout;
-    private OAuth20ResponseTypes responseType;
-    private CasConfigurationProperties casProperties;
-    private long deviceRefreshInterval;
+    private final ResourceLoader resourceLoader;
+    private final OAuthRegisteredService registeredService;
+    private final Service service;
+    private final OAuth20TokenGeneratedResult generatedToken;
+    private final long accessTokenTimeout;
+    private final long deviceTokenTimeout;
+    private final OAuth20ResponseTypes responseType;
+    private final CasConfigurationProperties casProperties;
+    private final long deviceRefreshInterval;
 }

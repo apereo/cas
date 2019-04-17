@@ -39,20 +39,20 @@ public class AccessTokenRequestDataHolder {
     private final TicketGrantingTicket ticketGrantingTicket;
 
     @Builder.Default
-    private OAuth20GrantTypes grantType = OAuth20GrantTypes.NONE;
+    private final OAuth20GrantTypes grantType = OAuth20GrantTypes.NONE;
 
     @Builder.Default
-    private Set<String> scopes = new LinkedHashSet<>();
+    private final Set<String> scopes = new LinkedHashSet<>();
 
     @Builder.Default
-    private OAuth20ResponseTypes responseType = OAuth20ResponseTypes.NONE;
+    private final OAuth20ResponseTypes responseType = OAuth20ResponseTypes.NONE;
 
     private final String deviceCode;
 
     private final String codeChallenge;
 
     @Builder.Default
-    private String codeChallengeMethod = "plain";
+    private final String codeChallengeMethod = "plain";
 
     private final String codeVerifier;
 }

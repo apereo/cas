@@ -87,6 +87,10 @@ public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowEx
     private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
+    @Qualifier("delegatedClientDistributedSessionStore")
+    private ObjectProvider<SessionStore> delegatedClientDistributedSessionStore;
+
+    @Autowired
     @Qualifier("ticketRegistry")
     private ObjectProvider<TicketRegistry> ticketRegistry;
 
@@ -155,7 +159,8 @@ public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowEx
     @Lazy
     @RefreshScope
     public Action saml2ClientLogoutAction() {
-        return new DelegatedAuthenticationSAML2ClientLogoutAction(builtClients.getIfAvailable(), delegatedClientDistributedSessionStore());
+        return new DelegatedAuthenticationSAML2ClientLogoutAction(builtClients.getIfAvailable(),
+            delegatedClientDistributedSessionStore.getIfAvailable());
     }
 
     @RefreshScope
@@ -177,7 +182,7 @@ public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowEx
             authenticationRequestServiceSelectionStrategies.getIfAvailable(),
             centralAuthenticationService.getIfAvailable(),
             webflowSingleSignOnParticipationStrategy.getIfAvailable(),
-            delegatedClientDistributedSessionStore());
+            delegatedClientDistributedSessionStore.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "delegatedAuthenticationWebflowConfigurer")
@@ -215,13 +220,7 @@ public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowEx
     public DelegatedClientNavigationController delegatedClientNavigationController() {
         return new DelegatedClientNavigationController(builtClients.getIfAvailable(),
             delegatedClientWebflowManager(),
-            delegatedClientDistributedSessionStore());
-    }
-
-    @ConditionalOnMissingBean(name = "delegatedClientDistributedSessionStore")
-    @Bean
-    public SessionStore delegatedClientDistributedSessionStore() {
-        return new DistributedJ2ESessionStore(ticketRegistry.getIfAvailable(), ticketFactory.getIfAvailable());
+            delegatedClientDistributedSessionStore.getIfAvailable());
     }
 
     @Override
@@ -240,7 +239,9 @@ public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowEx
         return () -> {
             if (!casProperties.getSso().isAllowMissingServiceParameter()) {
                 return CollectionUtils.wrap(
-                    new DelegatedAuthenticationWebApplicationServiceFactory(builtClients.getIfAvailable(), delegatedClientWebflowManager()));
+                    new DelegatedAuthenticationWebApplicationServiceFactory(builtClients.getIfAvailable(),
+                        delegatedClientWebflowManager(),
+                        delegatedClientDistributedSessionStore.getIfAvailable()));
             }
             return new ArrayList<>();
         };

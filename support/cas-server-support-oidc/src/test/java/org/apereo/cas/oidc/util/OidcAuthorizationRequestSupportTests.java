@@ -4,9 +4,12 @@ import org.apereo.cas.oidc.OidcConstants;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
+import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.profile.CommonProfile;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -53,7 +56,7 @@ public class OidcAuthorizationRequestSupportTests {
 
     @Test
     public void verifyAuthnProfile() {
-        val context = mock(WebContext.class);
+        val context = new J2EContext(new MockHttpServletRequest(), new MockHttpServletResponse());
         when(context.getSessionStore()).thenReturn(mock(SessionStore.class));
         when(context.getRequestAttribute(anyString())).thenReturn(new CommonProfile());
         assertTrue(OidcAuthorizationRequestSupport.isAuthenticationProfileAvailable(context).isPresent());

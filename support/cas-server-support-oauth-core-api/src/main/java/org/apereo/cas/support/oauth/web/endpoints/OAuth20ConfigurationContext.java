@@ -34,6 +34,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.pac4j.core.config.Config;
+import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.session.SessionStore;
 import org.springframework.core.io.ResourceLoader;
 
 import java.util.Collection;
@@ -76,7 +78,7 @@ public class OAuth20ConfigurationContext {
 
     private final ExpirationPolicy deviceTokenExpirationPolicy;
 
-    private final AuditableExecution accessTokenGrantAuditableRequestExtractor;
+    private AuditableExecution accessTokenGrantAuditableRequestExtractor;
 
     private final OAuthCodeFactory oAuthCodeFactory;
 
@@ -110,7 +112,9 @@ public class OAuth20ConfigurationContext {
 
     private final ResourceLoader resourceLoader;
 
-    private final OAuthTokenSigningAndEncryptionService idTokenSigningAndEncryptionService;
+    private OAuthTokenSigningAndEncryptionService idTokenSigningAndEncryptionService;
 
     private final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
+
+    private final SessionStore<J2EContext> sessionStore;
 }
