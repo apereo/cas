@@ -1,12 +1,9 @@
 package org.apereo.cas.support.oauth.validator.token;
 
-import org.apereo.cas.audit.AuditableExecution;
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 
 import org.pac4j.core.context.J2EContext;
 
@@ -17,10 +14,8 @@ import org.pac4j.core.context.J2EContext;
  * @since 5.3.0
  */
 public class OAuth20ClientCredentialsGrantTypeTokenRequestValidator extends OAuth20PasswordGrantTypeTokenRequestValidator {
-    public OAuth20ClientCredentialsGrantTypeTokenRequestValidator(final ServicesManager servicesManager,
-                                                                  final AuditableExecution registeredServiceAccessStrategyEnforcer,
-                                                                  final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactor) {
-        super(registeredServiceAccessStrategyEnforcer, servicesManager, webApplicationServiceServiceFactor);
+    public OAuth20ClientCredentialsGrantTypeTokenRequestValidator(final OAuth20ConfigurationContext configurationContext) {
+        super(configurationContext);
     }
 
     @Override

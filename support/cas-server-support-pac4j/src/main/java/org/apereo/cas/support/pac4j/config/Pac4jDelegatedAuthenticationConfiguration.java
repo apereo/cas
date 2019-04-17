@@ -41,9 +41,6 @@ public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketV
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer")

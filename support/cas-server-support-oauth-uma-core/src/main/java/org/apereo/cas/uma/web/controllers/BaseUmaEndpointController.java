@@ -1,25 +1,24 @@
 package org.apereo.cas.uma.web.controllers;
 
 import org.apereo.cas.authentication.AuthenticationException;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.uma.ticket.permission.UmaPermissionTicketFactory;
+import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.ticket.resource.InvalidResourceSetException;
 import org.apereo.cas.uma.ticket.resource.ResourceSet;
-import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.Pac4jUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.profile.ProfileManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.MultiValueMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Optional;
 
 /**
  * This is {@link BaseUmaEndpointController}.
@@ -27,6 +26,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+@Getter
 @RequiredArgsConstructor
 public abstract class BaseUmaEndpointController {
     /**
@@ -34,20 +34,7 @@ public abstract class BaseUmaEndpointController {
      */
     protected static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
-    /**
-     * The Uma permission ticket factory.
-     */
-    protected final UmaPermissionTicketFactory umaPermissionTicketFactory;
-
-    /**
-     * The Uma resource set repository.
-     */
-    protected final ResourceSetRepository umaResourceSetRepository;
-
-    /**
-     * The CAS properties.
-     */
-    protected final CasConfigurationProperties casProperties;
+    private final UmaConfigurationContext umaConfigurationContext;
 
     /**
      * Gets authenticated profile.
@@ -60,16 +47,16 @@ public abstract class BaseUmaEndpointController {
     protected CommonProfile getAuthenticatedProfile(final HttpServletRequest request,
                                                     final HttpServletResponse response,
                                                     final String requiredPermission) {
-        val manager = Pac4jUtils.getPac4jProfileManager(request, response);
-        val profile = (Optional<CommonProfile>) manager.get(true);
-        if (profile == null || profile.isEmpty()) {
+        val context = new J2EContext(request, response, getUmaConfigurationContext().getSessionStore());
+        val manager = new ProfileManager<>(context, context.getSessionStore());
+        val profile = manager.get(true).orElse(null);
+        if (profile == null) {
             throw new AuthenticationException("Unable to locate authenticated profile");
         }
-        val p = profile.get();
-        if (!p.getPermissions().contains(requiredPermission)) {
+        if (!profile.getPermissions().contains(requiredPermission)) {
             throw new AuthenticationException("Authenticated profile does not carry the UMA protection scope");
         }
-        return p;
+        return profile;
     }
 
     /**
@@ -103,7 +90,8 @@ public abstract class BaseUmaEndpointController {
      * @return the resource set uri location
      */
     protected String getResourceSetUriLocation(final ResourceSet saved) {
-        return casProperties.getAuthn().getUma().getIssuer()
+        return getUmaConfigurationContext().getCasProperties()
+            .getAuthn().getUma().getIssuer()
             + OAuth20Constants.BASE_OAUTH20_URL + '/'
             + OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL + '/'
             + saved.getId();

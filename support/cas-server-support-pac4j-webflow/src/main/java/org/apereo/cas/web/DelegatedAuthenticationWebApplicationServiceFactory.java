@@ -1,7 +1,7 @@
 package org.apereo.cas.web;
 
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.util.Pac4jUtils;
+import org.apereo.cas.util.HttpRequestUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +9,9 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
+import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.Pac4jConstants;
+import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.profile.CommonProfile;
 
@@ -26,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 public class DelegatedAuthenticationWebApplicationServiceFactory extends WebApplicationServiceFactory {
     private final Clients clients;
     private final DelegatedClientWebflowManager delegatedClientWebflowManager;
+    private final SessionStore sessionStore;
 
     @Override
     protected String getRequestedService(final HttpServletRequest request) {
@@ -43,7 +46,11 @@ public class DelegatedAuthenticationWebApplicationServiceFactory extends WebAppl
         }
 
         val client = (BaseClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
-        val webContext = Pac4jUtils.getPac4jJ2EContext(request);
+
+        val webContext = new J2EContext(request,
+            HttpRequestUtils.getHttpServletResponseFromRequestAttributes(),
+            this.sessionStore);
+
         val clientId = delegatedClientWebflowManager.getDelegatedClientId(webContext, client);
         if (StringUtils.isNotBlank(clientId)) {
             val ticket = delegatedClientWebflowManager.retrieveSessionTicketViaClientId(webContext, clientId);

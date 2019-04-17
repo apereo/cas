@@ -46,8 +46,8 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
         val attributes = new HashMap<String, List<Object>>();
         policies.forEach(policy -> {
             LOGGER.trace("Fetching attributes from policy [{}] for principal [{}]", policy.getName(), p.getId());
-            val policyAttributes = (Map) policy.getAttributes(p, selectedService, service);
-            merger.mergeAttributes((Map) attributes, policyAttributes);
+            val policyAttributes = policy.getAttributes(p, selectedService, service);
+            merger.mergeAttributes(attributes, policyAttributes);
             LOGGER.trace("Attributes that remain, after the merge with attribute policy results, are [{}}", attributes);
         });
         return attributes;
@@ -61,8 +61,8 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
         val attributes = new HashMap<String, List<Object>>();
         policies.forEach(policy -> {
             LOGGER.trace("Fetching consentable attributes from policy [{}] for principal [{}]", policy.getName(), principal.getId());
-            val policyAttributes = (Map) policy.getConsentableAttributes(principal, selectedService, service);
-            merger.mergeAttributes((Map) attributes, policyAttributes);
+            val policyAttributes = policy.getConsentableAttributes(principal, selectedService, service);
+            merger.mergeAttributes(attributes, policyAttributes);
             LOGGER.trace("Attributes that remain, after the merge with consentable attribute policy results, are [{}}", attributes);
         });
         return attributes;

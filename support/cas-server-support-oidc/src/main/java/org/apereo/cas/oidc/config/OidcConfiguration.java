@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderResolver;
-import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -106,6 +105,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.RsaJsonWebKey;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.config.Config;
+import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.ObjectProvider;
@@ -143,6 +143,9 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionPlanConfigurer {
+    @Autowired
+    @Qualifier("oauthDistributedSessionStore")
+    private ObjectProvider<SessionStore> oauthDistributedSessionStore;
 
     @Autowired
     @Qualifier("accessTokenJwtBuilder")
@@ -191,10 +194,6 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
     @Autowired
     @Qualifier("requiresAuthenticationAccessTokenInterceptor")
     private ObjectProvider<SecurityInterceptor> requiresAuthenticationAccessTokenInterceptor;
-
-    @Autowired
-    @Qualifier("multifactorAuthenticationProviderSelector")
-    private ObjectProvider<MultifactorAuthenticationProviderSelector> multifactorAuthenticationProviderSelector;
 
     @Autowired
     @Qualifier("oauthCasAuthenticationBuilder")
@@ -327,7 +326,8 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
     @Bean
     public HandlerInterceptorAdapter requiresAuthenticationAuthorizeInterceptor() {
         val name = oauthSecConfig.getIfAvailable().getClients().findClient(CasClient.class).getName();
-        return new OidcSecurityInterceptor(oauthSecConfig.getIfAvailable(), name, oidcAuthorizationRequestSupport());
+        return new OidcSecurityInterceptor(oauthSecConfig.getIfAvailable(), name, oidcAuthorizationRequestSupport(),
+            oauthDistributedSessionStore.getIfAvailable());
     }
 
     @Bean
@@ -338,11 +338,9 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
     @RefreshScope
     @Bean
     public IdTokenGeneratorService oidcIdTokenGenerator() {
-        return new OidcIdTokenGeneratorService(
-            casProperties,
-            oidcTokenSigningAndEncryptionService(),
-            servicesManager.getIfAvailable(),
-            ticketRegistry.getIfAvailable());
+        val context = buildConfigurationContext();
+        context.setIdTokenSigningAndEncryptionService(oidcTokenSigningAndEncryptionService());
+        return new OidcIdTokenGeneratorService(context);
     }
 
     @Bean
@@ -620,6 +618,7 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
 
     private OAuth20ConfigurationContext buildConfigurationContext() {
         return OAuth20ConfigurationContext.builder()
+            .sessionStore(oauthDistributedSessionStore.getIfAvailable())
             .servicesManager(servicesManager.getIfAvailable())
             .ticketRegistry(ticketRegistry.getIfAvailable())
             .accessTokenFactory(defaultAccessTokenFactory.getIfAvailable())

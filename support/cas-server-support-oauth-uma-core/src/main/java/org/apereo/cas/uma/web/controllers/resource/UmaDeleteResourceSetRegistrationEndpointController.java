@@ -1,11 +1,9 @@
 package org.apereo.cas.uma.web.controllers.resource;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.uma.ticket.permission.UmaPermissionTicketFactory;
+import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.ticket.resource.InvalidResourceSetException;
-import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -30,11 +28,8 @@ import javax.servlet.http.HttpServletResponse;
 @Controller("umaDeleteResourceSetRegistrationEndpointController")
 @Slf4j
 public class UmaDeleteResourceSetRegistrationEndpointController extends BaseUmaEndpointController {
-
-    public UmaDeleteResourceSetRegistrationEndpointController(final UmaPermissionTicketFactory umaPermissionTicketFactory,
-                                                              final ResourceSetRepository umaResourceSetRepository,
-                                                              final CasConfigurationProperties casProperties) {
-        super(umaPermissionTicketFactory, umaResourceSetRepository, casProperties);
+    public UmaDeleteResourceSetRegistrationEndpointController(final UmaConfigurationContext umaConfigurationContext) {
+        super(umaConfigurationContext);
     }
 
     /**
@@ -51,7 +46,7 @@ public class UmaDeleteResourceSetRegistrationEndpointController extends BaseUmaE
     public ResponseEntity deleteResourceSet(@PathVariable("id") final long id, final HttpServletRequest request, final HttpServletResponse response) {
         try {
             val profileResult = getAuthenticatedProfile(request, response, OAuth20Constants.UMA_PROTECTION_SCOPE);
-            val resourceSetResult = umaResourceSetRepository.getById(id);
+            val resourceSetResult = getUmaConfigurationContext().getUmaResourceSetRepository().getById(id);
             if (resourceSetResult.isEmpty()) {
                 val model = buildResponseEntityErrorModel(HttpStatus.NOT_FOUND, "Requested resource-set cannot be found");
                 return new ResponseEntity(model, model, HttpStatus.BAD_REQUEST);
@@ -61,7 +56,7 @@ public class UmaDeleteResourceSetRegistrationEndpointController extends BaseUmaE
             if (!resourceSet.getClientId().equalsIgnoreCase(OAuth20Utils.getClientIdFromAuthenticatedProfile(profileResult))) {
                 throw new InvalidResourceSetException(HttpStatus.FORBIDDEN.value(), "Resource-set owner does not match the authenticated profile");
             }
-            umaResourceSetRepository.remove(resourceSet);
+            getUmaConfigurationContext().getUmaResourceSetRepository().remove(resourceSet);
             return new ResponseEntity(CollectionUtils.wrap("code", HttpStatus.NO_CONTENT, "resourceId", resourceSet.getId()), HttpStatus.OK);
         } catch (final InvalidResourceSetException e) {
             return new ResponseEntity(buildResponseEntityErrorModel(e), HttpStatus.BAD_REQUEST);

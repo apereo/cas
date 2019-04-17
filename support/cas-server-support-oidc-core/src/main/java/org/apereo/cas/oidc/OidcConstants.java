@@ -127,10 +127,6 @@ public interface OidcConstants {
          */
         OPENID("openid"),
         /**
-         * Custom scope.
-         */
-        CUSTOM("custom"),
-        /**
          * address scope.
          */
         ADDRESS("address"),

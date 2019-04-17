@@ -14,10 +14,13 @@ import org.apereo.cas.authentication.principal.provision.DelegatedClientUserProf
 import org.apereo.cas.authentication.principal.provision.GroovyDelegatedClientUserProfileProvisioner;
 import org.apereo.cas.authentication.principal.provision.RestfulDelegatedClientUserProfileProvisioner;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.integration.pac4j.DistributedJ2ESessionStore;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.pac4j.authentication.ClientAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.pac4j.authentication.DelegatedClientFactory;
 import org.apereo.cas.support.pac4j.authentication.handler.support.DelegatedClientAuthenticationHandler;
+import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -25,7 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.pac4j.core.client.Clients;
-import org.pac4j.core.context.session.J2ESessionStore;
+import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -63,11 +66,25 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Audit
     @Qualifier("authenticationActionResolver")
     private ObjectProvider<AuditActionResolver> authenticationActionResolver;
 
+    @Autowired
+    @Qualifier("defaultTicketFactory")
+    private ObjectProvider<TicketFactory> ticketFactory;
+
+    @Autowired
+    @Qualifier("ticketRegistry")
+    private ObjectProvider<TicketRegistry> ticketRegistry;
+
     @Bean
     @ConditionalOnMissingBean(name = "pac4jDelegatedClientFactory")
     @RefreshScope
     public DelegatedClientFactory pac4jDelegatedClientFactory() {
         return new DelegatedClientFactory(casProperties.getAuthn().getPac4j());
+    }
+
+    @ConditionalOnMissingBean(name = "delegatedClientDistributedSessionStore")
+    @Bean
+    public SessionStore delegatedClientDistributedSessionStore() {
+        return new DistributedJ2ESessionStore(ticketRegistry.getIfAvailable(), ticketFactory.getIfAvailable());
     }
 
     @RefreshScope
@@ -105,7 +122,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Audit
             clientPrincipalFactory(),
             builtClients(),
             clientUserProfileProvisioner(),
-            new J2ESessionStore());
+            delegatedClientDistributedSessionStore());
         h.setTypedIdUsed(pac4j.isTypedIdUsed());
         h.setPrincipalAttributeId(pac4j.getPrincipalAttributeId());
         return h;

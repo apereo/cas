@@ -1,10 +1,8 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
-import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
-import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,23 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(transactionManager = "ticketTransactionManager")
 @RequiredArgsConstructor
+@Getter
 public abstract class BaseAccessTokenGrantRequestExtractor implements AccessTokenGrantRequestExtractor {
-    /**
-     * The Services manager.
-     */
-    protected final ServicesManager servicesManager;
-    /**
-     * The Ticket registry.
-     */
-    protected final TicketRegistry ticketRegistry;
-
-    /**
-     * The Services manager.
-     */
-    protected final CentralAuthenticationService centralAuthenticationService;
-
-    /**
-     * OAuth settings.
-     */
-    protected final OAuthProperties oAuthProperties;
+    private final OAuth20ConfigurationContext oAuthConfigurationContext;
 }

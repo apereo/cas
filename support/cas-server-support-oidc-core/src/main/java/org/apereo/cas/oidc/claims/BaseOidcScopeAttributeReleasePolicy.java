@@ -60,10 +60,13 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
         }
         val resolvedAttributes = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attributes);
+
         val attributesToRelease = Maps.<String, List<Object>>newHashMapWithExpectedSize(attributes.size());
         LOGGER.debug("Attempting to map and filter claims based on resolved attributes [{}]", resolvedAttributes);
+
         val properties = applicationContext.getBean(CasConfigurationProperties.class);
         val supportedClaims = properties.getAuthn().getOidc().getClaims();
+        
         val allowedClaims = new LinkedHashSet<String>(getAllowedAttributes());
         allowedClaims.retainAll(supportedClaims);
         LOGGER.debug("[{}] is designed to allow claims [{}] for scope [{}]. After cross-checking with "
