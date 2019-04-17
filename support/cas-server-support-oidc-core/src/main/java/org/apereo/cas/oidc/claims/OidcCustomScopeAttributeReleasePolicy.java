@@ -1,7 +1,5 @@
 package org.apereo.cas.oidc.claims;
 
-import org.apereo.cas.oidc.OidcConstants;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +17,7 @@ public class OidcCustomScopeAttributeReleasePolicy extends BaseOidcScopeAttribut
     }
 
     public OidcCustomScopeAttributeReleasePolicy(final List<String> allowedAttributes) {
-        this(OidcConstants.StandardScopes.CUSTOM.getScope(), allowedAttributes);
+        this("custom", allowedAttributes);
     }
 
     public OidcCustomScopeAttributeReleasePolicy(final String scopeName, final List<String> allowedAttributes) {

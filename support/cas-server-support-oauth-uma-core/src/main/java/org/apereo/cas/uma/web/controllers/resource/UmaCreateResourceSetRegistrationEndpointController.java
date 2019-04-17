@@ -1,10 +1,8 @@
 package org.apereo.cas.uma.web.controllers.resource;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.uma.ticket.permission.UmaPermissionTicketFactory;
+import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.ticket.resource.InvalidResourceSetException;
-import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -30,10 +28,8 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public class UmaCreateResourceSetRegistrationEndpointController extends BaseUmaEndpointController {
 
-    public UmaCreateResourceSetRegistrationEndpointController(final UmaPermissionTicketFactory umaPermissionTicketFactory,
-                                                              final ResourceSetRepository umaResourceSetRepository,
-                                                              final CasConfigurationProperties casProperties) {
-        super(umaPermissionTicketFactory, umaResourceSetRepository, casProperties);
+    public UmaCreateResourceSetRegistrationEndpointController(final UmaConfigurationContext umaConfigurationContext) {
+        super(umaConfigurationContext);
     }
 
     /**
@@ -60,7 +56,7 @@ public class UmaCreateResourceSetRegistrationEndpointController extends BaseUmaE
             val resourceSet = umaRequest.asResourceSet(profileResult);
             resourceSet.validate(profileResult);
 
-            val saved = umaResourceSetRepository.save(resourceSet);
+            val saved = getUmaConfigurationContext().getUmaResourceSetRepository().save(resourceSet);
             val location = getResourceSetUriLocation(saved);
 
             val model = CollectionUtils.wrap("entity", saved,

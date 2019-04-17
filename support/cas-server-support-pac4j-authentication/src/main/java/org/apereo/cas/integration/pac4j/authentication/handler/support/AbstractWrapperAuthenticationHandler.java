@@ -6,12 +6,12 @@ import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.HttpRequestUtils;
-import org.apereo.cas.util.Pac4jUtils;
 
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.J2ESessionStore;
 import org.pac4j.core.credentials.Credentials;
@@ -50,7 +50,7 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
      * @return the web context
      */
     protected static WebContext getWebContext() {
-        return Pac4jUtils.getPac4jJ2EContext(HttpRequestUtils.getHttpServletRequestFromRequestAttributes(),
+        return new J2EContext(HttpRequestUtils.getHttpServletRequestFromRequestAttributes(),
             HttpRequestUtils.getHttpServletResponseFromRequestAttributes(),
             new J2ESessionStore());
     }

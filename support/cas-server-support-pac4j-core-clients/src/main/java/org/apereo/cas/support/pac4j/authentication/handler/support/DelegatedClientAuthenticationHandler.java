@@ -9,13 +9,13 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.provision.DelegatedClientUserProfileProvisioner;
 import org.apereo.cas.integration.pac4j.authentication.handler.support.AbstractPac4jAuthenticationHandler;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
+import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.exception.HttpAction;
 import org.pac4j.core.profile.UserProfile;
@@ -71,7 +71,7 @@ public class DelegatedClientAuthenticationHandler extends AbstractPac4jAuthentic
 
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext();
-            val webContext = Pac4jUtils.getPac4jJ2EContext(request, response, this.sessionStore);
+            val webContext = new J2EContext(request, response, this.sessionStore);
 
             var userProfile = clientCredentials.getUserProfile();
             if (userProfile == null) {

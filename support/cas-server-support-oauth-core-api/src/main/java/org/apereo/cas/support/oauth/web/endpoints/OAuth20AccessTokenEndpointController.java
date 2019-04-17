@@ -11,14 +11,12 @@ import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20Devi
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
-import org.apereo.cas.util.Pac4jUtils;
 
 import com.google.common.base.Supplier;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.context.J2EContext;
-import org.pac4j.core.context.session.J2ESessionStore;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -69,7 +67,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
         try {
             val requestHolder = examineAndExtractAccessTokenGrantRequest(request, response);
             LOGGER.debug("Creating access token for [{}]", requestHolder);
-            val context = Pac4jUtils.getPac4jJ2EContext(request, response, new J2ESessionStore());
+            val context = new J2EContext(request, response, getOAuthConfigurationContext().getSessionStore());
             val tokenResult = getOAuthConfigurationContext().getAccessTokenGenerator().generate(requestHolder);
             LOGGER.debug("Access token generated result is: [{}]", tokenResult);
             return generateAccessTokenResponse(request, response, requestHolder, context, tokenResult);

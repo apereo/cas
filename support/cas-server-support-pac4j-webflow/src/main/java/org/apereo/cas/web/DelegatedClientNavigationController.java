@@ -2,7 +2,6 @@ package org.apereo.cas.web;
 
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.view.DynamicHtmlView;
 
 import lombok.RequiredArgsConstructor;
@@ -81,7 +80,7 @@ public class DelegatedClientNavigationController {
             }
             val client = (IndirectClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
             
-            val webContext = Pac4jUtils.getPac4jJ2EContext(request, response, this.sessionStore);
+            val webContext = new J2EContext(request, response, this.sessionStore);
             val ticket = delegatedClientWebflowManager.store(webContext, client);
 
             return getResultingView(client, webContext, ticket);

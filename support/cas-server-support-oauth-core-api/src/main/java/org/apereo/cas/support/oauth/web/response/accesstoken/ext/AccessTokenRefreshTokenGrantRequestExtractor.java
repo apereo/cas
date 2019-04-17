@@ -1,15 +1,10 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
-import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -24,13 +19,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Slf4j
 public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAuthorizationCodeGrantRequestExtractor {
-
-
-    public AccessTokenRefreshTokenGrantRequestExtractor(final ServicesManager servicesManager, final TicketRegistry ticketRegistry,
-                                                        final CentralAuthenticationService centralAuthenticationService,
-                                                        final OAuthProperties oAuthProperties,
-                                                        final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory) {
-        super(servicesManager, ticketRegistry, centralAuthenticationService, oAuthProperties, webApplicationServiceServiceFactory);
+    public AccessTokenRefreshTokenGrantRequestExtractor(final OAuth20ConfigurationContext oAuthConfigurationContext) {
+        super(oAuthConfigurationContext);
     }
 
     @Override
@@ -57,7 +47,7 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
     @Override
     protected OAuthRegisteredService getOAuthRegisteredServiceBy(final HttpServletRequest request) {
         val clientId = getRegisteredServiceIdentifierFromRequest(request);
-        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getOAuthConfigurationContext().getServicesManager(), clientId);
         LOGGER.debug("Located registered service [{}]", registeredService);
         return registeredService;
     }
