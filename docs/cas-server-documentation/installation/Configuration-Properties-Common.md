@@ -8,6 +8,10 @@ title: CAS Common Properties Overview
 This document describes a number of suggestions and configuration options that apply to and are common amongst a selection of CAS modules and features. 
 To see the full list of CAS properties, please [review this guide](Configuration-Properties.html).
 
+## What is `${configurationKey}`?
+
+Many CAS *sub* settings are common and applicable to a number of modules and features. For example, in dealing with database authentication there are a number of database-related modules who own an individual setting to define the database driver. These settings would typically be defined as `cas.authn.feature1.databaseDriver=xyz` and `cas.authn.feature2.databaseDriver=abc`. Rather than duplicating the shared and common `databaseDriver` setting, this page attempts to collect only what might be common CAS settings across features and modules while referring to the specific feature under the path `${configurationKey}`. Therefor, the documentation for either `feature1` or `feature2` might allow one to find common database-related settings (such as the `databaseDriver`) under `${configurationKey}.databaseDriver` where `${configurationKey}` would either be `cas.authn.feature1` or `cas.authn.feature2` depending on feature at hand. The notes and documentation for each feature that wants to inherit from a common block of settings should always advertise the appropriate value for `${configurationKey}`.
+
 ## Naming Convention
 
 - Settings and properties that are controlled by the CAS platform directly always begin with the prefix `cas`. All other settings are controlled 
