@@ -10,12 +10,11 @@ import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
-import org.apereo.cas.util.Pac4jUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.session.J2ESessionStore;
+import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.springframework.http.HttpHeaders;
@@ -75,11 +74,14 @@ public class OAuth20IntrospectionEndpointController extends BaseOAuth20Controlle
         ResponseEntity<OAuth20IntrospectionAccessTokenResponse> result;
         try {
             val authExtractor = new BasicAuthExtractor();
-            val credentials = authExtractor.extract(Pac4jUtils.getPac4jJ2EContext(request, response, new J2ESessionStore()));
+
+            val context = new J2EContext(request, response, getOAuthConfigurationContext().getSessionStore());
+            val credentials = authExtractor.extract(context);
             if (credentials == null) {
                 result = buildUnauthorizedResponseEntity(OAuth20Constants.INVALID_CLIENT, true);
             } else {
-                val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(getOAuthConfigurationContext().getServicesManager(), credentials.getUsername());
+                val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(
+                    getOAuthConfigurationContext().getServicesManager(), credentials.getUsername());
                 val validationError = validateIntrospectionRequest(service, credentials, request);
                 if (validationError.isPresent()) {
                     result = validationError.get();

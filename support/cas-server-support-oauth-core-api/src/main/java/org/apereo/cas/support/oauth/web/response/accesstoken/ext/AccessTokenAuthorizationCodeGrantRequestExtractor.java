@@ -1,19 +1,14 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
-import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.OAuthToken;
-import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -29,17 +24,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Slf4j
 public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAccessTokenGrantRequestExtractor {
-    /**
-     * Service factory instance.
-     */
-    protected final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
-
-    public AccessTokenAuthorizationCodeGrantRequestExtractor(final ServicesManager servicesManager, final TicketRegistry ticketRegistry,
-                                                             final CentralAuthenticationService centralAuthenticationService,
-                                                             final OAuthProperties oAuthProperties,
-                                                             final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory) {
-        super(servicesManager, ticketRegistry, centralAuthenticationService, oAuthProperties);
-        this.webApplicationServiceServiceFactory = webApplicationServiceServiceFactory;
+    public AccessTokenAuthorizationCodeGrantRequestExtractor(final OAuth20ConfigurationContext oAuthConfigurationContext) {
+        super(oAuthConfigurationContext);
     }
 
     @Override
@@ -60,7 +46,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
             throw new InvalidTicketException(getOAuthParameter(request));
         }
 
-        val service = this.webApplicationServiceServiceFactory.createService(redirectUri);
+        val service = getOAuthConfigurationContext().getWebApplicationServiceServiceFactory().createService(redirectUri);
         scopes.addAll(token.getScopes());
 
         val generateRefreshToken = isAllowedToGenerateRefreshToken() && registeredService.isGenerateRefreshToken();
@@ -130,11 +116,11 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
      * @return the OAuth token
      */
     protected OAuthToken getOAuthTokenFromRequest(final HttpServletRequest request) {
-        val token = this.ticketRegistry.getTicket(getOAuthParameter(request), OAuthToken.class);
+        val token = getOAuthConfigurationContext().getTicketRegistry().getTicket(getOAuthParameter(request), OAuthToken.class);
         if (token == null || token.isExpired()) {
             LOGGER.error("OAuth token indicated by parameter [{}] has expired or not found: [{}]", getOAuthParameter(request), token);
             if (token != null) {
-                this.ticketRegistry.deleteTicket(token.getId());
+                getOAuthConfigurationContext().getTicketRegistry().deleteTicket(token.getId());
             }
             return null;
         }
@@ -173,7 +159,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
      */
     protected OAuthRegisteredService getOAuthRegisteredServiceBy(final HttpServletRequest request) {
         val redirectUri = getRegisteredServiceIdentifierFromRequest(request);
-        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(this.servicesManager, redirectUri);
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(getOAuthConfigurationContext().getServicesManager(), redirectUri);
         LOGGER.debug("Located registered service [{}]", registeredService);
         return registeredService;
     }

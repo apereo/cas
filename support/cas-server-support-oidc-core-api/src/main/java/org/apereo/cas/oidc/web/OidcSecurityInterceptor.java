@@ -2,11 +2,12 @@ package org.apereo.cas.oidc.web;
 
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupport;
-import org.apereo.cas.util.Pac4jUtils;
 
 import lombok.val;
 import org.pac4j.core.config.Config;
-import org.pac4j.core.context.session.J2ESessionStore;
+import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.springframework.web.SecurityInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,18 +22,21 @@ import javax.servlet.http.HttpServletResponse;
 public class OidcSecurityInterceptor extends SecurityInterceptor {
 
     private final OidcAuthorizationRequestSupport authorizationRequestSupport;
+    private final SessionStore sessionStore;
 
-    public OidcSecurityInterceptor(final Config config, final String name, final OidcAuthorizationRequestSupport support) {
+    public OidcSecurityInterceptor(final Config config, final String name, final OidcAuthorizationRequestSupport support,
+                                   final SessionStore sessionStore) {
         super(config, name);
         authorizationRequestSupport = support;
+        this.sessionStore = sessionStore;
     }
 
     @Override
     public boolean preHandle(final HttpServletRequest request,
                              final HttpServletResponse response,
                              final Object handler) throws Exception {
-        val ctx = Pac4jUtils.getPac4jJ2EContext(request, response, new J2ESessionStore());
-        val manager = Pac4jUtils.getPac4jProfileManager(request, response);
+        val ctx = new J2EContext(request, response, this.sessionStore);
+        val manager = new ProfileManager<>(ctx, ctx.getSessionStore());
 
         var clearCreds = false;
         val authentication = authorizationRequestSupport.isCasAuthenticationAvailable(ctx);

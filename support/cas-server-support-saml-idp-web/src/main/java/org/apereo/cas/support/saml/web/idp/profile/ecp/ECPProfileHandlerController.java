@@ -9,7 +9,6 @@ import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
-import org.apereo.cas.util.Pac4jUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -19,6 +18,7 @@ import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.soap.messaging.context.SOAP11Context;
+import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.session.J2ESessionStore;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.springframework.http.MediaType;
@@ -157,7 +157,7 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
                                                                    final HttpServletResponse response) {
         try {
             val extractor = new BasicAuthExtractor();
-            val webContext = Pac4jUtils.getPac4jJ2EContext(request, response, new J2ESessionStore());
+            val webContext = new J2EContext(request, response, new J2ESessionStore());
             val credentials = extractor.extract(webContext);
             if (credentials != null) {
                 LOGGER.debug("Received basic authentication ECP request from credentials [{}]", credentials);

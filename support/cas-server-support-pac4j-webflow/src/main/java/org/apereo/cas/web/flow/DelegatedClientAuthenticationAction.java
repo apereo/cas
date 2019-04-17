@@ -17,7 +17,6 @@ import org.apereo.cas.support.pac4j.logout.RequestSloException;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.DelegatedClientNavigationController;
 import org.apereo.cas.web.DelegatedClientWebflowManager;
 import org.apereo.cas.web.flow.actions.AbstractAuthenticationAction;
@@ -167,7 +166,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             throw new IllegalArgumentException("Delegated authentication has failed with client " + clientName);
         }
 
-        val webContext = Pac4jUtils.getPac4jJ2EContext(request, response, this.sessionStore);
+        val webContext = new J2EContext(request, response, this.sessionStore);
         if (StringUtils.isNotBlank(clientName)) {
             val service = restoreAuthenticationRequestInContext(context, webContext, clientName);
             val client = findDelegatedClientByName(request, clientName, service);
@@ -308,7 +307,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
 
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
-        val webContext = Pac4jUtils.getPac4jJ2EContext(request, response, this.sessionStore);
+        val webContext = new J2EContext(request, response, this.sessionStore);
 
         val urls = new LinkedHashSet<ProviderLoginPageConfiguration>();
         this.clients

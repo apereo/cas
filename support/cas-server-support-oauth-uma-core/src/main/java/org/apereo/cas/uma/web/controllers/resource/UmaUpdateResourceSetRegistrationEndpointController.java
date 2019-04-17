@@ -1,10 +1,8 @@
 package org.apereo.cas.uma.web.controllers.resource;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.uma.ticket.permission.UmaPermissionTicketFactory;
+import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.ticket.resource.InvalidResourceSetException;
-import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -31,11 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 @Controller("umaUpdateResourceSetRegistrationEndpointController")
 @Slf4j
 public class UmaUpdateResourceSetRegistrationEndpointController extends BaseUmaEndpointController {
-
-    public UmaUpdateResourceSetRegistrationEndpointController(final UmaPermissionTicketFactory umaPermissionTicketFactory,
-                                                              final ResourceSetRepository umaResourceSetRepository,
-                                                              final CasConfigurationProperties casProperties) {
-        super(umaPermissionTicketFactory, umaResourceSetRepository, casProperties);
+    public UmaUpdateResourceSetRegistrationEndpointController(final UmaConfigurationContext umaConfigurationContext) {
+        super(umaConfigurationContext);
     }
 
     /**
@@ -63,7 +58,7 @@ public class UmaUpdateResourceSetRegistrationEndpointController extends BaseUmaE
                 return new ResponseEntity(model, model, HttpStatus.BAD_REQUEST);
             }
 
-            val resourceSetResult = umaResourceSetRepository.getById(id);
+            val resourceSetResult = getUmaConfigurationContext().getUmaResourceSetRepository().getById(id);
             if (resourceSetResult.isEmpty()) {
                 val model = buildResponseEntityErrorModel(HttpStatus.NOT_FOUND, "Requested resource-set cannot be found");
                 return new ResponseEntity(model, model, HttpStatus.BAD_REQUEST);
@@ -71,7 +66,7 @@ public class UmaUpdateResourceSetRegistrationEndpointController extends BaseUmaE
             val resourceSet = resourceSetResult.get();
             resourceSet.validate(profileResult);
 
-            val saved = umaResourceSetRepository.update(resourceSet, newResource);
+            val saved = getUmaConfigurationContext().getUmaResourceSetRepository().update(resourceSet, newResource);
             val location = getResourceSetUriLocation(saved);
             val model = CollectionUtils.wrap("entity", saved,
                 "resourceId", saved.getId(),

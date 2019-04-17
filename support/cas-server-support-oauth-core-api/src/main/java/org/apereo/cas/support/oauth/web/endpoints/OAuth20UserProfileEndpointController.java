@@ -4,13 +4,12 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
-import org.apereo.cas.util.Pac4jUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.HttpConstants;
-import org.pac4j.core.context.session.J2ESessionStore;
+import org.pac4j.core.context.J2EContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -61,8 +60,7 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
     public ResponseEntity<String> handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-        val context = Pac4jUtils.getPac4jJ2EContext(request, response, new J2ESessionStore());
-
+        val context = new J2EContext(request, response, getOAuthConfigurationContext().getSessionStore());
         val accessToken = getAccessTokenFromRequest(request);
         if (StringUtils.isBlank(accessToken)) {
             LOGGER.error("Missing [{}] from the request", OAuth20Constants.ACCESS_TOKEN);
@@ -84,7 +82,8 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
         if (getOAuthConfigurationContext().getCasProperties().getLogout().isRemoveDescendantTickets()) {
             val ticketGrantingTicket = accessTokenTicket.getTicketGrantingTicket();
             if (ticketGrantingTicket == null || ticketGrantingTicket.isExpired()) {
-                LOGGER.error("Ticket granting ticket [{}] parenting access token [{}] has expired or is not found", ticketGrantingTicket, accessTokenTicket);
+                LOGGER.error("Ticket granting ticket [{}] parenting access token [{}] has expired or is not found",
+                    ticketGrantingTicket, accessTokenTicket);
                 getOAuthConfigurationContext().getTicketRegistry().deleteTicket(accessToken);
                 return expiredAccessTokenResponseEntity;
             }

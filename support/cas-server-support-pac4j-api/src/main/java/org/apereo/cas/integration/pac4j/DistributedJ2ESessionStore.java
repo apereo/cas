@@ -64,7 +64,10 @@ public class DistributedJ2ESessionStore extends J2ESessionStore implements HttpS
 
     private TransientSessionTicket getTransientSessionTicketForSession(final J2EContext context) {
         val id = getOrCreateSessionId(context);
+        LOGGER.trace("Session identifier is set to [{}]", id);
         val ticketId = TransientSessionTicketFactory.normalizeTicketId(id);
+
+        LOGGER.trace("Fetching session ticket via identifier [{}]", ticketId);
         val ticket = this.ticketRegistry.getTicket(ticketId, TransientSessionTicket.class);
         if (ticket == null || ticket.isExpired()) {
             LOGGER.trace("The expiration policy for ticket id [{}] has expired the ticket", ticketId);

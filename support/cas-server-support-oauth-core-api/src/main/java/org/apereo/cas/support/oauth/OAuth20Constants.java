@@ -139,6 +139,11 @@ public interface OAuth20Constants {
     String CONFIRM_VIEW = "oauthConfirmView";
 
     /**
+     * The oauthSessionStaleMismatchErrorView view.
+     */
+    String SESSION_STALE_MISMATCH = "oauthSessionStaleMismatchErrorView";
+
+    /**
      * The device code approval view.
      */
     String DEVICE_CODE_APPROVAL_VIEW = "oauthDeviceCodeApprovalView";

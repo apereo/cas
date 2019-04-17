@@ -776,11 +776,22 @@ public class WebUtils {
     /**
      * Produce error view model and view.
      *
+     * @param view the view
+     * @param e    the e
+     * @return the model and view
+     */
+    public static ModelAndView produceErrorView(final String view, final Exception e) {
+        return new ModelAndView(view, CollectionUtils.wrap("rootCauseException", e));
+    }
+
+    /**
+     * Produce error view model and view.
+     *
      * @param e the e
      * @return the model and view
      */
     public static ModelAndView produceErrorView(final Exception e) {
-        return new ModelAndView(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, CollectionUtils.wrap("rootCauseException", e));
+        return produceErrorView(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, e);
     }
 
     /**

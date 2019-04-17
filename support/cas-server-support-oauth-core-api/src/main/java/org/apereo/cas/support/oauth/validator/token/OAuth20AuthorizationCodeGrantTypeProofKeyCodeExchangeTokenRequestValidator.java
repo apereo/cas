@@ -1,10 +1,6 @@
 package org.apereo.cas.support.oauth.validator.token;
 
-import org.apereo.cas.audit.AuditableExecution;
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,10 +12,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class OAuth20AuthorizationCodeGrantTypeProofKeyCodeExchangeTokenRequestValidator extends OAuth20AuthorizationCodeGrantTypeTokenRequestValidator {
-    public OAuth20AuthorizationCodeGrantTypeProofKeyCodeExchangeTokenRequestValidator(final ServicesManager servicesManager,
-                                                                                      final TicketRegistry ticketRegistry,
-                                                                                      final AuditableExecution registeredServiceAccessStrategyEnforcer,
-                                                                                      final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory) {
-        super(servicesManager, ticketRegistry, registeredServiceAccessStrategyEnforcer, webApplicationServiceServiceFactory);
+    public OAuth20AuthorizationCodeGrantTypeProofKeyCodeExchangeTokenRequestValidator(final OAuth20ConfigurationContext configurationContext) {
+        super(configurationContext);
     }
 }

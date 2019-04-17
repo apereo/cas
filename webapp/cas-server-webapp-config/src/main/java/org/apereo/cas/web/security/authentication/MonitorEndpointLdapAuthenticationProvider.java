@@ -4,8 +4,8 @@ import org.apereo.cas.authorization.LdapUserAttributesToRolesAuthorizationGenera
 import org.apereo.cas.authorization.LdapUserGroupsToRolesAuthorizationGenerator;
 import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.LdapUtils;
-import org.apereo.cas.util.Pac4jUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +17,8 @@ import org.ldaptive.SearchExecutor;
 import org.ldaptive.auth.AuthenticationRequest;
 import org.pac4j.core.authorization.authorizer.RequireAnyRoleAuthorizer;
 import org.pac4j.core.authorization.generator.AuthorizationGenerator;
+import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.session.J2ESessionStore;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -67,7 +69,9 @@ public class MonitorEndpointLdapAuthenticationProvider implements Authentication
 
                 LOGGER.debug("Collected user profile [{}]", profile);
 
-                val context = Pac4jUtils.getPac4jJ2EContext();
+                val context = new J2EContext(HttpRequestUtils.getHttpServletRequestFromRequestAttributes(),
+                    HttpRequestUtils.getHttpServletResponseFromRequestAttributes(),
+                    new J2ESessionStore());
                 val authZGen = buildAuthorizationGenerator();
                 authZGen.generate(context, profile);
                 LOGGER.debug("Assembled user profile with roles after generating authorization claims [{}]", profile);

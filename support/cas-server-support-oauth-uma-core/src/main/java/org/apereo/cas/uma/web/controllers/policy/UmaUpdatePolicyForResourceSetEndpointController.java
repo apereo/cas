@@ -1,10 +1,8 @@
 package org.apereo.cas.uma.web.controllers.policy;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.uma.ticket.permission.UmaPermissionTicketFactory;
+import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.ticket.resource.ResourceSetPolicy;
-import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -32,11 +30,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @Controller("umaUpdatePolicyForResourceSetEndpointController")
 public class UmaUpdatePolicyForResourceSetEndpointController extends BaseUmaEndpointController {
-
-    public UmaUpdatePolicyForResourceSetEndpointController(final UmaPermissionTicketFactory umaPermissionTicketFactory,
-                                                           final ResourceSetRepository umaResourceSetRepository,
-                                                           final CasConfigurationProperties casProperties) {
-        super(umaPermissionTicketFactory, umaResourceSetRepository, casProperties);
+    public UmaUpdatePolicyForResourceSetEndpointController(final UmaConfigurationContext umaConfigurationContext) {
+        super(umaConfigurationContext);
     }
 
     /**
@@ -59,7 +54,7 @@ public class UmaUpdatePolicyForResourceSetEndpointController extends BaseUmaEndp
                                                        final HttpServletResponse response) {
         try {
             val profileResult = getAuthenticatedProfile(request, response, OAuth20Constants.UMA_PROTECTION_SCOPE);
-            val resourceSetResult = umaResourceSetRepository.getById(resourceId);
+            val resourceSetResult = getUmaConfigurationContext().getUmaResourceSetRepository().getById(resourceId);
             if (resourceSetResult.isEmpty()) {
                 val model = buildResponseEntityErrorModel(HttpStatus.NOT_FOUND, "Requested resource-set cannot be found");
                 return new ResponseEntity(model, model, HttpStatus.BAD_REQUEST);
@@ -81,7 +76,7 @@ public class UmaUpdatePolicyForResourceSetEndpointController extends BaseUmaEndp
                 val currentPolicies = resourceSet.getPolicies().stream().filter(p -> p.getId() != policyId).collect(Collectors.toSet());
                 currentPolicies.add(policy);
                 resourceSet.setPolicies(new HashSet<>(currentPolicies));
-                umaResourceSetRepository.save(resourceSet);
+                getUmaConfigurationContext().getUmaResourceSetRepository().save(resourceSet);
 
                 val model = CollectionUtils.wrap("entity", resourceSet, "code", HttpStatus.FOUND);
                 return new ResponseEntity(model, HttpStatus.OK);

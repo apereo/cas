@@ -19,12 +19,14 @@ import org.apereo.cas.uma.web.controllers.resource.UmaFindResourceSetRegistratio
 import org.apereo.cas.uma.web.controllers.resource.UmaResourceRegistrationRequest;
 import org.apereo.cas.uma.web.controllers.resource.UmaUpdateResourceSetRegistrationEndpointController;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.Pac4jUtils;
 
 import lombok.val;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.http.HttpHeaders;
+import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -36,7 +38,6 @@ import org.springframework.test.context.TestPropertySource;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -79,6 +80,10 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
     @Autowired
     @Qualifier("umaFindPolicyForResourceSetEndpointController")
     protected UmaFindPolicyForResourceSetEndpointController umaFindPolicyForResourceSetEndpointController;
+
+    @Autowired
+    @Qualifier("umaDistributedSessionStore")
+    protected SessionStore umaDistributedSessionStore;
 
     @Autowired
     @Qualifier("umaDeletePolicyForResourceSetEndpointController")
@@ -167,7 +172,9 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
      * @param response the response
      * @return the current profile
      */
-    protected static CommonProfile getCurrentProfile(final HttpServletRequest request, final HttpServletResponse response) {
-        return (CommonProfile) Pac4jUtils.getPac4jProfileManager(request, response).get(true).get();
+    protected CommonProfile getCurrentProfile(final HttpServletRequest request, final HttpServletResponse response) {
+        val ctx = new J2EContext(request, response, this.umaDistributedSessionStore);
+        val manager = new ProfileManager<>(ctx, ctx.getSessionStore());
+        return manager.get(true).orElse(null);
     }
 }

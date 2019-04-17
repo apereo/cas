@@ -4,7 +4,6 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.NonNull;
@@ -17,6 +16,8 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 
 import java.time.ZoneOffset;
@@ -89,8 +90,8 @@ public class OidcAuthorizationRequestSupport {
      * @param context the context
      * @return the optional user profile
      */
-    public static Optional<UserProfile> isAuthenticationProfileAvailable(final WebContext context) {
-        val manager = Pac4jUtils.getPac4jProfileManager(context);
+    public static Optional<CommonProfile> isAuthenticationProfileAvailable(final J2EContext context) {
+        val manager = new ProfileManager<>(context, context.getSessionStore());
         return manager.get(true);
     }
 
@@ -123,7 +124,7 @@ public class OidcAuthorizationRequestSupport {
      * @return true/false
      */
     public static boolean isCasAuthenticationOldForMaxAgeAuthorizationRequest(final WebContext context,
-                                                                       final ZonedDateTime authenticationDate) {
+                                                                              final ZonedDateTime authenticationDate) {
         val maxAge = getOidcMaxAgeFromAuthorizationRequest(context);
         if (maxAge.isPresent() && maxAge.get() > 0) {
             val now = ZonedDateTime.now(ZoneOffset.UTC).toEpochSecond();
@@ -146,7 +147,7 @@ public class OidcAuthorizationRequestSupport {
      * @return true/false
      */
     public static boolean isCasAuthenticationOldForMaxAgeAuthorizationRequest(final WebContext context,
-                                                                       final Authentication authentication) {
+                                                                              final Authentication authentication) {
         return isCasAuthenticationOldForMaxAgeAuthorizationRequest(context, authentication.getAuthenticationDate());
     }
 
@@ -170,7 +171,7 @@ public class OidcAuthorizationRequestSupport {
      * @return true/false
      */
     public static boolean isCasAuthenticationOldForMaxAgeAuthorizationRequest(final WebContext context,
-                                                                       final UserProfile profile) {
+                                                                              final UserProfile profile) {
 
         val authTime = profile.getAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE);
         if (authTime == null) {

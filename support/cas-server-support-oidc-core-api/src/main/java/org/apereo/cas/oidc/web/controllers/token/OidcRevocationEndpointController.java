@@ -6,11 +6,10 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.util.HttpRequestUtils;
-import org.apereo.cas.util.Pac4jUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.pac4j.core.context.session.J2ESessionStore;
+import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +42,7 @@ public class OidcRevocationEndpointController extends BaseOAuth20Controller {
                                                         final HttpServletResponse response) {
         try {
             val authExtractor = new BasicAuthExtractor();
-            val credentials = authExtractor.extract(Pac4jUtils.getPac4jJ2EContext(request, response, new J2ESessionStore()));
+            val credentials = authExtractor.extract(new J2EContext(request, response, getOAuthConfigurationContext().getSessionStore()));
             if (credentials == null) {
                 throw new IllegalArgumentException("No credentials are provided to verify revocation of the token");
             }

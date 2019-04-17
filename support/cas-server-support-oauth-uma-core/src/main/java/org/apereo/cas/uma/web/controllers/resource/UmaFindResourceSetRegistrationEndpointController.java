@@ -1,11 +1,9 @@
 package org.apereo.cas.uma.web.controllers.resource;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.uma.ticket.permission.UmaPermissionTicketFactory;
+import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.ticket.resource.ResourceSet;
-import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -31,11 +29,8 @@ import java.util.stream.Collectors;
 @Controller("umaFindResourceSetRegistrationEndpointController")
 @Slf4j
 public class UmaFindResourceSetRegistrationEndpointController extends BaseUmaEndpointController {
-
-    public UmaFindResourceSetRegistrationEndpointController(final UmaPermissionTicketFactory umaPermissionTicketFactory,
-                                                            final ResourceSetRepository umaResourceSetRepository,
-                                                            final CasConfigurationProperties casProperties) {
-        super(umaPermissionTicketFactory, umaResourceSetRepository, casProperties);
+    public UmaFindResourceSetRegistrationEndpointController(final UmaConfigurationContext umaConfigurationContext) {
+        super(umaConfigurationContext);
     }
 
     /**
@@ -51,7 +46,8 @@ public class UmaFindResourceSetRegistrationEndpointController extends BaseUmaEnd
     public ResponseEntity findResourceSets(final HttpServletRequest request, final HttpServletResponse response) {
         try {
             val profileResult = getAuthenticatedProfile(request, response, OAuth20Constants.UMA_PROTECTION_SCOPE);
-            val resources = umaResourceSetRepository.getByClient(OAuth20Utils.getClientIdFromAuthenticatedProfile(profileResult));
+            val resources = getUmaConfigurationContext().getUmaResourceSetRepository()
+                .getByClient(OAuth20Utils.getClientIdFromAuthenticatedProfile(profileResult));
             val model = resources.stream().map(ResourceSet::getId).collect(Collectors.toSet());
             return new ResponseEntity(model, HttpStatus.OK);
         } catch (final Exception e) {
@@ -75,7 +71,7 @@ public class UmaFindResourceSetRegistrationEndpointController extends BaseUmaEnd
         try {
             val profileResult = getAuthenticatedProfile(request, response, OAuth20Constants.UMA_PROTECTION_SCOPE);
 
-            val resourceSetResult = umaResourceSetRepository.getById(id);
+            val resourceSetResult = getUmaConfigurationContext().getUmaResourceSetRepository().getById(id);
             if (resourceSetResult.isEmpty()) {
                 val model = buildResponseEntityErrorModel(HttpStatus.NOT_FOUND, "Requested resource-set cannot be found");
                 return new ResponseEntity(model, model, HttpStatus.BAD_REQUEST);

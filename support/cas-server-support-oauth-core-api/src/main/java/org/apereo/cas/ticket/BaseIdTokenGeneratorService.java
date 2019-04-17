@@ -1,21 +1,20 @@
 package org.apereo.cas.ticket;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
-import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.util.Pac4jUtils;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jose4j.jwt.JwtClaims;
+import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.profile.ProfileManager;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Optional;
 
 /**
  * This is {@link BaseIdTokenGeneratorService}.
@@ -25,24 +24,9 @@ import java.util.Optional;
  */
 @RequiredArgsConstructor
 @Slf4j
+@Getter
 public abstract class BaseIdTokenGeneratorService implements IdTokenGeneratorService {
-    /**
-     * The cas properties.
-     */
-    protected final CasConfigurationProperties casProperties;
-    /**
-     * The Signing service.
-     */
-    protected final OAuthTokenSigningAndEncryptionService signingService;
-    /**
-     * The Services manager.
-     */
-    protected final ServicesManager servicesManager;
-
-    /**
-     * Ticket registry.
-     */
-    protected final TicketRegistry ticketRegistry;
+    private final OAuth20ConfigurationContext configurationContext;
 
     /**
      * Gets authenticated profile.
@@ -52,8 +36,9 @@ public abstract class BaseIdTokenGeneratorService implements IdTokenGeneratorSer
      * @return the authenticated profile
      */
     protected CommonProfile getAuthenticatedProfile(final HttpServletRequest request, final HttpServletResponse response) {
-        val manager = Pac4jUtils.getPac4jProfileManager(request, response);
-        val profile = (Optional<CommonProfile>) manager.get(true);
+        val context = new J2EContext(request, response, getConfigurationContext().getSessionStore());
+        val manager = new ProfileManager<>(context, context.getSessionStore());
+        val profile = manager.get(true);
 
         if (profile.isEmpty()) {
             throw new IllegalArgumentException("Unable to determine the user profile from the context");
@@ -73,11 +58,11 @@ public abstract class BaseIdTokenGeneratorService implements IdTokenGeneratorSer
                                             final AccessToken accessToken) {
 
         LOGGER.debug("Received claims for the id token [{}] as [{}]", accessToken, claims);
-        val idTokenResult = this.signingService.encode(registeredService, claims);
+        val idTokenResult = getConfigurationContext().getIdTokenSigningAndEncryptionService().encode(registeredService, claims);
         accessToken.setIdToken(idTokenResult);
 
         LOGGER.debug("Updating access token [{}] in ticket registry with ID token [{}]", accessToken.getId(), idTokenResult);
-        this.ticketRegistry.updateTicket(accessToken);
+        getConfigurationContext().getTicketRegistry().updateTicket(accessToken);
         return idTokenResult;
     }
 }

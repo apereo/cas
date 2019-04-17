@@ -2,7 +2,6 @@ package org.apereo.cas.web.flow.logout;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
-import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -13,7 +12,10 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.Pac4jConstants;
+import org.pac4j.core.context.session.J2ESessionStore;
+import org.pac4j.core.profile.ProfileManager;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -132,7 +134,8 @@ public class TerminateSessionAction extends AbstractAction {
      */
     protected void destroyApplicationSession(final HttpServletRequest request, final HttpServletResponse response) {
         LOGGER.trace("Destroying application session");
-        val manager = Pac4jUtils.getPac4jProfileManager(request, response);
+        val context = new J2EContext(request, response, new J2ESessionStore());
+        val manager = new ProfileManager<>(context, context.getSessionStore());
         manager.logout();
 
         val session = request.getSession(false);

@@ -1,23 +1,16 @@
 package org.apereo.cas.uma.web.controllers.authz;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
-import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
-import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.uma.claim.UmaResourceSetClaimPermissionExaminer;
+import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.claim.UmaResourceSetClaimPermissionResult;
 import org.apereo.cas.uma.ticket.permission.UmaPermissionTicket;
-import org.apereo.cas.uma.ticket.permission.UmaPermissionTicketFactory;
 import org.apereo.cas.uma.ticket.resource.ResourceSet;
-import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -49,26 +42,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @Controller("umaAuthorizationRequestEndpointController")
 public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointController {
-    private final ServicesManager servicesManager;
-    private final TicketRegistry ticketRegistry;
-    private final OAuth20TokenGenerator accessTokenGenerator;
-    private final UmaResourceSetClaimPermissionExaminer claimPermissionExaminer;
-    private final IdTokenGeneratorService requestingPartyTokenGenerator;
-
-    public UmaAuthorizationRequestEndpointController(final UmaPermissionTicketFactory umaPermissionTicketFactory,
-                                                     final ResourceSetRepository umaResourceSetRepository,
-                                                     final CasConfigurationProperties casProperties,
-                                                     final ServicesManager servicesManager,
-                                                     final TicketRegistry ticketRegistry,
-                                                     final OAuth20TokenGenerator accessTokenGenerator,
-                                                     final UmaResourceSetClaimPermissionExaminer claimPermissionExaminer,
-                                                     final IdTokenGeneratorService requestingPartyTokenGenerator) {
-        super(umaPermissionTicketFactory, umaResourceSetRepository, casProperties);
-        this.servicesManager = servicesManager;
-        this.ticketRegistry = ticketRegistry;
-        this.accessTokenGenerator = accessTokenGenerator;
-        this.claimPermissionExaminer = claimPermissionExaminer;
-        this.requestingPartyTokenGenerator = requestingPartyTokenGenerator;
+    public UmaAuthorizationRequestEndpointController(final UmaConfigurationContext umaConfigurationContext) {
+        super(umaConfigurationContext);
     }
 
     /**
@@ -99,7 +74,8 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
             if (StringUtils.isBlank(umaRequest.getTicket())) {
                 return new ResponseEntity("Unable to accept authorization request; ticket parameter is missing", HttpStatus.BAD_REQUEST);
             }
-            val permissionTicket = this.ticketRegistry.getTicket(umaRequest.getTicket(), UmaPermissionTicket.class);
+            val permissionTicket = getUmaConfigurationContext().getTicketRegistry()
+                .getTicket(umaRequest.getTicket(), UmaPermissionTicket.class);
             if (permissionTicket == null || permissionTicket.isExpired()) {
                 return new ResponseEntity("Permission ticket is invalid or has expired", HttpStatus.BAD_REQUEST);
             }
@@ -108,7 +84,7 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
                 return new ResponseEntity("resource-set or linked policies are undefined", HttpStatus.BAD_REQUEST);
             }
 
-            val results = claimPermissionExaminer.examine(resourceSet, permissionTicket);
+            val results = getUmaConfigurationContext().getClaimPermissionExaminer().examine(resourceSet, permissionTicket);
             if (results.isSatisfied()) {
                 return generateRequestingPartyToken(request, response, profileResult, umaRequest, permissionTicket, resourceSet);
             }
@@ -184,7 +160,7 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
                                                           final CommonProfile profileResult, final UmaAuthorizationRequest umaRequest,
                                                           final UmaPermissionTicket permissionTicket, final ResourceSet resourceSet) {
         val currentAat = profileResult.getAttribute(AccessToken.class.getName(), AccessToken.class);
-        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager,
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getUmaConfigurationContext().getServicesManager(),
             OAuth20Utils.getClientIdFromAuthenticatedProfile(profileResult));
 
         val scopes = new LinkedHashSet<String>();
@@ -203,22 +179,23 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
             .service(currentAat.getService())
             .build();
 
-        val result = accessTokenGenerator.generate(holder);
+        val result = getUmaConfigurationContext().getAccessTokenGenerator().generate(holder);
         if (result.getAccessToken().isEmpty()) {
             return new ResponseEntity<>("Unable to generate access token", HttpStatus.BAD_REQUEST);
         }
 
         val accessToken = result.getAccessToken().get();
-        val timeout = Beans.newDuration(casProperties.getAuthn().getUma().getRequestingPartyToken().getMaxTimeToLiveInSeconds()).getSeconds();
+        val timeout = Beans.newDuration(getUmaConfigurationContext().getCasProperties()
+            .getAuthn().getUma().getRequestingPartyToken().getMaxTimeToLiveInSeconds()).getSeconds();
         request.setAttribute(UmaPermissionTicket.class.getName(), permissionTicket);
         request.setAttribute(ResourceSet.class.getName(), resourceSet);
-        val idToken = requestingPartyTokenGenerator.generate(request, response, accessToken,
+        val idToken = getUmaConfigurationContext().getRequestingPartyTokenGenerator().generate(request, response, accessToken,
             timeout, OAuth20ResponseTypes.CODE, registeredService);
         accessToken.setIdToken(idToken);
-        this.ticketRegistry.updateTicket(accessToken);
+        getUmaConfigurationContext().getTicketRegistry().updateTicket(accessToken);
 
         if (StringUtils.isNotBlank(umaRequest.getRpt())) {
-            this.ticketRegistry.deleteTicket(umaRequest.getRpt());
+            getUmaConfigurationContext().getTicketRegistry().deleteTicket(umaRequest.getRpt());
         }
         val model = CollectionUtils.wrap("rpt", accessToken.getId(), "code", HttpStatus.CREATED);
         return new ResponseEntity<>(model, HttpStatus.OK);

@@ -32,7 +32,6 @@ import org.apereo.cas.ticket.factory.DefaultTransientSessionTicketFactory;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.DelegatedClientNavigationController;
 import org.apereo.cas.web.DelegatedClientWebflowManager;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -44,6 +43,7 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
+import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.J2ESessionStore;
@@ -135,7 +135,7 @@ public class DelegatedClientAuthenticationActionTests {
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
             new DefaultArgumentExtractor(new WebApplicationServiceFactory()));
 
-        val webContext = Pac4jUtils.getPac4jJ2EContext(mockRequest, new MockHttpServletResponse(), new J2ESessionStore());
+        val webContext = new J2EContext(mockRequest, new MockHttpServletResponse(), new J2ESessionStore());
         val ticket = manager.store(webContext, facebookClient);
 
         mockRequest.addParameter(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
@@ -303,7 +303,7 @@ public class DelegatedClientAuthenticationActionTests {
             new CasConfigurationProperties(),
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
             new DefaultArgumentExtractor(new WebApplicationServiceFactory()));
-        val webContext = Pac4jUtils.getPac4jJ2EContext(mockRequest, new MockHttpServletResponse(), new J2ESessionStore());
+        val webContext = new J2EContext(mockRequest, new MockHttpServletResponse(), new J2ESessionStore());
         val ticket = manager.store(webContext, client);
 
         mockRequest.addParameter(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());

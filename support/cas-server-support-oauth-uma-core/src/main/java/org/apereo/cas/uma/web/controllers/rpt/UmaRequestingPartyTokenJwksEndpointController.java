@@ -1,11 +1,7 @@
 package org.apereo.cas.uma.web.controllers.rpt;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.uma.ticket.permission.UmaPermissionTicketFactory;
-import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
+import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 import org.apereo.cas.util.ResourceUtils;
 
@@ -33,17 +29,8 @@ import java.nio.charset.StandardCharsets;
 @Controller("umaRequestingPartyTokenJwksEndpointController")
 @Slf4j
 public class UmaRequestingPartyTokenJwksEndpointController extends BaseUmaEndpointController {
-    private final ServicesManager servicesManager;
-    private final TicketRegistry ticketRegistry;
-
-    public UmaRequestingPartyTokenJwksEndpointController(final UmaPermissionTicketFactory umaPermissionTicketFactory,
-                                                         final ResourceSetRepository umaResourceSetRepository,
-                                                         final CasConfigurationProperties casProperties,
-                                                         final ServicesManager servicesManager,
-                                                         final TicketRegistry ticketRegistry) {
-        super(umaPermissionTicketFactory, umaResourceSetRepository, casProperties);
-        this.servicesManager = servicesManager;
-        this.ticketRegistry = ticketRegistry;
+    public UmaRequestingPartyTokenJwksEndpointController(final UmaConfigurationContext umaConfigurationContext) {
+        super(umaConfigurationContext);
     }
 
     /**
@@ -57,7 +44,7 @@ public class UmaRequestingPartyTokenJwksEndpointController extends BaseUmaEndpoi
         produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> getKeys(final HttpServletRequest request, final HttpServletResponse response) {
         try {
-            val jwks = casProperties.getAuthn().getUma().getRequestingPartyToken().getJwksFile();
+            val jwks = getUmaConfigurationContext().getCasProperties().getAuthn().getUma().getRequestingPartyToken().getJwksFile();
             if (ResourceUtils.doesResourceExist(jwks)) {
                 val jsonJwks = IOUtils.toString(jwks.getInputStream(), StandardCharsets.UTF_8);
                 val jsonWebKeySet = new JsonWebKeySet(jsonJwks);

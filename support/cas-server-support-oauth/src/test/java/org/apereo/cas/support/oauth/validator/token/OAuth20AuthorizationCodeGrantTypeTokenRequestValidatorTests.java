@@ -13,6 +13,7 @@ import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.code.DefaultOAuthCodeFactory;
 import org.apereo.cas.ticket.code.OAuthCodeExpirationPolicy;
@@ -95,9 +96,15 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
                 supportingService,
                 nonSupportingService,
                 promiscuousService));
-        this.validator = new OAuth20AuthorizationCodeGrantTypeTokenRequestValidator(serviceManager,
-            ticketRegistry, new RegisteredServiceAccessStrategyAuditableEnforcer(),
-            new WebApplicationServiceFactory());
+
+        val context = OAuth20ConfigurationContext.builder()
+            .servicesManager(serviceManager)
+            .ticketRegistry(ticketRegistry)
+            .webApplicationServiceServiceFactory(new WebApplicationServiceFactory())
+            .registeredServiceAccessStrategyEnforcer(new RegisteredServiceAccessStrategyAuditableEnforcer())
+            .build();
+
+        this.validator = new OAuth20AuthorizationCodeGrantTypeTokenRequestValidator(context);
     }
 
     @Test
@@ -110,6 +117,7 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
         profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
         profile.setId(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID);
         val session = request.getSession(true);
+        assertNotNull(session);
         session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
 
         request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());

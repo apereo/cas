@@ -1,14 +1,10 @@
 package org.apereo.cas.support.oauth.validator.token;
 
-import org.apereo.cas.audit.AuditableExecution;
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.util.Pac4jUtils;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -16,12 +12,9 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.context.J2EContext;
-import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.core.Ordered;
-
-import java.util.Optional;
 
 /**
  * This is {@link BaseOAuth20TokenRequestValidator}.
@@ -34,20 +27,7 @@ import java.util.Optional;
 @Getter
 @Setter
 public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRequestValidator {
-    /**
-     * Access strategy enforcer.
-     */
-    protected final AuditableExecution registeredServiceAccessStrategyEnforcer;
-
-    /**
-     * Service manager instance, managing the registry.
-     */
-    protected final ServicesManager servicesManager;
-
-    /**
-     * Service factory instance.
-     */
-    protected final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
+    private final OAuth20ConfigurationContext configurationContext;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
 
@@ -92,9 +72,9 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
     }
 
     @Override
-    public boolean validate(final J2EContext context) {
-        val request = context.getRequest();
-        val response = context.getResponse();
+    public boolean validate(final J2EContext ctx) {
+        val request = ctx.getRequest();
+        val response = ctx.getResponse();
 
         val grantType = request.getParameter(OAuth20Constants.GRANT_TYPE);
         if (!isGrantTypeSupported(grantType, OAuth20GrantTypes.values())) {
@@ -102,8 +82,9 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
             return false;
         }
 
-        val manager = Pac4jUtils.getPac4jProfileManager(request, response);
-        val profile = (Optional<CommonProfile>) manager.get(true);
+        val context = new J2EContext(request, response, getConfigurationContext().getSessionStore());
+        val manager = new ProfileManager<>(context, context.getSessionStore());
+        val profile = manager.get(true);
         if (profile.isEmpty()) {
             LOGGER.warn("Could not locate authenticated profile for this request. Request is not authenticated");
             return false;

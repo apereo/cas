@@ -1,16 +1,12 @@
 package org.apereo.cas.uma.web.controllers.claims;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.InvalidTicketException;
-import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.ticket.permission.UmaPermissionTicket;
-import org.apereo.cas.uma.ticket.permission.UmaPermissionTicketFactory;
-import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 
 import lombok.extern.slf4j.Slf4j;
@@ -35,17 +31,8 @@ import javax.servlet.http.HttpServletResponse;
 @Controller("umaRequestingPartyClaimsCollectionEndpointController")
 @Slf4j
 public class UmaRequestingPartyClaimsCollectionEndpointController extends BaseUmaEndpointController {
-    private final ServicesManager servicesManager;
-    private final TicketRegistry ticketRegistry;
-
-    public UmaRequestingPartyClaimsCollectionEndpointController(final UmaPermissionTicketFactory umaPermissionTicketFactory,
-                                                                final ResourceSetRepository umaResourceSetRepository,
-                                                                final CasConfigurationProperties casProperties,
-                                                                final ServicesManager servicesManager,
-                                                                final TicketRegistry ticketRegistry) {
-        super(umaPermissionTicketFactory, umaResourceSetRepository, casProperties);
-        this.servicesManager = servicesManager;
-        this.ticketRegistry = ticketRegistry;
+    public UmaRequestingPartyClaimsCollectionEndpointController(final UmaConfigurationContext umaConfigurationContext) {
+        super(umaConfigurationContext);
     }
 
     /**
@@ -68,16 +55,16 @@ public class UmaRequestingPartyClaimsCollectionEndpointController extends BaseUm
 
         val profileResult = getAuthenticatedProfile(request, response, OAuth20Constants.UMA_PROTECTION_SCOPE);
 
-        val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
+        val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(getUmaConfigurationContext().getServicesManager(), clientId);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service);
 
-        val ticket = ticketRegistry.getTicket(ticketId, UmaPermissionTicket.class);
+        val ticket = getUmaConfigurationContext().getTicketRegistry().getTicket(ticketId, UmaPermissionTicket.class);
         if (ticket == null || ticket.isExpired()) {
             throw new InvalidTicketException(ticketId);
         }
 
         ticket.getClaims().putAll(profileResult.getAttributes());
-        this.ticketRegistry.updateTicket(ticket);
+        getUmaConfigurationContext().getTicketRegistry().updateTicket(ticket);
 
         if (StringUtils.isBlank(redirectUri) || !service.matches(redirectUri)) {
             throw new UnauthorizedServiceException("Redirect URI is unauthorized for this service definition");

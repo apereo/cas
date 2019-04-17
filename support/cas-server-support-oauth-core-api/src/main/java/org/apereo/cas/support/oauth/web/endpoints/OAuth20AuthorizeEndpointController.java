@@ -11,14 +11,12 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
-import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.support.CookieUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.J2EContext;
-import org.pac4j.core.context.session.J2ESessionStore;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,7 +25,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Optional;
 
 /**
  * This controller is in charge of responding to the authorize call in OAuth v2 protocol.
@@ -57,8 +54,8 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
      */
     @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.AUTHORIZE_URL)
     public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        val context = Pac4jUtils.getPac4jJ2EContext(request, response, new J2ESessionStore());
-        val manager = Pac4jUtils.getPac4jProfileManager(request, response);
+        val context = new J2EContext(request, response, getOAuthConfigurationContext().getSessionStore());
+        val manager = new ProfileManager<>(context, context.getSessionStore());
 
         if (!verifyAuthorizeRequest(context) || !isRequestAuthenticated(manager, context)) {
             LOGGER.error("Authorize request verification failed. Either the authorization request is missing required parameters, "
@@ -115,12 +112,12 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
      * @param clientId          the client id
      * @return the model and view
      */
-    protected ModelAndView redirectToCallbackRedirectUrl(final ProfileManager manager,
+    protected ModelAndView redirectToCallbackRedirectUrl(final ProfileManager<CommonProfile> manager,
                                                          final OAuthRegisteredService registeredService,
                                                          final J2EContext context,
                                                          final String clientId) {
-        val profile = (Optional<CommonProfile>) manager.get(true);
-        if (profile == null || profile.isEmpty()) {
+        val profile = manager.get(true).orElse(null);
+        if (profile == null) {
             LOGGER.error("Unexpected null profile from profile manager. Request is not fully authenticated.");
             return OAuth20Utils.produceUnauthorizedErrorView();
         }
@@ -128,7 +125,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
         val service = getOAuthConfigurationContext().getAuthenticationBuilder().buildService(registeredService, context, false);
         LOGGER.debug("Created service [{}] based on registered service [{}]", service, registeredService);
 
-        val authentication = getOAuthConfigurationContext().getAuthenticationBuilder().build(profile.get(), registeredService, context, service);
+        val authentication = getOAuthConfigurationContext().getAuthenticationBuilder().build(profile, registeredService, context, service);
         LOGGER.debug("Created OAuth authentication [{}] for service [{}]", service, authentication);
 
         try {

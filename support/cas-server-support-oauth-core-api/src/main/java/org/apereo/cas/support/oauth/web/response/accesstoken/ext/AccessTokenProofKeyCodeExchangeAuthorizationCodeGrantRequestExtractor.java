@@ -1,12 +1,7 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
-import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -21,12 +16,8 @@ import javax.servlet.http.HttpServletResponse;
  * @since 6.0.0
  */
 public class AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractor extends AccessTokenAuthorizationCodeGrantRequestExtractor {
-    public AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractor(final ServicesManager servicesManager,
-                                                                                 final TicketRegistry ticketRegistry,
-                                                                                 final CentralAuthenticationService centralAuthenticationService,
-                                                                                 final OAuthProperties oAuthProperties,
-                                                                                 final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory) {
-        super(servicesManager, ticketRegistry, centralAuthenticationService, oAuthProperties, webApplicationServiceServiceFactory);
+    public AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractor(final OAuth20ConfigurationContext oAuthConfigurationContext) {
+        super(oAuthConfigurationContext);
     }
 
     @Override
