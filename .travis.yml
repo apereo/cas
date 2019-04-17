@@ -168,6 +168,12 @@ jobs:
       script: ./ci/tests/mail/run-tests-mail.sh
       name: "Mail Tests"
     - stage: test
+      script: ./ci/tests/oauth/run-tests-oauth.sh
+      name: "OAuth Tests"
+    - stage: test
+      script: ./ci/tests/oidc/run-tests-oidc.sh
+      name: "OpenID Connect Tests"
+    - stage: test
       script: ./ci/tests/couchdb/run-tests-couchdb.sh
       name: "CouchDb Tests"
     - stage: test
