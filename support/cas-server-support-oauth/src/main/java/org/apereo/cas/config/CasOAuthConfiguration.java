@@ -116,6 +116,7 @@ import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.session.J2ESessionStore;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
@@ -765,7 +766,11 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @ConditionalOnMissingBean(name = "oauthDistributedSessionStore")
     @Bean
     public SessionStore<J2EContext> oauthDistributedSessionStore() {
-        return new DistributedJ2ESessionStore(ticketRegistry.getIfAvailable(), ticketFactory.getIfAvailable());
+        val replicate = casProperties.getAuthn().getOauth().isReplicateSessions();
+        if (replicate) {
+            return new DistributedJ2ESessionStore(ticketRegistry.getIfAvailable(), ticketFactory.getIfAvailable());
+        }
+        return new J2ESessionStore();
     }
 
     private OAuth20ConfigurationContext.OAuth20ConfigurationContextBuilder buildConfigurationContext() {
