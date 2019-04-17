@@ -7,9 +7,6 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.ServiceFactoryConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.integration.pac4j.DistributedJ2ESessionStore;
-import org.apereo.cas.logout.LogoutExecutionPlan;
-import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.ticket.TicketFactory;
@@ -60,7 +57,7 @@ import java.util.ArrayList;
  */
 @Configuration("delegatedAuthenticationWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowExecutionPlanConfigurer, LogoutExecutionPlanConfigurer {
+public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Autowired
     @Qualifier("singleSignOnParticipationStrategy")
@@ -85,10 +82,6 @@ public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowEx
     @Autowired
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier("delegatedClientDistributedSessionStore")
-    private ObjectProvider<SessionStore> delegatedClientDistributedSessionStore;
 
     @Autowired
     @Qualifier("ticketRegistry")
@@ -118,6 +111,10 @@ public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowEx
 
     @Autowired
     private ApplicationContext applicationContext;
+
+    @Autowired
+    @Qualifier("delegatedClientDistributedSessionStore")
+    private ObjectProvider<SessionStore> delegatedClientDistributedSessionStore;
 
     @Autowired
     @Qualifier("argumentExtractor")
@@ -228,10 +225,6 @@ public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowEx
         plan.registerWebflowConfigurer(delegatedAuthenticationWebflowConfigurer());
     }
 
-    @Override
-    public void configureLogoutExecutionPlan(final LogoutExecutionPlan plan) {
-        plan.registerLogoutPostProcessor(new DistributedJ2ESessionStore(ticketRegistry.getIfAvailable(), ticketFactory.getIfAvailable()));
-    }
 
     @Bean
     @RefreshScope

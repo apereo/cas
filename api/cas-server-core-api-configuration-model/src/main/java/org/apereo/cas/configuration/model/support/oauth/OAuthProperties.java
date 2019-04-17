@@ -19,6 +19,18 @@ import java.io.Serializable;
 public class OAuthProperties implements Serializable {
 
     private static final long serialVersionUID = 2677128037234123907L;
+
+    /**
+     * Indicates whether profiles and other session data,
+     * collected as part of OAuth flows and requests
+     * that are kept by the container session, should be replicated
+     * across the cluster using CAS and its own ticket registry.
+     * Without this option, OAuth profile data and other related
+     * pieces of information should be manually replicated
+     * via means and libraries outside of CAS.
+     */
+    private boolean replicateSessions;
+
     /**
      * Settings related to oauth grants.
      */
