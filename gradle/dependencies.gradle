@@ -403,6 +403,22 @@ ext.libraries = [
                 },
                 dependencies.create("org.codehaus.groovy:groovy-groovysh:$groovyVersion") {
                     force = true
+                },
+                dependencies.create("org.codehaus.groovy:groovy-json:$groovyVersion") {
+                    exclude(group: "commons-cli", module: "commons-cli")
+                    force = true
+                },
+                dependencies.create("org.codehaus.groovy:groovy-xml:$groovyVersion") {
+                    exclude(group: "commons-cli", module: "commons-cli")
+                    force = true
+                },
+                dependencies.create("org.codehaus.groovy:groovy-datetime:$groovyVersion") {
+                    exclude(group: "commons-cli", module: "commons-cli")
+                    force = true
+                },
+                dependencies.create("org.codehaus.groovy:groovy-sql:$groovyVersion") {
+                    exclude(group: "commons-cli", module: "commons-cli")
+                    force = true
                 }
         ],
         grouper                 : dependencies.create("edu.internet2.middleware.grouper:grouperClient:$grouperVersion") {
