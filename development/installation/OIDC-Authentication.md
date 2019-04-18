@@ -253,16 +253,21 @@ allows the release of `user-x` as a claim, as well as all claims assigned and in
       "java.util.ArrayList",
       [
         {
+          "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+          "allowedAttributes" : [ "java.util.ArrayList", [ "cn", "uid", "givenName" ] ],
+          "order": 0  
+        },
+        {
           "@class": "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy",
           "allowedAttributes": {
             "@class": "java.util.TreeMap",
             "user-x": "groovy { return attributes['uid'].get(0) + '-X' }"
           },
-          "order": 0
+          "order": 1
         },
         {
           "@class": "org.apereo.cas.oidc.claims.OidcEmailScopeAttributeReleasePolicy",
-          "order": 1
+          "order": 2
         }
       ]
     ]
