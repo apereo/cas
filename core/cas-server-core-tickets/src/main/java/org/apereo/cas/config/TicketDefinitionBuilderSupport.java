@@ -1,9 +1,10 @@
 package org.apereo.cas.config;
 
-import lombok.RequiredArgsConstructor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
+
+import lombok.RequiredArgsConstructor;
 
 /**
  * Contains common implementations of ticket definition builders shared across various
