@@ -29,9 +29,7 @@ public class DefaultResponse implements Response {
      */
     private static final Pattern NON_PRINTABLE = Pattern.compile("[\\x00-\\x1F\\x7F]+");
 
-    private static final int CONST_REDIRECT_RESPONSE_MULTIPLIER = 40;
-
-    private static final int CONST_REDIRECT_RESPONSE_BUFFER = 100;
+    private static final int RESPONSE_INITIAL_CAPACITY = 200;
 
     private static final long serialVersionUID = -8251042088720603062L;
 
@@ -71,7 +69,7 @@ public class DefaultResponse implements Response {
      * @return the redirect response
      */
     public static Response getRedirectResponse(final String url, final Map<String, String> parameters) {
-        val builder = new StringBuilder(parameters.size() * CONST_REDIRECT_RESPONSE_MULTIPLIER + CONST_REDIRECT_RESPONSE_BUFFER);
+        val builder = new StringBuilder(parameters.size() * RESPONSE_INITIAL_CAPACITY);
         val sanitizedUrl = sanitizeUrl(url);
         LOGGER.debug("Sanitized URL for redirect response is [{}]", sanitizedUrl);
         val fragmentSplit = Splitter.on("#").splitToList(sanitizedUrl);
