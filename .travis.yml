@@ -32,9 +32,6 @@ git:
 notifications:
   slack:
     secure: "gNFUOGd0isowSwPfQ9VqGQWhWRDAjzX9tfH0xGe2gyg1kiOhq3Odb8fdcUg9f3DhAbiMxGDu08IgmDbeEyncB42Zdqk/DFvD3F958WaVy0O9TF2iAzO+ftBG0+slFHPDZ8qAy97+mV/be7KBkLYP+BydYTVfO84NvpLNiylmOVU="
-  webhooks:
-    # Coveralls: https://docs.coveralls.io/parallel-build-webhook
-    secure: "e3Lkn/iMpq9IjNrBQqMAKAxCbKUcd5t6zbow+l39a5n7trIUcBzgK9YXlSBigRyVnKXwNmI08WQN0GMJuWoT2u9cda5qttgZ5C8p/RFWxGKz6qhlmKwcwmipasU0ykvMARB6nrTMwMeMV/O5btt2xko8KfsRQdmqyZGJBglhDsc="
 matrix:
   fast_finish: true
 env:
@@ -42,7 +39,6 @@ env:
     - JAVA_OPTS="-Xms512m -Xmx4048m -Xss128m -XX:ReservedCodeCacheSize=512m -XX:+UseG1GC -Xverify:none -server"
     - GRADLE_OPTS="-Xms512m -Xmx1024m -Xss128m -XX:ReservedCodeCacheSize=512m -XX:+UseG1GC -Xverify:none -server"
     - SPRING_MAIN_BANNER-MODE="off"
-    - COVERALLS_PARALLEL=true
     - secure: "ScUSTo0if5m7ddnwUA7EaYucc6yzEUrKLk0DzCvkMfjn2h5taUFSKHx+S0hd2EzJofv+Em4eI5qncSK5LTxgD7HhHR1e3iZp+SqJenhhOnbuciZfg4QA+tUGw3XUdmREac5cz2l0qhi1q4vsnnZARj2d4vvf2HWuNtEOBu/ZAKI="
     - secure: "iWPPLKSS3zBs2adqLPkMiHfCj2hSLyD5BoV3oodhR7Ne83Kpn1khRcEWFoHF3Ed11eSU+glNdPSzUpc8TzwTZGx5B3RU2Qp36hZFyjuzNWJARmoVPYMiEg3FFBQrUR75w+Tbtn6zPkiAk6nl0K5ewmY0/xixVdnTLXL5HjpE2rc="
     - secure: "f3mDIZ8m6NYJXI8KvWD/sZRSeCCyIyfgPRy3Q6o9u9WyHZuYaJf95Ia0eJQ3gxUDS1TKL31Vk08dhFKrfIcKgifFPa2uQ2uyJkvGxlarMTQ+tpqsZYp4zAJgKc9r4xdZasvF2k4xqr+pl9AFjlpXB4jDD59XPXt3DcRABOYA9sM="
@@ -128,80 +124,104 @@ jobs:
     - stage: test
       script: ./ci/tests/run-tests-simple.sh
       name: "Simple Unit Tests"
+      after_success: bash <(curl -s https://codecov.io/bash)
     - stage: test
       script: ./ci/tests/groovy/run-tests-groovy.sh
       name: "Groovy Unit Tests"
+      after_success: bash <(curl -s https://codecov.io/bash)
     - stage: test
       script: ./ci/tests/restful/run-tests-restful.sh
       name: "RESTful Tests"
+      after_success: bash <(curl -s https://codecov.io/bash)
     - stage: test
       script: ./ci/tests/amazons3/run-tests-awss3.sh
       name: "AWS S3 Tests"
+      after_success: bash <(curl -s https://codecov.io/bash)
     - stage: test
       script: ./ci/tests/cassandra/run-tests-cassandra.sh
       name: "Cassandra Tests"
+      after_success: bash <(curl -s https://codecov.io/bash)
     - stage: test
       script: ./ci/tests/cosmosdb/run-tests-cosmosdb.sh
       name: "CosmosDb Tests"
+      after_success: bash <(curl -s https://codecov.io/bash)
     - stage: test
       script: ./ci/tests/radius/run-tests-radius.sh
       name: "Radius Tests"
+      after_success: bash <(curl -s https://codecov.io/bash)
     - stage: test
       script: ./ci/tests/couchbase/run-tests-couchbase.sh
       name: "Couchbase Tests"
+      after_success: bash <(curl -s https://codecov.io/bash)
     - stage: test
       script: ./ci/tests/dynamodb/run-tests-dynamodb.sh
       name: "DynamoDb Tests"
+      after_success: bash <(curl -s https://codecov.io/bash)
     - stage: test
       script: ./ci/tests/filesystem/run-tests-filesystem.sh
       name: "FileSystem Tests"
+      after_success: bash <(curl -s https://codecov.io/bash)
     - stage: test
       script: ./ci/tests/ignite/run-tests-ignite.sh
       name: "Apache Ignite Tests"
+      after_success: bash <(curl -s https://codecov.io/bash)
     - stage: test
       script: ./ci/tests/influxdb/run-tests-influxdb.sh
       name: "InfluxDb Tests"
+      after_success: bash <(curl -s https://codecov.io/bash)
     - stage: test
       script: ./ci/tests/ldap/run-tests-ldap.sh
       name: "LDAP Tests"
+      after_success: bash <(curl -s https://codecov.io/bash)
     - stage: test
       script: ./ci/tests/mail/run-tests-mail.sh
       name: "Mail Tests"
+      after_success: bash <(curl -s https://codecov.io/bash)
     - stage: test
       script: ./ci/tests/oauth/run-tests-oauth.sh
       name: "OAuth Tests"
+      after_success: bash <(curl -s https://codecov.io/bash)
     - stage: test
       script: ./ci/tests/oidc/run-tests-oidc.sh
       name: "OpenID Connect Tests"
+      after_success: bash <(curl -s https://codecov.io/bash)
     - stage: test
       script: ./ci/tests/couchdb/run-tests-couchdb.sh
       name: "CouchDb Tests"
+      after_success: bash <(curl -s https://codecov.io/bash)
     - stage: test
       script: ./ci/tests/memcached/run-tests-memcached.sh
       name: "Memcached Tests"
+      after_success: bash <(curl -s https://codecov.io/bash)
     - stage: test
       script: ./ci/tests/mysql/run-tests-mysql.sh
       name: "MySQL Tests"
+      after_success: bash <(curl -s https://codecov.io/bash)
     - stage: test
       script: ./ci/tests/mssqlserver/run-tests-mssqlserver.sh
       name: "MSSQL Server Tests"
+      after_success: bash <(curl -s https://codecov.io/bash)
     - stage: test
       script: ./ci/tests/postgres/run-tests-postgres.sh
       name: "PostgreSQL Tests"
+      after_success: bash <(curl -s https://codecov.io/bash)
     - stage: test
       script: ./ci/tests/mariadb/run-tests-mariadb.sh
       name: "MariaDb Tests"
+      after_success: bash <(curl -s https://codecov.io/bash)
     - stage: test
       script: ./ci/tests/mongodb/run-tests-mongodb.sh
       name: "MongoDb Tests"
+      after_success: bash <(curl -s https://codecov.io/bash)
     - stage: test
       script: ./ci/tests/redis/run-tests-redis.sh
       name: "Redis Tests"
+      after_success: bash <(curl -s https://codecov.io/bash)
     - stage: spotbugs
       script: ./ci/analyze-bugs-main.sh
       name: "Spotbugs Main Analysis"
+      after_success: bash <(curl -s https://codecov.io/bash)
     - stage: spotbugs
       script: ./ci/analyze-bugs-tests.sh
       name: "Spotbugs Tests Analysis"
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
+      after_success: bash <(curl -s https://codecov.io/bash) 
