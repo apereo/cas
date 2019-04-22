@@ -241,7 +241,7 @@ public class GitHubTemplate implements GitHubOperations {
     @Override
     public PullRequest addLabel(final PullRequest pr, final String label) {
         final URI uri = URI.create(pr.getLabelsUrl());
-        log.info("Adding label {} to pull request {}", label, uri);
+        log.info("Adding label {} to pull request {}", label, pr);
         final ResponseEntity<Label[]> response = this.rest.exchange(
             new RequestEntity<>(Arrays.asList(label), HttpMethod.POST, uri),
             Label[].class);
