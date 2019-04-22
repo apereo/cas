@@ -1,7 +1,6 @@
 package org.apereo.cas.oidc.token;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -15,7 +14,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.EncodingUtils;
 
-import com.google.common.base.Preconditions;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -31,7 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Map.Entry;
 import java.util.stream.Stream;
 
 /**
@@ -95,7 +92,10 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
         val oidc = getConfigurationContext().getCasProperties().getAuthn().getOidc();
 
         val claims = new JwtClaims();
-        claims.setJwtId(getOAuthServiceTicket(accessTokenId.getTicketGrantingTicket()).getKey());
+
+        val jwtId = getJwtId(accessTokenId.getTicketGrantingTicket());
+        claims.setJwtId(jwtId);
+
         claims.setIssuer(oidc.getIssuer());
         claims.setAudience(service.getClientId());
 
@@ -153,7 +153,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
      * @param tgt the tgt
      * @return the o auth service ticket
      */
-    protected Entry<String, Service> getOAuthServiceTicket(final TicketGrantingTicket tgt) {
+    protected String getJwtId(final TicketGrantingTicket tgt) {
         val oAuthCallbackUrl = getConfigurationContext().getCasProperties().getServer().getPrefix()
             + OAuth20Constants.BASE_OAUTH20_URL + '/'
             + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
@@ -166,9 +166,11 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
                 return service != null && service.getServiceId().equals(oAuthCallbackUrl);
             })
             .findFirst();
-        Preconditions.checkState(oAuthServiceTicket.isPresent(), "Cannot find service ticket issued to "
-            + oAuthCallbackUrl + " as part of the authentication context");
-        return oAuthServiceTicket.get();
+        if (oAuthServiceTicket.isEmpty()) {
+            LOGGER.trace("Cannot find ticket issued to [{}] as part of the authentication context", oAuthCallbackUrl);
+            return tgt.getId();
+        }
+        return oAuthServiceTicket.get().getKey();
     }
 
     /**
