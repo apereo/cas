@@ -72,7 +72,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
         try {
-            val redisKey = getTicketRedisKey(ticketId);
+            val redisKey = getTicketRedisKey(encodeTicketId(ticketId));
             this.client.delete(redisKey);
             return true;
         } catch (final Exception e) {
@@ -85,7 +85,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     public void addTicket(final Ticket ticket) {
         try {
             LOGGER.debug("Adding ticket [{}]", ticket);
-            val redisKey = getTicketRedisKey(ticket.getId());
+            val redisKey = getTicketRedisKey(encodeTicketId(ticket.getId()));
             val encodeTicket = encodeTicket(ticket);
             val timeout = getTimeout(ticket);
             this.client.boundValueOps(redisKey).set(encodeTicket, timeout.longValue(), TimeUnit.SECONDS);
@@ -97,7 +97,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     @Override
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         try {
-            val redisKey = getTicketRedisKey(ticketId);
+            val redisKey = getTicketRedisKey(encodeTicketId(ticketId));
             val t = this.client.boundValueOps(redisKey).get();
             if (t != null) {
                 val result = decodeTicket(t);
@@ -142,7 +142,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
         try {
             LOGGER.debug("Updating ticket [{}]", ticket);
             val encodeTicket = this.encodeTicket(ticket);
-            val redisKey = getTicketRedisKey(ticket.getId());
+            val redisKey = getTicketRedisKey(encodeTicketId(ticket.getId()));
             LOGGER.debug("Fetched redis key [{}] for ticket [{}]", redisKey, ticket);
 
             val timeout = getTimeout(ticket);
