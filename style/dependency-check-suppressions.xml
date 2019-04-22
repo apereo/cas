@@ -7,6 +7,9 @@
         <cve>CVE-2003-0789</cve>
     </suppress>
     <suppress>
+        <cve>CVE-2019-0232</cve>
+    </suppress>
+    <suppress>
         <cve>CVE-2019-5736</cve>
     </suppress>
     <suppress>
