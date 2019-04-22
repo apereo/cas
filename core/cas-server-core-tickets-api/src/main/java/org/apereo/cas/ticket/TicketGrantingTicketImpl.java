@@ -174,9 +174,6 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
         this.services.put(id, service);
     }
 
-    /**
-     * Remove all services of the TGT (at logout).
-     */
     @Override
     public void removeAllServices() {
         this.services.clear();

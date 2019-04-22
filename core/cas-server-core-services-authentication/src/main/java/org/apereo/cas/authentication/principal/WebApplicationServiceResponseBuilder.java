@@ -67,9 +67,4 @@ public class WebApplicationServiceResponseBuilder extends AbstractWebApplication
     protected WebApplicationService buildInternal(final WebApplicationService service, final Map<String, String> parameters) {
         return service;
     }
-
-    @Override
-    public boolean supports(final WebApplicationService service) {
-        return true;
-    }
 }

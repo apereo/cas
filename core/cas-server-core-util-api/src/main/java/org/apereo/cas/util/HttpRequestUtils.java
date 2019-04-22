@@ -127,8 +127,12 @@ public class HttpRequestUtils {
      * @return the service, or null.
      */
     public static WebApplicationService getService(final List<ArgumentExtractor> argumentExtractors, final HttpServletRequest request) {
-        return argumentExtractors.stream().map(argumentExtractor -> argumentExtractor.extractService(request))
-            .filter(Objects::nonNull).findFirst().orElse(null);
+        return argumentExtractors
+            .stream()
+            .map(argumentExtractor -> argumentExtractor.extractService(request))
+            .filter(Objects::nonNull)
+            .findFirst()
+            .orElse(null);
     }
 
     /**

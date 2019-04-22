@@ -30,7 +30,8 @@ import java.util.Map;
  */
 @Entity
 @Inheritance
-@DiscriminatorColumn(name = "service_type", length = 50, discriminatorType = DiscriminatorType.STRING, columnDefinition = "VARCHAR(50) DEFAULT 'simple'")
+@DiscriminatorColumn(name = "service_type", length = 50,
+    discriminatorType = DiscriminatorType.STRING, columnDefinition = "VARCHAR(50) DEFAULT 'simple'")
 @Table(name = "WebApplicationServices")
 @ToString
 @Getter

@@ -81,9 +81,7 @@ public class PairwiseOidcRegisteredServiceUsernameAttributeProvider extends Base
     @Getter
     @AllArgsConstructor
     private static class PairwiseService implements Service {
-
         private static final long serialVersionUID = -6154643329901712381L;
-
         private final String id;
     }
 }

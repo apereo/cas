@@ -38,5 +38,7 @@ public interface ResponseBuilder<T extends WebApplicationService> extends Serial
      * @param service the service
      * @return true /false
      */
-    boolean supports(T service);
+    default boolean supports(final T service) {
+        return service != null;
+    }
 }

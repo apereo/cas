@@ -18,6 +18,7 @@ import org.pac4j.core.profile.CommonProfile;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -48,6 +49,34 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
 
         val service = new WebApplicationServiceFactory().createService(callback);
         when(tgt.getServices()).thenReturn(CollectionUtils.wrap("service", service));
+        var authentication = CoreAuthenticationTestUtils.getAuthentication("casuser",
+            CollectionUtils.wrap(OAuth20Constants.STATE, List.of("some-state"),
+                OAuth20Constants.NONCE, List.of("some-nonce")));
+        when(tgt.getAuthentication()).thenReturn(authentication);
+
+        val accessToken = mock(AccessToken.class);
+        when(accessToken.getAuthentication()).thenReturn(authentication);
+        when(accessToken.getTicketGrantingTicket()).thenReturn(tgt);
+        when(accessToken.getId()).thenReturn(getClass().getSimpleName());
+
+        val idToken = oidcIdTokenGenerator.generate(request, response, accessToken, 30,
+            OAuth20ResponseTypes.CODE, OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, "clientid"));
+        assertNotNull(idToken);
+    }
+
+    @Test
+    public void verifyTokenGenerationWithoutCallbackService() {
+        val request = new MockHttpServletRequest();
+        val profile = new CommonProfile();
+        profile.setClientName("OIDC");
+        profile.setId("casuser");
+        request.setAttribute(Pac4jConstants.USER_PROFILES, profile);
+
+        val response = new MockHttpServletResponse();
+
+        val tgt = mock(TicketGrantingTicket.class);
+
+        when(tgt.getServices()).thenReturn(new HashMap<>());
         var authentication = CoreAuthenticationTestUtils.getAuthentication("casuser",
             CollectionUtils.wrap(OAuth20Constants.STATE, List.of("some-state"),
                 OAuth20Constants.NONCE, List.of("some-nonce")));
