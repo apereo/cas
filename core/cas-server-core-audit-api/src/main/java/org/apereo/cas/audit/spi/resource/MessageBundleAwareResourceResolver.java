@@ -8,6 +8,7 @@ import org.aspectj.lang.JoinPoint;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.i18n.LocaleContextHolder;
 
+import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
@@ -29,11 +30,10 @@ public class MessageBundleAwareResourceResolver extends ReturnValueAsStringResou
 
     private String[] resolveMessagesFromBundleOrDefault(final String[] resolved, final Exception e) {
         val locale = LocaleContextHolder.getLocale();
-        val defaultKey = String.join("_", StringUtils.splitByCharacterTypeCamelCase(e.getClass().getSimpleName()))
-            .toUpperCase();
-
+        val defaultKey = String.join("_", StringUtils.splitByCharacterTypeCamelCase(e.getClass().getSimpleName())).toUpperCase();
         return Stream.of(resolved)
             .map(key -> this.context.getMessage(key, null, defaultKey, locale))
+            .filter(Objects::nonNull)
             .toArray(String[]::new);
     }
 }
