@@ -32,20 +32,21 @@ public class DuoSecurityDetermineUserAccountAction extends AbstractMultifactorAu
         val duoAuthenticationService = provider.getDuoAuthenticationService();
         val account = duoAuthenticationService.getDuoUserAccount(principal.getId());
 
+        val eventFactorySupport = new EventFactorySupport();
         if (account.getStatus() == DuoUserAccountAuthStatus.ENROLL) {
             if (StringUtils.isNotBlank(provider.getRegistrationUrl())) {
                 requestContext.getFlowScope().put("duoRegistrationUrl", provider.getRegistrationUrl());
-                return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_ENROLL);
+                return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_ENROLL);
             }
         }
         if (account.getStatus() == DuoUserAccountAuthStatus.ALLOW) {
-            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_BYPASS);
+            return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_BYPASS);
         }
         if (account.getStatus() == DuoUserAccountAuthStatus.DENY) {
-            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_DENY);
+            return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_DENY);
         }
         if (account.getStatus() == DuoUserAccountAuthStatus.UNAVAILABLE) {
-            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
+            return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
         }
 
         return success();
