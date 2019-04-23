@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import org.junit.jupiter.api.Tag;
@@ -14,7 +15,7 @@ import org.springframework.test.context.TestPropertySource;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@EnableConfigurationProperties
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 @TestPropertySource(properties = {
     "cas.ticket.registry.cassandra.keyspace=cas"
 })

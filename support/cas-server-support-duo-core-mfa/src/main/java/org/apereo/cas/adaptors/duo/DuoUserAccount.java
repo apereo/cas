@@ -28,5 +28,4 @@ public class DuoUserAccount {
     public DuoUserAccount(final String username) {
         this.username = username;
     }
-
 }

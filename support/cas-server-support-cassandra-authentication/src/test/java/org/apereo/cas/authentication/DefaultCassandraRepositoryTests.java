@@ -7,6 +7,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CassandraAuthenticationConfiguration;
 import org.apereo.cas.config.CassandraCoreConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import lombok.SneakyThrows;
@@ -41,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationPrincipalConfiguration.class,
     CassandraAuthenticationConfiguration.class
 })
-@EnableConfigurationProperties
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 @TestPropertySource(properties = {
     "cas.authn.cassandra.tableName=users_table",
     "cas.authn.cassandra.usernameAttribute=user_attr",
