@@ -65,8 +65,7 @@ public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuth
 
     @SneakyThrows
     private Token verifyAuthyToken(final AuthyTokenCredential tokenCredential, final User user, final Map<String, String> options) {
-        return this.instance.getAuthyTokens()
-            .verify(user.getId(), tokenCredential.getToken(), options);
+        return this.instance.getAuthyTokens().verify(user.getId(), tokenCredential.getToken(), options);
     }
 
     @Override
