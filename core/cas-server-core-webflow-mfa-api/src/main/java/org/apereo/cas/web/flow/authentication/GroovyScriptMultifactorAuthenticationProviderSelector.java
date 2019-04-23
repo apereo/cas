@@ -38,6 +38,6 @@ public class GroovyScriptMultifactorAuthenticationProviderSelector implements Mu
             .stream()
             .filter(p -> p.getId().equals(provider))
             .findFirst()
-            .get();
+            .orElse(null);
     }
 }

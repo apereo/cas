@@ -1,6 +1,7 @@
 package org.apereo.cas.audit.spi;
 
 import org.apereo.cas.audit.spi.principal.ChainingAuditPrincipalIdProviderTests;
+import org.apereo.cas.audit.spi.resource.MessageBundleAwareResourceResolverTests;
 import org.apereo.cas.audit.spi.resource.ServiceResourceResolverTests;
 import org.apereo.cas.audit.spi.resource.TicketAsFirstParameterResourceResolverTests;
 
@@ -17,7 +18,8 @@ import org.junit.platform.suite.api.SelectClasses;
     ServiceResourceResolverTests.class,
     TicketAsFirstParameterResourceResolverTests.class,
     ChainingAuditPrincipalIdProviderTests.class,
-    FilterAndDelegateAuditTrailManagerTests.class
+    FilterAndDelegateAuditTrailManagerTests.class,
+    MessageBundleAwareResourceResolverTests.class
 })
 public class CoreAuditTestsSuite {
 }
