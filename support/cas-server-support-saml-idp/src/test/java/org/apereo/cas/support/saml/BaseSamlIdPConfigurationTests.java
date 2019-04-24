@@ -172,10 +172,14 @@ public abstract class BaseSamlIdPConfigurationTests {
     }
 
     protected static AuthnRequest getAuthnRequestFor(final SamlRegisteredService service) {
+        return getAuthnRequestFor(service.getServiceId());
+    }
+
+    protected static AuthnRequest getAuthnRequestFor(final String service) {
         val authnRequest = mock(AuthnRequest.class);
         when(authnRequest.getID()).thenReturn("23hgbcehfgeb7843jdv1");
         val issuer = mock(Issuer.class);
-        when(issuer.getValue()).thenReturn(service.getServiceId());
+        when(issuer.getValue()).thenReturn(service);
         when(authnRequest.getIssuer()).thenReturn(issuer);
         return authnRequest;
     }
