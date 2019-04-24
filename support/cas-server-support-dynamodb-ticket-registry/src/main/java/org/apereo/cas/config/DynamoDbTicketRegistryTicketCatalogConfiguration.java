@@ -1,12 +1,14 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.ticket.TicketCatalog;
-import org.apereo.cas.ticket.TicketDefinition;
+import org.springframework.beans.factory.annotation.Qualifier;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.function.Function;
 
 /**
  * This is {@link DynamoDbTicketRegistryTicketCatalogConfiguration}.
@@ -16,44 +18,42 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("dynamoDbTicketRegistryTicketCatalogConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class DynamoDbTicketRegistryTicketCatalogConfiguration extends CasCoreTicketCatalogConfiguration {
+public class DynamoDbTicketRegistryTicketCatalogConfiguration extends TicketDefinitionBuilderSupport {
 
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Override
-    protected void buildAndRegisterServiceTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
-        metadata.getProperties().setStorageName(casProperties.getTicket().getRegistry().getDynamoDb().getServiceTicketsTableName());
-        metadata.getProperties().setStorageTimeout(casProperties.getTicket().getSt().getTimeToKillInSeconds());
-        super.buildAndRegisterServiceTicketDefinition(plan, metadata);
+    public DynamoDbTicketRegistryTicketCatalogConfiguration(final CasConfigurationProperties casProperties,
+                                                            final @Qualifier("dynamoDbTicketCatalogConfigurationValuesProvider")
+                                                                    CasTicketCatalogConfigurationValuesProvider configProvider) {
+        super(casProperties, configProvider);
     }
 
-    @Override
-    protected void buildAndRegisterProxyTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
-        metadata.getProperties().setStorageName(casProperties.getTicket().getRegistry().getDynamoDb().getProxyTicketsTableName());
-        metadata.getProperties().setStorageTimeout(casProperties.getTicket().getPt().getTimeToKillInSeconds());
-        super.buildAndRegisterProxyTicketDefinition(plan, metadata);
-    }
+    @ConditionalOnMissingBean
+    @Bean
+    public CasTicketCatalogConfigurationValuesProvider dynamoDbTicketCatalogConfigurationValuesProvider() {
+        return new CasTicketCatalogConfigurationValuesProvider() {
+            @Override
+            public Function<CasConfigurationProperties, String> getServiceTicketStorageName() {
+                return p -> p.getTicket().getRegistry().getDynamoDb().getServiceTicketsTableName();
+            }
 
-    @Override
-    protected void buildAndRegisterTicketGrantingTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
-        metadata.getProperties().setStorageName(casProperties.getTicket().getRegistry().getDynamoDb().getTicketGrantingTicketsTableName());
-        metadata.getProperties().setStorageTimeout(casProperties.getTicket().getTgt().getMaxTimeToLiveInSeconds());
-        super.buildAndRegisterTicketGrantingTicketDefinition(plan, metadata);
-    }
+            @Override
+            public Function<CasConfigurationProperties, String> getProxyTicketStorageName() {
+                return p -> p.getTicket().getRegistry().getDynamoDb().getProxyTicketsTableName();
+            }
 
-    @Override
-    protected void buildAndRegisterProxyGrantingTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
-        metadata.getProperties().setStorageName(casProperties.getTicket().getRegistry().getDynamoDb().getProxyGrantingTicketsTableName());
-        metadata.getProperties().setStorageTimeout(casProperties.getTicket().getTgt().getMaxTimeToLiveInSeconds());
-        super.buildAndRegisterProxyGrantingTicketDefinition(plan, metadata);
-    }
+            @Override
+            public Function<CasConfigurationProperties, String> getTicketGrantingTicketStorageName() {
+                return p -> p.getTicket().getRegistry().getDynamoDb().getTicketGrantingTicketsTableName();
+            }
 
-    @Override
-    protected void buildAndRegisterTransientSessionTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
-        metadata.getProperties().setStorageName(casProperties.getTicket().getRegistry().getDynamoDb().getTransientSessionTicketsTableName());
-        metadata.getProperties().setStorageTimeout(casProperties.getTicket().getTst().getTimeToKillInSeconds());
-        super.buildAndRegisterTransientSessionTicketDefinition(plan, metadata);
+            @Override
+            public Function<CasConfigurationProperties, String> getProxyGrantingTicketStorageName() {
+                return p -> p.getTicket().getRegistry().getDynamoDb().getProxyGrantingTicketsTableName();
+            }
+
+            @Override
+            public Function<CasConfigurationProperties, String> getTransientSessionStorageName() {
+                return p -> p.getTicket().getRegistry().getDynamoDb().getTransientSessionTicketsTableName();
+            }
+        };
     }
 }
