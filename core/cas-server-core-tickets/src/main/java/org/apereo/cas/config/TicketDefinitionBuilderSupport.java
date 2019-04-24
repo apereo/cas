@@ -44,7 +44,7 @@ public class TicketDefinitionBuilderSupport extends CasCoreTicketCatalogConfigur
     @Override
     protected void buildAndRegisterProxyGrantingTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
         metadata.getProperties().setStorageName(configurationValuesProvider.getProxyGrantingTicketStorageName().apply(casProperties));
-        metadata.getProperties().setStorageTimeout(configurationValuesProvider.getTicketGrantingTicketStorageTimeout().apply(casProperties));
+        metadata.getProperties().setStorageTimeout(configurationValuesProvider.getProxyGrantingTicketStorageTimeout().apply(casProperties));
         super.buildAndRegisterProxyGrantingTicketDefinition(plan, metadata);
     }
 
