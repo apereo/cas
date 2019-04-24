@@ -18,38 +18,40 @@ public class TicketDefinitionBuilderSupport extends CasCoreTicketCatalogConfigur
 
     private final CasConfigurationProperties casProperties;
 
+    private final CasTicketCatalogConfigurationValuesProvider configurationValuesProvider;
+
     @Override
     protected void buildAndRegisterServiceTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
-        metadata.getProperties().setStorageName("serviceTicketsCache");
-        metadata.getProperties().setStorageTimeout(casProperties.getTicket().getSt().getTimeToKillInSeconds());
+        metadata.getProperties().setStorageName(configurationValuesProvider.getServiceTicketStorageName().apply(casProperties));
+        metadata.getProperties().setStorageTimeout(configurationValuesProvider.getServiceTicketStorageTimeout().apply(casProperties));
         super.buildAndRegisterServiceTicketDefinition(plan, metadata);
     }
 
     @Override
     protected void buildAndRegisterProxyTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
-        metadata.getProperties().setStorageName("proxyTicketsCache");
-        metadata.getProperties().setStorageTimeout(casProperties.getTicket().getPt().getTimeToKillInSeconds());
+        metadata.getProperties().setStorageName(configurationValuesProvider.getProxyTicketStorageName().apply(casProperties));
+        metadata.getProperties().setStorageTimeout(configurationValuesProvider.getProxyTicketStorageTimeout().apply(casProperties));
         super.buildAndRegisterProxyTicketDefinition(plan, metadata);
     }
 
     @Override
     protected void buildAndRegisterTicketGrantingTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
-        metadata.getProperties().setStorageName("ticketGrantingTicketsCache");
-        metadata.getProperties().setStorageTimeout(casProperties.getTicket().getTgt().getMaxTimeToLiveInSeconds());
+        metadata.getProperties().setStorageName(configurationValuesProvider.getTicketGrantingTicketStorageName().apply(casProperties));
+        metadata.getProperties().setStorageTimeout(configurationValuesProvider.getTicketGrantingTicketStorageTimeout().apply(casProperties));
         super.buildAndRegisterTicketGrantingTicketDefinition(plan, metadata);
     }
 
     @Override
     protected void buildAndRegisterProxyGrantingTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
-        metadata.getProperties().setStorageName("proxyGrantingTicketsCache");
-        metadata.getProperties().setStorageTimeout(casProperties.getTicket().getTgt().getMaxTimeToLiveInSeconds());
+        metadata.getProperties().setStorageName(configurationValuesProvider.getProxyGrantingTicketStorageName().apply(casProperties));
+        metadata.getProperties().setStorageTimeout(configurationValuesProvider.getTicketGrantingTicketStorageTimeout().apply(casProperties));
         super.buildAndRegisterProxyGrantingTicketDefinition(plan, metadata);
     }
 
     @Override
     protected void buildAndRegisterTransientSessionTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
-        metadata.getProperties().setStorageName("transientSessionTicketsCache");
-        metadata.getProperties().setStorageTimeout(casProperties.getTicket().getTst().getTimeToKillInSeconds());
+        metadata.getProperties().setStorageName(configurationValuesProvider.getTransientSessionStorageName().apply(casProperties));
+        metadata.getProperties().setStorageTimeout(configurationValuesProvider.getTransientSessionStorageTimeout().apply(casProperties));
         super.buildAndRegisterTransientSessionTicketDefinition(plan, metadata);
     }
 }

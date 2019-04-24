@@ -16,6 +16,6 @@ import org.springframework.context.annotation.Configuration;
 public class IgniteTicketRegistryTicketCatalogConfiguration extends TicketDefinitionBuilderSupport {
 
     public IgniteTicketRegistryTicketCatalogConfiguration(final CasConfigurationProperties casProperties) {
-        super(casProperties);
+        super(casProperties, new CasTicketCatalogConfigurationValuesProvider() {});
     }
 }

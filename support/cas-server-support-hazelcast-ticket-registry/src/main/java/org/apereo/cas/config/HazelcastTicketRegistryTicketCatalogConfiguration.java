@@ -16,6 +16,6 @@ import org.springframework.context.annotation.Configuration;
 public class HazelcastTicketRegistryTicketCatalogConfiguration extends TicketDefinitionBuilderSupport {
 
     public HazelcastTicketRegistryTicketCatalogConfiguration(final CasConfigurationProperties casProperties) {
-        super(casProperties);
+        super(casProperties, new CasTicketCatalogConfigurationValuesProvider() {});
     }
 }
