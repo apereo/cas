@@ -2,7 +2,6 @@ package org.apereo.cas.oidc.web.controllers;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -112,10 +111,7 @@ public class OidcIntrospectionEndpointController extends BaseOAuth20Controller {
                     return createIntrospectionResponse(service, ticket);
                 }
             }
-        } catch (final InvalidTicketException e) {
-            LOGGER.error(e.getMessage(), e);
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }catch (final Exception e) {
+        } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
