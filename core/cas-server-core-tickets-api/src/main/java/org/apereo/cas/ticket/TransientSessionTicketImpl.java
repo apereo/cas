@@ -52,7 +52,7 @@ public class TransientSessionTicketImpl extends AbstractTicket implements Transi
      * The Service.
      */
     @Lob
-    @Column(name = "SERVICE", nullable = false)
+    @Column(name = "SERVICE")
     private Service service;
 
     /**
