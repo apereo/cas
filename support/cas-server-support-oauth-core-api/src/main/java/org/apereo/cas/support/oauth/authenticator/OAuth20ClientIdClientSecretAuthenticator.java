@@ -37,7 +37,8 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator<U
         val id = credentials.getUsername();
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, id);
         if (registeredService == null) {
-            throw new CredentialsException("Unable to locate registered service for " + id);
+            LOGGER.debug("Unable to locate registered service for [{}]", id);
+            return;
         }
 
         val service = this.webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
