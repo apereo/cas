@@ -505,6 +505,16 @@ public class WebUtils {
     }
 
     /**
+     * Gets principal from request context.
+     *
+     * @param requestContext the request context
+     * @return the principal from request context
+     */
+    public static Principal getPrincipalFromRequestContext(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("principal", Principal.class);
+    }
+
+    /**
      * Gets authentication result builder.
      *
      * @param ctx the ctx

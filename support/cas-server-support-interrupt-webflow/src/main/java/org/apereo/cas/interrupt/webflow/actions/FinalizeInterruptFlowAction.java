@@ -38,6 +38,7 @@ public class FinalizeInterruptFlowAction extends AbstractAction {
         }
         val authentication = WebUtils.getAuthentication(requestContext);
         authentication.addAttribute(InquireInterruptAction.AUTHENTICATION_ATTRIBUTE_FINALIZED_INTERRUPT, Boolean.TRUE);
+        WebUtils.putAuthentication(authentication, requestContext);
         return success();
     }
 }

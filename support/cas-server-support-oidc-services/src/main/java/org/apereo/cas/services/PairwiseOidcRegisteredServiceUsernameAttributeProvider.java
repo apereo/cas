@@ -5,10 +5,11 @@ import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -39,6 +40,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Getter
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@Setter
 public class PairwiseOidcRegisteredServiceUsernameAttributeProvider extends BaseRegisteredServiceUsernameAttributeProvider {
 
     private static final long serialVersionUID = 469929103943101717L;
@@ -79,7 +81,7 @@ public class PairwiseOidcRegisteredServiceUsernameAttributeProvider extends Base
     }
 
     @Getter
-    @AllArgsConstructor
+    @RequiredArgsConstructor
     private static class PairwiseService implements Service {
         private static final long serialVersionUID = -6154643329901712381L;
         private final String id;
