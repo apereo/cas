@@ -235,27 +235,34 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     public Config oauthSecConfig() {
         val cfg = new CasConfiguration(casProperties.getServer().getLoginUrl());
         cfg.setDefaultTicketValidator(new CasServerApiBasedTicketValidator(centralAuthenticationService.getIfAvailable()));
+
         val oauthCasClient = new CasClient(cfg);
         oauthCasClient.setRedirectActionBuilder(webContext -> oauthCasClientRedirectActionBuilder().build(oauthCasClient, webContext));
         oauthCasClient.setName(Authenticators.CAS_OAUTH_CLIENT);
         oauthCasClient.setUrlResolver(casCallbackUrlResolver());
+        oauthCasClient.setCallbackUrl(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()));
+        oauthCasClient.init();
 
         val authenticator = oAuthClientAuthenticator();
         val basicAuthClient = new DirectBasicAuthClient(authenticator);
         basicAuthClient.setName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
+        basicAuthClient.init();
 
         val directFormClient = new DirectFormClient(authenticator);
         directFormClient.setName(Authenticators.CAS_OAUTH_CLIENT_DIRECT_FORM);
         directFormClient.setUsernameParameter(OAuth20Constants.CLIENT_ID);
         directFormClient.setPasswordParameter(OAuth20Constants.CLIENT_SECRET);
+        directFormClient.init();
 
         val pkceAuthnClient = new DirectFormClient(oAuthProofKeyCodeExchangeAuthenticator());
         pkceAuthnClient.setName(Authenticators.CAS_OAUTH_CLIENT_PROOF_KEY_CODE_EXCHANGE_AUTHN);
         pkceAuthnClient.setUsernameParameter(OAuth20Constants.CLIENT_ID);
         pkceAuthnClient.setPasswordParameter(OAuth20Constants.CODE_VERIFIER);
+        pkceAuthnClient.init();
 
         val userFormClient = new DirectFormClient(oAuthUserAuthenticator());
         userFormClient.setName(Authenticators.CAS_OAUTH_CLIENT_USER_FORM);
+        userFormClient.init();
 
         val config = new Config(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()),
             oauthCasClient, basicAuthClient, pkceAuthnClient, directFormClient, userFormClient);
