@@ -4,6 +4,7 @@ import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,6 +29,7 @@ import java.security.PublicKey;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"location", "algorithm"})
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKey {
 
     private static final long serialVersionUID = -8497658523695695863L;

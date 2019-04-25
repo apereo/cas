@@ -3,6 +3,7 @@ package org.apereo.cas.services.support;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RegisteredServiceMutantRegexAttributeFilter extends RegisteredServiceMappedRegexAttributeFilter {
 
     private static final long serialVersionUID = 543145306984660628L;
