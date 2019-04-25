@@ -20,18 +20,21 @@ import java.util.Collection;
 @Slf4j
 public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdapter {
     private final HandlerInterceptorAdapter requiresAuthenticationDynamicRegistrationInterceptor;
+    private final HandlerInterceptorAdapter requiresAuthenticationClientConfigurationInterceptor;
     private final OidcConstants.DynamicClientRegistrationMode dynamicClientRegistrationMode;
     private final Collection<AccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors;
 
     public OidcHandlerInterceptorAdapter(final HandlerInterceptorAdapter requiresAuthenticationAccessTokenInterceptor,
                                          final HandlerInterceptorAdapter requiresAuthenticationAuthorizeInterceptor,
                                          final HandlerInterceptorAdapter requiresAuthenticationDynamicRegistrationInterceptor,
+                                         final HandlerInterceptorAdapter requiresAuthenticationClientConfigurationInterceptor,
                                          final OidcConstants.DynamicClientRegistrationMode dynamicClientRegistrationMode,
                                          final Collection<AccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors) {
         super(requiresAuthenticationAccessTokenInterceptor, requiresAuthenticationAuthorizeInterceptor, accessTokenGrantRequestExtractors);
         this.requiresAuthenticationDynamicRegistrationInterceptor = requiresAuthenticationDynamicRegistrationInterceptor;
         this.dynamicClientRegistrationMode = dynamicClientRegistrationMode;
         this.accessTokenGrantRequestExtractors = accessTokenGrantRequestExtractors;
+        this.requiresAuthenticationClientConfigurationInterceptor = requiresAuthenticationClientConfigurationInterceptor;
     }
 
     @Override
@@ -42,6 +45,11 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
             return false;
         }
 
+        if (isClientConfigurationRequest(request.getRequestURI())) {
+            LOGGER.trace("OIDC client configuration is protected at [{}]", request.getRequestURI());
+            return requiresAuthenticationClientConfigurationInterceptor.preHandle(request, response, handler);
+
+        }
         if (isDynamicClientRegistrationRequest(request.getRequestURI())) {
             LOGGER.trace("OIDC request at [{}] is one of dynamic client registration", request.getRequestURI());
             if (isDynamicClientRegistrationRequestProtected()) {
@@ -52,6 +60,11 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
         return true;
     }
 
+    /**
+     * Is dynamic client registration request protected boolean.
+     *
+     * @return the boolean
+     */
     private boolean isDynamicClientRegistrationRequestProtected() {
         return this.dynamicClientRegistrationMode == OidcConstants.DynamicClientRegistrationMode.PROTECTED;
     }
@@ -64,5 +77,15 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
      */
     protected boolean isDynamicClientRegistrationRequest(final String requestPath) {
         return doesUriMatchPattern(requestPath, OidcConstants.REGISTRATION_URL);
+    }
+
+    /**
+     * Is client configuration request.
+     *
+     * @param requestPath the request path
+     * @return the boolean
+     */
+    protected boolean isClientConfigurationRequest(final String requestPath) {
+        return doesUriMatchPattern(requestPath, OidcConstants.CLIENT_CONFIGURATION_URL);
     }
 }
