@@ -30,6 +30,9 @@ public class OidcClientRegistrationRequest implements Serializable {
     @JsonProperty("default_acr_values")
     private List<String> defaultAcrValues = new ArrayList<>();
 
+    @JsonProperty("registration_client_uri")
+    private String registrationClientUri;
+    
     @JsonProperty("id_token_signed_response_alg")
     private String idTokenSignedResponseAlg;
 

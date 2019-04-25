@@ -209,7 +209,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
             .findFirst()
             .orElse(null);
         if (validator == null) {
-            LOGGER.warn("Ignoring malformed request [{}] no OAuth20 validator could declare support for its syntax", context.getFullRequestURL());
+            LOGGER.warn("Ignoring malformed request [{}] as no OAuth20 validator could declare support for its syntax", context.getFullRequestURL());
             return false;
         }
         return validator.validate(context);
