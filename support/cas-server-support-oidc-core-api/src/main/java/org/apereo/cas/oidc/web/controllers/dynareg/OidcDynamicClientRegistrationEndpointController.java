@@ -4,25 +4,20 @@ import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequest;
-import org.apereo.cas.oidc.dynareg.OidcClientRegistrationResponse;
 import org.apereo.cas.services.DefaultRegisteredServiceContact;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.OidcSubjectTypes;
 import org.apereo.cas.services.PairwiseOidcRegisteredServiceUsernameAttributeProvider;
-import org.apereo.cas.support.oauth.OAuth20GrantTypes;
-import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
-import org.apereo.cas.util.CollectionUtils;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.utils.URIBuilder;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -32,13 +27,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.net.URISyntaxException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link OidcDynamicClientRegistrationEndpointController}.
@@ -102,9 +94,10 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
                 registeredService.setLogo(registeredService.getLogo());
             }
 
-            val supportedScopes = new HashSet<String>(
-                getOAuthConfigurationContext().getCasProperties().getAuthn().getOidc().getScopes());
-            val clientResponse = getClientRegistrationResponse(registrationRequest, registeredService);
+            val properties = getOAuthConfigurationContext().getCasProperties();
+            val supportedScopes = new HashSet<String>(properties.getAuthn().getOidc().getScopes());
+            val prefix = properties.getServer().getPrefix();
+            val clientResponse = OidcClientRegistrationUtils.getClientRegistrationResponse(registeredService, prefix);
 
             val accessToken = generateRegistrationAccessToken(request, response, registeredService, registrationRequest);
             clientResponse.setRegistrationAccessToken(accessToken.getId());
@@ -155,47 +148,6 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
         }
     }
 
-    /**
-     * Gets client registration response.
-     *
-     * @param registrationRequest the registration request
-     * @param registeredService   the registered service
-     * @return the client registration response
-     */
-    @SneakyThrows
-    protected OidcClientRegistrationResponse getClientRegistrationResponse(final OidcClientRegistrationRequest registrationRequest,
-                                                                           final OidcRegisteredService registeredService) {
-        val clientResponse = new OidcClientRegistrationResponse();
-        clientResponse.setApplicationType(registrationRequest.getApplicationType());
-        clientResponse.setClientId(registeredService.getClientId());
-        clientResponse.setClientSecret(registeredService.getClientSecret());
-        clientResponse.setSubjectType(registrationRequest.getSubjectType());
-        clientResponse.setTokenEndpointAuthMethod(registrationRequest.getTokenEndpointAuthMethod());
-        clientResponse.setClientName(registeredService.getName());
-        clientResponse.setRedirectUris(CollectionUtils.wrap(registeredService.getServiceId()));
-
-        clientResponse.setGrantTypes(
-            Arrays.stream(OAuth20GrantTypes.values())
-                .map(type -> type.getType().toLowerCase())
-                .collect(Collectors.toList()));
-
-        clientResponse.setResponseTypes(
-            Arrays.stream(OAuth20ResponseTypes.values())
-                .map(type -> type.getType().toLowerCase())
-                .collect(Collectors.toList()));
-
-        val clientConfigUri = getClientConfigurationUri(registeredService);
-        clientResponse.setRegistrationClientUri(clientConfigUri);
-        return clientResponse;
-    }
-
-    private String getClientConfigurationUri(final OidcRegisteredService registeredService) throws URISyntaxException {
-        return new URIBuilder(getOAuthConfigurationContext().getCasProperties().getServer().getPrefix()
-            .concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CLIENT_CONFIGURATION_URL))
-            .addParameter(OidcConstants.CLIENT_REGISTRATION_CLIENT_ID, registeredService.getClientId())
-            .build()
-            .toString();
-    }
 
     /**
      * Generate registration access token access token.
@@ -214,8 +166,8 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
         val authn = DefaultAuthenticationBuilder.newInstance()
             .setPrincipal(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(registeredService.getClientId()))
             .build();
-
-        val clientConfigUri = getClientConfigurationUri(registeredService);
+        val clientConfigUri = OidcClientRegistrationUtils.getClientConfigurationUri(registeredService,
+            getOAuthConfigurationContext().getCasProperties().getServer().getPrefix());
         val service = getOAuthConfigurationContext().getWebApplicationServiceServiceFactory().createService(clientConfigUri);
         val accessToken = getOAuthConfigurationContext().getAccessTokenFactory()
             .create(service, authn, List.of(OidcConstants.CLIENT_REGISTRATION_SCOPE), registeredService.getClientId());
