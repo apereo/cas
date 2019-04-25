@@ -67,6 +67,9 @@ public class CasPullRequestListener implements PullRequestListener {
                 log.info("{} is targeted at a branch {} that is no longer maintained. See maintenance policy", pr, pr.getBase());
                 repository.labelPullRequestAs(pr, CasLabels.LABEL_SEE_MAINTENANCE_POLICY);
                 repository.labelPullRequestAs(pr, CasLabels.LABEL_PROPOSAL_DECLINED);
+                repository.addComment(pr, "Thank you very much for submitting this pull request! Please note that this patch "
+                    + "is targeted at a CAS branch that is no longer maintained and as such cannot be accepted or merged. "
+                    + "For additional details, please review https://apereo.github.io/cas/developer/Maintenance-Policy.html");
                 repository.close(pr);
                 return true;
             }

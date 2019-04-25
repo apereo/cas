@@ -120,6 +120,9 @@ public class MonitoredRepository implements InitializingBean {
         });
     }
 
+    public void addComment(final PullRequest pr, final String comment) {
+        this.gitHub.addComment(pr, comment);
+    }
     public void removeLabelFrom(final PullRequest pr, final CasLabels labelName) {
         this.gitHub.removeLabel(pr, labelName.getTitle());
     }
