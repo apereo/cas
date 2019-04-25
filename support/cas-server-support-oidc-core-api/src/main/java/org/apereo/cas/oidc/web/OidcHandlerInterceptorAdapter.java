@@ -4,6 +4,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +17,7 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdapter {
     private final HandlerInterceptorAdapter requiresAuthenticationDynamicRegistrationInterceptor;
     private final OidcConstants.DynamicClientRegistrationMode dynamicClientRegistrationMode;
@@ -34,12 +36,16 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
 
     @Override
     public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler) throws Exception {
+        LOGGER.trace("Attempting to pre-handle OIDC request at [{}]", request.getRequestURI());
         if (!super.preHandle(request, response, handler)) {
+            LOGGER.trace("Unable to pre-handle OIDC request at [{}]", request.getRequestURI());
             return false;
         }
 
         if (isDynamicClientRegistrationRequest(request.getRequestURI())) {
+            LOGGER.trace("OIDC request at [{}] is one of dynamic client registration", request.getRequestURI());
             if (isDynamicClientRegistrationRequestProtected()) {
+                LOGGER.trace("OIDC dynamic client registration is protected at [{}]", request.getRequestURI());
                 return requiresAuthenticationDynamicRegistrationInterceptor.preHandle(request, response, handler);
             }
         }

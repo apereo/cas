@@ -64,8 +64,8 @@ after_script:
   - ./ci/stop.sh
 stages:
   - initialize
-  - build
   - publish
+  - build
   - postbuild
   - test
   - dependencies
@@ -76,6 +76,11 @@ jobs:
       script: ./ci/download-dependencies.sh
       name: "Initialize Build System"
       ############################################
+    - stage: publish
+      if: NOT commit_message =~ ^\[skip\s+snapshots\] and type != "pull_request" and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
+      script: ./ci/publish-snapshots-release.sh
+      name: "Publish SNAPSHOT Artifacts"
+      ############################################
     - stage: build
       script: ./ci/build.sh
       name: "Build CAS"
@@ -83,11 +88,6 @@ jobs:
       script: ./ci/html-proofer-docs.sh
       if: branch =~ /^\d+\.\d+\.x$/ or branch = master
       name: "Validate Documentation"
-      ############################################
-    - stage: publish
-      if: NOT commit_message =~ ^\[skip\s+snapshots\] and type != "pull_request" and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
-      script: ./ci/publish-snapshots-release.sh
-      name: "Publish SNAPSHOT Artifacts"
       ############################################
     - stage: postbuild
       script: ./ci/analyze-sonarqube.sh
