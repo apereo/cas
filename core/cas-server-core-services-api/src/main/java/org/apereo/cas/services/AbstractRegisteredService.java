@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -51,6 +52,7 @@ import java.util.Map;
 @Getter
 @Setter
 @EqualsAndHashCode(exclude = {"id"})
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class AbstractRegisteredService implements RegisteredService {
 
     private static final long serialVersionUID = 7645279151115635245L;
