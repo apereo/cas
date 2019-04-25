@@ -71,16 +71,22 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
         val jaas = casProperties.getMonitor().getEndpoints().getJaas();
         if (jaas.getLoginConfig() != null) {
             configureJaasAuthenticationProvider(auth, jaas);
+        } else {
+            LOGGER.trace("No JAAS login config is defined to enable JAAS authentication");
         }
 
         val ldap = casProperties.getMonitor().getEndpoints().getLdap();
         if (StringUtils.isNotBlank(ldap.getLdapUrl()) && StringUtils.isNotBlank(ldap.getSearchFilter())) {
             configureLdapAuthenticationProvider(auth, ldap);
+        } else {
+            LOGGER.trace("No LDAP url or search filter is defined to enable LDAP authentication");
         }
 
         val jdbc = casProperties.getMonitor().getEndpoints().getJdbc();
         if (StringUtils.isNotBlank(jdbc.getQuery())) {
             configureJdbcAuthenticationProvider(auth, jdbc);
+        } else {
+            LOGGER.trace("No JDBC query is defined to enable JDBC authentication");
         }
 
         if (!auth.isConfigured()) {
@@ -137,6 +143,8 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
         if (isLdapAuthorizationActive()) {
             val p = new MonitorEndpointLdapAuthenticationProvider(ldap, securityProperties);
             auth.authenticationProvider(p);
+        } else {
+            LOGGER.trace("LDAP authorization is undefined, given no LDAP url, base-dn, search filter or role/group filter is configured");
         }
     }
 
