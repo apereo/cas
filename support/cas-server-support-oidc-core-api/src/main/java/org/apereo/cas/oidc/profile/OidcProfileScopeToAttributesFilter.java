@@ -18,8 +18,10 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.beanutils.BeanUtils;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.context.J2EContext;
 import org.reflections.Reflections;
@@ -138,17 +140,17 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
         return attributes;
     }
 
+    @SneakyThrows
     @Override
     public void reconcile(final RegisteredService service) {
         if (!(service instanceof OidcRegisteredService)) {
             super.reconcile(service);
             return;
         }
-
         LOGGER.trace("Reconciling OpenId Connect scopes and claims for [{}]", service.getServiceId());
 
         val policy = new ChainingAttributeReleasePolicy();
-        val oidcService = OidcRegisteredService.class.cast(service);
+        val oidcService = (OidcRegisteredService) BeanUtils.cloneBean(service);
 
         val definedServiceScopes = oidcService.getScopes();
         definedServiceScopes.forEach(s -> {
