@@ -45,7 +45,9 @@ public class OidcClientConfigurationEndpointController extends BaseOAuth20Contro
 
         val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(getOAuthConfigurationContext().getServicesManager(), clientId);
         if (service instanceof OidcRegisteredService) {
-            return new ResponseEntity<>(service, HttpStatus.OK);
+            val prefix = getOAuthConfigurationContext().getCasProperties().getServer().getPrefix();
+            val regResponse = OidcClientRegistrationUtils.getClientRegistrationResponse((OidcRegisteredService) service, prefix);
+            return new ResponseEntity<>(regResponse, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
