@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class OidcClientRegistrationRequest implements Serializable {
     @JsonProperty("token_endpoint_auth_method")
     private String tokenEndpointAuthMethod;
 
-    @JsonProperty("scope")
+    @JsonProperty(value = "scope")
     private String scope;
 
     @JsonProperty("grant_types")
@@ -63,6 +64,6 @@ public class OidcClientRegistrationRequest implements Serializable {
 
     @JsonIgnore
     public Collection<String> getScopes() {
-        return CollectionUtils.wrapList(getScope().split(" "));
+        return CollectionUtils.wrapList(StringUtils.defaultString(getScope()).split(" "));
     }
 }

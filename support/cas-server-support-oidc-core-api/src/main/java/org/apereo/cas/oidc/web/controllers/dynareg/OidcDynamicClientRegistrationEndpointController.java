@@ -55,7 +55,8 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
                                                                                 final HttpServletRequest request,
                                                                                 final HttpServletResponse response) {
         try {
-            val registrationRequest = (OidcClientRegistrationRequest) getOAuthConfigurationContext().getClientRegistrationRequestSerializer().from(jsonInput);
+            val registrationRequest = (OidcClientRegistrationRequest) getOAuthConfigurationContext()
+                .getClientRegistrationRequestSerializer().from(jsonInput);
             LOGGER.debug("Received client registration request [{}]", registrationRequest);
 
             if (registrationRequest.getScopes().isEmpty()) {
@@ -108,7 +109,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
             LOGGER.error(e.getMessage(), e);
             val map = new HashMap<String, String>();
             map.put("error", "invalid_client_metadata");
-            map.put("error_message", e.getMessage());
+            map.put("error_message", StringUtils.defaultString(e.getMessage(), "None"));
             return new ResponseEntity(map, HttpStatus.BAD_REQUEST);
         }
     }
