@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,6 +30,7 @@ import java.util.Map;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RemoteEndpointServiceAccessStrategy extends DefaultRegisteredServiceAccessStrategy {
 
     private static final long serialVersionUID = -1108201604115278440L;

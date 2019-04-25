@@ -4,6 +4,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,6 +40,7 @@ import java.util.stream.Collectors;
 @Getter
 @EqualsAndHashCode
 @Setter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class DefaultRegisteredServiceAccessStrategy implements RegisteredServiceAccessStrategy {
 
     private static final long serialVersionUID = 1245279151345635245L;

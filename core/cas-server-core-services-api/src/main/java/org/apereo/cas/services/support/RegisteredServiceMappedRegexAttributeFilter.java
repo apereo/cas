@@ -4,6 +4,7 @@ import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RegisteredServiceMappedRegexAttributeFilter implements RegisteredServiceAttributeFilter {
 
     private static final long serialVersionUID = 852145306984610128L;

@@ -4,6 +4,7 @@ import org.apereo.cas.util.RegexUtils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -25,6 +26,7 @@ import java.net.URL;
 @Getter
 @NoArgsConstructor
 @EqualsAndHashCode
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RegexMatchingRegisteredServiceProxyPolicy implements RegisteredServiceProxyPolicy {
 
     private static final long serialVersionUID = -211069319543047324L;
