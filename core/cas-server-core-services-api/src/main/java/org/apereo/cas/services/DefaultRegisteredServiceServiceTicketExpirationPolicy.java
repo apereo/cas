@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -23,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @ToString
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class DefaultRegisteredServiceServiceTicketExpirationPolicy implements RegisteredServiceServiceTicketExpirationPolicy {
     private static final long serialVersionUID = -6745109870746310448L;
 

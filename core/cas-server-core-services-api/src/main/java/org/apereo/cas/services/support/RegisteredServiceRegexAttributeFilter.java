@@ -5,6 +5,7 @@ import org.apereo.cas.util.RegexUtils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @Getter
 @EqualsAndHashCode(of = {"pattern", "order"})
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceAttributeFilter {
 
     private static final long serialVersionUID = 403015306984610128L;
