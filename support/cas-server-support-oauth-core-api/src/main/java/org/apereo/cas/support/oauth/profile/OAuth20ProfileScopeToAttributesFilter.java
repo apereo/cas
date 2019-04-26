@@ -38,7 +38,9 @@ public interface OAuth20ProfileScopeToAttributesFilter {
      * The operation is expected to persist service changes.
      *
      * @param service the service
+     * @return the registered service
      */
-    default void reconcile(final RegisteredService service) {
+    default RegisteredService reconcile(final RegisteredService service) {
+        return service;
     }
 }

@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
+import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -67,14 +68,14 @@ public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
 
     @Test
     public void verifyOperationRecon() {
-        val service = getOidcRegisteredService();
+        var service = getOidcRegisteredService();
         service.getScopes().add(OidcConstants.StandardScopes.ADDRESS.getScope());
         service.getScopes().add(OidcConstants.StandardScopes.EMAIL.getScope());
         service.getScopes().add(OidcConstants.StandardScopes.OFFLINE_ACCESS.getScope());
         service.getScopes().add(OidcConstants.StandardScopes.OPENID.getScope());
         service.getScopes().add(OidcConstants.StandardScopes.PHONE.getScope());
         service.getScopes().add(OidcConstants.StandardScopes.PROFILE.getScope());
-        profileScopeToAttributesFilter.reconcile(service);
+        service = (OidcRegisteredService) profileScopeToAttributesFilter.reconcile(service);
         val policy = service.getAttributeReleasePolicy();
         assertTrue(policy instanceof ChainingAttributeReleasePolicy);
         val chain = (ChainingAttributeReleasePolicy) policy;

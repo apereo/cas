@@ -62,8 +62,8 @@ public class ThreadContextMDCServletFilterTests {
         val response = new MockHttpServletResponse();
         val filterChain = new MockFilterChain();
 
-        when(cookieRetrievingCookieGenerator.retrieveCookieValue(any(HttpServletRequest.class))).thenReturn("TICKET");
-        when(ticketSupport.getAuthenticatedPrincipalFrom(anyString())).thenReturn(CoreAuthenticationTestUtils.getPrincipal());
+        lenient().when(cookieRetrievingCookieGenerator.retrieveCookieValue(any(HttpServletRequest.class))).thenReturn("TICKET");
+        lenient().when(ticketSupport.getAuthenticatedPrincipalFrom(anyString())).thenReturn(CoreAuthenticationTestUtils.getPrincipal());
 
         try {
             filter.init(mock(FilterConfig.class));
