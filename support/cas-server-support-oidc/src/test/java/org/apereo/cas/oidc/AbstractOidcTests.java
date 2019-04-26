@@ -50,7 +50,6 @@ import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -103,7 +102,6 @@ import java.util.Optional;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
 })
 @DirtiesContext
-@Tag("FileSystem")
 @TestPropertySource(properties = {
     "cas.authn.oidc.issuer=https://sso.example.org/cas/oidc",
     "cas.authn.oidc.jwksFile=classpath:keystore.jwks"

@@ -142,10 +142,9 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
 
     @SneakyThrows
     @Override
-    public void reconcile(final RegisteredService service) {
+    public RegisteredService reconcile(final RegisteredService service) {
         if (!(service instanceof OidcRegisteredService)) {
-            super.reconcile(service);
-            return;
+            return super.reconcile(service);
         }
         LOGGER.trace("Reconciling OpenId Connect scopes and claims for [{}]", service.getServiceId());
 
@@ -221,8 +220,9 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
             LOGGER.trace("Saving scope/claim reconciliation results for service [{}] into registry", service.getServiceId());
             this.servicesManager.save(oidcService);
             LOGGER.debug("Saved service [{}] into registry", service.getServiceId());
-        } else {
-            LOGGER.trace("No changes detected in service [{}] after scope/claim reconciliation", service.getId());
+            return oidcService;
         }
+        LOGGER.trace("No changes detected in service [{}] after scope/claim reconciliation", service.getId());
+        return service;
     }
 }
