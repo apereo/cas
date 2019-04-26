@@ -154,7 +154,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
 
         if (singleSignOnSessionExists(context)) {
             LOGGER.debug("An existing single sign-on session already exists. Skipping delegation and routing back to CAS authentication flow");
-            return super.doExecute(context);
+            return resumeWebflow();
         }
 
         final String clientName = request.getParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER);
@@ -345,6 +345,15 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
      */
     protected Event stopWebflow() {
         return new Event(this, CasWebflowConstants.TRANSITION_ID_STOP);
+    }
+    
+    /**
+     * Resume webflow event.
+     *
+     * @return the event
+     */
+    protected Event resumeWebflow() {
+        return new Event(this, CasWebflowConstants.TRANSITION_ID_RESUME);
     }
 
     /**
