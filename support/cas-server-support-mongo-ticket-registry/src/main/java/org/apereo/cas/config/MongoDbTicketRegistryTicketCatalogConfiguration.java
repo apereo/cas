@@ -25,7 +25,7 @@ public class MongoDbTicketRegistryTicketCatalogConfiguration extends TicketDefin
         super(casProperties, configProvider);
     }
 
-    @Configuration
+    @Configuration("mongoDbTicketCatalogConfigValuesProviderConfiguration")
     static class Config {
 
         @ConditionalOnMissingBean

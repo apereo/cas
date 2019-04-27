@@ -26,7 +26,7 @@ public class DynamoDbTicketRegistryTicketCatalogConfiguration extends TicketDefi
         super(casProperties, configProvider);
     }
 
-    @Configuration
+    @Configuration("dynamoDbTicketCatalogConfigValuesProviderConfiguration")
     static class Config {
 
         @ConditionalOnMissingBean
