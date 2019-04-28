@@ -4,5 +4,8 @@
     ":preserveSemverRanges",
     ":rebaseStalePrs",
     "schedule:daily"
-  ]
+  ],
+  "gradle": {
+    "enabled": true
+  }
 }
