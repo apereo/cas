@@ -13,7 +13,6 @@ import org.apereo.cas.configuration.model.core.services.ServiceRegistryPropertie
 import org.apereo.cas.services.ChainingServiceRegistry;
 import org.apereo.cas.services.DefaultServiceRegistryExecutionPlan;
 import org.apereo.cas.services.DefaultServicesManager;
-import org.apereo.cas.services.DomainServicesManager;
 import org.apereo.cas.services.ImmutableServiceRegistry;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
@@ -25,6 +24,8 @@ import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerScheduledLoader;
+import org.apereo.cas.services.domain.DefaultRegisteredServiceDomainExtractor;
+import org.apereo.cas.services.domain.DomainServicesManager;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
@@ -136,7 +137,9 @@ public class CasCoreServicesConfiguration {
         val activeProfiles = Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toSet());
         if (managementType == ServiceRegistryProperties.ServiceManagementTypes.DOMAIN) {
             LOGGER.trace("Managing CAS service definitions via domains");
-            return new DomainServicesManager(serviceRegistry(), eventPublisher, activeProfiles);
+            return new DomainServicesManager(serviceRegistry(), eventPublisher,
+                new DefaultRegisteredServiceDomainExtractor(),
+                activeProfiles);
         }
         return new DefaultServicesManager(serviceRegistry(), eventPublisher, activeProfiles);
     }
