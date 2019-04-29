@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.audit.AuditTrailConstants;
+import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
 import org.apereo.cas.aup.DefaultAcceptableUsagePolicyRepository;
 import org.apereo.cas.aup.GroovyAcceptableUsagePolicyRepository;
@@ -13,6 +15,9 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.audit.spi.AuditResourceResolver;
+import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -56,6 +61,10 @@ public class CasAcceptableUsagePolicyWebflowConfiguration implements CasWebflowE
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier("nullableReturnValueResourceResolver")
+    private ObjectProvider<AuditResourceResolver> nullableReturnValueResourceResolver;
+
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "acceptableUsagePolicySubmitAction")
@@ -90,6 +99,22 @@ public class CasAcceptableUsagePolicyWebflowConfiguration implements CasWebflowE
         return new DefaultAcceptableUsagePolicyRepository(
             ticketRegistrySupport.getIfAvailable(),
             casProperties.getAcceptableUsagePolicy());
+    }
+
+    @ConditionalOnMissingBean(name = "casAcceptableUsagePolicyAuditTrailRecordResolutionPlanConfigurer")
+    @Bean
+    public AuditTrailRecordResolutionPlanConfigurer casAcceptableUsagePolicyAuditTrailRecordResolutionPlanConfigurer() {
+        return plan -> {
+            plan.registerAuditResourceResolver("AUP_VERIFY_RESOURCE_RESOLVER",
+                nullableReturnValueResourceResolver.getIfAvailable());
+            plan.registerAuditActionResolver("AUP_VERIFY_ACTION_RESOLVER",
+                new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_TRIGGERED, StringUtils.EMPTY));
+
+            plan.registerAuditResourceResolver("AUP_SUBMIT_RESOURCE_RESOLVER",
+                nullableReturnValueResourceResolver.getIfAvailable());
+            plan.registerAuditActionResolver("AUP_SUBMIT_ACTION_RESOLVER",
+                new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_TRIGGERED, StringUtils.EMPTY));
+        };
     }
 
     @ConditionalOnMissingBean(name = "casAcceptableUsagePolicyWebflowExecutionPlanConfigurer")
