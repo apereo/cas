@@ -20,7 +20,7 @@ The project release schedule is [available here](https://github.com/apereo/cas/m
 
 - CAS adopters MAY expect a CAS release to be maintained for **six months**, starting from the original release date.
 - Maintenance during this year includes bug fixes, security patches and general upkeep of the release.
-- Once the year is passed, maintenance of the release is *strictly* limited to security patches and fixing vulnerabilities for another **six months** (i.e. SPM mode).
+- Afterwards, maintenance of the release is *strictly* limited to security patches and fixing vulnerabilities for another **six months** (i.e. SPM mode).
 - The lifespan of a release MAY be extended beyond a single year, to be decided by the [CAS PMC](Project-Commitee.html) and the community at large when and where reasonable.
 
 By “CAS Release”, we mean anything that is a feature release and above. (i.e. `4.1.x`, `4.2.x`, `5.0.x`, `5.1.x`, etc).
