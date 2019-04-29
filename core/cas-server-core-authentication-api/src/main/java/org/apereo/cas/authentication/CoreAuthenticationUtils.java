@@ -1,9 +1,13 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.authentication.support.password.DefaultPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.support.password.GroovyPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.support.password.RejectResultCodePasswordPolicyHandlingStrategy;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
+import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.Assertion;
@@ -263,5 +267,28 @@ public class CoreAuthenticationUtils {
 
         LOGGER.trace("Created default password policy handling strategy");
         return new DefaultPasswordPolicyHandlingStrategy();
+    }
+
+    /**
+     * New person directory principal resolver.
+     *
+     * @param principalFactory    the principal factory
+     * @param attributeRepository the attribute repository
+     * @param personDirectory     the person directory
+     * @return the principal resolver
+     */
+    public static PrincipalResolver newPersonDirectoryPrincipalResolver(
+        final PrincipalFactory principalFactory, final IPersonAttributeDao attributeRepository,
+        final PersonDirectoryPrincipalResolverProperties personDirectory) {
+
+        return new PersonDirectoryPrincipalResolver(
+            attributeRepository,
+            principalFactory,
+            personDirectory.isReturnNull(),
+            personDirectory.getPrincipalAttribute(),
+            personDirectory.isUseExistingPrincipalId(),
+            personDirectory.isAttributeResolutionEnabled(),
+            org.springframework.util.StringUtils.commaDelimitedListToSet(personDirectory.getActiveAttributeRepositoryIds())
+        );
     }
 }
