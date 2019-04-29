@@ -57,7 +57,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     @Setter
     private ExpirationPolicy expirationPolicy = new TicketGrantingTicketExpirationPolicy(100, 100);
 
-    public MockTicketGrantingTicket(final String principal, final Credential c, final Map attributes) {
+    public MockTicketGrantingTicket(final String principal, final Credential c, final Map<String, List<Object>> attributes) {
         id = ID_GENERATOR.getNewTicketId("TGT");
         val metaData = new BasicCredentialMetaData(c);
         authentication = new DefaultAuthenticationBuilder(new DefaultPrincipalFactory().createPrincipal(principal, attributes))

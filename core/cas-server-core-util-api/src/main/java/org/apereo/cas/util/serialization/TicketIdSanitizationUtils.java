@@ -32,7 +32,7 @@ public class TicketIdSanitizationUtils {
     private static final int OBFUSCATION_LENGTH = 5;
 
     /**
-     * Gets the default suffix used when the default ticket id generator is used so the poroper
+     * Gets the default suffix used when the default ticket id generator is used so the proper
      * visible length is shown.
      */
     private static final int HOST_NAME_LENGTH = InetAddressUtils.getCasServerHostName().length();
