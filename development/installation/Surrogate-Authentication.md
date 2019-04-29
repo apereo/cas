@@ -149,7 +149,7 @@ For example, if you are `casuser` and you need to switch to `jsmith` as the surr
 
 ### GUI
 
-This is the case where the surrogate user identity is *not* known beforehand, and you wish to choose the account from a prepopulated list. When entering credentials, the following syntax should be used:
+This is the case where the surrogate user identity is *not* known beforehand, and you wish to choose the account from a pre-populated list. When entering credentials, the following syntax should be used:
 
 ```bash
 [separator][primary-userid]
