@@ -43,6 +43,12 @@ public class OidcClientRegistrationResponse implements Serializable {
     @JsonProperty("logo_uri")
     private String logo;
 
+    @JsonProperty("policy_uri")
+    private String policyUri;
+
+    @JsonProperty("tos_uri")
+    private String termsOfUseUri;
+
     @JsonProperty("response_types")
     private List<String> responseTypes = new ArrayList<>();
 

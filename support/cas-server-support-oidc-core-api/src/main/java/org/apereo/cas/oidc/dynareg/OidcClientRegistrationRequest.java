@@ -54,6 +54,12 @@ public class OidcClientRegistrationRequest implements Serializable {
     @JsonProperty("logo_uri")
     private String logo;
 
+    @JsonProperty("policy_uri")
+    private String policyUri;
+
+    @JsonProperty("tos_uri")
+    private String termsOfUseUri;
+
     @JsonProperty("token_endpoint_auth_method")
     private String tokenEndpointAuthMethod;
 
@@ -70,7 +76,7 @@ public class OidcClientRegistrationRequest implements Serializable {
     private String sectorIdentifierUri;
 
     @JsonProperty("contacts")
-    private List<String> contacts;
+    private List<String> contacts = new ArrayList<>();
 
     @JsonProperty("request_object_signing_alg")
     private String requestObjectSigningAlg;

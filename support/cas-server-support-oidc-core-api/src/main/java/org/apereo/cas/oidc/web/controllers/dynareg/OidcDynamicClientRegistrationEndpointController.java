@@ -12,12 +12,16 @@ import org.apereo.cas.services.PairwiseOidcRegisteredServiceUsernameAttributePro
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.util.HttpUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpResponse;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -40,6 +45,8 @@ import java.util.List;
  */
 @Slf4j
 public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20Controller {
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+
     private static final int GENERATED_CLIENT_NAME_LENGTH = 8;
 
     public OidcDynamicClientRegistrationEndpointController(final OAuth20ConfigurationContext oAuthConfigurationContext) {
@@ -90,8 +97,14 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
             registeredService.setLogoutUrl(
                 org.springframework.util.StringUtils.collectionToCommaDelimitedString(registrationRequest.getPostLogoutRedirectUris()));
 
-            if (StringUtils.isNotBlank(registeredService.getLogo())) {
-                registeredService.setLogo(registeredService.getLogo());
+            if (StringUtils.isNotBlank(registrationRequest.getLogo())) {
+                registeredService.setLogo(registrationRequest.getLogo());
+            }
+            if (StringUtils.isNotBlank(registrationRequest.getPolicyUri())) {
+                registeredService.setInformationUrl(registrationRequest.getPolicyUri());
+            }
+            if (StringUtils.isNotBlank(registrationRequest.getTermsOfUseUri())) {
+                registeredService.setPrivacyUrl(registrationRequest.getTermsOfUseUri());
             }
 
             val properties = getOAuthConfigurationContext().getCasProperties();
@@ -136,8 +149,10 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
             registeredService.setDescription("Registered service ".concat(registeredService.getName()));
             registeredService.setDynamicallyRegistered(true);
 
-            getOAuthConfigurationContext().getProfileScopeToAttributesFilter().reconcile(registeredService);
 
+            validate(registrationRequest, registeredService);
+
+            getOAuthConfigurationContext().getProfileScopeToAttributesFilter().reconcile(registeredService);
             return new ResponseEntity<>(clientResponse, HttpStatus.CREATED);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -145,6 +160,25 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
             map.put("error", "invalid_client_metadata");
             map.put("error_description", StringUtils.defaultString(e.getMessage(), "None"));
             return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @SneakyThrows
+    private void validate(final OidcClientRegistrationRequest registrationRequest, final OidcRegisteredService registeredService) {
+        if (StringUtils.isNotBlank(registeredService.getSectorIdentifierUri())) {
+            HttpResponse sectorResponse = null;
+            try {
+                sectorResponse = HttpUtils.executeGet(registeredService.getSectorIdentifierUri());
+                if (sectorResponse != null && sectorResponse.getStatusLine().getStatusCode() == org.apache.http.HttpStatus.SC_OK) {
+                    val result = IOUtils.toString(sectorResponse.getEntity().getContent(), StandardCharsets.UTF_8);
+                    val urls = MAPPER.readValue(result, List.class);
+                    if (!urls.equals(registrationRequest.getRedirectUris())) {
+                        throw new IllegalArgumentException("Invalid sector identifier uri");
+                    }
+                }
+            } finally {
+                HttpUtils.close(sectorResponse);
+            }
         }
     }
 
