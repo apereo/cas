@@ -3,4 +3,5 @@ description = "Apereo CAS Web Application via Undertow"
 
 dependencies {
     implementation libraries.springbootundertow
+    implementation project(":webapp:cas-server-webapp-resources")
 }
