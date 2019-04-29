@@ -63,6 +63,8 @@ public class OidcClientRegistrationUtils {
                 .collect(Collectors.toList()));
 
         clientResponse.setLogo(registeredService.getLogo());
+        clientResponse.setPolicyUri(registeredService.getInformationUrl());
+        clientResponse.setTermsOfUseUri(registeredService.getPrivacyUrl());
         clientResponse.setRedirectUris(CollectionUtils.wrapList(registeredService.getServiceId()));
         val clientConfigUri = getClientConfigurationUri(registeredService, serverPrefix);
         clientResponse.setRegistrationClientUri(clientConfigUri);
