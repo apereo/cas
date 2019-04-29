@@ -9,7 +9,6 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -19,6 +18,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.RestTemplate;
@@ -39,18 +39,19 @@ import java.util.Optional;
 public class RestEndpointMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger {
     private final CasConfigurationProperties casProperties;
     private final MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver;
+    private final ApplicationContext applicationContext;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
 
     @Override
-    public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication, final RegisteredService registeredService,
+    public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
+                                                                   final RegisteredService registeredService,
                                                                    final HttpServletRequest httpServletRequest,
                                                                    final Service service) {
         val restEndpoint = casProperties.getAuthn().getMfa().getRestEndpoint();
-        val applicationContext = ApplicationContextProvider.getApplicationContext();
 
         if (service == null || authentication == null) {
-            LOGGER.debug("No service or authentication is available to determine event for principal");
+            LOGGER.trace("No service or authentication is available to determine event for principal");
             return Optional.empty();
         }
         val principal = authentication.getPrincipal();

@@ -319,9 +319,11 @@ class MyExampleScript {
 ## REST
 
 MFA can be triggered based on the results of a remote REST endpoint of your design. If the endpoint is configured,
-CAS shall issue a `POST`, providing the principal and the service url.
+CAS shall issue a `POST`, providing the authenticated username as `principalId` and `serviceId` as the service 
+url in the body of the request.
 
-The body of the response in the event of a successful `200` status code is expected to be the MFA provider id which CAS should activate.
+Endpoints must be designed to accept/process `application/json`. The body of the response in 
+the event of a successful `200` status code is expected to be the MFA provider id which CAS should activate.
 
 ## Opt-In Request Parameter/Header
 
@@ -337,7 +339,7 @@ An example request that triggers an authentication flow based on a request param
 https://.../cas/login?service=...&<PARAMETER_NAME>=<MFA_PROVIDER_ID>
 ```
 
-The same strategy also applied to triggers that are based on request/session attributes, which tend to get used for internal communications between APIs and CAS components specially when designing addons and extensions.
+The same strategy also applied to triggers that are based on request/session attributes, which tend to get used for internal communications between APIs and CAS components specially when designing extensions.
 
 ## Principal Attribute Per Application
 
