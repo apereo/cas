@@ -15,7 +15,7 @@ import org.springframework.shell.standard.ShellOption;
 import java.security.Security;
 
 /**
- * This is {@link JasyptEncryptPropertyCommand}.
+ * This is {@link JasyptDecryptPropertyCommand}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
@@ -23,12 +23,12 @@ import java.security.Security;
 @ShellCommandGroup("CAS Properties")
 @ShellComponent
 @Slf4j
-public class JasyptEncryptPropertyCommand {
+public class JasyptDecryptPropertyCommand {
     @Autowired
     private Environment environment;
 
     /**
-     * Encrypt a value using Jasypt.
+     * Decrypt a value using Jasypt.
      *
      * @param value      the value
      * @param alg        the alg
@@ -36,8 +36,8 @@ public class JasyptEncryptPropertyCommand {
      * @param password   the password
      * @param iterations the iterations
      */
-    @ShellMethod(key = "encrypt-value", value = "Encrypt a CAS property value/setting via Jasypt")
-    public void encryptValue(
+    @ShellMethod(key = "decrypt-value", value = "Encrypt a CAS property value/setting via Jasypt")
+    public void decryptValue(
         @ShellOption(value = {"value"},
             help = "Value to encrypt") final String value,
         @ShellOption(value = {"alg"},
@@ -57,7 +57,8 @@ public class JasyptEncryptPropertyCommand {
         }
         cipher.setProviderName(provider);
         cipher.setKeyObtentionIterations(iterations);
-        val encrypted = cipher.encryptValue(value);
-        LOGGER.info("==== Encrypted Value ====\n{}", encrypted);
+        val encrypted = cipher.decryptValue(value);
+        LOGGER.info("==== Decrypted Value ====\n{}", encrypted);
+
     }
 }

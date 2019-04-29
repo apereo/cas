@@ -24,7 +24,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
     /**
      * Prefix inserted at the beginning of a value to indicate it's encrypted.
      */
-    public static final String ENCRYPTED_VALUE_PREFIX = "{cipher}";
+    public static final String ENCRYPTED_VALUE_PREFIX = "{cas-cipher}";
     /**
      * The Jasypt instance.
      */
@@ -214,7 +214,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         /**
          * Jasypt number of iterations to use.
          */
-        ITERATIONS("cas.standalone.configurationSecurity.iteration", null),
+        ITERATIONS("cas.standalone.configurationSecurity.iterations", null),
         /**
          * Jasypt password to use.
          */
