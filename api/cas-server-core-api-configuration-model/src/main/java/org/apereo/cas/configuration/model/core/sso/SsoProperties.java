@@ -41,4 +41,15 @@ public class SsoProperties implements Serializable {
      * support CAS protocol authentication requests that are tagged with "renew=true".
      */
     private boolean renewAuthnEnabled = true;
+
+    /**
+     * A regular expression pattern that represents an application
+     * which must have established a session with CAS already
+     * before access to other applications can be allowed by CAS.
+     * This is the initial mandatory/required application with which
+     * the user must start before going anywhere else.
+     * Services that establish a session with CAS typically do so
+     * by receiving a service ticket from CAS.
+     */
+    private String requiredServicePattern;
 }
