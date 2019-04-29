@@ -3,7 +3,9 @@ package org.apereo.cas.configuration.config;
 import org.apereo.cas.configuration.CommaSeparatedStringToThrowablesConverter;
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBinding;
@@ -36,7 +38,8 @@ public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLo
     private ResourceLoader resourceLoader;
 
     @Autowired
-    private CasConfigurationPropertiesSourceLocator casConfigurationPropertiesSourceLocator;
+    @Qualifier("casConfigurationPropertiesSourceLocator")
+    private ObjectProvider<CasConfigurationPropertiesSourceLocator> casConfigurationPropertiesSourceLocator;
 
     @ConfigurationPropertiesBinding
     @Bean
@@ -46,7 +49,7 @@ public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLo
 
     @Override
     public PropertySource<?> locate(final Environment environment) {
-        return casConfigurationPropertiesSourceLocator.locate(environment, this.resourceLoader);
+        return casConfigurationPropertiesSourceLocator.getIfAvailable().locate(environment, this.resourceLoader);
     }
 
     @Override

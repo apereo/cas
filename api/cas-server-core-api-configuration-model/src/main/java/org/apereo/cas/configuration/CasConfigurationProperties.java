@@ -44,7 +44,6 @@ import org.apereo.cas.configuration.model.webapp.WebflowProperties;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -56,7 +55,6 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConditionalOnMissingBean
 @ConfigurationProperties(value = "cas", ignoreUnknownFields = false)
 @Getter
 @Setter
