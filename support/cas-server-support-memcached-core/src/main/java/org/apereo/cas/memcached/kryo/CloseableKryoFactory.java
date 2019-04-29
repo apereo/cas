@@ -200,12 +200,11 @@ public class CloseableKryoFactory implements KryoFactory {
         val singletonMap = Collections.singletonMap("key", "value");
         kryo.register(singletonMap.getClass());
 
+        val singletonList = Collections.singletonList("key");
+        kryo.register(singletonList.getClass());
+
         val list = Arrays.asList("key");
         kryo.register(list.getClass(), new ArraysAsListSerializer());
-
-        val list2 = Collections.singletonList("key");
-        kryo.register(list2.getClass(), new ArraysAsListSerializer());
-
     }
 
     private static void registerCasServicesWithKryo(final Kryo kryo) {
