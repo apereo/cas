@@ -6,6 +6,7 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
@@ -30,7 +31,8 @@ public class AcceptableUsagePolicyVerifyAction extends AbstractAction {
      * @param messageContext the message context
      * @return success if policy is accepted. {@link CasWebflowConstants#TRANSITION_ID_AUP_MUST_ACCEPT} otherwise.
      */
-    private Event verify(final RequestContext context, final Credential credential, final MessageContext messageContext) {
+    private Event verify(final RequestContext context, final Credential credential,
+                         final MessageContext messageContext) {
         val res = repository.verify(context, credential);
         WebUtils.putPrincipal(context, res.getPrincipal());
         WebUtils.putAcceptableUsagePolicyStatusIntoFlowScope(context, res);
@@ -40,8 +42,11 @@ public class AcceptableUsagePolicyVerifyAction extends AbstractAction {
             : eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_AUP_MUST_ACCEPT);
     }
 
+    @Audit(action = "AUP_VERIFY",
+        actionResolverName = "AUP_VERIFY_ACTION_RESOLVER",
+        resourceResolverName = "AUP_VERIFY_RESOURCE_RESOLVER")
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    public Event doExecute(final RequestContext requestContext) {
         return verify(requestContext, WebUtils.getCredential(requestContext), requestContext.getMessageContext());
     }
 }
