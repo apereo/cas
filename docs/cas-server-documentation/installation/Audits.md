@@ -146,6 +146,8 @@ The following events are tracked and recorded in the audit log:
 | `PROXY_TICKET`                        | `CREATED`, `NOT_CREATED`
 | `AUTHENTICATION`                      | `SUCCESS`, `FAILED`
 | `AUTHENTICATION_EVENT`                | `TRIGGERED`
+| `AUP_VERIFY`                          | `TRIGGERED`
+| `AUP_SUBMIT`                          | `TRIGGERED`
 | `EVALUATE_RISKY_AUTHENTICATION`       | N/A
 | `MITIGATE_RISKY_AUTHENTICATION`       | N/A
 | `MFA_BYPASS`                          | N/A

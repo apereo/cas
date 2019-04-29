@@ -158,7 +158,8 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Audit
         return plan -> {
             if (!builtClients().findAllClients().isEmpty()) {
                 LOGGER.info("Registering delegated authentication clients...");
-                plan.registerAuthenticationHandlerWithPrincipalResolver(clientAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
+                plan.registerAuthenticationHandlerWithPrincipalResolver(clientAuthenticationHandler(),
+                    defaultPrincipalResolver.getIfAvailable());
                 plan.registerAuthenticationMetadataPopulator(clientAuthenticationMetaDataPopulator());
             }
         };

@@ -202,6 +202,10 @@ public class CloseableKryoFactory implements KryoFactory {
 
         val list = Arrays.asList("key");
         kryo.register(list.getClass(), new ArraysAsListSerializer());
+
+        val list2 = Collections.singletonList("key");
+        kryo.register(list2.getClass(), new ArraysAsListSerializer());
+
     }
 
     private static void registerCasServicesWithKryo(final Kryo kryo) {

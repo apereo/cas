@@ -75,8 +75,10 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
      * @param client      the client
      * @return the authentication handler execution result
      */
-    protected AuthenticationHandlerExecutionResult finalizeAuthenticationHandlerResult(final ClientCredential credentials, final Principal principal,
-                                                                                       final UserProfile profile, final BaseClient client) {
+    protected AuthenticationHandlerExecutionResult finalizeAuthenticationHandlerResult(final ClientCredential credentials,
+                                                                                       final Principal principal,
+                                                                                       final UserProfile profile,
+                                                                                       final BaseClient client) {
         preFinalizeAuthenticationHandlerResult(credentials, principal, profile, client);
         return createHandlerResult(credentials, principal, new ArrayList<>(0));
     }

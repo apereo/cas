@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
@@ -13,7 +14,6 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
-import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +28,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,15 +87,9 @@ public class CasCoreAuthenticationPrincipalConfiguration implements PrincipalRes
     @ConditionalOnMissingBean(name = "personDirectoryAttributeRepositoryPrincipalResolver")
     public PrincipalResolver personDirectoryAttributeRepositoryPrincipalResolver() {
         val personDirectory = casProperties.getPersonDirectory();
-        return new PersonDirectoryPrincipalResolver(
+        return CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(principalFactory(),
             attributeRepository.getIfAvailable(),
-            principalFactory(),
-            personDirectory.isReturnNull(),
-            personDirectory.getPrincipalAttribute(),
-            personDirectory.isUseExistingPrincipalId(),
-            personDirectory.isAttributeResolutionEnabled(),
-            StringUtils.commaDelimitedListToSet(personDirectory.getActiveAttributeRepositoryIds())
-        );
+            personDirectory);
     }
 
     @Bean
