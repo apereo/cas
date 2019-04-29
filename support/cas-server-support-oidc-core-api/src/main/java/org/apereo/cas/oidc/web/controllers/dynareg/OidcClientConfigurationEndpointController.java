@@ -40,7 +40,7 @@ public class OidcClientConfigurationEndpointController extends BaseOAuth20Contro
     @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CLIENT_CONFIGURATION_URL,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity handleRequestInternal(
-        @RequestParam(name = OidcConstants.CLIENT_REGISTRATION_CLIENT_ID, required = true) final String clientId,
+        @RequestParam(name = OidcConstants.CLIENT_REGISTRATION_CLIENT_ID) final String clientId,
         final HttpServletRequest request, final HttpServletResponse response) {
 
         val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(getOAuthConfigurationContext().getServicesManager(), clientId);
