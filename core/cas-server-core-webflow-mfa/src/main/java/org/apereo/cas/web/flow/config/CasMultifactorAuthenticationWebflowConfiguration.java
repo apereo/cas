@@ -248,7 +248,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
     @ConditionalOnMissingBean(name = "restEndpointMultifactorAuthenticationTrigger")
     @RefreshScope
     public MultifactorAuthenticationTrigger restEndpointMultifactorAuthenticationTrigger() {
-        return new RestEndpointMultifactorAuthenticationTrigger(casProperties, multifactorAuthenticationProviderResolver());
+        return new RestEndpointMultifactorAuthenticationTrigger(casProperties, multifactorAuthenticationProviderResolver(), applicationContext);
     }
 
     @ConditionalOnMissingBean(name = "restEndpointAuthenticationPolicyWebflowEventResolver")
