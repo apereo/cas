@@ -3369,6 +3369,7 @@ To learn more about this topic, [please review this guide](../ux/User-Interface-
 # cas.sso.createSsoCookieOnRenewAuthn=true
 # cas.sso.proxyAuthnEnabled=true
 # cas.sso.renewAuthnEnabled=true
+# cas.sso.requiredServicePattern=
 ```
 
 ## Warning Cookie

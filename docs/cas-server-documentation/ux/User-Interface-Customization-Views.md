@@ -42,31 +42,6 @@ Some CAS adopters remove the 'warn' checkbox in the CAS login view and don't off
 <label for="warn" th:utext="#{screen.welcome.label.warn}"/>
 ...
 ```
-
-## "I am at a public workstation" authentication
-
-CAS has the ability to allow the user to opt-out of SSO, by indicating on the login page that the authentication
-is happening at a public workstation. By electing to do so, CAS will not honor the subsequent SSO session
-and will not generate the TGC that is designed to do so.
-
-```html
-...
-<input id="publicWorkstation"
-       name="publicWorkstation"
-       value="false" tabindex="4"
-       type="checkbox" />
-<label for="publicWorkstation" th:utext="#{screen.welcome.label.publicstation}"/>
-...
-```
-
-## Default Service
-
-In the event that no `service` is submitted to CAS, you may specify a default
-service url to which CAS will redirect. Note that this default service, much like
-all other services, MUST be authorized and registered with CAS.
-
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#views).
-
 ## Custom Fields
 
 CAS allows on the ability to dynamically extend the login form by including additional fields, to be populated by the user.
