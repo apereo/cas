@@ -46,6 +46,9 @@ public class DomainServicesManager extends AbstractServicesManager {
     protected void deleteInternal(final RegisteredService service) {
         val domain = extractDomain(service.getServiceId());
         this.domains.get(domain).remove(service);
+        if (this.domains.get(domain).isEmpty()) {
+            this.domains.remove(domain);
+        }
     }
 
     @Override
