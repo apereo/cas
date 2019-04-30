@@ -83,7 +83,7 @@ The following fields are specifically available for OpenID connect services:
 | `encryptIdToken`              | Optional. Whether ID tokens should be encrypted. Default is `false`.
 | `idTokenEncryptionAlg`        | Optional. The algorithm header value used to encrypt the id token.
 | `idTokenSigningAlg`           | Optional. The algorithm header value used to sign the id token.
-| `jwksAuthenticationMethod`    | Optional. The requested client authentication method to the token endpoint. Default is `client_secret_basic`.
+| `tokenEndpointAuthenticationMethod`    | Optional. The requested client authentication method to the token endpoint. Default is `client_secret_basic`.
 | `applicationType`             | Optional. `web`, `native`, or blank. Defined the kind of the application. The default, if omitted, is `web`. 
 | `idTokenEncryptionEncoding`   | Optional. The algorithm method header value used to encrypt the id token.
 | `subjectType`                 | Optional value chosen from `public` or `pairwise`. Type to use when generating principal identifiers. Default is `public`.
