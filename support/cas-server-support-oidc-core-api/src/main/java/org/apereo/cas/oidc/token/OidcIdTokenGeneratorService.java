@@ -97,7 +97,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
         claims.setJwtId(jwtId);
 
         claims.setIssuer(oidc.getIssuer());
-        claims.setAudience(service.getClientId());
+        claims.setAudience(accessTokenId.getClientId());
 
         val expirationDate = NumericDate.now();
         expirationDate.addSeconds(timeoutInSeconds);
@@ -182,7 +182,13 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
      */
     protected String generateAccessTokenHash(final AccessToken accessTokenId,
                                              final OidcRegisteredService service) {
+        val alg = getConfigurationContext().getIdTokenSigningAndEncryptionService().getJsonWebKeySigningAlgorithm(service);
         val tokenBytes = accessTokenId.getId().getBytes(StandardCharsets.UTF_8);
+        if (AlgorithmIdentifiers.NONE.equalsIgnoreCase(alg)) {
+            LOGGER.debug("Signing algorithm specified by service [{}] is unspecified", service.getServiceId());
+            return EncodingUtils.encodeUrlSafeBase64(tokenBytes);
+        }
+
         val hashAlg = getSigningHashAlgorithm(service);
         LOGGER.debug("Digesting access token hash via algorithm [{}]", hashAlg);
         val digested = DigestUtils.rawDigest(hashAlg, tokenBytes);
