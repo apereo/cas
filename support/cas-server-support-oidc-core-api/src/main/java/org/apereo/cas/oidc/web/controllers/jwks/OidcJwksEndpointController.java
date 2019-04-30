@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 
 /**
  * This is {@link OidcJwksEndpointController}.
@@ -58,8 +57,8 @@ public class OidcJwksEndpointController extends BaseOAuth20Controller {
             val servicesManager = getOAuthConfigurationContext().getServicesManager();
             servicesManager.getAllServices()
                 .stream()
+                .filter(s -> s instanceof OidcRegisteredService)
                 .map(s -> (OidcRegisteredService) s)
-                .filter(Objects::nonNull)
                 .filter(s -> StringUtils.isNotBlank(s.getJwks()))
                 .forEach(service -> {
                     val set = OidcJsonWebKeySetUtils.getJsonWebKeySet(service);
