@@ -71,9 +71,11 @@ public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
     @RepeatedTest(2)
     public void verifyOAuthCodeIsAddedToMemcached() {
         val factory = new DefaultOAuthCodeFactory(new NeverExpiresExpirationPolicy());
-        val code = factory.create(RegisteredServiceTestUtils.getService(), CoreAuthenticationTestUtils.getAuthentication(),
-            new MockTicketGrantingTicket("casuser"), CollectionUtils.wrapList("openid"),
-            "code-challenge", "plain");
+        val code = factory.create(RegisteredServiceTestUtils.getService(),
+            CoreAuthenticationTestUtils.getAuthentication(),
+            new MockTicketGrantingTicket("casuser"),
+            CollectionUtils.wrapList("openid"),
+            "code-challenge", "plain", "clientId123456");
         this.registry.addTicket(code);
         val ticket = this.registry.getTicket(code.getId(), OAuthCode.class);
         assertNotNull(ticket);
