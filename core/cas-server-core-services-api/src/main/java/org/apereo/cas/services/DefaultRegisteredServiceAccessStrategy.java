@@ -96,43 +96,21 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      */
     protected boolean caseInsensitive;
 
-    /**
-     * Instantiates a new Default registered service authorization strategy.
-     * By default, rules indicate that services are both enabled
-     * and can participate in SSO.
-     */
     public DefaultRegisteredServiceAccessStrategy() {
         this(true, true);
     }
 
-    /**
-     * Instantiates a new Default registered service authorization strategy.
-     *
-     * @param enabled    the enabled
-     * @param ssoEnabled the sso enabled
-     */
     public DefaultRegisteredServiceAccessStrategy(final boolean enabled, final boolean ssoEnabled) {
         this.enabled = enabled;
         this.ssoEnabled = ssoEnabled;
     }
 
-    /**
-     * Instantiates a new Default registered service access strategy.
-     *
-     * @param requiredAttributes the required attributes
-     * @param rejectedAttributes the rejected attributes
-     */
     public DefaultRegisteredServiceAccessStrategy(final Map<String, Set<String>> requiredAttributes, final Map<String, Set<String>> rejectedAttributes) {
         this();
         this.requiredAttributes = requiredAttributes;
         this.rejectedAttributes = rejectedAttributes;
     }
 
-    /**
-     * Instantiates a new Default registered service access strategy.
-     *
-     * @param requiredAttributes the required attributes
-     */
     public DefaultRegisteredServiceAccessStrategy(final Map<String, Set<String>> requiredAttributes) {
         this();
         this.requiredAttributes = requiredAttributes;
@@ -288,14 +266,9 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
             return false;
         }
         if (this.requireAllAttributes) {
-            return difference.stream().allMatch(key -> {
-                return requiredAttributeFound(key, principalAttributes, requiredAttributes);
-            });
-        } else {
-            return difference.stream().anyMatch(key -> {
-                return requiredAttributeFound(key, principalAttributes, requiredAttributes);
-            });
+            return difference.stream().allMatch(key -> requiredAttributeFound(key, principalAttributes, requiredAttributes));
         }
+        return difference.stream().anyMatch(key -> requiredAttributeFound(key, principalAttributes, requiredAttributes));
     }
     
     private boolean requiredAttributeFound(final String attributeName, final Map<String, Object> principalAttributes, final Map<String, Set<String>> requiredAttributes) {
