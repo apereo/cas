@@ -40,7 +40,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     private String jwks;
 
     @Column
-    private String jwksAuthenticationMethod = "client_secret_basic";
+    private String tokenEndpointAuthenticationMethod = "client_secret_basic";
 
     @Column
     private boolean signIdToken = true;

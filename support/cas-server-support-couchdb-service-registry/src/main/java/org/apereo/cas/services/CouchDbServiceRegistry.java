@@ -33,7 +33,7 @@ public class CouchDbServiceRegistry extends AbstractServiceRegistry {
     public RegisteredService save(final RegisteredService registeredService) {
         LOGGER.debug("Saving service [{}]", registeredService.getName());
         if (registeredService.getId() < 0) {
-            registeredService.setId(RandomUtils.getNativeInstance().nextLong());
+            registeredService.setId(RandomUtils.nextLong());
         }
         try {
             val svc = dbClient.get(registeredService.getId());

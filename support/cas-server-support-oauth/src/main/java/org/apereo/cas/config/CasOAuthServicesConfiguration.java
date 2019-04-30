@@ -57,7 +57,7 @@ public class CasOAuthServicesConfiguration {
             @Override
             public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
                 val service = new RegexRegisteredService();
-                service.setId(RandomUtils.getNativeInstance().nextLong());
+                service.setId(RandomUtils.nextLong());
                 service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
                 service.setName(service.getClass().getSimpleName());
                 service.setDescription("OAuth Authentication Callback Request URL");
