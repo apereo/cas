@@ -101,7 +101,7 @@ public class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     public void verifyOAuthCodeCanBeAdded() {
         val code = new DefaultOAuthCodeFactory(new NeverExpiresExpirationPolicy()).create(RegisteredServiceTestUtils.getService(),
             RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),
-            CollectionUtils.wrapSet("1", "2"), "code-challenge", "code-challenge-method");
+            CollectionUtils.wrapSet("1", "2"), "code-challenge", "code-challenge-method", "clientId1234567");
         ticketRegistry.addTicket(code);
         assertSame(1, ticketRegistry.deleteTicket(code.getId()), "Wrong ticket count");
         assertNull(ticketRegistry.getTicket(code.getId()));
@@ -125,7 +125,7 @@ public class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
         val token = new DefaultRefreshTokenFactory(new NeverExpiresExpirationPolicy())
             .create(RegisteredServiceTestUtils.getService(),
                 RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),
-                CollectionUtils.wrapSet("1", "2"));
+                CollectionUtils.wrapSet("1", "2"), "clientId1234567");
         ticketRegistry.addTicket(token);
         assertSame(1, ticketRegistry.deleteTicket(token.getId()), "Wrong ticket count");
         assertNull(ticketRegistry.getTicket(token.getId()));

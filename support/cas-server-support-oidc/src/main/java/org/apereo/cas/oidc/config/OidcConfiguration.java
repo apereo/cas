@@ -658,7 +658,8 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
                 servicesManager.getIfAvailable(),
                 registeredServiceAccessStrategyEnforcer.getIfAvailable(),
                 ticketRegistry.getIfAvailable(),
-                webApplicationServiceFactory.getIfAvailable()));
+                webApplicationServiceFactory.getIfAvailable(),
+                casProperties));
             privateKeyJwtClient.setName(OidcConstants.CAS_OAUTH_CLIENT_PRIVATE_KEY_JWT_AUTHN);
             privateKeyJwtClient.setUsernameParameter(OAuth20Constants.CLIENT_ASSERTION_TYPE);
             privateKeyJwtClient.setPasswordParameter(OAuth20Constants.CLIENT_ASSERTION);

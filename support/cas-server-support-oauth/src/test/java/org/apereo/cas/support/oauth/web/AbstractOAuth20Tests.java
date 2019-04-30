@@ -270,7 +270,8 @@ public abstract class AbstractOAuth20Tests {
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService(registeredService.getClientId());
         val code = oAuthCodeFactory.create(service, authentication,
-            new MockTicketGrantingTicket("casuser"), new ArrayList<>(), null, null);
+            new MockTicketGrantingTicket("casuser"), new ArrayList<>(),
+            null, null, CLIENT_ID);
         this.ticketRegistry.addTicket(code);
         return code;
     }
@@ -280,7 +281,7 @@ public abstract class AbstractOAuth20Tests {
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService(registeredService.getServiceId());
         val refreshToken = oAuthRefreshTokenFactory.create(service, authentication,
-            new MockTicketGrantingTicket("casuser"), new ArrayList<>());
+            new MockTicketGrantingTicket("casuser"), new ArrayList<>(), CLIENT_ID);
         this.ticketRegistry.addTicket(refreshToken);
         return refreshToken;
     }

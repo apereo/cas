@@ -4,6 +4,8 @@ import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeySetUtils;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
@@ -35,6 +37,7 @@ public class OidcPrivateKeyJwtAuthenticator implements Authenticator<UsernamePas
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
     private final TicketRegistry ticketRegistry;
     private final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
+    private final CasConfigurationProperties casProperties;
 
     @Override
     public void validate(final UsernamePasswordCredentials credentials,
@@ -59,14 +62,19 @@ public class OidcPrivateKeyJwtAuthenticator implements Authenticator<UsernamePas
         val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
         accessResult.throwExceptionIfNeeded();
 
+        val audience = casProperties.getServer().getPrefix().concat('/'
+            + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL);
         val keys = OidcJsonWebKeySetUtils.getJsonWebKeySet(registeredService);
         keys.ifPresent(jwks ->
             jwks.getJsonWebKeys().forEach(jsonWebKey -> {
                 val consumer = new JwtConsumerBuilder()
                     .setVerificationKey(jsonWebKey.getKey())
                     .setRequireSubject()
+                    .setExpectedSubject(clientId)
                     .setRequireJwtId()
-                    .setRequireIssuedAt()
+                    .setRequireExpirationTime()
+                    .setExpectedIssuer(true, clientId)
+                    .setExpectedAudience(true, audience)
                     .build();
                 try {
                     val jwt = consumer.processToClaims(credentials.getPassword());
