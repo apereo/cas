@@ -1,11 +1,5 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.nameid;
 
-import lombok.extern.slf4j.Slf4j;
-import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.IdPAttributeValue;
-import net.shibboleth.idp.attribute.StringAttributeValue;
-import net.shibboleth.idp.saml.attribute.encoding.impl.SAML2StringNameIDEncoder;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
@@ -15,6 +9,13 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSe
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.saml.attribute.encoding.impl.SAML2StringNameIDEncoder;
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.messaging.context.MessageContext;
@@ -235,7 +236,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
                 return nameID;
             }
 
-            final IdPAttribute attribute = prepareNameIdAttribute(assertion, nameFormat, adaptor);
+            final IdPAttribute attribute = prepareNameIdAttribute(assertion, nameFormat, adaptor, service);
             final SAML2StringNameIDEncoder encoder = prepareNameIdEncoder(authnRequest, nameFormat, attribute, service, adaptor);
             LOGGER.debug("Encoding NameID based on [{}]", nameFormat);
             final NameID nameid = encoder.encode(attribute);
@@ -248,15 +249,17 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
     }
 
     /**
-     * Prepare name id attribute id p attribute.
+     * Prepare name id attribute.
      *
      * @param casAssertion the assertion
      * @param nameFormat   the name format
      * @param adaptor      the adaptor
+     * @param service      the service
      * @return the idp attribute
      */
     protected IdPAttribute prepareNameIdAttribute(final Object casAssertion, final String nameFormat,
-                                                  final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
+                                                  final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                                  final SamlRegisteredService service) {
 
         final Assertion assertion = Assertion.class.cast(casAssertion);
         final IdPAttribute attribute = new IdPAttribute(AttributePrincipal.class.getName());
@@ -265,10 +268,15 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
         final String principalName = assertion.getPrincipal().getName();
 
         LOGGER.debug("Preparing NameID attribute for principal [{}]", principalName);
+        final String entityId = adaptor.getEntityId();
         if (nameFormat.trim().equalsIgnoreCase(NameIDType.TRANSIENT)) {
-            final String entityId = adaptor.getEntityId();
-            LOGGER.debug("Generating transient NameID value for principal [{}] and entity id [{}]", principalName, entityId);
-            nameIdValue = persistentIdGenerator.generate(principalName, entityId);
+            if (service.isSkipGeneratingTransientNameId()) {
+                LOGGER.debug("Generation of transient NameID value is skipped for [{}] and [{}] will be used instead", entityId, principalName);
+                nameIdValue = principalName;
+            } else {
+                LOGGER.debug("Generating transient NameID value for principal [{}] and entity id [{}]", principalName, entityId);
+                nameIdValue = persistentIdGenerator.generate(principalName, entityId);
+            }
         } else {
             nameIdValue = principalName;
         }
