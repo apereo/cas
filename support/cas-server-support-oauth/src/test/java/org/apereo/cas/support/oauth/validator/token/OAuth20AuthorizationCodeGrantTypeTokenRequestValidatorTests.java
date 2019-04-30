@@ -62,7 +62,7 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
         val oauthCode = new DefaultOAuthCodeFactory(expirationPolicy)
             .create(oauthCasAuthenticationBuilderService, RegisteredServiceTestUtils.getAuthentication(),
                 new MockTicketGrantingTicket("casuser"), new HashSet<>(),
-                null, null);
+                null, null, "clientid12345");
         when(ticketRegistry.getTicket(eq(name), (Class<Ticket>) any())).thenReturn(oauthCode);
     }
 
