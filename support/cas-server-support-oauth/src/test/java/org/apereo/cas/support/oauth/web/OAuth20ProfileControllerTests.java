@@ -71,7 +71,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.PROFILE_URL);
         val mockResponse = new MockHttpServletResponse();
 
-        val entity = oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
+        val entity = oAuth20ProfileController.handleGetRequest(mockRequest, mockResponse);
 
         assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON_VALUE, mockResponse.getContentType());
@@ -85,7 +85,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         mockRequest.setParameter(OAuth20Constants.ACCESS_TOKEN, "DOES NOT EXIST");
         val mockResponse = new MockHttpServletResponse();
 
-        val entity = oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
+        val entity = oAuth20ProfileController.handleGetRequest(mockRequest, mockResponse);
 
         assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON_VALUE, mockResponse.getContentType());
@@ -107,7 +107,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         mockRequest.setParameter(OAuth20Constants.ACCESS_TOKEN, accessToken.getId());
         val mockResponse = new MockHttpServletResponse();
 
-        val entity = oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
+        val entity = oAuth20ProfileController.handleGetRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON_VALUE, mockResponse.getContentType());
         assertNotNull(entity.getBody());
@@ -131,7 +131,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         mockRequest.setParameter(OAuth20Constants.ACCESS_TOKEN, accessToken.getId());
         val mockResponse = new MockHttpServletResponse();
 
-        val entity = oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
+        val entity = oAuth20ProfileController.handleGetRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.OK, entity.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON_VALUE, mockResponse.getContentType());
 
@@ -166,7 +166,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         mockRequest.setParameter(OAuth20Constants.ACCESS_TOKEN, accessToken.getId());
         val mockResponse = new MockHttpServletResponse();
 
-        val entity = oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
+        val entity = oAuth20ProfileController.handleGetRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.OK, entity.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON_VALUE, mockResponse.getContentType());
 
@@ -206,7 +206,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.PROFILE_URL);
         mockRequest.addHeader("Authorization", OAuth20Constants.TOKEN_TYPE_BEARER + ' ' + accessToken.getId());
         val mockResponse = new MockHttpServletResponse();
-        val entity = oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
+        val entity = oAuth20ProfileController.handleGetRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.OK, entity.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON_VALUE, mockResponse.getContentType());
 

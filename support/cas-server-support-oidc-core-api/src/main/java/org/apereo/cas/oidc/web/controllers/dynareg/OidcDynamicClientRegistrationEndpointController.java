@@ -9,6 +9,7 @@ import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.OidcSubjectTypes;
 import org.apereo.cas.services.PairwiseOidcRegisteredServiceUsernameAttributeProvider;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
@@ -35,6 +36,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * This is {@link OidcDynamicClientRegistrationEndpointController}.
@@ -70,16 +72,22 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
                 .getClientRegistrationRequestSerializer().from(jsonInput);
             LOGGER.debug("Received client registration request [{}]", registrationRequest);
 
-            val registeredService = new OidcRegisteredService();
+            val servicesManager = getOAuthConfigurationContext().getServicesManager();
+            val registeredService = registrationRequest.getRedirectUris()
+                .stream()
+                .map(uri -> (OidcRegisteredService) OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(servicesManager, uri))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseGet(OidcRegisteredService::new);
 
             if (StringUtils.isNotBlank(registrationRequest.getClientName())) {
                 registeredService.setName(registrationRequest.getClientName());
-            } else {
+            } else if (StringUtils.isBlank(registeredService.getName())) {
                 registeredService.setName(RandomStringUtils.randomAlphabetic(GENERATED_CLIENT_NAME_LENGTH));
             }
 
-            val uri = String.join("|", registrationRequest.getRedirectUris());
-            registeredService.setServiceId(uri);
+            val serviceId = String.join("|", registrationRequest.getRedirectUris());
+            registeredService.setServiceId(serviceId);
 
             registeredService.setSectorIdentifierUri(registrationRequest.getSectorIdentifierUri());
             registeredService.setSubjectType(registrationRequest.getSubjectType());

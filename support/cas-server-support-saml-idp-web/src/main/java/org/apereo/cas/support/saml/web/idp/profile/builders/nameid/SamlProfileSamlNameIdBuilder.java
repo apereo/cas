@@ -270,7 +270,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
                 return nameID;
             }
 
-            val attribute = prepareNameIdAttribute(assertion, nameFormat, adaptor);
+            val attribute = prepareNameIdAttribute(assertion, nameFormat, adaptor, service);
             val encoder = prepareNameIdEncoder(authnRequest, nameFormat, attribute, service, adaptor);
             LOGGER.debug("Encoding NameID based on [{}]", nameFormat);
             var nameId = encoder.encode(attribute);
@@ -285,21 +285,23 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
     /**
      * Prepare name id attribute id p attribute.
      *
-     * @param casAssertion the assertion
-     * @param nameFormat   the name format
-     * @param adaptor      the adaptor
+     * @param casAssertion      the assertion
+     * @param nameFormat        the name format
+     * @param adaptor           the adaptor
+     * @param registeredService the registered service
      * @return the idp attribute
      */
     protected IdPAttribute prepareNameIdAttribute(final Object casAssertion,
                                                   final String nameFormat,
-                                                  final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
+                                                  final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                                  final SamlRegisteredService registeredService) {
         val assertion = Assertion.class.cast(casAssertion);
         val attribute = new IdPAttribute(AttributePrincipal.class.getName());
 
         val principalName = assertion.getPrincipal().getName();
         LOGGER.debug("Preparing NameID attribute for principal [{}]", principalName);
 
-        val nameIdValue = getNameIdValueFromNameFormat(nameFormat, adaptor, principalName);
+        val nameIdValue = getNameIdValueFromNameFormat(nameFormat, adaptor, principalName, registeredService);
         val value = new StringAttributeValue(nameIdValue);
         LOGGER.debug("NameID attribute value is set to [{}]", value);
         attribute.setValues(CollectionUtils.wrap(value));
@@ -308,11 +310,16 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
 
     private String getNameIdValueFromNameFormat(final String nameFormat,
                                                 final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                                final String principalName) {
+                                                final String principalName,
+                                                final SamlRegisteredService registeredService) {
         if (nameFormat.trim().equalsIgnoreCase(NameIDType.TRANSIENT)) {
             val entityId = adaptor.getEntityId();
-            LOGGER.debug("Generating transient NameID value for principal [{}] and entity id [{}]", principalName, entityId);
-            return persistentIdGenerator.generate(principalName, entityId);
+            if (registeredService.isSkipGeneratingTransientNameId()) {
+                LOGGER.debug("Generation of transient NameID value is skipped for [{}] and [{}] will be used instead", entityId, principalName);
+            } else {
+                LOGGER.debug("Generating transient NameID value for principal [{}] and entity id [{}]", principalName, entityId);
+                return persistentIdGenerator.generate(principalName, entityId);
+            }
         }
         return principalName;
     }

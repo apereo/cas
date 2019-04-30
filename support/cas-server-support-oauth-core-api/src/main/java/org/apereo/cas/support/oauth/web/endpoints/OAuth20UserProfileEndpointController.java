@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -49,6 +50,19 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
     }
 
     /**
+     * Handle post request response entity.
+     *
+     * @param request  the request
+     * @param response the response
+     * @return the response entity
+     * @throws Exception the exception
+     */
+    @PostMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.PROFILE_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> handlePostRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        return handleGetRequest(request, response);
+    }
+
+    /**
      * Handle request internal response entity.
      *
      * @param request  the request
@@ -57,7 +71,7 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
      * @throws Exception the exception
      */
     @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.PROFILE_URL, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public ResponseEntity<String> handleGetRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
         val context = new J2EContext(request, response, getOAuthConfigurationContext().getSessionStore());

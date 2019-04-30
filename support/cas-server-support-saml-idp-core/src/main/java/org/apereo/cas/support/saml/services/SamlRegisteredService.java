@@ -104,6 +104,9 @@ public class SamlRegisteredService extends RegexRegisteredService {
 
     @Column(name = "skipGenSubConfNameId")
     private boolean skipGeneratingSubjectConfirmationNameId = true;
+    
+    @Column
+    private boolean skipGeneratingTransientNameId;
 
     @Column
     private boolean signResponses = true;
