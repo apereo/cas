@@ -1,8 +1,8 @@
 package org.apereo.cas.oidc.jwks;
 
 import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
 
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -40,6 +40,10 @@ public class OidcJsonWebKeySetUtils {
             LOGGER.trace("Loading JSON web key from [{}]", service.getJwks());
 
             val resource = getJsonWebKeySetResource(service);
+            if (resource == null) {
+                LOGGER.warn("No JSON web keys or keystore resource could be found for [{}]", service);
+                return Optional.empty();
+            }
             val jsonWebKeySet = buildJsonWebKeySet(resource);
 
             if (jsonWebKeySet == null || jsonWebKeySet.getJsonWebKeys().isEmpty()) {
@@ -116,11 +120,13 @@ public class OidcJsonWebKeySetUtils {
     }
 
     private static Resource getJsonWebKeySetResource(final OidcRegisteredService service) {
-        val validator = new SimpleUrlValidatorFactoryBean(false).getObject();
-        if (!Objects.requireNonNull(validator).isValid(service.getJwks())) {
+        if (StringUtils.isNotBlank(service.getJwks())) {
+            if (ResourceUtils.doesResourceExist(service.getJwks())) {
+                return ApplicationContextProvider.getResourceLoader().getResource(service.getJwks());
+            }
             return new InputStreamResource(new ByteArrayInputStream(service.getJwks().getBytes(StandardCharsets.UTF_8)), "JWKS");
         }
-        return ApplicationContextProvider.getResourceLoader().getResource(service.getJwks());
+        return null;
     }
 
     /**
