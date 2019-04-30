@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.RsaJsonWebKey;
+import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 
 import java.util.Optional;
@@ -51,6 +52,10 @@ public class OidcIdTokenSigningAndEncryptionService extends BaseOidcJsonWebKeyTo
      */
     @Override
     protected boolean shouldSignTokenFor(final OidcRegisteredService svc) {
+        if (AlgorithmIdentifiers.NONE.equalsIgnoreCase(svc.getIdTokenSigningAlg())) {
+            LOGGER.warn("ID token signing algorithm is set to none for [{}] and ID token will not be signed", svc.getServiceId());
+            return false;
+        }
         return svc.isSignIdToken();
     }
 
@@ -62,6 +67,10 @@ public class OidcIdTokenSigningAndEncryptionService extends BaseOidcJsonWebKeyTo
      */
     @Override
     protected boolean shouldEncryptTokenFor(final OidcRegisteredService svc) {
+        if (AlgorithmIdentifiers.NONE.equalsIgnoreCase(svc.getIdTokenEncryptionAlg())) {
+            LOGGER.warn("ID token encryption algorithm is set to none for [{}] and ID token will not be encrypted", svc.getServiceId());
+            return false;
+        }
         return svc.isEncryptIdToken() && StringUtils.isNotBlank(svc.getIdTokenEncryptionAlg()) && StringUtils.isNotBlank(svc.getIdTokenEncryptionEncoding());
     }
 }
