@@ -8,6 +8,7 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileEndpointCont
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,7 +27,13 @@ public class OidcUserProfileEndpointController extends OAuth20UserProfileEndpoin
 
     @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.PROFILE_URL, produces = MediaType.APPLICATION_JSON_VALUE)
     @Override
-    public ResponseEntity<String> handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        return super.handleRequest(request, response);
+    public ResponseEntity<String> handleGetRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        return super.handleGetRequest(request, response);
+    }
+
+    @PostMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.PROFILE_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Override
+    public ResponseEntity<String> handlePostRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        return super.handlePostRequest(request, response);
     }
 }
