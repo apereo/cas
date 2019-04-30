@@ -3058,7 +3058,7 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
 # cas.authn.oidc.claimTypesSupported=normal
 # cas.authn.oidc.grantTypesSupported=authorization_code,password,client_credentials,refresh_token
 # cas.authn.oidc.idTokenSigningAlgValuesSupported=none,RS256
-# cas.authn.oidc.tokenEndpointAuthMethodsSupported=client_secret_basic,client_secret_post
+# cas.authn.oidc.tokenEndpointAuthMethodsSupported=client_secret_basic,client_secret_post,private_key_jwt
 ```
 
 ### OpenID Connect Scopes & Claims
@@ -3369,6 +3369,7 @@ To learn more about this topic, [please review this guide](../ux/User-Interface-
 # cas.sso.createSsoCookieOnRenewAuthn=true
 # cas.sso.proxyAuthnEnabled=true
 # cas.sso.renewAuthnEnabled=true
+# cas.sso.requiredServicePattern=
 ```
 
 ## Warning Cookie

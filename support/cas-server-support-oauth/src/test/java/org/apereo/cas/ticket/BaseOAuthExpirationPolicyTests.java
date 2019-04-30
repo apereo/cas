@@ -95,7 +95,7 @@ public abstract class BaseOAuthExpirationPolicyTests {
     protected RefreshToken newRefreshToken(final AccessToken at) {
         val testService = CoreAuthenticationTestUtils.getService("https://service.example.com");
         val rt = defaultRefreshTokenFactory.create(testService, at.getAuthentication(),
-            at.getTicketGrantingTicket(), new ArrayList<>());
+            at.getTicketGrantingTicket(), new ArrayList<>(), "clientid12345");
         at.getTicketGrantingTicket().getDescendantTickets().add(rt.getId());
         return rt;
     }

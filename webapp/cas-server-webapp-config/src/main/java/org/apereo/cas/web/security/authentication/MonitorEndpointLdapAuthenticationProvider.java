@@ -17,6 +17,7 @@ import org.ldaptive.SearchExecutor;
 import org.ldaptive.auth.AuthenticationRequest;
 import org.pac4j.core.authorization.authorizer.RequireAnyRoleAuthorizer;
 import org.pac4j.core.authorization.generator.AuthorizationGenerator;
+import org.pac4j.core.authorization.generator.DefaultRolesPermissionsAuthorizationGenerator;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.session.J2ESessionStore;
 import org.pac4j.core.profile.CommonProfile;
@@ -30,6 +31,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -62,6 +64,13 @@ public class MonitorEndpointLdapAuthenticationProvider implements Authentication
             LOGGER.debug("LDAP response: [{}]", response);
 
             if (response.getResult()) {
+
+                val roles = securityProperties.getUser().getRoles();
+                if (roles.isEmpty()) {
+                    LOGGER.info("No user security roles are defined for CAS to enable authorization. User [{}] is considered authorized", username);
+                    return generateAuthenticationToken(authentication, new ArrayList<>());
+                }
+
                 val entry = response.getLdapEntry();
                 val profile = new CommonProfile();
                 profile.setId(username);
@@ -81,12 +90,11 @@ public class MonitorEndpointLdapAuthenticationProvider implements Authentication
                     .map(SimpleGrantedAuthority::new)
                     .collect(Collectors.toCollection(ArrayList::new));
                 LOGGER.debug("List of authorities remapped from profile roles are [{}]", authorities);
-
-                val authorizer = new RequireAnyRoleAuthorizer(securityProperties.getUser().getRoles());
+                val authorizer = new RequireAnyRoleAuthorizer(roles);
                 LOGGER.debug("Executing authorization for expected admin roles [{}]", authorizer.getElements());
 
                 if (authorizer.isAllAuthorized(context, CollectionUtils.wrap(profile))) {
-                    return new UsernamePasswordAuthenticationToken(username, password, authorities);
+                    return generateAuthenticationToken(authentication, authorities);
                 }
                 LOGGER.warn("User [{}] is not authorized to access the requested resource allowed to roles [{}]",
                     username, authorizer.getElements());
@@ -99,6 +107,12 @@ public class MonitorEndpointLdapAuthenticationProvider implements Authentication
             throw new InsufficientAuthenticationException("Unexpected LDAP error", e);
         }
         throw new BadCredentialsException("Could not authenticate provided credentials");
+    }
+
+    private Authentication generateAuthenticationToken(final Authentication authentication, final List<SimpleGrantedAuthority> authorities) {
+        val username = authentication.getPrincipal().toString();
+        val credentials = authentication.getCredentials();
+        return new UsernamePasswordAuthenticationToken(username, credentials, authorities);
     }
 
     @Override
@@ -119,17 +133,27 @@ public class MonitorEndpointLdapAuthenticationProvider implements Authentication
                 ldapAuthz.getGroupPrefix(),
                 ldapAuthorizationGeneratorGroupSearchExecutor());
         }
-        LOGGER.debug("Handling LDAP authorization based on attributes and roles");
-        return new LdapUserAttributesToRolesAuthorizationGenerator(connectionFactory,
-            ldapAuthorizationGeneratorUserSearchExecutor(),
-            ldapAuthz.isAllowMultipleResults(),
-            ldapAuthz.getRoleAttribute(),
-            ldapAuthz.getRolePrefix());
+        if (isUserBasedAuthorization()) {
+            LOGGER.debug("Handling LDAP authorization based on attributes and roles");
+            return new LdapUserAttributesToRolesAuthorizationGenerator(connectionFactory,
+                ldapAuthorizationGeneratorUserSearchExecutor(),
+                ldapAuthz.isAllowMultipleResults(),
+                ldapAuthz.getRoleAttribute(),
+                ldapAuthz.getRolePrefix());
+        }
+        val roles = securityProperties.getUser().getRoles();
+        LOGGER.info("Could not determine authorization generator based on users or groups. Authorization will generate static roles based on [{}]", roles);
+        return new DefaultRolesPermissionsAuthorizationGenerator<>(roles, new ArrayList<>());
     }
 
     private boolean isGroupBasedAuthorization() {
         val ldapAuthz = this.ldapProperties.getLdapAuthz();
         return StringUtils.isNotBlank(ldapAuthz.getGroupFilter()) && StringUtils.isNotBlank(ldapAuthz.getGroupAttribute());
+    }
+
+    private boolean isUserBasedAuthorization() {
+        val ldapAuthz = this.ldapProperties.getLdapAuthz();
+        return StringUtils.isNotBlank(ldapAuthz.getBaseDn()) && StringUtils.isNotBlank(ldapAuthz.getSearchFilter());
     }
 
     private SearchExecutor ldapAuthorizationGeneratorUserSearchExecutor() {

@@ -16,6 +16,10 @@ public interface Authenticators {
      */
     String CAS_OAUTH_CLIENT_BASIC_AUTHN = "clientBasicAuth";
     /**
+     * OAuth authn for access token authn.
+     */
+    String CAS_OAUTH_CLIENT_ACCESS_TOKEN_AUTHN = "clientAccessTokenAuth";
+    /**
      * OAuth authn for client id and secret.
      */
     String CAS_OAUTH_CLIENT_DIRECT_FORM = "clientForm";

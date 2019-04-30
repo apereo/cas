@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.web.controllers.jwks;
 
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeySetUtils;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
@@ -9,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jooq.lambda.Unchecked;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.springframework.core.io.Resource;
@@ -54,16 +54,16 @@ public class OidcJwksEndpointController extends BaseOAuth20Controller {
             val jsonJwks = IOUtils.toString(this.jwksFile.getInputStream(), StandardCharsets.UTF_8);
             val jsonWebKeySet = new JsonWebKeySet(jsonJwks);
 
-            getOAuthConfigurationContext().getServicesManager().getAllServices()
+            val servicesManager = getOAuthConfigurationContext().getServicesManager();
+            servicesManager.getAllServices()
                 .stream()
-                .filter(s -> s instanceof OidcRegisteredService && StringUtils.isNotBlank(((OidcRegisteredService) s).getJwks()))
-                .forEach(
-                    Unchecked.consumer(s -> {
-                        val service = (OidcRegisteredService) s;
-                        val resource = getOAuthConfigurationContext().getResourceLoader().getResource(service.getJwks());
-                        val set = new JsonWebKeySet(IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8));
-                        set.getJsonWebKeys().forEach(jsonWebKeySet::addJsonWebKey);
-                    }));
+                .filter(s -> s instanceof OidcRegisteredService)
+                .map(s -> (OidcRegisteredService) s)
+                .filter(s -> StringUtils.isNotBlank(s.getJwks()))
+                .forEach(service -> {
+                    val set = OidcJsonWebKeySetUtils.getJsonWebKeySet(service);
+                    set.ifPresent(keys -> keys.getJsonWebKeys().forEach(jsonWebKeySet::addJsonWebKey));
+                });
             val body = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY);
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             return new ResponseEntity<>(body, HttpStatus.OK);

@@ -71,14 +71,18 @@ public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
     @Column(name = "code_challenge_method")
     private String codeChallengeMethod;
 
+    @Column
+    private String clientId;
+
     public OAuthCodeImpl(final String id,
                          final @NonNull Service service,
                          final @NonNull Authentication authentication,
-                         final ExpirationPolicy expirationPolicy,
+                         final @NonNull ExpirationPolicy expirationPolicy,
                          final TicketGrantingTicket ticketGrantingTicket,
-                         final Collection<String> scopes,
+                         final @NonNull Collection<String> scopes,
                          final String codeChallenge,
-                         final String codeChallengeMethod) {
+                         final String codeChallengeMethod,
+                         final String clientId) {
         super(id, expirationPolicy);
         this.service = service;
         this.authentication = authentication;
@@ -86,6 +90,7 @@ public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
         this.scopes.addAll(scopes);
         this.codeChallenge = codeChallenge;
         this.codeChallengeMethod = codeChallengeMethod;
+        this.clientId = clientId;
     }
 
     @Override
@@ -100,8 +105,10 @@ public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
     }
 
     @Override
-    public ProxyGrantingTicket grantProxyGrantingTicket(final String id, final Authentication authentication, final ExpirationPolicy expirationPolicy) {
-        throw new UnsupportedOperationException("No PGT grant is available in OAuth");
+    public ProxyGrantingTicket grantProxyGrantingTicket(final String id,
+                                                        final Authentication authentication,
+                                                        final ExpirationPolicy expirationPolicy) {
+        throw new UnsupportedOperationException("No proxy-granting ticket can be issued");
     }
 
     @Override

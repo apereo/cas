@@ -1,5 +1,6 @@
 package org.apereo.cas.memcached.kryo;
 
+import org.apereo.cas.DefaultMessageDescriptor;
 import org.apereo.cas.authentication.AttributeMergingStrategy;
 import org.apereo.cas.authentication.DefaultAuthentication;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
@@ -20,6 +21,7 @@ import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdG
 import org.apereo.cas.authentication.principal.SimplePrincipal;
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
+import org.apereo.cas.authentication.support.password.PasswordExpiringWarningMessageDescriptor;
 import org.apereo.cas.memcached.kryo.serial.ImmutableNativeJavaListSerializer;
 import org.apereo.cas.memcached.kryo.serial.ImmutableNativeJavaSetSerializer;
 import org.apereo.cas.memcached.kryo.serial.RegisteredServiceSerializer;
@@ -198,6 +200,9 @@ public class CloseableKryoFactory implements KryoFactory {
         val singletonMap = Collections.singletonMap("key", "value");
         kryo.register(singletonMap.getClass());
 
+        val singletonList = Collections.singletonList("key");
+        kryo.register(singletonList.getClass());
+
         val list = Arrays.asList("key");
         kryo.register(list.getClass(), new ArraysAsListSerializer());
     }
@@ -360,6 +365,11 @@ public class CloseableKryoFactory implements KryoFactory {
         kryo.register(BaseDelegatingExpirationPolicy.class);
     }
 
+    private void registerMessageDescriptorsWithKryo(final CloseableKryo kryo) {
+        kryo.register(DefaultMessageDescriptor.class);
+        kryo.register(PasswordExpiringWarningMessageDescriptor.class);
+    }
+
     @Override
     public Kryo create() {
         val kryo = new CloseableKryo(this.kryoPool);
@@ -386,6 +396,7 @@ public class CloseableKryoFactory implements KryoFactory {
         registerImmutableOrEmptyCollectionsWithKryo(kryo);
         registerCasServicesProxyPolicyWithKryo(kryo);
         registerExceptionsWithKryo(kryo);
+        registerMessageDescriptorsWithKryo(kryo);
         registerCasServicesPrincipalAttributeRepositoryWithKryo(kryo);
         registerCasServicesMultifactorPolicyWithKryo(kryo);
         registerCasServicesConsentPolicyWithKryo(kryo);

@@ -2,6 +2,9 @@
   "extends": [
     "config:base",
     ":preserveSemverRanges",
-    "schedule:daily"
-  ]
+    ":rebaseStalePrs"
+  ],
+  "gradle": {
+    "enabled": true
+  }
 }

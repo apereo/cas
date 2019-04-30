@@ -40,6 +40,9 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     private String jwks;
 
     @Column
+    private String tokenEndpointAuthenticationMethod = "client_secret_basic";
+
+    @Column
     private boolean signIdToken = true;
 
     @Column
@@ -56,6 +59,9 @@ public class OidcRegisteredService extends OAuthRegisteredService {
 
     @Column
     private String sectorIdentifierUri;
+
+    @Column
+    private String applicationType = "web";
 
     @Column
     private String subjectType = OidcSubjectTypes.PUBLIC.getType();

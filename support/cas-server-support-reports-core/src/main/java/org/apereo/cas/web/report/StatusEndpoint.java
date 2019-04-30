@@ -45,7 +45,7 @@ public class StatusEndpoint extends BaseCasActuatorEndpoint {
         if (healthEndpoint == null) {
             model.put("status", HttpStatus.OK.value());
             model.put("description", HttpStatus.OK.name());
-            LOGGER.warn("Health endpoint is undefined/disabled. No health indicators may be consulted to query for health data "
+            LOGGER.info("Health endpoint is undefined/disabled. No health indicators may be consulted to query for health data "
                 + "and the status results are always going to be [{}]", model);
         } else {
 

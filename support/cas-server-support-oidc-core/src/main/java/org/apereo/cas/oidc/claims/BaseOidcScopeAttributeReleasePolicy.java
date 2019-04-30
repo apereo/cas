@@ -10,6 +10,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.collect.Maps;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -37,6 +38,7 @@ import java.util.TreeMap;
 @Getter
 @EqualsAndHashCode(callSuper = true)
 @Setter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = -7302163334687300920L;

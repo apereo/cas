@@ -4,11 +4,13 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.NullPrincipal;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -25,6 +27,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,13 +45,12 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Getter
 public class InitialFlowSetupAction extends AbstractAction {
 
     private final List<ArgumentExtractor> argumentExtractors;
 
-    @Getter
     private final ServicesManager servicesManager;
-
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
     private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
     private final CasCookieBuilder warnCookieGenerator;
@@ -61,22 +63,71 @@ public class InitialFlowSetupAction extends AbstractAction {
     public Event doExecute(final RequestContext context) {
         configureCookieGenerators(context);
         configureWebflowContext(context);
-        configureWebflowContextForService(context);
+
+        configureWebflowForPostParameters(context);
+        configureWebflowForCustomFields(context);
+        configureWebflowForServices(context);
+
+        val ticketGrantingTicketId = configureWebflowForTicketGrantingTicket(context);
+        configureWebflowForSsoParticipation(context, ticketGrantingTicketId);
+        configureWebflowForInitialMandatoryService(context, ticketGrantingTicketId);
+
         return success();
     }
 
-    private void configureWebflowContextForService(final RequestContext context) {
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+    private void configureWebflowForInitialMandatoryService(final RequestContext context, final String ticketGrantingTicketId) {
+        val initialService = casProperties.getSso().getRequiredServicePattern();
+        if (StringUtils.isNotBlank(initialService)) {
+            val servicesToMatch = new ArrayList<Service>();
 
+            val initialServicePattern = RegexUtils.createPattern(initialService);
+            if (StringUtils.isNotBlank(ticketGrantingTicketId)) {
+                val ticket = ticketRegistrySupport.getTicketGrantingTicket(ticketGrantingTicketId);
+                if (ticket != null) {
+                    servicesToMatch.addAll(ticket.getServices().values());
+                }
+            } else {
+                val service = WebUtils.getService(context);
+                if (service != null) {
+                    servicesToMatch.add(service);
+                }
+            }
+
+            if (!servicesToMatch.isEmpty()) {
+                val matches = servicesToMatch
+                    .stream()
+                    .anyMatch(service -> RegexUtils.find(initialServicePattern, service.getId()));
+                if (!matches) {
+                    throw new NoSuchFlowExecutionException(context.getFlowExecutionContext().getKey(),
+                        new UnauthorizedServiceException("screen.service.initial.message", "Service is required"));
+                }
+            }
+        }
+    }
+
+    private String configureWebflowForTicketGrantingTicket(final RequestContext context) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        val ticketGrantingTicketId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
+        WebUtils.putTicketGrantingTicketInScopes(context, ticketGrantingTicketId);
+        return ticketGrantingTicketId;
+    }
+
+    private void configureWebflowForCustomFields(final RequestContext context) {
+        WebUtils.putCustomLoginFormFields(context, casProperties.getView().getCustomLoginFormFields());
+    }
+
+    private static void configureWebflowForPostParameters(final RequestContext context) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         if (request.getMethod().equalsIgnoreCase(HttpMethod.POST.name())) {
             WebUtils.putInitialHttpRequestPostParameters(context);
         }
-        WebUtils.putCustomLoginFormFields(context, casProperties.getView().getCustomLoginFormFields());
+    }
 
+    private void configureWebflowForServices(final RequestContext context) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val service = WebUtils.getService(this.argumentExtractors, context);
         if (service != null) {
             LOGGER.debug("Placing service in context scope: [{}]", service.getId());
-
             val selectedService = authenticationRequestServiceSelectionStrategies.resolveService(service);
             val registeredService = this.servicesManager.findServiceBy(selectedService);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
@@ -101,10 +152,9 @@ public class InitialFlowSetupAction extends AbstractAction {
                 new UnauthorizedServiceException("screen.service.required.message", "Service is required"));
         }
         WebUtils.putServiceIntoFlowScope(context, service);
+    }
 
-        val ticketGrantingTicketId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
-        WebUtils.putTicketGrantingTicketInScopes(context, ticketGrantingTicketId);
-        
+    private void configureWebflowForSsoParticipation(final RequestContext context, final String ticketGrantingTicketId) {
         val ssoParticipation = this.renewalStrategy.supports(context) && this.renewalStrategy.isParticipating(context);
         if (!ssoParticipation && StringUtils.isNotBlank(ticketGrantingTicketId)) {
             val auth = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicketId);

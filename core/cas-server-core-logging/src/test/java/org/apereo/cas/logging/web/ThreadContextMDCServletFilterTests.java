@@ -17,6 +17,9 @@ import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import javax.servlet.FilterConfig;
+import javax.servlet.http.HttpServletRequest;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -52,7 +55,6 @@ public class ThreadContextMDCServletFilterTests {
         request.setRemotePort(2000);
         request.setQueryString("queryString");
         request.setMethod("method");
-
         request.setParameter("p1", "v1");
         request.setAttribute("a1", "v1");
         request.addHeader("h1", "v1");
@@ -60,10 +62,11 @@ public class ThreadContextMDCServletFilterTests {
         val response = new MockHttpServletResponse();
         val filterChain = new MockFilterChain();
 
-        lenient().when(cookieRetrievingCookieGenerator.retrieveCookieValue(request)).thenReturn("TICKET");
+        lenient().when(cookieRetrievingCookieGenerator.retrieveCookieValue(any(HttpServletRequest.class))).thenReturn("TICKET");
         lenient().when(ticketSupport.getAuthenticatedPrincipalFrom(anyString())).thenReturn(CoreAuthenticationTestUtils.getPrincipal());
 
         try {
+            filter.init(mock(FilterConfig.class));
             filter.doFilter(request, response, filterChain);
             assertEquals(HttpStatus.OK.value(), response.getStatus());
         } catch (final Exception e) {

@@ -38,7 +38,7 @@ public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
             LOGGER.trace("Extractor did not generate service.");
         } else {
             LOGGER.trace("Extractor generated service type [{}] for: [{}]",
-                    service.getClass().getName(), DigestUtils.abbreviate(service.getId()));
+                service.getClass().getName(), DigestUtils.abbreviate(service.getId()));
         }
         return service;
     }

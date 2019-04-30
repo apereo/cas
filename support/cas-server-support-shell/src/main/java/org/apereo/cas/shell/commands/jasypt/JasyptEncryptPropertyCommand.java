@@ -59,10 +59,5 @@ public class JasyptEncryptPropertyCommand {
         cipher.setKeyObtentionIterations(iterations);
         val encrypted = cipher.encryptValue(value);
         LOGGER.info("==== Encrypted Value ====\n{}", encrypted);
-        try {
-            cipher.decryptValue(encrypted);
-        } catch (final Exception e) {
-            LOGGER.error("Decryption failed for value: {}", encrypted, e);
-        }
     }
 }

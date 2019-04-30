@@ -122,6 +122,14 @@ public interface OAuth20Constants {
      * The refresh token.
      */
     String REFRESH_TOKEN = "refresh_token";
+    /**
+     * The client assertion type.
+     */
+    String CLIENT_ASSERTION_TYPE = "client_assertion_type";
+    /**
+     * The client assertion jwt.
+     */
+    String CLIENT_ASSERTION ="client_assertion";
 
     /**
      * The missing access token.
@@ -257,6 +265,11 @@ public interface OAuth20Constants {
      * The bearer type.
      */
     String TOKEN_TYPE_BEARER = "bearer";
+
+    /**
+     * Client assertion type as jwt bearer.
+     */
+    String CLIENT_ASSERTION_TYPE_JWT_BEARER = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
 
     /**
      * Registration endpoint URL.

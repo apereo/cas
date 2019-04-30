@@ -1,10 +1,12 @@
 package org.apereo.cas.oidc.dynareg;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,9 +17,16 @@ import java.util.List;
  */
 @Getter
 @Setter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class OidcClientRegistrationResponse implements Serializable {
 
     private static final long serialVersionUID = 1436206039117219598L;
+
+    @JsonProperty("jwks")
+    private String jwks;
+
+    @JsonProperty("jwks_uri")
+    private String jwksUri;
 
     @JsonProperty("client_id")
     private String clientId;
@@ -35,17 +44,35 @@ public class OidcClientRegistrationResponse implements Serializable {
     private String subjectType;
 
     @JsonProperty("grant_types")
-    private List<String> grantTypes;
+    private List<String> grantTypes = new ArrayList<>();
+
+    @JsonProperty("logo_uri")
+    private String logo;
+
+    @JsonProperty("policy_uri")
+    private String policyUri;
+
+    @JsonProperty("tos_uri")
+    private String termsOfUseUri;
 
     @JsonProperty("response_types")
-    private List<String> responseTypes;
+    private List<String> responseTypes = new ArrayList<>();
 
     @JsonProperty("redirect_uris")
-    private List<String> redirectUris;
+    private List<String> redirectUris = new ArrayList<>();
+
+    @JsonProperty("contacts")
+    private List<String> contacts = new ArrayList<>();
 
     @JsonProperty("request_object_signing_alg")
     private String requestObjectSigningAlg;
 
     @JsonProperty("token_endpoint_auth_method")
     private String tokenEndpointAuthMethod;
+
+    @JsonProperty("registration_access_token")
+    private String registrationAccessToken;
+
+    @JsonProperty("registration_client_uri")
+    private String registrationClientUri;
 }

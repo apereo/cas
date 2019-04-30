@@ -78,6 +78,13 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
     }
 
     @Override
+    public AccessToken create(final Service service, final Authentication authentication, final Collection<String> scopes, final String clientId) {
+        val accessTokenId = this.accessTokenIdGenerator.getNewTicketId(AccessToken.PREFIX);
+        return new AccessTokenImpl(accessTokenId, service, authentication,
+            this.expirationPolicy, null, scopes, clientId);
+    }
+
+    @Override
     public TicketFactory get(final Class<? extends Ticket> clazz) {
         return this;
     }
