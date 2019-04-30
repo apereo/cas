@@ -87,7 +87,7 @@ public class SamlProfileSingleLogoutMessageCreator extends AbstractSaml20ObjectB
     @Override
     @SneakyThrows
     public SingleLogoutMessage create(final SingleLogoutRequest request) {
-        val id = '_' + String.valueOf(RandomUtils.getNativeInstance().nextLong());
+        val id = '_' + String.valueOf(RandomUtils.nextLong());
         val issueInstant = DateTime.now(DateTimeZone.UTC).plusSeconds(samlIdPProperties.getResponse().getSkewAllowance());
 
         val encoder = new SAML2StringNameIDEncoder();

@@ -33,9 +33,6 @@ public class AccessTokenImpl extends OAuthCodeImpl implements AccessToken {
     @Column
     private String idToken;
 
-    @Column
-    private String clientId;
-
     public AccessTokenImpl(final String id, final Service service,
                            final Authentication authentication,
                            final ExpirationPolicy expirationPolicy,
@@ -45,8 +42,9 @@ public class AccessTokenImpl extends OAuthCodeImpl implements AccessToken {
                            final String codeChallengeMethod,
                            final String clientId) {
         super(id, service, authentication, expirationPolicy,
-            ticketGrantingTicket, scopes, codeChallenge, codeChallengeMethod);
-        this.clientId = clientId;
+            ticketGrantingTicket, scopes,
+            codeChallenge, codeChallengeMethod,
+            clientId);
     }
 
     public AccessTokenImpl(final String id, final Service service,

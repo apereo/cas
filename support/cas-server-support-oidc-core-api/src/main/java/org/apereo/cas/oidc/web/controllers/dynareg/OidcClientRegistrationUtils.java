@@ -7,15 +7,18 @@ import org.apereo.cas.services.RegisteredServiceContact;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
 
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
+import org.jose4j.jwk.JsonWebKeySet;
 
 import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -42,7 +45,7 @@ public class OidcClientRegistrationUtils {
         clientResponse.setClientId(registeredService.getClientId());
         clientResponse.setClientSecret(registeredService.getClientSecret());
         clientResponse.setSubjectType(registeredService.getSubjectType());
-        clientResponse.setTokenEndpointAuthMethod(registeredService.getJwksAuthenticationMethod());
+        clientResponse.setTokenEndpointAuthMethod(registeredService.getTokenEndpointAuthenticationMethod());
         clientResponse.setClientName(registeredService.getName());
         clientResponse.setRedirectUris(CollectionUtils.wrap(registeredService.getServiceId()));
         clientResponse.setContacts(
@@ -62,6 +65,13 @@ public class OidcClientRegistrationUtils {
                 .map(type -> type.getType().toLowerCase())
                 .collect(Collectors.toList()));
 
+        val validator = new SimpleUrlValidatorFactoryBean(false).getObject();
+        if (Objects.requireNonNull(validator).isValid(registeredService.getJwks())) {
+            clientResponse.setJwksUri(registeredService.getJwks());
+        } else {
+            val jwks = new JsonWebKeySet(registeredService.getJwks());
+            clientResponse.setJwks(jwks.toJson());
+        }
         clientResponse.setLogo(registeredService.getLogo());
         clientResponse.setPolicyUri(registeredService.getInformationUrl());
         clientResponse.setTermsOfUseUri(registeredService.getPrivacyUrl());

@@ -22,7 +22,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
-import org.springframework.core.Ordered;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -78,6 +77,10 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
             } else {
                 registeredService.setName(RandomStringUtils.randomAlphabetic(GENERATED_CLIENT_NAME_LENGTH));
             }
+
+            val uri = String.join("|", registrationRequest.getRedirectUris());
+            registeredService.setServiceId(uri);
+
             registeredService.setSectorIdentifierUri(registrationRequest.getSectorIdentifierUri());
             registeredService.setSubjectType(registrationRequest.getSubjectType());
             if (StringUtils.equalsIgnoreCase(OidcSubjectTypes.PAIRWISE.getType(), registeredService.getSubjectType())) {
@@ -86,14 +89,17 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
 
             if (StringUtils.isNotBlank(registrationRequest.getJwksUri())) {
                 registeredService.setJwks(registrationRequest.getJwksUri());
-                registeredService.setSignIdToken(true);
+            } else {
+                val jwks = registrationRequest.getJwks();
+                registeredService.setJwks(jwks.toJson());
             }
-            val uri = String.join("|", registrationRequest.getRedirectUris());
-            registeredService.setServiceId(uri);
+            if (StringUtils.isNotBlank(registrationRequest.getTokenEndpointAuthMethod())) {
+                registeredService.setTokenEndpointAuthenticationMethod(registrationRequest.getTokenEndpointAuthMethod());
+            }
 
             registeredService.setClientId(getOAuthConfigurationContext().getClientIdGenerator().getNewString());
             registeredService.setClientSecret(getOAuthConfigurationContext().getClientSecretGenerator().getNewString());
-            registeredService.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
+            registeredService.setEvaluationOrder(0);
             registeredService.setLogoutUrl(
                 org.springframework.util.StringUtils.collectionToCommaDelimitedString(registrationRequest.getPostLogoutRedirectUris()));
 

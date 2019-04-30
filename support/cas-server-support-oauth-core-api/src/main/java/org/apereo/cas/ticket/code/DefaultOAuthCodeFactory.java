@@ -39,12 +39,14 @@ public class DefaultOAuthCodeFactory implements OAuthCodeFactory {
 
     @Override
     public OAuthCode create(final Service service, final Authentication authentication,
-                            final TicketGrantingTicket ticketGrantingTicket, final Collection<String> scopes,
-                            final String codeChallenge, final String codeChallengeMethod) {
+                            final TicketGrantingTicket ticketGrantingTicket,
+                            final Collection<String> scopes,
+                            final String codeChallenge, final String codeChallengeMethod,
+                            final String clientId) {
         val codeId = this.oAuthCodeIdGenerator.getNewTicketId(OAuthCode.PREFIX);
         return new OAuthCodeImpl(codeId, service, authentication,
             this.expirationPolicy, ticketGrantingTicket, scopes,
-            codeChallenge, codeChallengeMethod);
+            codeChallenge, codeChallengeMethod, clientId);
     }
 
     @Override
