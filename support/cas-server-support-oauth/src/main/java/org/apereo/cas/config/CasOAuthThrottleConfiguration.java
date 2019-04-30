@@ -9,6 +9,8 @@ import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlanConfigurer;
 
 import lombok.val;
+import org.pac4j.core.client.Client;
+import org.pac4j.core.client.DirectClient;
 import org.pac4j.core.config.Config;
 import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.ObjectProvider;
@@ -23,6 +25,8 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Collection;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static org.apereo.cas.support.oauth.OAuth20Constants.BASE_OAUTH20_URL;
 
@@ -53,11 +57,13 @@ public class CasOAuthThrottleConfiguration implements AuthenticationThrottlingEx
     @ConditionalOnMissingBean(name = "requiresAuthenticationAccessTokenInterceptor")
     @Bean
     public SecurityInterceptor requiresAuthenticationAccessTokenInterceptor() {
-        val clients = String.join(",", Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN,
-            Authenticators.CAS_OAUTH_CLIENT_USER_FORM,
-            Authenticators.CAS_OAUTH_CLIENT_DIRECT_FORM,
-            Authenticators.CAS_OAUTH_CLIENT_ACCESS_TOKEN_AUTHN,
-            Authenticators.CAS_OAUTH_CLIENT_PROOF_KEY_CODE_EXCHANGE_AUTHN);
+        val secConfig = oauthSecConfig.getIfAvailable();
+        val clients = Objects.requireNonNull(secConfig).getClients()
+            .findAllClients()
+            .stream()
+            .filter(client -> client instanceof DirectClient)
+            .map(Client::getName)
+            .collect(Collectors.joining(","));
         return new SecurityInterceptor(oauthSecConfig.getIfAvailable(), clients);
     }
 
@@ -84,25 +90,26 @@ public class CasOAuthThrottleConfiguration implements AuthenticationThrottlingEx
 
         @Override
         public void addInterceptors(final InterceptorRegistry registry) {
-            authenticationThrottlingExecutionPlan.getIfAvailable().getAuthenticationThrottleInterceptors().forEach(handler -> {
-                val baseUrl = BASE_OAUTH20_URL.concat("/");
-                registry.addInterceptor(handler)
-                    .addPathPatterns(baseUrl.concat(OAuth20Constants.UMA_AUTHORIZATION_REQUEST_URL).concat("*"))
-                    .addPathPatterns(baseUrl.concat(OAuth20Constants.UMA_CLAIMS_COLLECTION_URL).concat("*"))
-                    .addPathPatterns(baseUrl.concat(OAuth20Constants.UMA_JWKS_URL).concat("*"))
-                    .addPathPatterns(baseUrl.concat(OAuth20Constants.UMA_PERMISSION_URL).concat("*"))
-                    .addPathPatterns(baseUrl.concat(OAuth20Constants.UMA_POLICY_URL).concat("*"))
-                    .addPathPatterns(baseUrl.concat(OAuth20Constants.UMA_REGISTRATION_URL).concat("*"))
-                    .addPathPatterns(baseUrl.concat(OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL).concat("*"))
+            Objects.requireNonNull(authenticationThrottlingExecutionPlan.getIfAvailable()).getAuthenticationThrottleInterceptors()
+                .forEach(handler -> {
+                    val baseUrl = BASE_OAUTH20_URL.concat("/");
+                    registry.addInterceptor(handler)
+                        .addPathPatterns(baseUrl.concat(OAuth20Constants.UMA_AUTHORIZATION_REQUEST_URL).concat("*"))
+                        .addPathPatterns(baseUrl.concat(OAuth20Constants.UMA_CLAIMS_COLLECTION_URL).concat("*"))
+                        .addPathPatterns(baseUrl.concat(OAuth20Constants.UMA_JWKS_URL).concat("*"))
+                        .addPathPatterns(baseUrl.concat(OAuth20Constants.UMA_PERMISSION_URL).concat("*"))
+                        .addPathPatterns(baseUrl.concat(OAuth20Constants.UMA_POLICY_URL).concat("*"))
+                        .addPathPatterns(baseUrl.concat(OAuth20Constants.UMA_REGISTRATION_URL).concat("*"))
+                        .addPathPatterns(baseUrl.concat(OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL).concat("*"))
 
-                    .addPathPatterns(baseUrl.concat(OAuth20Constants.AUTHORIZE_URL).concat("*"))
-                    .addPathPatterns(baseUrl.concat(OAuth20Constants.ACCESS_TOKEN_URL).concat("*"))
-                    .addPathPatterns(baseUrl.concat(OAuth20Constants.TOKEN_URL).concat("*"))
-                    .addPathPatterns(baseUrl.concat(OAuth20Constants.INTROSPECTION_URL).concat("*"))
-                    .addPathPatterns(baseUrl.concat(OAuth20Constants.CALLBACK_AUTHORIZE_URL).concat("*"))
-                    .addPathPatterns(baseUrl.concat(OAuth20Constants.DEVICE_AUTHZ_URL).concat("*"))
-                    .addPathPatterns(baseUrl.concat(OAuth20Constants.PROFILE_URL).concat("*"));
-            });
+                        .addPathPatterns(baseUrl.concat(OAuth20Constants.AUTHORIZE_URL).concat("*"))
+                        .addPathPatterns(baseUrl.concat(OAuth20Constants.ACCESS_TOKEN_URL).concat("*"))
+                        .addPathPatterns(baseUrl.concat(OAuth20Constants.TOKEN_URL).concat("*"))
+                        .addPathPatterns(baseUrl.concat(OAuth20Constants.INTROSPECTION_URL).concat("*"))
+                        .addPathPatterns(baseUrl.concat(OAuth20Constants.CALLBACK_AUTHORIZE_URL).concat("*"))
+                        .addPathPatterns(baseUrl.concat(OAuth20Constants.DEVICE_AUTHZ_URL).concat("*"))
+                        .addPathPatterns(baseUrl.concat(OAuth20Constants.PROFILE_URL).concat("*"));
+                });
         }
     }
 

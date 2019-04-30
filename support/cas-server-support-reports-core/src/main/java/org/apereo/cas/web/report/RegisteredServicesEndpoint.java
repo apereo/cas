@@ -5,7 +5,9 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
+import lombok.val;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
@@ -58,5 +60,20 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
             return this.servicesManager.findServiceBy(Long.parseLong(id));
         }
         return this.servicesManager.findServiceBy(id);
+    }
+
+    /**
+     * Delete registered service.
+     *
+     * @param id the id
+     * @return the registered service
+     */
+    @DeleteOperation(produces = {ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
+    public RegisteredService deleteService(@Selector final String id) {
+        if (NumberUtils.isDigits(id)) {
+            return this.servicesManager.delete(Long.parseLong(id));
+        }
+        val svc = this.servicesManager.findServiceBy(id);
+        return this.servicesManager.delete(svc);
     }
 }

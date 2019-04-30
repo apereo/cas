@@ -115,7 +115,7 @@ public class OidcProperties implements Serializable {
     /**
      * List of client authentication methods supported by token endpoint.
      */
-    private List<String> tokenEndpointAuthMethodsSupported = Stream.of("client_secret_basic", "client_secret_post").collect(Collectors.toList());
+    private List<String> tokenEndpointAuthMethodsSupported = Stream.of("client_secret_basic", "client_secret_post", "private_key_jwt").collect(Collectors.toList());
 
     /**
      * OIDC webfinger protocol settings.

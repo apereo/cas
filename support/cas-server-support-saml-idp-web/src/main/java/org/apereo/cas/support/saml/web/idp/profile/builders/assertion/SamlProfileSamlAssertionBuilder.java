@@ -87,7 +87,7 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
             statements.add(attrStatement);
         }
 
-        val id = '_' + String.valueOf(RandomUtils.getNativeInstance().nextLong());
+        val id = '_' + String.valueOf(RandomUtils.nextLong());
 
         val issuerId = StringUtils.isBlank(service.getIssuerEntityId())
             ? casProperties.getAuthn().getSamlIdp().getEntityId()
