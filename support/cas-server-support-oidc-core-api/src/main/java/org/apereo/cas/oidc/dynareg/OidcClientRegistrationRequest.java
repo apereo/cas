@@ -1,10 +1,14 @@
 package org.apereo.cas.oidc.dynareg;
 
+import org.apereo.cas.oidc.jwks.JsonWebKeySetJacksonSerializer;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.jose4j.jwk.JsonWebKeySet;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -32,7 +36,7 @@ public class OidcClientRegistrationRequest implements Serializable {
 
     @JsonProperty("registration_client_uri")
     private String registrationClientUri;
-    
+
     @JsonProperty("id_token_signed_response_alg")
     private String idTokenSignedResponseAlg;
 
@@ -71,6 +75,10 @@ public class OidcClientRegistrationRequest implements Serializable {
 
     @JsonProperty("jwks_uri")
     private String jwksUri;
+
+    @JsonProperty("jwks")
+    @JsonDeserialize(using = JsonWebKeySetJacksonSerializer.class)
+    private JsonWebKeySet jwks;
 
     @JsonProperty("sector_identifier_uri")
     private String sectorIdentifierUri;

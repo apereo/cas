@@ -22,8 +22,11 @@ public interface RefreshTokenFactory extends TicketFactory {
      * @param authentication       the authentication
      * @param ticketGrantingTicket the ticket granting ticket
      * @param scopes               the scopes
+     * @param clientId             the client id
      * @return the refresh token
      */
     RefreshToken create(Service service, Authentication authentication,
-                        TicketGrantingTicket ticketGrantingTicket, Collection<String> scopes);
+                        TicketGrantingTicket ticketGrantingTicket,
+                        Collection<String> scopes,
+                        String clientId);
 }

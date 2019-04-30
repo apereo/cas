@@ -84,7 +84,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
         var id = request != null ? CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET) : StringUtils.EMPTY;
         if (StringUtils.isBlank(id)) {
             LOGGER.warn("Unable to locate service ticket as the session index; Generating random identifier instead...");
-            id = '_' + String.valueOf(RandomUtils.getNativeInstance().nextLong());
+            id = '_' + String.valueOf(RandomUtils.nextLong());
         }
         val statement = newAuthnStatement(authenticationMethod, DateTimeUtils.zonedDateTimeOf(assertion.getAuthenticationDate()), id);
         if (assertion.getValidUntilDate() != null) {

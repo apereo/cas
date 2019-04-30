@@ -22,6 +22,12 @@ public class OidcClientRegistrationResponse implements Serializable {
 
     private static final long serialVersionUID = 1436206039117219598L;
 
+    @JsonProperty("jwks")
+    private String jwks;
+
+    @JsonProperty("jwks_uri")
+    private String jwksUri;
+
     @JsonProperty("client_id")
     private String clientId;
 

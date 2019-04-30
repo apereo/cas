@@ -18,13 +18,22 @@ public interface OAuthCode extends OAuthToken {
 
     /**
      * The PKCE code challenge.
+     *
      * @return code challenge
      */
     String getCodeChallenge();
 
     /**
      * The PKCE code challenge method.
+     *
      * @return code challenge method (i.e. plain, S256, etc)
      */
     String getCodeChallengeMethod();
+
+    /**
+     * Gets client id.
+     *
+     * @return the client id
+     */
+    String getClientId();
 }

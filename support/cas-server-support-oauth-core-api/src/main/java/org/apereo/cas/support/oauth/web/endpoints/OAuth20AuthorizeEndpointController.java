@@ -189,6 +189,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
             .codeChallenge(codeChallenge)
             .codeChallengeMethod(codeChallengeMethod)
             .scopes(scopes)
+            .clientId(clientId)
             .build();
 
         LOGGER.debug("Building authorization response for grant type [{}] with scopes [{}] for client id [{}]",

@@ -55,4 +55,6 @@ public class AccessTokenRequestDataHolder {
     private final String codeChallengeMethod = "plain";
 
     private final String codeVerifier;
+
+    private final String clientId;
 }

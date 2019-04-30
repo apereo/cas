@@ -16,6 +16,7 @@ import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.authn.OidcAccessTokenAuthenticator;
 import org.apereo.cas.oidc.authn.OidcClientConfigurationAccessTokenAuthenticator;
+import org.apereo.cas.oidc.authn.OidcPrivateKeyJwtAuthenticator;
 import org.apereo.cas.oidc.claims.BaseOidcScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.mapping.DefaultOidcAttributeToScopeClaimMapper;
@@ -63,6 +64,7 @@ import org.apereo.cas.oidc.web.flow.OidcWebflowConfigurer;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.authenticator.OAuthAuthenticationClientProvider;
@@ -113,6 +115,7 @@ import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.credentials.extractor.BearerAuthExtractor;
+import org.pac4j.http.client.direct.DirectFormClient;
 import org.pac4j.http.client.direct.HeaderClient;
 import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.FactoryBean;
@@ -136,6 +139,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -340,7 +344,7 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
 
     @Bean
     public HandlerInterceptorAdapter requiresAuthenticationAuthorizeInterceptor() {
-        val name = oauthSecConfig.getIfAvailable().getClients().findClient(CasClient.class).getName();
+        val name = Objects.requireNonNull(oauthSecConfig.getIfAvailable()).getClients().findClient(CasClient.class).getName();
         return new OidcSecurityInterceptor(oauthSecConfig.getIfAvailable(), name, oidcAuthorizationRequestSupport(),
             oauthDistributedSessionStore.getIfAvailable());
     }
@@ -514,7 +518,7 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
             .build();
 
         val r = new DefaultMultifactorAuthenticationProviderEventResolver(context, oidcMultifactorAuthenticationTrigger());
-        this.initialAuthenticationAttemptWebflowEventResolver.getIfAvailable().addDelegate(r);
+        Objects.requireNonNull(this.initialAuthenticationAttemptWebflowEventResolver.getIfAvailable()).addDelegate(r);
         return r;
     }
 
@@ -565,7 +569,7 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
 
     @Bean
     public CacheLoader<OidcRegisteredService, Optional<RsaJsonWebKey>> oidcServiceJsonWebKeystoreCacheLoader() {
-        return new OidcServiceJsonWebKeystoreCacheLoader(resourceLoader);
+        return new OidcServiceJsonWebKeystoreCacheLoader();
     }
 
     @Bean
@@ -644,6 +648,22 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
             accessTokenClient.setName(OidcConstants.CAS_OAUTH_CLIENT_CONFIG_ACCESS_TOKEN_AUTHN);
             accessTokenClient.init();
             return accessTokenClient;
+        };
+    }
+
+    @Bean
+    public OAuthAuthenticationClientProvider oidcPrivateKeyJwtClientProvider() {
+        return () -> {
+            val privateKeyJwtClient = new DirectFormClient(new OidcPrivateKeyJwtAuthenticator(
+                servicesManager.getIfAvailable(),
+                registeredServiceAccessStrategyEnforcer.getIfAvailable(),
+                ticketRegistry.getIfAvailable(),
+                webApplicationServiceFactory.getIfAvailable()));
+            privateKeyJwtClient.setName(OidcConstants.CAS_OAUTH_CLIENT_PRIVATE_KEY_JWT_AUTHN);
+            privateKeyJwtClient.setUsernameParameter(OAuth20Constants.CLIENT_ASSERTION_TYPE);
+            privateKeyJwtClient.setPasswordParameter(OAuth20Constants.CLIENT_ASSERTION);
+            privateKeyJwtClient.init();
+            return privateKeyJwtClient;
         };
     }
 

@@ -14,6 +14,7 @@ import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
 
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -45,7 +46,8 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
     @SneakyThrows
     public String encode(final OAuthRegisteredService service, final JwtClaims claims) {
         val svc = (OidcRegisteredService) service;
-        LOGGER.debug("Attempting to produce token generated for service [{}]", svc);
+        LOGGER.trace("Attempting to produce token generated for service [{}]", svc);
+
         val jws = createJsonWebSignature(claims);
         LOGGER.debug("Generated claims to put into token are [{}]", claims.toJson());
 
@@ -90,7 +92,7 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
     @Override
     protected PublicJsonWebKey getJsonWebKeySigningKey() {
         val jwks = defaultJsonWebKeystoreCache.get(getIssuer());
-        if (jwks.isEmpty()) {
+        if (Objects.requireNonNull(jwks).isEmpty()) {
             throw new IllegalArgumentException("No signing key could be found for issuer " + getIssuer());
         }
         return jwks.get();
@@ -124,7 +126,7 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
     protected JsonWebKey getJsonWebKeyForEncryption(final OidcRegisteredService svc) {
         LOGGER.debug("Service [{}] is set to encrypt tokens", svc);
         val jwks = this.serviceJsonWebKeystoreCache.get(svc);
-        if (jwks.isEmpty()) {
+        if (Objects.requireNonNull(jwks).isEmpty()) {
             throw new IllegalArgumentException("Service " + svc.getServiceId()
                 + " with client id " + svc.getClientId()
                 + " is configured to encrypt tokens, yet no JSON web key is available");

@@ -1,6 +1,7 @@
 package org.apereo.cas.web;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.DomainValidator;
 import org.apache.commons.validator.routines.UrlValidator;
 
@@ -32,11 +33,11 @@ public class SimpleUrlValidator implements org.apereo.cas.web.UrlValidator {
 
     @Override
     public boolean isValid(final String value) {
-        return this.urlValidator.isValid(value);
+        return StringUtils.isNotBlank(value) && this.urlValidator.isValid(value);
     }
 
     @Override
     public boolean isValidDomain(final String value) {
-        return this.domainValidator.isValid(value);
+        return StringUtils.isNotBlank(value) && this.domainValidator.isValid(value);
     }
 }

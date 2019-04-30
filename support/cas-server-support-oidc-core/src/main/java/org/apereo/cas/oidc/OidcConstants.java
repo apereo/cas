@@ -120,6 +120,10 @@ public interface OidcConstants {
      * Authenticator used to verify access to client configuration endpoint.
      */
     String CAS_OAUTH_CLIENT_CONFIG_ACCESS_TOKEN_AUTHN = "ClientRegistrationClient";
+    /**
+     * Authenticator used to verify access using private key jwts.
+     */
+    String CAS_OAUTH_CLIENT_PRIVATE_KEY_JWT_AUTHN = "ClientPrivateKeyJwtClient";
 
     /**
      * Dynamic client registration mode.

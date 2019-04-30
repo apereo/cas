@@ -40,6 +40,15 @@ public class RandomUtils {
     }
 
     /**
+     * Next long between 0 and long's maximum value.
+     *
+     * @return the long
+     */
+    public static long nextLong() {
+        return org.apache.commons.lang3.RandomUtils.nextLong(0, Long.MAX_VALUE);
+    }
+
+    /**
      * Generate secure random id string.
      *
      * @return the string

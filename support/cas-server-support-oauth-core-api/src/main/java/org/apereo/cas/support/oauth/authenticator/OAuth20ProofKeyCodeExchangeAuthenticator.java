@@ -29,8 +29,10 @@ import java.nio.charset.StandardCharsets;
 public class OAuth20ProofKeyCodeExchangeAuthenticator extends OAuth20ClientIdClientSecretAuthenticator {
     private final TicketRegistry ticketRegistry;
 
-    public OAuth20ProofKeyCodeExchangeAuthenticator(final ServicesManager servicesManager, final ServiceFactory webApplicationServiceFactory,
-                                                    final AuditableExecution registeredServiceAccessStrategyEnforcer, final TicketRegistry ticketRegistry) {
+    public OAuth20ProofKeyCodeExchangeAuthenticator(final ServicesManager servicesManager,
+                                                    final ServiceFactory webApplicationServiceFactory,
+                                                    final AuditableExecution registeredServiceAccessStrategyEnforcer,
+                                                    final TicketRegistry ticketRegistry) {
         super(servicesManager, webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer);
         this.ticketRegistry = ticketRegistry;
     }

@@ -265,7 +265,10 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
     protected RefreshToken generateRefreshToken(final AccessTokenRequestDataHolder responseHolder) {
         LOGGER.debug("Creating refresh token for [{}]", responseHolder.getService());
         val refreshToken = this.refreshTokenFactory.create(responseHolder.getService(),
-            responseHolder.getAuthentication(), responseHolder.getTicketGrantingTicket(), responseHolder.getScopes());
+            responseHolder.getAuthentication(),
+            responseHolder.getTicketGrantingTicket(),
+            responseHolder.getScopes(),
+            responseHolder.getClientId());
         LOGGER.debug("Adding refresh token [{}] to the registry", refreshToken);
         addTicketToRegistry(refreshToken, responseHolder.getTicketGrantingTicket());
         return refreshToken;
