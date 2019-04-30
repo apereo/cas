@@ -173,7 +173,12 @@ public interface CasWebflowConstants {
      * The view state 'error'.
      */
     String VIEW_ID_ERROR = "error";
-
+    
+    /**
+     * The transition state 'resume'.
+     */
+    String TRANSITION_ID_RESUME = "resume";
+    
     /**
      * The view state 'showAuthenticationWarningMessages'.
      */
