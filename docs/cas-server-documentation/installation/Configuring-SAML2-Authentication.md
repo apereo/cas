@@ -142,6 +142,7 @@ The following fields are available for SAML services:
 | `requireSignedRoot`                  | Whether incoming metadata's root element is required to be signed. Default is `true`.
 | `signAssertions`                     | Whether assertions should be signed. Default is `false`.
 | `signResponses`                      | Whether responses should be signed. Default is `true`.
+| `encryptionOptional`                 | Encrypt whenever possible (i.e a compatible key is found in the peer's metadata) or skip encryption otherwise. Default is `false`.
 | `encryptAssertions`                  | Whether assertions should be encrypted. Default is `false`.
 | `encryptAttributes`                  | Whether assertion attributes should be encrypted. Default is `false`.
 | `encryptableAttributes`              | Set of attributes nominated for encryption, disqualifying others absent in this collection. Default (i.e. `*`) is to encrypt all once `encryptAttributes` is true.
@@ -173,6 +174,11 @@ The following fields are available for SAML services:
 | `signingSignatureBlackListedAlgorithms` | Collection of signing signature blacklisted algorithms, if any, to override the global defaults.
 | `signingSignatureWhiteListedAlgorithms` | Collection of signing signature whitelisted algorithms, if any, to override the global defaults.
 | `signingSignatureCanonicalizationAlgorithm` | The signing signature canonicalization algorithm, if any, to override the global defaults.
+| `encryptionDataAlgorithms` | Collection of encryption data algorithms, if any, to override the global defaults.
+| `encryptionKeyAlgorithms` | Collection of encryption key transport algorithms, if any, to override the global defaults.
+| `encryptionBlackListedAlgorithms` | Collection of encryption blacklisted algorithms, if any, to override the global defaults.
+| `encryptionWhiteListedAlgorithms` | Collection of encryption whitelisted algorithms, if any, to override the global defaults.
+| `whiteListBlackListPrecedence` | Preference value indicating which should take precedence when both whitelist and blacklist are non-empty. Accepted values are `WHITELIST` or `BLACKLIST`. Default is `WHITELIST`. 
 
 <div class="alert alert-info"><strong>Keep What You Need!</strong><p>You are encouraged to only keep and maintain properties and settings needed for a 
 particular integration. It is UNNECESSARY to grab a copy of all service fields and try to configure them yet again based on their default. While 
@@ -273,7 +279,64 @@ In almost all cases, you should leave the defaults in place.
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#saml-algorithms--security).
 
+#### Encryption
+
+The following examples demonstrate encryption security configuration overrides per service provider.
+
+#### CBC
+
+The following example demonstrates how to configure CAS to use `CBC` encryption for a particular service provider:
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "sp.example.org",
+  "name": "SAML",
+  "id": 1,
+  "metadataLocation": "/path/to/sp-metadata.xml",
+  "encryptionDataAlgorithms": [
+    "java.util.ArrayList",
+    [
+      "http://www.w3.org/2001/04/xmlenc#aes128-cbc"
+    ]
+  ],
+  "encryptionKeyAlgorithms": [
+    "java.util.ArrayList",
+    [
+      "http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p"
+    ]
+  ]
+}
+```
+
+#### GCM
+
+The following example demonstrates how to configure CAS to use `GCM` encryption for a particular service provider:
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "sp.example.org",
+  "name": "SAML",
+  "id": 1,
+  "metadataLocation": "/path/to/sp-metadata.xml",
+  "encryptionDataAlgorithms": [
+    "java.util.ArrayList",
+    [
+      "http://www.w3.org/2009/xmlenc11#aes128-gcm"
+    ]
+  ],
+  "encryptionKeyAlgorithms": [
+    "java.util.ArrayList",
+    [
+      "http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p"
+    ]
+  ]
+}
+
 #### Signing
+
+The following examples demonstrate signing security configuration overrides per service provider.
 
 ##### SHA-1
 
