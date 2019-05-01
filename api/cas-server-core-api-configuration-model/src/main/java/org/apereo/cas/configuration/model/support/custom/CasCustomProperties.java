@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.custom;
 
+import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,6 +17,7 @@ import java.util.Map;
  */
 @Getter
 @Setter
+@RequiresModule(name = "cas-server-core-web", automated = true)
 public class CasCustomProperties implements Serializable {
     private static final long serialVersionUID = 5354004353286722083L;
 

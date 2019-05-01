@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.email;
 
 import org.apereo.cas.configuration.support.RequiredProperty;
+import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -22,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 @Getter
 @Setter
 @Slf4j
+@RequiresModule(name = "cas-server-core-util", automated = true)
 public class EmailProperties implements Serializable {
     private static final long serialVersionUID = 7367120636536230761L;
 
