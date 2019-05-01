@@ -1,9 +1,12 @@
 package org.apereo.cas.configuration.model.support.saml.idp;
 
+import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,6 +15,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@RequiresModule(name = "cas-server-support-saml-idp")
 @Getter
 @Setter
 public class SamlIdPAlgorithmsProperties implements Serializable {
@@ -21,42 +25,42 @@ public class SamlIdPAlgorithmsProperties implements Serializable {
     /**
      * The Override data encryption algorithms.
      */
-    private List overrideDataEncryptionAlgorithms;
+    private List<String> overrideDataEncryptionAlgorithms = new ArrayList<>();
 
     /**
      * The Override key encryption algorithms.
      */
-    private List overrideKeyEncryptionAlgorithms;
+    private List<String> overrideKeyEncryptionAlgorithms = new ArrayList<>();
 
     /**
      * The Override black listed encryption algorithms.
      */
-    private List overrideBlackListedEncryptionAlgorithms;
+    private List<String> overrideBlackListedEncryptionAlgorithms = new ArrayList<>();
 
     /**
      * The Override white listed algorithms.
      */
-    private List overrideWhiteListedAlgorithms;
+    private List<String> overrideWhiteListedAlgorithms = new ArrayList<>();
 
     /**
      * The Override signature reference digest methods.
      */
-    private List overrideSignatureReferenceDigestMethods;
+    private List<String> overrideSignatureReferenceDigestMethods = new ArrayList<>();
 
     /**
      * The Override signature algorithms.
      */
-    private List overrideSignatureAlgorithms;
+    private List<String> overrideSignatureAlgorithms = new ArrayList<>();
 
     /**
      * The Override black listed signature signing algorithms.
      */
-    private List overrideBlackListedSignatureSigningAlgorithms;
+    private List<String> overrideBlackListedSignatureSigningAlgorithms = new ArrayList<>();
 
     /**
      * The Override white listed signature signing algorithms.
      */
-    private List overrideWhiteListedSignatureSigningAlgorithms;
+    private List<String> overrideWhiteListedSignatureSigningAlgorithms = new ArrayList<>();
 
     /**
      * The Override signature canonicalization algorithm.

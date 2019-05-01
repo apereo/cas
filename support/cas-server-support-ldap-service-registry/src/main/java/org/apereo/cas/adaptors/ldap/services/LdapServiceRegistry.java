@@ -147,7 +147,8 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
                 return response.getResult().getEntries()
                     .stream()
                     .map(this.ldapServiceMapper::mapToRegisteredService)
-                    .filter(Objects::nonNull).count();
+                    .filter(Objects::nonNull)
+                    .count();
             }
         } catch (final LdapException e) {
             LOGGER.error(e.getMessage(), e);
