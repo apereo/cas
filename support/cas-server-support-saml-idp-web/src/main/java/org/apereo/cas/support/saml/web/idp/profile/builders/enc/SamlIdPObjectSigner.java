@@ -43,6 +43,7 @@ import org.opensaml.security.criteria.UsageCriterion;
 import org.opensaml.security.x509.BasicX509Credential;
 import org.opensaml.xmlsec.SignatureSigningConfiguration;
 import org.opensaml.xmlsec.SignatureSigningParameters;
+import org.opensaml.xmlsec.WhitelistBlacklistConfiguration;
 import org.opensaml.xmlsec.config.impl.DefaultSecurityConfigurationBootstrap;
 import org.opensaml.xmlsec.context.SecurityParametersContext;
 import org.opensaml.xmlsec.criterion.SignatureSigningConfigurationCriterion;
@@ -229,6 +230,7 @@ public class SamlIdPObjectSigner {
     protected SignatureSigningConfiguration getSignatureSigningConfiguration(final RoleDescriptor roleDescriptor,
                                                                              final SamlRegisteredService service) throws Exception {
         val config = configureSignatureSigningSecurityConfiguration(service);
+
         val samlIdp = casProperties.getAuthn().getSamlIdp();
         val privateKey = getSigningPrivateKey();
 
@@ -316,6 +318,10 @@ public class SamlIdPObjectSigner {
         LOGGER.trace("Finalized signature signing whitelisted algorithms: [{}]", config.getWhitelistedAlgorithms());
         LOGGER.trace("Finalized signature signing reference digest methods: [{}]", config.getSignatureReferenceDigestMethods());
 
+        if (StringUtils.isNotBlank(service.getWhiteListBlackListPrecedence())) {
+            val precedence = WhitelistBlacklistConfiguration.Precedence.valueOf(service.getWhiteListBlackListPrecedence().trim().toUpperCase());
+            config.setWhitelistBlacklistPrecedence(precedence);
+        }
         return config;
     }
 
