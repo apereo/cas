@@ -63,7 +63,10 @@ public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilde
                                          final MessageContext messageContext) throws SamlException {
 
         val currentDateTime = ZonedDateTime.now(ZoneOffset.UTC);
-        var skewAllowance = casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance();
+
+        var skewAllowance = service.getSkewAllowance() > 0
+            ? service.getSkewAllowance()
+            : casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance();
         if (skewAllowance <= 0) {
             skewAllowance = casProperties.getSamlCore().getSkewAllowance();
         }

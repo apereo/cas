@@ -214,7 +214,7 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     public SamlProfileObjectBuilder<Subject> samlProfileSamlSubjectBuilder() {
         return new SamlProfileSamlSubjectBuilder(openSamlConfigBean.getIfAvailable(),
             samlProfileSamlNameIdBuilder(),
-            casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance(),
+            casProperties,
             samlObjectEncrypter());
     }
 

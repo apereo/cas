@@ -136,6 +136,9 @@ public class SamlRegisteredService extends RegexRegisteredService {
     @Column
     private String assertionAudiences;
 
+    @Column
+    private int skewAllowance;
+
     @Column(name = "white_black_list_prec")
     private String whiteListBlackListPrecedence;
 

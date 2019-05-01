@@ -34,7 +34,7 @@ public class SamlIdPResponseProperties implements Serializable {
      * Time unit in seconds used to skew authentication dates such
      * as valid-from and valid-until elements.
      */
-    private int skewAllowance = 5;
+    private int skewAllowance = 15;
     /**
      * Whether error responses should be signed.
      */
