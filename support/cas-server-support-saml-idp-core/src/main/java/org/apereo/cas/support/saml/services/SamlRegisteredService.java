@@ -119,6 +119,9 @@ public class SamlRegisteredService extends RegexRegisteredService {
     private boolean encryptAttributes;
 
     @Column
+    private boolean encryptionOptional;
+
+    @Column
     private String metadataCriteriaRoles = SPSSODescriptor.DEFAULT_ELEMENT_LOCAL_NAME;
 
     @Column(name = "mdCriteriaRmEmptyEntities")
@@ -132,6 +135,9 @@ public class SamlRegisteredService extends RegexRegisteredService {
 
     @Column
     private String assertionAudiences;
+
+    @Column(name = "white_black_list_prec")
+    private String whiteListBlackListPrecedence;
 
     @ElementCollection
     @CollectionTable(name = "SamlRegisteredService_AttributeNameFormats")
@@ -173,6 +179,22 @@ public class SamlRegisteredService extends RegexRegisteredService {
 
     @Column(name = "signing_sig_canonicalization_alg")
     private String signingSignatureCanonicalizationAlgorithm;
+
+    @Lob
+    @Column(name = "enc_data_algs", length = Integer.MAX_VALUE)
+    private ArrayList<String> encryptionDataAlgorithms = new ArrayList<>();
+
+    @Lob
+    @Column(name = "enc_key_algs", length = Integer.MAX_VALUE)
+    private ArrayList<String> encryptionKeyAlgorithms = new ArrayList<>();
+
+    @Lob
+    @Column(name = "enc_blacklisted_algs", length = Integer.MAX_VALUE)
+    private ArrayList<String> encryptionBlackListedAlgorithms = new ArrayList<>();
+
+    @Lob
+    @Column(name = "enc_whitelisted_algs", length = Integer.MAX_VALUE)
+    private ArrayList<String> encryptionWhiteListedAlgorithms = new ArrayList<>();
 
     @Override
     protected AbstractRegisteredService newInstance() {

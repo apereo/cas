@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.Objects;
 
 /**
  * This is {@link SamlProfileSamlSubjectBuilder}.
@@ -91,16 +92,23 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
             service.isSkipGeneratingSubjectConfirmationInResponseTo() ? null : authnRequest.getID(),
             service.isSkipGeneratingSubjectConfirmationNotBefore() ? null : ZonedDateTime.now(ZoneOffset.UTC));
 
-        if (NameIDType.ENCRYPTED.equalsIgnoreCase(subjectNameId.getFormat())) {
+        if (NameIDType.ENCRYPTED.equalsIgnoreCase(Objects.requireNonNull(subjectNameId).getFormat())) {
             subject.setNameID(null);
             subject.getSubjectConfirmations().forEach(c -> c.setNameID(null));
 
             val encryptedId = samlObjectEncrypter.encode(subjectNameId, service, adaptor);
-            subject.setEncryptedID(encryptedId);
-
+            if (encryptedId != null) {
+                subject.setEncryptedID(encryptedId);
+            } else {
+                LOGGER.debug("Unable to encrypt subject Name ID for [{}]", adaptor.getEntityId());
+            }
             if (subjectConfNameId != null) {
                 val encryptedConfId = samlObjectEncrypter.encode(subjectConfNameId, service, adaptor);
-                subject.getSubjectConfirmations().forEach(c -> c.setEncryptedID(encryptedConfId));
+                if (encryptedConfId != null) {
+                    subject.getSubjectConfirmations().forEach(c -> c.setEncryptedID(encryptedConfId));
+                } else {
+                    LOGGER.debug("Unable to encrypt subject confirmation Name ID for [{}]", adaptor.getEntityId());
+                }
             }
         }
 
