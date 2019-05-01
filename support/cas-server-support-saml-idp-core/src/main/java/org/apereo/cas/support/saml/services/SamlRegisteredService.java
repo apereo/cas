@@ -18,6 +18,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.MapKeyColumn;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.TreeMap;
@@ -68,7 +69,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
 
     @Column
     private boolean requireSignedRoot = true;
-    
+
     @Column(name = "spNameIdQualifier")
     private String serviceProviderNameIdQualifier;
 
@@ -104,7 +105,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
 
     @Column(name = "skipGenSubConfNameId")
     private boolean skipGeneratingSubjectConfirmationNameId = true;
-    
+
     @Column
     private boolean skipGeneratingTransientNameId;
 
@@ -153,6 +154,25 @@ public class SamlRegisteredService extends RegexRegisteredService {
     @Lob
     @Column(name = "encryptable_attrs", length = Integer.MAX_VALUE)
     private HashSet<String> encryptableAttributes = new HashSet<>();
+
+    @Lob
+    @Column(name = "signing_sig_ref_digest_methods", length = Integer.MAX_VALUE)
+    private ArrayList<String> signingSignatureReferenceDigestMethods = new ArrayList<>();
+
+    @Lob
+    @Column(name = "signing_sig_algs", length = Integer.MAX_VALUE)
+    private ArrayList<String> signingSignatureAlgorithms = new ArrayList<>();
+
+    @Lob
+    @Column(name = "signing_sig_blacklisted_algs", length = Integer.MAX_VALUE)
+    private ArrayList<String> signingSignatureBlackListedAlgorithms = new ArrayList<>();
+
+    @Lob
+    @Column(name = "signing_sig_whitelisted_algs", length = Integer.MAX_VALUE)
+    private ArrayList<String> signingSignatureWhiteListedAlgorithms = new ArrayList<>();
+
+    @Column(name = "signing_sig_canonicalization_alg")
+    private String signingSignatureCanonicalizationAlgorithm;
 
     @Override
     protected AbstractRegisteredService newInstance() {

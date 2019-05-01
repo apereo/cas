@@ -43,7 +43,4 @@ echo "Home directory: $HOME"
 echo "Gradle Home directory:"
 ./gradlew gradleHome --no-daemon
 
-echo "Installing renovate-bot"
-npm install -g renovate
-
 echo -e "Configured build environment\n"
