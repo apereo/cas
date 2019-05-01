@@ -7,6 +7,10 @@ title: CAS - Build Process
 
 This page documents the steps that a CAS developer/contributor should take for building a CAS server locally.
 
+<div class="alert alert-warning"><strong>Usage Warning!</strong><p>
+If you are about to deploy and configure CAS, you are in the <strong>WRONG PLACE</strong>! To deploy CAS locally, use the WAR Overlay method described in the project documentation for a specific CAS version. Cloning, downloading and building the CAS codebase from source is <strong>ONLY</strong> required if you wish to contribute to the development of the project.
+</p></div>
+
 ## Source Checkout
 
 The following shell commands may be used to grab the source from the repository:
