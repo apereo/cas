@@ -37,8 +37,13 @@ public class SamlProfileSamlRegisteredServiceAttributeBuilder extends DefaultSam
         }
 
         val encryptedAttribute = samlObjectEncrypter.encode(attribute, service, adaptor);
-        LOGGER.debug("Encrypted attribute [{}] for service [{}]", attribute.getName(), service.getName());
-        attrStatement.getEncryptedAttributes().add(encryptedAttribute);
+        if (encryptedAttribute != null) {
+            LOGGER.debug("Encrypted attribute [{}] for service [{}]", attribute.getName(), service.getName());
+            attrStatement.getEncryptedAttributes().add(encryptedAttribute);
+        } else {
+            LOGGER.debug("Unable to encrypt attribute [{}] for service [{}]", attribute.getName(), service.getName());
+            super.build(attrStatement, attribute);
+        }
     }
 
     private boolean shouldEncryptAttribute(final Attribute attribute) {
