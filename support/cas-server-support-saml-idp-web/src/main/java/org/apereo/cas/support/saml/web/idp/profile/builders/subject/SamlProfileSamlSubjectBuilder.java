@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.subject;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
@@ -37,18 +38,18 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
 
     private final transient SamlProfileObjectBuilder<NameID> ssoPostProfileSamlNameIdBuilder;
 
-    private final int skewAllowance;
+    private final CasConfigurationProperties casProperties;
 
     private final transient SamlIdPObjectEncrypter samlObjectEncrypter;
 
     public SamlProfileSamlSubjectBuilder(final OpenSamlConfigBean configBean,
                                          final SamlProfileObjectBuilder<NameID> ssoPostProfileSamlNameIdBuilder,
-                                         final int skewAllowance,
+                                         final CasConfigurationProperties casProperties,
                                          final SamlIdPObjectEncrypter samlObjectEncrypter) {
         super(configBean);
         this.ssoPostProfileSamlNameIdBuilder = ssoPostProfileSamlNameIdBuilder;
-        this.skewAllowance = skewAllowance;
         this.samlObjectEncrypter = samlObjectEncrypter;
+        this.casProperties = casProperties;
     }
 
     @Override
@@ -86,9 +87,13 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
             ? null
             : getNameIdForService(request, response, authnRequest, service, adaptor, binding, assertion, messageContext);
 
+        val skewAllowance = service.getSkewAllowance() > 0
+            ? service.getSkewAllowance()
+            : casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance();
+
         val subject = newSubject(subjectNameId, subjectConfNameId,
             service.isSkipGeneratingSubjectConfirmationRecipient() ? null : location,
-            service.isSkipGeneratingSubjectConfirmationNotOnOrAfter() ? null : validFromDate.plusSeconds(this.skewAllowance),
+            service.isSkipGeneratingSubjectConfirmationNotOnOrAfter() ? null : validFromDate.plusSeconds(skewAllowance),
             service.isSkipGeneratingSubjectConfirmationInResponseTo() ? null : authnRequest.getID(),
             service.isSkipGeneratingSubjectConfirmationNotBefore() ? null : ZonedDateTime.now(ZoneOffset.UTC));
 
