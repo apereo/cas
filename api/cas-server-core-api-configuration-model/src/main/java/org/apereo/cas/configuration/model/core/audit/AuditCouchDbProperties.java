@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.core.audit;
 
 import org.apereo.cas.configuration.model.support.couchdb.BaseAsynchronousCouchDbProperties;
+import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,6 +12,7 @@ import lombok.Setter;
  * @author Timur Duehr
  * @since 6.0.0
  */
+@RequiresModule(name = "cas-server-support-audit-couchdb")
 @Getter
 @Setter
 public class AuditCouchDbProperties extends BaseAsynchronousCouchDbProperties {

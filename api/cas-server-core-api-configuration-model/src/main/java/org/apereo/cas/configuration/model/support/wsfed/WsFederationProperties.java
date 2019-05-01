@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.wsfed;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
+import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -18,6 +19,7 @@ import java.util.List;
  */
 @Getter
 @Setter
+@RequiresModule(name = "cas-server-support-ws-idp")
 public class WsFederationProperties implements Serializable {
 
     private static final long serialVersionUID = -8679379856243224647L;

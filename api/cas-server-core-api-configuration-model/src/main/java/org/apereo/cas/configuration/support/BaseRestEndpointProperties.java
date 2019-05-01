@@ -13,6 +13,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
+@RequiresModule(name = "cas-server-core-util", automated = true)
 public class BaseRestEndpointProperties implements Serializable {
     private static final long serialVersionUID = 2687020856160473089L;
 
