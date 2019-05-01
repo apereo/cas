@@ -168,6 +168,11 @@ The following fields are available for SAML services:
 | `skipGeneratingSubjectConfirmationNameId` | Whether generation of the `NameID` element should be skipped for subject confirmations. Default is `true`.
 | `signingCredentialFingerprint` | `SHA-1` digest of the signing credential's public key, parsed as a regular expression, used for the purposes of key rotation when dealing with multiple credentials.
 | `signingCredentialType` | Acceptable values are `BASIC` and `X509`. This setting controls the type of the signature block produced in the final SAML response for this application. The latter, being the default, encodes the signature in `PEM` format inside a `X509Data` block while the former encodes the signature based on the resolved public key under a `DEREncodedKeyValue` block.
+| `signingSignatureReferenceDigestMethods` | Collection of signing signature reference digest methods, if any, to override the global defaults.
+| `signingSignatureAlgorithms` | Collection of signing signature algorithms, if any, to override the global defaults.
+| `signingSignatureBlackListedAlgorithms` | Collection of signing signature blacklisted algorithms, if any, to override the global defaults.
+| `signingSignatureWhiteListedAlgorithms` | Collection of signing signature whitelisted algorithms, if any, to override the global defaults.
+| `signingSignatureCanonicalizationAlgorithm` | The signing signature canonicalization algorithm, if any, to override the global defaults.
 
 <div class="alert alert-info"><strong>Keep What You Need!</strong><p>You are encouraged to only keep and maintain properties and settings needed for a 
 particular integration. It is UNNECESSARY to grab a copy of all service fields and try to configure them yet again based on their default. While 
@@ -233,7 +238,8 @@ via CAS properties. To see the relevant list of CAS properties, please [review t
 
 ### Attribute Friendly Names
 
-Attribute friendly names can be specified per relying party in the service registry. If there is no friendly name defined for the attribute, the 
+Attribute friendly names can be specified per relying party in the service registry, as well as globally via CAS settings. 
+If there is no friendly name defined for the attribute, the 
 attribute name will be used instead in its place. Note that the name of the attribute is one that is designed to be released to the service provider,
 specially if the original attribute is *mapped* to a different name.
 
@@ -248,6 +254,78 @@ specially if the original attribute is *mapped* to a different name.
     "@class": "java.util.HashMap",
     "urn:oid:2.5.4.42": "friendly-name-to-use"
   }
+}
+```
+
+### Security Configuration
+
+There are several levels of configuration that control the security configuration of objects that are signed, encrypted, etc. These configurations include things 
+like the keys to use, preferred/default algorithms, and algorithm whitelists or blacklists to enforce. 
+
+The configurations are generally determined based on the following order:
+
+- Service provider metadata
+- Per-service configuration overrides
+- Global CAS default settings
+- OpenSAML initial defaults
+
+In almost all cases, you should leave the defaults in place.
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#saml-algorithms--security).
+
+#### Signing
+
+##### SHA-1
+
+The following example demonstrates how to configure CAS to use `SHA-1` signing and digest algorithms for a particular service provider:
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "sp.example.org",
+  "name": "SAML",
+  "id": 1,
+  "metadataLocation": "/path/to/sp-metadata.xml",
+  "signingSignatureAlgorithms": [
+    "java.util.ArrayList",
+    [
+      "http://www.w3.org/2000/09/xmldsig#rsa-sha1",
+      "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha1"
+    ]
+  ],
+  "signingSignatureReferenceDigestMethods": [
+    "java.util.ArrayList",
+    [
+      "http://www.w3.org/2000/09/xmldsig#sha1"
+    ]
+  ]
+}
+```
+
+##### SHA-256
+
+The following example demonstrates how to configure CAS to use `SHA-256` signing and digest algorithms for a particular service provider:
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "sp.example.org",
+  "name": "SAML",
+  "id": 1,
+  "metadataLocation": "/path/to/sp-metadata.xml",
+  "signingSignatureAlgorithms": [
+    "java.util.ArrayList",
+    [
+      "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256",
+      "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256"
+    ]
+  ],
+  "signingSignatureReferenceDigestMethods": [
+    "java.util.ArrayList",
+    [
+      "http://www.w3.org/2001/04/xmlenc#sha256"
+    ]
+  ]
 }
 ```
 
@@ -283,7 +361,7 @@ The following attribute value types are supported:
   "serviceId" : "the-entity-id-of-the-sp",
   "name": "SAML Service",
   "metadataLocation" : "../../sp-metadata.xml",
-  "id": 100001,
+  "id": 1,
   "attributeValueTypes": {
     "@class": "java.util.HashMap",
     "<attribute-name>": "<attribute-value-type>"
@@ -303,6 +381,67 @@ decide to configure CAS to return a particular attribute as
 [the authenticated user name for this service](../integration/Attribute-Release-PrincipalId.html),
 that value will then be used to construct the Name ID along with the right format.
 
+#### Examples
+
+The following service definition instructs CAS to use the `urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress` as the final Name ID format,
+and use the `mail` attribute value as the final Name ID value.
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "the-entity-id-of-the-sp",
+  "name": "SAML Service",
+  "metadataLocation": "/path/to/sp-metadata.xml",
+  "id": 1,
+  "requiredNameIdFormat": "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress",
+  "usernameAttributeProvider" : {
+    "@class" : "org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider",
+    "usernameAttribute" : "mail",
+  }
+}
+```
+
+The following service definition instructs CAS to use the `urn:oasis:names:tc:SAML:2.0:nameid-format:transient` as the final Name ID format,
+and use the `cn` attribute value in upper-case as the final Name ID value, skipping the generation of transient value per the required format.
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "the-entity-id-of-the-sp",
+  "name": "SAML Service",
+  "metadataLocation": "/path/to/sp-metadata.xml",
+  "id": 1,
+  "requiredNameIdFormat": "urn:oasis:names:tc:SAML:2.0:nameid-format:transient",
+  "skipGeneratingTransientNameId" : true,
+  "usernameAttributeProvider" : {
+    "@class" : "org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider",
+    "usernameAttribute" : "cn",
+    "canonicalizationMode" : "UPPER"
+  }
+}
+```
+
+The following service definition instructs CAS to use the `cn` attribute value to create a persistent Name ID.
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "the-entity-id-of-the-sp",
+  "name": "SAML Service",
+  "metadataLocation": "/path/to/sp-metadata.xml",
+  "id": 1,
+  "requiredNameIdFormat": "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent",
+  "usernameAttributeProvider" : {
+    "@class" : "org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider",
+    "persistentIdGenerator" : {
+      "@class" : "org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator",
+      "salt" : "aGVsbG93b3JsZA==",
+      "attribute": "cn"
+    }
+  }
+}
+```
+  
 ## Unsolicited SSO
 
 SAML2 IdP `Unsolicited/SSO` profile supports the following parameters:
