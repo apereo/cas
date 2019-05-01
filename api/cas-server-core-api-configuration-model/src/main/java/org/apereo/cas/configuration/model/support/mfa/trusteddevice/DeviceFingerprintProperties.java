@@ -46,6 +46,7 @@ public class DeviceFingerprintProperties implements Serializable {
 
     @Getter
     @Setter
+    @RequiresModule(name = "cas-server-support-trusted-mfa")
     public static class ClientIp extends BaseDeviceFingerprintComponentProperties {
         private static final long serialVersionUID = 785014133279201757L;
 
@@ -57,6 +58,7 @@ public class DeviceFingerprintProperties implements Serializable {
 
     @Getter
     @Setter
+    @RequiresModule(name = "cas-server-support-trusted-mfa")
     public static class Cookie extends CookieProperties {
         private static final long serialVersionUID = -9022498833437602657L;
 
@@ -92,6 +94,7 @@ public class DeviceFingerprintProperties implements Serializable {
 
     @Getter
     @Setter
+    @RequiresModule(name = "cas-server-support-trusted-mfa")
     public static class UserAgent extends BaseDeviceFingerprintComponentProperties {
         private static final long serialVersionUID = -5325531035180836136L;
 

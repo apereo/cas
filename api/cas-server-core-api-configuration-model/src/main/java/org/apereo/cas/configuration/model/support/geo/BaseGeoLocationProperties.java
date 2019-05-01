@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.geo;
 
+import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +15,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
+@RequiresModule(name = "cas-server-support-geolocation-googlemaps")
 public abstract class BaseGeoLocationProperties implements Serializable {
     private static final long serialVersionUID = 4548572400079087989L;
 

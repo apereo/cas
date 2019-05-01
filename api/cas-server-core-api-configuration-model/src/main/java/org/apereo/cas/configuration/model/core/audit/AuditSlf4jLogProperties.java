@@ -13,7 +13,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiresModule(name = "cas-server-core-audit")
+@RequiresModule(name = "cas-server-core-audit", automated = true)
 @Getter
 @Setter
 public class AuditSlf4jLogProperties implements Serializable {

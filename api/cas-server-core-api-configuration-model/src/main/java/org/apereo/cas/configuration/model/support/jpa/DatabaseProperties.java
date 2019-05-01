@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.jpa;
 
+import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.util.LinkedCaseInsensitiveMap;
@@ -15,6 +17,7 @@ import java.util.Map;
  */
 @Getter
 @Setter
+@RequiresModule(name = "cas-server-support-jdbc-drivers")
 public class DatabaseProperties implements Serializable {
 
     private static final long serialVersionUID = 7740236971148591965L;

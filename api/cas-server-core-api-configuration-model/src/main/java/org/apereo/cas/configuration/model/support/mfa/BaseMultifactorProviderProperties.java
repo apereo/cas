@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
+import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,6 +18,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @EqualsAndHashCode(of = "id")
+@RequiresModule(name = "cas-server-core-authentication-mfa")
 public abstract class BaseMultifactorProviderProperties implements Serializable {
 
     private static final long serialVersionUID = -2690281104343633871L;

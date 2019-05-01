@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.redis;
 
 import org.apereo.cas.configuration.support.RequiredProperty;
+import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -17,6 +18,7 @@ import java.util.List;
  */
 @Getter
 @Setter
+@RequiresModule(name = "cas-server-support-redis-core")
 public class BaseRedisProperties implements Serializable {
 
     private static final long serialVersionUID = -2600996981339638782L;

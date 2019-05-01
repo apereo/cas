@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.couchdb;
 
+import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,6 +13,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@RequiresModule(name = "cas-server-support-couchdb-core")
 public abstract class BaseAsynchronousCouchDbProperties extends BaseCouchDbProperties {
 
     private static final long serialVersionUID = -7920471433876478891L;

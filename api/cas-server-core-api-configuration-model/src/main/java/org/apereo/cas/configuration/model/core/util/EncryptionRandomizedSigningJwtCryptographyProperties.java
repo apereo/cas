@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.core.util;
 
+import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,6 +19,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
+@RequiresModule(name = "cas-server-core-util", automated = true)
 public class EncryptionRandomizedSigningJwtCryptographyProperties implements Serializable {
 
     private static final long serialVersionUID = -6802876221525521736L;

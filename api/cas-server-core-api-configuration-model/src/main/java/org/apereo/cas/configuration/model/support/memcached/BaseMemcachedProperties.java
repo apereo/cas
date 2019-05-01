@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.memcached;
 
 import org.apereo.cas.configuration.support.RequiredProperty;
+import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -15,6 +16,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
+@RequiresModule(name = "cas-server-support-memcached-core")
 public class BaseMemcachedProperties implements Serializable {
 
     private static final long serialVersionUID = 514520518053691666L;

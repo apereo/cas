@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.saml.sps;
 
 import org.apereo.cas.configuration.support.RequiredProperty;
+import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -19,6 +20,7 @@ import java.util.stream.Stream;
  */
 @Getter
 @Setter
+@RequiresModule(name = "cas-server-support-saml-idp")
 public abstract class AbstractSamlSPProperties implements Serializable {
 
     private static final long serialVersionUID = -5381463661659831898L;
