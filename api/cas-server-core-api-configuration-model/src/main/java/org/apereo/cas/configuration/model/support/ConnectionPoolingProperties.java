@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support;
 
+import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +15,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
+@RequiresModule(name = "cas-server-support-ldap-core")
 public class ConnectionPoolingProperties implements Serializable {
 
     private static final long serialVersionUID = -5307463292890944799L;

@@ -14,7 +14,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RequiresModule(name = "cas-server-core-web", automated = true)
+@RequiresModule(name = "cas-server-support-google-analytics", automated = true)
 @Getter
 @Setter
 public class GoogleAnalyticsProperties implements Serializable {

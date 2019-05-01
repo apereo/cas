@@ -426,13 +426,26 @@ public class CollectionUtils {
     }
 
     /**
-     * Wrap set set.
+     * Wrap list.
      *
      * @param <T>    the type parameter
      * @param source the source
      * @return the set
      */
     public static <T> List<T> wrapList(final T... source) {
+        val list = new ArrayList<T>();
+        addToCollection(list, source);
+        return list;
+    }
+
+    /**
+     * Wrap array list array list.
+     *
+     * @param <T>    the type parameter
+     * @param source the source
+     * @return the array list
+     */
+    public static <T> ArrayList<T> wrapArrayList(final T... source) {
         val list = new ArrayList<T>();
         addToCollection(list, source);
         return list;

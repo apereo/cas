@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.subject;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
@@ -23,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.Objects;
 
 /**
  * This is {@link SamlProfileSamlSubjectBuilder}.
@@ -36,18 +38,18 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
 
     private final transient SamlProfileObjectBuilder<NameID> ssoPostProfileSamlNameIdBuilder;
 
-    private final int skewAllowance;
+    private final CasConfigurationProperties casProperties;
 
     private final transient SamlIdPObjectEncrypter samlObjectEncrypter;
 
     public SamlProfileSamlSubjectBuilder(final OpenSamlConfigBean configBean,
                                          final SamlProfileObjectBuilder<NameID> ssoPostProfileSamlNameIdBuilder,
-                                         final int skewAllowance,
+                                         final CasConfigurationProperties casProperties,
                                          final SamlIdPObjectEncrypter samlObjectEncrypter) {
         super(configBean);
         this.ssoPostProfileSamlNameIdBuilder = ssoPostProfileSamlNameIdBuilder;
-        this.skewAllowance = skewAllowance;
         this.samlObjectEncrypter = samlObjectEncrypter;
+        this.casProperties = casProperties;
     }
 
     @Override
@@ -85,22 +87,33 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
             ? null
             : getNameIdForService(request, response, authnRequest, service, adaptor, binding, assertion, messageContext);
 
+        val skewAllowance = service.getSkewAllowance() > 0
+            ? service.getSkewAllowance()
+            : casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance();
+
         val subject = newSubject(subjectNameId, subjectConfNameId,
             service.isSkipGeneratingSubjectConfirmationRecipient() ? null : location,
-            service.isSkipGeneratingSubjectConfirmationNotOnOrAfter() ? null : validFromDate.plusSeconds(this.skewAllowance),
+            service.isSkipGeneratingSubjectConfirmationNotOnOrAfter() ? null : validFromDate.plusSeconds(skewAllowance),
             service.isSkipGeneratingSubjectConfirmationInResponseTo() ? null : authnRequest.getID(),
             service.isSkipGeneratingSubjectConfirmationNotBefore() ? null : ZonedDateTime.now(ZoneOffset.UTC));
 
-        if (NameIDType.ENCRYPTED.equalsIgnoreCase(subjectNameId.getFormat())) {
+        if (NameIDType.ENCRYPTED.equalsIgnoreCase(Objects.requireNonNull(subjectNameId).getFormat())) {
             subject.setNameID(null);
             subject.getSubjectConfirmations().forEach(c -> c.setNameID(null));
 
             val encryptedId = samlObjectEncrypter.encode(subjectNameId, service, adaptor);
-            subject.setEncryptedID(encryptedId);
-
+            if (encryptedId != null) {
+                subject.setEncryptedID(encryptedId);
+            } else {
+                LOGGER.debug("Unable to encrypt subject Name ID for [{}]", adaptor.getEntityId());
+            }
             if (subjectConfNameId != null) {
                 val encryptedConfId = samlObjectEncrypter.encode(subjectConfNameId, service, adaptor);
-                subject.getSubjectConfirmations().forEach(c -> c.setEncryptedID(encryptedConfId));
+                if (encryptedConfId != null) {
+                    subject.getSubjectConfirmations().forEach(c -> c.setEncryptedID(encryptedConfId));
+                } else {
+                    LOGGER.debug("Unable to encrypt subject confirmation Name ID for [{}]", adaptor.getEntityId());
+                }
             }
         }
 

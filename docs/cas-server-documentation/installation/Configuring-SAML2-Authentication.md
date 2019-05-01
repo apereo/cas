@@ -142,11 +142,13 @@ The following fields are available for SAML services:
 | `requireSignedRoot`                  | Whether incoming metadata's root element is required to be signed. Default is `true`.
 | `signAssertions`                     | Whether assertions should be signed. Default is `false`.
 | `signResponses`                      | Whether responses should be signed. Default is `true`.
+| `encryptionOptional`                 | Encrypt whenever possible (i.e a compatible key is found in the peer's metadata) or skip encryption otherwise. Default is `false`.
 | `encryptAssertions`                  | Whether assertions should be encrypted. Default is `false`.
 | `encryptAttributes`                  | Whether assertion attributes should be encrypted. Default is `false`.
 | `encryptableAttributes`              | Set of attributes nominated for encryption, disqualifying others absent in this collection. Default (i.e. `*`) is to encrypt all once `encryptAttributes` is true.
 | `requiredAuthenticationContextClass` | If defined, will specify the SAML authentication context class in the final response. If undefined, the authentication class will either be `urn:oasis:names:tc:SAML:2.0:ac:classes:unspecified` or `urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport` depending on the SAML authentication request.
 | `requiredNameIdFormat`               | If defined, will force the indicated Name ID format in the final SAML response.
+| `skewAllowance`                      | If defined, indicates number of seconds used to skew authentication dates such as valid-from and valid-until elements, etc.
 | `metadataCriteriaPattern`            | If defined, will force an entity id filter on the metadata aggregate based on the `PredicateFilter` to include/exclude specific entity ids based on a valid regex pattern.
 | `metadataCriteriaDirection`          | If defined, will force an entity id filter on the metadata aggregate based on `PredicateFilter`. Allowed values are `INCLUDE`,`EXCLUDE`.
 | `metadataCriteriaRoles`              | If defined, will whitelist the defined metadata roles (i.e. `SPSSODescriptor`, `IDPSSODescriptor`). Default is `SPSSODescriptor`.
@@ -168,6 +170,16 @@ The following fields are available for SAML services:
 | `skipGeneratingSubjectConfirmationNameId` | Whether generation of the `NameID` element should be skipped for subject confirmations. Default is `true`.
 | `signingCredentialFingerprint` | `SHA-1` digest of the signing credential's public key, parsed as a regular expression, used for the purposes of key rotation when dealing with multiple credentials.
 | `signingCredentialType` | Acceptable values are `BASIC` and `X509`. This setting controls the type of the signature block produced in the final SAML response for this application. The latter, being the default, encodes the signature in `PEM` format inside a `X509Data` block while the former encodes the signature based on the resolved public key under a `DEREncodedKeyValue` block.
+| `signingSignatureReferenceDigestMethods` | Collection of signing signature reference digest methods, if any, to override the global defaults.
+| `signingSignatureAlgorithms` | Collection of signing signature algorithms, if any, to override the global defaults.
+| `signingSignatureBlackListedAlgorithms` | Collection of signing signature blacklisted algorithms, if any, to override the global defaults.
+| `signingSignatureWhiteListedAlgorithms` | Collection of signing signature whitelisted algorithms, if any, to override the global defaults.
+| `signingSignatureCanonicalizationAlgorithm` | The signing signature canonicalization algorithm, if any, to override the global defaults.
+| `encryptionDataAlgorithms` | Collection of encryption data algorithms, if any, to override the global defaults.
+| `encryptionKeyAlgorithms` | Collection of encryption key transport algorithms, if any, to override the global defaults.
+| `encryptionBlackListedAlgorithms` | Collection of encryption blacklisted algorithms, if any, to override the global defaults.
+| `encryptionWhiteListedAlgorithms` | Collection of encryption whitelisted algorithms, if any, to override the global defaults.
+| `whiteListBlackListPrecedence` | Preference value indicating which should take precedence when both whitelist and blacklist are non-empty. Accepted values are `WHITELIST` or `BLACKLIST`. Default is `WHITELIST`. 
 
 <div class="alert alert-info"><strong>Keep What You Need!</strong><p>You are encouraged to only keep and maintain properties and settings needed for a 
 particular integration. It is UNNECESSARY to grab a copy of all service fields and try to configure them yet again based on their default. While 
@@ -233,7 +245,8 @@ via CAS properties. To see the relevant list of CAS properties, please [review t
 
 ### Attribute Friendly Names
 
-Attribute friendly names can be specified per relying party in the service registry. If there is no friendly name defined for the attribute, the 
+Attribute friendly names can be specified per relying party in the service registry, as well as globally via CAS settings. 
+If there is no friendly name defined for the attribute, the 
 attribute name will be used instead in its place. Note that the name of the attribute is one that is designed to be released to the service provider,
 specially if the original attribute is *mapped* to a different name.
 
@@ -248,6 +261,135 @@ specially if the original attribute is *mapped* to a different name.
     "@class": "java.util.HashMap",
     "urn:oid:2.5.4.42": "friendly-name-to-use"
   }
+}
+```
+
+### Security Configuration
+
+There are several levels of configuration that control the security configuration of objects that are signed, encrypted, etc. These configurations include things 
+like the keys to use, preferred/default algorithms, and algorithm whitelists or blacklists to enforce. 
+
+The configurations are generally determined based on the following order:
+
+- Service provider metadata
+- Per-service configuration overrides
+- Global CAS default settings
+- OpenSAML initial defaults
+
+In almost all cases, you should leave the defaults in place.
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#saml-algorithms--security).
+
+#### Encryption
+
+The following examples demonstrate encryption security configuration overrides per service provider.
+
+#### CBC
+
+The following example demonstrates how to configure CAS to use `CBC` encryption for a particular service provider:
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "sp.example.org",
+  "name": "SAML",
+  "id": 1,
+  "metadataLocation": "/path/to/sp-metadata.xml",
+  "encryptionDataAlgorithms": [
+    "java.util.ArrayList",
+    [
+      "http://www.w3.org/2001/04/xmlenc#aes128-cbc"
+    ]
+  ],
+  "encryptionKeyAlgorithms": [
+    "java.util.ArrayList",
+    [
+      "http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p"
+    ]
+  ]
+}
+```
+
+#### GCM
+
+The following example demonstrates how to configure CAS to use `GCM` encryption for a particular service provider:
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "sp.example.org",
+  "name": "SAML",
+  "id": 1,
+  "metadataLocation": "/path/to/sp-metadata.xml",
+  "encryptionDataAlgorithms": [
+    "java.util.ArrayList",
+    [
+      "http://www.w3.org/2009/xmlenc11#aes128-gcm"
+    ]
+  ],
+  "encryptionKeyAlgorithms": [
+    "java.util.ArrayList",
+    [
+      "http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p"
+    ]
+  ]
+}
+
+#### Signing
+
+The following examples demonstrate signing security configuration overrides per service provider.
+
+##### SHA-1
+
+The following example demonstrates how to configure CAS to use `SHA-1` signing and digest algorithms for a particular service provider:
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "sp.example.org",
+  "name": "SAML",
+  "id": 1,
+  "metadataLocation": "/path/to/sp-metadata.xml",
+  "signingSignatureAlgorithms": [
+    "java.util.ArrayList",
+    [
+      "http://www.w3.org/2000/09/xmldsig#rsa-sha1",
+      "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha1"
+    ]
+  ],
+  "signingSignatureReferenceDigestMethods": [
+    "java.util.ArrayList",
+    [
+      "http://www.w3.org/2000/09/xmldsig#sha1"
+    ]
+  ]
+}
+```
+
+##### SHA-256
+
+The following example demonstrates how to configure CAS to use `SHA-256` signing and digest algorithms for a particular service provider:
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "sp.example.org",
+  "name": "SAML",
+  "id": 1,
+  "metadataLocation": "/path/to/sp-metadata.xml",
+  "signingSignatureAlgorithms": [
+    "java.util.ArrayList",
+    [
+      "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256",
+      "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256"
+    ]
+  ],
+  "signingSignatureReferenceDigestMethods": [
+    "java.util.ArrayList",
+    [
+      "http://www.w3.org/2001/04/xmlenc#sha256"
+    ]
+  ]
 }
 ```
 
@@ -283,7 +425,7 @@ The following attribute value types are supported:
   "serviceId" : "the-entity-id-of-the-sp",
   "name": "SAML Service",
   "metadataLocation" : "../../sp-metadata.xml",
-  "id": 100001,
+  "id": 1,
   "attributeValueTypes": {
     "@class": "java.util.HashMap",
     "<attribute-name>": "<attribute-value-type>"
@@ -303,6 +445,67 @@ decide to configure CAS to return a particular attribute as
 [the authenticated user name for this service](../integration/Attribute-Release-PrincipalId.html),
 that value will then be used to construct the Name ID along with the right format.
 
+#### Examples
+
+The following service definition instructs CAS to use the `urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress` as the final Name ID format,
+and use the `mail` attribute value as the final Name ID value.
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "the-entity-id-of-the-sp",
+  "name": "SAML Service",
+  "metadataLocation": "/path/to/sp-metadata.xml",
+  "id": 1,
+  "requiredNameIdFormat": "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress",
+  "usernameAttributeProvider" : {
+    "@class" : "org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider",
+    "usernameAttribute" : "mail",
+  }
+}
+```
+
+The following service definition instructs CAS to use the `urn:oasis:names:tc:SAML:2.0:nameid-format:transient` as the final Name ID format,
+and use the `cn` attribute value in upper-case as the final Name ID value, skipping the generation of transient value per the required format.
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "the-entity-id-of-the-sp",
+  "name": "SAML Service",
+  "metadataLocation": "/path/to/sp-metadata.xml",
+  "id": 1,
+  "requiredNameIdFormat": "urn:oasis:names:tc:SAML:2.0:nameid-format:transient",
+  "skipGeneratingTransientNameId" : true,
+  "usernameAttributeProvider" : {
+    "@class" : "org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider",
+    "usernameAttribute" : "cn",
+    "canonicalizationMode" : "UPPER"
+  }
+}
+```
+
+The following service definition instructs CAS to use the `cn` attribute value to create a persistent Name ID.
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "the-entity-id-of-the-sp",
+  "name": "SAML Service",
+  "metadataLocation": "/path/to/sp-metadata.xml",
+  "id": 1,
+  "requiredNameIdFormat": "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent",
+  "usernameAttributeProvider" : {
+    "@class" : "org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider",
+    "persistentIdGenerator" : {
+      "@class" : "org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator",
+      "salt" : "aGVsbG93b3JsZA==",
+      "attribute": "cn"
+    }
+  }
+}
+```
+  
 ## Unsolicited SSO
 
 SAML2 IdP `Unsolicited/SSO` profile supports the following parameters:

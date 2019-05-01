@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.jpa;
 
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
+import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -21,6 +22,7 @@ import java.util.Map;
  */
 @Getter
 @Setter
+@RequiresModule(name = "cas-server-support-jdbc-drivers")
 public abstract class AbstractJpaProperties implements Serializable {
 
     private static final long serialVersionUID = 761486823496930920L;

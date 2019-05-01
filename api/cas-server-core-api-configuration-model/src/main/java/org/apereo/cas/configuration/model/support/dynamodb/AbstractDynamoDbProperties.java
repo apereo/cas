@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.dynamodb;
 
 import org.apereo.cas.configuration.model.support.aws.BaseAmazonWebServicesProperties;
+import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,6 +12,7 @@ import lombok.Setter;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@RequiresModule(name = "cas-server-support-dynamodb-core")
 @Getter
 @Setter
 public abstract class AbstractDynamoDbProperties extends BaseAmazonWebServicesProperties {

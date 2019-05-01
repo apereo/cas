@@ -43,14 +43,17 @@ import org.opensaml.security.criteria.UsageCriterion;
 import org.opensaml.security.x509.BasicX509Credential;
 import org.opensaml.xmlsec.SignatureSigningConfiguration;
 import org.opensaml.xmlsec.SignatureSigningParameters;
+import org.opensaml.xmlsec.WhitelistBlacklistConfiguration;
 import org.opensaml.xmlsec.config.impl.DefaultSecurityConfigurationBootstrap;
 import org.opensaml.xmlsec.context.SecurityParametersContext;
 import org.opensaml.xmlsec.criterion.SignatureSigningConfigurationCriterion;
+import org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.PrivateKey;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 /**
@@ -157,7 +160,7 @@ public class SamlIdPObjectSigner {
         val secParametersContext = outboundContext.getSubcontext(SecurityParametersContext.class, true);
         val roleDesc = adaptor.getSsoDescriptor();
         val signingParameters = buildSignatureSigningParameters(roleDesc, service);
-        secParametersContext.setSignatureSigningParameters(signingParameters);
+        Objects.requireNonNull(secParametersContext).setSignatureSigningParameters(signingParameters);
     }
 
     /**
@@ -201,15 +204,17 @@ public class SamlIdPObjectSigner {
         val params = resolver.resolveSingle(criteria);
         if (params != null) {
             LOGGER.trace("Created signature signing parameters."
-                            + "\nSignature algorithm: [{}]"
-                            + "\nSignature canonicalization algorithm: [{}]"
-                            + "\nSignature reference digest methods: [{}]",
-                    params.getSignatureAlgorithm(),
-                    params.getSignatureCanonicalizationAlgorithm(),
-                    params.getSignatureReferenceDigestMethod());
+                    + "\nSignature algorithm: [{}]"
+                    + "\nSignature canonicalization algorithm: [{}]"
+                    + "\nSignature reference digest methods: [{}]"
+                    + "\nSignature reference canonicalization algorithm: [{}]",
+                params.getSignatureAlgorithm(),
+                params.getSignatureCanonicalizationAlgorithm(),
+                params.getSignatureReferenceDigestMethod(),
+                params.getSignatureReferenceCanonicalizationAlgorithm());
         } else {
             LOGGER.warn("Unable to resolve SignatureSigningParameters, response signing will fail."
-                    + " Make sure domain names in IDP metadata URLs and certificates match CAS domain name");
+                + " Make sure domain names in IDP metadata URLs and certificates match CAS domain name");
         }
         return params;
     }
@@ -224,40 +229,9 @@ public class SamlIdPObjectSigner {
      */
     protected SignatureSigningConfiguration getSignatureSigningConfiguration(final RoleDescriptor roleDescriptor,
                                                                              final SamlRegisteredService service) throws Exception {
-        val config = DefaultSecurityConfigurationBootstrap.buildDefaultSignatureSigningConfiguration();
+        val config = configureSignatureSigningSecurityConfiguration(service);
+
         val samlIdp = casProperties.getAuthn().getSamlIdp();
-        val algs = samlIdp.getAlgs();
-
-        val overrideSignatureReferenceDigestMethods = algs.getOverrideSignatureReferenceDigestMethods();
-        val overrideSignatureAlgorithms = algs.getOverrideSignatureAlgorithms();
-        val overrideBlackListedSignatureAlgorithms = algs.getOverrideBlackListedSignatureSigningAlgorithms();
-        val overrideWhiteListedAlgorithms = algs.getOverrideWhiteListedSignatureSigningAlgorithms();
-
-        if (overrideBlackListedSignatureAlgorithms != null && !overrideBlackListedSignatureAlgorithms.isEmpty()) {
-            config.setBlacklistedAlgorithms(overrideBlackListedSignatureAlgorithms);
-        }
-
-        if (overrideSignatureAlgorithms != null && !overrideSignatureAlgorithms.isEmpty()) {
-            config.setSignatureAlgorithms(overrideSignatureAlgorithms);
-        }
-
-        if (overrideSignatureReferenceDigestMethods != null && !overrideSignatureReferenceDigestMethods.isEmpty()) {
-            config.setSignatureReferenceDigestMethods(overrideSignatureReferenceDigestMethods);
-        }
-
-        if (overrideWhiteListedAlgorithms != null && !overrideWhiteListedAlgorithms.isEmpty()) {
-            config.setWhitelistedAlgorithms(overrideWhiteListedAlgorithms);
-        }
-
-        if (StringUtils.isNotBlank(algs.getOverrideSignatureCanonicalizationAlgorithm())) {
-            config.setSignatureCanonicalizationAlgorithm(algs.getOverrideSignatureCanonicalizationAlgorithm());
-        }
-        LOGGER.trace("Signature signing blacklisted algorithms: [{}]", config.getBlacklistedAlgorithms());
-        LOGGER.trace("Signature signing signature algorithms: [{}]", config.getSignatureAlgorithms());
-        LOGGER.trace("Signature signing signature canonicalization algorithm: [{}]", config.getSignatureCanonicalizationAlgorithm());
-        LOGGER.trace("Signature signing whitelisted algorithms: [{}]", config.getWhitelistedAlgorithms());
-        LOGGER.trace("Signature signing reference digest methods: [{}]", config.getSignatureReferenceDigestMethods());
-
         val privateKey = getSigningPrivateKey();
 
         val kekCredentialResolver = new MetadataCredentialResolver();
@@ -265,7 +239,7 @@ public class SamlIdPObjectSigner {
         kekCredentialResolver.setRoleDescriptorResolver(roleDescriptorResolver);
         kekCredentialResolver.setKeyInfoCredentialResolver(DefaultSecurityConfigurationBootstrap.buildBasicInlineKeyInfoCredentialResolver());
         kekCredentialResolver.initialize();
-        
+
         val criteriaSet = new CriteriaSet();
         criteriaSet.add(new SignatureSigningConfigurationCriterion(config));
         criteriaSet.add(new UsageCriterion(UsageType.SIGNING));
@@ -291,6 +265,63 @@ public class SamlIdPObjectSigner {
 
         config.setSigningCredentials(creds);
         LOGGER.trace("Signature signing credentials configured with [{}] credentials", creds.size());
+        return config;
+    }
+
+    private BasicSignatureSigningConfiguration configureSignatureSigningSecurityConfiguration(final SamlRegisteredService service) {
+        val config = DefaultSecurityConfigurationBootstrap.buildDefaultSignatureSigningConfiguration();
+        LOGGER.trace("Default signature signing blacklisted algorithms: [{}]", config.getBlacklistedAlgorithms());
+        LOGGER.trace("Default signature signing signature algorithms: [{}]", config.getSignatureAlgorithms());
+        LOGGER.trace("Default signature signing signature canonicalization algorithm: [{}]", config.getSignatureCanonicalizationAlgorithm());
+        LOGGER.trace("Default signature signing whitelisted algorithms: [{}]", config.getWhitelistedAlgorithms());
+        LOGGER.trace("Default signature signing reference digest methods: [{}]", config.getSignatureReferenceDigestMethods());
+
+        val samlIdp = casProperties.getAuthn().getSamlIdp();
+        val globalAlgorithms = samlIdp.getAlgs();
+
+        val overrideSignatureReferenceDigestMethods = service.getSigningSignatureReferenceDigestMethods().isEmpty()
+            ? globalAlgorithms.getOverrideSignatureReferenceDigestMethods()
+            : service.getSigningSignatureReferenceDigestMethods();
+        if (overrideSignatureReferenceDigestMethods != null && !overrideSignatureReferenceDigestMethods.isEmpty()) {
+            config.setSignatureReferenceDigestMethods(overrideSignatureReferenceDigestMethods);
+        }
+
+        val overrideSignatureAlgorithms = service.getSigningSignatureAlgorithms().isEmpty()
+            ? globalAlgorithms.getOverrideSignatureAlgorithms()
+            : service.getSigningSignatureAlgorithms();
+        if (overrideSignatureAlgorithms != null && !overrideSignatureAlgorithms.isEmpty()) {
+            config.setSignatureAlgorithms(overrideSignatureAlgorithms);
+        }
+
+        val overrideBlackListedSignatureAlgorithms = service.getSigningSignatureBlackListedAlgorithms().isEmpty()
+            ? globalAlgorithms.getOverrideBlackListedSignatureSigningAlgorithms()
+            : service.getSigningSignatureBlackListedAlgorithms();
+        if (overrideBlackListedSignatureAlgorithms != null && !overrideBlackListedSignatureAlgorithms.isEmpty()) {
+            config.setBlacklistedAlgorithms(overrideBlackListedSignatureAlgorithms);
+        }
+
+        val overrideWhiteListedAlgorithms = service.getSigningSignatureWhiteListedAlgorithms().isEmpty()
+            ? globalAlgorithms.getOverrideWhiteListedSignatureSigningAlgorithms()
+            : service.getSigningSignatureWhiteListedAlgorithms();
+        if (overrideWhiteListedAlgorithms != null && !overrideWhiteListedAlgorithms.isEmpty()) {
+            config.setWhitelistedAlgorithms(overrideWhiteListedAlgorithms);
+        }
+
+        if (StringUtils.isNotBlank(service.getSigningSignatureCanonicalizationAlgorithm())) {
+            config.setSignatureCanonicalizationAlgorithm(service.getSigningSignatureCanonicalizationAlgorithm());
+        } else if (StringUtils.isNotBlank(globalAlgorithms.getOverrideSignatureCanonicalizationAlgorithm())) {
+            config.setSignatureCanonicalizationAlgorithm(globalAlgorithms.getOverrideSignatureCanonicalizationAlgorithm());
+        }
+        LOGGER.trace("Finalized signature signing blacklisted algorithms: [{}]", config.getBlacklistedAlgorithms());
+        LOGGER.trace("Finalized signature signing signature algorithms: [{}]", config.getSignatureAlgorithms());
+        LOGGER.trace("Finalized signature signing signature canonicalization algorithm: [{}]", config.getSignatureCanonicalizationAlgorithm());
+        LOGGER.trace("Finalized signature signing whitelisted algorithms: [{}]", config.getWhitelistedAlgorithms());
+        LOGGER.trace("Finalized signature signing reference digest methods: [{}]", config.getSignatureReferenceDigestMethods());
+
+        if (StringUtils.isNotBlank(service.getWhiteListBlackListPrecedence())) {
+            val precedence = WhitelistBlacklistConfiguration.Precedence.valueOf(service.getWhiteListBlackListPrecedence().trim().toUpperCase());
+            config.setWhitelistBlacklistPrecedence(precedence);
+        }
         return config;
     }
 
@@ -331,7 +362,7 @@ public class SamlIdPObjectSigner {
     private static boolean doesCredentialFingerprintMatch(final AbstractCredential credential, final SamlRegisteredService samlRegisteredService) {
         val fingerprint = samlRegisteredService.getSigningCredentialFingerprint();
         if (StringUtils.isNotBlank(fingerprint)) {
-            val digest = DigestUtils.digest("SHA-1", credential.getPublicKey().getEncoded());
+            val digest = DigestUtils.digest("SHA-1", Objects.requireNonNull(credential.getPublicKey()).getEncoded());
             val pattern = RegexUtils.createPattern(fingerprint, Pattern.CASE_INSENSITIVE);
             LOGGER.debug("Matching credential fingerprint [{}] against filter [{}] for service [{}]", digest, fingerprint, samlRegisteredService.getName());
             return pattern.matcher(digest).find();
@@ -342,7 +373,8 @@ public class SamlIdPObjectSigner {
     private static AbstractCredential finalizeSigningCredential(final MutableCredential credential, final Credential original) {
         credential.setEntityId(original.getEntityId());
         credential.setUsageType(original.getUsageType());
-        original.getCredentialContextSet().forEach(ctx -> credential.getCredentialContextSet().add(ctx));
+        Objects.requireNonNull(original.getCredentialContextSet())
+            .forEach(ctx -> Objects.requireNonNull(credential.getCredentialContextSet()).add(ctx));
         return (AbstractCredential) credential;
     }
 
