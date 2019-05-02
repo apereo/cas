@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("FileSystem")
+@Tag("SAML")
 public class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
 
     @BeforeEach

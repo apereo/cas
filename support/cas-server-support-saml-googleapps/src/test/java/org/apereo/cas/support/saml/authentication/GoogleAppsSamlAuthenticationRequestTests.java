@@ -8,6 +8,7 @@ import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.2.0
  */
 @Import(SamlGoogleAppsConfiguration.class)
+@Tag("SAML")
 @TestPropertySource(locations = "classpath:/gapps.properties")
 public class GoogleAppsSamlAuthenticationRequestTests extends AbstractOpenSamlTests {
     @Autowired

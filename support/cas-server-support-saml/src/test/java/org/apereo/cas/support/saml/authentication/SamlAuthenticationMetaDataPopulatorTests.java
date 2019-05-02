@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -17,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Tag("SAML")
 public class SamlAuthenticationMetaDataPopulatorTests {
 
     private SamlAuthenticationMetaDataPopulator populator;
