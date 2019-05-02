@@ -212,6 +212,15 @@ if (hasTestsOfCategory(project, "OIDC")) {
     }
 }
 
+if (hasTestsOfCategory(project, "SAML")) {
+    task testSAML(type: Test) {
+        enabled = shouldTest(project, "SAML")
+        useJUnitPlatform {
+            includeTags "SAML"
+        }
+    }
+}
+
 test {
     useJUnitPlatform {
         excludeTags "Cassandra", "CosmosDb", "Couchbase", "DynamoDb",
@@ -219,7 +228,7 @@ test {
                 "Ldap", "Mail", "MariaDb", "Memcached",
                 "MongoDb", "MsSqlServer", "MySQL", "Postgres", "Redis",
                 "Radius", "AmazonWebServicesS3", "RestfulApi", "Groovy",
-                "OAuth", "OIDC"
+                "OAuth", "OIDC", "SAML"
     }
     enabled = "SIMPLE".equalsIgnoreCase(rootProject.testCategoryType) && !Boolean.getBoolean("skipTests")
 }

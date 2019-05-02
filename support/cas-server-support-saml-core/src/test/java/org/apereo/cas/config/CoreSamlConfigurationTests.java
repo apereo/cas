@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -32,6 +33,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         CasPersonDirectoryConfiguration.class,
         CasCoreServicesConfiguration.class})
 @EnableScheduling
+@Tag("SAML")
 public class CoreSamlConfigurationTests {
     @Test
     public void verify() {

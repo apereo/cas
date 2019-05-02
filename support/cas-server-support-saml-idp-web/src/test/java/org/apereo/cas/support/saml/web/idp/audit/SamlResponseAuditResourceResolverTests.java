@@ -4,6 +4,7 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.aspectj.lang.JoinPoint;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.Response;
@@ -25,6 +26,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
+@Tag("SAML")
 public class SamlResponseAuditResourceResolverTests {
     @Test
     public void verifyAction() {
