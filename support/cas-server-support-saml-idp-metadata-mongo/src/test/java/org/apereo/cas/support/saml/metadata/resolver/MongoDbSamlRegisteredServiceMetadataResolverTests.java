@@ -8,6 +8,7 @@ import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
 import org.apache.commons.io.IOUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
@@ -35,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.samlIdp.metadata.mongo.idpMetadataCollection=saml-idp-metadata-resolver",
     "cas.authn.samlIdp.metadata.location=file:/tmp"
     })
+@Tag("MongoDb")
 @EnabledIfPortOpen(port = 27017)
 @EnabledIfContinuousIntegration
 public class MongoDbSamlRegisteredServiceMetadataResolverTests extends BaseMongoDbSamlMetadataTests {

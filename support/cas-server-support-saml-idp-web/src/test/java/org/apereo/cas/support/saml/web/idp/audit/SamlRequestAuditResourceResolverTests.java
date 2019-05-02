@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.web.idp.audit;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.aspectj.lang.JoinPoint;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
@@ -20,6 +21,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
+@Tag("SAML")
 public class SamlRequestAuditResourceResolverTests {
     @Test
     public void verifyAction() {

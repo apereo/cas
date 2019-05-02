@@ -5,6 +5,7 @@ import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.EncodingUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Tag("SAML")
 public class SamlAuthenticationRequestTests extends AbstractOpenSamlTests {
 
     private static String deflateViaStream(final String samlRequest) throws IOException {

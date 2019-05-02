@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("FileSystem")
+@Tag("SAML")
 @TestPropertySource(properties = {"cas.authn.samlIdp.metadata.location=file:/tmp"})
 public class SamlSPUtilsTests extends BaseSamlIdPConfigurationTests {
     @BeforeAll

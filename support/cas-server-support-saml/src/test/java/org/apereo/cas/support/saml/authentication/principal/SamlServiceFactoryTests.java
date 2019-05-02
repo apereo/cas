@@ -8,6 +8,7 @@ import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
     SamlServiceFactoryConfiguration.class,
     SamlConfiguration.class
 })
+@Tag("SAML")
 public class SamlServiceFactoryTests extends AbstractOpenSamlTests {
 
     @Autowired

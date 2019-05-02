@@ -4,6 +4,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.saml.ext.saml2mdui.Description;
 import org.opensaml.saml.ext.saml2mdui.DisplayName;
@@ -25,6 +26,7 @@ import static org.mockito.Mockito.*;
     RefreshAutoConfiguration.class
 })
 @DirtiesContext
+@Tag("SAML")
 public class SamlMetadataUIInfoTests {
     @Test
     public void verifyInfoNotAvailable() {

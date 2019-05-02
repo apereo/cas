@@ -6,5 +6,8 @@
   ],
   "gradle": {
     "enabled": true
-  }
+  },
+  "ignoreDeps": [
+    "com.github.coova:jradius"
+  ]
 }

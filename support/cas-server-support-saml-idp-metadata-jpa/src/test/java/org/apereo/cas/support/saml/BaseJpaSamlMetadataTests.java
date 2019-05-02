@@ -35,6 +35,7 @@ import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -86,6 +87,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     CasCoreUtilConfiguration.class})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
+@Tag("SAML")
 public abstract class BaseJpaSamlMetadataTests {
     @Autowired
     @Qualifier("jpaSamlRegisteredServiceMetadataResolver")

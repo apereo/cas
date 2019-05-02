@@ -35,7 +35,7 @@ import java.io.File;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Tag("FileSystem")
+@Tag("SAML")
 public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
     private SAML2Configuration saml2ClientConfiguration;
     private SAML2MessageContext saml2MessageContext;

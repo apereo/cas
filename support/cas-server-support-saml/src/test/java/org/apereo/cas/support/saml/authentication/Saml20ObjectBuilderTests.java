@@ -5,6 +5,7 @@ import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.util.NonInflatingSaml20ObjectBuilder;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Jerome Leleu
  * @since 5.2.9
  */
+@Tag("SAML")
 public class Saml20ObjectBuilderTests extends AbstractOpenSamlTests {
 
     private static final String BASE64_SAML_AUTHN_REQUEST = "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c2FtbDJwOkF1dG"

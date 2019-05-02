@@ -35,7 +35,15 @@ sudo service postgresql stop
 echo -e "Setting build environment...\n"
 sudo mkdir -p /etc/cas/config /etc/cas/saml /etc/cas/services
 
+echo -e "Installing Java...\n"
+wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
+chmod +x install-jdk.sh
+export JAVA_HOME=$(./install-jdk.sh --emit-java-home -F 11 -c | tail --lines 1) && echo $JAVA_HOME
+
+chmod -R 777 ./ci/*.sh
+
 echo -e "Configuring Gradle wrapper...\n"
+mkdir -p ~/.gradle && echo "org.gradle.daemon=false" >> ~/.gradle/gradle.properties
 chmod -R 777 ./gradlew
 
 echo "Home directory: $HOME"

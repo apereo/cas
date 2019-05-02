@@ -7,6 +7,7 @@ import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -18,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Tag("SAML")
 public class WebUtilTests {
 
     @Test

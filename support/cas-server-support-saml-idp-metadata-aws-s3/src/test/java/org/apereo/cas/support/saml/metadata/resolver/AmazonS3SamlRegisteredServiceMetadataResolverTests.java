@@ -14,6 +14,7 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
 import lombok.val;
 import net.shibboleth.utilities.java.support.xml.BasicParserPool;
 import org.apache.http.client.methods.HttpGet;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -29,6 +30,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
+@Tag("AmazonWebServicesS3")
 public class AmazonS3SamlRegisteredServiceMetadataResolverTests {
     @Test
     public void verifyAction() throws Exception {

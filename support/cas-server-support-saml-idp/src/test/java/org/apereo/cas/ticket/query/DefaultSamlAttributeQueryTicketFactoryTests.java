@@ -4,6 +4,7 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
+@Tag("SAML")
 public class DefaultSamlAttributeQueryTicketFactoryTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("samlAttributeQueryTicketFactory")

@@ -12,6 +12,7 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -38,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
     SamlMetadataUIConfiguration.class,
     SamlMetadataUIWebflowConfiguration.class
 })
+@Tag("SAML")
 @TestPropertySource(properties = {"cas.samlMetadataUi.resources=classpath:sample-metadata.xml::classpath:inc-md-pub.pem"})
 public class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
     @Autowired

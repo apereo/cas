@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -39,6 +40,7 @@ import static org.mockito.Mockito.*;
  * @since 3.1
  */
 @Import(SamlGoogleAppsConfiguration.class)
+@Tag("SAML")
 @TestPropertySource(locations = "classpath:/gapps.properties")
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {

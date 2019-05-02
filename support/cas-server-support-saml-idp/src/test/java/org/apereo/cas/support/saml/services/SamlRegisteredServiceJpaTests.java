@@ -9,6 +9,7 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Import;
 
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.0.0
  */
 @Import(JpaServiceRegistryConfiguration.class)
+@Tag("SAML")
 public class SamlRegisteredServiceJpaTests extends BaseSamlIdPConfigurationTests {
 
     @BeforeEach

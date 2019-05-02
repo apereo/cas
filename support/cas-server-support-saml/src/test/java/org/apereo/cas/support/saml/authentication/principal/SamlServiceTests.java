@@ -15,6 +15,7 @@ import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -41,6 +42,7 @@ import static org.mockito.Mockito.*;
     SamlServiceFactoryConfiguration.class,
     SamlConfiguration.class
 })
+@Tag("SAML")
 public class SamlServiceTests extends AbstractOpenSamlTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "samlService.json");
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();

@@ -5,6 +5,7 @@ import org.apereo.cas.support.saml.config.SamlGoogleAppsConfiguration;
 import org.apereo.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
@@ -18,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Import(SamlGoogleAppsConfiguration.class)
+@Tag("SAML")
 @TestPropertySource(locations = "classpath:/gapps.properties")
 public class GoogleSaml20ObjectBuilderTests extends AbstractOpenSamlTests {
 

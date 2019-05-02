@@ -25,7 +25,7 @@ echo -e "***********************************************"
 echo -e "Installing renovate-bot...\n"
 npm install -g renovate
 
-renovate --token=${GH_TOKEN} --dry-run=true apereo/cas
+renovate --git-fs=https --token=${GH_TOKEN} --dry-run=true apereo/cas
 
 waitloop="while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &"
 eval $waitloop

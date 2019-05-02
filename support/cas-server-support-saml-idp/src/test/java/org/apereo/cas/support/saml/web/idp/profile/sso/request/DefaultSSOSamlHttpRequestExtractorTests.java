@@ -6,6 +6,7 @@ import org.apereo.cas.support.saml.web.idp.profile.sso.UrlDecodingHTTPRedirectDe
 import org.apereo.cas.util.EncodingUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.springframework.http.HttpMethod;
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
+@Tag("SAML")
 public class DefaultSSOSamlHttpRequestExtractorTests extends BaseSamlIdPConfigurationTests {
     private static final String SAML_REQUEST = "pZNBj9owEIX%2FSm4%2BJcYQFrAIUgSqhLRtEWx72MvK6wys1cROPeNu%2Bu%2FrBGg57O6lp0j"
         + "j5%2FnevHGWqJq6lWWgF7uHnwGQkhIRPBln185iaMAfwP8yGr7t7wv2QtSi5BxBBw"
