@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.util;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Scott Battaglia
  * @since 3.4.3
  */
+@Tag("SAML")
 public class SamlCompliantUniqueTicketIdGeneratorTests extends AbstractOpenSamlTests {
 
     @Test

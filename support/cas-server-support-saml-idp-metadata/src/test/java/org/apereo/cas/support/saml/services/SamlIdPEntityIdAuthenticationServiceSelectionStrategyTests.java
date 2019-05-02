@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.services;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Tag("SAML")
 public class SamlIdPEntityIdAuthenticationServiceSelectionStrategyTests {
     @Test
     public void verifyAction() {

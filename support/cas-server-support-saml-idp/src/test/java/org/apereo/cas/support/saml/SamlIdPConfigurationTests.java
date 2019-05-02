@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Tag("FileSystem")
+@Tag("SAML")
 public class SamlIdPConfigurationTests extends BaseSamlIdPConfigurationTests {
 
     @Test

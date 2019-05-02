@@ -6,6 +6,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 
 import lombok.val;
 import org.apache.commons.io.IOUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @TestPropertySource(properties = "cas.authn.samlIdp.metadata.location=file:/tmp")
+@Tag("SAML")
 public class JpaSamlRegisteredServiceMetadataResolverTests extends BaseJpaSamlMetadataTests {
 
     @Test

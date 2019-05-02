@@ -6,6 +6,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.attribute.SamlAt
 import org.apereo.cas.util.EncodingUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -18,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Tag("SAML")
 public class SamlAttributeEncoderTests {
     @Test
     public void verifyAction() {
