@@ -51,11 +51,6 @@ jdk:
   - openjdk11
 before_install:
   - unset _JAVA_OPTIONS
-  - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
-  - chmod +x install-jdk.sh
-  - export JAVA_HOME=$(./install-jdk.sh --emit-java-home -F 11 -c | tail --lines 1) && echo $JAVA_HOME
-  - mkdir -p ~/.gradle && echo "org.gradle.daemon=false" >> ~/.gradle/gradle.properties
-  - chmod -R 777 ./ci/*.sh
   - ./ci/init-travis-build.sh
 install: true
 script:
@@ -188,6 +183,10 @@ jobs:
     - stage: test
       script: ./ci/tests/oidc/run-tests-oidc.sh
       name: "OpenID Connect Tests"
+      after_success: bash <(curl -s https://codecov.io/bash)
+    - stage: test
+      script: ./ci/tests/saml/run-tests-saml.sh
+      name: "SAML Tests"
       after_success: bash <(curl -s https://codecov.io/bash)
     - stage: test
       script: ./ci/tests/couchdb/run-tests-couchdb.sh

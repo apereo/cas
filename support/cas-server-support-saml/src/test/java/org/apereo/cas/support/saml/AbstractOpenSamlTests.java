@@ -28,6 +28,7 @@ import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
 import org.apereo.cas.web.config.CasValidationConfiguration;
 
 import net.shibboleth.utilities.java.support.xml.ParserPool;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
@@ -81,6 +82,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreConfiguration.class
 })
+@Tag("SAML")
 public abstract class AbstractOpenSamlTests {
     protected static final String SAML_REQUEST = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         + "<samlp:AuthnRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" "

@@ -5,6 +5,7 @@ import org.apereo.cas.config.CoreSamlConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -23,6 +24,7 @@ import org.springframework.test.context.TestPropertySource;
     CasCoreHttpConfiguration.class,
     CoreSamlConfiguration.class
 })
+@Tag("SAML")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @TestPropertySource(properties = {"spring.mail.host=localhost", "spring.mail.port=25000", "spring.mail.testConnection=true"})
 public abstract class BaseSamlIdPServicesTests {

@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("FileSystem")
+@Tag("SAML")
 public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests {
     @Test
     public void verifySamlResponseAllSigned() {

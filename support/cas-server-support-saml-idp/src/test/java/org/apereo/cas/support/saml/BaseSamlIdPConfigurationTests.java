@@ -49,6 +49,7 @@ import org.jasig.cas.client.authentication.AttributePrincipalImpl;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.AssertionImpl;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
@@ -110,6 +111,7 @@ import static org.mockito.Mockito.*;
     CasCoreUtilConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Tag("SAML")
 public abstract class BaseSamlIdPConfigurationTests {
     protected static FileSystemResource METADATA_DIRECTORY;
 

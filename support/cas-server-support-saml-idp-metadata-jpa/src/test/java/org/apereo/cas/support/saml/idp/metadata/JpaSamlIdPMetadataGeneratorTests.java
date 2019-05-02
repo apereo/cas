@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.idp.metadata;
 
 import org.apereo.cas.support.saml.BaseJpaSamlMetadataTests;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @TestPropertySource(properties = "cas.authn.samlIdp.metadata.jpa.idpMetadataEnabled=true")
+@Tag("SAML")
 public class JpaSamlIdPMetadataGeneratorTests extends BaseJpaSamlMetadataTests {
     @Test
     public void verifyOperation() {

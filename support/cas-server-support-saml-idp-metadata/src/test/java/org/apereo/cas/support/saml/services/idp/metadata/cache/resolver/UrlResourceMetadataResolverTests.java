@@ -19,8 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-
-@Tag("FileSystem")
+@Tag("SAML")
 @TestPropertySource(properties = {"cas.authn.samlIdp.metadata.location=file:/tmp"})
 public class UrlResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
     public static final String METADATA_URL = "https://raw.githubusercontent.com/apereo/cas/master/support/cas-server-support-saml-idp/src/test/resources/metadata/testshib-providers.xml";
