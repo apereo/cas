@@ -28,10 +28,12 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
 
     @Override
     protected boolean isConsentApprovalBypassed(final J2EContext context, final OAuthRegisteredService service) {
-        val url = context.getFullRequestURL();
-        val prompts = OidcAuthorizationRequestSupport.getOidcPromptFromAuthorizationRequest(url);
-        if (prompts.contains(OidcConstants.PROMPT_CONSENT) || url.startsWith("h")) {
-            return false;
+        if (service instanceof OidcRegisteredService) {
+            val url = context.getFullRequestURL();
+            val prompts = OidcAuthorizationRequestSupport.getOidcPromptFromAuthorizationRequest(url);
+            if (prompts.contains(OidcConstants.PROMPT_CONSENT) || url.startsWith("h")) {
+                return false;
+            }
         }
         return super.isConsentApprovalBypassed(context, service);
     }
