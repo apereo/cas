@@ -1,12 +1,12 @@
 package org.apereo.cas.authentication.support.password;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.MessageDescriptor;
-import org.apereo.cas.util.scripting.ScriptingUtils;
+import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 
@@ -22,12 +22,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GroovyPasswordPolicyHandlingStrategy<AuthenticationResponse> implements
     AuthenticationPasswordPolicyHandlingStrategy<AuthenticationResponse, PasswordPolicyConfiguration> {
-    private final transient Resource groovyResource;
+    private final transient WatchableGroovyScriptResource watchableScript;
+
+    public GroovyPasswordPolicyHandlingStrategy(final Resource groovyScript) {
+        this.watchableScript = new WatchableGroovyScriptResource(groovyScript);
+    }
 
     @Override
     public List<MessageDescriptor> handle(final AuthenticationResponse response,
                                           final PasswordPolicyConfiguration configuration) {
         final ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
-        return ScriptingUtils.executeGroovyScript(groovyResource, new Object[]{response, configuration, LOGGER, applicationContext}, List.class);
+        final Object[] args = new Object[]{response, configuration, LOGGER, applicationContext};
+        return watchableScript.execute(args, List.class);
     }
 }
