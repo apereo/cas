@@ -29,7 +29,7 @@ public class DynamicResourceMetadataResolverTests extends BaseSamlIdPServicesTes
         val service = new SamlRegisteredService();
         service.setMetadataLocation("http://www.testshib.org/metadata/testshib-providers.xml");
         assertFalse(resolver.supports(service));
-        service.setMetadataLocation("http://mdq-beta.incommon.org/global/entities/{0}");
+        service.setMetadataLocation("http://mdq-preview.incommon.org/entities/{0}");
         assertTrue(resolver.supports(service));
     }
 
@@ -41,7 +41,7 @@ public class DynamicResourceMetadataResolverTests extends BaseSamlIdPServicesTes
         val service = new SamlRegisteredService();
         service.setId(100);
         service.setName("Dynamic");
-        service.setMetadataLocation("http://mdq-beta.incommon.org/global/entities/{0}");
+        service.setMetadataLocation("http://mdq-preview.incommon.org/entities/{0}");
         service.setServiceId("https://webauth.cmc.edu/idp/shibboleth");
         val results = resolver.resolve(service);
         assertFalse(results.isEmpty());
