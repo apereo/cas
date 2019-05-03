@@ -115,7 +115,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             passwordPolicyHandlingStrategy.getClass().getSimpleName());
         val messageList = passwordPolicyHandlingStrategy.handle(response, getPasswordPolicyConfiguration());
         if (response.getResult()) {
-            LOGGER.debug("LDAP response returned a result. Creating the final LDAP principal");
+            LOGGER.debug("LDAP response returned a result [{}], creating the final LDAP principal", response.getLdapEntry());
             val principal = createPrincipal(upc.getUsername(), response.getLdapEntry());
             return createHandlerResult(upc, principal, messageList);
         }
