@@ -37,7 +37,7 @@ import java.util.stream.Stream;
  */
 @Slf4j
 @RequiredArgsConstructor
-public abstract class AbstractServicesManager implements ServicesManager, InitializingBean {
+public abstract class AbstractServicesManager implements ServicesManager {
 
     private final ServiceRegistry serviceRegistry;
     private final transient ApplicationEventPublisher eventPublisher;
@@ -179,11 +179,6 @@ public abstract class AbstractServicesManager implements ServicesManager, Initia
             publishEvent(new CasRegisteredServiceSavedEvent(this, r));
         }
         return r;
-    }
-
-    @Override
-    public void afterPropertiesSet() {
-        load();
     }
 
     /**
