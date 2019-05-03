@@ -25,11 +25,11 @@ echo -e "***********************************************"
 echo -e "Installing renovate-bot...\n"
 npm install -g renovate
 
-renovate --git-fs=https --token=${GH_TOKEN} --dry-run=true apereo/cas
-
-waitloop="while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &"
+waitloop="while sleep 9m; do echo -e '\n=====[ Build is still running ]====='; done &"
 eval $waitloop
 waitRetVal=$?
+
+renovate --git-fs=https --token=${GH_TOKEN} --dry-run=true apereo/cas
 
 echo -e "***************************************************************************************"
 echo -e "Build finished at `date` with exit code $retVal"
