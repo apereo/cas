@@ -59,5 +59,12 @@ public class JasyptEncryptPropertyCommand {
         cipher.setKeyObtentionIterations(iterations);
         val encrypted = cipher.encryptValue(value);
         LOGGER.info("==== Encrypted Value ====\n{}", encrypted);
+        try {
+            cipher.decryptValue(encrypted);
+        } catch (final Exception e) {
+            LOGGER.error("Decryption failed for value: [{}] with provider [{}]", encrypted, provider, e);
+            LOGGER.error("Failure is likely due to this Jasypt bug: https://sourceforge.net/p/jasypt/bugs/32/");
+            LOGGER.error("Choose a non-AES algorithm or use the BouncyCastle Provider");
+        }
     }
 }
