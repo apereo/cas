@@ -26,7 +26,7 @@ public interface RegisteredServiceMultifactorPolicy extends Serializable {
      *
      * @return the failure mode
      */
-    FailureModes getFailureMode();
+    RegisteredServiceMultifactorPolicyFailureModes getFailureMode();
 
     /**
      * Gets principal attribute name trigger.
@@ -49,33 +49,5 @@ public interface RegisteredServiceMultifactorPolicy extends Serializable {
      * @return true/false
      */
     boolean isBypassEnabled();
-
-    /**
-     * The enum Failure modes.
-     */
-    enum FailureModes {
-        /**
-         * Disallow MFA, proceed with authentication but don't communicate MFA to the RP.
-         */
-        OPEN,
-        /**
-         * Disallow MFA, block with authentication.
-         */
-        CLOSED,
-        /**
-         * Disallow MFA, proceed with authentication and communicate MFA to the RP.
-         */
-        PHANTOM,
-
-        /**
-         * Do not check for failure at all.
-         */
-        NONE,
-
-        /**
-         * The default one indicating that no failure mode is set at all.
-         */
-        UNDEFINED
-    }
 
 }

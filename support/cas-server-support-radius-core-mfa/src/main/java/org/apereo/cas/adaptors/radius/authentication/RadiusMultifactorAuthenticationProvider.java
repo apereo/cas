@@ -42,7 +42,7 @@ public class RadiusMultifactorAuthenticationProvider extends AbstractMultifactor
 
     @Override
     public String getFriendlyName() {
-        return "RADIUS (RSA,WiKID)";
+        return "RADIUS (RSA,WiKID,etc)";
     }
 
     /**

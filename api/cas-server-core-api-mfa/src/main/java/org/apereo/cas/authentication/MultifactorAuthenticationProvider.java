@@ -2,7 +2,8 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
+import org.apereo.cas.services.RegisteredServiceMultifactorPolicyFailureModes;
+
 import org.springframework.core.Ordered;
 
 import java.io.Serializable;
@@ -63,7 +64,7 @@ public interface MultifactorAuthenticationProvider extends Serializable, Ordered
      *
      * @return the FailureMode
      */
-    RegisteredServiceMultifactorPolicy.FailureModes failureMode();
+    RegisteredServiceMultifactorPolicyFailureModes getFailureMode();
 
     /**
      * Creates a unique mark that identifies this provider instance.

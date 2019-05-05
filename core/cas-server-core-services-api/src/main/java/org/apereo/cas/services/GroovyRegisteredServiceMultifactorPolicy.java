@@ -45,7 +45,7 @@ public class GroovyRegisteredServiceMultifactorPolicy implements RegisteredServi
 
     @JsonIgnore
     @Override
-    public FailureModes getFailureMode() {
+    public RegisteredServiceMultifactorPolicyFailureModes getFailureMode() {
         buildGroovyMultifactorPolicyInstanceIfNeeded();
         return this.groovyPolicyInstance.getFailureMode();
     }
