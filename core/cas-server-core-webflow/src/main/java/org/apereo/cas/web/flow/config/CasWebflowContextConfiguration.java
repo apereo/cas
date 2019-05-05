@@ -37,6 +37,7 @@ import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
+import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 import org.springframework.webflow.config.FlowBuilderServicesBuilder;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.context.servlet.FlowUrlHandler;
@@ -51,7 +52,6 @@ import org.springframework.webflow.mvc.servlet.FlowHandlerMapping;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * This is {@link CasWebflowContextConfiguration} that attempts to create Spring-managed beans
@@ -85,6 +85,10 @@ public class CasWebflowContextConfiguration {
     @Autowired
     @Qualifier("webflowCipherExecutor")
     private ObjectProvider<CipherExecutor> webflowCipherExecutor;
+
+    @Autowired
+    @Qualifier("themeChangeInterceptor")
+    private ObjectProvider<ThemeChangeInterceptor> themeChangeInterceptor;
 
     @Bean
     public ExpressionParser expressionParser() {
@@ -168,6 +172,7 @@ public class CasWebflowContextConfiguration {
     public Object[] loginFlowHandlerMappingInterceptors() {
         val interceptors = new ArrayList<Object>();
         interceptors.add(localeChangeInterceptor());
+        themeChangeInterceptor.ifAvailable(interceptor -> interceptors.add(interceptor));
         val plan = authenticationThrottlingExecutionPlan.getIfAvailable();
         if (plan != null) {
             interceptors.addAll(plan.getAuthenticationThrottleInterceptors());
