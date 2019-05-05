@@ -28,7 +28,7 @@ public class DefaultRegisteredServiceMultifactorPolicy implements RegisteredServ
 
     private Set<String> multifactorAuthenticationProviders = new LinkedHashSet<>();
 
-    private FailureModes failureMode = FailureModes.UNDEFINED;
+    private RegisteredServiceMultifactorPolicyFailureModes failureMode = RegisteredServiceMultifactorPolicyFailureModes.UNDEFINED;
 
     private String principalAttributeNameTrigger;
 

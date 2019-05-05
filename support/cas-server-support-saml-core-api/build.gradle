@@ -18,10 +18,10 @@ dependencies {
 
     compileOnly project(":core:cas-server-core-rest")
     
-    testImplementation project(":core:cas-server-core-services")
-    testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":support:cas-server-support-validation")
     testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":core:cas-server-core-services")
+    testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-web-api")
     testImplementation project(":core:cas-server-core-tickets")
