@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 
@@ -37,7 +36,7 @@ import java.util.stream.Stream;
  */
 @Slf4j
 @RequiredArgsConstructor
-public abstract class AbstractServicesManager implements ServicesManager, InitializingBean {
+public abstract class AbstractServicesManager implements ServicesManager {
 
     private final ServiceRegistry serviceRegistry;
     private final transient ApplicationEventPublisher eventPublisher;
@@ -179,11 +178,6 @@ public abstract class AbstractServicesManager implements ServicesManager, Initia
             publishEvent(new CasRegisteredServiceSavedEvent(this, r));
         }
         return r;
-    }
-
-    @Override
-    public void afterPropertiesSet() {
-        load();
     }
 
     /**
