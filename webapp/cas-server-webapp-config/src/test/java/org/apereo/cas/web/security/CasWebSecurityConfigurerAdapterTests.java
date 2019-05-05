@@ -42,7 +42,25 @@ import org.springframework.test.context.web.WebAppConfiguration;
     "cas.monitor.endpoints.ldap.bindCredential=password",
 
     "cas.monitor.endpoints.jdbc.query=SELECT * FROM USERS",
-    "cas.monitor.endpoints.jdbc.role-prefix=USER_"
+    "cas.monitor.endpoints.jdbc.role-prefix=USER_",
+
+    "cas.monitor.endpoints.defaultEndpointProperties.requiredIpAddresses=127.+",
+    "cas.monitor.endpoints.defaultEndpointProperties.access=IP_ADDRESS",
+
+    "cas.monitor.endpoints.endpoint.health.access=IP_ADDRESS",
+    "cas.monitor.endpoints.endpoint.health.requiredIpAddresses=196.+",
+
+    "cas.monitor.endpoints.endpoint.status.access=AUTHENTICATED",
+
+    "cas.monitor.endpoints.endpoint.env.access=PERMIT",
+
+    "cas.monitor.endpoints.endpoint.springWebflow.access=ANONYMOUS",
+
+    "cas.monitor.endpoints.endpoint.sso.access=AUTHORITY",
+    "cas.monitor.endpoints.endpoint.sso.requiredAuthorities=EXAMPLE",
+
+    "cas.monitor.endpoints.endpoint.info.access=ROLE",
+    "cas.monitor.endpoints.endpoint.info.requiredRoles=EXAMPLE"
 })
 public class CasWebSecurityConfigurerAdapterTests {
     @Test
