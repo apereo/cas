@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
  * Class to test {@link RegisteredServiceAccessStrategyAuditableEnforcer}.
  *
  * @author Travis Schmidt
- * @since 6.1
+ * @since 6.1.0
  */
 public class RegisteredServiceAccessStrategyAuditableEnforcerTests {
 
