@@ -48,7 +48,7 @@ import org.apereo.cas.services.RefuseRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
-import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
+import org.apereo.cas.services.RegisteredServiceMultifactorPolicyFailureModes;
 import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
 import org.apereo.cas.services.RemoteEndpointServiceAccessStrategy;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
@@ -277,7 +277,7 @@ public class CloseableKryoFactory implements KryoFactory {
     private static void registerCasServicesMultifactorPolicyWithKryo(final Kryo kryo) {
         kryo.register(DefaultRegisteredServiceMultifactorPolicy.class);
         kryo.register(GroovyRegisteredServiceMultifactorPolicy.class);
-        kryo.register(RegisteredServiceMultifactorPolicy.FailureModes.class);
+        kryo.register(RegisteredServiceMultifactorPolicyFailureModes.class);
     }
 
     private static void registerCasServicesPrincipalAttributeRepositoryWithKryo(final Kryo kryo) {

@@ -4,7 +4,6 @@ dependencies {
     implementation libraries.nimbus
     implementation libraries.jose4j
     
-
     api project(":api:cas-server-core-api-webflow")
     
     implementation project(":core:cas-server-core-webflow")
@@ -14,6 +13,8 @@ dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-services-api")
+    
     implementation project(":support:cas-server-support-oauth")
     implementation project(":support:cas-server-support-oauth-core-api")
     implementation project(":support:cas-server-support-oauth-core")

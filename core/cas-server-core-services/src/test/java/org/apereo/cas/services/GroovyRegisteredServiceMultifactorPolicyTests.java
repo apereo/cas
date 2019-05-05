@@ -28,7 +28,7 @@ public class GroovyRegisteredServiceMultifactorPolicyTests {
         val authz = new GroovyRegisteredServiceMultifactorPolicy();
         authz.setGroovyScript("classpath:mfapolicy.groovy");
 
-        assertEquals(RegisteredServiceMultifactorPolicy.FailureModes.OPEN, authz.getFailureMode());
+        assertEquals(RegisteredServiceMultifactorPolicyFailureModes.OPEN, authz.getFailureMode());
         assertEquals("Test", authz.getPrincipalAttributeNameTrigger());
         assertEquals("TestMatch", authz.getPrincipalAttributeValueToMatch());
         assertTrue(authz.getMultifactorAuthenticationProviders().contains("mfa-something"));
