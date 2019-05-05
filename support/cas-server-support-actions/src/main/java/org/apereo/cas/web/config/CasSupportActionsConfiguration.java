@@ -287,6 +287,7 @@ public class CasSupportActionsConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "logoutViewSetupAction")
     public Action logoutViewSetupAction() {
         return new LogoutViewSetupAction(casProperties);
     }
