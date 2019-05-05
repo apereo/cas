@@ -82,7 +82,7 @@ class GroovyMultifactorPolicy extends DefaultRegisteredServiceMultifactorPolicy 
     }
 
     @Override
-    RegisteredServiceMultifactorPolicy.FailureModes getFailureMode() {
+    RegisteredServiceMultifactorPolicyFailureModes getFailureMode() {
         ...
     }
 

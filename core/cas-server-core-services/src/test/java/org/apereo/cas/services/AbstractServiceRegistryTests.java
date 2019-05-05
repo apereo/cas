@@ -238,7 +238,7 @@ public abstract class AbstractServiceRegistryTests {
         val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
         val policy =
             new DefaultRegisteredServiceMultifactorPolicy();
-        policy.setFailureMode(RegisteredServiceMultifactorPolicy.FailureModes.PHANTOM);
+        policy.setFailureMode(RegisteredServiceMultifactorPolicyFailureModes.PHANTOM);
 
         val set = new HashSet<String>();
         set.add("duoAuthenticationProvider");

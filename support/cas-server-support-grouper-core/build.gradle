@@ -4,16 +4,18 @@ dependencies {
     api project(":api:cas-server-core-api-webflow")
     
     implementation libraries.grouper
+    
     implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-services-registry")
     
     compileOnly project(":core:cas-server-core-webflow")
     
     testImplementation project(":core:cas-server-core-authentication-api")
     testImplementation project(":core:cas-server-core-services")
-    implementation project(":core:cas-server-core-services-registry")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
-    testImplementation project(path: ":support:cas-server-support-json-service-registry")
+    testImplementation project(":support:cas-server-support-json-service-registry")
 }

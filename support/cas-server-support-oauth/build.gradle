@@ -13,6 +13,8 @@ dependencies {
     implementation project(":core:cas-server-core-audit-api")
     implementation project(":core:cas-server-core-services-registry")
     implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-services-api")
+    
     
     implementation project(":support:cas-server-support-token-core-api")
     implementation project(":support:cas-server-support-oauth-core")
