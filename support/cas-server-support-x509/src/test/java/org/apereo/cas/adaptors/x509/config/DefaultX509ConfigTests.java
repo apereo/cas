@@ -29,9 +29,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /** 
  * This test makes sure the default X509 config loads without errors.
  * It purposely has minimal configuration and the defined crlFetcher is the default.
- * @since 6.1
+ * @since 6.1.0
 */
-@SpringBootTest(classes = {X509AuthenticationConfiguration.class,
+@SpringBootTest(classes = {
+    X509AuthenticationConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationPolicyConfiguration.class,
