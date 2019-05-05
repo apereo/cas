@@ -334,6 +334,7 @@ The following example demonstrates how to configure CAS to use `GCM` encryption 
     ]
   ]
 }
+```
 
 #### Signing
 
