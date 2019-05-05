@@ -1,6 +1,6 @@
 package org.apereo.cas.services.util;
 
-import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
+import org.apereo.cas.services.RegisteredServiceMultifactorPolicyFailureModes;
 
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.DeserializationProblemHandler;
@@ -22,12 +22,12 @@ class RegisteredServiceMultifactorPolicyDeserializationProblemHandler extends De
     @Override
     public Object handleWeirdStringValue(final DeserializationContext ctxt, final Class<?> targetType,
                                          final String valueToConvert, final String failureMsg) throws IOException {
-        if (targetType.equals(RegisteredServiceMultifactorPolicy.FailureModes.class)) {
+        if (targetType.equals(RegisteredServiceMultifactorPolicyFailureModes.class)) {
             if (StringUtils.equals("NOT_SET", valueToConvert)) {
                 LOGGER.warn("Found legacy attribute value [{}] which will be converted to [{}] as part of a service multifactor authentication policy."
                         + "The definition SHOULD manually be upgraded to the new supported syntax",
-                    valueToConvert, RegisteredServiceMultifactorPolicy.FailureModes.UNDEFINED);
-                return RegisteredServiceMultifactorPolicy.FailureModes.UNDEFINED;
+                    valueToConvert, RegisteredServiceMultifactorPolicyFailureModes.UNDEFINED);
+                return RegisteredServiceMultifactorPolicyFailureModes.UNDEFINED;
             }
         }
         return super.handleWeirdStringValue(ctxt, targetType, valueToConvert, failureMsg);
