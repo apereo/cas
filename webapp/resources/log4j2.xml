@@ -96,6 +96,7 @@
         <AsyncLogger name="org.springframework.scheduling" level="warn" includeLocation="true"/>
         <AsyncLogger name="org.springframework.context.annotation" level="off" includeLocation="true"/>
         <AsyncLogger name="org.springframework.web.socket" level="warn" includeLocation="true"/>
+        <AsyncLogger name="org.springframework.boot.diagnostics.LoggingFailureAnalysisReporter" level="debug" includeLocation="true"/>
 
         <AsyncLogger name="com.couchbase" level="warn" includeLocation="true" />
         <AsyncLogger name="org.apache" level="error" includeLocation="true"/>
