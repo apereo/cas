@@ -2,12 +2,35 @@
   "extends": [
     "config:base",
     ":preserveSemverRanges",
-    ":rebaseStalePrs"
+    ":rebaseStalePrs",
+    "schedule:daily"
   ],
   "gradle": {
     "enabled": true
   },
   "ignoreDeps": [
     "com.github.coova:jradius"
+  ],
+  "packageRules": [
+    {
+      "groupName": "Groovy",
+      "packagePatterns": [
+        "^org.codehaus.groovy:"
+      ]
+    },
+    {
+      "groupName": "JAXB2",
+      "packagePatterns": [
+        "^org.jvnet.jaxb2_commons:"
+      ]
+    },
+    {
+      "groupName": "AmazonSDK",
+      "packagePatterns": [
+        "^com.amazonaws"
+      ]
+    }
+
+
   ]
 }
