@@ -41,9 +41,10 @@
                 &nbsp;
                 <input class="btn btn-danger" name="back" accesskey="c"
                        th:value="Cancel"
-                       tabindex="6" type="button"
+                       tabindex="6"
+                       type="button"
                        value="Cancel"
-                       onclick="window.history.back();"/>
+                       onclick="location.href = location.href;"/>
             </div>
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
         </form>

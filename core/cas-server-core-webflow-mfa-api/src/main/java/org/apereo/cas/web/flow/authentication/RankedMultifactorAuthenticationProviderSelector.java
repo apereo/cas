@@ -7,10 +7,11 @@ import org.apereo.cas.services.RegisteredService;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.core.OrderComparator;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * This is {@link RankedMultifactorAuthenticationProviderSelector}
@@ -26,13 +27,27 @@ public class RankedMultifactorAuthenticationProviderSelector implements Multifac
 
     @Override
     public MultifactorAuthenticationProvider resolve(final Collection<MultifactorAuthenticationProvider> providers,
-                                                     final RegisteredService service, final Principal principal) {
+                                                     final RegisteredService service,
+                                                     final Principal principal) {
         val sorted = new ArrayList<MultifactorAuthenticationProvider>(providers);
         if (sorted.isEmpty()) {
             throw new IllegalArgumentException("List of candidate multifactor authentication providers is empty");
         }
-        OrderComparator.sort(sorted);
-        val provider = sorted.get(sorted.size() - 1);
+        AnnotationAwareOrderComparator.sort(sorted);
+        return selectMultifactorAuthenticationProvider(service, sorted);
+    }
+
+    /**
+     * Select multifactor authentication provider.
+     *
+     * @param service   the service
+     * @param providers the providers
+     * @return the multifactor authentication provider
+     */
+    protected MultifactorAuthenticationProvider selectMultifactorAuthenticationProvider(
+        final RegisteredService service,
+        final List<MultifactorAuthenticationProvider> providers) {
+        val provider = providers.get(providers.size() - 1);
         LOGGER.debug("Selected the provider [{}] for service [{}] out of [{}] providers", provider, service, providers.size());
         return provider;
     }

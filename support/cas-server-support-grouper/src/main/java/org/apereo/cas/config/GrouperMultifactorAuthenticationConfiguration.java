@@ -16,7 +16,7 @@ import org.apereo.cas.web.flow.GrouperMultifactorAuthenticationTrigger;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
-import org.apereo.cas.web.flow.resolver.impl.mfa.DefaultMultifactorAuthenticationProviderEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.mfa.DefaultMultifactorAuthenticationProviderWebflowEventResolver;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -121,7 +121,7 @@ public class GrouperMultifactorAuthenticationConfiguration {
             .applicationContext(applicationContext)
             .build();
 
-        val r = new DefaultMultifactorAuthenticationProviderEventResolver(
+        val r = new DefaultMultifactorAuthenticationProviderWebflowEventResolver(
             context,
             grouperMultifactorAuthenticationTrigger());
         LOGGER.debug("Activating MFA event resolver based on Grouper groups...");

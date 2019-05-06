@@ -43,8 +43,10 @@ public class TimedMultifactorAuthenticationTrigger implements MultifactorAuthent
     private int order = Ordered.LOWEST_PRECEDENCE;
 
     @Override
-    public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication, final RegisteredService registeredService,
-                                                                   final HttpServletRequest httpServletRequest, final Service service) {
+    public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
+                                                                   final RegisteredService registeredService,
+                                                                   final HttpServletRequest httpServletRequest,
+                                                                   final Service service) {
 
         val timedMultifactor = casProperties.getAuthn().getAdaptive().getRequireTimedMultifactor();
         if (service == null || authentication == null) {
