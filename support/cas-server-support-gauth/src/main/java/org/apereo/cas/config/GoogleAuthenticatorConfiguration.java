@@ -5,6 +5,7 @@ import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorMultifactorTrustWebflowC
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorMultifactorWebflowConfigurer;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 
@@ -52,7 +53,7 @@ public class GoogleAuthenticatorConfiguration implements CasWebflowExecutionPlan
     @Bean
     public FlowDefinitionRegistry googleAuthenticatorFlowRegistry() {
         val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
-        builder.setBasePath("classpath*:/webflow");
+        builder.setBasePath(CasWebflowConstants.BASE_CLASSPATH_WEBFLOW);
         builder.addFlowLocationPattern("/mfa-gauth/*-webflow.xml");
         return builder.build();
     }

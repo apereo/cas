@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.bypass.NeverAllowMultifactorAuthenticationP
 import org.apereo.cas.services.RegisteredService;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
 
@@ -21,10 +22,12 @@ import java.util.Optional;
  * @since 5.3.4
  */
 @Getter
+@NoArgsConstructor
 public class DefaultChainingMultifactorAuthenticationBypassProvider implements ChainingMultifactorAuthenticationProviderBypass {
     private static final long serialVersionUID = 2397239625822397286L;
 
-    private final List<MultifactorAuthenticationProviderBypass> multifactorAuthenticationProviderBypassEvaluators = new ArrayList<>();
+    private final List<MultifactorAuthenticationProviderBypass> multifactorAuthenticationProviderBypassEvaluators
+        = new ArrayList<>();
 
     @Audit(action = "MFA_BYPASS",
         actionResolverName = "MFA_BYPASS_ACTION_RESOLVER",

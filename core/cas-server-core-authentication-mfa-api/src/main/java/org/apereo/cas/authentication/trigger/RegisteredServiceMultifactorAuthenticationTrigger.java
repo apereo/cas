@@ -41,7 +41,8 @@ public class RegisteredServiceMultifactorAuthenticationTrigger implements Multif
     @Override
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
                                                                    final RegisteredService registeredService,
-                                                                   final HttpServletRequest httpServletRequest, final Service service) {
+                                                                   final HttpServletRequest httpServletRequest,
+                                                                   final Service service) {
         if (registeredService == null || authentication == null) {
             LOGGER.debug("No service or authentication is available to determine event for principal");
             return Optional.empty();
@@ -53,8 +54,10 @@ public class RegisteredServiceMultifactorAuthenticationTrigger implements Multif
             return Optional.empty();
         }
 
-        if (StringUtils.isNotBlank(policy.getPrincipalAttributeNameTrigger()) || StringUtils.isNotBlank(policy.getPrincipalAttributeValueToMatch())) {
-            LOGGER.debug("Authentication policy for [{}] has defined principal attribute triggers. Skipping...", registeredService.getServiceId());
+        if (StringUtils.isNotBlank(policy.getPrincipalAttributeNameTrigger())
+            || StringUtils.isNotBlank(policy.getPrincipalAttributeValueToMatch())) {
+            LOGGER.debug("Authentication policy for [{}] has defined principal attribute triggers. Skipping...",
+                registeredService.getServiceId());
             return Optional.empty();
         }
 
