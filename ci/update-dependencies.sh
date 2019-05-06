@@ -29,7 +29,7 @@ waitloop="while sleep 9m; do echo -e '\n=====[ Build is still running ]====='; d
 eval $waitloop
 waitRetVal=$?
 
-renovate --git-fs=https --token=${GH_TOKEN} --dry-run=true apereo/cas
+renovate --git-fs=https --token=${GH_TOKEN} apereo/cas
 
 echo -e "***************************************************************************************"
 echo -e "Build finished at `date` with exit code $retVal"
