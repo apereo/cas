@@ -2656,7 +2656,7 @@ The signing key and the encryption key [are both JWKs](Configuration-Properties-
 
 ### YubiKey JPA Device Store
 
-Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.mfa.gauth.yubikey`.
+Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.mfa.yubikey.jpa`.
 
 ### YubiKey CouchDb Device Store
 
