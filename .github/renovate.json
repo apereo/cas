@@ -3,7 +3,7 @@
     "config:base",
     ":preserveSemverRanges",
     ":rebaseStalePrs",
-    "schedule:daily"
+    "schedule:every weekend"
   ],
   "gradle": {
     "enabled": true
@@ -38,7 +38,5 @@
         "^io.swagger:"
       ]
     }
-
-
   ]
 }

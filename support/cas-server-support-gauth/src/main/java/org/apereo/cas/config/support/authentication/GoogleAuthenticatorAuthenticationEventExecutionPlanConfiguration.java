@@ -180,7 +180,6 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
                 crypto.getEncryption().getKey(),
                 crypto.getSigning().getKey(),
                 crypto.getAlg(),
-                "Google Authenticator Token Account",
                 crypto.getSigning().getKeySize(),
                 crypto.getEncryption().getKeySize());
         }
