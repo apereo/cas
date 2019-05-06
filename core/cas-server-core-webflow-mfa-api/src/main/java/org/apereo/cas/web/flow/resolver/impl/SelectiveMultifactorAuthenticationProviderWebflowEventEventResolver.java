@@ -78,8 +78,11 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventEventResolver
      * @return the set of events
      */
     protected Pair<Set<Event>, Collection<MultifactorAuthenticationProvider>> filterEventsByMultifactorAuthenticationProvider(
-        final Set<Event> resolveEvents, final Authentication authentication,
-        final RegisteredService registeredService, final HttpServletRequest request) {
+        final Set<Event> resolveEvents,
+        final Authentication authentication,
+        final RegisteredService registeredService,
+        final HttpServletRequest request) {
+
         LOGGER.debug("Locating multifactor providers to determine support for this authentication sequence");
         val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(
             getWebflowEventResolutionConfigurationContext().getApplicationContext());

@@ -1,6 +1,9 @@
 
 package org.apereo.cas;
 
+import org.apereo.cas.web.flow.authentication.GroovyScriptMultifactorAuthenticationProviderSelectorTests;
+import org.apereo.cas.web.flow.authentication.RankedMultifactorAuthenticationProviderSelectorTests;
+
 import org.junit.platform.suite.api.SelectClasses;
 
 /**
@@ -16,6 +19,8 @@ import org.junit.platform.suite.api.SelectClasses;
     AuthenticationAttributeMultifactorAuthenticationPolicyEventResolverTests.class,
     AdaptiveMultifactorAuthenticationPolicyEventResolverTests.class,
     MultifactorAuthenticationTests.class,
+    GroovyScriptMultifactorAuthenticationProviderSelectorTests.class,
+    RankedMultifactorAuthenticationProviderSelectorTests.class,
     RequestSessionAttributeMultifactorAuthenticationPolicyEventResolverTests.class,
     TimedMultifactorAuthenticationPolicyEventResolverTests.class,
     AllMultifactorAuthenticationWebflowTests.class
