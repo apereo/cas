@@ -115,7 +115,7 @@ jobs:
     - stage: dependencies
       if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
       script: ./ci/update-dependencies.sh
-      name: "Update Dependencies"
+      name: "Renovate Dependency Updates"
       ############################################
     - stage: test
       script: ./ci/tests/validate-tests.sh
