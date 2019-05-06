@@ -113,7 +113,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             if (casProperties.getWebflow().isAutoconfigure()) {
                 doInitialize();
             } else {
-                LOGGER.warn("Webflow auto-configuration is disabled. CAS will not modify the webflow via [{}]", getClass().getName());
+                LOGGER.info("Webflow auto-configuration is disabled for [{}]", getClass().getName());
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -144,7 +144,8 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         if (found) {
             return (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(FLOW_ID_LOGIN);
         }
-        LOGGER.error("Could not find flow definition [{}]. Available flow definition ids are [{}]", FLOW_ID_LOGIN, this.loginFlowDefinitionRegistry.getFlowDefinitionIds());
+        LOGGER.error("Could not find flow definition [{}]. Available flow definition ids are [{}]",
+            FLOW_ID_LOGIN, this.loginFlowDefinitionRegistry.getFlowDefinitionIds());
         return null;
     }
 
@@ -210,7 +211,8 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         val actionState = new ActionState(flow, name);
         LOGGER.trace("Created action state [{}]", actionState.getId());
         actionState.getActionList().addAll(actions);
-        LOGGER.trace("Added action to the action state [{}] list of actions: [{}]", actionState.getId(), actionState.getActionList());
+        LOGGER.trace("Added action to the action state [{}] list of actions: [{}]",
+            actionState.getId(), actionState.getActionList());
         return actionState;
     }
 

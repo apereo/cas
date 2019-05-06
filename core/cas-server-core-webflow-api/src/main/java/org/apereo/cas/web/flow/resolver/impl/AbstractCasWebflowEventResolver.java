@@ -111,6 +111,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     public Event resolveSingle(final RequestContext context) {
         val events = resolve(context);
         if (events == null || events.isEmpty()) {
+            LOGGER.trace("No event could be determined");
             return null;
         }
         val event = events.iterator().next();

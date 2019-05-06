@@ -17,17 +17,17 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * This is {@link DefaultMultifactorAuthenticationProviderEventResolver}.
+ * This is {@link DefaultMultifactorAuthenticationProviderWebflowEventResolver}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
  */
 @Slf4j
-public class DefaultMultifactorAuthenticationProviderEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
+public class DefaultMultifactorAuthenticationProviderWebflowEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
     private final MultifactorAuthenticationTrigger multifactorAuthenticationTrigger;
 
-    public DefaultMultifactorAuthenticationProviderEventResolver(final CasWebflowEventResolutionConfigurationContext webflowEventResolutionConfigurationContext,
-                                                                 final MultifactorAuthenticationTrigger multifactorAuthenticationTrigger) {
+    public DefaultMultifactorAuthenticationProviderWebflowEventResolver(final CasWebflowEventResolutionConfigurationContext webflowEventResolutionConfigurationContext,
+                                                                        final MultifactorAuthenticationTrigger multifactorAuthenticationTrigger) {
         super(webflowEventResolutionConfigurationContext);
         this.multifactorAuthenticationTrigger = multifactorAuthenticationTrigger;
     }
@@ -41,9 +41,11 @@ public class DefaultMultifactorAuthenticationProviderEventResolver extends BaseM
 
         val result = multifactorAuthenticationTrigger.isActivated(authentication, registeredService, request, service);
         return result.map(provider -> {
-            LOGGER.trace("Attempting to build an event based on the authentication provider [{}] and service [{}]", provider, registeredService);
-            val event = MultifactorAuthenticationUtils.validateEventIdForMatchingTransitionInContext(provider.getId(), Optional.of(context),
-                MultifactorAuthenticationUtils.buildEventAttributeMap(authentication.getPrincipal(), Optional.ofNullable(registeredService), provider));
+            LOGGER.trace("Building event based on the authentication provider [{}] and service [{}]", provider, registeredService);
+            var eventMap = MultifactorAuthenticationUtils.buildEventAttributeMap(authentication.getPrincipal(),
+                Optional.ofNullable(registeredService), provider);
+            val event = MultifactorAuthenticationUtils.validateEventIdForMatchingTransitionInContext(
+                provider.getId(), Optional.of(context), eventMap);
             return CollectionUtils.wrapSet(event);
         }).orElse(null);
     }

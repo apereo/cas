@@ -8,7 +8,6 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -30,9 +29,9 @@ public abstract class AbstractMultifactorAuthenticationAction<T extends Multifac
 
     @Override
     protected Event doPreExecute(final RequestContext requestContext) {
-        val flowId = requestContext.getFlowScope().get(CasWebflowConstants.VAR_ID_MFA_PROVIDER_ID, String.class);
+        val providerId = requestContext.getFlowScope().get(CasWebflowConstants.VAR_ID_MFA_PROVIDER_ID, String.class);
         val applicationContext = ApplicationContextProvider.getApplicationContext();
-        provider = (T) MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(flowId, applicationContext)
+        provider = (T) MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(providerId, applicationContext)
                 .orElseThrow(AuthenticationException::new);
 
         return null;

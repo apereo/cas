@@ -6,6 +6,7 @@ import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasFlowHandlerAdapter;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.actions.CasDefaultFlowUrlHandler;
@@ -67,7 +68,7 @@ public class CasWebflowContextConfiguration {
 
     private static final int LOGOUT_FLOW_HANDLER_ORDER = 3;
 
-    private static final String BASE_CLASSPATH_WEBFLOW = "classpath*:/webflow";
+    private static final FlowExecutionListener[] FLOW_EXECUTION_LISTENERS = new FlowExecutionListener[0];
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -203,7 +204,7 @@ public class CasWebflowContextConfiguration {
     @Bean
     public FlowDefinitionRegistry logoutFlowRegistry() {
         val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, builder());
-        builder.setBasePath(BASE_CLASSPATH_WEBFLOW);
+        builder.setBasePath(CasWebflowConstants.BASE_CLASSPATH_WEBFLOW);
         builder.addFlowLocationPattern("/logout/*-webflow.xml");
         return builder.build();
     }
@@ -212,7 +213,7 @@ public class CasWebflowContextConfiguration {
     @Bean
     public FlowDefinitionRegistry loginFlowRegistry() {
         val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, builder());
-        builder.setBasePath(BASE_CLASSPATH_WEBFLOW);
+        builder.setBasePath(CasWebflowConstants.BASE_CLASSPATH_WEBFLOW);
         builder.addFlowLocationPattern("/login/*-webflow.xml");
         return builder.build();
     }
@@ -222,7 +223,7 @@ public class CasWebflowContextConfiguration {
     @Lazy(false)
     public FlowExecutor logoutFlowExecutor() {
         val factory = new WebflowExecutorFactory(casProperties.getWebflow(),
-            logoutFlowRegistry(), this.webflowCipherExecutor.getIfAvailable(), new FlowExecutionListener[0]);
+            logoutFlowRegistry(), this.webflowCipherExecutor.getIfAvailable(), FLOW_EXECUTION_LISTENERS);
         return factory.build();
     }
 
@@ -232,7 +233,7 @@ public class CasWebflowContextConfiguration {
     public FlowExecutor loginFlowExecutor() {
         val factory = new WebflowExecutorFactory(casProperties.getWebflow(),
             loginFlowRegistry(), this.webflowCipherExecutor.getIfAvailable(),
-            new FlowExecutionListener[0]);
+            FLOW_EXECUTION_LISTENERS);
 
         return factory.build();
     }

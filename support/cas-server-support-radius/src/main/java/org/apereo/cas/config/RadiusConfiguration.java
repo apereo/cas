@@ -31,7 +31,7 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
-import org.apereo.cas.web.flow.resolver.impl.mfa.DefaultMultifactorAuthenticationProviderEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.mfa.DefaultMultifactorAuthenticationProviderWebflowEventResolver;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -199,7 +199,7 @@ public class RadiusConfiguration {
             .eventPublisher(applicationEventPublisher)
             .applicationContext(applicationContext)
             .build();
-        final CasWebflowEventResolver r = new DefaultMultifactorAuthenticationProviderEventResolver(context,
+        final CasWebflowEventResolver r = new DefaultMultifactorAuthenticationProviderWebflowEventResolver(context,
             radiusAccessChallengedMultifactorAuthenticationTrigger());
         LOGGER.debug("Activating MFA event resolver based on RADIUS...");
         this.initialAuthenticationAttemptWebflowEventResolver.getIfAvailable().addDelegate(r);
