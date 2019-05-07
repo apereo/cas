@@ -30,7 +30,7 @@ public class AccepttoMultifactorProperties extends BaseMultifactorProviderProper
      * method. Based on the policies defined by relying party user
      * has the option of using Push Notification, Text Message, Voice
      * Call, TOTP for replying to the authentication request. As soon as
-     * users select “Accept” or “Decline” with the push, or verifies
+     * users select Accept or Decline with the push, or verifies
      * with a one-time passcode, they will get redirected back to
      * callback url that was passed by the relying party.
      */
@@ -38,33 +38,33 @@ public class AccepttoMultifactorProperties extends BaseMultifactorProviderProper
     private String authnSelectionUrl = "https://mfa.acceptto.com/mfa/index";
 
     /**
-     * Base URL for API calls  to authenticate, fetch channels or verify responses.
+     * Base URL for API calls to authenticate, fetch channels or verify responses.
      */
     @RequiredProperty
     private String apiUrl = "https://mfa.acceptto.com/api/v9/";
 
     /**
-     * uid of the application. When an organization creates
-     * an application in eGuardian® dashboard this uid gets generated.
+     * Identifier of the application. When an organization creates
+     * an application in eGuardian dashboard this id gets generated.
      */
     @RequiredProperty
     private String applicationId;
 
     /**
-     * secret of the application. When an organization creates an
-     * application in eGuardian® dashboard this secret gets generated.
+     * Secret of the application. When an organization creates an
+     * application in eGuardian dashboard this secret gets generated.
      */
     @RequiredProperty
     private String secret;
 
     /**
-     * message to deliver to the user. This message gets delivered to
-     * the user device via push notification. e.g “Would you like to sign in?”
+     * Message to deliver to the user. This message gets delivered to
+     * the user device via push notification. e.g "Would you like to sign in?".
      */
     private String message = "Would you like to sign into CAS?";
 
     /**
-     * The user attribute that collect's the user's email address
+     * The user attribute that collects the user's email address
      * which the relying party wants to authenticate.
      */
     @RequiredProperty
@@ -72,7 +72,7 @@ public class AccepttoMultifactorProperties extends BaseMultifactorProviderProper
 
     /**
      * Timeout value for the authentication request is in seconds.
-     * If the user doesn’t respond in the specified time period, an authentication
+     * If the user does not respond in the specified time period, an authentication
      * request expires. The max value is 600 seconds. Setting the value any
      * higher will cause it to revert back to 600 seconds.
      */
