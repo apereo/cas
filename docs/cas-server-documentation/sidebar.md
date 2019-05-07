@@ -88,6 +88,7 @@ layout: null
         *   [Duo Security](/$version/mfa/DuoSecurity-Authentication.html)
         *   [YubiKey](/$version/mfa/YubiKey-Authentication.html)
         *   [RSA/Radius](/$version/mfa/RADIUS-Authentication.html)
+        *   [Acceptto](/$version/mfa/Acceptto-Authentication.html)
         *   [Google Authenticator](/$version/mfa/GoogleAuthenticator-Authentication.html)
         *   [Authy](/$version/mfa/AuthyAuthenticator-Authentication.html)
         *   [Simple](/$version/mfa/Simple-Multifactor-Authentication.html)
