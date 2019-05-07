@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
@@ -37,6 +38,11 @@ public class AccepttoMultifactorFetchChannelAction extends AbstractAction {
      */
     public static final String SESSION_ATTRIBUTE_CHANNEL = "acceptoMfaChannel";
 
+    /**
+     * Session attribute to hold original authn.
+     */
+    public static final String SESSION_ATTRIBUTE_ORIGINAL_AUTHENTICATION = "acceptoMfaOriginalAuthN";
+
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     private final CasConfigurationProperties casProperties;
@@ -53,6 +59,9 @@ public class AccepttoMultifactorFetchChannelAction extends AbstractAction {
         val channel = authenticateAndFetchChannel();
         LOGGER.debug("Storing channel [{}] in http session", channel);
         webContext.getSessionStore().set(webContext, SESSION_ATTRIBUTE_CHANNEL, channel);
+
+        val authentication = WebUtils.getInProgressAuthentication();
+        webContext.getSessionStore().set(webContext, SESSION_ATTRIBUTE_ORIGINAL_AUTHENTICATION, authentication);
 
         val callbackUrl = WebUtils.getHttpRequestFullUrl(request);
         val accepttoRedirectUrl = new URIBuilder(acceptto.getAuthnSelectionUrl() + "/mfa/index")
@@ -73,7 +82,8 @@ public class AccepttoMultifactorFetchChannelAction extends AbstractAction {
      */
     protected String authenticateAndFetchChannel() {
         val acceptto = casProperties.getAuthn().getMfa().getAcceptto();
-        val url = acceptto.getApiUrl() + "/authenticate";
+        val url = StringUtils.appendIfMissing(acceptto.getApiUrl(), "/") + "authenticate";
+
         LOGGER.trace("Contacting API [{}] to fetch channel", url);
 
         val authentication = WebUtils.getInProgressAuthentication();

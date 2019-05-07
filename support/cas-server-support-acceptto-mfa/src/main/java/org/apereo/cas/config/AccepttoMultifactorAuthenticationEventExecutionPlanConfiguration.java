@@ -53,9 +53,9 @@ public class AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     public AuthenticationHandler casAccepttoMultifactorAuthenticationHandler() {
         val props = casProperties.getAuthn().getMfa().getAcceptto();
-        return new AccepttoMultifactorAuthenticationHandler(props.getName(),
+        return new AccepttoMultifactorAuthenticationHandler(
             servicesManager.getIfAvailable(), casAccepttoMultifactorPrincipalFactory(),
-            props.getOrder());
+            props);
     }
 
     @Bean

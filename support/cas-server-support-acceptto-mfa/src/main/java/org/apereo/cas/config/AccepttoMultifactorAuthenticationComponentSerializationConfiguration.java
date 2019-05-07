@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.ComponentSerializationPlan;
 import org.apereo.cas.ComponentSerializationPlanConfigurator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.mfa.accepto.AccepttoMultifactorTokenCredential;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -20,5 +21,6 @@ public class AccepttoMultifactorAuthenticationComponentSerializationConfiguratio
 
     @Override
     public void configureComponentSerializationPlan(final ComponentSerializationPlan plan) {
+        plan.registerSerializableClass(AccepttoMultifactorTokenCredential.class);
     }
 }

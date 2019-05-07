@@ -14,7 +14,7 @@ import lombok.ToString;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@ToString
+@ToString(callSuper = true)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -22,7 +22,7 @@ import lombok.ToString;
 public class AccepttoMultifactorTokenCredential extends BasicIdentifiableCredential {
     private static final long serialVersionUID = -4245622701132144037L;
 
-    public AccepttoMultifactorTokenCredential(final String token) {
-        super(token);
+    public AccepttoMultifactorTokenCredential(final String channel) {
+        super(channel);
     }
 }

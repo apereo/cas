@@ -1,8 +1,10 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.integration.pac4j.DistributedJ2ESessionStore;
 import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorFetchChannelAction;
+import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorValidateChannelAction;
 import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorWebflowConfigurer;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -44,6 +46,10 @@ public class AccepttoMultifactorAuthenticationConfiguration implements CasWebflo
 
     @Autowired
     private ApplicationContext applicationContext;
+
+    @Autowired
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
     @Autowired
     @Qualifier("loginFlowRegistry")
@@ -94,4 +100,12 @@ public class AccepttoMultifactorAuthenticationConfiguration implements CasWebflo
     public Action mfaAccepttoMultifactorFetchChannelAction() {
         return new AccepttoMultifactorFetchChannelAction(casProperties, mfaAccepttoDistributedSessionStore());
     }
+
+    @ConditionalOnMissingBean(name = "mfaAccepttoMultifactorValidateChannelAction")
+    @Bean
+    public Action mfaAccepttoMultifactorValidateChannelAction() {
+        return new AccepttoMultifactorValidateChannelAction(mfaAccepttoDistributedSessionStore(),
+            authenticationSystemSupport.getIfAvailable());
+    }
+
 }
