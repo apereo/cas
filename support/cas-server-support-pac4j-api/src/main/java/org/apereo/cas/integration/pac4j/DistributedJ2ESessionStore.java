@@ -49,11 +49,14 @@ public class DistributedJ2ESessionStore extends J2ESessionStore implements HttpS
         if (value instanceof Serializable) {
             properties.put(key, (Serializable) value);
         } else if (value != null) {
-            LOGGER.trace("Object value [{}] assigned to [{}] is not serializable and will not kept as part of the ticket [{}]", value, key, id);
+            LOGGER.trace("Object value [{}] assigned to [{}] is not serializable and may not be part of the ticket [{}]",
+                value, key, id);
         }
 
         var ticket = getTransientSessionTicketForSession(context);
-        if (ticket == null) {
+        if (value == null && ticket != null) {
+            this.ticketRegistry.deleteTicket(ticket);
+        } else if (ticket == null) {
             ticket = transientFactory.create(id, properties);
             this.ticketRegistry.addTicket(ticket);
         } else {
