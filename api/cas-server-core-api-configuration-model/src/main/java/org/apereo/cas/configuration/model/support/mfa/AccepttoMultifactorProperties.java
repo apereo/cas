@@ -76,7 +76,7 @@ public class AccepttoMultifactorProperties extends BaseMultifactorProviderProper
      * request expires. The max value is 600 seconds. Setting the value any
      * higher will cause it to revert back to 600 seconds.
      */
-    private long timeout = 30;
+    private long timeout = 120;
 
     public AccepttoMultifactorProperties() {
         setId(DEFAULT_IDENTIFIER);

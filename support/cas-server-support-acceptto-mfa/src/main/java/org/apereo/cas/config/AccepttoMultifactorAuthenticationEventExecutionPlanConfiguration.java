@@ -17,6 +17,8 @@ import org.apereo.cas.services.ServicesManager;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -53,8 +55,15 @@ public class AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     public AuthenticationHandler casAccepttoMultifactorAuthenticationHandler() {
         val props = casProperties.getAuthn().getMfa().getAcceptto();
+        if (StringUtils.isBlank(props.getApiUrl()) || StringUtils.isBlank(props.getApplicationId())
+            || StringUtils.isBlank(props.getSecret()) || StringUtils.isBlank(props.getEmailAttribute())
+            || StringUtils.isBlank(props.getAuthnSelectionUrl())) {
+            throw new BeanCreationException("No API/selection url, application id, secret or email attribute "
+                + "is defined for the Acceptto integration. Examine your CAS configuration and adjust.");
+        }
         return new AccepttoMultifactorAuthenticationHandler(
-            servicesManager.getIfAvailable(), casAccepttoMultifactorPrincipalFactory(),
+            servicesManager.getIfAvailable(),
+            casAccepttoMultifactorPrincipalFactory(),
             props);
     }
 

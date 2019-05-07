@@ -2846,7 +2846,7 @@ To learn more about this topic, [please review this guide](../mfa/Acceptto-Authe
 # cas.authn.mfa.acceptto.applicationId=
 # cas.authn.mfa.acceptto.secret=
 # cas.authn.mfa.acceptto.message=Do you want to login to CAS?
-# cas.authn.mfa.acceptto.timeout=30
+# cas.authn.mfa.acceptto.timeout=120
 # cas.authn.mfa.acceptto.emailAttribute=mail
 # cas.authn.mfa.acceptto.name=
 # cas.authn.mfa.acceptto.order=
