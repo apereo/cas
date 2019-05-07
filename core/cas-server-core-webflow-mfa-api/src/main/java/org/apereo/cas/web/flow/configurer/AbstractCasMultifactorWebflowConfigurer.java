@@ -218,7 +218,8 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
     }
 
     private void registerMultifactorProviderBypassAction(final Flow mfaFlow) {
-        val bypassAction = createActionState(mfaFlow, CasWebflowConstants.STATE_ID_MFA_CHECK_BYPASS, createEvaluateAction(MFA_CHECK_BYPASS_BEAN_ID));
+        val bypassAction = createActionState(mfaFlow, CasWebflowConstants.STATE_ID_MFA_CHECK_BYPASS,
+            createEvaluateAction(MFA_CHECK_BYPASS_BEAN_ID));
         createTransitionForState(bypassAction, CasWebflowConstants.TRANSITION_ID_NO, CasWebflowConstants.STATE_ID_MFA_CHECK_AVAILABLE);
         createTransitionForState(bypassAction, CasWebflowConstants.TRANSITION_ID_YES, CasWebflowConstants.TRANSITION_ID_SUCCESS);
     }

@@ -2417,13 +2417,34 @@ The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encrypt
 To learn more about this topic, [please review this guide](../mfa/Configuring-Multifactor-Authentication.html).
 
 ```properties
+# Describe the global failure mode in case provider cannot be reached
+# cas.authn.mfa.globalFailureMode=CLOSED
+
+# Design the attribute chosen to communicate the authentication context
+# cas.authn.mfa.authenticationContextAttribute=authnContextClass
+
+# Identify the request content type for non-browser MFA requests
+# cas.authn.mfa.contentType=application/cas
+```
+
+### Multifactor Authentication: Global Trigger
+
+```properties
 # Activate MFA globally for all, regardless of other settings
 # cas.authn.mfa.globalProviderId=mfa-duo
+```
 
+### Multifactor Authentication: Authentication Attribute Trigger
+
+```properties
 # Activate MFA globally based on authentication metadata attributes
 # cas.authn.mfa.globalAuthenticationAttributeNameTriggers=customAttributeName
 # cas.authn.mfa.globalAuthenticationAttributeValueRegex=customRegexValue
+```
 
+### Multifactor Authentication: Principal Attribute Trigger
+
+```properties
 # Activate MFA globally based on principal attributes
 # cas.authn.mfa.globalPrincipalAttributeNameTriggers=memberOf,eduPersonPrimaryAffiliation
 
@@ -2433,16 +2454,31 @@ To learn more about this topic, [please review this guide](../mfa/Configuring-Mu
 
 # Activate MFA globally based on principal attributes and a groovy-based predicate
 # cas.authn.mfa.globalPrincipalAttributePredicate=file:/etc/cas/PredicateExample.groovy
+```
 
-# Activate MFA based on a custom REST API/endpoint
+### Multifactor Authentication: REST API Trigger
+
+```properties
 # cas.authn.mfa.restEndpoint=https://entity.example.org/mfa
+```
 
+### Multifactor Authentication: Groovy Trigger
+
+```properties
 # Activate MFA based on a Groovy script
 # cas.authn.mfa.groovyScript=file:/etc/cas/mfaGroovyTrigger.groovy
+```
 
+### Multifactor Authentication: Internet2 Grouper Trigger
+
+```properties
 # Activate MFA based on Internet2's Grouper
 # cas.authn.mfa.grouperGroupField=NAME|EXTENSION|DISPLAY_NAME|DISPLAY_EXTENSION
+```
 
+### Multifactor Authentication: Http Request Trigger
+
+```properties
 # Activate MFA based on an optional request parameter
 # cas.authn.mfa.requestParameter=authn_method
 
@@ -2451,18 +2487,16 @@ To learn more about this topic, [please review this guide](../mfa/Configuring-Mu
 
 # Activate MFA based on an optional request/session attribute
 # cas.authn.mfa.sessionAttribute=authn_method
+```
 
-# Describe the global failure mode in case provider cannot be reached
-# cas.authn.mfa.globalFailureMode=CLOSED
+### Multifactor Authentication: Provider Selection
 
-# Design the attribute chosen to communicate the authentication context
-# cas.authn.mfa.authenticationContextAttribute=authnContextClass
-
-# Identify the request content type for non-browser MFA requests
-# cas.authn.mfa.contentType=application/cas
-
+```properties
 # Select MFA provider, if resolved more than one, via Groovy script
 # cas.authn.mfa.providerSelectorGroovyScript=file:/etc/cas/mfaGroovySelector.groovy
+
+# Enable provider selection menu, if resolved more than one
+cas.authn.mfa.provider-selection-enabled=true
 ```
 
 ### Multifactor Trusted Device/Browser
@@ -2800,6 +2834,26 @@ To learn more about this topic, [please review this guide](../mfa/AuthyAuthentic
 ```
 
 Multifactor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.authy`.
+
+
+### Acceptto
+
+To learn more about this topic, [please review this guide](../mfa/Acceptto-Authentication.html).
+
+```properties
+# cas.authn.mfa.acceptto.authnSelectionUrl=https://mfa.acceptto.com/mfa/index
+# cas.authn.mfa.acceptto.api-url=https://mfa.acceptto.com/api/v9/
+# cas.authn.mfa.acceptto.applicationId=
+# cas.authn.mfa.acceptto.secret=
+# cas.authn.mfa.acceptto.message=Do you want to login to CAS?
+# cas.authn.mfa.acceptto.timeout=30
+# cas.authn.mfa.acceptto.emailAttribute=mail
+# cas.authn.mfa.acceptto.name=
+# cas.authn.mfa.acceptto.order=
+# cas.authn.mfa.acceptto.rank=0
+```
+
+Multifactor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.acceptto`.
 
 ## SAML Core
 
