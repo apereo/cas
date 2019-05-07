@@ -37,7 +37,7 @@ public class MultifactorAuthenticationBypassAction extends AbstractMultifactorAu
         }
 
         if (bypass.shouldMultifactorAuthenticationProviderExecute(authentication, service, provider, request)) {
-            LOGGER.debug("Bypass rules determined MFA should execute for user [{}] for provider [{}]",
+            LOGGER.debug("Bypass rules determined MFA should execute for user [{}] and provider [{}]",
                     authentication.getPrincipal().getId(), provider.getId());
             bypass.forgetBypass(authentication);
             LOGGER.debug("Authentication updated to forget any existing bypass for user [{}] for provider [{}]",

@@ -36,7 +36,7 @@ public class RestfulLoginWebflowDecorator implements WebflowDecorator {
             response = HttpUtils.execute(restProperties.getUrl(), restProperties.getUrl(),
                     restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword());
             val statusCode = response.getStatusLine().getStatusCode();
-            if (response != null && HttpStatus.valueOf(statusCode).is2xxSuccessful()) {
+            if (HttpStatus.valueOf(statusCode).is2xxSuccessful()) {
                 val jsonObject = MAPPER.readValue(response.getEntity().getContent(), Map.class);
                 requestContext.getFlowScope().put("decoration", jsonObject);
             }

@@ -222,4 +222,10 @@ public class MultifactorAuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SwivelMultifactorProperties swivel = new SwivelMultifactorProperties();
+
+    /**
+     * Activate and configure a multifactor authentication provider via Acceptto.
+     */
+    @NestedConfigurationProperty
+    private AccepttoMultifactorProperties acceptto = new AccepttoMultifactorProperties();
 }

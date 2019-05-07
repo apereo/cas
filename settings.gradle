@@ -62,6 +62,7 @@ include "core:cas-server-core-webflow-mfa-api"
 include "docs:cas-server-documentation"
 include "docs:cas-server-documentation-swagger"
 
+include "support:cas-server-support-acceptto-mfa"
 include "support:cas-server-support-actions"
 include "support:cas-server-support-audit-couchbase"
 include "support:cas-server-support-audit-couchdb"

@@ -1040,4 +1040,28 @@ public class WebUtils {
     public static void putExistingSingleSignOnSessionPrincipal(final RequestContext context, final Principal value) {
         context.getFlashScope().put("existingSingleSignOnSessionPrincipal", value);
     }
+
+    /**
+     * Gets http request full url.
+     *
+     * @param requestContext the request context
+     * @return the http request full url
+     */
+    public static String getHttpRequestFullUrl(final RequestContext requestContext) {
+        return getHttpRequestFullUrl(getHttpServletRequestFromExternalWebflowContext(requestContext));
+    }
+
+    /**
+     * Gets http request full url.
+     *
+     * @param request the request
+     * @return the http request full url
+     */
+    public static String getHttpRequestFullUrl(final HttpServletRequest request) {
+        val requestURL = request.getRequestURL();
+        val queryString = request.getQueryString();
+        return queryString == null
+            ? requestURL.toString()
+            : requestURL.append('?').append(queryString).toString();
+    }
 }
