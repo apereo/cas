@@ -169,11 +169,24 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
     public void setThemeName(final HttpServletRequest request, final HttpServletResponse response, final String themeName) {
     }
 
-    private String rememberThemeName(final HttpServletRequest request) {
+    /**
+     * Remember/save the theme in the request.
+     *
+     * @param request the HTTP request
+     * @return the remembered theme
+     */
+    protected String rememberThemeName(final HttpServletRequest request) {
         return rememberThemeName(request, getDefaultThemeName());
     }
 
-    private String rememberThemeName(final HttpServletRequest request, final String themeName) {
+    /**
+     * Remember/save the theme in the request.
+     *
+     * @param request the HTTP request
+     * @param themeName the theme to remember
+     * @return the remembered theme
+     */
+    protected String rememberThemeName(final HttpServletRequest request, final String themeName) {
         request.setAttribute(casProperties.getTheme().getParamName(), themeName);
         return themeName;
     }
