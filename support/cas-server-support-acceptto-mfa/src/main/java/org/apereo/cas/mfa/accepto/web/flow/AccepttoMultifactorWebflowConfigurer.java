@@ -45,10 +45,10 @@ public class AccepttoMultifactorWebflowConfigurer extends AbstractCasMultifactor
         if (flow != null) {
             registerMultifactorProviderAuthenticationWebflow(flow, MFA_ACCEPTTO_EVENT_ID,
                 this.flowDefinitionRegistry, casProperties.getAuthn().getMfa().getAcceptto().getId());
-
             val startState = getStartState(flow);
             addActionsToActionStateExecutionListAt(flow, startState.getId(), 0,
                 createEvaluateAction("mfaAccepttoMultifactorValidateChannelAction"));
+
             createTransitionForState(startState,
                 CasWebflowConstants.TRANSITION_ID_FINALIZE, "accepttoFinalizeAuthentication");
             val finalizeAuthN = createActionState(flow, "accepttoFinalizeAuthentication",
