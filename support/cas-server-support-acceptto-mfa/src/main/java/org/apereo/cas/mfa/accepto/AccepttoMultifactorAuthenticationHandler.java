@@ -79,6 +79,7 @@ public class AccepttoMultifactorAuthenticationHandler extends AbstractPreAndPost
                     if (status == HttpStatus.SC_OK) {
                         val results = MAPPER.readValue(response.getEntity().getContent(), Map.class);
                         LOGGER.debug("Received results as [{}]", results);
+
                         val deviceId = results.get("device_id").toString();
                         val channelStatus = results.get("status").toString();
 
@@ -104,14 +105,14 @@ public class AccepttoMultifactorAuthenticationHandler extends AbstractPreAndPost
                     if (status == HttpStatus.SC_UNAUTHORIZED) {
                         throw new AccountLockedException("Email address provided is not a valid registered account");
                     }
+                } else {
+                    LOGGER.warn("Unable to fetch a response from [{}]", url);
                 }
             } catch (final Exception e) {
                 LOGGER.error(e.getMessage(), e);
             } finally {
                 HttpUtils.close(response);
             }
-
-
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
