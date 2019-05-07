@@ -107,13 +107,16 @@ public class AccepttoMultifactorFetchChannelAction extends AbstractAction {
             response = HttpUtils.executePost(url, parameters, new HashMap<>(0));
             if (response != null) {
                 val status = response.getStatusLine().getStatusCode();
+                LOGGER.debug("Response status code is [{}]", status);
+
                 if (status == HttpStatus.SC_OK) {
                     val results = MAPPER.readValue(response.getEntity().getContent(), Map.class);
                     LOGGER.debug("Received API results as [{}]", results);
 
                     val channel = results.get("channel").toString();
-                    val channelStatus = results.get("status").toString();
-                    if ("denied".equalsIgnoreCase(channelStatus)) {
+                    val channelStatus = (String) results.get("status");
+                    if (StringUtils.isNotBlank(channelStatus)
+                        && ("denied".equalsIgnoreCase(channelStatus) || "rejected".equalsIgnoreCase(channelStatus))) {
                         throw new AuthenticationException("Authentication attempt has been denied");
                     }
                     return channel;
