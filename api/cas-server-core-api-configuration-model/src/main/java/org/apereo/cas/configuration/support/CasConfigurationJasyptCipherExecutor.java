@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.support;
 
 import org.apereo.cas.CipherExecutor;
 
-import com.google.common.collect.ImmutableSet;
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -12,6 +11,7 @@ import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.springframework.core.env.Environment;
 
 import java.security.Security;
+import java.util.Set;
 
 /**
  * This is {@link CasConfigurationJasyptCipherExecutor}.
@@ -28,7 +28,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
     /**
      * These algorithms don't work with Jasypt 1.9.2.
      */
-    private static final String[] ALGORITHM_BLACKLIST = new String[] {
+    private static final String[] ALGORITHM_BLACKLIST = new String[]{
         "PBEWITHHMACSHA1ANDAES_128",
         "PBEWITHHMACSHA1ANDAES_256",
         "PBEWITHHMACSHA224ANDAES_128",
@@ -44,7 +44,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
     /**
      * List version of blacklisted algorithms (due to Jasypt 1.9.2 bug).
      */
-    public static final ImmutableSet<String> ALGORITHM_BLACKLIST_SET = ImmutableSet.copyOf(ALGORITHM_BLACKLIST);
+    public static final Set<String> ALGORITHM_BLACKLIST_SET = Set.of(ALGORITHM_BLACKLIST);
 
     /**
      * The Jasypt instance.

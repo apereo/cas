@@ -14,6 +14,7 @@ import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -30,37 +31,45 @@ public class AccepttoMultifactorValidateChannelAction extends AbstractAction {
     private final AuthenticationSystemSupport authenticationSystemSupport;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-        val webContext = new J2EContext(request, response, this.sessionStore);
+    protected Event doExecute(final RequestContext requestContext) {
+        val eventAttributes = new LocalAttributeMap();
+        try {
+            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+            val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+            val webContext = new J2EContext(request, response, this.sessionStore);
 
-        val channel = sessionStore.get(webContext,
-            AccepttoMultifactorFetchChannelAction.SESSION_ATTRIBUTE_CHANNEL);
-        if (channel == null) {
-            LOGGER.debug("Unable to determine channel from the session store; not a validation attempt");
-            return null;
+            val channel = sessionStore.get(webContext,
+                AccepttoMultifactorFetchChannelAction.SESSION_ATTRIBUTE_CHANNEL);
+            if (channel == null) {
+                LOGGER.debug("Unable to determine channel from session store; not a validation attempt");
+                return null;
+            }
+            val authentication = (Authentication) sessionStore.get(webContext,
+                AccepttoMultifactorFetchChannelAction.SESSION_ATTRIBUTE_ORIGINAL_AUTHENTICATION);
+            if (authentication == null) {
+                LOGGER.debug("Unable to determine the original authentication attempt the session store");
+                throw new AuthenticationException("Unable to determine authentication from session store");
+            }
+            WebUtils.putAuthentication(authentication, requestContext);
+
+            val credential = new AccepttoMultifactorTokenCredential(channel.toString());
+            val service = WebUtils.getService(requestContext);
+
+            LOGGER.debug("Cleaning up session store to remove [{}]", credential);
+            resetAccepttoSessionStore(webContext);
+
+            LOGGER.debug("Attempting to authenticate channel [{}] with authentication [{}] and service [{}]",
+                credential, authentication, service);
+            var resultBuilder = authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication);
+            resultBuilder = authenticationSystemSupport.handleAuthenticationTransaction(service, resultBuilder, credential);
+            WebUtils.putAuthenticationResultBuilder(resultBuilder, requestContext);
+            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_FINALIZE);
+        } catch (final Exception e) {
+            eventAttributes.put("error", e);
+            LOGGER.error(e.getMessage(), e);
         }
-        val authentication = (Authentication) sessionStore.get(webContext,
-            AccepttoMultifactorFetchChannelAction.SESSION_ATTRIBUTE_ORIGINAL_AUTHENTICATION);
-        if (authentication == null) {
-            LOGGER.debug("Unable to determine the original authentication attempt the session store");
-            throw new AuthenticationException("Unable to determine authentication from session store");
-        }
-        WebUtils.putAuthentication(authentication, requestContext);
-
-        val credential = new AccepttoMultifactorTokenCredential(channel.toString());
-        val service = WebUtils.getService(requestContext);
-
-        LOGGER.debug("Cleaning up session store to remove [{}]", credential);
-        resetAccepttoSessionStore(webContext);
-
-        LOGGER.debug("Attempting to authenticate channel [{}] with authentication [{}] and service [{}]",
-            credential, authentication, service);
-        var resultBuilder = authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication);
-        resultBuilder = authenticationSystemSupport.handleAuthenticationTransaction(service, resultBuilder, credential);
-        WebUtils.putAuthenticationResultBuilder(resultBuilder, requestContext);
-        return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_FINALIZE);
+        return new EventFactorySupport().event(this,
+            CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, eventAttributes);
     }
 
     private void resetAccepttoSessionStore(final J2EContext webContext) {
