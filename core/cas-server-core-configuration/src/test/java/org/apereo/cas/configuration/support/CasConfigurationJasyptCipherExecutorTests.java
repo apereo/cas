@@ -91,7 +91,7 @@ public class CasConfigurationJasyptCipherExecutorTests {
 
     private boolean isAlgorithmFunctional(final String algorithm) {
         val jasyptTest = new CasConfigurationJasyptCipherExecutor(this.environment);
-        jasyptTest.setAlgorithm(algorithm);
+        jasyptTest.setAlgorithmForce(algorithm);
         val testValue = "Testing_" + algorithm;
         val value = jasyptTest.encryptValue(testValue);
         val result = jasyptTest.decode(value, ArrayUtils.EMPTY_OBJECT_ARRAY);

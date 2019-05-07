@@ -97,6 +97,18 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
     }
 
     /**
+     * Sets algorithm (possibly to bad algorithm, for unit test usage).
+     *
+     * @param alg the alg
+     */
+    protected void setAlgorithmForce(final String alg) {
+        if (StringUtils.isNotBlank(alg)) {
+            LOGGER.debug("Configured Jasypt algorithm [{}]", alg);
+            jasyptInstance.setAlgorithm(alg);
+        }
+    }
+
+    /**
      * Sets password.
      *
      * @param psw the psw
