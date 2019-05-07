@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                          http://www.springframework.org/schema/webflow/spring-webflow.xsd">
+
+    <on-start>
+        <evaluate expression="initialFlowSetupAction" />
+    </on-start>
+
+    <action-state id="initializeLoginForm">
+        <evaluate expression="initializeLoginAction" />
+        <transition on="success" to="authenticateAndFetchChannel"/>
+    </action-state>
+
+    <action-state id="authenticateAndFetchChannel">
+        <evaluate expression="mfaAccepttoMultifactorFetchChannelAction" />
+        <transition on="success" to="redirectToAcceptto" />
+    </action-state>
+
+    <view-state id="redirectToAcceptto"
+               view="externalRedirect:#{requestScope.accepttoRedirectUrl}">
+        <transition to="success" />
+    </view-state>
+    <end-state id="success" commit="true" />
+</flow>

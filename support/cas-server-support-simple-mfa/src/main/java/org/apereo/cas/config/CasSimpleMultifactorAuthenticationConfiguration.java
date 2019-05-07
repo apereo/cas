@@ -84,6 +84,12 @@ public class CasSimpleMultifactorAuthenticationConfiguration implements CasWebfl
             mfaSimpleAuthenticatorFlowRegistry(), applicationContext, casProperties);
     }
 
+
+    @Override
+    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+        plan.registerWebflowConfigurer(mfaSimpleMultifactorWebflowConfigurer());
+    }
+
     @ConditionalOnMissingBean(name = "mfaSimpleMultifactorSendTokenAction")
     @Bean
     public Action mfaSimpleMultifactorSendTokenAction() {
@@ -93,11 +99,6 @@ public class CasSimpleMultifactorAuthenticationConfiguration implements CasWebfl
         }
         return new CasSimpleSendTokenAction(ticketRegistry.getIfAvailable(), communicationsManager.getIfAvailable(),
             casSimpleMultifactorAuthenticationTicketFactory(), simple);
-    }
-
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(mfaSimpleMultifactorWebflowConfigurer());
     }
 
     @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationTicketExpirationPolicy")
