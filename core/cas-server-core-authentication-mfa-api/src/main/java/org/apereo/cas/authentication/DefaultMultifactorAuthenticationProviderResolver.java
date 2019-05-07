@@ -61,13 +61,16 @@ public class DefaultMultifactorAuthenticationProviderResolver implements Multifa
                 continue;
             }
 
-            LOGGER.debug("Selecting a multifactor authentication provider out of [{}] for [{}] and service [{}]", providers, principal.getId(), service);
+            LOGGER.debug("Selecting a multifactor authentication provider out of [{}] for [{}] and service [{}]",
+                providers, principal.getId(), service);
             val provider = this.multifactorAuthenticationProviderSelector.resolve(providers, service, principal);
 
             LOGGER.debug("Located attribute value [{}] for [{}]", attributeValue, attributeNames);
-            var results = MultifactorAuthenticationUtils.resolveEventViaSingleAttribute(principal, attributeValue, service, context, provider, predicate);
+            var results = MultifactorAuthenticationUtils.resolveEventViaSingleAttribute(principal, attributeValue,
+                service, context, provider, predicate);
             if (results == null || results.isEmpty()) {
-                results = MultifactorAuthenticationUtils.resolveEventViaMultivaluedAttribute(principal, attributeValue, service, context, provider, predicate);
+                results = MultifactorAuthenticationUtils.resolveEventViaMultivaluedAttribute(principal, attributeValue,
+                    service, context, provider, predicate);
             }
             if (results != null && !results.isEmpty()) {
                 LOGGER.debug("Resolved set of events based on the attribute [{}] are [{}]", attributeName, results);

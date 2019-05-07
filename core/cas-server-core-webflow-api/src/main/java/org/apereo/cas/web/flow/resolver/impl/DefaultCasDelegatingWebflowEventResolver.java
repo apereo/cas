@@ -104,7 +104,8 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
         if (authn == null) {
             throw new IllegalArgumentException("Unable to locate authentication object in the webflow context");
         }
-        LOGGER.trace("Enforcing access strategy policies for registered service [{}] and principal [{}]", registeredService, authn.getPrincipal());
+        LOGGER.trace("Enforcing access strategy policies for registered service [{}] and principal [{}]",
+            registeredService, authn.getPrincipal());
         val unauthorizedRedirectUrl = registeredService.getAccessStrategy().getUnauthorizedRedirectUrl();
         if (unauthorizedRedirectUrl != null) {
             WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context, unauthorizedRedirectUrl);
@@ -162,13 +163,13 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
 
     private Event returnAuthenticationExceptionEventIfNeeded(final Exception e) {
         if (e instanceof AuthenticationException || e instanceof AbstractTicketException) {
-            LOGGER.debug(e.getMessage(), e);
+            LOGGER.warn(e.getMessage(), e);
             return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, e);
         }
 
         if (e.getCause() instanceof AuthenticationException || e.getCause() instanceof AbstractTicketException) {
             val ex = e.getCause();
-            LOGGER.debug(ex.getMessage(), ex);
+            LOGGER.warn(ex.getMessage(), ex);
             return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, ex);
         }
         return null;

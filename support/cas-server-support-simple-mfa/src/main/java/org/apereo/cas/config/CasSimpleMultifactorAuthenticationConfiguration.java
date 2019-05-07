@@ -12,6 +12,7 @@ import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 
@@ -33,6 +34,8 @@ import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
+
+import java.util.Objects;
 
 /**
  * This is {@link CasSimpleMultifactorAuthenticationConfiguration}.
@@ -68,7 +71,7 @@ public class CasSimpleMultifactorAuthenticationConfiguration implements CasWebfl
     @Bean
     public FlowDefinitionRegistry mfaSimpleAuthenticatorFlowRegistry() {
         val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
-        builder.setBasePath("classpath*:/webflow");
+        builder.setBasePath(CasWebflowConstants.BASE_CLASSPATH_WEBFLOW);
         builder.addFlowLocationPattern("/mfa-simple/*-webflow.xml");
         return builder.build();
     }
@@ -81,20 +84,21 @@ public class CasSimpleMultifactorAuthenticationConfiguration implements CasWebfl
             mfaSimpleAuthenticatorFlowRegistry(), applicationContext, casProperties);
     }
 
-    @ConditionalOnMissingBean(name = "mfaSimpleMultifactorSendTokenAction")
-    @Bean
-    public Action mfaSimpleMultifactorSendTokenAction() {
-        val simple = casProperties.getAuthn().getMfa().getSimple();
-        if (!communicationsManager.getIfAvailable().validate()) {
-            throw new BeanCreationException("Unable to submit tokens since no communication strategy is defined");
-        }
-        return new CasSimpleSendTokenAction(ticketRegistry.getIfAvailable(), communicationsManager.getIfAvailable(),
-            casSimpleMultifactorAuthenticationTicketFactory(), simple);
-    }
 
     @Override
     public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
         plan.registerWebflowConfigurer(mfaSimpleMultifactorWebflowConfigurer());
+    }
+
+    @ConditionalOnMissingBean(name = "mfaSimpleMultifactorSendTokenAction")
+    @Bean
+    public Action mfaSimpleMultifactorSendTokenAction() {
+        val simple = casProperties.getAuthn().getMfa().getSimple();
+        if (!Objects.requireNonNull(communicationsManager.getIfAvailable()).validate()) {
+            throw new BeanCreationException("Unable to submit tokens since no communication strategy is defined");
+        }
+        return new CasSimpleSendTokenAction(ticketRegistry.getIfAvailable(), communicationsManager.getIfAvailable(),
+            casSimpleMultifactorAuthenticationTicketFactory(), simple);
     }
 
     @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationTicketExpirationPolicy")

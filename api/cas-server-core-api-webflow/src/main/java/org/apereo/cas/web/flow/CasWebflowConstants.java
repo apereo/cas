@@ -8,6 +8,11 @@ package org.apereo.cas.web.flow;
  */
 public interface CasWebflowConstants {
 
+    /**
+     * Base path for webflow configuration files.
+     */
+    String BASE_CLASSPATH_WEBFLOW = "classpath*:/webflow";
+
     /*
      ****************************************
      * Transitions.
@@ -22,6 +27,11 @@ public interface CasWebflowConstants {
      * The transition state 'yes'.
      */
     String TRANSITION_ID_YES = "yes";
+
+    /**
+     * The transition state 'finalize'.
+     */
+    String TRANSITION_ID_FINALIZE = "finalize";
 
     /**
      * The transition state 'warn'.
@@ -623,6 +633,12 @@ public interface CasWebflowConstants {
      * Action id 'renderLoginFormAction'.
      */
     String ACTION_ID_RENDER_LOGIN_FORM = "renderLoginFormAction";
+
+    /**
+     * Action id 'compositeMfaProviderSelectedAction'.
+     */
+    String ACTION_ID_MFA_PROVIDER_SELECTED = "compositeMfaProviderSelectedAction";
+
     /**
      * Action id 'initialFlowSetupAction'.
      */

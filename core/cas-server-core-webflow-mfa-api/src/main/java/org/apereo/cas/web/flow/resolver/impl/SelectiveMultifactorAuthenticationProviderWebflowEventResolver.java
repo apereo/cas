@@ -19,7 +19,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * This is {@link SelectiveMultifactorAuthenticationProviderWebflowEventEventResolver}
+ * This is {@link SelectiveMultifactorAuthenticationProviderWebflowEventResolver}
  * that acts as a stub resolver, specifically designed for extensions.
  * Deployers can extend this class to perform additional processes on the final set
  * of resolved events, to select one vs another based on the nature of the event attributes.
@@ -28,8 +28,10 @@ import java.util.Set;
  * @since 5.0.0
  */
 @Slf4j
-public class SelectiveMultifactorAuthenticationProviderWebflowEventEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
-    public SelectiveMultifactorAuthenticationProviderWebflowEventEventResolver(
+public class SelectiveMultifactorAuthenticationProviderWebflowEventResolver
+    extends BaseMultifactorAuthenticationProviderEventResolver {
+
+    public SelectiveMultifactorAuthenticationProviderWebflowEventResolver(
         final CasWebflowEventResolutionConfigurationContext webflowEventResolutionConfigurationContext) {
         super(webflowEventResolutionConfigurationContext);
     }
@@ -55,13 +57,18 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventEventResolver
      * @param context           the request context
      * @return the set of resolved events
      */
-    protected Set<Event> resolveEventsInternal(final Set<Event> resolveEvents, final Authentication authentication, final RegisteredService registeredService,
-                                               final HttpServletRequest request, final RequestContext context) {
+    protected Set<Event> resolveEventsInternal(final Set<Event> resolveEvents,
+                                               final Authentication authentication,
+                                               final RegisteredService registeredService,
+                                               final HttpServletRequest request,
+                                               final RequestContext context) {
         if (!resolveEvents.isEmpty()) {
             LOGGER.trace("Collection of resolved events for this authentication sequence are:");
-            resolveEvents.forEach(e -> LOGGER.trace("Event id [{}] resolved from [{}]", e.getId(), e.getSource().getClass().getName()));
+            resolveEvents.forEach(e -> LOGGER.trace("Event id [{}] resolved from [{}]",
+                e.getId(), e.getSource().getClass().getName()));
         } else {
-            LOGGER.trace("No events could be resolved for this authentication transaction [{}] and service [{}]", authentication, registeredService);
+            LOGGER.trace("No events resolved for authentication transaction [{}] and service [{}]",
+                authentication, registeredService);
         }
         val pair = filterEventsByMultifactorAuthenticationProvider(resolveEvents, authentication, registeredService, request);
         WebUtils.putResolvedMultifactorAuthenticationProviders(context, pair.getValue());
@@ -78,8 +85,11 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventEventResolver
      * @return the set of events
      */
     protected Pair<Set<Event>, Collection<MultifactorAuthenticationProvider>> filterEventsByMultifactorAuthenticationProvider(
-        final Set<Event> resolveEvents, final Authentication authentication,
-        final RegisteredService registeredService, final HttpServletRequest request) {
+        final Set<Event> resolveEvents,
+        final Authentication authentication,
+        final RegisteredService registeredService,
+        final HttpServletRequest request) {
+
         LOGGER.debug("Locating multifactor providers to determine support for this authentication sequence");
         val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(
             getWebflowEventResolutionConfigurationContext().getApplicationContext());

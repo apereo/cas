@@ -100,7 +100,7 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
-import org.apereo.cas.web.flow.resolver.impl.mfa.DefaultMultifactorAuthenticationProviderEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.mfa.DefaultMultifactorAuthenticationProviderWebflowEventResolver;
 
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -517,7 +517,7 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
             .applicationContext(applicationContext)
             .build();
 
-        val r = new DefaultMultifactorAuthenticationProviderEventResolver(context, oidcMultifactorAuthenticationTrigger());
+        val r = new DefaultMultifactorAuthenticationProviderWebflowEventResolver(context, oidcMultifactorAuthenticationTrigger());
         Objects.requireNonNull(this.initialAuthenticationAttemptWebflowEventResolver.getIfAvailable()).addDelegate(r);
         return r;
     }

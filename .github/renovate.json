@@ -3,13 +3,14 @@
     "config:base",
     ":preserveSemverRanges",
     ":rebaseStalePrs",
-    "schedule:daily"
+    "schedule:every weekend"
   ],
   "gradle": {
     "enabled": true
   },
   "ignoreDeps": [
-    "com.github.coova:jradius"
+    "com.github.coova:jradius",
+    "com.mebigfatguy.fb-contrib:fb-contrib"
   ],
   "packageRules": [
     {
@@ -21,16 +22,21 @@
     {
       "groupName": "JAXB2",
       "packagePatterns": [
-        "^org.jvnet.jaxb2_commons:"
+        "^org.jvnet.jaxb2_commons:",
+        "^com.sun.xml.bind"
       ]
     },
     {
       "groupName": "AmazonSDK",
       "packagePatterns": [
-        "^com.amazonaws"
+        "^com.amazonaws:"
+      ]
+    },
+    {
+      "groupName": "Swagger",
+      "packagePatterns": [
+        "^io.swagger:"
       ]
     }
-
-
   ]
 }
