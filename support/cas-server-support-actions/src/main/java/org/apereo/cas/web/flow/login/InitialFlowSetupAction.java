@@ -81,11 +81,12 @@ public class InitialFlowSetupAction extends AbstractAction {
             val servicesToMatch = new ArrayList<Service>();
 
             val initialServicePattern = RegexUtils.createPattern(initialService);
-            if (StringUtils.isNotBlank(ticketGrantingTicketId)) {
-                val ticket = ticketRegistrySupport.getTicketGrantingTicket(ticketGrantingTicketId);
-                if (ticket != null) {
-                    servicesToMatch.addAll(ticket.getServices().values());
-                }
+            val ticket = StringUtils.isNotBlank(ticketGrantingTicketId)
+                ? ticketRegistrySupport.getTicketGrantingTicket(ticketGrantingTicketId)
+                : null;
+
+            if (ticket != null) {
+                servicesToMatch.addAll(ticket.getServices().values());
             } else {
                 val service = WebUtils.getService(context);
                 if (service != null) {
@@ -107,9 +108,16 @@ public class InitialFlowSetupAction extends AbstractAction {
 
     private String configureWebflowForTicketGrantingTicket(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        val ticketGrantingTicketId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
-        WebUtils.putTicketGrantingTicketInScopes(context, ticketGrantingTicketId);
-        return ticketGrantingTicketId;
+        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
+        val ticketGrantingTicketId = ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
+        val ticket = ticketRegistrySupport.getTicketGrantingTicket(ticketGrantingTicketId);
+        if (ticket != null) {
+            WebUtils.putTicketGrantingTicketInScopes(context, ticket.getId());
+            return ticket.getId();
+        }
+        ticketGrantingTicketCookieGenerator.removeCookie(response);
+        WebUtils.putTicketGrantingTicketInScopes(context, StringUtils.EMPTY);
+        return null;
     }
 
     private void configureWebflowForCustomFields(final RequestContext context) {
