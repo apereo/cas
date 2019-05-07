@@ -113,7 +113,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
 
     @Override
     public RegisteredService findServiceBy(final long id) {
-        var result = this.services.get(id);
+        val result = this.services.get(id);
         return validateRegisteredService(result);
     }
 
@@ -191,7 +191,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
             .collect(Collectors.toConcurrentMap(r -> {
                 LOGGER.debug("Adding registered service [{}]", r.getServiceId());
                 return r.getId();
-            }, Function.identity(), (r, s) -> s == null ? r : s));
+            }, Function.identity(), (r, s) -> s));
         loadInternal();
         publishEvent(new CasRegisteredServicesLoadedEvent(this, getAllServices()));
         evaluateExpiredServiceDefinitions();
@@ -209,7 +209,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
     private void evaluateExpiredServiceDefinitions() {
         this.services.values()
             .stream()
-            .filter((Predicate<RegisteredService>) getRegisteredServicesFilteringPredicate().negate())
+            .filter(getRegisteredServicesFilteringPredicate().negate())
             .filter(Objects::nonNull)
             .forEach(this::processExpiredRegisteredService);
     }
