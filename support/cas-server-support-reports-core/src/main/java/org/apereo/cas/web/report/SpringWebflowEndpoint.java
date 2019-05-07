@@ -13,6 +13,9 @@ import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.context.ApplicationContext;
 import org.springframework.lang.Nullable;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.webflow.action.EvaluateAction;
+import org.springframework.webflow.action.ExternalRedirectAction;
+import org.springframework.webflow.action.SetAction;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.EndState;
@@ -21,10 +24,15 @@ import org.springframework.webflow.engine.FlowVariable;
 import org.springframework.webflow.engine.State;
 import org.springframework.webflow.engine.TransitionableState;
 import org.springframework.webflow.engine.ViewState;
+import org.springframework.webflow.engine.support.ActionExecutingViewFactory;
+import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.execution.AnnotatedAction;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -88,7 +96,7 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
                     }
 
                     var acts = StreamSupport.stream(state.getEntryActionList().spliterator(), false)
-                        .map(Object::toString)
+                        .map(this::convertActionToString)
                         .collect(Collectors.toList());
 
                     if (!acts.isEmpty()) {
@@ -97,7 +105,7 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
 
                     if (state instanceof ActionState) {
                         acts = StreamSupport.stream(ActionState.class.cast(state).getActionList().spliterator(), false)
-                            .map(Object::toString)
+                            .map(this::convertActionToString)
                             .collect(Collectors.toList());
                         if (!acts.isEmpty()) {
                             stateMap.put("actionList", acts);
@@ -108,18 +116,20 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
                         stateMap.put("isEndState", Boolean.TRUE);
                     }
                     if (state.isViewState()) {
+                        val viewState = ViewState.class.cast(state);
+
                         stateMap.put("isViewState", state.isViewState());
-                        stateMap.put("isRedirect", ((ViewState) state).getRedirect());
+                        stateMap.put("isRedirect", viewState.getRedirect());
 
                         acts = StreamSupport.stream(state.getEntryActionList().spliterator(), false)
                             .map(Object::toString)
                             .collect(Collectors.toList());
 
                         if (!acts.isEmpty()) {
-                            stateMap.put("renderActions", ((ViewState) state).getRenderActionList());
+                            stateMap.put("renderActions", viewState.getRenderActionList());
                         }
 
-                        acts = Arrays.stream(((ViewState) state).getVariables())
+                        acts = Arrays.stream(viewState.getVariables())
                             .map(value -> value.getName() + " -> " + value.getValueFactory().toString())
                             .collect(Collectors.toList());
 
@@ -127,13 +137,26 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
                             stateMap.put("viewVariables", acts);
                         }
 
-                        val field = ReflectionUtils.findField(((ViewState) state).getViewFactory().getClass(), "viewId");
+                        val field = ReflectionUtils.findField(viewState.getViewFactory().getClass(), "viewId");
                         if (field != null) {
                             ReflectionUtils.makeAccessible(field);
-                            val exp = (Expression) ReflectionUtils.getField(field, ((ViewState) state).getViewFactory());
-                            stateMap.put("viewId", StringUtils.defaultIfBlank(exp.getExpressionString(), exp.getValue(null).toString()));
+                            val exp = (Expression) ReflectionUtils.getField(field, viewState.getViewFactory());
+                            stateMap.put("viewId",
+                                StringUtils.defaultIfBlank(Objects.requireNonNull(exp).getExpressionString(), exp.getValue(null).toString()));
+                        } else if (viewState.getViewFactory() instanceof ActionExecutingViewFactory) {
+                            val factory = (ActionExecutingViewFactory) viewState.getViewFactory();
+                            if (factory.getAction() instanceof ExternalRedirectAction) {
+                                val redirect = (ExternalRedirectAction) factory.getAction();
+                                val uri = ReflectionUtils.findField(redirect.getClass(), "resourceUri");
+                                ReflectionUtils.makeAccessible(Objects.requireNonNull(uri));
+                                val exp = (Expression) ReflectionUtils.getField(uri, redirect);
+                                stateMap.put("viewId",
+                                    "externalRedirect -> #{" + Objects.requireNonNull(exp).getExpressionString() + '}');
+                            } else {
+                                stateMap.put("viewId", factory.getAction().toString());
+                            }
                         } else {
-                            LOGGER.warn("Field viewId cannot be located on view state [{}]", state);
+                            LOGGER.info("Field viewId cannot be located on view state [{}]", state);
                         }
                     }
 
@@ -163,7 +186,7 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
                 flowDetails.put("stateCount", def.getStateCount());
 
                 var acts = StreamSupport.stream(def.getEndActionList().spliterator(), false)
-                    .map(Object::toString)
+                    .map(this::convertActionToString)
                     .collect(Collectors.toList());
                 if (!acts.isEmpty()) {
                     flowDetails.put("endActions", acts);
@@ -195,5 +218,45 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
             }));
 
         return jsonMap;
+    }
+
+    private String convertActionToString(final Action action) {
+        if (action instanceof EvaluateAction) {
+            return convertEvaluateActionToString(action);
+        }
+        if (action instanceof AnnotatedAction) {
+            val eval = AnnotatedAction.class.cast(action);
+            if (eval.getTargetAction() instanceof EvaluateAction) {
+                return convertEvaluateActionToString(eval.getTargetAction());
+            }
+            return eval.getTargetAction().toString();
+        }
+        if (action instanceof SetAction) {
+            val expF = ReflectionUtils.findField(action.getClass(), "nameExpression");
+            val resultExpF = ReflectionUtils.findField(action.getClass(), "valueExpression");
+            return "set " + stringifyActionField(action, expF) + " = " + stringifyActionField(action, resultExpF);
+        }
+        return action.toString();
+    }
+
+    private String convertEvaluateActionToString(final Action action) {
+        val eval = EvaluateAction.class.cast(action);
+        val expF = ReflectionUtils.findField(eval.getClass(), "expression");
+        val resultExpF = ReflectionUtils.findField(eval.getClass(), "resultExpression");
+        return stringifyActionField(action, expF, resultExpF);
+    }
+
+    private String stringifyActionField(final Action eval, final Field... fields) {
+        return Arrays.stream(fields)
+            .map(f -> {
+                ReflectionUtils.makeAccessible(f);
+                val exp = ReflectionUtils.getField(f, eval);
+                if (exp != null) {
+                    return StringUtils.defaultString(exp.toString());
+                }
+                return null;
+            })
+            .filter(Objects::nonNull)
+            .collect(Collectors.joining(", "));
     }
 }
