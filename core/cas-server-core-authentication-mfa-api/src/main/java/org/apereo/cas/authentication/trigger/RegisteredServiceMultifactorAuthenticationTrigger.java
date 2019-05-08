@@ -66,9 +66,10 @@ public class RegisteredServiceMultifactorAuthenticationTrigger implements Multif
         if (providers != null && !providers.isEmpty()) {
             val provider = multifactorAuthenticationProviderSelector.resolve(providers, registeredService, principal);
             LOGGER.debug("Selected multifactor authentication provider for this transaction is [{}]", provider);
-            return Optional.of(provider);
+            if (provider != null) {
+                return Optional.of(provider);
+            }
         }
-
         return Optional.empty();
     }
 }
