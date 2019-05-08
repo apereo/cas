@@ -22,14 +22,6 @@ public class OidcCustomScopeAttributeReleasePolicy extends BaseOidcScopeAttribut
 
     private String scopeName;
 
-    public OidcCustomScopeAttributeReleasePolicy() {
-        this(new ArrayList<>());
-    }
-
-    public OidcCustomScopeAttributeReleasePolicy(final List<String> allowedAttributes) {
-        this(OidcConstants.CUSTOM_SCOPE_TYPE, allowedAttributes);
-    }
-
     public OidcCustomScopeAttributeReleasePolicy(final String scopeName, final List<String> allowedAttributes) {
         super(OidcConstants.CUSTOM_SCOPE_TYPE);
         this.scopeName = scopeName;
