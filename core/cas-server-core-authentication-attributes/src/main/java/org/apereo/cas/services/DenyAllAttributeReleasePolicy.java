@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,6 +19,7 @@ import java.util.Map;
  */
 @Slf4j
 @Getter
+@EqualsAndHashCode(callSuper = true)
 public class DenyAllAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = -6215588543966639050L;
