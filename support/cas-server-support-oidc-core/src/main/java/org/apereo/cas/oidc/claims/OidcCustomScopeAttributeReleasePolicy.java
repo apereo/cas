@@ -1,11 +1,11 @@
 package org.apereo.cas.oidc.claims;
 
+import org.apereo.cas.oidc.OidcConstants;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.apereo.cas.oidc.OidcConstants;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

@@ -194,7 +194,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                     .stream()
                     .filter(obj -> obj instanceof OidcCustomScopeAttributeReleasePolicy)
                     .map(t -> (OidcCustomScopeAttributeReleasePolicy) t)
-                    .filter(t -> t.getScopeName().equals(s.trim()) )
+                    .filter(t -> t.getScopeName().equals(s.trim()))
                     .findFirst()
                     .orElse(null);
 
