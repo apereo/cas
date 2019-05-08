@@ -34,7 +34,7 @@ public class GroovyScriptMultifactorAuthenticationProviderSelector implements Mu
         LOGGER.debug("Invoking Groovy script with service=[{}], principal=[{}], providers=[{}]", service, principal, providers);
         val provider = watchableScript.execute(args, String.class);
         if (StringUtils.isBlank(provider)) {
-            LOGGER.debug("Multifactor provider selection did not return a provider id");
+            LOGGER.debug("Multifactor provider selection script did not return a provider id");
             return null;
         }
         return providers
