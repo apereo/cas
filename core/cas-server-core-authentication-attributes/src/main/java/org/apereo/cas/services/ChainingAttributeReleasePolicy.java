@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 @Setter
 @Getter
 @Slf4j
+@EqualsAndHashCode
 public class ChainingAttributeReleasePolicy implements RegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = 3795054936775326709L;
