@@ -7,6 +7,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.ws.idp.WSFederationClaims;
 
 import com.google.common.collect.Maps;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,7 @@ import java.util.TreeMap;
 @Slf4j
 @Getter
 @Setter
+@EqualsAndHashCode(callSuper = true)
 public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = -2814928645221579489L;
