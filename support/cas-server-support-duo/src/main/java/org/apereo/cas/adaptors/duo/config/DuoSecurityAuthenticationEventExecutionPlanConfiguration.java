@@ -31,6 +31,7 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,7 +125,13 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
     @RefreshScope
     @Bean
     public Collection<AuthenticationHandler> duoAuthenticationHandler() {
-        val duos = casProperties.getAuthn().getMfa().getDuo();
+        val duos = casProperties.getAuthn().getMfa().getDuo()
+            .stream()
+            .filter(d -> StringUtils.isNotBlank(d.getDuoApplicationKey())
+                && StringUtils.isNotBlank(d.getDuoApiHost())
+                && StringUtils.isNotBlank(d.getDuoIntegrationKey())
+                && StringUtils.isNotBlank(d.getDuoSecretKey()))
+            .collect(Collectors.toList());
         if (duos.isEmpty()) {
             throw new BeanCreationException("No configuration/settings could be found for Duo Security. Review settings and ensure the correct syntax is used");
         }
