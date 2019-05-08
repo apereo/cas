@@ -16,7 +16,6 @@ import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
@@ -67,7 +66,6 @@ public class X509AuthenticationWebflowConfiguration implements CasWebflowExecuti
     private ObjectProvider<X509CertificateExtractor> x509CertificateExtractor;
 
     @ConditionalOnMissingBean(name = "x509WebflowConfigurer")
-    @ConditionalOnBean(name = "defaultWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer x509WebflowConfigurer() {

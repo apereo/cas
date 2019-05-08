@@ -35,6 +35,7 @@ import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
 import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import org.openid4java.server.ServerManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +78,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCoreValidationConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
+    CasWebflowContextConfiguration.class,
     CasCoreWebflowConfiguration.class,
     CasCoreUtilConfiguration.class,
     OpenIdConfiguration.class,
