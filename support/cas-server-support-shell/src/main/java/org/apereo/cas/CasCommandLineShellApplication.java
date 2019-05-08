@@ -50,7 +50,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 public class CasCommandLineShellApplication {
 
     /**
-     * Main entry point of the CAS web application.
+     * Main entry point of the CAS shell.
      *
      * @param args the args
      */
