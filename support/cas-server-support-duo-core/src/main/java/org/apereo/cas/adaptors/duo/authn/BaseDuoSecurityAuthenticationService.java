@@ -14,6 +14,7 @@ import lombok.EqualsAndHashCode;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpMethod;
 
 import java.net.URL;
@@ -156,10 +157,10 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
                     throw new DuoWebException("Duo returned code 500: " + result.get(RESULT_KEY_MESSAGE));
                 }
                 LOGGER.warn("Duo returned an Invalid response with message [{}] and detail [{}] "
-                        + "when determining user account.  This maybe a configuration error in the admin request and Duo will "
-                        + "still be considered available",
-                    result.get(RESULT_KEY_MESSAGE).asText(),
-                    result.get(RESULT_KEY_MESSAGE_DETAIL).asText());
+                        + "when determining user account. This maybe a configuration error in the admin request and Duo will "
+                        + "still be considered available.",
+                    result.hasNonNull(RESULT_KEY_MESSAGE) ? result.get(RESULT_KEY_MESSAGE).asText() : StringUtils.EMPTY,
+                    result.hasNonNull(RESULT_KEY_MESSAGE_DETAIL) ? result.get(RESULT_KEY_MESSAGE_DETAIL).asText() : StringUtils.EMPTY);
             }
         } catch (final Exception e) {
             LOGGER.warn("Reaching Duo has failed with error: [{}]", e.getMessage(), e);
