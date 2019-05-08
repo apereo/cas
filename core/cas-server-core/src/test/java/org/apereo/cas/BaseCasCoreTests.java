@@ -26,6 +26,7 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -72,6 +73,7 @@ import org.springframework.test.annotation.DirtiesContext;
     CasCoreServicesAuthenticationConfiguration.class,
     AopAutoConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
+    CasWebflowContextConfiguration.class,
     CasCoreWebflowConfiguration.class,
     CasCoreValidationConfiguration.class
 })
