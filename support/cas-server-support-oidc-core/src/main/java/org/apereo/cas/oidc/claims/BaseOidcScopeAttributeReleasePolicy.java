@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.claims;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -9,7 +10,6 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.collect.Maps;
 import lombok.EqualsAndHashCode;
@@ -46,10 +46,10 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
     private List<String> allowedAttributes;
 
     @JsonIgnore
-    private String scopeName;
+    private String scopeType;
 
-    public BaseOidcScopeAttributeReleasePolicy(final String scopeName) {
-        this.scopeName = scopeName;
+    public BaseOidcScopeAttributeReleasePolicy(final String scopeType) {
+        this.scopeType = scopeType;
     }
 
     @Override
@@ -73,7 +73,7 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
         allowedClaims.retainAll(supportedClaims);
         LOGGER.debug("[{}] is designed to allow claims [{}] for scope [{}]. After cross-checking with "
                 + "supported claims [{}], the final collection of allowed attributes is [{}]", getClass().getSimpleName(),
-            getAllowedAttributes(), getScopeName(), supportedClaims, allowedClaims);
+            getAllowedAttributes(), getScopeType(), supportedClaims, allowedClaims);
         allowedClaims.stream()
             .map(claim -> mapClaimToAttribute(claim, resolvedAttributes))
             .filter(p -> p.getValue() != null)

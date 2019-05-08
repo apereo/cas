@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.claims.BaseOidcScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcAddressScopeAttributeReleasePolicy;
+import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcEmailScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcPhoneScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcProfileScopeAttributeReleasePolicy;
@@ -76,17 +77,17 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
         val subTypes = reflections.getSubTypesOf(BaseOidcScopeAttributeReleasePolicy.class);
         subTypes.forEach(Unchecked.consumer(t -> {
             val ex = t.getDeclaredConstructor().newInstance();
-            if (oidc.getScopes().contains(ex.getScopeName())) {
-                LOGGER.trace("Found OpenID Connect scope [{}] to filter attributes", ex.getScopeName());
-                filters.put(ex.getScopeName(), ex);
+            if (oidc.getScopes().contains(ex.getScopeType())) {
+                LOGGER.trace("Found OpenID Connect scope [{}] to filter attributes", ex.getScopeType());
+                filters.put(ex.getScopeType(), ex);
             } else {
-                LOGGER.debug("OpenID Connect scope [{}] is not configured for use and will be ignored", ex.getScopeName());
+                LOGGER.debug("OpenID Connect scope [{}] is not configured for use and will be ignored", ex.getScopeType());
             }
         }));
 
         if (!userScopes.isEmpty()) {
             LOGGER.debug("Configuring attributes release policies for user-defined scopes [{}]", userScopes);
-            userScopes.forEach(t -> filters.put(t.getScopeName(), t));
+            userScopes.forEach(t -> filters.put(t.getScopeType(), t));
         }
     }
 
@@ -191,7 +192,9 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
 
                 val userPolicy = userScopes
                     .stream()
-                    .filter(t -> t.getScopeName().equals(s.trim()))
+                    .filter(obj -> obj instanceof OidcCustomScopeAttributeReleasePolicy)
+                    .map(t -> (OidcCustomScopeAttributeReleasePolicy) t)
+                    .filter(t -> t.getScopeName().equals(s.trim()) )
                     .findFirst()
                     .orElse(null);
 
