@@ -18,7 +18,7 @@ Jasypt supplies command-line tools useful for performing encryption, decryption,
 Encrypted settings need to be placed into CAS configuration files as:
 
 ```properties
-cas.something.sensitive={cipher}FKSAJDFGYOS8F7GLHAKERGFHLSAJ
+cas.something.sensitive={cas-cipher}FKSAJDFGYOS8F7GLHAKERGFHLSAJ
 ```
 
 You also need to instruct CAS to use the proper algorithm, decryption key and other relevant parameters
