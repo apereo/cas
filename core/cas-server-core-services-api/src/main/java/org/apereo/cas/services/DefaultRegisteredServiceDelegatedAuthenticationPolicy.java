@@ -34,6 +34,8 @@ public class DefaultRegisteredServiceDelegatedAuthenticationPolicy implements Re
 
     private boolean permitUndefined = true;
 
+    private boolean exclusive;
+
     @Override
     @JsonIgnore
     public boolean isProviderAllowed(final String provider, final RegisteredService registeredService) {
