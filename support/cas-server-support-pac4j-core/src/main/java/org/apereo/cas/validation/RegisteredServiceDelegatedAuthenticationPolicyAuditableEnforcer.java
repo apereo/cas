@@ -19,23 +19,23 @@ import org.pac4j.core.client.Client;
  */
 @Slf4j
 public class RegisteredServiceDelegatedAuthenticationPolicyAuditableEnforcer extends BaseAuditableExecution {
-
     @Audit(action = "DELEGATED_CLIENT",
         actionResolverName = "DELEGATED_CLIENT_ACTION_RESOLVER",
         resourceResolverName = "DELEGATED_CLIENT_RESOURCE_RESOLVER")
     @Override
     public AuditableExecutionResult execute(final AuditableContext context) {
         val result = AuditableExecutionResult.of(context);
-
         if (context.getRegisteredService().isPresent() && context.getProperties().containsKey(Client.class.getSimpleName())) {
             val registeredService = context.getRegisteredService().get();
             val clientName = context.getProperties().get(Client.class.getSimpleName()).toString();
+            LOGGER.trace("Checking delegated access strategy of [{}] for client [{}]", registeredService, clientName);
             val policy = registeredService.getAccessStrategy().getDelegatedAuthenticationPolicy();
             if (policy != null) {
                 if (!policy.isProviderAllowed(clientName, registeredService)) {
-                    LOGGER.debug("Delegated authentication policy for [{}] does not allow for using client [{}]", registeredService,
-                        clientName);
-                    val e = new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+                    LOGGER.debug("Delegated access strategy for [{}] does not permit client [{}]",
+                        registeredService, clientName);
+                    val e = new UnauthorizedServiceException(
+                        UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
                     result.setException(e);
                 }
             }

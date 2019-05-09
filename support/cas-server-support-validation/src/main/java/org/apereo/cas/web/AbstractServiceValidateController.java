@@ -71,7 +71,8 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
         if (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
-            val msg = String.format("ServiceManagement: Unauthorized Service Access. " + "Service [%s] is not enabled in service registry.", service.getId());
+            val msg = String.format("ServiceManagement: Unauthorized Service Access. "
+                + "Service [%s] is not enabled in service registry.", service.getId());
             LOGGER.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
@@ -128,7 +129,8 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             .handleAndFinalizeSingleAuthenticationTransaction(serviceTicket.getService(), credential);
         val proxyGrantingTicketId = serviceValidateConfigurationContext.getCentralAuthenticationService()
             .createProxyGrantingTicket(serviceTicketId, authenticationResult);
-        LOGGER.debug("Generated proxy-granting ticket [{}] off of service ticket [{}] and credential [{}]", proxyGrantingTicketId.getId(), serviceTicketId, credential);
+        LOGGER.debug("Generated proxy-granting ticket [{}] off of service ticket [{}] and credential [{}]",
+            proxyGrantingTicketId.getId(), serviceTicketId, credential);
         return proxyGrantingTicketId;
     }
 
@@ -137,21 +139,29 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         val service = serviceValidateConfigurationContext.getArgumentExtractor().extractService(request);
         val serviceTicketId = service != null ? service.getArtifactId() : null;
         if (service == null || StringUtils.isBlank(serviceTicketId)) {
-            LOGGER.debug("Could not identify service and/or service ticket for service: [{}]", service);
-            return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_REQUEST, null, request, service);
+            LOGGER.warn("Could not identify service and/or service ticket for service: [{}]", service);
+            return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_REQUEST, StringUtils.EMPTY, request, service);
         }
         try {
             prepareForTicketValidation(request, service, serviceTicketId);
             return handleTicketValidation(request, service, serviceTicketId);
         } catch (final AbstractTicketValidationException e) {
             val code = e.getCode();
-            return generateErrorView(code, new Object[]{serviceTicketId, e.getService().getId(), service.getId()}, request, service);
+            val description = getTicketValidationErrorDescription(code,
+                new Object[]{serviceTicketId, e.getService().getId(), service.getId()}, request);
+            return generateErrorView(code, description, request, service);
         } catch (final AbstractTicketException e) {
-            return generateErrorView(e.getCode(), new Object[]{serviceTicketId}, request, service);
+            val description = getTicketValidationErrorDescription(e.getCode(), new Object[]{serviceTicketId}, request);
+            return generateErrorView(e.getCode(), description, request, service);
         } catch (final UnauthorizedProxyingException e) {
-            return generateErrorView(CasProtocolConstants.ERROR_CODE_UNAUTHORIZED_SERVICE_PROXY, new Object[]{service.getId()}, request, service);
+            val description = getTicketValidationErrorDescription(
+                CasProtocolConstants.ERROR_CODE_UNAUTHORIZED_SERVICE_PROXY, new Object[]{service.getId()}, request);
+            return generateErrorView(CasProtocolConstants.ERROR_CODE_UNAUTHORIZED_SERVICE_PROXY, description, request, service);
         } catch (final UnauthorizedServiceException | PrincipalException e) {
             return generateErrorView(CasProtocolConstants.ERROR_CODE_UNAUTHORIZED_SERVICE, null, request, service);
+        } catch (final Exception e) {
+            LOGGER.warn(e.getMessage(), e);
+            return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_REQUEST, StringUtils.EMPTY, request, service);
         }
     }
 
@@ -181,18 +191,23 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                 proxyGrantingTicketId = handleProxyGrantingTicketDelivery(serviceTicketId, serviceCredential);
             } catch (final AuthenticationException e) {
                 LOGGER.warn("Failed to authenticate service credential [{}]", serviceCredential);
-                return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK, new Object[]{serviceCredential.getId()}, request, service);
+                val description = getTicketValidationErrorDescription(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
+                    new Object[]{serviceCredential.getId()}, request);
+                return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK, description, request, service);
             } catch (final InvalidTicketException e) {
                 LOGGER.error("Failed to create proxy granting ticket due to an invalid ticket for [{}]", serviceCredential, e);
-                return generateErrorView(e.getCode(), new Object[]{serviceTicketId}, request, service);
+                val description = getTicketValidationErrorDescription(e.getCode(), new Object[]{serviceTicketId}, request);
+                return generateErrorView(e.getCode(), description, request, service);
             } catch (final AbstractTicketException e) {
                 LOGGER.error("Failed to create proxy granting ticket for [{}]", serviceCredential, e);
-                return generateErrorView(e.getCode(), new Object[]{serviceCredential.getId()}, request, service);
+                val description = getTicketValidationErrorDescription(e.getCode(), new Object[]{serviceCredential.getId()}, request);
+                return generateErrorView(e.getCode(), description, request, service);
             }
         }
         val assertion = validateServiceTicket(service, serviceTicketId);
         if (!validateAssertion(request, serviceTicketId, assertion, service)) {
-            return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_TICKET, new Object[]{serviceTicketId}, request, service);
+            val description = getTicketValidationErrorDescription(CasProtocolConstants.ERROR_CODE_INVALID_TICKET, new Object[]{serviceTicketId}, request);
+            return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_TICKET, description, request, service);
         }
 
         val ctxResult = serviceValidateConfigurationContext.getRequestedContextValidator().validateAuthenticationContext(assertion, request);
@@ -205,7 +220,9 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         if (serviceCredential != null && proxyHandler != null && proxyHandler.canHandle(serviceCredential)) {
             proxyIou = handleProxyIouDelivery(serviceCredential, proxyGrantingTicketId);
             if (StringUtils.isEmpty(proxyIou)) {
-                return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK, new Object[]{serviceCredential.getId()}, request, service);
+                val description = getTicketValidationErrorDescription(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
+                    new Object[]{serviceCredential.getId()}, request);
+                return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK, description, request, service);
             }
         } else {
             LOGGER.debug("No service credentials specified, and/or the proxy handler [{}] cannot handle credentials", proxyHandler);
@@ -267,17 +284,25 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     /**
      * Generate error view.
      *
-     * @param code    the code
-     * @param args    the args
-     * @param request the request
+     * @param code        the code
+     * @param description the description
+     * @param request     the request
+     * @param service     the service
      * @return the model and view
      */
-    private ModelAndView generateErrorView(final String code, final Object[] args, final HttpServletRequest request, final WebApplicationService service) {
-        val modelAndView = serviceValidateConfigurationContext.getValidationViewFactory().getModelAndView(request, false, service, getClass());
-        val convertedDescription = this.applicationContext.getMessage(code, args, code, request.getLocale());
+    private ModelAndView generateErrorView(final String code,
+                                           final String description,
+                                           final HttpServletRequest request,
+                                           final WebApplicationService service) {
+        val modelAndView = serviceValidateConfigurationContext.getValidationViewFactory()
+            .getModelAndView(request, false, service, getClass());
         modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ERROR_CODE, StringEscapeUtils.escapeHtml4(code));
-        modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ERROR_DESCRIPTION, StringEscapeUtils.escapeHtml4(convertedDescription));
+        modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ERROR_DESCRIPTION, StringEscapeUtils.escapeHtml4(description));
         return modelAndView;
+    }
+
+    private String getTicketValidationErrorDescription(final String code, final Object[] args, final HttpServletRequest request) {
+        return this.applicationContext.getMessage(code, args, code, request.getLocale());
     }
 
 

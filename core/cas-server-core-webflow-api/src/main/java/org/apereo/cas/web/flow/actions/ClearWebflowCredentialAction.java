@@ -28,7 +28,11 @@ public class ClearWebflowCredentialAction extends AbstractAction {
     @Override
     @SneakyThrows
     protected Event doExecute(final RequestContext requestContext) {
-        val current = requestContext.getCurrentEvent().getId();
+        val currentEvent = requestContext.getCurrentEvent();
+        if (currentEvent == null) {
+            return null;
+        }
+        val current = currentEvent.getId();
         if (current.equalsIgnoreCase(CasWebflowConstants.TRANSITION_ID_SUCCESS)) {
             return null;
         }

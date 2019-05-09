@@ -103,7 +103,8 @@ Service definitions may be conditionally authorized to use an external identity 
     "delegatedAuthenticationPolicy" : {
       "@class" : "org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy",
       "allowedProviders" : [ "java.util.ArrayList", [ "Facebook", "Twitter" ] ],
-      "permitUndefined": true
+      "permitUndefined": true,
+      "exclusive": true
     }
   }
 }
@@ -112,7 +113,8 @@ Service definitions may be conditionally authorized to use an external identity 
 Note that:
 
 - The list of allowed providers should contain the external identity provider names (i.e. client names).
-- The `permitUndefined` flag decide whether access should be granted in the event that no allowed providers are defined explicitly.
+- The `permitUndefined` flag decides whether access should be granted in the event that no allowed providers are defined explicitly.
+- The `exclusive` flag decides whether authentication should be exclusively limited to allowed providers, disabling other methods such as username/password, etc.
 
 ## Provisioning
 

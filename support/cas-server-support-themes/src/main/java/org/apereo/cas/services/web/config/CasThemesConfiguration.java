@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.CasPropertiesThymeleafViewResolverConfigurer;
+import org.apereo.cas.services.web.CasThymeleafLoginFormDirector;
 import org.apereo.cas.services.web.CasThymeleafOutputTemplateHandler;
 import org.apereo.cas.services.web.CasThymeleafViewResolverConfigurer;
 import org.apereo.cas.services.web.ChainingThemeResolver;
@@ -102,6 +103,12 @@ public class CasThemesConfiguration {
         val factory = new ThemeViewResolver.Factory(nonCachingThymeleafViewResolver(), thymeleafProperties, casProperties);
         factory.setApplicationContext(applicationContext);
         return factory;
+    }
+
+    @ConditionalOnMissingBean(name = "casThymeleafLoginFormDirector")
+    @Bean
+    public CasThymeleafLoginFormDirector casThymeleafLoginFormDirector() {
+        return new CasThymeleafLoginFormDirector();
     }
 
     @Bean
