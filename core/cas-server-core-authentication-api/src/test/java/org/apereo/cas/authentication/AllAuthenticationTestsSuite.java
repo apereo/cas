@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.adaptive.intel.RestfulIPAddressIntelligence
 import org.apereo.cas.authentication.policy.GroovyScriptAuthenticationPolicyTests;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtilsTests;
 import org.apereo.cas.authentication.principal.resolvers.InternalGroovyScriptDaoTests;
+import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolverTests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -25,6 +26,7 @@ import org.junit.runners.Suite;
     BlackDotIPAddressIntelligenceServiceTests.class,
     GroovyScriptAuthenticationPolicyTests.class,
     InternalGroovyScriptDaoTests.class,
+    PersonDirectoryPrincipalResolverTests.class,
     PrincipalNameTransformerUtilsTests.class,
     AuthenticationCredentialTypeMetaDataPopulatorTests.class,
     DefaultPrincipalFactoryTests.class,

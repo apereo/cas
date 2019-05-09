@@ -154,7 +154,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
             val values = CollectionUtils.toCollection(attrValue, ArrayList.class);
             LOGGER.debug("Found attribute [{}] with value(s) [{}]", key, values);
             if (values.size() == 1) {
-                val value = CollectionUtils.firstElement(values).get();
+                val value = values.get(0);
                 convertedAttributes.put(key, value);
             } else {
                 convertedAttributes.put(key, values);
