@@ -982,6 +982,16 @@ public class WebUtils {
     }
 
     /**
+     * Gets delegated authentication provider primary.
+     *
+     * @param context the context
+     * @return the delegated authentication provider primary
+     */
+    public static Object getDelegatedAuthenticationProviderPrimary(final RequestContext context) {
+        return context.getFlowScope().get("delegatedAuthenticationProviderPrimary");
+    }
+
+    /**
      * Put available authentication handle names.
      *
      * @param context           the context
@@ -1039,6 +1049,26 @@ public class WebUtils {
      */
     public static void putExistingSingleSignOnSessionPrincipal(final RequestContext context, final Principal value) {
         context.getFlashScope().put("existingSingleSignOnSessionPrincipal", value);
+    }
+
+    /**
+     * Put cas login form viewable.
+     *
+     * @param context  the context
+     * @param viewable the viewable
+     */
+    public static void putCasLoginFormViewable(final RequestContext context, final boolean viewable) {
+        context.getFlowScope().put("casLoginFormViewable", viewable);
+    }
+
+    /**
+     * Is cas login form viewable.
+     *
+     * @param context the context
+     * @return the boolean
+     */
+    public static boolean isCasLoginFormViewable(final RequestContext context) {
+        return context.getFlowScope().getBoolean("casLoginFormViewable", Boolean.TRUE);
     }
 
     /**

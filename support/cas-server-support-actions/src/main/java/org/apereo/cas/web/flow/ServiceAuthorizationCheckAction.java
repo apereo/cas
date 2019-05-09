@@ -50,14 +50,13 @@ public class ServiceAuthorizationCheckAction extends AbstractAction {
         if (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             val msg = String.format("Service Management: Unauthorized Service Access. "
                 + "Service [%s] is not allowed access via the service registry.", service.getId());
-
             LOGGER.warn(msg);
-
             WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context,
                 registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
-
+        val delegatedPolicy = registeredService.getAccessStrategy().getDelegatedAuthenticationPolicy();
+        WebUtils.putCasLoginFormViewable(context, delegatedPolicy == null || !delegatedPolicy.isExclusive());
         return success();
     }
 }
