@@ -78,6 +78,11 @@ public class AccepttoMultifactorProperties extends BaseMultifactorProviderProper
      */
     private long timeout = 120;
 
+    /**
+     * Whether QR Code login should be enabled.
+     */
+    private boolean qrLoginEnabled;
+
     public AccepttoMultifactorProperties() {
         setId(DEFAULT_IDENTIFIER);
     }

@@ -7,9 +7,6 @@ import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorDetermineUserAccou
 import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorFetchChannelAction;
 import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorValidateChannelAction;
 import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorWebflowConfigurer;
-import org.apereo.cas.mfa.accepto.web.flow.qr.AccepttoQRCodeAuthenticationWebflowConfigurer;
-import org.apereo.cas.mfa.accepto.web.flow.qr.AccepttoQRCodePrepareAuthenticationAction;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -52,10 +49,6 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     private ApplicationContext applicationContext;
 
     @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
     private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
@@ -91,16 +84,6 @@ public class AccepttoMultifactorAuthenticationConfiguration {
             mfaAccepttoAuthenticatorFlowRegistry(), applicationContext, casProperties);
     }
 
-
-    @ConditionalOnMissingBean(name = "mfaAccepttoQRCodeAuthenticationWebflowConfigurer")
-    @Bean
-    @DependsOn("defaultWebflowConfigurer")
-    public CasWebflowConfigurer mfaAccepttoQRCodeAuthenticationWebflowConfigurer() {
-        return new AccepttoQRCodeAuthenticationWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry.getIfAvailable(),
-            applicationContext, casProperties);
-    }
-
     @ConditionalOnMissingBean(name = "mfaAccepttoCasWebflowExecutionPlanConfigurer")
     @Bean
     public CasWebflowExecutionPlanConfigurer mfaAccepttoCasWebflowExecutionPlanConfigurer() {
@@ -108,7 +91,6 @@ public class AccepttoMultifactorAuthenticationConfiguration {
             @Override
             public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
                 plan.registerWebflowConfigurer(mfaAccepttoMultifactorWebflowConfigurer());
-                plan.registerWebflowConfigurer(mfaAccepttoQRCodeAuthenticationWebflowConfigurer());
             }
         };
     }
@@ -132,10 +114,6 @@ public class AccepttoMultifactorAuthenticationConfiguration {
             authenticationSystemSupport.getIfAvailable());
     }
 
-    @Bean
-    public Action initializeLoginAction() {
-        return new AccepttoQRCodePrepareAuthenticationAction(servicesManager.getIfAvailable());
-    }
 
     @ConditionalOnMissingBean(name = "mfaAccepttoMultifactorDetermineUserAccountStatusAction")
     @Bean
