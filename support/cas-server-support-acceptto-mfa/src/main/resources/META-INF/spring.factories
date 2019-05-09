@@ -2,4 +2,4 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.co
   org.apereo.cas.config.AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration,\
   org.apereo.cas.config.AccepttoMultifactorAuthenticationComponentSerializationConfiguration,\
   org.apereo.cas.config.AccepttoMultifactorAuthenticationMultifactorProviderBypassConfiguration,\
-  org.apereo.cas.config.AccepttoMultifactorQRAuthenticationConfiguration
+  org.apereo.cas.config.AccepttoAuthenticationQRCodeConfiguration
