@@ -39,14 +39,20 @@ public class AccepttoQRCodeAuthenticationWebflowConfigurer extends AbstractCasWe
             val state = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
             createTransitionForState(state,
                 TRANSITION_ID_GENERATE_QR_CODE, "accepttoPasswordlessQRCodeLogin");
+
             val viewState = createViewState(flow,
                 "accepttoPasswordlessQRCodeLogin", "casAccepttoPasswordlessQRCodeLoginView");
-            createTransitionForState(viewState,
-                CasWebflowConstants.TRANSITION_ID_SUBMIT, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET);
+            createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, "accepttoQRCodeValidate");
             val applicationId = casProperties.getAuthn().getMfa().getAcceptto().getApplicationId();
             val setAction = createSetAction("flowScope.accepttoApplicationId", StringUtils.quote(applicationId));
             viewState.getRenderActionList().add(setAction);
 
+            val validateAction = createActionState(flow,
+                "accepttoQRCodeValidate", "mfaAccepttoQRCodeValidateWebSocketChannelAction");
+            createTransitionForState(validateAction,
+                CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, CasWebflowConstants.STATE_ID_HANDLE_AUTHN_FAILURE);
+            createTransitionForState(validateAction,
+                CasWebflowConstants.TRANSITION_ID_FINALIZE, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET);
 
         }
     }
