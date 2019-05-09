@@ -11768,3 +11768,11 @@ header > .navbar .logo path.cls-1 {
   background-color: #17a2b8;
   color: #fff;
 }
+
+#duo_iframe {
+  width: 100%;
+  min-width: 304px;
+  height: 330px;
+  border: none;
+  padding: 0 20px;
+}
