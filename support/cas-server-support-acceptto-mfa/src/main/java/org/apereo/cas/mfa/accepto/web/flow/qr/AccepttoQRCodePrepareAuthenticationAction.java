@@ -19,7 +19,7 @@ public class AccepttoQRCodePrepareAuthenticationAction extends InitializeLoginAc
     }
 
     @Override
-    public Event doExecute(final RequestContext requestContext) throws Exception {
+    public Event doExecute(final RequestContext requestContext) {
         return new EventFactorySupport()
             .event(this, AccepttoQRCodeAuthenticationWebflowConfigurer.TRANSITION_ID_GENERATE_QR_CODE);
     }
