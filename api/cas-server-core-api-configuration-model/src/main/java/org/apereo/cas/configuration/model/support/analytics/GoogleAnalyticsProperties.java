@@ -44,6 +44,14 @@ public class GoogleAnalyticsProperties implements Serializable {
          */
         private String attributeName;
 
+        /**
+         * A regular expression pattern
+         * that is tested against attribute values
+         * to only release and allow those that produce
+         * a successful match.
+         */
+        private String attributeValuePattern = ".+";
+
         public Cookie() {
             setName("CasGoogleAnalytics");
             setPinToSession(false);
