@@ -4349,6 +4349,7 @@ under the configuration key `cas.googleAnalytics.cookie`.
 
 ```properties
 cas.googleAnalytics.cookie.attributeName=
+cas.googleAnalytics.cookie.attributeValuePattern=.+
 ```
 
 ## Spring Webflow
