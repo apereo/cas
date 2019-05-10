@@ -44,7 +44,7 @@ public class DefaultMultifactorAuthenticationContextValidator implements Multifa
      * {@inheritDoc}
      * If the authentication event is established as part trusted/device browser
      * such that MFA was skipped, allow for validation to execute successfully.
-     * If authentication event did bypass MFA, let for allow for validation to execute successfully.
+     * If authentication event did bypass MFA, let's for allow for validation to execute successfully.
      *
      * @param authentication   the authentication
      * @param requestedContext the requested context
@@ -75,15 +75,13 @@ public class DefaultMultifactorAuthenticationContextValidator implements Multifa
             LOGGER.debug("Requested authentication context [{}] is satisfied since device is already trusted", requestedContext);
             return Pair.of(Boolean.TRUE, requestedProvider);
         }
+        val provider = requestedProvider.get();
         val satisfiedProviders = getSatisfiedAuthenticationProviders(authentication, providerMap.values());
         if (satisfiedProviders != null && !satisfiedProviders.isEmpty()) {
             val providers = satisfiedProviders.toArray(MultifactorAuthenticationProvider[]::new);
             OrderComparator.sortIfNecessary(providers);
             val result = Arrays.stream(providers)
-                .filter(provider -> {
-                    val p = requestedProvider.get();
-                    return provider.equals(p) || provider.getOrder() >= p.getOrder();
-                })
+                .filter(p -> p.equals(provider) || p.getOrder() >= provider.getOrder())
                 .findFirst();
             if (result.isPresent()) {
                 LOGGER.debug("Current provider [{}] already satisfies the authentication requirements of [{}]; proceed with flow normally.",
@@ -91,7 +89,6 @@ public class DefaultMultifactorAuthenticationContextValidator implements Multifa
                 return Pair.of(Boolean.TRUE, requestedProvider);
             }
         }
-        val provider = requestedProvider.get();
         LOGGER.debug("No multifactor providers could be located to satisfy the requested context for [{}]", provider);
         return Pair.of(Boolean.FALSE, requestedProvider);
     }
