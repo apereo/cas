@@ -15,5 +15,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CassandraServiceRegistryProperties extends BaseCassandraProperties {
+    private static final long serialVersionUID = -1835394847251801709L;
 }
 
