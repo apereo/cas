@@ -56,9 +56,9 @@ public class JpaBeans {
     @SneakyThrows
     public static DataSource newDataSource(final AbstractJpaProperties jpaProperties) {
         val dataSourceName = jpaProperties.getDataSourceName();
-        val proxyDataSource = jpaProperties.isDataSourceProxy();
 
         if (StringUtils.isNotBlank(dataSourceName)) {
+            val proxyDataSource = jpaProperties.isDataSourceProxy();
             try {
                 val dsLookup = new JndiDataSourceLookup();
                 dsLookup.setResourceRef(false);
