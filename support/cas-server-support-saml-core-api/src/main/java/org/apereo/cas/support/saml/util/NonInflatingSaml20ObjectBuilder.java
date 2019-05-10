@@ -15,6 +15,8 @@ import java.nio.charset.StandardCharsets;
  * @since 5.3.7
  */
 public class NonInflatingSaml20ObjectBuilder extends AbstractSaml20ObjectBuilder {
+    private static final long serialVersionUID = 4737200174453971436L;
+
     public NonInflatingSaml20ObjectBuilder(final OpenSamlConfigBean configBean) {
         super(configBean);
     }

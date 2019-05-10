@@ -8,8 +8,8 @@ import org.junit.platform.suite.api.SelectClasses;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@SelectClasses({
+@SelectClasses(
   CreateGoogleAnalyticsCookieActionTests.class
-})
+)
 public class GoogleAnalyticsAllTestsSuite {
 }

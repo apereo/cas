@@ -40,6 +40,8 @@ public class NonWSFederationClaimsClaimsHandler extends WrappingSecurityTokenSer
     }
 
     private static class NonWSFederationClaimsList extends ArrayList<String> {
+        private static final long serialVersionUID = -50278523307446738L;
+
         @Override
         public boolean contains(final Object o) {
             return o.toString().startsWith(WSFederationConstants.HTTP_SCHEMAS_APEREO_CAS);

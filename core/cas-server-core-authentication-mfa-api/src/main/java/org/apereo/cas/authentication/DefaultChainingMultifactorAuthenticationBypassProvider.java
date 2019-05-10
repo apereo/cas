@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
-
+                                                                                               
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +40,27 @@ public class DefaultChainingMultifactorAuthenticationBypassProvider implements C
 
         return multifactorAuthenticationProviderBypassEvaluators
             .stream()
-            .allMatch(bypass -> bypass.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, request));
+            .allMatch(bypass -> bypass.shouldMultifactorAuthenticationProviderExecute(authentication,
+                registeredService, provider, request));
+    }
+
+    @Override
+    public void forgetBypass(final Authentication authentication) {
+        multifactorAuthenticationProviderBypassEvaluators
+            .forEach(bypass -> bypass.forgetBypass(authentication));
+    }
+
+    @Override
+    public void rememberBypass(final Authentication authentication, final MultifactorAuthenticationProvider provider) {
+        multifactorAuthenticationProviderBypassEvaluators
+            .forEach(bypass -> bypass.rememberBypass(authentication, provider));
+    }
+
+    @Override
+    public boolean isMultifactorAuthenticationBypassed(final Authentication authentication, final String requestedContext) {
+        return multifactorAuthenticationProviderBypassEvaluators
+            .stream()
+            .allMatch(bypass -> bypass.isMultifactorAuthenticationBypassed(authentication, requestedContext));
     }
 
     @Override

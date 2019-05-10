@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Slf4j
 public class AuthenticationMultifactorAuthenticationProviderBypass extends BaseMultifactorAuthenticationProviderBypass {
+    private static final long serialVersionUID = 5582655921143779773L;
     private final MultifactorAuthenticationProviderBypassProperties bypassProperties;
 
     public AuthenticationMultifactorAuthenticationProviderBypass(final MultifactorAuthenticationProviderBypassProperties bypassProperties,
