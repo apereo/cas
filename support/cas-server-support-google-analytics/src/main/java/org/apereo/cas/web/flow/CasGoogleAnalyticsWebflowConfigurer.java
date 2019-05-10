@@ -1,9 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
-import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -15,9 +13,6 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.LinkedHashMap;
-import java.util.stream.Collectors;
-
 /**
  * This is {@link CasGoogleAnalyticsWebflowConfigurer}.
  *
@@ -27,15 +22,11 @@ import java.util.stream.Collectors;
 public class CasGoogleAnalyticsWebflowConfigurer extends AbstractCasWebflowConfigurer {
     private static final String ATTRIBUTE_FLOWSCOPE_GOOGLE_ANALYTICS_TRACKING_ID = "googleAnalyticsTrackingId";
 
-    private final CasCookieBuilder googleAnalyticsCookieBuilder;
-
     public CasGoogleAnalyticsWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                final ApplicationContext applicationContext,
-                                               final CasConfigurationProperties casProperties,
-                                               final CasCookieBuilder googleAnalyticsCookieBuilder) {
+                                               final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
-        this.googleAnalyticsCookieBuilder = googleAnalyticsCookieBuilder;
     }
 
     @Override
@@ -55,11 +46,7 @@ public class CasGoogleAnalyticsWebflowConfigurer extends AbstractCasWebflowConfi
 
     private void createRemoveGoogleAnalyticsCookieLogoutAction(final Flow logoutFlow) {
         val logoutSetup = getState(logoutFlow, CasWebflowConstants.STATE_ID_TERMINATE_SESSION);
-        logoutSetup.getExitActionList().add(requestContext -> {
-            val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-            googleAnalyticsCookieBuilder.removeCookie(response);
-            return null;
-        });
+        logoutSetup.getExitActionList().add(createEvaluateAction("removeGoogleAnalyticsCookieAction"));
     }
 
     private void injectGoogleAnalyticsIdIntoLogoutView(final Flow logoutFlow) {
@@ -69,22 +56,7 @@ public class CasGoogleAnalyticsWebflowConfigurer extends AbstractCasWebflowConfi
 
     private void createSendGoogleAnalyticsCookieAction(final Flow flow) {
         val sendTgt = getState(flow, CasWebflowConstants.STATE_ID_SEND_TICKET_GRANTING_TICKET);
-        sendTgt.getExitActionList().add(requestContext -> {
-            val authn = WebUtils.getAuthentication(requestContext);
-            val attributes = new LinkedHashMap<>(authn.getAttributes());
-            attributes.putAll(authn.getPrincipal().getAttributes());
-
-            val attributeName = casProperties.getGoogleAnalytics().getCookie().getAttributeName();
-            if (StringUtils.isNotBlank(attributeName) && attributes.containsKey(attributeName)) {
-                val cookieValue = attributes.get(attributeName)
-                    .stream()
-                    .map(Object::toString)
-                    .collect(Collectors.joining(","));
-                googleAnalyticsCookieBuilder.addCookie(requestContext, cookieValue);
-            }
-
-            return null;
-        });
+        sendTgt.getExitActionList().add(createEvaluateAction("createGoogleAnalyticsCookieAction"));
     }
 
     private void injectGoogleAnalyticsTrackingIdToFlowStart(final Flow flow) {
