@@ -126,6 +126,12 @@ public interface OidcConstants {
     String CAS_OAUTH_CLIENT_PRIVATE_KEY_JWT_AUTHN = "ClientPrivateKeyJwtClient";
 
     /**
+     * This is a standard label for a custom scope which will have a scope name.
+     * This should not be added to StandardScopes enumeration because it isn't standard.
+     */
+    String CUSTOM_SCOPE_TYPE = "custom";
+
+    /**
      * Dynamic client registration mode.
      */
     enum DynamicClientRegistrationMode {
