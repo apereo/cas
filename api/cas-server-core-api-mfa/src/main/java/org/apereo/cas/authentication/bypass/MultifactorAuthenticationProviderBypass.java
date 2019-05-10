@@ -44,6 +44,19 @@ public interface MultifactorAuthenticationProviderBypass extends Serializable, O
 
 
     /**
+     * Indicates whether the authentication attempt carries information
+     * that would signal a bypassed attempt.
+     *
+     * @param authentication   the authentication
+     * @param requestedContext the requested context
+     * @return the boolean
+     */
+    default boolean isMultifactorAuthenticationBypassed(final Authentication authentication,
+                                                        final String requestedContext) {
+        return false;
+    }
+
+    /**
      * Method will remove any previous bypass set in the authentication.
      *
      * @param authentication - the authentication

@@ -12,6 +12,7 @@ import org.pac4j.core.exception.TechnicalException;
 @Getter
 public class RequestSloException extends TechnicalException {
 
+    private static final long serialVersionUID = 4616417545194274302L;
     private final String key;
 
     private final boolean isFrontChannel;

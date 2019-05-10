@@ -34,7 +34,8 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
         val registeredService = servicesManager.findServiceBy(assertion.getService());
         val authentication = assertion.getPrimaryAuthentication();
 
-        val requestedContext = multifactorTriggerSelectionStrategy.resolve(request, registeredService, authentication, assertion.getService());
+        val requestedContext = multifactorTriggerSelectionStrategy.resolve(request, registeredService,
+            authentication, assertion.getService());
         if (requestedContext.isEmpty()) {
             LOGGER.debug("No particular authentication context is required for this request");
             return Pair.of(Boolean.TRUE, Optional.empty());
@@ -47,7 +48,14 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
             val provider = providerResult.get();
             val bypassEvaluator = provider.getBypassEvaluator();
             if (!bypassEvaluator.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, request)) {
-                LOGGER.debug("MFA provider [{}] was determined that it should be bypassed for this service request [{}]", providerId, assertion.getService());
+                LOGGER.debug("MFA provider [{}] has determined that it should be bypassed for this service request [{}]",
+                    providerId, assertion.getService());
+                bypassEvaluator.rememberBypass(authentication, provider);
+                return Pair.of(Boolean.TRUE, Optional.empty());
+            }
+
+            if (bypassEvaluator.isMultifactorAuthenticationBypassed(authentication, providerId)) {
+                LOGGER.debug("Authentication attempt indicates that MFA is bypassed for this request for [{}]", requestedContext);
                 bypassEvaluator.rememberBypass(authentication, provider);
                 return Pair.of(Boolean.TRUE, Optional.empty());
             }

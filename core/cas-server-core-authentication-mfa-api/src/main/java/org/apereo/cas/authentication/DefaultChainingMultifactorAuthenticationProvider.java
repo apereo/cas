@@ -47,6 +47,7 @@ public class DefaultChainingMultifactorAuthenticationProvider implements Chainin
         return provider;
     }
 
+    
     @Override
     public void addMultifactorAuthenticationProviders(final Collection<MultifactorAuthenticationProvider> providers) {
         multifactorAuthenticationProviders.addAll(providers);

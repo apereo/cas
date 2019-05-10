@@ -30,12 +30,32 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @ToString
 public abstract class BaseMultifactorAuthenticationProviderBypass implements MultifactorAuthenticationProviderBypass {
+    private static final long serialVersionUID = 2372899636154131393L;
     private final String providerId;
     private final String id = this.getClass().getSimpleName();
 
     @Override
     public void forgetBypass(final Authentication authentication) {
         authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, Boolean.FALSE);
+    }
+
+    @Override
+    public boolean isMultifactorAuthenticationBypassed(final Authentication authentication, final String requestedContext) {
+        val attributes = authentication.getAttributes();
+        if (attributes.containsKey(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA)) {
+
+            val result = CollectionUtils.firstElement(attributes.get(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA));
+            val providerRes = CollectionUtils.firstElement(attributes.get(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER));
+
+            if (result.isPresent()) {
+                val bypass = (Boolean) result.get();
+                if (bypass && providerRes.isPresent()) {
+                    val provider = providerRes.get().toString();
+                    return StringUtils.equalsIgnoreCase(requestedContext, provider);
+                }
+            }
+        }
+        return false;
     }
 
     @Override
