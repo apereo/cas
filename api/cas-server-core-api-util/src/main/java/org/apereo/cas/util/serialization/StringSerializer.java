@@ -99,12 +99,7 @@ public interface StringSerializer<T> extends Serializable {
      */
     default Collection<T> load(final InputStream stream) {
         val result = from(stream);
-        if (result != null) {
-            val list = new ArrayList<T>();
-            list.add(result);
-            return list;
-        }
-        return new ArrayList<>(0);
+        return makeCollectionOf(result);
     }
 
     /**
@@ -115,12 +110,7 @@ public interface StringSerializer<T> extends Serializable {
      */
     default Collection<T> load(final Reader stream) {
         val result = from(stream);
-        if (result != null) {
-            val list = new ArrayList<T>();
-            list.add(result);
-            return list;
-        }
-        return new ArrayList<>(0);
+        return makeCollectionOf(result);
     }
 
     /**
@@ -149,4 +139,20 @@ public interface StringSerializer<T> extends Serializable {
      * @return the type to serialize
      */
     Class<T> getTypeToSerialize();
+
+    /**
+     * Helper method with reusable code.
+     *
+     * @param <T> the type param
+     * @param elem the elem
+     * @return collection
+     */
+    private static <T> Collection<T> makeCollectionOf(T elem) {
+        if (elem != null) {
+            val list = new ArrayList<T>();
+            list.add(elem);
+            return list;
+        }
+        return new ArrayList<>(0);
+    }
 }

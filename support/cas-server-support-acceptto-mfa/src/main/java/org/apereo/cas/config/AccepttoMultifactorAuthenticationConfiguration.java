@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.integration.pac4j.DistributedJ2ESessionStore;
+import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorDetermineUserAccountStatusAction;
 import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorFetchChannelAction;
 import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorValidateChannelAction;
 import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorWebflowConfigurer;
@@ -40,7 +41,7 @@ import org.springframework.webflow.execution.Action;
 @Configuration("accepttoMultifactorAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
-public class AccepttoMultifactorAuthenticationConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class AccepttoMultifactorAuthenticationConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -83,11 +84,16 @@ public class AccepttoMultifactorAuthenticationConfiguration implements CasWebflo
             mfaAccepttoAuthenticatorFlowRegistry(), applicationContext, casProperties);
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(mfaAccepttoMultifactorWebflowConfigurer());
+    @ConditionalOnMissingBean(name = "mfaAccepttoCasWebflowExecutionPlanConfigurer")
+    @Bean
+    public CasWebflowExecutionPlanConfigurer mfaAccepttoCasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(mfaAccepttoMultifactorWebflowConfigurer());
+            }
+        };
     }
-
 
     @ConditionalOnMissingBean(name = "mfaAccepttoDistributedSessionStore")
     @Bean
@@ -106,6 +112,13 @@ public class AccepttoMultifactorAuthenticationConfiguration implements CasWebflo
     public Action mfaAccepttoMultifactorValidateChannelAction() {
         return new AccepttoMultifactorValidateChannelAction(mfaAccepttoDistributedSessionStore(),
             authenticationSystemSupport.getIfAvailable());
+    }
+
+
+    @ConditionalOnMissingBean(name = "mfaAccepttoMultifactorDetermineUserAccountStatusAction")
+    @Bean
+    public Action mfaAccepttoMultifactorDetermineUserAccountStatusAction() {
+        return new AccepttoMultifactorDetermineUserAccountStatusAction(casProperties);
     }
 
 }

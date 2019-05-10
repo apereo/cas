@@ -10,7 +10,14 @@
 
     <action-state id="initializeLoginForm">
         <evaluate expression="initializeLoginAction" />
-        <transition on="success" to="authenticateAndFetchChannel"/>
+        <transition on="success" to="fetchUserAccountStatus"/>
+    </action-state>
+
+    <action-state id="fetchUserAccountStatus">
+        <evaluate expression="mfaAccepttoMultifactorDetermineUserAccountStatusAction" />
+        <transition on="unavailable" to="mfaFailure" />
+        <transition on="deny" to="deny" />
+        <transition on="success" to="authenticateAndFetchChannel" />
     </action-state>
 
     <action-state id="authenticateAndFetchChannel">
@@ -22,5 +29,7 @@
                view="externalRedirect:#{requestScope.accepttoRedirectUrl}">
         <transition to="success" />
     </view-state>
-    <end-state id="success" commit="true" />
+    <end-state id="success"  />
+    <end-state id="unavailable"  />
+    <end-state id="deny"  />
 </flow>
