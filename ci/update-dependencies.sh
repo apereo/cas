@@ -27,19 +27,9 @@ npm install -g renovate
 
 waitloop="while sleep 9m; do echo -e '\n=====[ Build is still running ]====='; done &"
 eval $waitloop
-waitRetVal=$?
 
 renovate --git-fs=https --token=${GH_TOKEN} apereo/cas
 
 echo -e "***************************************************************************************"
 echo -e "Build finished at `date` with exit code $retVal"
 echo -e "***************************************************************************************"
-
-if [ $retVal == 0 ]; then
-    echo "Gradle build finished successfully."
-    exit 0
-else
-    echo "Gradle build did NOT finish successfully."
-    exit $retVal
-fi
-
