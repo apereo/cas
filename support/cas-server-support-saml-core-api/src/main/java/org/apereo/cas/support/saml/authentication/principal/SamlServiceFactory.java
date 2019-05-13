@@ -37,7 +37,8 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
     private static String getRequestBody(final HttpServletRequest request) {
         val body = readRequestBodyIfAny(request);
         if (!StringUtils.hasText(body)) {
-            LOGGER.trace("Looking at the request attribute [{}] to locate SAML request body", SamlProtocolConstants.PARAMETER_SAML_REQUEST);
+            LOGGER.trace("Looking at the request attribute [{}] to locate SAML request body",
+                SamlProtocolConstants.PARAMETER_SAML_REQUEST);
             return (String) request.getAttribute(SamlProtocolConstants.PARAMETER_SAML_REQUEST);
         }
         return body;

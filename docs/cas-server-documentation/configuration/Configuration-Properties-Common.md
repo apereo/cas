@@ -496,6 +496,14 @@ More advanced Hazelcast configuration settings are listed below, given the compo
 # ${configurationKey}.cluster.publicAddress=
 ```
 
+### Management Center
+
+```properties
+# ${configurationKey}.managementCenter.url=
+# ${configurationKey}.managementCenter.enabled=false
+# ${configurationKey}.managementCenter.updateInterval=5
+```
+
 ### Static WAN Replication
 
 ```properties

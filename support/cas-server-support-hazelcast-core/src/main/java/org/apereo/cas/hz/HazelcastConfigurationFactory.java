@@ -9,6 +9,7 @@ import com.hazelcast.config.DiscoveryConfig;
 import com.hazelcast.config.DiscoveryStrategyConfig;
 import com.hazelcast.config.EvictionPolicy;
 import com.hazelcast.config.JoinConfig;
+import com.hazelcast.config.ManagementCenterConfig;
 import com.hazelcast.config.MapConfig;
 import com.hazelcast.config.MaxSizeConfig;
 import com.hazelcast.config.MergePolicyConfig;
@@ -108,16 +109,20 @@ public class HazelcastConfigurationFactory {
 
         config.setLicenseKey(hz.getLicenseKey());
 
+        if (hz.getManagementCenter().isEnabled()) {
+            buildManagementCenterConfig(hz, config);
+        }
+
         val networkConfig = new NetworkConfig()
             .setPort(cluster.getPort())
             .setPortAutoIncrement(cluster.isPortAutoIncrement());
 
-        if (StringUtils.hasText(hz.getCluster().getLocalAddress())) {
-            config.setProperty(BaseHazelcastProperties.HAZELCAST_LOCAL_ADDRESS_PROP, hz.getCluster().getLocalAddress());
+        if (StringUtils.hasText(cluster.getLocalAddress())) {
+            config.setProperty(BaseHazelcastProperties.HAZELCAST_LOCAL_ADDRESS_PROP, cluster.getLocalAddress());
         }
-        if (StringUtils.hasText(hz.getCluster().getPublicAddress())) {
-            config.setProperty(BaseHazelcastProperties.HAZELCAST_PUBLIC_ADDRESS_PROP, hz.getCluster().getPublicAddress());
-            networkConfig.setPublicAddress(hz.getCluster().getPublicAddress());
+        if (StringUtils.hasText(cluster.getPublicAddress())) {
+            config.setProperty(BaseHazelcastProperties.HAZELCAST_PUBLIC_ADDRESS_PROP, cluster.getPublicAddress());
+            networkConfig.setPublicAddress(cluster.getPublicAddress());
         }
 
         if (cluster.getWanReplication().isEnabled()) {
@@ -130,8 +135,8 @@ public class HazelcastConfigurationFactory {
         }
 
         val joinConfig = cluster.getDiscovery().isEnabled()
-            ? createDiscoveryJoinConfig(config, hz.getCluster(), networkConfig)
-            : createDefaultJoinConfig(config, hz.getCluster());
+            ? createDiscoveryJoinConfig(config, cluster, networkConfig)
+            : createDefaultJoinConfig(config, cluster);
         LOGGER.trace("Created Hazelcast join configuration [{}]", joinConfig);
         networkConfig.setJoin(joinConfig);
 
@@ -139,10 +144,20 @@ public class HazelcastConfigurationFactory {
         config.setNetworkConfig(networkConfig);
 
         return config.setInstanceName(cluster.getInstanceName())
-            .setProperty(BaseHazelcastProperties.HAZELCAST_DISCOVERY_ENABLED_PROP, BooleanUtils.toStringTrueFalse(cluster.getDiscovery().isEnabled()))
+            .setProperty(BaseHazelcastProperties.HAZELCAST_DISCOVERY_ENABLED_PROP,
+                BooleanUtils.toStringTrueFalse(cluster.getDiscovery().isEnabled()))
             .setProperty(BaseHazelcastProperties.IPV4_STACK_PROP, String.valueOf(cluster.isIpv4Enabled()))
             .setProperty(BaseHazelcastProperties.LOGGING_TYPE_PROP, cluster.getLoggingType())
             .setProperty(BaseHazelcastProperties.MAX_HEARTBEAT_SECONDS_PROP, String.valueOf(cluster.getMaxNoHeartbeatSeconds()));
+    }
+
+    private static void buildManagementCenterConfig(final BaseHazelcastProperties hz, final Config config) {
+        val managementCenter = new ManagementCenterConfig();
+        val center = hz.getManagementCenter();
+        managementCenter.setEnabled(center.isEnabled());
+        managementCenter.setUrl(center.getUrl());
+        managementCenter.setUpdateInterval(center.getUpdateInterval());
+        config.setManagementCenterConfig(managementCenter);
     }
 
     private static void buildWanReplicationSettingsForConfig(final BaseHazelcastProperties hz, final Config config) {
@@ -199,7 +214,7 @@ public class HazelcastConfigurationFactory {
             val strategy = it.next();
             return strategy.get(cluster, joinConfig, config, networkConfig);
         }
-        throw new IllegalArgumentException("Could not create discovery strategy configuration. No discovery provider is defined in the settings");
+        throw new IllegalArgumentException("Could not create discovery strategy configuration. No discovery provider is defined");
     }
 
     private static JoinConfig createDefaultJoinConfig(final Config config, final HazelcastClusterProperties cluster) {

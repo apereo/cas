@@ -65,7 +65,8 @@ public class SSOSamlProfileCallbackHandlerController extends AbstractSamlProfile
      * @throws Exception the exception
      */
     @GetMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK)
-    protected void handleCallbackProfileRequest(final HttpServletResponse response, final HttpServletRequest request) throws Exception {
+    protected void handleCallbackProfileRequest(final HttpServletResponse response,
+                                                final HttpServletRequest request) throws Exception {
         LOGGER.info("Received SAML callback profile request [{}]", request.getRequestURI());
         val authnRequest = retrieveSamlAuthenticationRequestFromHttpRequest(request);
         if (authnRequest == null) {
@@ -76,7 +77,8 @@ public class SSOSamlProfileCallbackHandlerController extends AbstractSamlProfile
 
         val ticket = CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET);
         if (StringUtils.isBlank(ticket)) {
-            LOGGER.error("Can not validate the request because no [{}] is provided via the request", CasProtocolConstants.PARAMETER_TICKET);
+            LOGGER.error("Can not validate the request because no [{}] is provided via the request",
+                CasProtocolConstants.PARAMETER_TICKET);
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
@@ -115,7 +117,8 @@ public class SSOSamlProfileCallbackHandlerController extends AbstractSamlProfile
         val facade = pair.getValue();
 
         val binding = StringUtils.defaultIfBlank(authnRequest.getProtocolBinding(), SAMLConstants.SAML2_POST_BINDING_URI);
-        LOGGER.debug("Determined authentication request binding is [{}], issued by [{}]", binding, authnRequest.getIssuer().getValue());
+        LOGGER.debug("Determined authentication request binding is [{}], issued by [{}]",
+            binding, authnRequest.getIssuer().getValue());
 
         val entityId = facade.getEntityId();
         LOGGER.debug("Checking metadata for [{}] to see if binding [{}] is supported", entityId, binding);
