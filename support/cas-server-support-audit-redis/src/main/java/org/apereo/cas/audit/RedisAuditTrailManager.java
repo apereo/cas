@@ -54,7 +54,7 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
                 .stream()
                 .map(redisKey -> this.redisTemplate.boundValueOps(redisKey).get())
                 .filter(Objects::nonNull)
-                .map(obj -> AuditActionContext.class.cast(obj))
+                .map(AuditActionContext.class::cast)
                 .filter(audit -> audit.getWhenActionWasPerformed().compareTo(dt) >= 0)
                 .collect(Collectors.toSet());
         } catch (final Exception e) {

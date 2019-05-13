@@ -182,7 +182,7 @@ public class CasWebflowContextConfiguration {
     public Object[] loginFlowHandlerMappingInterceptors() {
         val interceptors = new ArrayList<Object>();
         interceptors.add(localeChangeInterceptor());
-        themeChangeInterceptor.ifAvailable(interceptor -> interceptors.add(interceptor));
+        themeChangeInterceptor.ifAvailable(interceptors::add);
         val plan = authenticationThrottlingExecutionPlan.getIfAvailable();
         if (plan != null) {
             interceptors.addAll(plan.getAuthenticationThrottleInterceptors());

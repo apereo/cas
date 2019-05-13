@@ -158,7 +158,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
         try {
             t.join(this.timeout);
         } catch (final InterruptedException e) {
-            LOGGER.debug("Threaded lookup failed.  Defaulting to IP [{}].", remoteIp, e);
+            LOGGER.debug("Threaded lookup failed. Defaulting to IP [{}].", remoteIp, e);
         }
         val remoteHostName = revDNS.getHostName();
         LOGGER.debug("Found remote host name [{}].", remoteHostName);

@@ -183,10 +183,10 @@ public class ValidateEndpointCommand {
                 e -> "invalid: " + e.getMessage()
             ).apply(certificate);
 
-            LOGGER.info("  subject: [{}]", certificate.getSubjectDN().getName());
-            LOGGER.info("  issuer: [{}]", certificate.getIssuerDN().getName());
-            LOGGER.info("  expiration: [{}] - [{}] [{}]", certificate.getNotBefore(), certificate.getNotAfter(), validity);
-            LOGGER.info("  trust anchor [{}]", checkTrustedCertStatus(certificate, systemTrustManagers));
+            LOGGER.info("\tsubject: [{}]", certificate.getSubjectDN().getName());
+            LOGGER.info("\tissuer: [{}]", certificate.getIssuerDN().getName());
+            LOGGER.info("\texpiration: [{}] - [{}] [{}]", certificate.getNotBefore(), certificate.getNotAfter(), validity);
+            LOGGER.info("\ttrust anchor [{}]", checkTrustedCertStatus(certificate, systemTrustManagers));
             LOGGER.info("---");
         }
     }

@@ -366,7 +366,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         if (StringUtils.isNotBlank(name)) {
             computedCssClass = computedCssClass.concat(' ' + PAC4J_CLIENT_CSS_CLASS_SUBSTITUTION_PATTERN.matcher(name).replaceAll("-"));
         }
-        LOGGER.debug("CSS class for [{}] is [{}]", name, computedCssClass);
+        LOGGER.trace("CSS class for [{}] is [{}]", name, computedCssClass);
         return computedCssClass;
     }
 
@@ -458,7 +458,6 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         val service = WebUtils.getService(context);
         return authenticationRequestServiceSelectionStrategies.resolveService(service);
     }
-
 
     private static boolean isLogoutRequest(final HttpServletRequest request) {
         return request.getParameter(SAML2ServiceProviderMetadataResolver.LOGOUT_ENDPOINT_PARAMETER) != null;
