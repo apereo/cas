@@ -67,17 +67,20 @@ public class CachingTicketRegistry extends AbstractMapBasedTicketRegistry {
         }
 
         @Override
-        public long expireAfterCreate(final String key, final Ticket value, final long currentTime) {
+        public long expireAfterCreate(final String key, final Ticket value,
+                                      final long currentTime) {
             return getExpiration(value, currentTime);
         }
 
         @Override
-        public long expireAfterUpdate(final String key, final Ticket value, final long currentTime, final long currentDuration) {
+        public long expireAfterUpdate(final String key, final Ticket value,
+                                      final long currentTime, final long currentDuration) {
             return getExpiration(value, currentDuration);
         }
 
         @Override
-        public long expireAfterRead(final String key, final Ticket value, final long currentTime, final long currentDuration) {
+        public long expireAfterRead(final String key, final Ticket value,
+                                    final long currentTime, final long currentDuration) {
             return getExpiration(value, currentDuration);
         }
     }

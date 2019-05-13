@@ -80,6 +80,8 @@ The following fields are specifically available for OpenID connect services:
 | `supportedResponseTypes`      | Optional. Collection of supported response types for this service.
 | `signIdToken`                 | Optional. Whether ID tokens should be signed. Default is `true`.
 | `jwks`                        | Optional. Resource path to the keystore location that holds the keys for this application.
+| `jwksCacheDuration`           | Optional. The expiration policy time value applied to loaded/cached keys for this application.
+| `jwksCacheTimeUnit`           | Optional. The expiration policy time unit of measure (i.e. `seconds`, `minutes`, etc) applied to loaded/cached keys.
 | `encryptIdToken`              | Optional. Whether ID tokens should be encrypted. Default is `false`.
 | `idTokenEncryptionAlg`        | Optional. The algorithm header value used to encrypt the id token.
 | `idTokenSigningAlg`           | Optional. The algorithm header value used to sign the id token.

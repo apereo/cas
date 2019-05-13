@@ -32,6 +32,7 @@ import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequest;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequestSerializer;
 import org.apereo.cas.oidc.jwks.OidcDefaultJsonWebKeystoreCacheLoader;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
+import org.apereo.cas.oidc.jwks.OidcServiceJsonWebKeystoreCacheExpirationPolicy;
 import org.apereo.cas.oidc.jwks.OidcServiceJsonWebKeystoreCacheLoader;
 import org.apereo.cas.oidc.profile.OidcProfileScopeToAttributesFilter;
 import org.apereo.cas.oidc.profile.OidcRegisteredServicePreProcessorEventListener;
@@ -554,9 +555,9 @@ public class OidcConfiguration implements WebMvcConfigurer {
 
     @Bean
     public LoadingCache<OidcRegisteredService, Optional<RsaJsonWebKey>> oidcServiceJsonWebKeystoreCache() {
-        val oidc = casProperties.getAuthn().getOidc();
-        return Caffeine.newBuilder().maximumSize(1)
-            .expireAfterWrite(oidc.getJwksCacheInMinutes(), TimeUnit.MINUTES)
+        return Caffeine.newBuilder()
+            .maximumSize(1)
+            .expireAfter(new OidcServiceJsonWebKeystoreCacheExpirationPolicy(casProperties))
             .build(oidcServiceJsonWebKeystoreCacheLoader());
     }
 

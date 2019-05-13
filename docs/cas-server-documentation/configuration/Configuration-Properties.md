@@ -3095,7 +3095,7 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
 # Skew ID tokens in minutes
 # cas.authn.oidc.skew=5
 
-# cas.authn.oidc.jwksFile=file:/keystore.jwks
+# cas.authn.oidc.jwksFile=file:/etc/cas/config/keystore.jwks
 # cas.authn.oidc.jwksCacheInMinutes=60
 
 # cas.authn.oidc.dynamicClientRegistrationMode=OPEN|PROTECTED
@@ -3398,7 +3398,7 @@ To learn more about this topic, [please review this guide](../installation/OAuth
 # cas.authn.uma.issuer=http://localhost:8080/cas
 
 # cas.authn.uma.requestingPartyToken.maxTimeToLiveInSeconds=PT3M
-# cas.authn.uma.requestingPartyToken.jwksFile=file:/etc/cas/uma-keystore.jwks
+# cas.authn.uma.requestingPartyToken.jwksFile=file:/etc/cas/config/uma-keystore.jwks
 
 # cas.authn.uma.permissionTicket.maxTimeToLiveInSeconds=PT3M
 ```
