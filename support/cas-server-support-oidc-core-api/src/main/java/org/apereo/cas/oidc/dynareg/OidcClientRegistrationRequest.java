@@ -76,6 +76,15 @@ public class OidcClientRegistrationRequest implements Serializable {
     @JsonProperty("jwks_uri")
     private String jwksUri;
 
+    @JsonProperty("userinfo_signed_response_alg")
+    private String userInfoSignedReponseAlg;
+
+    @JsonProperty("userinfo_encrypted_response_alg")
+    private String userInfoEncryptedResponseAlg;
+
+    @JsonProperty("userinfo_encrypted_response_enc")
+    private String userInfoEncryptedResponseEncoding;
+
     @JsonProperty("jwks")
     @JsonDeserialize(using = JsonWebKeySetJacksonSerializer.class)
     private JsonWebKeySet jwks;
