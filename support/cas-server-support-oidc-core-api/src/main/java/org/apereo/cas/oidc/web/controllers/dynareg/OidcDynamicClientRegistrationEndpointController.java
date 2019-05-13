@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequest;
+import org.apereo.cas.oidc.profile.OidcUserProfileSigningAndEncryptionService;
 import org.apereo.cas.services.DefaultRegisteredServiceContact;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.OidcRegisteredService;
@@ -119,6 +120,16 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
             }
             if (StringUtils.isNotBlank(registrationRequest.getTermsOfUseUri())) {
                 registeredService.setPrivacyUrl(registrationRequest.getTermsOfUseUri());
+            }
+            registeredService.setUserInfoSigningAlg(registrationRequest.getUserInfoSignedReponseAlg());
+            registeredService.setUserInfoEncryptedResponseAlg(registrationRequest.getUserInfoEncryptedResponseAlg());
+
+            if (StringUtils.isNotBlank(registeredService.getUserInfoEncryptedResponseAlg())) {
+                if (StringUtils.isBlank(registrationRequest.getUserInfoEncryptedResponseEncoding())) {
+                    registeredService.setUserInfoEncryptedResponseEncoding(OidcUserProfileSigningAndEncryptionService.USER_INFO_RESPONSE_ENCRYPTION_ENCODING_DEFAULT);
+                } else {
+                    registeredService.setUserInfoEncryptedResponseEncoding(registrationRequest.getUserInfoEncryptedResponseEncoding());
+                }
             }
 
             val properties = getOAuthConfigurationContext().getCasProperties();

@@ -36,6 +36,8 @@ import org.apereo.cas.oidc.jwks.OidcServiceJsonWebKeystoreCacheLoader;
 import org.apereo.cas.oidc.profile.OidcProfileScopeToAttributesFilter;
 import org.apereo.cas.oidc.profile.OidcRegisteredServicePreProcessorEventListener;
 import org.apereo.cas.oidc.profile.OidcUserProfileDataCreator;
+import org.apereo.cas.oidc.profile.OidcUserProfileSigningAndEncryptionService;
+import org.apereo.cas.oidc.profile.OidcUserProfileViewRenderer;
 import org.apereo.cas.oidc.token.OidcIdTokenGeneratorService;
 import org.apereo.cas.oidc.token.OidcIdTokenSigningAndEncryptionService;
 import org.apereo.cas.oidc.token.OidcRegisteredServiceJwtAccessTokenCipherExecutor;
@@ -154,7 +156,7 @@ import java.util.stream.Collectors;
 @Configuration("oidcConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionPlanConfigurer {
+public class OidcConfiguration implements WebMvcConfigurer {
     @Autowired
     @Qualifier("oauthDistributedSessionStore")
     private ObjectProvider<SessionStore> oauthDistributedSessionStore;
@@ -289,10 +291,6 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
     private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
-
-    @Autowired
-    @Qualifier("oauthUserProfileViewRenderer")
-    private ObjectProvider<OAuth20UserProfileViewRenderer> oauthUserProfileViewRenderer;
 
     @Autowired
     @Qualifier("accessTokenGrantRequestExtractors")
@@ -547,6 +545,14 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
     }
 
     @Bean
+    public OAuthTokenSigningAndEncryptionService oidcUserProfileSigningAndEncryptionService() {
+        val oidc = casProperties.getAuthn().getOidc();
+        return new OidcUserProfileSigningAndEncryptionService(oidcDefaultJsonWebKeystoreCache(),
+            oidcServiceJsonWebKeystoreCache(),
+            oidc.getIssuer());
+    }
+
+    @Bean
     public LoadingCache<OidcRegisteredService, Optional<RsaJsonWebKey>> oidcServiceJsonWebKeystoreCache() {
         val oidc = casProperties.getAuthn().getOidc();
         return Caffeine.newBuilder().maximumSize(1)
@@ -673,10 +679,25 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
         return new OidcAccessTokenAuthenticator(ticketRegistry.getIfAvailable(), oidcTokenSigningAndEncryptionService());
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(oidcWebflowConfigurer());
+    @ConditionalOnMissingBean(name = "oidcCasWebflowExecutionPlanConfigurer")
+    @Bean
+    public CasWebflowExecutionPlanConfigurer oidcCasWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(oidcWebflowConfigurer());
+            }
+        };
     }
+
+    @ConditionalOnMissingBean(name = "oidcUserProfileViewRenderer")
+    @Bean
+    public OAuth20UserProfileViewRenderer oidcUserProfileViewRenderer() {
+        return new OidcUserProfileViewRenderer(casProperties.getAuthn().getOauth(),
+            servicesManager.getIfAvailable(),
+            oidcUserProfileSigningAndEncryptionService());
+    }
+
 
     private OAuth20ConfigurationContext buildConfigurationContext() {
         return OAuth20ConfigurationContext.builder()
@@ -705,7 +726,7 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
             .accessTokenGrantRequestValidators(oauthTokenRequestValidators.getIfAvailable())
             .accessTokenGrantAuditableRequestExtractor(accessTokenGrantAuditableRequestExtractor.getIfAvailable())
             .userProfileDataCreator(oidcUserProfileDataCreator())
-            .userProfileViewRenderer(oauthUserProfileViewRenderer.getIfAvailable())
+            .userProfileViewRenderer(oidcUserProfileViewRenderer())
             .oAuthCodeFactory(defaultOAuthCodeFactory.getIfAvailable())
             .consentApprovalViewResolver(consentApprovalViewResolver())
             .authenticationBuilder(authenticationBuilder.getIfAvailable())

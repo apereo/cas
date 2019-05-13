@@ -71,6 +71,7 @@ public class OidcIdTokenSigningAndEncryptionService extends BaseOidcJsonWebKeyTo
             LOGGER.warn("ID token encryption algorithm is set to none for [{}] and ID token will not be encrypted", svc.getServiceId());
             return false;
         }
-        return svc.isEncryptIdToken() && StringUtils.isNotBlank(svc.getIdTokenEncryptionAlg()) && StringUtils.isNotBlank(svc.getIdTokenEncryptionEncoding());
+        return svc.isEncryptIdToken() && StringUtils.isNotBlank(svc.getIdTokenEncryptionAlg())
+            && StringUtils.isNotBlank(svc.getIdTokenEncryptionEncoding());
     }
 }

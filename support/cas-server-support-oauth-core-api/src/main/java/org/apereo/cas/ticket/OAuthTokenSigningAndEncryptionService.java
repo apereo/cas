@@ -38,4 +38,11 @@ public interface OAuthTokenSigningAndEncryptionService {
     default String getJsonWebKeySigningAlgorithm(final OAuthRegisteredService svc) {
         return AlgorithmIdentifiers.RSA_USING_SHA256;
     }
+
+    /**
+     * Gets issuer.
+     *
+     * @return the issuer
+     */
+    String getIssuer();
 }

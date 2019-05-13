@@ -93,7 +93,7 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuthToken
         LOGGER.debug("Signing id token with key id header value [{}]", jws.getKeyIdHeaderValue());
         jws.setAlgorithmHeaderValue(getJsonWebKeySigningAlgorithm(svc));
 
-        LOGGER.debug("Signing id token with algorithm [{}]", jws.getAlgorithmHeaderValue());
+        LOGGER.trace("Signing id token with algorithm [{}]", jws.getAlgorithmHeaderValue());
         return jws;
     }
 

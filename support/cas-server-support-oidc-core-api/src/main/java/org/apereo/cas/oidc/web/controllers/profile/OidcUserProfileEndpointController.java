@@ -25,15 +25,19 @@ public class OidcUserProfileEndpointController extends OAuth20UserProfileEndpoin
         super(configurationContext);
     }
 
-    @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.PROFILE_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.PROFILE_URL,
+        produces = MediaType.APPLICATION_JSON_VALUE)
     @Override
-    public ResponseEntity<String> handleGetRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public ResponseEntity<String> handleGetRequest(final HttpServletRequest request,
+                                                   final HttpServletResponse response) throws Exception {
         return super.handleGetRequest(request, response);
     }
 
-    @PostMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.PROFILE_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.PROFILE_URL,
+        produces = MediaType.APPLICATION_JSON_VALUE)
     @Override
-    public ResponseEntity<String> handlePostRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public ResponseEntity<String> handlePostRequest(final HttpServletRequest request,
+                                                    final HttpServletResponse response) throws Exception {
         return super.handlePostRequest(request, response);
     }
 }

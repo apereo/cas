@@ -7,8 +7,6 @@ import org.apereo.cas.ticket.accesstoken.AccessToken;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.hjson.JsonValue;
-import org.hjson.Stringify;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -26,20 +24,33 @@ public class OAuth20DefaultUserProfileViewRenderer implements OAuth20UserProfile
 
     @Override
     public String render(final Map<String, Object> model, final AccessToken accessToken) {
-        val value = getRenderedUserProfile(model);
+        val userProfile = getRenderedUserProfile(model, accessToken);
+        return renderProfileForModel(userProfile, accessToken);
+    }
+
+    /**
+     * Render profile for model string.
+     *
+     * @param userProfile the user profile
+     * @param accessToken the access token
+     * @return the string
+     */
+    protected String renderProfileForModel(final Map<String, Object> userProfile, final AccessToken accessToken) {
+        val json = OAuth20Utils.toJson(userProfile);
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Final user profile is [{}]", JsonValue.readHjson(value).toString(Stringify.FORMATTED));
+            LOGGER.debug("Final user profile is [{}]", json);
         }
-        return value;
+        return json;
     }
 
     /**
      * Gets rendered user profile.
      *
-     * @param model the model
+     * @param model       the model
+     * @param accessToken the access token
      * @return the rendered user profile
      */
-    protected String getRenderedUserProfile(final Map<String, Object> model) {
+    protected Map<String, Object> getRenderedUserProfile(final Map<String, Object> model, final AccessToken accessToken) {
         if (oauthProperties.getUserProfileViewType() == OAuthProperties.UserProfileViewTypes.FLAT) {
             val flattened = new LinkedHashMap<String, Object>();
             if (model.containsKey(MODEL_ATTRIBUTE_ATTRIBUTES)) {
@@ -51,9 +62,8 @@ public class OAuth20DefaultUserProfileViewRenderer implements OAuth20UserProfile
                 .filter(k -> !k.equalsIgnoreCase(MODEL_ATTRIBUTE_ATTRIBUTES))
                 .forEach(k -> flattened.put(k, model.get(k)));
             LOGGER.trace("Flattened user profile attributes with the final model as [{}]", model);
-            return OAuth20Utils.toJson(flattened);
+            return flattened;
         }
-        return OAuth20Utils.toJson(model);
-
+        return model;
     }
 }
