@@ -91,8 +91,6 @@ public class DefaultOAuth20UserProfileDataCreator implements OAuth20UserProfileD
                                            final Principal principal,
                                            final RegisteredService registeredService) {
         if (registeredService instanceof OAuthRegisteredService) {
-            val oauth = (OAuthRegisteredService) registeredService;
-            map.put(OAuth20Constants.CLIENT_ID, oauth.getClientId());
             val service = accessTokenTicket.getService();
             map.put(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
         }
