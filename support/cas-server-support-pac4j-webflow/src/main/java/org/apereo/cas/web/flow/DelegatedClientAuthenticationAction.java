@@ -451,7 +451,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         val authentication = getSingleSignOnAuthenticationFrom(context);
         return authentication
             .map(authn -> delegatedAuthenticationAccessStrategyHelper.isDelegatedClientAuthorizedForAuthentication(authn, resolvedService))
-            .orElse(false);
+            .orElse(Boolean.FALSE);
     }
 
     private Service resolveServiceFromRequestContext(final RequestContext context) {
