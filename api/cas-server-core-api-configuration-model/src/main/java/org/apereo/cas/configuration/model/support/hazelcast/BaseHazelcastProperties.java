@@ -69,6 +69,12 @@ public class BaseHazelcastProperties implements Serializable {
     private String licenseKey;
 
     /**
+     * Hazelcast management center settings.
+     */
+    @NestedConfigurationProperty
+    private HazelcastManagementCenterProperties managementCenter = new HazelcastManagementCenterProperties();
+
+    /**
      * Hazelcast cluster settings if CAS is able to auto-create caches.
      */
     @NestedConfigurationProperty
