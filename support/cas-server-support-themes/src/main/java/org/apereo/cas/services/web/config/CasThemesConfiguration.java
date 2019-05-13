@@ -89,6 +89,7 @@ public class CasThemesConfiguration {
         return new CasPropertiesThymeleafViewResolverConfigurer(casProperties);
     }
 
+    @ConditionalOnMissingBean(name = "registeredServiceViewResolver")
     @Bean
     public ViewResolver registeredServiceViewResolver() {
         val resolver = new ThemeBasedViewResolver(themeResolver(), themeViewResolverFactory());

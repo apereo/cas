@@ -59,7 +59,13 @@ public class ThemeBasedViewResolver implements ViewResolver, Ordered {
         return null;
     }
 
-    private ViewResolver getViewResolver(final String theme) {
+    /**
+     * Get (or create) the view resolver for the theme.
+     *
+     * @param theme the theme
+     * @return the view resolver
+     */
+    protected ViewResolver getViewResolver(final String theme) {
         if (resolvers.containsKey(theme)) {
             return resolvers.get(theme);
         }
