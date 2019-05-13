@@ -426,11 +426,23 @@ public class HttpUtils {
      * @return the org . springframework . http . http headers
      */
     public static org.springframework.http.HttpHeaders createBasicAuthHeaders(final String basicAuthUser, final String basicAuthPassword) {
+        return HttpUtils.createBasicAuthHeaders(basicAuthUser, basicAuthPassword, "US-ASCII");
+    }
+
+    /**
+     * Create headers org . springframework . http . http headers.
+     *
+     * @param basicAuthUser     the basic auth user
+     * @param basicAuthPassword the basic auth password
+     * @param basicCharset      The charset used to encode auth header
+     * @return the org . springframework . http . http headers
+     */
+    public static org.springframework.http.HttpHeaders createBasicAuthHeaders(final String basicAuthUser, final String basicAuthPassword, final String basicCharset) {
         val acceptHeaders = new org.springframework.http.HttpHeaders();
         acceptHeaders.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
         if (StringUtils.isNotBlank(basicAuthUser) && StringUtils.isNotBlank(basicAuthPassword)) {
             val authorization = basicAuthUser + ':' + basicAuthPassword;
-            val basic = EncodingUtils.encodeBase64(authorization.getBytes(Charset.forName("US-ASCII")));
+            val basic = EncodingUtils.encodeBase64(authorization.getBytes(Charset.forName(basicCharset)));
             acceptHeaders.set(org.springframework.http.HttpHeaders.AUTHORIZATION, "Basic " + basic);
         }
         return acceptHeaders;
