@@ -80,12 +80,17 @@ The following fields are specifically available for OpenID connect services:
 | `supportedResponseTypes`      | Optional. Collection of supported response types for this service.
 | `signIdToken`                 | Optional. Whether ID tokens should be signed. Default is `true`.
 | `jwks`                        | Optional. Resource path to the keystore location that holds the keys for this application.
+| `jwksCacheDuration`           | Optional. The expiration policy time value applied to loaded/cached keys for this application.
+| `jwksCacheTimeUnit`           | Optional. The expiration policy time unit of measure (i.e. `seconds`, `minutes`, etc) applied to loaded/cached keys.
 | `encryptIdToken`              | Optional. Whether ID tokens should be encrypted. Default is `false`.
 | `idTokenEncryptionAlg`        | Optional. The algorithm header value used to encrypt the id token.
 | `idTokenSigningAlg`           | Optional. The algorithm header value used to sign the id token.
+| `userInfoSigningAlg`          | Optional. The algorithm header value used to sign user profile responses.
+| `userInfoEncryptedResponseAlg`   | Optional. The algorithm header value used to encrypt user profile responses.
 | `tokenEndpointAuthenticationMethod`    | Optional. The requested client authentication method to the token endpoint. Default is `client_secret_basic`.
 | `applicationType`             | Optional. `web`, `native`, or blank. Defined the kind of the application. The default, if omitted, is `web`. 
 | `idTokenEncryptionEncoding`   | Optional. The algorithm method header value used to encrypt the id token.
+| `userInfoEncryptedResponseEncoding`   | Optional. The algorithm method header value used to encrypt the user profile response.
 | `subjectType`                 | Optional value chosen from `public` or `pairwise`. Type to use when generating principal identifiers. Default is `public`.
 | `sectorIdentifierUri`         | Optional. Host value of this URL is used as the sector identifier for the pairwise identifier calculation. If left undefined, the host value of the `serviceId` will be used instead.
 
