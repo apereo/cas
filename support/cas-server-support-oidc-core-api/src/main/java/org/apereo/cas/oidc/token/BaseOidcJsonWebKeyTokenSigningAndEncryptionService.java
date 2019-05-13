@@ -134,7 +134,7 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
         val jsonWebKey = jwks.get();
         LOGGER.debug("Found JSON web key to encrypt the token: [{}]", jsonWebKey);
         if (jsonWebKey.getPublicKey() == null) {
-            throw new IllegalArgumentException("JSON web key used to sign the token has no associated public key");
+            throw new IllegalArgumentException("JSON web key used to encrypt the token has no associated public key");
         }
         return jsonWebKey;
     }

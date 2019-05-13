@@ -61,6 +61,15 @@ public class OidcClientRegistrationResponse implements Serializable {
     @JsonProperty("redirect_uris")
     private List<String> redirectUris = new ArrayList<>();
 
+    @JsonProperty("userinfo_signed_response_alg")
+    private String userInfoSignedReponseAlg;
+
+    @JsonProperty("userinfo_encrypted_response_alg")
+    private String userInfoEncryptedReponseAlg;
+
+    @JsonProperty("userinfo_encrypted_response_enc")
+    private String userInfoEncryptedReponseEncoding;
+
     @JsonProperty("contacts")
     private List<String> contacts = new ArrayList<>();
 
