@@ -39,6 +39,12 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     @Column
     private String jwks;
 
+    @Column
+    private long jwksCacheDuration;
+
+    @Column
+    private String jwksCacheTimeUnit;
+
     @Column(name = "token_auth_method")
     private String tokenEndpointAuthenticationMethod = "client_secret_basic";
 
