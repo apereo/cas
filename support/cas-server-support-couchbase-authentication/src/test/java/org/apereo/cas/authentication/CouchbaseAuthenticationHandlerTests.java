@@ -18,6 +18,7 @@ import org.junit.rules.ExpectedException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 import javax.security.auth.login.FailedLoginException;
 import java.util.ArrayList;
@@ -55,6 +56,21 @@ public class CouchbaseAuthenticationHandlerTests {
         this.thrown.expect(FailedLoginException.class);
 
         internalAutenticate(NoOpPasswordEncoder.getInstance(), new SimplePrincipal(), BAD_PASSWORD);
+    }
+
+    @Test
+    public void sha256EncryptionGoodPassword() throws Exception {
+        val principal = new SimplePrincipal();
+        val result = internalAutenticate(new StandardPasswordEncoder(), principal, GOOD_PASSWORD);
+
+        assertEquals(principal, result.getPrincipal());
+    }
+
+    @Test
+    public void sha256EncryptionBadPassword() throws Exception {
+        this.thrown.expect(FailedLoginException.class);
+
+        internalAutenticate(new StandardPasswordEncoder(), new SimplePrincipal(), BAD_PASSWORD);
     }
 
     @Test
