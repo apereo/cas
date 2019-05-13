@@ -48,6 +48,10 @@ public class OidcClientRegistrationUtils {
         clientResponse.setTokenEndpointAuthMethod(registeredService.getTokenEndpointAuthenticationMethod());
         clientResponse.setClientName(registeredService.getName());
         clientResponse.setRedirectUris(CollectionUtils.wrap(registeredService.getServiceId()));
+        clientResponse.setUserInfoSignedReponseAlg(registeredService.getUserInfoSigningAlg());
+        clientResponse.setUserInfoEncryptedReponseAlg(registeredService.getUserInfoEncryptedResponseAlg());
+        clientResponse.setUserInfoEncryptedReponseEncoding(registeredService.getUserInfoEncryptedResponseEncoding());
+
         clientResponse.setContacts(
             registeredService.getContacts()
                 .stream()

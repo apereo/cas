@@ -53,7 +53,7 @@ public class DefaultOAuth20UserProfileDataCreator implements OAuth20UserProfileD
         map.put(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_CLIENT_ID, accessToken.getClientId());
         val attributes = principal.getAttributes();
         map.put(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES, attributes);
-        finalizeProfileResponse(accessToken, map, principal);
+        finalizeProfileResponse(accessToken, map, principal, registeredService);
         return map;
     }
 
@@ -65,11 +65,14 @@ public class DefaultOAuth20UserProfileDataCreator implements OAuth20UserProfileD
      * @param registeredService the registered service
      * @return the access token authentication principal
      */
-    protected Principal getAccessTokenAuthenticationPrincipal(final AccessToken accessToken, final J2EContext context, final RegisteredService registeredService) {
+    protected Principal getAccessTokenAuthenticationPrincipal(final AccessToken accessToken,
+                                                              final J2EContext context,
+                                                              final RegisteredService registeredService) {
         val currentPrincipal = accessToken.getAuthentication().getPrincipal();
         LOGGER.debug("Preparing user profile response based on CAS principal [{}]", currentPrincipal);
 
-        val principal = this.scopeToAttributesFilter.filter(accessToken.getService(), currentPrincipal, registeredService, context, accessToken);
+        val principal = this.scopeToAttributesFilter.filter(accessToken.getService(), currentPrincipal,
+            registeredService, context, accessToken);
         LOGGER.debug("Created CAS principal [{}] based on requested/authorized scopes", principal);
 
         return principal;
@@ -81,13 +84,16 @@ public class DefaultOAuth20UserProfileDataCreator implements OAuth20UserProfileD
      * @param accessTokenTicket the access token ticket
      * @param map               the map
      * @param principal         the authentication principal
+     * @param registeredService the registered service
      */
-    protected void finalizeProfileResponse(final AccessToken accessTokenTicket, final Map<String, Object> map, final Principal principal) {
-        val service = accessTokenTicket.getService();
-        val registeredService = servicesManager.findServiceBy(service);
+    protected void finalizeProfileResponse(final AccessToken accessTokenTicket,
+                                           final Map<String, Object> map,
+                                           final Principal principal,
+                                           final RegisteredService registeredService) {
         if (registeredService instanceof OAuthRegisteredService) {
             val oauth = (OAuthRegisteredService) registeredService;
             map.put(OAuth20Constants.CLIENT_ID, oauth.getClientId());
+            val service = accessTokenTicket.getService();
             map.put(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
         }
     }
