@@ -63,7 +63,8 @@ public class CouchbaseAuthenticationHandler extends AbstractUsernamePasswordAuth
             throw new FailedLoginException("No password attribute found for " + transformedCredential.getId());
         }
 
-        if (!value.get(couchbaseProperties.getPasswordAttribute()).equals(transformedCredential.getPassword())) {
+        val entryPassword = (String) value.get(couchbaseProperties.getPasswordAttribute());
+        if (!getPasswordEncoder().matches(originalPassword, entryPassword)) {
             LOGGER.warn("Account password on record for [{}] does not match the given/encoded password", transformedCredential.getId());
             throw new FailedLoginException();
         }
