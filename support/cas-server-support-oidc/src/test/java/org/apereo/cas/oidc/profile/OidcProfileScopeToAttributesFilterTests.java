@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.profile;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
@@ -42,6 +43,7 @@ public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
     public void verifyOperationFilterWithOpenId() {
         val service = getOidcRegisteredService();
         val accessToken = mock(AccessToken.class);
+        when(accessToken.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket("casuser"));
         when(accessToken.getScopes()).thenReturn(CollectionUtils.wrapList(
             OidcConstants.StandardScopes.OPENID.getScope(),
             OidcConstants.StandardScopes.PHONE.getScope(),
