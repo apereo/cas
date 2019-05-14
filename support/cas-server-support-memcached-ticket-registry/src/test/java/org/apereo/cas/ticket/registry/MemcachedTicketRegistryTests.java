@@ -27,6 +27,8 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 
+import java.util.HashMap;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -75,7 +77,8 @@ public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
             CoreAuthenticationTestUtils.getAuthentication(),
             new MockTicketGrantingTicket("casuser"),
             CollectionUtils.wrapList("openid"),
-            "code-challenge", "plain", "clientId123456");
+            "code-challenge", "plain", "clientId123456",
+            new HashMap<>());
         this.registry.addTicket(code);
         val ticket = this.registry.getTicket(code.getId(), OAuthCode.class);
         assertNotNull(ticket);

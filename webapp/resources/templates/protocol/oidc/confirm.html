@@ -23,27 +23,40 @@
         </div>
 
         <div th:unless="${#sets.isEmpty(scopes)}">
+            <h3>Scopes</h3>
             <p th:text="#{screen.oidc.confirm.asksinfo}"/>
 
             <span th:each="scope : ${scopes}">
                 <div>
                     <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
                     <strong><code th:text="${scope}"/></strong>
-                    <p th:text="#{screen.oidc.confirm.scope.__${scope}__}"/>
+                    <p th:utext="#{screen.oidc.confirm.scope.__${scope}__}"/>
                 </div>
             </span>
-
-            <div th:if="${service.informationUrl}">
-                <span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
-                <a th:href="${service.informationUrl}" th:text="#{screen.oidc.confirm.infourl(${serviceName})}"/>
-            </div>
-            <div th:if="${service.privacyUrl}">
-                <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
-                <a th:href="${service.privacyUrl}" th:utext="#{screen.oidc.confirm.privacyurl(${serviceName})}"/>
-            </div>
             <br/>
         </div>
 
+        <div th:unless="${#sets.isEmpty(userInfoClaims)}">
+            <h3>Claims</h3>
+            <p th:utext="#{screen.oidc.confirm.asksinfo}"/>
+
+            <span th:each="claim : ${userInfoClaims}">
+                <div>
+                    <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+                    <strong><code th:text="${claim}"/></strong>
+                    <p th:utext="#{screen.oidc.confirm.claim.__${claim}__}"/>
+                </div>
+            </span>
+        </div>
+
+        <div th:if="${service.informationUrl}">
+            <span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
+            <a th:href="${service.informationUrl}" th:utext="#{screen.oidc.confirm.infourl(${serviceName})}"/>
+        </div>
+        <div th:if="${service.privacyUrl}">
+            <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+            <a th:href="${service.privacyUrl}" th:utext="#{screen.oidc.confirm.privacyurl(${serviceName})}"/>
+        </div>
 
         <strong>
             <h4 th:text="#{screen.oauth.confirm.message(${serviceName})}"/>

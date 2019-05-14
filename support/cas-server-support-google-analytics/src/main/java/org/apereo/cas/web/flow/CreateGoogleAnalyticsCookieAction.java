@@ -30,7 +30,7 @@ public class CreateGoogleAnalyticsCookieAction extends AbstractAction {
     private final CasCookieBuilder googleAnalyticsCookieBuilder;
 
     @Override
-    public Event doExecute(final RequestContext requestContext) throws Exception {
+    public Event doExecute(final RequestContext requestContext) {
         val authn = WebUtils.getAuthentication(requestContext);
         val attributes = new LinkedHashMap<>(authn.getAttributes());
         attributes.putAll(authn.getPrincipal().getAttributes());
@@ -39,7 +39,7 @@ public class CreateGoogleAnalyticsCookieAction extends AbstractAction {
         val attributeName = cookie.getAttributeName();
         val attributeValuePattern = RegexUtils.createPattern(cookie.getAttributeValuePattern());
 
-        LOGGER.trace("Available attributes are [{}] examines against cookie attribute name [{}] with value pattern [{}]",
+        LOGGER.trace("Available attributes are [{}] examined against cookie attribute name [{}] with value pattern [{}]",
             attributeName, attributeName, attributeValuePattern.pattern());
 
         if (StringUtils.isNotBlank(attributeName) && attributes.containsKey(attributeName)) {

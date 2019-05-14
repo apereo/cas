@@ -54,6 +54,11 @@ public interface OAuth20Constants {
     String RESPONSE_MODE = "response_mode";
 
     /**
+     * The claims.
+     */
+    String CLAIMS = "claims";
+
+    /**
      * The grant type.
      */
     String GRANT_TYPE = "grant_type";

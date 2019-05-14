@@ -190,12 +190,14 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             .addAttribute(OAuth20Constants.GRANT_TYPE, holder.getGrantType().toString())
             .addAttribute(OAuth20Constants.SCOPE, holder.getScopes())
             .addAttribute(OAuth20Constants.CLIENT_ID, clientId)
+            .addAttribute(OAuth20Constants.CLAIMS, holder.getClaims())
             .build();
 
         LOGGER.debug("Creating access token for [{}]", holder);
         val ticketGrantingTicket = holder.getTicketGrantingTicket();
         val accessToken = this.accessTokenFactory.create(holder.getService(),
-            authn, ticketGrantingTicket, holder.getScopes(), clientId);
+            authn, ticketGrantingTicket, holder.getScopes(),
+            clientId, holder.getClaims());
 
         LOGGER.debug("Created access token [{}]", accessToken);
         addTicketToRegistry(accessToken, ticketGrantingTicket);
@@ -268,7 +270,8 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             responseHolder.getAuthentication(),
             responseHolder.getTicketGrantingTicket(),
             responseHolder.getScopes(),
-            responseHolder.getClientId());
+            responseHolder.getClientId(),
+            responseHolder.getClaims());
         LOGGER.debug("Adding refresh token [{}] to the registry", refreshToken);
         addTicketToRegistry(refreshToken, responseHolder.getTicketGrantingTicket());
         return refreshToken;
