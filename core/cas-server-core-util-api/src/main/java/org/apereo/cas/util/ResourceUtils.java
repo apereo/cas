@@ -84,19 +84,19 @@ public class ResourceUtils {
      * @return the boolean
      */
     public static boolean doesResourceExist(final Resource res) {
-        if (res != null) {
-            try {
-                IOUtils.read(res.getInputStream(), new byte[1]);
-                return res.contentLength() > 0;
-            } catch (final FileNotFoundException e) {
-                LOGGER.trace(e.getMessage());
-                return false;
-            } catch (final Exception e) {
-                LOGGER.trace(e.getMessage(), e);
-                return false;
-            }
+        if (res == null) {
+            return false;
         }
-        return false;
+        try {
+            IOUtils.read(res.getInputStream(), new byte[1]);
+            return res.contentLength() > 0;
+        } catch (final FileNotFoundException e) {
+            LOGGER.trace(e.getMessage());
+            return false;
+        } catch (final Exception e) {
+            LOGGER.trace(e.getMessage(), e);
+            return false;
+        }
     }
 
     /**
