@@ -142,7 +142,6 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
             .stream()
             .filter(principalAttributes::containsKey)
             .forEach(key -> attributes.put(key, principalAttributes.get(key)));
-
     }
 
     /**
