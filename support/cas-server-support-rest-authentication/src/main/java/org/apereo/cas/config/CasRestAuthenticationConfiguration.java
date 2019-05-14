@@ -64,7 +64,7 @@ public class CasRestAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public RestAuthenticationApi restAuthenticationApi() {
-        return new RestAuthenticationApi(restAuthenticationTemplate(), casProperties.getAuthn().getRest().getUri());
+        return new RestAuthenticationApi(restAuthenticationTemplate(), casProperties.getAuthn().getRest().getUri(), casProperties.getAuthn().getRest().getCharset());
     }
 
     @Bean
