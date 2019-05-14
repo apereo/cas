@@ -32,7 +32,6 @@ public class RestAuthenticationProperties implements Serializable {
     /**
      * Charset to encode the credentials sent to the REST endpoint.
      */
-    @RequiredProperty
     private String charset = "US-ASCII";
 
     /**
