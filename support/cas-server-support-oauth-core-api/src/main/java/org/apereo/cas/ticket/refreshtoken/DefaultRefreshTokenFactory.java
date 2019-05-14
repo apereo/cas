@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * Default OAuth refresh token factory.
@@ -37,15 +38,16 @@ public class DefaultRefreshTokenFactory implements RefreshTokenFactory {
         this(new DefaultUniqueTicketIdGenerator(), expirationPolicy);
     }
 
-
     @Override
     public RefreshToken create(final Service service, final Authentication authentication,
                                final TicketGrantingTicket ticketGrantingTicket,
                                final Collection<String> scopes,
-                               final String clientId) {
+                               final String clientId,
+                               final Map<String, Map<String, Object>> requestClaims) {
         val codeId = this.refreshTokenIdGenerator.getNewTicketId(RefreshToken.PREFIX);
         val rt = new RefreshTokenImpl(codeId, service, authentication,
-            this.expirationPolicy, ticketGrantingTicket, scopes, clientId);
+            this.expirationPolicy, ticketGrantingTicket,
+            scopes, clientId, requestClaims);
 
         if (ticketGrantingTicket != null) {
             ticketGrantingTicket.getDescendantTickets().add(rt.getId());

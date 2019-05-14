@@ -33,6 +33,7 @@ import org.reflections.util.FilterBuilder;
 import org.springframework.util.ClassUtils;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -113,17 +114,52 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
             scopes.retainAll(oidcService.getScopes());
 
             val attributes = filterAttributesByScope(scopes, principal, service, oidcService, accessToken);
-            LOGGER.debug("Final collection of attributes filtered by scopes [{}] are [{}]", scopes, attributes);
+            LOGGER.debug("Collection of attributes filtered by scopes [{}] are [{}]", scopes, attributes);
+
+            filterAttributesByAccessTokenRequestedClaims(oidcService, accessToken, principal, attributes);
+            LOGGER.debug("Final collection of attributes are [{}]", attributes);
             return this.principalFactory.createPrincipal(profile.getId(), attributes);
         }
         return principal;
     }
 
-    private Map<String, List<Object>> filterAttributesByScope(final Collection<String> scopes,
-                                                              final Principal principal,
-                                                              final Service service,
-                                                              final RegisteredService registeredService,
-                                                              final AccessToken accessToken) {
+    /**
+     * Filter attributes by access token requested claims.
+     *
+     * @param oidcService the oidc service
+     * @param accessToken the access token
+     * @param principal   the principal
+     * @param attributes  the attributes
+     */
+    protected void filterAttributesByAccessTokenRequestedClaims(final OidcRegisteredService oidcService,
+                                                                final AccessToken accessToken,
+                                                                final Principal principal,
+                                                                final Map<String, List<Object>> attributes) {
+        val userinfo = accessToken.getClaims().getOrDefault("userinfo", new HashMap<>());
+        val principalAttributes = accessToken.getTicketGrantingTicket().getAuthentication().getPrincipal().getAttributes();
+        LOGGER.debug("Requested user-info claims [{}] are compared against principal attributes [{}}", userinfo, principalAttributes);
+        userinfo.keySet()
+            .stream()
+            .filter(principalAttributes::containsKey)
+            .forEach(key -> attributes.put(key, principalAttributes.get(key)));
+
+    }
+
+    /**
+     * Filter attributes by scope map.
+     *
+     * @param scopes            the scopes
+     * @param principal         the principal
+     * @param service           the service
+     * @param registeredService the registered service
+     * @param accessToken       the access token
+     * @return the map
+     */
+    protected Map<String, List<Object>> filterAttributesByScope(final Collection<String> scopes,
+                                                                final Principal principal,
+                                                                final Service service,
+                                                                final RegisteredService registeredService,
+                                                                final AccessToken accessToken) {
         if (scopes.isEmpty()) {
             val attributes = principal.getAttributes();
             LOGGER.trace("No defined scopes are available to instruct attribute release policies for [{}]. "

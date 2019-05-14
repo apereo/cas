@@ -19,6 +19,7 @@ import lombok.val;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * Default OAuth access token factory.
@@ -52,13 +53,15 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
     @Override
     public AccessToken create(final Service service, final Authentication authentication,
                               final TicketGrantingTicket ticketGrantingTicket,
-                              final Collection<String> scopes, final String clientId) {
+                              final Collection<String> scopes, final String clientId,
+                              final Map<String, Map<String, Object>> requestClaims) {
         var accessTokenId = this.accessTokenIdGenerator.getNewTicketId(AccessToken.PREFIX);
 
         val registeredService = (OAuthRegisteredService) this.jwtBuilder.getServicesManager().findServiceBy(service);
         if (registeredService != null && registeredService.isJwtAccessToken()) {
             val dt = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(this.expirationPolicy.getTimeToLive());
             val builder = JwtBuilder.JwtRequest.builder();
+
             val request = builder
                 .serviceAudience(service.getId())
                 .issueDate(DateTimeUtils.dateOf(authentication.getAuthenticationDate()))
@@ -70,7 +73,8 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
             accessTokenId = jwtBuilder.build(request);
         }
         val at = new AccessTokenImpl(accessTokenId, service, authentication,
-            this.expirationPolicy, ticketGrantingTicket, scopes, clientId);
+            this.expirationPolicy, ticketGrantingTicket, scopes,
+            clientId, requestClaims);
         if (ticketGrantingTicket != null) {
             ticketGrantingTicket.getDescendantTickets().add(at.getId());
         }
@@ -78,10 +82,13 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
     }
 
     @Override
-    public AccessToken create(final Service service, final Authentication authentication, final Collection<String> scopes, final String clientId) {
+    public AccessToken create(final Service service, final Authentication authentication,
+                              final Collection<String> scopes, final String clientId,
+                              final Map<String, Map<String, Object>> requestClaims) {
         val accessTokenId = this.accessTokenIdGenerator.getNewTicketId(AccessToken.PREFIX);
         return new AccessTokenImpl(accessTokenId, service, authentication,
-            this.expirationPolicy, null, scopes, clientId);
+            this.expirationPolicy, null,
+            scopes, clientId, requestClaims);
     }
 
     @Override
