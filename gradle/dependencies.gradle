@@ -3575,6 +3575,7 @@ ext.libraries = [
                     force = true
                 },
                 dependencies.create("org.webjars.bower:bootstrap-select:$bootstrapSelectVersion") {
+                    exclude(group: "org.webjars.bower", module: "jquery")
                     force = true
                 }
         ]

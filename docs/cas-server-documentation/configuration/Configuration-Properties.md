@@ -1925,6 +1925,7 @@ To learn more about this topic, [please review this guide](../installation/Rest-
 ```properties
 # cas.authn.rest.uri=https://...
 # cas.authn.rest.name=
+# cas.authn.rest.charset=US-ASCII
 ```
 
 ## Google Apps Authentication
