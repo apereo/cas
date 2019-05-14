@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * Default OAuth code factory.
@@ -41,12 +42,14 @@ public class DefaultOAuthCodeFactory implements OAuthCodeFactory {
     public OAuthCode create(final Service service, final Authentication authentication,
                             final TicketGrantingTicket ticketGrantingTicket,
                             final Collection<String> scopes,
-                            final String codeChallenge, final String codeChallengeMethod,
-                            final String clientId) {
+                            final String codeChallenge,
+                            final String codeChallengeMethod,
+                            final String clientId,
+                            final Map<String, Map<String, Object>> requestClaims) {
         val codeId = this.oAuthCodeIdGenerator.getNewTicketId(OAuthCode.PREFIX);
         return new OAuthCodeImpl(codeId, service, authentication,
             this.expirationPolicy, ticketGrantingTicket, scopes,
-            codeChallenge, codeChallengeMethod, clientId);
+            codeChallenge, codeChallengeMethod, clientId, requestClaims);
     }
 
     @Override

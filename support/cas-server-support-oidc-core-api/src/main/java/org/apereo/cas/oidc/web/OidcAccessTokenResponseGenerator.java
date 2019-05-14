@@ -31,7 +31,9 @@ public class OidcAccessTokenResponseGenerator extends OAuth20DefaultAccessTokenR
     }
 
     @Override
-    protected Map<String, Object> getAccessTokenResponseModel(final HttpServletRequest request, final HttpServletResponse response, final OAuth20AccessTokenResponseResult result) {
+    protected Map<String, Object> getAccessTokenResponseModel(final HttpServletRequest request,
+                                                              final HttpServletResponse response,
+                                                              final OAuth20AccessTokenResponseResult result) {
         val model = super.getAccessTokenResponseModel(request, response, result);
         val accessToken = result.getGeneratedToken().getAccessToken();
         accessToken.ifPresent(token -> {

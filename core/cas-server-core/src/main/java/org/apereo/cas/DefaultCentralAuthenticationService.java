@@ -263,7 +263,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
 
                 if (!serviceTicket.isValidFor(service)) {
                     LOGGER.error("Service ticket [{}] with service [{}] does not match supplied service [{}]",
-                        serviceTicketId, serviceTicket.getService().getId(), service);
+                        serviceTicketId, serviceTicket.getService().getId(), service.getId());
                     throw new UnrecognizableServiceForServiceTicketValidationException(serviceTicket.getService());
                 }
             }
@@ -284,11 +284,14 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             LOGGER.debug("Attribute policy [{}] is associated with service [{}]", attributePolicy, registeredService);
 
             val attributesToRelease = attributePolicy != null
-                ? attributePolicy.getAttributes(principal, selectedService, registeredService) : new HashMap<String, List<Object>>();
+                ? attributePolicy.getAttributes(principal, selectedService, registeredService)
+                : new HashMap<String, List<Object>>();
 
-            LOGGER.debug("Calculated attributes for release per the release policy are [{}]", attributesToRelease.keySet());
+            LOGGER.debug("Calculated attributes for release per the release policy are [{}]",
+                attributesToRelease.keySet());
 
-            val principalId = registeredService.getUsernameAttributeProvider().resolveUsername(principal, selectedService, registeredService);
+            val principalId = registeredService.getUsernameAttributeProvider()
+                .resolveUsername(principal, selectedService, registeredService);
             val builder = DefaultAuthenticationBuilder.of(
                     principal,
                     this.principalFactory,
@@ -296,7 +299,8 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                     selectedService,
                     registeredService,
                     authentication);
-            LOGGER.debug("Principal determined for release to [{}] is [{}]", registeredService.getServiceId(), principalId);
+            LOGGER.debug("Principal determined for release to [{}] is [{}]",
+                registeredService.getServiceId(), principalId);
 
             val finalAuthentication = builder.build();
 

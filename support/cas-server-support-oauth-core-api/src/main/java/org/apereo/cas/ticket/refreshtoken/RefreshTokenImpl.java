@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * An OAuth refresh token implementation.
@@ -32,10 +33,11 @@ public class RefreshTokenImpl extends OAuthCodeImpl implements RefreshToken {
                             final Collection<String> scopes,
                             final String codeChallenge,
                             final String codeChallengeMethod,
-                            final String clientId) {
+                            final String clientId,
+                            final Map<String, Map<String, Object>> requestClaims) {
         super(id, service, authentication, expirationPolicy,
             ticketGrantingTicket, scopes,
-            codeChallenge, codeChallengeMethod, clientId);
+            codeChallenge, codeChallengeMethod, clientId, requestClaims);
     }
 
     public RefreshTokenImpl(final String id, final Service service,
@@ -43,9 +45,10 @@ public class RefreshTokenImpl extends OAuthCodeImpl implements RefreshToken {
                             final ExpirationPolicy expirationPolicy,
                             final TicketGrantingTicket ticketGrantingTicket,
                             final Collection<String> scopes,
-                            final String clientId) {
+                            final String clientId,
+                            final Map<String, Map<String, Object>> requestClaims) {
         this(id, service, authentication, expirationPolicy,
-            ticketGrantingTicket, scopes, null, null, clientId);
+            ticketGrantingTicket, scopes, null, null, clientId, requestClaims);
     }
 
     @Override

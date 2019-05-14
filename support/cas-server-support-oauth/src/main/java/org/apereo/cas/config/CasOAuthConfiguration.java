@@ -242,9 +242,10 @@ public class CasOAuthConfiguration {
     public List<Client> oauthSecConfigClients() {
         val cfg = new CasConfiguration(casProperties.getServer().getLoginUrl());
         cfg.setDefaultTicketValidator(new CasServerApiBasedTicketValidator(centralAuthenticationService.getIfAvailable()));
-
+      
         val oauthCasClient = new CasClient(cfg);
-        oauthCasClient.setRedirectActionBuilder(webContext -> oauthCasClientRedirectActionBuilder().build(oauthCasClient, webContext));
+        oauthCasClient.setRedirectActionBuilder(webContext ->
+            oauthCasClientRedirectActionBuilder().build(oauthCasClient, webContext));
         oauthCasClient.setName(Authenticators.CAS_OAUTH_CLIENT);
         oauthCasClient.setUrlResolver(casCallbackUrlResolver());
         oauthCasClient.setCallbackUrl(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()));

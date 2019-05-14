@@ -13,6 +13,8 @@ import org.ldaptive.Response;
 import org.ldaptive.SearchResult;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Set;
+
 /**
  * This is {@link LdapAcceptableUsagePolicyRepository}.
  * Examines the principal attribute collection to determine if
@@ -48,8 +50,9 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
             if (LdapUtils.containsResultEntry(response)) {
                 val currentDn = response.getResult().getEntry().getDn();
                 LOGGER.debug("Updating [{}]", currentDn);
-                return LdapUtils.executeModifyOperation(currentDn, this.connectionFactory,
-                    CollectionUtils.wrap(this.aupAttributeName, CollectionUtils.wrapSet(Boolean.TRUE.toString())));
+                val attributes =CollectionUtils.<String, Set<String>>wrap(this.aupAttributeName,
+                    CollectionUtils.wrapSet(Boolean.TRUE.toString().toUpperCase()));
+                return LdapUtils.executeModifyOperation(currentDn, this.connectionFactory, attributes);
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

@@ -29,7 +29,8 @@ public class OAuth20ResourceOwnerCredentialsResponseBuilder implements OAuth20Au
     private final CasConfigurationProperties casProperties;
 
     @Override
-    public ModelAndView build(final J2EContext context, final String clientId, final AccessTokenRequestDataHolder holder) {
+    public ModelAndView build(final J2EContext context, final String clientId,
+                              final AccessTokenRequestDataHolder holder) {
         val accessTokenResult = accessTokenGenerator.generate(holder);
         val result = OAuth20AccessTokenResponseResult.builder()
             .registeredService(holder.getRegisteredService())

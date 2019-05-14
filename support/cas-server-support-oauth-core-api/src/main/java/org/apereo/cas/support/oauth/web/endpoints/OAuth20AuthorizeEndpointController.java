@@ -13,6 +13,7 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
 import org.apereo.cas.web.support.CookieUtils;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -53,12 +54,13 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
      * @throws Exception the exception
      */
     @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.AUTHORIZE_URL)
-    public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public ModelAndView handleRequest(final HttpServletRequest request,
+                                      final HttpServletResponse response) throws Exception {
         val context = new J2EContext(request, response, getOAuthConfigurationContext().getSessionStore());
         val manager = new ProfileManager<>(context, context.getSessionStore());
 
         if (!verifyAuthorizeRequest(context) || !isRequestAuthenticated(manager, context)) {
-            LOGGER.error("Authorize request verification failed. Either the authorization request is missing required parameters, "
+            LOGGER.error("Authorize request verification failed. Authorization request is missing required parameters, "
                 + "or the request is not authenticated and contains no authenticated profile/principal.");
             return OAuth20Utils.produceUnauthorizedErrorView();
         }
@@ -74,6 +76,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
 
         val mv = getOAuthConfigurationContext().getConsentApprovalViewResolver().resolve(context, registeredService);
         if (!mv.isEmpty() && mv.hasView()) {
+            LOGGER.debug("Redirecting to consent-approval view with model [{}]", mv.getModel());
             return mv;
         }
 
@@ -122,10 +125,12 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
             return OAuth20Utils.produceUnauthorizedErrorView();
         }
 
-        val service = getOAuthConfigurationContext().getAuthenticationBuilder().buildService(registeredService, context, false);
+        val service = getOAuthConfigurationContext().getAuthenticationBuilder()
+            .buildService(registeredService, context, false);
         LOGGER.debug("Created service [{}] based on registered service [{}]", service, registeredService);
 
-        val authentication = getOAuthConfigurationContext().getAuthenticationBuilder().build(profile, registeredService, context, service);
+        val authentication = getOAuthConfigurationContext().getAuthenticationBuilder()
+            .build(profile, registeredService, context, service);
         LOGGER.debug("Created OAuth authentication [{}] for service [{}]", service, authentication);
 
         try {
@@ -160,9 +165,11 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
      * @param authentication    the authentication
      * @return the string
      */
+    @SneakyThrows
     protected ModelAndView buildAuthorizationForRequest(final OAuthRegisteredService registeredService,
                                                         final J2EContext context,
-                                                        final String clientId, final Service service,
+                                                        final String clientId,
+                                                        final Service service,
                                                         final Authentication authentication) {
         val builder = getOAuthConfigurationContext().getOauthAuthorizationResponseBuilders()
             .stream()
@@ -180,6 +187,8 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
         val codeChallenge = context.getRequestParameter(OAuth20Constants.CODE_CHALLENGE);
         val codeChallengeMethod = StringUtils.defaultIfEmpty(context.getRequestParameter(OAuth20Constants.CODE_CHALLENGE_METHOD),
             OAuth20GrantTypes.AUTHORIZATION_CODE.getType()).toUpperCase();
+        val claims = OAuth20Utils.parseRequestClaims(context);
+
         val holder = AccessTokenRequestDataHolder.builder()
             .service(service)
             .authentication(authentication)
@@ -190,6 +199,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
             .codeChallengeMethod(codeChallengeMethod)
             .scopes(scopes)
             .clientId(clientId)
+            .claims(claims)
             .build();
 
         LOGGER.debug("Building authorization response for grant type [{}] with scopes [{}] for client id [{}]",

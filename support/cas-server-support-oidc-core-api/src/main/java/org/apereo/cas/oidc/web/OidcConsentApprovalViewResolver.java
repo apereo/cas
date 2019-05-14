@@ -44,7 +44,9 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
     }
 
     @Override
-    protected void prepareApprovalViewModel(final Map<String, Object> model, final J2EContext ctx, final OAuthRegisteredService svc) {
+    protected void prepareApprovalViewModel(final Map<String, Object> model,
+                                            final J2EContext ctx,
+                                            final OAuthRegisteredService svc) throws Exception {
         super.prepareApprovalViewModel(model, ctx, svc);
         if (svc instanceof OidcRegisteredService) {
             val oidcRegisteredService = (OidcRegisteredService) svc;
@@ -53,7 +55,10 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
             val supportedScopes = new HashSet<String>(casProperties.getAuthn().getOidc().getScopes());
             supportedScopes.retainAll(oidcRegisteredService.getScopes());
             supportedScopes.retainAll(OAuth20Utils.getRequestedScopes(ctx));
+            supportedScopes.add(OidcConstants.StandardScopes.OPENID.getScope());
             model.put("scopes", supportedScopes);
+            val requestedClaims = OAuth20Utils.parseRequestClaims(ctx);
+            model.put("userInfoClaims", requestedClaims.get("userinfo").keySet());
         }
     }
 }

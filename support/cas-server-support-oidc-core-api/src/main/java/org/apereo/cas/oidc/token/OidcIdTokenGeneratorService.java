@@ -141,7 +141,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
             .forEach(entry -> claims.setClaim(entry.getKey(), entry.getValue()));
 
         if (!claims.hasClaim(OidcConstants.CLAIM_PREFERRED_USERNAME)) {
-            claims.setClaim(OidcConstants.CLAIM_PREFERRED_USERNAME, profile.getId());
+            claims.setClaim(OidcConstants.CLAIM_PREFERRED_USERNAME, principal.getId());
         }
 
         return claims;

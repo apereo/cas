@@ -39,7 +39,9 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
 
     @Override
     @SneakyThrows
-    public ModelAndView build(final J2EContext context, final String clientId, final AccessTokenRequestDataHolder holder) {
+    public ModelAndView build(final J2EContext context,
+                              final String clientId,
+                              final AccessTokenRequestDataHolder holder) {
 
         val redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI);
         LOGGER.debug("Authorize request verification successful for client [{}] with redirect uri [{}]", clientId, redirectUri);

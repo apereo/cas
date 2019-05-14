@@ -12,7 +12,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -43,6 +45,9 @@ public class AccessTokenRequestDataHolder {
 
     @Builder.Default
     private final Set<String> scopes = new LinkedHashSet<>();
+
+    @Builder.Default
+    private final Map<String, Map<String, Object>> claims = new HashMap<>();
 
     @Builder.Default
     private final OAuth20ResponseTypes responseType = OAuth20ResponseTypes.NONE;

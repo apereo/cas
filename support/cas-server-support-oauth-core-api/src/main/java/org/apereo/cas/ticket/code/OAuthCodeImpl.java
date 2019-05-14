@@ -22,7 +22,9 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 /**
  * An OAuth code implementation.
@@ -43,6 +45,10 @@ public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
     @Lob
     @Column(name = "scopes", length = Integer.MAX_VALUE)
     private HashSet<String> scopes = new HashSet<>();
+
+    @Lob
+    @Column(name = "claims", length = Integer.MAX_VALUE)
+    private HashMap<String, Map<String, Object>> claims = new HashMap<>();
 
     /**
      * The {@link TicketGrantingTicket} this is associated with.
@@ -82,15 +88,18 @@ public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
                          final @NonNull Collection<String> scopes,
                          final String codeChallenge,
                          final String codeChallengeMethod,
-                         final String clientId) {
+                         final String clientId,
+                         final Map<String, Map<String, Object>> requestClaims) {
         super(id, expirationPolicy);
         this.service = service;
         this.authentication = authentication;
         this.ticketGrantingTicket = ticketGrantingTicket;
-        this.scopes.addAll(scopes);
         this.codeChallenge = codeChallenge;
         this.codeChallengeMethod = codeChallengeMethod;
         this.clientId = clientId;
+
+        this.scopes.addAll(scopes);
+        this.claims.putAll(requestClaims);
     }
 
     @Override

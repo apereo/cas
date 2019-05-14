@@ -49,8 +49,8 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
 
     private PasswordPolicyConfiguration passwordPolicyConfiguration;
 
-
-    public AbstractUsernamePasswordAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory, final Integer order) {
+    public AbstractUsernamePasswordAuthenticationHandler(final String name, final ServicesManager servicesManager,
+                                                         final PrincipalFactory principalFactory, final Integer order) {
         super(name, servicesManager, principalFactory, order);
     }
 

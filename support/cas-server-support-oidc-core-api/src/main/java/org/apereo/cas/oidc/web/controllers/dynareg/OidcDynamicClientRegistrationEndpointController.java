@@ -229,7 +229,11 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
             getOAuthConfigurationContext().getCasProperties().getServer().getPrefix());
         val service = getOAuthConfigurationContext().getWebApplicationServiceServiceFactory().createService(clientConfigUri);
         val accessToken = getOAuthConfigurationContext().getAccessTokenFactory()
-            .create(service, authn, List.of(OidcConstants.CLIENT_REGISTRATION_SCOPE), registeredService.getClientId());
+            .create(service,
+                authn,
+                List.of(OidcConstants.CLIENT_REGISTRATION_SCOPE),
+                registeredService.getClientId(),
+                new HashMap<>());
         getOAuthConfigurationContext().getTicketRegistry().addTicket(accessToken);
         return accessToken;
     }

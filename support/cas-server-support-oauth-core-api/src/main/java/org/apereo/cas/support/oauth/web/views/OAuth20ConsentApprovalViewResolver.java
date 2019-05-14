@@ -105,7 +105,9 @@ public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewRe
      * @param model the model
      * @param ctx   the ctx
      * @param svc   the svc
+     * @throws Exception the exception
      */
-    protected void prepareApprovalViewModel(final Map<String, Object> model, final J2EContext ctx, final OAuthRegisteredService svc) {
+    protected void prepareApprovalViewModel(final Map<String, Object> model, final J2EContext ctx,
+                                            final OAuthRegisteredService svc) throws Exception {
     }
 }
