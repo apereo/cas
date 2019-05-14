@@ -33,6 +33,12 @@
       ]
     },
     {
+      "groupName": "ApacheCXF",
+      "packagePatterns": [
+        "^org.apache.cxf:"
+      ]
+    },
+    {
       "groupName": "Swagger",
       "packagePatterns": [
         "^io.swagger:"
