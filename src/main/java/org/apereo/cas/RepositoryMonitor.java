@@ -78,7 +78,7 @@ class RepositoryMonitor {
             Page<PullRequest> page = this.gitHub.getPullRequests(this.repository.getOrganization(), this.repository.getName());
             while (page != null) {
                 for (final PullRequest pr : page.getContent()) {
-                    if (!pr.getTitle().contains("WIP") && !pr.isLabeledAs(CasLabels.LABEL_PENDING)) {
+                    if (!pr.getTitle().contains("WIP") && !pr.isLabeledAs(CasLabels.LABEL_PENDING) && !pr.isLabeledAs(CasLabels.LABEL_BOT)) {
                         repository.mergePullRequest(pr);
                     }
                 }
