@@ -3,7 +3,9 @@
     "config:base",
     ":preserveSemverRanges",
     ":rebaseStalePrs",
-    ":disableRateLimiting"
+    ":disableRateLimiting",
+    ":semanticCommits",
+    ":semanticCommitTypeAll(renovatebot)"
   ],
   "gradle": {
     "enabled": true
