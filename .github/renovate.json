@@ -20,10 +20,141 @@
       ]
     },
     {
+      "groupName": "SpringBoot",
+      "packagePatterns": [
+        "^org.springframework.boot:"
+      ]
+    },
+    {
+      "groupName": "Spring",
+      "packagePatterns": [
+        "^org.springframework:"
+      ]
+    },
+    {
+      "groupName": "SpringSession",
+      "packagePatterns": [
+        "^org.springframework.session:"
+      ]
+    },
+    {
+      "groupName": "Ribbon",
+      "packagePatterns": [
+        "^com.netflix.ribbon:"
+      ]
+    },
+    {
+      "groupName": "ApacheCurator",
+      "packagePatterns": [
+        "^org.apache.curator:"
+      ]
+    },
+    {
+      "groupName": "ApacheWss4j",
+      "packagePatterns": [
+        "^org.apache.wss4j:"
+      ]
+    },
+    {
+      "groupName": "SpringSecurity",
+      "packagePatterns": [
+        "^org.springframework.security:"
+      ]
+    },
+    {
       "groupName": "JAXB2",
       "packagePatterns": [
         "^org.jvnet.jaxb2_commons:",
         "^com.sun.xml.bind"
+      ]
+    },
+    {
+      "groupName": "Logback",
+      "packagePatterns": [
+        "^ch.qos.logback:"
+      ]
+    },
+    {
+      "groupName": "JUnit",
+      "packagePatterns": [
+        "^org.junit.vintage",
+        "^org.junit.platform",
+        "^org.junit.jupiter"
+      ]
+    },
+    {
+      "groupName": "Hibernate",
+      "packagePatterns": [
+        "^org.hibernate:hibernate-core",
+        "^org.hibernate:hibernate-hikaricp",
+        "^org.hibernate:hibernate-entitymanager"
+      ]
+    },
+    {
+      "groupName": "ApacheJClouds",
+      "packagePatterns": [
+        "^org.apache.jclouds"
+      ]
+    },
+    {
+      "groupName": "Tomcat",
+      "packagePatterns": [
+        "^org.apache.tomcat:",
+        "^org.apache.tomcat.embed:"
+      ]
+    },
+    {
+      "groupName": "Jackson",
+      "packagePatterns": [
+        "^com.fasterxml.jackson"
+      ]
+    },
+    {
+      "groupName": "BouncyCastle",
+      "packagePatterns": [
+        "^org.bouncycastle:"
+      ]
+    },
+    {
+      "groupName": "Slf4j",
+      "packagePatterns": [
+        "^org.slf4j:"
+      ]
+    },
+    {
+      "groupName": "ShibbolethIdP",
+      "packagePatterns": [
+        "^net.shibboleth.idp:"
+      ]
+    },
+    {
+      "groupName": "ApacheLogging",
+      "packagePatterns": [
+        "^org.apache.logging:"
+      ]
+    },
+    {
+      "groupName": "Ldaptive",
+      "packagePatterns": [
+        "^org.ldaptive:"
+      ]
+    },
+    {
+      "groupName": "Pac4j",
+      "packagePatterns": [
+        "^org.pac4j:"
+      ]
+    },
+    {
+      "groupName": "Micrometer",
+      "packagePatterns": [
+        "^io.micrometer:"
+      ]
+    },
+    {
+      "groupName": "OpenSAML",
+      "packagePatterns": [
+        "^org.opensaml:"
       ]
     },
     {

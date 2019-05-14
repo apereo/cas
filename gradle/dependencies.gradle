@@ -41,7 +41,6 @@ ext.libraries = [
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                     exclude(group: "org.slf4j", module: "slf4j-api")
-
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-aop")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
@@ -2367,11 +2366,11 @@ ext.libraries = [
                     exclude(group: "commons-lang", module: "commons-lang")
                     force = true
                 },
-                dependencies.create("org.codehaus.jackson:jackson-mapper-asl:1.9.13") {
+                dependencies.create("org.codehaus.jackson:jackson-mapper-asl:${jacksonAslVersion}") {
                     transitive = false
                     force = true
                 },
-                dependencies.create("org.codehaus.jackson:jackson-core-asl:1.9.13") {
+                dependencies.create("org.codehaus.jackson:jackson-core-asl:${jacksonAslVersion}") {
                     transitive = false
                     force = true
                 }
