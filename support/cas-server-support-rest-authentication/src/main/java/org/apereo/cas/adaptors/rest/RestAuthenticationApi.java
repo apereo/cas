@@ -20,10 +20,12 @@ public class RestAuthenticationApi {
 
     private final transient RestTemplate restTemplate;
     private final String authenticationUri;
+    private final String charset;
 
-    public RestAuthenticationApi(final RestTemplate restTemplate, final String authenticationUri) {
+    public RestAuthenticationApi(final RestTemplate restTemplate, final String authenticationUri, final String charset) {
         this.restTemplate = restTemplate;
         this.authenticationUri = authenticationUri;
+        this.charset = charset;
     }
 
     /**
@@ -33,7 +35,7 @@ public class RestAuthenticationApi {
      * @return the response entity
      */
     public ResponseEntity<SimplePrincipal> authenticate(final UsernamePasswordCredential c) {
-        val entity = new HttpEntity<Object>(HttpUtils.createBasicAuthHeaders(c.getUsername(), c.getPassword()));
+        val entity = new HttpEntity<Object>(HttpUtils.createBasicAuthHeaders(c.getUsername(), c.getPassword(), this.charset));
         return restTemplate.exchange(authenticationUri, HttpMethod.POST, entity, SimplePrincipal.class);
     }
 }
