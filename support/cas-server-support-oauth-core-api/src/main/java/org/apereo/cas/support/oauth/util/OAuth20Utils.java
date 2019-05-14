@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -424,5 +425,20 @@ public class OAuth20Utils {
             return CollectionUtils.toCollection(attribute, ArrayList.class).get(0).toString();
         }
         return null;
+    }
+
+    /**
+     * Parse request claims map.
+     *
+     * @param context the context
+     * @return the map
+     * @throws Exception the exception
+     */
+    public static Map<String, Map<String, Object>> parseRequestClaims(final J2EContext context) throws Exception {
+        val claims = context.getRequestParameter(OAuth20Constants.CLAIMS);
+        if (StringUtils.isBlank(claims)) {
+            return new HashMap<>();
+        }
+        return MAPPER.readValue(claims, Map.class);
     }
 }

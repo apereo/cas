@@ -91,6 +91,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -233,7 +234,7 @@ public abstract class AbstractOAuth20Tests {
     }
 
     protected OAuthRegisteredService addRegisteredService() {
-        return addRegisteredService(false, new HashSet<>());
+        return addRegisteredService(false, EnumSet.noneOf(OAuth20GrantTypes.class));
     }
 
 
@@ -271,7 +272,7 @@ public abstract class AbstractOAuth20Tests {
         val service = factory.createService(registeredService.getClientId());
         val code = oAuthCodeFactory.create(service, authentication,
             new MockTicketGrantingTicket("casuser"), new ArrayList<>(),
-            null, null, CLIENT_ID);
+            null, null, CLIENT_ID, new HashMap<>());
         this.ticketRegistry.addTicket(code);
         return code;
     }
@@ -281,7 +282,8 @@ public abstract class AbstractOAuth20Tests {
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService(registeredService.getServiceId());
         val refreshToken = oAuthRefreshTokenFactory.create(service, authentication,
-            new MockTicketGrantingTicket("casuser"), new ArrayList<>(), CLIENT_ID);
+            new MockTicketGrantingTicket("casuser"),
+            new ArrayList<>(), CLIENT_ID, new HashMap<>());
         this.ticketRegistry.addTicket(refreshToken);
         return refreshToken;
     }

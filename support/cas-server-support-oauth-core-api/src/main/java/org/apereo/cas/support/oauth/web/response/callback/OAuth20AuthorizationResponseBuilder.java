@@ -67,6 +67,4 @@ public interface OAuth20AuthorizationResponseBuilder {
         }
         return new ModelAndView(new RedirectView(redirectUrl));
     }
-
-
 }

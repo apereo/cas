@@ -99,5 +99,6 @@ public class JwtBuilder {
 
         @Builder.Default
         private final Map<String, List<Object>> attributes = new LinkedHashMap<>();
+
     }
 }

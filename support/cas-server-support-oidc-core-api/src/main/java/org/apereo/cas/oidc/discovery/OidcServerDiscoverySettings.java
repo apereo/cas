@@ -23,6 +23,7 @@ public class OidcServerDiscoverySettings {
 
     @JsonIgnore
     private final CasConfigurationProperties casProperties;
+
     @JsonProperty
     private final String issuer;
     @JsonIgnore
@@ -45,6 +46,8 @@ public class OidcServerDiscoverySettings {
     private List<String> introspectionSupportedAuthenticationMethods;
     @JsonProperty("token_endpoint_auth_methods_supported")
     private List<String> tokenEndpointAuthMethodsSupported;
+    @JsonProperty("claims_parameter_supported")
+    private boolean claimsParameterSupported;
 
     public OidcServerDiscoverySettings(final CasConfigurationProperties casProperties, final String issuer) {
         this.issuer = issuer;
