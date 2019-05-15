@@ -82,7 +82,7 @@ whose service ticket expiration policy is to deviate from the default configurat
     "serviceTicketExpirationPolicy": {
       "@class": "org.apereo.cas.services.DefaultRegisteredServiceServiceTicketExpirationPolicy",
       "numberOfUses": 1,
-      "timeToLive": 10
+      "timeToLive": "10"
     }
 }
 ```
@@ -112,7 +112,7 @@ whose proxy ticket expiration policy is to deviate from the default configuratio
     "proxyTicketExpirationPolicy": {
      "@class": "org.apereo.cas.services.DefaultRegisteredServiceProxyTicketExpirationPolicy",
      "numberOfUses": 1,
-     "timeToLive": 30
+     "timeToLive": "30"
     } 
 }
 ```

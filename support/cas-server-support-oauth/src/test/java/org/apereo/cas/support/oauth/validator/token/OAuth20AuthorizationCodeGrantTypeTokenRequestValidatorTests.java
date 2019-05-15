@@ -60,7 +60,7 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
             new CasConfigurationProperties());
         val oauthCasAuthenticationBuilderService = builder.buildService(service, null, false);
         val expirationPolicy = new OAuthCodeExpirationPolicy(1, 60);
-        val oauthCode = new DefaultOAuthCodeFactory(expirationPolicy)
+        val oauthCode = new DefaultOAuthCodeFactory(expirationPolicy, mock(ServicesManager.class))
             .create(oauthCasAuthenticationBuilderService, RegisteredServiceTestUtils.getAuthentication(),
                 new MockTicketGrantingTicket("casuser"), new HashSet<>(),
                 null, null, "clientid12345",
