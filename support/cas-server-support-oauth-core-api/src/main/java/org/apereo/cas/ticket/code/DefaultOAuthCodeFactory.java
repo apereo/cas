@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
@@ -57,7 +57,7 @@ public class DefaultOAuthCodeFactory implements OAuthCodeFactory {
                             final String clientId,
                             final Map<String, Map<String, Object>> requestClaims) {
 
-        val expirationPolicyToUse = determineExpirationPolicyForService(service);
+        val expirationPolicyToUse = determineExpirationPolicyForService(clientId);
         val codeId = this.oAuthCodeIdGenerator.getNewTicketId(OAuthCode.PREFIX);
         return new OAuthCodeImpl(codeId, service, authentication,
             expirationPolicyToUse, ticketGrantingTicket, scopes,
@@ -69,8 +69,8 @@ public class DefaultOAuthCodeFactory implements OAuthCodeFactory {
         return this;
     }
 
-    private ExpirationPolicy determineExpirationPolicyForService(final Service service) {
-        val registeredService = (OAuthRegisteredService) servicesManager.findServiceBy(service);
+    private ExpirationPolicy determineExpirationPolicyForService(final String clientId) {
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
         if (registeredService != null && registeredService.getCodeExpirationPolicy() != null) {
             val policy = registeredService.getCodeExpirationPolicy();
             val count = policy.getNumberOfUses();
