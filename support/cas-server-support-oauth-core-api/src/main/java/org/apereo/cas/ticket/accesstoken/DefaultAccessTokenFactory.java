@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
@@ -65,7 +66,7 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
                               final TicketGrantingTicket ticketGrantingTicket,
                               final Collection<String> scopes, final String clientId,
                               final Map<String, Map<String, Object>> requestClaims) {
-        val registeredService = (OAuthRegisteredService) this.jwtBuilder.getServicesManager().findServiceBy(service);
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(jwtBuilder.getServicesManager(), clientId);
         val expirationPolicyToUse = determineExpirationPolicyForService(registeredService);
         var accessTokenId = this.accessTokenIdGenerator.getNewTicketId(AccessToken.PREFIX);
         if (registeredService != null && registeredService.isJwtAccessToken()) {
@@ -96,8 +97,7 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
                               final Collection<String> scopes, final String clientId,
                               final Map<String, Map<String, Object>> requestClaims) {
         val accessTokenId = this.accessTokenIdGenerator.getNewTicketId(AccessToken.PREFIX);
-
-        val registeredService = (OAuthRegisteredService) this.jwtBuilder.getServicesManager().findServiceBy(service);
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(jwtBuilder.getServicesManager(), clientId);
         val expirationPolicyToUse = determineExpirationPolicyForService(registeredService);
         return new AccessTokenImpl(accessTokenId, service, authentication,
             expirationPolicyToUse, null,

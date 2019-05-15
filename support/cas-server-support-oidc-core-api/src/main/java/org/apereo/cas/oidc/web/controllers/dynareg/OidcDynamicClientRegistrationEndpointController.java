@@ -76,7 +76,8 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
             val servicesManager = getOAuthConfigurationContext().getServicesManager();
             val registeredService = registrationRequest.getRedirectUris()
                 .stream()
-                .map(uri -> (OidcRegisteredService) OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(servicesManager, uri))
+                .map(uri -> (OidcRegisteredService)
+                    OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(servicesManager, uri))
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElseGet(OidcRegisteredService::new);
