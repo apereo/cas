@@ -11,6 +11,7 @@ import org.apereo.cas.config.MemcachedTicketRegistryConfiguration;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.code.DefaultOAuthCodeFactory;
 import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
@@ -60,6 +61,10 @@ public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
     @Qualifier("ticketRegistry")
     private TicketRegistry registry;
 
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+
     @Override
     public TicketRegistry getNewTicketRegistry() {
         return registry;
@@ -72,7 +77,7 @@ public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
 
     @RepeatedTest(2)
     public void verifyOAuthCodeIsAddedToMemcached() {
-        val factory = new DefaultOAuthCodeFactory(new NeverExpiresExpirationPolicy());
+        val factory = new DefaultOAuthCodeFactory(new NeverExpiresExpirationPolicy(), servicesManager);
         val code = factory.create(RegisteredServiceTestUtils.getService(),
             CoreAuthenticationTestUtils.getAuthentication(),
             new MockTicketGrantingTicket("casuser"),

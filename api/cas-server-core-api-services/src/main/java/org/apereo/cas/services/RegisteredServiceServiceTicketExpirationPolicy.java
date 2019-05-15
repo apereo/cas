@@ -27,7 +27,7 @@ public interface RegisteredServiceServiceTicketExpirationPolicy extends Serializ
      *
      * @return the time to live
      */
-    long getTimeToLive();
+    String getTimeToLive();
 
     /**
      * Undefined registered service service ticket expiration policy.
@@ -44,8 +44,8 @@ public interface RegisteredServiceServiceTicketExpirationPolicy extends Serializ
             }
 
             @Override
-            public long getTimeToLive() {
-                return Long.MIN_VALUE;
+            public String getTimeToLive() {
+                return null;
             }
         };
     }

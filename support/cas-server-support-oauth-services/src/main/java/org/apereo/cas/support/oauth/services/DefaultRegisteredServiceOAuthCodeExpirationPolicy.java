@@ -1,4 +1,4 @@
-package org.apereo.cas.services;
+package org.apereo.cas.support.oauth.services;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -11,7 +11,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * This is {@link DefaultRegisteredServiceServiceTicketExpirationPolicy}.
+ * This is {@link DefaultRegisteredServiceOAuthCodeExpirationPolicy}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
@@ -25,8 +25,8 @@ import lombok.extern.slf4j.Slf4j;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class DefaultRegisteredServiceServiceTicketExpirationPolicy implements RegisteredServiceServiceTicketExpirationPolicy {
-    private static final long serialVersionUID = -6745109870746310448L;
+public class DefaultRegisteredServiceOAuthCodeExpirationPolicy implements RegisteredServiceOAuthCodeExpirationPolicy {
+    private static final long serialVersionUID = 8435436756392637728L;
 
     private long numberOfUses;
 
