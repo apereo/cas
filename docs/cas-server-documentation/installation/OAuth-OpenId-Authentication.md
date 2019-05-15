@@ -183,6 +183,81 @@ The expiration policy for OAuth tokens is controlled by CAS settings and propert
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#oauth2).
 
+### Per Service
+
+The expiration policy of certain OAuth tokens can be conditionally decided on a per-application basis. The candidate service 
+whose token expiration policy is to deviate from the default configuration must be designed as the following snippets demonstrate.
+
+#### OAuth Code
+
+```json
+{
+  "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
+  "clientId": "clientid",
+  "clientSecret": "clientSecret",
+  "serviceId" : "^(https|imaps)://<redirect-uri>.*",
+  "name" : "OAuthService",
+  "id" : 100,
+  "codeExpirationPolicy": {
+    "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthCodeExpirationPolicy",
+    "numberOfUses": 1,
+    "timeToLive": "10"
+  }
+}
+```
+
+#### OAuth Access Token
+
+```json
+{
+  "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
+  "clientId": "clientid",
+  "clientSecret": "clientSecret",
+  "serviceId" : "^(https|imaps)://<redirect-uri>.*",
+  "name" : "OAuthService",
+  "id" : 100,
+  "accessTokenExpirationPolicy": {
+    "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy",
+    "maxTimeToLive": "1000",
+    "timeToLive": "100"
+  }
+}
+```
+
+#### OAuth Device Token
+
+```json
+{
+  "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
+  "clientId": "clientid",
+  "clientSecret": "clientSecret",
+  "serviceId" : "^(https|imaps)://<redirect-uri>.*",
+  "name" : "OAuthService",
+  "id" : 100,
+  "accessTokenExpirationPolicy": {
+    "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthDeviceTokenExpirationPolicy",
+    "timeToLive": "100"
+  }
+}
+```
+
+#### OAuth Refresh Token
+
+```json
+{
+  "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
+  "clientId": "clientid",
+  "clientSecret": "clientSecret",
+  "serviceId" : "^(https|imaps)://<redirect-uri>.*",
+  "name" : "OAuthService",
+  "id" : 100,
+  "accessTokenExpirationPolicy": {
+    "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthRefreshTokenExpirationPolicy",
+    "timeToLive": "100"
+  }
+}
+```
+
 ## JWT Access Tokens
 
 By default, OAuth access tokens are created as opaque identifiers. There is also the option to generate JWTs as access tokens on a per-service basis:

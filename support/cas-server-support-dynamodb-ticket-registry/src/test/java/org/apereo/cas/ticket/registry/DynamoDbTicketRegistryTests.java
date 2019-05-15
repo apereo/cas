@@ -101,7 +101,8 @@ public class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
 
     @RepeatedTest(2)
     public void verifyOAuthCodeCanBeAdded() {
-        val code = new DefaultOAuthCodeFactory(new NeverExpiresExpirationPolicy()).create(RegisteredServiceTestUtils.getService(),
+        val code = new DefaultOAuthCodeFactory(new NeverExpiresExpirationPolicy(), servicesManager)
+            .create(RegisteredServiceTestUtils.getService(),
             RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),
             CollectionUtils.wrapSet("1", "2"), "code-challenge", "code-challenge-method", "clientId1234567", new HashMap<>());
         ticketRegistry.addTicket(code);
@@ -113,7 +114,7 @@ public class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     public void verifyAccessTokenCanBeAdded() {
         val jwtBuilder = new JwtBuilder("cas-prefix", CipherExecutor.noOpOfSerializableToString(),
             servicesManager, RegisteredServiceCipherExecutor.noOp());
-        val token = new DefaultAccessTokenFactory(new NeverExpiresExpirationPolicy(), jwtBuilder)
+        val token = new DefaultAccessTokenFactory(new NeverExpiresExpirationPolicy(), jwtBuilder, servicesManager)
             .create(RegisteredServiceTestUtils.getService(),
                 RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),
                 CollectionUtils.wrapSet("1", "2"), "clientId1234567", new HashMap<>());
@@ -124,7 +125,7 @@ public class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
 
     @RepeatedTest(2)
     public void verifyRefreshTokenCanBeAdded() {
-        val token = new DefaultRefreshTokenFactory(new NeverExpiresExpirationPolicy())
+        val token = new DefaultRefreshTokenFactory(new NeverExpiresExpirationPolicy(), servicesManager)
             .create(RegisteredServiceTestUtils.getService(),
                 RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),
                 CollectionUtils.wrapSet("1", "2"), "clientId1234567", new HashMap<>());

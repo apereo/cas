@@ -24,7 +24,7 @@ public class DefaultRegisteredServiceProxyTicketExpirationPolicyTests {
     public void verifySerializationToJson() throws IOException {
         val p = new DefaultRegisteredServiceProxyTicketExpirationPolicy();
         p.setNumberOfUses(12);
-        p.setTimeToLive(60);
+        p.setTimeToLive("60");
         MAPPER.writeValue(JSON_FILE, p);
         val repositoryRead = MAPPER.readValue(JSON_FILE, DefaultRegisteredServiceProxyTicketExpirationPolicy.class);
         assertEquals(p, repositoryRead);

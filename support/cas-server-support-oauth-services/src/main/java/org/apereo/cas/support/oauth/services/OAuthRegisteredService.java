@@ -48,6 +48,22 @@ public class OAuthRegisteredService extends RegexRegisteredService {
     private boolean jwtAccessToken;
 
     @Lob
+    @Column(name = "code_exp_policy", length = Integer.MAX_VALUE)
+    private RegisteredServiceOAuthCodeExpirationPolicy codeExpirationPolicy;
+
+    @Lob
+    @Column(name = "at_exp_policy", length = Integer.MAX_VALUE)
+    private RegisteredServiceOAuthAccessTokenExpirationPolicy accessTokenExpirationPolicy;
+
+    @Lob
+    @Column(name = "rt_exp_policy", length = Integer.MAX_VALUE)
+    private RegisteredServiceOAuthRefreshTokenExpirationPolicy refreshTokenExpirationPolicy;
+
+    @Lob
+    @Column(name = "dt_exp_policy", length = Integer.MAX_VALUE)
+    private RegisteredServiceOAuthDeviceTokenExpirationPolicy deviceTokenExpirationPolicy;
+
+    @Lob
     @Column(name = "supported_grants", length = Integer.MAX_VALUE)
     private HashSet<String> supportedGrantTypes = new HashSet<>();
 

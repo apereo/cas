@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.factory;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -16,6 +17,7 @@ import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
 
@@ -90,8 +92,9 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
             val policy = registeredService.getServiceTicketExpirationPolicy();
             val count = policy.getNumberOfUses();
             val ttl = policy.getTimeToLive();
-            if (count > 0 && ttl > 0) {
-                return new MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy(count, ttl);
+            if (count > 0 && StringUtils.isNotBlank(ttl)) {
+                return new MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy(
+                    count, Beans.newDuration(ttl).getSeconds());
             }
         }
         return this.serviceTicketExpirationPolicy;

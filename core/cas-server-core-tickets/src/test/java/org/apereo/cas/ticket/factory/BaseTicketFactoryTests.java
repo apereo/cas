@@ -55,8 +55,10 @@ public abstract class BaseTicketFactoryTests {
         @Bean
         public List inMemoryRegisteredServices() {
             val svc = RegisteredServiceTestUtils.getRegisteredService("customExpirationPolicy", RegexRegisteredService.class);
-            svc.setServiceTicketExpirationPolicy(new DefaultRegisteredServiceServiceTicketExpirationPolicy(10, 666));
-            svc.setProxyTicketExpirationPolicy(new DefaultRegisteredServiceProxyTicketExpirationPolicy(50, 1984));
+            svc.setServiceTicketExpirationPolicy(
+                new DefaultRegisteredServiceServiceTicketExpirationPolicy(10, "666"));
+            svc.setProxyTicketExpirationPolicy(
+                new DefaultRegisteredServiceProxyTicketExpirationPolicy(50, "1984"));
 
             val defaultSvc = RegisteredServiceTestUtils.getRegisteredService("defaultExpirationPolicy", RegexRegisteredService.class);
             return CollectionUtils.wrapList(svc, defaultSvc);

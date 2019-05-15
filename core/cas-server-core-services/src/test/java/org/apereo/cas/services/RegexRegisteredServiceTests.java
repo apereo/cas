@@ -82,8 +82,10 @@ public class RegexRegisteredServiceTests {
         val service = new RegexRegisteredService();
         service.setServiceId(id);
         service.setLogoutType(RegisteredServiceLogoutType.FRONT_CHANNEL);
-        service.setServiceTicketExpirationPolicy(new DefaultRegisteredServiceServiceTicketExpirationPolicy(100, 100));
-        service.setProxyTicketExpirationPolicy(new DefaultRegisteredServiceProxyTicketExpirationPolicy(100, 100));
+        service.setServiceTicketExpirationPolicy(
+            new DefaultRegisteredServiceServiceTicketExpirationPolicy(100, "100"));
+        service.setProxyTicketExpirationPolicy(
+            new DefaultRegisteredServiceProxyTicketExpirationPolicy(100, "100"));
         val policy = new ChainingRegisteredServiceSingleSignOnParticipationPolicy();
         policy.addPolicies(Arrays.asList(
             new LastUsedTimeRegisteredServiceSingleSignOnParticipationPolicy(TimeUnit.SECONDS, 100, 1),
