@@ -1,20 +1,17 @@
-package org.apereo.cas.services;
+package org.apereo.cas.support.oauth.services;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.io.Serializable;
 
 /**
- * This is {@link RegisteredServiceProxyTicketExpirationPolicy}.
- * This contract allows applications registered with CAS to define
- * an expiration policy for proxy tickets as to override
- * the default timeouts and settings applied globally.
+ * This is {@link RegisteredServiceOAuthCodeExpirationPolicy}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public interface RegisteredServiceProxyTicketExpirationPolicy extends Serializable {
+public interface RegisteredServiceOAuthCodeExpirationPolicy extends Serializable {
     /**
      * Gets number of times this ticket can be used.
      *

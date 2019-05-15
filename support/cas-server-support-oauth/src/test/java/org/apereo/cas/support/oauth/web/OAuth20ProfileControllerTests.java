@@ -98,7 +98,8 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         val principal = CoreAuthenticationTestUtils.getPrincipal(ID, new HashMap<>());
         val authentication = getAuthentication(principal);
         val jwtBuilder = new JwtBuilder("cas.example.org", new OAuth20JwtAccessTokenCipherExecutor(), servicesManager, new RegisteredServiceJwtAccessTokenCipherExecutor());
-        val expiringAccessTokenFactory = new DefaultAccessTokenFactory(new AlwaysExpiresExpirationPolicy(), jwtBuilder);
+        val expiringAccessTokenFactory = new DefaultAccessTokenFactory(
+            new AlwaysExpiresExpirationPolicy(), jwtBuilder, servicesManager);
         val accessToken = expiringAccessTokenFactory.create(RegisteredServiceTestUtils.getService(), authentication,
             new MockTicketGrantingTicket("casuser"), new ArrayList<>(), null, new HashMap<>());
         this.ticketRegistry.addTicket(accessToken);

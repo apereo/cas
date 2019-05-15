@@ -110,7 +110,7 @@ public class OAuth20DefaultAccessTokenResponseGeneratorTests extends AbstractOAu
 
         val factory = new DefaultAccessTokenFactory(new HardTimeoutExpirationPolicy(30),
             new JwtBuilder("cas.example.org", new OAuth20JwtAccessTokenCipherExecutor(), servicesManager,
-                new RegisteredServiceJwtAccessTokenCipherExecutor()));
+                new RegisteredServiceJwtAccessTokenCipherExecutor()), servicesManager);
 
         val accessToken = factory.create(service,
             RegisteredServiceTestUtils.getAuthentication("casuser"),
