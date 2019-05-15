@@ -12,9 +12,7 @@ import com.couchbase.client.java.document.json.JsonObject;
 import com.couchbase.client.java.query.DefaultN1qlQueryResult;
 import com.couchbase.client.java.query.N1qlQueryRow;
 import lombok.val;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,7 +22,7 @@ import javax.security.auth.login.FailedLoginException;
 import java.util.ArrayList;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -40,9 +38,6 @@ public class CouchbaseAuthenticationHandlerTests {
     private static final String GOOD_PASSWORD = "good";
     private static final String BAD_PASSWORD = "bad";
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Test
     public void noEncryptionGoodPassword() throws Exception {
         val principal = new SimplePrincipal();
@@ -53,9 +48,8 @@ public class CouchbaseAuthenticationHandlerTests {
 
     @Test
     public void noEncryptionBadPassword() throws Exception {
-        this.thrown.expect(FailedLoginException.class);
-
-        internalAutenticate(NoOpPasswordEncoder.getInstance(), new SimplePrincipal(), BAD_PASSWORD);
+        assertThrows(FailedLoginException.class, () ->
+            internalAutenticate(NoOpPasswordEncoder.getInstance(), new SimplePrincipal(), BAD_PASSWORD));
     }
 
     @Test
@@ -68,9 +62,8 @@ public class CouchbaseAuthenticationHandlerTests {
 
     @Test
     public void sha256EncryptionBadPassword() throws Exception {
-        this.thrown.expect(FailedLoginException.class);
-
-        internalAutenticate(new StandardPasswordEncoder(), new SimplePrincipal(), BAD_PASSWORD);
+        assertThrows(FailedLoginException.class, () ->
+            internalAutenticate(new StandardPasswordEncoder(), new SimplePrincipal(), BAD_PASSWORD));
     }
 
     @Test
@@ -83,12 +76,13 @@ public class CouchbaseAuthenticationHandlerTests {
 
     @Test
     public void bcryptEncryptionBadPassword() throws Exception {
-        this.thrown.expect(FailedLoginException.class);
-
-        internalAutenticate(new BCryptPasswordEncoder(), new SimplePrincipal(), BAD_PASSWORD);
+        assertThrows(FailedLoginException.class, () ->
+        internalAutenticate(new BCryptPasswordEncoder(), new SimplePrincipal(), BAD_PASSWORD));
     }
 
-    private AuthenticationHandlerExecutionResult internalAutenticate(final PasswordEncoder encoder, final Principal principal, final String userPassword) throws Exception {
+    private AuthenticationHandlerExecutionResult internalAutenticate(final PasswordEncoder encoder,
+                                                                     final Principal principal,
+                                                                     final String userPassword) throws Exception {
         val factory = mock(CouchbaseClientFactory.class);
         val defBucket = mock(Bucket.class);
         when(defBucket.name()).thenReturn(BUCKET_NAME);
@@ -104,10 +98,10 @@ public class CouchbaseAuthenticationHandlerTests {
         val listRows = new ArrayList<N1qlQueryRow>();
         val row = mock(N1qlQueryRow.class);
         val json = JsonObject.empty()
-                .put(properties.getUsernameAttribute(), LOGIN)
-                .put(properties.getPasswordAttribute(), encoder.encode(GOOD_PASSWORD));
+            .put(properties.getUsernameAttribute(), LOGIN)
+            .put(properties.getPasswordAttribute(), encoder.encode(GOOD_PASSWORD));
         val bucket = JsonObject.empty()
-                .put(BUCKET_NAME, json);
+            .put(BUCKET_NAME, json);
         when(row.value()).thenReturn(bucket);
         listRows.add(row);
         when(queryResult.allRows()).thenReturn(listRows);
