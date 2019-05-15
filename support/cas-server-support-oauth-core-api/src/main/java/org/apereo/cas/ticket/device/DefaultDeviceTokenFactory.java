@@ -83,9 +83,13 @@ public class DefaultDeviceTokenFactory implements DeviceTokenFactory {
     }
 
     private ExpirationPolicy determineExpirationPolicyForService(final Service service) {
-        val registeredService = (OAuthRegisteredService) this.servicesManager.findServiceBy(service);
-        if (registeredService != null && registeredService.getDeviceTokenExpirationPolicy() != null) {
-            val policy = registeredService.getDeviceTokenExpirationPolicy();
+        val registeredService = this.servicesManager.findServiceBy(service);
+        if (!(registeredService instanceof OAuthRegisteredService)) {
+            return this.expirationPolicy;
+        }
+        val oauthService = OAuthRegisteredService.class.cast(registeredService);
+        if (oauthService.getDeviceTokenExpirationPolicy() != null) {
+            val policy = oauthService.getDeviceTokenExpirationPolicy();
             val ttl = policy.getTimeToKill();
             if (StringUtils.isNotBlank(ttl)) {
                 return new DeviceTokenExpirationPolicy(Beans.newDuration(ttl).getSeconds());
