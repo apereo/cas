@@ -119,16 +119,20 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
             .forEach(Unchecked.consumer(json -> {
                 val r = json.getLocation();
                 val dao = new JsonBackedComplexStubPersonAttributeDao(r);
-                if (r.isFile()) {
-                    val watcherService = new FileWatcherService(r.getFile(), file -> {
-                        try {
-                            dao.init();
-                        } catch (final Exception e) {
-                            LOGGER.error(e.getMessage(), e);
-                        }
-                    });
-                    watcherService.start(getClass().getSimpleName());
-                    dao.setResourceWatcherService(watcherService);
+                try {
+                    if (r.isFile()) {
+                        val watcherService = new FileWatcherService(r.getFile(), file -> {
+                            try {
+                                dao.init();
+                            } catch (final Exception e) {
+                                LOGGER.error(e.getMessage(), e);
+                            }
+                        });
+                        watcherService.start(getClass().getSimpleName());
+                        dao.setResourceWatcherService(watcherService);
+                    }
+                } catch (final Exception e) {
+                    LOGGER.debug(e.getMessage(), e);
                 }
                 dao.setOrder(json.getOrder());
                 FunctionUtils.doIfNotNull(json.getId(), dao::setId);
