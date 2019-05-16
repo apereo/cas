@@ -14,6 +14,8 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jwt.JWTParser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -47,6 +49,23 @@ public class OidcPrivateKeyJwtAuthenticator implements Authenticator<UsernamePas
             LOGGER.debug("client assertion type is not set to [{}]", OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER);
             return;
         }
+        if (StringUtils.isBlank(credentials.getPassword())) {
+            LOGGER.debug("No assertion is available in the provided credentials");
+            return;
+        }
+
+        try {
+            val jwt = JWTParser.parse(credentials.getPassword());
+            val alg = jwt.getHeader().getAlgorithm();
+            if (!JWSAlgorithm.Family.RSA.contains(alg) && !JWSAlgorithm.Family.EC.contains(alg)) {
+                LOGGER.debug("No assertion is available in the provided credentials");
+                return;
+            }
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return;
+        }
+
         val code = webContext.getRequestParameter(OAuth20Constants.CODE);
         val oauthCode = this.ticketRegistry.getTicket(code, OAuthCode.class);
         if (oauthCode == null || oauthCode.isExpired()) {
