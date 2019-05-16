@@ -45,7 +45,7 @@ public class DynamoDbTicketRegistryConfiguration {
     @Bean
     public DynamoDbTicketRegistryFacilitator dynamoDbTicketRegistryFacilitator(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
         val db = casProperties.getTicket().getRegistry().getDynamoDb();
-        val f = new DynamoDbTicketRegistryFacilitator(ticketCatalog, db, amazonDynamoDbClient());
+        val f = new DynamoDbTicketRegistryFacilitator(ticketCatalog, db, amazonDynamoDbTicketRegistryClient());
         if (!db.isPreventTableCreationOnStartup()) {
             f.createTicketTables(db.isDropTablesOnStartup());
         }
@@ -55,7 +55,8 @@ public class DynamoDbTicketRegistryConfiguration {
     @RefreshScope
     @Bean
     @SneakyThrows
-    public AmazonDynamoDB amazonDynamoDbClient() {
+    @ConditionalOnMissingBean(name = "amazonDynamoDbTicketRegistryClient")
+    public AmazonDynamoDB amazonDynamoDbTicketRegistryClient() {
         val dynamoDbProperties = casProperties.getTicket().getRegistry().getDynamoDb();
         val factory = new AmazonDynamoDbClientFactory();
         return factory.createAmazonDynamoDb(dynamoDbProperties);

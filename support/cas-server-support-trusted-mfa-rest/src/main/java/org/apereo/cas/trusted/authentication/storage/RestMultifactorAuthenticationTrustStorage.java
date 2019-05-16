@@ -14,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -56,7 +57,7 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
     protected MultifactorAuthenticationTrustRecord setInternal(final MultifactorAuthenticationTrustRecord record) {
         val entity = getHttpEntity(record);
         val response = restTemplate.exchange(getEndpointUrl(null), HttpMethod.POST, entity, Object.class);
-        if (response != null && response.getStatusCode() == HttpStatus.OK) {
+        if (response.getStatusCode() == HttpStatus.OK) {
             return record;
         }
         return null;
@@ -67,7 +68,7 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
         val responseEntity = restTemplate.exchange(url, HttpMethod.GET, entity, MultifactorAuthenticationTrustRecord[].class);
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
             val results = responseEntity.getBody();
-            return Stream.of(results).collect(Collectors.toSet());
+            return Stream.of(Objects.requireNonNull(results)).collect(Collectors.toSet());
         }
         return new HashSet<>(0);
     }
