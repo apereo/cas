@@ -40,12 +40,31 @@ public class OidcServerDiscoverySettings {
     private List<String> claimsSupported;
     @JsonProperty("grant_types_supported")
     private List<String> grantTypesSupported;
+
     @JsonProperty("id_token_signing_alg_values_supported")
     private List<String> idTokenSigningAlgValuesSupported;
+
+    @JsonProperty("id_token_encryption_alg_values_supported")
+    private List<String> idTokenEncryptionAlgValuesSupported;
+
+    @JsonProperty("id_token_encryption_enc_values_supported")
+    private List<String> idTokenEncryptionEncodingValuesSupported;
+
+    @JsonProperty("userinfo_signing_alg_values_supported")
+    private List<String> userInfoSigningAlgValuesSupported;
+
+    @JsonProperty("userinfo_encryption_alg_values_supported")
+    private List<String> userInfoEncryptionAlgValuesSupported;
+
+    @JsonProperty("userinfo_encryption_enc_values_supported")
+    private List<String> userInfoEncryptionEncodingValuesSupported;
+
     @JsonProperty("introspection_endpoint_auth_methods_supported")
     private List<String> introspectionSupportedAuthenticationMethods;
+
     @JsonProperty("token_endpoint_auth_methods_supported")
     private List<String> tokenEndpointAuthMethodsSupported;
+
     @JsonProperty("claims_parameter_supported")
     private boolean claimsParameterSupported;
 

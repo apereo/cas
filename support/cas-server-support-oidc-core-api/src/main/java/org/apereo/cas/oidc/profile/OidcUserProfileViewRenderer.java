@@ -38,18 +38,20 @@ public class OidcUserProfileViewRenderer extends OAuth20DefaultUserProfileViewRe
     @Override
     protected String renderProfileForModel(final Map<String, Object> userProfile, final AccessToken accessToken) {
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, accessToken.getClientId());
-        if (registeredService instanceof OidcRegisteredService) {
-            val claims = new JwtClaims();
-            userProfile.forEach(claims::setClaim);
-            claims.setAudience(registeredService.getClientId());
-            claims.setIssuedAt(NumericDate.now());
-            claims.setIssuer(this.signingAndEncryptionService.getIssuer());
-            claims.setJwtId(UUID.randomUUID().toString());
-
-            LOGGER.debug("Collected user profile claims are [{}]", claims);
-            val result = this.signingAndEncryptionService.encode(registeredService, claims);
-            LOGGER.debug("Finalized user profile is [{}]", result);
+        if (!(registeredService instanceof OidcRegisteredService)) {
+            return super.renderProfileForModel(userProfile, accessToken);
         }
-        return super.renderProfileForModel(userProfile, accessToken);
+
+        val claims = new JwtClaims();
+        userProfile.forEach(claims::setClaim);
+        claims.setAudience(registeredService.getClientId());
+        claims.setIssuedAt(NumericDate.now());
+        claims.setIssuer(this.signingAndEncryptionService.getIssuer());
+        claims.setJwtId(UUID.randomUUID().toString());
+
+        LOGGER.debug("Collected user profile claims are [{}]", claims);
+        val result = this.signingAndEncryptionService.encode(registeredService, claims);
+        LOGGER.debug("Finalized user profile is [{}]", result);
+        return result;
     }
 }

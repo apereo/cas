@@ -5,6 +5,16 @@ title: CAS - Home
 
 # CAS Enterprise Single Sign-On
 
+Welcome to the home of the Apereo Central Authentication Service project, more commonly referred to as CAS. CAS is an enterprise 
+multilingual single sign-on solution for the web and attempts to be a comprehensive platform for your authentication 
+and authorization needs.
+
+CAS is an open and well-documented authentication protocol. The primary implementation of the protocol is 
+an open-source Java server component by the same name hosted here, with support for a plethora of 
+additional authentication protocols and features.
+
+The following items include a summary of features and technologies presented by the CAS project:
+
 * [Spring Webflow](webflow/Webflow-Customization.html)/Spring Boot [Java server component](planning/Architecture.html).
 * [Pluggable authentication support](installation/Configuring-Authentication-Components.html) ([LDAP](installation/LDAP-Authentication.html), 
 [Database](installation/Database-Authentication.html), [X.509](installation/X509-Authentication.html), [SPNEGO](installation/SPNEGO-Authentication.html), 
