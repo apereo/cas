@@ -90,11 +90,11 @@ public class OAuthRefreshTokenExpirationPolicy extends AbstractCasExpirationPoli
     @NoArgsConstructor
     @EqualsAndHashCode(callSuper = true)
     @ToString(callSuper = true)
-    public static class OAuthRefreshTokenSovereignExpirationPolicy extends OAuthRefreshTokenExpirationPolicy {
+    public static class OAuthRefreshTokenStandaloneExpirationPolicy extends OAuthRefreshTokenExpirationPolicy {
         private static final long serialVersionUID = -7768661082888351104L;
 
         @JsonCreator
-        public OAuthRefreshTokenSovereignExpirationPolicy(@JsonProperty("timeToLive") final long timeToKillInSeconds) {
+        public OAuthRefreshTokenStandaloneExpirationPolicy(@JsonProperty("timeToLive") final long timeToKillInSeconds) {
             super(timeToKillInSeconds);
         }
 

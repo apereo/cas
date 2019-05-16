@@ -57,8 +57,8 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
             supportedScopes.retainAll(OAuth20Utils.getRequestedScopes(ctx));
             supportedScopes.add(OidcConstants.StandardScopes.OPENID.getScope());
             model.put("scopes", supportedScopes);
-            val requestedClaims = OAuth20Utils.parseRequestClaims(ctx);
-            model.put("userInfoClaims", requestedClaims.get("userinfo").keySet());
+            val userInfoClaims = OAuth20Utils.parseUserInfoRequestClaims(ctx);
+            model.put("userInfoClaims", userInfoClaims);
         }
     }
 }
