@@ -68,7 +68,8 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyNoGivenAccessToken() throws Exception {
-        val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.PROFILE_URL);
+        val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(),
+            CONTEXT + OAuth20Constants.PROFILE_URL);
         val mockResponse = new MockHttpServletResponse();
 
         val entity = oAuth20ProfileController.handleGetRequest(mockRequest, mockResponse);
@@ -97,7 +98,9 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
     public void verifyExpiredAccessToken() throws Exception {
         val principal = CoreAuthenticationTestUtils.getPrincipal(ID, new HashMap<>());
         val authentication = getAuthentication(principal);
-        val jwtBuilder = new JwtBuilder("cas.example.org", new OAuth20JwtAccessTokenCipherExecutor(), servicesManager, new RegisteredServiceJwtAccessTokenCipherExecutor());
+        val jwtBuilder = new JwtBuilder("cas.example.org",
+            new OAuth20JwtAccessTokenCipherExecutor(), servicesManager,
+            new RegisteredServiceJwtAccessTokenCipherExecutor());
         val expiringAccessTokenFactory = new DefaultAccessTokenFactory(
             new AlwaysExpiresExpirationPolicy(), jwtBuilder, servicesManager);
         val accessToken = expiringAccessTokenFactory.create(RegisteredServiceTestUtils.getService(), authentication,
