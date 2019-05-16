@@ -74,7 +74,11 @@ public class OAuth20Utils {
      * @param clientId        the client id by which the {@link OAuthRegisteredService} is to be located.
      * @return null, or the located {@link OAuthRegisteredService} instance in the service registry.
      */
-    public static OAuthRegisteredService getRegisteredOAuthServiceByClientId(final ServicesManager servicesManager, final String clientId) {
+    public static OAuthRegisteredService getRegisteredOAuthServiceByClientId(final ServicesManager servicesManager,
+                                                                             final String clientId) {
+        if (StringUtils.isBlank(clientId)) {
+            return null;
+        }
         return getRegisteredOAuthServiceByPredicate(servicesManager, s -> s.getClientId().equals(clientId));
     }
 
@@ -85,7 +89,11 @@ public class OAuth20Utils {
      * @param redirectUri     the redirect uri
      * @return the registered OAuth service by redirect uri
      */
-    public static OAuthRegisteredService getRegisteredOAuthServiceByRedirectUri(final ServicesManager servicesManager, final String redirectUri) {
+    public static OAuthRegisteredService getRegisteredOAuthServiceByRedirectUri(final ServicesManager servicesManager,
+                                                                                final String redirectUri) {
+        if (StringUtils.isBlank(redirectUri)) {
+            return null;
+        }
         return getRegisteredOAuthServiceByPredicate(servicesManager, s -> s.matches(redirectUri));
     }
 
