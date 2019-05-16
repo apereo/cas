@@ -353,7 +353,7 @@ public abstract class AbstractServiceRegistryTests {
         r.setAttributeReleasePolicy(policy);
 
         val r2 = this.serviceRegistry.save(r);
-        val r3 = this.serviceRegistry.findServiceById(r2.getId());
+        val r3 = this.serviceRegistry.findServiceById(r2.getServiceId());
 
         assertEquals(r2, r3);
         assertNotNull(r3.getAttributeReleasePolicy());

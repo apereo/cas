@@ -2528,11 +2528,23 @@ Database settings for this feature are available [here](Configuration-Properties
 
 #### CouchDb Storage
 
- Configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.authn.mfa.trusted`.
+Configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.authn.mfa.trusted`.
 
 #### MongoDb Storage
 
- Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.trusted`.
+Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.trusted`.
+ 
+#### DynamoDb Storage
+ 
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration)
+under the configuration key `cas.authn.mfa.trusted`.
+
+AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
+under the configuration key `cas.authn.mfa.trusted.dynamoDb`.
+
+```properties
+# cas.authn.mfa.trusted.dynamoDb.tableName=DynamoDbCasMfaTrustRecords
+```
 
 #### REST Storage
 
