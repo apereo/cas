@@ -40,7 +40,11 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class,
     RefreshAutoConfiguration.class
 })
-@TestPropertySource(locations = {"classpath:/rest-pm.properties"})
+@TestPropertySource(properties = {
+    "cas.authn.pm.rest.endpointUrlChange=http://localhost:9090",
+    "cas.authn.pm.rest.endpointUrlSecurityQuestions=http://localhost:9090",
+    "cas.authn.pm.rest.endpointUrlEmail=http://localhost:9090"
+})
 @Tag("RestfulApi")
 public class RestPasswordManagementServiceTests {
     @Autowired
