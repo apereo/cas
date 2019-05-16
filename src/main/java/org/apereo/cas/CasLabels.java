@@ -53,7 +53,7 @@ public enum CasLabels {
     LABEL_GRADLE_BUILD_RELEASE("Gradle Build & Release", "gulp|jdk|gradle|sonatype|snapshot|dependency|module|pom|bom|travis-ci|dependencies|update\\s.+to\\sv.+"),
     LABEL_HAZELCAST("Hazelcast", "\\bhz\\b"),
     LABEL_INFINISPAN("Infinispan"),
-    LABEL_INTERNATIONALIZATION("Internationalization", "localization|localized|message bundle|translation|language bundle|I18n"),
+    LABEL_INTERNATIONALIZATION("Internationalization", "localization|localized|message bundle|translation|language bundle|I18n|french|spanish|german|italian"),
     LABEL_INTERRUPT_NOTIFICATIONS("Interrupt Notifications", "interrupt"),
     LABEL_JAAS("JAAS"),
     LABEL_JDBC_HIBERNATE_JPA("JDBC & Hibernate & JPA", "mysql|postgres|oracle|mariadb|jpa|hibernate|database|jdbc|rdbms"),
