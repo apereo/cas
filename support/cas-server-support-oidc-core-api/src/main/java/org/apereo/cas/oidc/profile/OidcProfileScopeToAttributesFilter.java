@@ -17,6 +17,7 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilter;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 
 import lombok.SneakyThrows;
@@ -33,7 +34,6 @@ import org.reflections.util.FilterBuilder;
 import org.springframework.util.ClassUtils;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -135,10 +135,10 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                                                                 final AccessToken accessToken,
                                                                 final Principal principal,
                                                                 final Map<String, List<Object>> attributes) {
-        val userinfo = accessToken.getClaims().getOrDefault("userinfo", new HashMap<>());
+        val userinfo = OAuth20Utils.parseUserInfoRequestClaims(accessToken);
         val principalAttributes = accessToken.getTicketGrantingTicket().getAuthentication().getPrincipal().getAttributes();
         LOGGER.debug("Requested user-info claims [{}] are compared against principal attributes [{}}", userinfo, principalAttributes);
-        userinfo.keySet()
+        userinfo
             .stream()
             .filter(principalAttributes::containsKey)
             .forEach(key -> attributes.put(key, principalAttributes.get(key)));

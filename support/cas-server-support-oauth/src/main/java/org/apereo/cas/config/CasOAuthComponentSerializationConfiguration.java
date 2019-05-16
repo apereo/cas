@@ -33,6 +33,7 @@ public class CasOAuthComponentSerializationConfiguration implements ComponentSer
     public void configureComponentSerializationPlan(final ComponentSerializationPlan plan) {
         plan.registerSerializableClass(OAuthAccessTokenExpirationPolicy.class);
         plan.registerSerializableClass(OAuthRefreshTokenExpirationPolicy.class);
+        plan.registerSerializableClass(OAuthRefreshTokenExpirationPolicy.OAuthRefreshTokenStandaloneExpirationPolicy.class);
         plan.registerSerializableClass(OAuthCodeExpirationPolicy.class);
 
         plan.registerSerializableClass(OAuthRegisteredService.class);

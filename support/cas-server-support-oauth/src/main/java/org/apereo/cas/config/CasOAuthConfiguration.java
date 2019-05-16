@@ -702,7 +702,7 @@ public class CasOAuthConfiguration {
         if (casProperties.getLogout().isRemoveDescendantTickets()) {
             return new OAuthRefreshTokenExpirationPolicy(timeout);
         }
-        return new OAuthRefreshTokenExpirationPolicy.OAuthRefreshTokenSovereignExpirationPolicy(timeout);
+        return new OAuthRefreshTokenExpirationPolicy.OAuthRefreshTokenStandaloneExpirationPolicy(timeout);
     }
 
     @ConditionalOnMissingBean(name = "oauthCasAuthenticationBuilder")

@@ -9,6 +9,7 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.ticket.OAuthToken;
 import org.apereo.cas.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -448,5 +449,27 @@ public class OAuth20Utils {
             return new HashMap<>();
         }
         return MAPPER.readValue(claims, Map.class);
+    }
+
+    /**
+     * Parse user info request claims set.
+     *
+     * @param token the token
+     * @return the set
+     */
+    public static Set<String> parseUserInfoRequestClaims(final OAuthToken token) {
+        return token.getClaims().getOrDefault("userinfo", new HashMap<>()).keySet();
+    }
+
+    /**
+     * Parse user info request claims set.
+     *
+     * @param context the context
+     * @return the set
+     * @throws Exception the exception
+     */
+    public static Set<String> parseUserInfoRequestClaims(final J2EContext context) throws Exception {
+        val requestedClaims = parseRequestClaims(context);
+        return requestedClaims.getOrDefault("userinfo", new HashMap<>()).keySet();
     }
 }

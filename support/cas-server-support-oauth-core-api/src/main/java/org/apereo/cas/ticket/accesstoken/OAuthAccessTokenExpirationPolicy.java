@@ -81,13 +81,13 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
 
         var expirationTime = creationTime.plus(this.maxTimeToLiveInSeconds, ChronoUnit.SECONDS);
         if (currentSystemTime.isAfter(expirationTime)) {
-            LOGGER.debug("Access token is expired because the time since creation is greater than maxTimeToLiveInSeconds");
+            LOGGER.debug("Access token is expired because the current time [{}} is after [{}]", currentSystemTime, expirationTime);
             return true;
         }
 
         val expirationTimeToKill = ticketState.getLastTimeUsed().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
         if (currentSystemTime.isAfter(expirationTimeToKill)) {
-            LOGGER.debug("Access token is expired because the time since last use is greater than timeToKillInSeconds");
+            LOGGER.debug("Access token is expired because the current time [{}] is after [{}]", currentSystemTime, expirationTimeToKill);
             return true;
         }
         return false;
