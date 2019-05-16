@@ -81,7 +81,17 @@ import java.util.Collection;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasCoreUtilConfiguration.class})
-@TestPropertySource(locations = {"classpath:/wsfed.properties"})
+@TestPropertySource(properties = {
+    "cas.authn.wsfed[0].identityProviderUrl=https://adfs.example.com/adfs/ls/",
+    "cas.authn.wsfed[0].identityProviderIdentifier=http://adfs.example.com/adfs/services/trust",
+    "cas.authn.wsfed[0].relyingPartyIdentifier=urn:federation:cas",
+    "cas.authn.wsfed[0].attributesType=WSFED",
+    "cas.authn.wsfed[0].signingCertificateResources=classpath:adfs-signing.crt",
+    "cas.authn.wsfed[0].identityAttribute=upn",
+    "cas.authn.wsfed[0].attributeResolverEnabled=true",
+    "cas.authn.wsfed[0].autoRedirect=false",
+    "cas.authn.wsfed[0].name=Test ADFS1"
+})
 @ContextConfiguration(locations = {"classpath:/applicationContext.xml"})
 public class AbstractWsFederationTests extends AbstractOpenSamlTests {
     @Autowired

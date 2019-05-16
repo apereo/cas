@@ -64,7 +64,13 @@ import static org.junit.jupiter.api.Assertions.*;
     WsFederationAuthenticationWebflowConfiguration.class,
     WsFederationAuthenticationConfiguration.class
 })
-@TestPropertySource(locations = "classpath:wsfedauthn.properties")
+@TestPropertySource(properties = {
+    "cas.authn.wsfed[0].identityProviderUrl=https://example.org/adfs/ls/",
+    "cas.authn.wsfed[0].identityProviderIdentifier=https://example.org/adfs/services/trust",
+    "cas.authn.wsfed[0].relyingPartyIdentifier=urn:cas:example",
+    "cas.authn.wsfed[0].signingCertificateResources=classpath:adfs-signing.cer",
+    "cas.authn.wsfed[0].identityAttribute=upn"
+})
 public class WsFederationActionTests {
     @Autowired
     @Qualifier("wsFederationAction")

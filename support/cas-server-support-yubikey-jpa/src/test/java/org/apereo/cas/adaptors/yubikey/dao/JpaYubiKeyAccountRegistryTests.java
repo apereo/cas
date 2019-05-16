@@ -74,7 +74,10 @@ import static org.junit.jupiter.api.Assertions.*;
         RefreshAutoConfiguration.class
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@TestPropertySource(locations = {"classpath:/yubikey-jpa.properties"})
+@TestPropertySource(properties = {
+    "cas.authn.mfa.yubikey.clientId=18423",
+    "cas.authn.mfa.yubikey.secretKey=zAIqhjui12mK8x82oe9qzBEb0As="
+})
 public class JpaYubiKeyAccountRegistryTests {
     private static final String BAD_TOKEN = "123456";
 
