@@ -43,16 +43,6 @@ public abstract class AbstractDynamoDbProperties extends BaseAmazonWebServicesPr
      */
     private long writeCapacity = 10;
 
-
-
-
-
-
-
-
-
-
-
     /**
      * Indicates that the database instance is local to the deployment
      * that does not require or use any credentials or other configuration
@@ -60,8 +50,5 @@ public abstract class AbstractDynamoDbProperties extends BaseAmazonWebServicesPr
      * and testing.
      */
     private boolean localInstance;
-
-
-
 
 }
