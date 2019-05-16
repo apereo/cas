@@ -12,7 +12,13 @@ import org.springframework.test.context.TestPropertySource;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@TestPropertySource(locations = "classpath:samlidp-mssql.properties")
+@TestPropertySource(properties = {
+    "cas.authn.samlIdp.metadata.jpa.user=sa",
+    "cas.authn.samlIdp.metadata.jpa.password=p@ssw0rd",
+    "cas.authn.samlIdp.metadata.jpa.driverClass=com.microsoft.sqlserver.jdbc.SQLServerDriver",
+    "cas.authn.samlIdp.metadata.jpa.url=jdbc:sqlserver://localhost:1433;databaseName=samlidp;useUnicode=true;characterEncoding=UTF-8",
+    "cas.authn.samlIdp.metadata.jpa.dialect=org.hibernate.dialect.SQLServer2012Dialect"
+})
 @EnabledIfPortOpen(port = 1433)
 @EnabledIfContinuousIntegration
 @Tag("MsSqlServer")
