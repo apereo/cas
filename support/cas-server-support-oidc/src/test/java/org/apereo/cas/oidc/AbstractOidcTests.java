@@ -1,5 +1,8 @@
 package org.apereo.cas.oidc;
 
+import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -36,6 +39,8 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.ticket.OAuthTokenSigningAndEncryptionService;
+import org.apereo.cas.ticket.code.OAuthCodeFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
@@ -113,6 +118,14 @@ public abstract class AbstractOidcTests {
     protected OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter;
 
     @Autowired
+    @Qualifier("defaultOAuthCodeFactory")
+    protected OAuthCodeFactory defaultOAuthCodeFactory;
+
+    @Autowired
+    @Qualifier("webApplicationServiceFactory")
+    protected ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+
+    @Autowired
     protected CasConfigurationProperties casProperties;
 
     @Autowired
@@ -132,12 +145,20 @@ public abstract class AbstractOidcTests {
     protected OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService;
 
     @Autowired
+    @Qualifier("registeredServiceAccessStrategyEnforcer")
+    protected AuditableExecution registeredServiceAccessStrategyEnforcer;
+
+    @Autowired
     @Qualifier("oidcRegisteredServiceUIAction")
     protected Action oidcRegisteredServiceUIAction;
 
     @Autowired
     @Qualifier("oidcServerDiscoverySettingsFactory")
     protected OidcServerDiscoverySettings oidcServerDiscoverySettings;
+
+    @Autowired
+    @Qualifier("ticketRegistry")
+    protected TicketRegistry ticketRegistry;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -157,12 +178,19 @@ public abstract class AbstractOidcTests {
     }
 
     protected static OidcRegisteredService getOidcRegisteredService(final boolean sign, final boolean encrypt) {
+        return getOidcRegisteredService("clientid", "https://oauth\\.example\\.org.*", sign, encrypt);
+    }
+
+    protected static OidcRegisteredService getOidcRegisteredService(final String clientId,
+                                                                    final String redirectUri,
+                                                                    final boolean sign,
+                                                                    final boolean encrypt) {
         val svc = new OidcRegisteredService();
-        svc.setClientId("clientid");
+        svc.setClientId(clientId);
         svc.setName("oauth");
         svc.setDescription("description");
         svc.setClientSecret("secret");
-        svc.setServiceId("https://oauth\\.example\\.org.*");
+        svc.setServiceId(redirectUri);
         svc.setSignIdToken(sign);
         svc.setEncryptIdToken(encrypt);
         svc.setIdTokenEncryptionAlg(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
@@ -174,18 +202,24 @@ public abstract class AbstractOidcTests {
     }
 
     protected static JwtClaims getClaims() {
+        val clientId = getOidcRegisteredService().getClientId();
+        return getClaims("casuser", "https://cas.example.org", clientId, clientId);
+    }
+
+    protected static JwtClaims getClaims(final String subject, final String issuer,
+                                         final String clientId, final String audience) {
         val claims = new JwtClaims();
         claims.setJwtId(RandomStringUtils.randomAlphanumeric(16));
-        claims.setIssuer("https://cas.example.org");
-        claims.setAudience(getOidcRegisteredService().getClientId());
+        claims.setIssuer(issuer);
+        claims.setAudience(audience);
 
         val expirationDate = NumericDate.now();
         expirationDate.addSeconds(120);
         claims.setExpirationTime(expirationDate);
         claims.setIssuedAtToNow();
         claims.setNotBeforeMinutesInThePast(1);
-        claims.setSubject("casuser");
-        claims.setStringClaim(OAuth20Constants.CLIENT_ID, "clientid");
+        claims.setSubject(subject);
+        claims.setStringClaim(OAuth20Constants.CLIENT_ID, clientId);
         return claims;
     }
 }

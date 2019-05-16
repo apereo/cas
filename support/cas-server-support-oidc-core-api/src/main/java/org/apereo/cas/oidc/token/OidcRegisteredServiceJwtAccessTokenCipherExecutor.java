@@ -2,7 +2,7 @@ package org.apereo.cas.oidc.token;
 
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.support.oauth.web.response.accesstoken.response.RegisteredServiceJwtAccessTokenCipherExecutor;
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20RegisteredServiceJwtAccessTokenCipherExecutor;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.Getter;
@@ -22,7 +22,7 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 @Getter
-public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends RegisteredServiceJwtAccessTokenCipherExecutor {
+public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20RegisteredServiceJwtAccessTokenCipherExecutor {
     /**
      * The default keystore for OIDC tokens.
      */

@@ -69,7 +69,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRefr
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20DefaultAccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenCipherExecutor;
-import org.apereo.cas.support.oauth.web.response.accesstoken.response.RegisteredServiceJwtAccessTokenCipherExecutor;
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20RegisteredServiceJwtAccessTokenCipherExecutor;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationCodeAuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ClientCredentialsResponseBuilder;
@@ -213,7 +213,7 @@ public class CasOAuthConfiguration {
     @ConditionalOnMissingBean(name = "oauthRegisteredServiceJwtAccessTokenCipherExecutor")
     @Bean
     public RegisteredServiceCipherExecutor oauthRegisteredServiceJwtAccessTokenCipherExecutor() {
-        return new RegisteredServiceJwtAccessTokenCipherExecutor();
+        return new OAuth20RegisteredServiceJwtAccessTokenCipherExecutor();
     }
 
     @ConditionalOnMissingBean(name = "oauthCasClientRedirectActionBuilder")
