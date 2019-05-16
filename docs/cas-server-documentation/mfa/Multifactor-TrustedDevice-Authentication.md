@@ -131,6 +131,21 @@ Support is provided via the following module:
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#mongodb-storage).
 
+### DynamoDb
+
+User decisions may also be kept inside a DynamoDb instance.
+
+Support is provided via the following module:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-trusted-mfa-dynamodb</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#dynamodb-storage).
 
 ### REST
 
