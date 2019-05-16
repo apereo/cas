@@ -32,6 +32,8 @@ import org.apereo.cas.ticket.refreshtoken.DefaultRefreshTokenFactory;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
 import org.junit.jupiter.api.RepeatedTest;
@@ -77,9 +79,14 @@ import static org.junit.jupiter.api.Assertions.*;
     CasPersonDirectoryConfiguration.class,
     RefreshAutoConfiguration.class
 })
-@TestPropertySource(locations = "classpath:/dynamodb-ticketregistry.properties")
-//@EnabledIfContinuousIntegration
-//@EnabledIfPortOpen(port = 8000)
+@TestPropertySource(properties = {
+    "cas.ticket.registry.dynamoDb.endpoint=http://localhost:8000",
+    "cas.ticket.registry.dynamoDb.dropTablesOnStartup=true",
+    "cas.ticket.registry.dynamoDb.localInstance=true",
+    "cas.ticket.registry.dynamoDb.region=us-east-1"
+})
+@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 8000)
 public class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     static {
         System.setProperty("aws.accessKeyId", "AKIAIPPIGGUNIO74C63Z");
