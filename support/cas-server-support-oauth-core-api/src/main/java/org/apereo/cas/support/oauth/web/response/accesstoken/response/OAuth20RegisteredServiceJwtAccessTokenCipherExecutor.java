@@ -4,12 +4,12 @@ import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.token.cipher.RegisteredServiceJwtTicketCipherExecutor;
 
 /**
- * This is {@link RegisteredServiceJwtAccessTokenCipherExecutor}.
+ * This is {@link OAuth20RegisteredServiceJwtAccessTokenCipherExecutor}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-public class RegisteredServiceJwtAccessTokenCipherExecutor extends RegisteredServiceJwtTicketCipherExecutor {
+public class OAuth20RegisteredServiceJwtAccessTokenCipherExecutor extends RegisteredServiceJwtTicketCipherExecutor {
     @Override
     protected RegisteredServiceProperty.RegisteredServiceProperties getSigningKeyRegisteredServiceProperty() {
         return RegisteredServiceProperty.RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_SIGNING_KEY;
