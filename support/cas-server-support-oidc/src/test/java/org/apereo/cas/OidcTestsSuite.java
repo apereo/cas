@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.oidc.authn.OidcClientSecretJwtAuthenticatorTests;
 import org.apereo.cas.oidc.authn.OidcPrivateKeyJwtAuthenticatorTests;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettingsFactoryTests;
 import org.apereo.cas.oidc.discovery.webfinger.OidcEchoingWebFingerUserInfoRepositoryTests;
@@ -37,6 +38,7 @@ import org.junit.platform.suite.api.SelectClasses;
     OidcServiceJsonWebKeystoreCacheLoaderTests.class,
     OidcAuthorizationRequestSupportTests.class,
     OidcPrivateKeyJwtAuthenticatorTests.class,
+    OidcClientSecretJwtAuthenticatorTests.class,
     OidcEchoingWebFingerUserInfoRepositoryTests.class,
     OidcGroovyWebFingerUserInfoRepositoryTests.class,
     OidcRestfulWebFingerUserInfoRepositoryTests.class

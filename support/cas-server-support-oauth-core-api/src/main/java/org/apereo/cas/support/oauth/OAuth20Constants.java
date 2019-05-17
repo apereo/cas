@@ -252,7 +252,7 @@ public interface OAuth20Constants {
     String PROFILE_URL = "profile";
 
     /**
-     * The remaining time in seconds before expiration with syntax : expires=3600...
+     * The remaining time in seconds before expiration.
      */
     String EXPIRES_IN = "expires_in";
 

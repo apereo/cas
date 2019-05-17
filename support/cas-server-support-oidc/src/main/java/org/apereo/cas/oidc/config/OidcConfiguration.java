@@ -16,6 +16,7 @@ import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.authn.OidcAccessTokenAuthenticator;
 import org.apereo.cas.oidc.authn.OidcClientConfigurationAccessTokenAuthenticator;
+import org.apereo.cas.oidc.authn.OidcClientSecretJwtAuthenticator;
 import org.apereo.cas.oidc.authn.OidcPrivateKeyJwtAuthenticator;
 import org.apereo.cas.oidc.claims.BaseOidcScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
@@ -672,6 +673,23 @@ public class OidcConfiguration implements WebMvcConfigurer {
             privateKeyJwtClient.setPasswordParameter(OAuth20Constants.CLIENT_ASSERTION);
             privateKeyJwtClient.init();
             return privateKeyJwtClient;
+        };
+    }
+
+    @Bean
+    public OAuthAuthenticationClientProvider oidcClientSecretJwtClientProvider() {
+        return () -> {
+            val client = new DirectFormClient(new OidcClientSecretJwtAuthenticator(
+                servicesManager.getIfAvailable(),
+                registeredServiceAccessStrategyEnforcer.getIfAvailable(),
+                ticketRegistry.getIfAvailable(),
+                webApplicationServiceFactory.getIfAvailable(),
+                casProperties));
+            client.setName(OidcConstants.CAS_OAUTH_CLIENT_CLIENT_SECRET_JWT_AUTHN);
+            client.setUsernameParameter(OAuth20Constants.CLIENT_ASSERTION_TYPE);
+            client.setPasswordParameter(OAuth20Constants.CLIENT_ASSERTION);
+            client.init();
+            return client;
         };
     }
 
