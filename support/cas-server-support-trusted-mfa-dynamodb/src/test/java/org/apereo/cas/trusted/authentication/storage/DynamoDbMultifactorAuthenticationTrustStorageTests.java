@@ -50,6 +50,11 @@ public class DynamoDbMultifactorAuthenticationTrustStorageTests {
     @Qualifier("mfaTrustEngine")
     private MultifactorAuthenticationTrustStorage mfaTrustEngine;
 
+    static {
+        System.setProperty("aws.accessKeyId", "AKIAIPPIGGUNIO74C63Z");
+        System.setProperty("aws.secretKey", "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");
+    }
+
     @Test
     public void verifySetAnExpireByKey() {
         mfaTrustEngine.set(MultifactorAuthenticationTrustRecord.newInstance("casuser",
