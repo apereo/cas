@@ -22,6 +22,12 @@
       ]
     },
     {
+      "groupName": "Groovy",
+      "packagePatterns": [
+        "^de.codecentric:spring-boot-admin-starter"
+      ]
+    },
+    {
       "groupName": "SpringBoot",
       "packagePatterns": [
         "^org.springframework.boot:"

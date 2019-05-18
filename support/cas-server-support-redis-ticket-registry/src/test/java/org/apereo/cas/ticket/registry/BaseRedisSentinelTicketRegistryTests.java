@@ -23,13 +23,13 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @Tag("Redis")
 @SpringBootTest(classes = {
-        RedisTicketRegistryConfiguration.class,
-        RefreshAutoConfiguration.class,
-        CasCoreWebConfiguration.class,
-        AopAutoConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class})
+    RedisTicketRegistryConfiguration.class,
+    RefreshAutoConfiguration.class,
+    CasCoreWebConfiguration.class,
+    AopAutoConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class})
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public abstract class BaseRedisSentinelTicketRegistryTests extends BaseTicketRegistryTests {

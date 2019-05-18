@@ -11,5 +11,5 @@ if [ "$COUNT_REDIS" -eq 3 -a "$COUNT_SENTINEL" -eq 3 ]; then
     echo "Redis + sentinel docker images are running."
 else
     echo "Redis + sentinel docker images failed to start."
-    exit
+    exit 1
 fi

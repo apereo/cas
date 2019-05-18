@@ -69,8 +69,7 @@ For additional instructions on how to configure auditing, please [review the fol
 
 ### MongoDb
 
-Queries a MongoDb data source used by the CAS audit facility to prevent successive failed login attempts for a particular username from the same IP address. 
-This component requires and depends on the [CAS auditing functionality](Audits.html) via MongoDb.
+Queries a MongoDb data source used by the CAS audit facility to prevent successive failed login attempts for a particular username from the same IP address. This component requires and depends on the [CAS auditing functionality](Audits.html) via MongoDb.
 
 Enable the following module in your configuration overlay:
 
@@ -78,6 +77,20 @@ Enable the following module in your configuration overlay:
 <dependency>
     <groupId>org.apereo.cas</groupId>
     <artifactId>cas-server-support-throttle-mongo</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
+### Redis
+
+Queries a Redis data source used by the CAS audit facility to prevent successive failed login attempts for a particular username from the same IP address. This component requires and depends on the [CAS auditing functionality](Audits.html) via Redis.
+
+Enable the following module in your configuration overlay:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-throttle-redis</artifactId>
     <version>${cas.version}</version>
 </dependency>
 ```
@@ -99,8 +112,7 @@ Enable the following module in your configuration overlay:
 
 ### CouchDb
 
-Queries a CouchDb data source used by the CAS audit facility to prevent successive failed login attempts for a particular username from the same IP address. 
-This component requires and depends on the [CAS auditing functionality](Audits.html) via CouchDb.
+Queries a CouchDb data source used by the CAS audit facility to prevent successive failed login attempts for a particular username from the same IP address. This component requires and depends on the [CAS auditing functionality](Audits.html) via CouchDb.
 
 Enable the following module in your configuration overlay:
 
