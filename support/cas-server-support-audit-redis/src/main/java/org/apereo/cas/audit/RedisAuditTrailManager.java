@@ -26,7 +26,10 @@ import java.util.stream.Collectors;
 @Setter
 @RequiredArgsConstructor
 public class RedisAuditTrailManager extends AbstractAuditTrailManager {
-    private static final String CAS_AUDIT_CONTEXT_PREFIX = AuditActionContext.class.getSimpleName() + ':';
+    /**
+     * Redis key prefix.
+     */
+    public static final String CAS_AUDIT_CONTEXT_PREFIX = AuditActionContext.class.getSimpleName() + ':';
 
     private final RedisTemplate redisTemplate;
 
