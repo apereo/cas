@@ -110,23 +110,16 @@ public abstract class AbstractSamlProfileHandlerController {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE,
                 "Could not verify/locate SAML registered service since no serviceId is provided");
         }
-        LOGGER.debug("Checking service access in CAS service registry for [{}]", serviceId);
-        val registeredService =
-            samlProfileHandlerConfigurationContext.getServicesManager()
-                .findServiceBy(samlProfileHandlerConfigurationContext.getWebApplicationServiceFactory().createService(serviceId));
+        val service = samlProfileHandlerConfigurationContext.getWebApplicationServiceFactory().createService(serviceId);
+        LOGGER.debug("Checking service access in CAS service registry for [{}]", service);
+        val registeredService = samlProfileHandlerConfigurationContext.getServicesManager().findServiceBy(service, SamlRegisteredService.class);
         if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             LOGGER.warn("[{}] is not found in the registry or service access is denied. Ensure service is registered in service registry", serviceId);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
         }
-
-        if (registeredService instanceof SamlRegisteredService) {
-            val samlRegisteredService = (SamlRegisteredService) registeredService;
-            LOGGER.debug("Located SAML service in the registry as [{}] with the metadata location of [{}]",
-                samlRegisteredService.getServiceId(), samlRegisteredService.getMetadataLocation());
-            return samlRegisteredService;
-        }
-        LOGGER.error("CAS has found a match for service [{}] in registry but the match is not defined as a SAML service", serviceId);
-        throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
+        LOGGER.debug("Located SAML service in the registry as [{}] with the metadata location of [{}]",
+            registeredService.getServiceId(), registeredService.getMetadataLocation());
+        return registeredService;
     }
 
     /**
