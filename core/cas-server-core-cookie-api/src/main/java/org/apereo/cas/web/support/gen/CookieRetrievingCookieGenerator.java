@@ -18,7 +18,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Objects;
 
 
@@ -99,6 +98,13 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
                     cookie = createCookie(cookieValue);
                 }
             }
+            if (cookie == null) {
+                val cookieValue = request.getParameter(getCookieName());
+                if (StringUtils.isNotBlank(cookieValue)) {
+                    LOGGER.trace("Found cookie [{}] under request parameter name [{}]", cookieValue, getCookieName());
+                    cookie = createCookie(cookieValue);
+                }
+            }
             return cookie == null ? null : this.casCookieValueManager.obtainCookieValue(cookie, request);
         } catch (final Exception e) {
             LOGGER.debug(e.getMessage(), e);
@@ -140,7 +146,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         LOGGER.trace("Located authentication attributes [{}]", attributes);
 
         if (attributes.containsKey(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME)) {
-            val rememberMeValue = (Collection) attributes.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
+            val rememberMeValue = attributes.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
             LOGGER.debug("Located remember-me authentication attribute [{}]", rememberMeValue);
             return rememberMeValue.contains(Boolean.TRUE);
         }
