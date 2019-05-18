@@ -37,19 +37,20 @@ public class SingleSignOnSessionStatusEndpoint {
      */
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity ssoStatus(final HttpServletRequest request) {
-        val tgtId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
-        if (StringUtils.isNotBlank(tgtId)) {
-            val auth = this.ticketRegistrySupport.getAuthenticationFrom(tgtId);
-            if (auth != null) {
-                val ticketState = this.ticketRegistrySupport.getTicketState(tgtId);
-                val body = CollectionUtils.wrap("principal", auth.getPrincipal().getId(),
-                    "authenticationDate", auth.getAuthenticationDate(),
-                    "ticketGrantingTicketCreationTime", ticketState.getCreationTime(),
-                    "ticketGrantingTicketPreviousTimeUsed", ticketState.getPreviousTimeUsed(),
-                    "ticketGrantingTicketLastTimeUsed", ticketState.getLastTimeUsed());
-                return ResponseEntity.ok(body);
-            }
+        var tgtId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
+        if (StringUtils.isBlank(tgtId)) {
+            return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.badRequest().build();
+        val auth = this.ticketRegistrySupport.getAuthenticationFrom(tgtId);
+        if (auth == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        val ticketState = this.ticketRegistrySupport.getTicketState(tgtId);
+        val body = CollectionUtils.wrap("principal", auth.getPrincipal().getId(),
+            "authenticationDate", auth.getAuthenticationDate(),
+            "ticketGrantingTicketCreationTime", ticketState.getCreationTime(),
+            "ticketGrantingTicketPreviousTimeUsed", ticketState.getPreviousTimeUsed(),
+            "ticketGrantingTicketLastTimeUsed", ticketState.getLastTimeUsed());
+        return ResponseEntity.ok(body);
     }
 }
