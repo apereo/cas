@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Objects;
 
 
 /**
@@ -90,7 +91,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
     @Override
     public String retrieveCookieValue(final HttpServletRequest request) {
         try {
-            var cookie = org.springframework.web.util.WebUtils.getCookie(request, getCookieName());
+            var cookie = org.springframework.web.util.WebUtils.getCookie(request, Objects.requireNonNull(getCookieName()));
             if (cookie == null) {
                 val cookieValue = request.getHeader(getCookieName());
                 if (StringUtils.isNotBlank(cookieValue)) {

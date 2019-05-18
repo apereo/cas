@@ -8,6 +8,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.SchedulingUtils;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
 import lombok.Getter;
@@ -34,6 +35,10 @@ public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasC
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
+
+    @Autowired
+    @Qualifier("ticketGrantingTicketCookieGenerator")
+    private CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
     @Autowired
     @Qualifier("ticketRegistry")
