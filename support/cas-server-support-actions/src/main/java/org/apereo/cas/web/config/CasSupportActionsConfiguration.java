@@ -30,6 +30,7 @@ import org.apereo.cas.web.flow.login.SendTicketGrantingTicketAction;
 import org.apereo.cas.web.flow.login.ServiceWarningAction;
 import org.apereo.cas.web.flow.login.SetServiceUnauthorizedRedirectUrlAction;
 import org.apereo.cas.web.flow.login.TicketGrantingTicketCheckAction;
+import org.apereo.cas.web.flow.login.VerifyRequiredServiceAction;
 import org.apereo.cas.web.flow.logout.FrontChannelLogoutAction;
 import org.apereo.cas.web.flow.logout.LogoutAction;
 import org.apereo.cas.web.flow.logout.LogoutViewSetupAction;
@@ -217,6 +218,17 @@ public class CasSupportActionsConfiguration {
             casProperties,
             authenticationEventExecutionPlan.getIfAvailable(),
             webflowSingleSignOnParticipationStrategy.getIfAvailable(),
+            ticketRegistrySupport.getIfAvailable());
+    }
+
+    @RefreshScope
+    @Bean
+    @ConditionalOnMissingBean(name = "verifyRequiredServiceAction")
+    public Action verifyRequiredServiceAction() {
+        return new VerifyRequiredServiceAction(
+            servicesManager.getIfAvailable(),
+            ticketGrantingTicketCookieGenerator.getIfAvailable(),
+            casProperties,
             ticketRegistrySupport.getIfAvailable());
     }
 

@@ -643,6 +643,10 @@ public interface CasWebflowConstants {
      * Action id 'initialFlowSetupAction'.
      */
     String ACTION_ID_INIT_FLOW_SETUP = "initialFlowSetupAction";
+    /**
+     * Action id 'verifyRequiredServiceAction'.
+     */
+    String ACTION_ID_VERIFY_REQUIRED_SERVICE = "verifyRequiredServiceAction";
 
     /**
      * Action id 'ticketGrantingTicketCheckAction'.

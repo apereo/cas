@@ -196,4 +196,23 @@ access can be granted to all other registered services. Once CAS find a record f
 application as part of the single sign-on session records, it will permit authentication attempts
 by all other services until the single sign-on session is destroyed.
 
+Such validation checks can be turned off and skipped on a per-application basis:
+
+```json
+{
+  "@class": "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId": "^https://www.example.com",
+  "name": "Example",
+  "id": 1,
+  "description": "Example",
+  "properties" : {
+    "@class" : "java.util.HashMap",
+    "skipRequiredServiceCheck" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "true" ] ]
+    }
+  }
+}
+```
+
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#global-sso-behavior).

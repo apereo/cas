@@ -108,7 +108,7 @@ public interface RegisteredServiceProperty extends Serializable {
         /**
          * Whether this service should skip qualification for required-service pattern checks.
          **/
-        SKIP_REQUIRED_SERVICE_CHECK("verifyRequiredServiceCheck", "false"),
+        SKIP_REQUIRED_SERVICE_CHECK("skipRequiredServiceCheck", "false"),
         /**
          * Whether CAS should inject cache control headers into the response when this service is in process.
          */

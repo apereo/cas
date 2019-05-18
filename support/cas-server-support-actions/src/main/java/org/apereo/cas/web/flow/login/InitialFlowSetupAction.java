@@ -4,14 +4,11 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.NullPrincipal;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
-import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -28,7 +25,6 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -71,51 +67,8 @@ public class InitialFlowSetupAction extends AbstractAction {
 
         val ticketGrantingTicketId = configureWebflowForTicketGrantingTicket(context);
         configureWebflowForSsoParticipation(context, ticketGrantingTicketId);
-        configureWebflowForInitialMandatoryService(context, ticketGrantingTicketId);
 
         return success();
-    }
-
-    private void configureWebflowForInitialMandatoryService(final RequestContext context,
-                                                            final String ticketGrantingTicketId) {
-        val initialService = casProperties.getSso().getRequiredServicePattern();
-        if (StringUtils.isNotBlank(initialService)) {
-            val servicesToMatch = new ArrayList<Service>();
-
-            val initialServicePattern = RegexUtils.createPattern(initialService);
-            val ticket = StringUtils.isNotBlank(ticketGrantingTicketId)
-                ? ticketRegistrySupport.getTicketGrantingTicket(ticketGrantingTicketId)
-                : null;
-
-            if (ticket != null) {
-                servicesToMatch.addAll(ticket.getServices().values());
-            } else {
-                val service = WebUtils.getService(context);
-                if (service != null) {
-                    servicesToMatch.add(service);
-                }
-            }
-
-            if (!servicesToMatch.isEmpty()) {
-                val it = servicesToMatch.iterator();
-                while (it.hasNext()) {
-                    val registeredService = this.servicesManager.findServiceBy(it.next());
-                    if (registeredService != null) {
-                        val skip = RegisteredServiceProperties.SKIP_REQUIRED_SERVICE_CHECK.isAssignedTo(registeredService);
-                        if (skip) {
-                            it.remove();
-                        }
-                    }
-                }
-                val matches = servicesToMatch
-                    .stream()
-                    .anyMatch(service -> RegexUtils.find(initialServicePattern, service.getId()));
-                if (!matches) {
-                    throw new NoSuchFlowExecutionException(context.getFlowExecutionContext().getKey(),
-                        new UnauthorizedServiceException("screen.service.initial.message", "Service is required"));
-                }
-            }
-        }
     }
 
     private String configureWebflowForTicketGrantingTicket(final RequestContext context) {
