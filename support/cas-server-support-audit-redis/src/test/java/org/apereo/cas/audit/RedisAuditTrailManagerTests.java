@@ -7,7 +7,6 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasSupportRedisAuditConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -38,7 +37,6 @@ import redis.embedded.RedisServer;
 @TestPropertySource(properties = {"cas.audit.redis.host=localhost", "cas.audit.redis.port=6388"})
 @Tag("Redis")
 @Getter
-@EnabledIfPortOpen(port = 6388)
 @EnabledIfContinuousIntegration
 public class RedisAuditTrailManagerTests extends BaseAuditConfigurationTests {
     private static RedisServer REDIS_SERVER;
