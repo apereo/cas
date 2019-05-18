@@ -32,12 +32,34 @@ import org.pac4j.core.credentials.authenticator.Authenticator;
 @RequiredArgsConstructor
 public abstract class BaseOidcJwtAuthenticator implements Authenticator<UsernamePasswordCredentials> {
 
+    /**
+     * Services Manager.
+     */
     protected final ServicesManager servicesManager;
+    /**
+     * Registered service access strategy.
+     */
     protected final AuditableExecution registeredServiceAccessStrategyEnforcer;
+    /**
+     * Ticket registry.
+     */
     protected final TicketRegistry ticketRegistry;
+    /**
+     * Web application service factory.
+     */
     protected final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
+    /**
+     * CAS properties.
+     */
     protected final CasConfigurationProperties casProperties;
 
+    /**
+     * Verify credentials and fetch oidc registered service.
+     *
+     * @param credentials the credentials
+     * @param webContext  the web context
+     * @return the oidc registered service
+     */
     protected OidcRegisteredService verifyCredentials(final UsernamePasswordCredentials credentials,
                                                       final WebContext webContext) {
         if (!StringUtils.equalsIgnoreCase(OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
@@ -81,5 +103,11 @@ public abstract class BaseOidcJwtAuthenticator implements Authenticator<Username
         return registeredService;
     }
 
+    /**
+     * Validate jwt algorithm and return truw/false.
+     *
+     * @param alg the alg
+     * @return the boolean
+     */
     protected abstract boolean validateJwtAlgorithm(Algorithm alg);
 }
