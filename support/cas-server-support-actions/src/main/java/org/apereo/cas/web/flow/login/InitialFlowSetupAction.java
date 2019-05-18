@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
+import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -75,7 +76,8 @@ public class InitialFlowSetupAction extends AbstractAction {
         return success();
     }
 
-    private void configureWebflowForInitialMandatoryService(final RequestContext context, final String ticketGrantingTicketId) {
+    private void configureWebflowForInitialMandatoryService(final RequestContext context,
+                                                            final String ticketGrantingTicketId) {
         val initialService = casProperties.getSso().getRequiredServicePattern();
         if (StringUtils.isNotBlank(initialService)) {
             val servicesToMatch = new ArrayList<Service>();
@@ -95,6 +97,16 @@ public class InitialFlowSetupAction extends AbstractAction {
             }
 
             if (!servicesToMatch.isEmpty()) {
+                val it = servicesToMatch.iterator();
+                while (it.hasNext()) {
+                    val registeredService = this.servicesManager.findServiceBy(it.next());
+                    if (registeredService != null) {
+                        val skip = RegisteredServiceProperties.SKIP_REQUIRED_SERVICE_CHECK.isAssignedTo(registeredService);
+                        if (skip) {
+                            it.remove();
+                        }
+                    }
+                }
                 val matches = servicesToMatch
                     .stream()
                     .anyMatch(service -> RegexUtils.find(initialServicePattern, service.getId()));
