@@ -25,6 +25,7 @@ import org.junit.platform.suite.api.SelectClasses;
     TicketGrantingTicketCheckActionTests.class,
     ServiceWarningActionTests.class,
     TerminateSessionActionTests.class,
+    VerifyRequiredServiceActionTests.class,
     SetServiceUnauthorizedRedirectUrlActionTests.class,
     TerminateSessionConfirmingActionTests.class
 })
