@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,6 +22,7 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,7 +58,7 @@ public class AccepttoMultifactorFetchChannelAction extends AbstractAction {
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         val webContext = new J2EContext(request, response, this.sessionStore);
 
-        val channel = authenticateAndFetchChannel();
+        val channel = authenticateAndFetchChannel(request);
         LOGGER.debug("Storing channel [{}] in http session", channel);
         webContext.getSessionStore().set(webContext, SESSION_ATTRIBUTE_CHANNEL, channel);
 
@@ -78,11 +80,12 @@ public class AccepttoMultifactorFetchChannelAction extends AbstractAction {
     /**
      * Authenticate and fetch channel.
      *
+     * @param request the request
      * @return the channel
      */
-    protected String authenticateAndFetchChannel() {
+    protected String authenticateAndFetchChannel(final HttpServletRequest request) {
         val acceptto = casProperties.getAuthn().getMfa().getAcceptto();
-        val url = StringUtils.appendIfMissing(acceptto.getApiUrl(), "/") + "authenticate";
+        val url = StringUtils.appendIfMissing(acceptto.getApiUrl(), "/") + "authenticate_with_options";
 
         LOGGER.trace("Contacting API [{}] to fetch channel", url);
 
@@ -101,6 +104,9 @@ public class AccepttoMultifactorFetchChannelAction extends AbstractAction {
             "email", email,
             "message", acceptto.getMessage(),
             "timeout", acceptto.getTimeout());
+
+        CookieUtils.getCookieFromRequest("jwt", request)
+            .ifPresent(cookie -> parameters.put("jwt", cookie));
 
         HttpResponse response = null;
         try {
