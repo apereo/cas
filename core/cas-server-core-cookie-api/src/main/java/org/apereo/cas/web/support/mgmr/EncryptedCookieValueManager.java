@@ -9,7 +9,6 @@ import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 
@@ -36,16 +35,16 @@ public class EncryptedCookieValueManager implements CookieValueManager {
     }
 
     @Override
-    public final String obtainCookieValue(final Cookie cookie, final HttpServletRequest request) {
-        val decoded = cipherExecutor.decode(cookie.getValue(), ArrayUtils.EMPTY_OBJECT_ARRAY);
+    public String obtainCookieValue(final String cookie, final HttpServletRequest request) {
+        val decoded = cipherExecutor.decode(cookie, ArrayUtils.EMPTY_OBJECT_ARRAY);
         if (decoded == null) {
-            LOGGER.trace("Could not decode cookie value [{}] for cookie [{}]", cookie.getValue(), cookie.getName());
+            LOGGER.trace("Could not decode cookie value [{}] for cookie", cookie);
             return null;
         }
         val cookieValue = decoded.toString();
         LOGGER.trace("Decoded cookie value is [{}]", cookieValue);
         if (StringUtils.isBlank(cookieValue)) {
-            LOGGER.trace("Retrieved decoded cookie value is blank. Failed to decode cookie [{}]", cookie.getName());
+            LOGGER.trace("Retrieved decoded cookie value is blank. Failed to decode cookie");
             return null;
         }
 
