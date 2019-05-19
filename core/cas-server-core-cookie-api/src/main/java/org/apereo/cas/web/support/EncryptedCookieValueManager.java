@@ -1,11 +1,11 @@
 package org.apereo.cas.web.support;
 
+import org.apereo.cas.CipherExecutor;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.CipherExecutor;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 
@@ -31,14 +31,13 @@ public class EncryptedCookieValueManager implements CookieValueManager {
     }
 
     @Override
-    public final String obtainCookieValue(final Cookie cookie, final HttpServletRequest request) {
-        final String cookieValue = cipherExecutor.decode(cookie.getValue(), new Object[]{}).toString();
+    public String obtainCookieValue(final String cookie, final HttpServletRequest request) {
+        final String cookieValue = cipherExecutor.decode(cookie, new Object[]{}).toString();
         LOGGER.debug("Decoded cookie value is [{}]", cookieValue);
         if (StringUtils.isBlank(cookieValue)) {
-            LOGGER.debug("Retrieved decoded cookie value is blank. Failed to decode cookie [{}]", cookie.getName());
+            LOGGER.debug("Retrieved decoded cookie value is blank. Failed to decode cookie value");
             return null;
         }
-
         return obtainValueFromCompoundCookie(cookieValue, request);
     }
 
