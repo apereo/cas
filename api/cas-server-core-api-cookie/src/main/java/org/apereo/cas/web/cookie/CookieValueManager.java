@@ -29,7 +29,19 @@ public interface CookieValueManager extends Serializable {
      *
      * @param cookie  the cookie
      * @param request the request
-     * @return the cookie value or null
+     * @return the string
      */
-    String obtainCookieValue(Cookie cookie, HttpServletRequest request);
+    default String obtainCookieValue(final Cookie cookie, final HttpServletRequest request) {
+        return obtainCookieValue(cookie.getValue(), request);
+    }
+
+    /**
+     * Obtain cookie value.
+     *
+     * @param cookie  the cookie
+     * @param request the request
+     * @return the string
+     */
+    String obtainCookieValue(String cookie, HttpServletRequest request);
+
 }

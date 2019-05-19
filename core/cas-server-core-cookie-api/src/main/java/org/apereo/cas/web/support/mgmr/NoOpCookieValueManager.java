@@ -2,7 +2,6 @@ package org.apereo.cas.web.support.mgmr;
 
 import org.apereo.cas.web.cookie.CookieValueManager;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -22,7 +21,7 @@ public class NoOpCookieValueManager implements CookieValueManager {
     }
 
     @Override
-    public String obtainCookieValue(final Cookie cookie, final HttpServletRequest request) {
-        return cookie.getValue();
+    public String obtainCookieValue(final String cookie, final HttpServletRequest request) {
+        return cookie;
     }
 }

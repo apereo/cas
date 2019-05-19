@@ -235,21 +235,28 @@ public class ConfigurationMetadataGenerator {
                         .map(RequiresModule.class::cast)
                         .get();
                     val valueHint = new ValueHint();
-                    valueHint.setValue(Stream.of(RequiresModule.class.getName(), annotation.automated()).collect(Collectors.toList()));
+                    valueHint.setValue(Stream.of(RequiresModule.class.getName(), annotation.automated())
+                        .collect(Collectors.toList()));
                     valueHint.setDescription(annotation.name());
                     hint.getValues().add(valueHint);
                 }
 
-                val foundRequiredProperty = StreamSupport.stream(RelaxedPropertyNames.forCamelCase(propName).spliterator(), false)
+                StreamSupport.stream(RelaxedPropertyNames.forCamelCase(propName)
+                    .spliterator(), false)
                     .map(n -> ReflectionUtils.findField(clazz, n))
-                    .anyMatch(f -> f != null && f.isAnnotationPresent(RequiredProperty.class));
-
-                if (foundRequiredProperty) {
-                    val valueHint = new ValueHint();
-                    valueHint.setValue(RequiredProperty.class.getName());
-                    hint.getValues().add(valueHint);
-                }
-
+                    .filter(f -> f != null && f.isAnnotationPresent(RequiredProperty.class))
+                    .forEach(field -> {
+                        val annotation = Arrays.stream(clazz.getAnnotations())
+                            .filter(a -> a.annotationType().equals(RequiredProperty.class))
+                            .findFirst()
+                            .map(RequiredProperty.class::cast)
+                            .get();
+                        val valueHint = new ValueHint();
+                        valueHint.setValue(RequiredProperty.class.getName());
+                        valueHint.setDescription(annotation.message());
+                        hint.getValues().add(valueHint);
+                    });
+                
                 if (!hint.getValues().isEmpty()) {
                     hints.add(hint);
                 }
