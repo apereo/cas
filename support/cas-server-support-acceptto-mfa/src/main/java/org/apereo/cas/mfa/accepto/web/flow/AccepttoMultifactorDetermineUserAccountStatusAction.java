@@ -81,8 +81,7 @@ public class AccepttoMultifactorDetermineUserAccountStatusAction extends Abstrac
                     }
 
                     if (!StringUtils.equalsIgnoreCase("finished", registrationState)) {
-                        LOGGER.error("User account [{}] has not finished the registration process yet", email);
-                        return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_DENY);
+                        LOGGER.warn("User account [{}] has not finished the registration process yet", email);
                     }
                 } else {
                     if (status == HttpStatus.SC_FORBIDDEN) {

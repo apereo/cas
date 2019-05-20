@@ -21,7 +21,18 @@ Support is enabled by including the following module in the overlay:
 </dependency>
 ```
 
-The integration adds support for both multifactor authentication and QR login codes.
+The integration adds support for both multifactor authentication and QR passwordless authentication.
+
+## Integration with DBFP
+
+To enable the integration with DBFP, the following script will need to be added to CAS:
+
+```html
+<script type="text/javascript" src="https://dbfp.acceptto.com/bfp.js"></script>
+```
+
+This script will set a cookie named `jwt` that is passed to the Acceptto API. This parameter contains a value that the server uses to assess the risk of authentication request 
+including browser fingerprint, IP address of user and GPS location of the user’s browser. The server compares this data with the history of user behavior data to detect anomalies.
 
 ## Configuration
 
