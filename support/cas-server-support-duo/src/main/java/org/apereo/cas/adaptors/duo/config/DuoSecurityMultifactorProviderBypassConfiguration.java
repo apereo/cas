@@ -41,6 +41,7 @@ public class DuoSecurityMultifactorProviderBypassConfiguration {
     public ChainingMultifactorAuthenticationProviderBypass duoSecurityBypassEvaluator() {
         val bypass = new DefaultChainingMultifactorAuthenticationBypassProvider();
         bypass.addMultifactorAuthenticationProviderBypass(duoSecurityRegisteredServiceMultifactorAuthenticationProviderBypass());
+        bypass.addMultifactorAuthenticationProviderBypass(duoSecurityPrincipalMultifactorAuthenticationProviderBypass());
         bypass.addMultifactorAuthenticationProviderBypass(duoSecurityAuthenticationMultifactorAuthenticationProviderBypass());
         bypass.addMultifactorAuthenticationProviderBypass(duoSecurityCredentialMultifactorAuthenticationProviderBypass());
         bypass.addMultifactorAuthenticationProviderBypass(duoSecurityHttpRequestMultifactorAuthenticationProviderBypass());
