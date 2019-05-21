@@ -23,7 +23,7 @@ import javax.persistence.Table;
 @Getter
 @Setter
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(of = {"name", "email"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DefaultRegisteredServiceContact implements RegisteredServiceContact {
 

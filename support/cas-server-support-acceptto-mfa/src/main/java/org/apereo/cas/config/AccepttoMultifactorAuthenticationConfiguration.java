@@ -1,12 +1,22 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
+import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.integration.pac4j.DistributedJ2ESessionStore;
 import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorDetermineUserAccountStatusAction;
 import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorFetchChannelAction;
 import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorValidateChannelAction;
 import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorWebflowConfigurer;
+import org.apereo.cas.mfa.accepto.web.flow.qr.AccepttoQRCodeAuthenticationHandler;
+import org.apereo.cas.mfa.accepto.web.flow.qr.AccepttoQRCodeCredential;
+import org.apereo.cas.mfa.accepto.web.flow.qr.AccepttoQRCodeValidateWebSocketChannelAction;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -15,13 +25,16 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.session.SessionStore;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,6 +55,10 @@ import org.springframework.webflow.execution.Action;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 public class AccepttoMultifactorAuthenticationConfiguration {
+    @Autowired
+    @Qualifier("servicesManager")
+    private ObjectProvider<ServicesManager> servicesManager;
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -66,6 +83,10 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     @Autowired
     @Qualifier("ticketRegistry")
     private ObjectProvider<TicketRegistry> ticketRegistry;
+
+    @Autowired
+    @Qualifier("defaultPrincipalResolver")
+    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
 
     @Bean
     public FlowDefinitionRegistry mfaAccepttoAuthenticatorFlowRegistry() {
@@ -114,11 +135,48 @@ public class AccepttoMultifactorAuthenticationConfiguration {
             authenticationSystemSupport.getIfAvailable());
     }
 
+    @Bean
+    @ConditionalOnMissingBean(name = "mfaAccepttoQRCodeValidateWebSocketChannelAction")
+    public Action mfaAccepttoQRCodeValidateWebSocketChannelAction() {
+        return new AccepttoQRCodeValidateWebSocketChannelAction(casProperties, mfaAccepttoDistributedSessionStore());
+    }
 
     @ConditionalOnMissingBean(name = "mfaAccepttoMultifactorDetermineUserAccountStatusAction")
     @Bean
     public Action mfaAccepttoMultifactorDetermineUserAccountStatusAction() {
         return new AccepttoMultifactorDetermineUserAccountStatusAction(casProperties);
+    }
+
+
+    @ConditionalOnMissingBean(name = "casAccepttoQRCodePrincipalFactory")
+    @Bean
+    public PrincipalFactory casAccepttoQRCodePrincipalFactory() {
+        return PrincipalFactoryUtils.newPrincipalFactory();
+    }
+
+    @ConditionalOnMissingBean(name = "casAccepttoQRCodeAuthenticationHandler")
+    @Bean
+    @RefreshScope
+    public AuthenticationHandler casAccepttoQRCodeAuthenticationHandler() {
+        val props = casProperties.getAuthn().getMfa().getAcceptto();
+        if (StringUtils.isBlank(props.getApiUrl()) || StringUtils.isBlank(props.getApplicationId())
+            || StringUtils.isBlank(props.getSecret())) {
+            throw new BeanCreationException("No API url, application id or secret "
+                + "is defined for the Acceptto integration. Examine your CAS configuration and adjust.");
+        }
+        return new AccepttoQRCodeAuthenticationHandler(
+            servicesManager.getIfAvailable(),
+            casAccepttoQRCodePrincipalFactory());
+    }
+
+    @ConditionalOnMissingBean(name = "casAccepttoAuthenticationQRCodeEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer casAccepttoAuthenticationQRCodeEventExecutionPlanConfigurer() {
+        return plan -> {
+            plan.registerAuthenticationHandlerWithPrincipalResolver(casAccepttoQRCodeAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
+            plan.registerAuthenticationHandlerResolver(
+                new ByCredentialTypeAuthenticationHandlerResolver(AccepttoQRCodeCredential.class));
+        };
     }
 
 }
