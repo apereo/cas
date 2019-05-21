@@ -9,17 +9,13 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import lombok.Getter;
-import lombok.SneakyThrows;
 import org.apereo.inspektr.audit.AuditTrailManager;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import redis.embedded.RedisServer;
 
 /**
  * This is {@link RedisAuditTrailManagerTests}.
@@ -34,26 +30,12 @@ import redis.embedded.RedisServer;
     CasWebApplicationServiceFactoryConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreWebConfiguration.class})
-@TestPropertySource(properties = {"cas.audit.redis.host=localhost", "cas.audit.redis.port=6388"})
+@TestPropertySource(properties = {"cas.audit.redis.host=localhost", "cas.audit.redis.port=6379"})
 @Tag("Redis")
 @Getter
 @EnabledIfContinuousIntegration
 public class RedisAuditTrailManagerTests extends BaseAuditConfigurationTests {
-    private static RedisServer REDIS_SERVER;
-
     @Autowired
     @Qualifier("redisAuditTrailManager")
     private AuditTrailManager auditTrailManager;
-
-    @BeforeAll
-    @SneakyThrows
-    public static void startRedis() {
-        REDIS_SERVER = new RedisServer(6388);
-        REDIS_SERVER.start();
-    }
-
-    @AfterAll
-    public static void stopRedis() {
-        REDIS_SERVER.stop();
-    }
 }
