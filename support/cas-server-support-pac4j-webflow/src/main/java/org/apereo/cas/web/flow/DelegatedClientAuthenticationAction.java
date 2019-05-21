@@ -154,6 +154,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
 
         if (singleSignOnSessionExists(context)) {
             LOGGER.debug("An existing single sign-on session already exists. Skipping delegation and routing back to CAS authentication flow");
+            prepareForLoginPage(context);
             return resumeWebflow();
         }
 
