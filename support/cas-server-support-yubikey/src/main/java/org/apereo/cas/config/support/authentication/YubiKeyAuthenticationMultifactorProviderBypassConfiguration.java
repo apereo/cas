@@ -41,9 +41,9 @@ public class YubiKeyAuthenticationMultifactorProviderBypassConfiguration {
         val props = casProperties.getAuthn().getMfa().getYubikey().getBypass();
 
         if (StringUtils.isNotBlank(props.getPrincipalAttributeName())) {
-            bypass.addMultifactorAuthenticationProviderBypass(yubikeyRegisteredServiceMultifactorAuthenticationProviderBypass());
+            bypass.addMultifactorAuthenticationProviderBypass(yubikeyPrincipalMultifactorAuthenticationProviderBypass());
         }
-
+        bypass.addMultifactorAuthenticationProviderBypass(yubikeyRegisteredServiceMultifactorAuthenticationProviderBypass());
         if (StringUtils.isNotBlank(props.getAuthenticationAttributeName())
             || StringUtils.isNotBlank(props.getAuthenticationHandlerName())
             || StringUtils.isNotBlank(props.getAuthenticationMethodName())) {

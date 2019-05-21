@@ -41,9 +41,9 @@ public class SwivelAuthenticationMultifactorProviderBypassConfiguration {
         val props = casProperties.getAuthn().getMfa().getSwivel().getBypass();
 
         if (StringUtils.isNotBlank(props.getPrincipalAttributeName())) {
-            bypass.addMultifactorAuthenticationProviderBypass(swivelRegisteredServiceMultifactorAuthenticationProviderBypass());
+            bypass.addMultifactorAuthenticationProviderBypass(swivelPrincipalMultifactorAuthenticationProviderBypass());
         }
-
+        bypass.addMultifactorAuthenticationProviderBypass(swivelRegisteredServiceMultifactorAuthenticationProviderBypass());
         if (StringUtils.isNotBlank(props.getAuthenticationAttributeName())
             || StringUtils.isNotBlank(props.getAuthenticationHandlerName())
             || StringUtils.isNotBlank(props.getAuthenticationMethodName())) {

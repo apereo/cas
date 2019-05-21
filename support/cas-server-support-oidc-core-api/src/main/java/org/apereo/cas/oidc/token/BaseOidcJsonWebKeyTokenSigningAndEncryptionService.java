@@ -51,8 +51,8 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
         val jws = createJsonWebSignature(claims);
         LOGGER.debug("Generated claims to put into token are [{}]", claims.toJson());
 
-        var innerJwt = shouldSignTokenFor(svc) ? signToken(svc, jws) : jws.getCompactSerialization();
-        if (shouldEncryptTokenFor(svc)) {
+        var innerJwt = shouldSignToken(svc) ? signToken(svc, jws) : jws.getCompactSerialization();
+        if (shouldEncryptToken(svc)) {
             innerJwt = encryptToken(svc, jws, innerJwt);
         }
 
@@ -68,26 +68,6 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
      * @return the string
      */
     protected abstract String encryptToken(OidcRegisteredService svc, JsonWebSignature jws, String innerJwt);
-
-    /**
-     * Should sign token for service?
-     *
-     * @param svc the svc
-     * @return the boolean
-     */
-    protected boolean shouldSignTokenFor(final OidcRegisteredService svc) {
-        return false;
-    }
-
-    /**
-     * Should encrypt token for service?
-     *
-     * @param svc the svc
-     * @return the boolean
-     */
-    protected boolean shouldEncryptTokenFor(final OidcRegisteredService svc) {
-        return false;
-    }
 
     @Override
     protected PublicJsonWebKey getJsonWebKeySigningKey() {

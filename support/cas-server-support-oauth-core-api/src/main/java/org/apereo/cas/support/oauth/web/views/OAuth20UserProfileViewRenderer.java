@@ -3,6 +3,9 @@ package org.apereo.cas.support.oauth.web.views;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 
+import org.springframework.http.ResponseEntity;
+
+import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 /**
@@ -34,7 +37,8 @@ public interface OAuth20UserProfileViewRenderer {
      *
      * @param model       the model
      * @param accessToken the access token
+     * @param response    the response
      * @return the string
      */
-    String render(Map<String, Object> model, AccessToken accessToken);
+    ResponseEntity render(Map<String, Object> model, AccessToken accessToken, HttpServletResponse response);
 }
