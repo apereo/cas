@@ -154,7 +154,7 @@ public class DelegatedClientAuthenticationActionTests {
         assertEquals(Locale.getDefault().getCountry(), mockRequest.getAttribute(LocaleChangeInterceptor.DEFAULT_PARAM_NAME));
         assertEquals(HttpMethod.POST.name(), mockRequest.getAttribute(CasProtocolConstants.PARAMETER_METHOD));
         val flowScope = mockRequestContext.getFlowScope();
-        val urls = (Set<DelegatedClientAuthenticationAction.ProviderLoginPageConfiguration>)
+        val urls = (Set<DelegatedClientAuthenticationAction.DelegatedClientIdentityProviderConfiguration>)
             flowScope.get(DelegatedClientAuthenticationAction.FLOW_ATTRIBUTE_PROVIDER_URLS);
 
         assertFalse(urls.isEmpty());
