@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.RsaJsonWebKey;
+import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 
 import java.util.Optional;
@@ -53,12 +54,21 @@ public class OidcUserProfileSigningAndEncryptionService extends BaseOidcJsonWebK
     }
 
     @Override
-    protected boolean shouldSignTokenFor(final OidcRegisteredService svc) {
-        return StringUtils.isNotBlank(svc.getUserInfoSigningAlg());
+    public boolean shouldSignToken(final OAuthRegisteredService svc) {
+        if (svc instanceof OidcRegisteredService) {
+            val service = (OidcRegisteredService) svc;
+            return StringUtils.isNotBlank(service.getUserInfoSigningAlg())
+                && !AlgorithmIdentifiers.NONE.equalsIgnoreCase(service.getIdTokenSigningAlg());
+        }
+        return false;
     }
 
     @Override
-    protected boolean shouldEncryptTokenFor(final OidcRegisteredService svc) {
-        return StringUtils.isNotBlank(svc.getUserInfoEncryptedResponseAlg());
+    public boolean shouldEncryptToken(final OAuthRegisteredService svc) {
+        if (svc instanceof OidcRegisteredService) {
+            val service = (OidcRegisteredService) svc;
+            return StringUtils.isNotBlank(service.getUserInfoEncryptedResponseAlg());
+        }
+        return false;
     }
 }

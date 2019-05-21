@@ -133,6 +133,10 @@ public interface OidcConstants {
      * This should not be added to StandardScopes enumeration because it isn't standard.
      */
     String CUSTOM_SCOPE_TYPE = "custom";
+    /**
+     * JWT content type.
+     */
+    String CONTENT_TYPE_JWT = "application/jwt";
 
     /**
      * Dynamic client registration mode.

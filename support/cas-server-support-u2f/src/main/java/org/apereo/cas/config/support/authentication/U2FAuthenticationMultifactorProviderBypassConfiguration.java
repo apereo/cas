@@ -41,9 +41,9 @@ public class U2FAuthenticationMultifactorProviderBypassConfiguration {
         val props = casProperties.getAuthn().getMfa().getU2f().getBypass();
 
         if (StringUtils.isNotBlank(props.getPrincipalAttributeName())) {
-            bypass.addMultifactorAuthenticationProviderBypass(u2fRegisteredServiceMultifactorAuthenticationProviderBypass());
+            bypass.addMultifactorAuthenticationProviderBypass(u2fPrincipalMultifactorAuthenticationProviderBypass());
         }
-
+        bypass.addMultifactorAuthenticationProviderBypass(u2fRegisteredServiceMultifactorAuthenticationProviderBypass());
         if (StringUtils.isNotBlank(props.getAuthenticationAttributeName())
             || StringUtils.isNotBlank(props.getAuthenticationHandlerName())
             || StringUtils.isNotBlank(props.getAuthenticationMethodName())) {

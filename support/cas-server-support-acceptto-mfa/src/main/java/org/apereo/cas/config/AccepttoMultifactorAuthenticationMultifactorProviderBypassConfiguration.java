@@ -41,9 +41,9 @@ public class AccepttoMultifactorAuthenticationMultifactorProviderBypassConfigura
         val props = casProperties.getAuthn().getMfa().getAcceptto().getBypass();
 
         if (StringUtils.isNotBlank(props.getPrincipalAttributeName())) {
-            bypass.addMultifactorAuthenticationProviderBypass(casAccepttoMultifactorRegisteredServiceMultifactorAuthenticationProviderBypass());
+            bypass.addMultifactorAuthenticationProviderBypass(casAccepttoMultifactorPrincipalMultifactorAuthenticationProviderBypass());
         }
-
+        bypass.addMultifactorAuthenticationProviderBypass(casAccepttoMultifactorRegisteredServiceMultifactorAuthenticationProviderBypass());
         if (StringUtils.isNotBlank(props.getAuthenticationAttributeName())
             || StringUtils.isNotBlank(props.getAuthenticationHandlerName())
             || StringUtils.isNotBlank(props.getAuthenticationMethodName())) {

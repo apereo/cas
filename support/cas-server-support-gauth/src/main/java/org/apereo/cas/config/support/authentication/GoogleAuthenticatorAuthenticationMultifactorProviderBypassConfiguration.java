@@ -41,8 +41,10 @@ public class GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfigura
         val props = casProperties.getAuthn().getMfa().getGauth().getBypass();
 
         if (StringUtils.isNotBlank(props.getPrincipalAttributeName())) {
-            bypass.addMultifactorAuthenticationProviderBypass(googleAuthenticatorRegisteredServiceMultifactorAuthenticationProviderBypass());
+            bypass.addMultifactorAuthenticationProviderBypass(googleAuthenticatorPrincipalMultifactorAuthenticationProviderBypass());
         }
+
+        bypass.addMultifactorAuthenticationProviderBypass(googleAuthenticatorRegisteredServiceMultifactorAuthenticationProviderBypass());
 
         if (StringUtils.isNotBlank(props.getAuthenticationAttributeName())
             || StringUtils.isNotBlank(props.getAuthenticationHandlerName())
