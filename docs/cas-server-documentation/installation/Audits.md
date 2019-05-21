@@ -119,6 +119,20 @@ If you intend to use a Couchbase database for auditing functionality, enable the
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#couchbase-audits).
 
+## DynamoDb Audits
+
+If you intend to use a DynamoDb database for auditing functionality, enable the following module in your configuration:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-audit-dynamodb</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#dymamodb-audits).
+
 ## REST Audits
 
 Audit events may also be `POST`ed to an endpoint of your choosing. To activate this feature, enable the following module in your configuration:
