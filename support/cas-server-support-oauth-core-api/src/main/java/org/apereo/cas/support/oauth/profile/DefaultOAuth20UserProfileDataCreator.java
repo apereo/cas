@@ -8,6 +8,7 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -25,6 +26,7 @@ import java.util.Map;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Getter
 public class DefaultOAuth20UserProfileDataCreator implements OAuth20UserProfileDataCreator {
 
     /**
@@ -36,7 +38,6 @@ public class DefaultOAuth20UserProfileDataCreator implements OAuth20UserProfileD
      * The oauth2 scope to attributes filter.
      */
     private final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter;
-
 
     @Override
     @Audit(action = "OAUTH2_USER_PROFILE",

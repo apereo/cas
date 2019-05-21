@@ -35,16 +35,6 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 public class AccepttoMultifactorFetchChannelAction extends AbstractAction {
-    /**
-     * Session attribute to hold the authentication channel.
-     */
-    public static final String SESSION_ATTRIBUTE_CHANNEL = "acceptoMfaChannel";
-
-    /**
-     * Session attribute to hold original authn.
-     */
-    public static final String SESSION_ATTRIBUTE_ORIGINAL_AUTHENTICATION = "acceptoMfaOriginalAuthN";
-
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     private final CasConfigurationProperties casProperties;
@@ -52,29 +42,39 @@ public class AccepttoMultifactorFetchChannelAction extends AbstractAction {
 
     @Override
     public Event doExecute(final RequestContext requestContext) throws Exception {
-        val acceptto = casProperties.getAuthn().getMfa().getAcceptto();
-
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         val webContext = new J2EContext(request, response, this.sessionStore);
 
         val channel = authenticateAndFetchChannel(request);
         LOGGER.debug("Storing channel [{}] in http session", channel);
-        webContext.getSessionStore().set(webContext, SESSION_ATTRIBUTE_CHANNEL, channel);
+        webContext.getSessionStore().set(webContext, AccepttoWebflowUtils.SESSION_ATTRIBUTE_CHANNEL, channel);
 
         val authentication = WebUtils.getInProgressAuthentication();
-        webContext.getSessionStore().set(webContext, SESSION_ATTRIBUTE_ORIGINAL_AUTHENTICATION, authentication);
+        webContext.getSessionStore().set(webContext, AccepttoWebflowUtils.SESSION_ATTRIBUTE_ORIGINAL_AUTHENTICATION, authentication);
 
+        val accepttoRedirectUrl = buildAccepttoAuthenticationSelectionUrl(request, channel);
+        LOGGER.debug("Redirecting to [{}]", accepttoRedirectUrl);
+        requestContext.getRequestScope().put("accepttoRedirectUrl", accepttoRedirectUrl);
+        return new EventFactorySupport().success(this);
+    }
+
+    /**
+     * Build acceptto authentication selection url string.
+     *
+     * @param request the request
+     * @param channel the channel
+     * @return the string
+     * @throws Exception the exception
+     */
+    protected String buildAccepttoAuthenticationSelectionUrl(final HttpServletRequest request, final String channel) throws Exception {
+        val acceptto = casProperties.getAuthn().getMfa().getAcceptto();
         val callbackUrl = WebUtils.getHttpRequestFullUrl(request);
-        val accepttoRedirectUrl = new URIBuilder(acceptto.getAuthnSelectionUrl() + "/mfa/index")
+        return new URIBuilder(acceptto.getAuthnSelectionUrl() + "/mfa/index")
             .addParameter("channel", channel)
             .addParameter("callback_url", callbackUrl)
             .build()
             .toString();
-
-        LOGGER.debug("Redirecting to [{}]", accepttoRedirectUrl);
-        requestContext.getRequestScope().put("accepttoRedirectUrl", accepttoRedirectUrl);
-        return new EventFactorySupport().success(this);
     }
 
     /**

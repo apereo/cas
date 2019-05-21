@@ -96,9 +96,11 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
     }
 
     @Override
-    public Principal filter(final Service service, final Principal profile,
+    public Principal filter(final Service service,
+                            final Principal profile,
                             final RegisteredService registeredService,
-                            final J2EContext context, final AccessToken accessToken) {
+                            final J2EContext context,
+                            final AccessToken accessToken) {
         val principal = super.filter(service, profile, registeredService, context, accessToken);
 
         if (registeredService instanceof OidcRegisteredService) {

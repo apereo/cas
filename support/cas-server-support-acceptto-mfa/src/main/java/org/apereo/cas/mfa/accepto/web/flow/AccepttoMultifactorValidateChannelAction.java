@@ -38,14 +38,13 @@ public class AccepttoMultifactorValidateChannelAction extends AbstractAction {
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
             val webContext = new J2EContext(request, response, this.sessionStore);
 
-            val channel = sessionStore.get(webContext,
-                AccepttoMultifactorFetchChannelAction.SESSION_ATTRIBUTE_CHANNEL);
+            val channel = sessionStore.get(webContext, AccepttoWebflowUtils.SESSION_ATTRIBUTE_CHANNEL);
             if (channel == null) {
                 LOGGER.debug("Unable to determine channel from session store; not a validation attempt");
                 return null;
             }
             val authentication = (Authentication) sessionStore.get(webContext,
-                AccepttoMultifactorFetchChannelAction.SESSION_ATTRIBUTE_ORIGINAL_AUTHENTICATION);
+                AccepttoWebflowUtils.SESSION_ATTRIBUTE_ORIGINAL_AUTHENTICATION);
             if (authentication == null) {
                 LOGGER.debug("Unable to determine the original authentication attempt the session store");
                 throw new AuthenticationException("Unable to determine authentication from session store");
@@ -74,8 +73,8 @@ public class AccepttoMultifactorValidateChannelAction extends AbstractAction {
 
     private void resetAccepttoSessionStore(final J2EContext webContext) {
         sessionStore.set(webContext,
-            AccepttoMultifactorFetchChannelAction.SESSION_ATTRIBUTE_CHANNEL, null);
+            AccepttoWebflowUtils.SESSION_ATTRIBUTE_CHANNEL, null);
         sessionStore.set(webContext,
-            AccepttoMultifactorFetchChannelAction.SESSION_ATTRIBUTE_ORIGINAL_AUTHENTICATION, null);
+            AccepttoWebflowUtils.SESSION_ATTRIBUTE_ORIGINAL_AUTHENTICATION, null);
     }
 }

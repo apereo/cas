@@ -66,7 +66,10 @@ public class OidcServerDiscoverySettings {
     private List<String> tokenEndpointAuthMethodsSupported;
 
     @JsonProperty("claims_parameter_supported")
-    private boolean claimsParameterSupported;
+    private boolean claimsParameterSupported = true;
+
+    @JsonProperty("request_parameter_supported")
+    private boolean requestParameterSupported;
 
     public OidcServerDiscoverySettings(final CasConfigurationProperties casProperties, final String issuer) {
         this.issuer = issuer;

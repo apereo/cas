@@ -73,6 +73,13 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
                 .getClientRegistrationRequestSerializer().from(jsonInput);
             LOGGER.debug("Received client registration request [{}]", registrationRequest);
 
+            val containsFragment = registrationRequest.getRedirectUris()
+                .stream()
+                .anyMatch(uri -> uri.contains("#"));
+            if (containsFragment) {
+                throw new IllegalArgumentException("Redirect URI cannot contain a fragment");
+            }
+
             val servicesManager = getOAuthConfigurationContext().getServicesManager();
             val registeredService = registrationRequest.getRedirectUris()
                 .stream()
@@ -171,7 +178,12 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
 
             registrationRequest.getContacts().forEach(c -> {
                 val contact = new DefaultRegisteredServiceContact();
-                contact.setName(c);
+                if (c.contains("@")) {
+                    contact.setEmail(c);
+                    contact.setName(c.substring(0, c.indexOf('@')));
+                } else {
+                    contact.setName(c);
+                }
                 registeredService.getContacts().add(contact);
             });
 

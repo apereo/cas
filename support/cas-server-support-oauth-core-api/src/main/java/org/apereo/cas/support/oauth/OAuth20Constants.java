@@ -59,6 +59,11 @@ public interface OAuth20Constants {
     String CLAIMS = "claims";
 
     /**
+     * The request passed as a jwt.
+     */
+    String REQUEST = "request";
+
+    /**
      * The grant type.
      */
     String GRANT_TYPE = "grant_type";

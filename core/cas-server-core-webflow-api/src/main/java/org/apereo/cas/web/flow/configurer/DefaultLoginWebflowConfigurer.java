@@ -179,7 +179,7 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
      * @param flow the flow
      */
     protected void createRealSubmitAction(final Flow flow) {
-        val state = createActionState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, "authenticationViaFormAction");
+        val state = createActionState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, CasWebflowConstants.ACTION_ID_AUTHENTICATION_VIA_FORM_ACTION);
         createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_WARN, CasWebflowConstants.STATE_ID_WARN);
         createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET);
         createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS, CasWebflowConstants.STATE_ID_SHOW_AUTHN_WARNING_MSGS);

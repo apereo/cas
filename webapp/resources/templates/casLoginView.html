@@ -24,6 +24,16 @@
                     <a href="fragments/loginProviders.html">loginProviders</a>
                 </div>
             </div>
+
+            <div id="acceptto" class="col" th:if="${accepttoApplicationId}">
+                <div th:replace="fragments/accepttoQRCode :: accepttoQRCode">
+                    <a href="fragments/accepttoQRCode.html">accepttoQRCode</a>
+                </div>
+                <script>
+                    $('#loginForm').addClass("col");
+                </script>
+            </div>
+
             <script>
                 if ($('#list-providers').length) {
                     $('#providers').addClass("col");
