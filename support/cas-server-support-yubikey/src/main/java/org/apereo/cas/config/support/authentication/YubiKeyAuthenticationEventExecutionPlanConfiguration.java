@@ -16,6 +16,7 @@ import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAccountSaveRegistrationAc
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.MultifactorAuthenticationFailureMode;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
@@ -68,6 +69,10 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @Autowired
     @Qualifier("noRedirectHttpClient")
     private ObjectProvider<HttpClient> httpClient;
+
+    @Autowired
+    @Qualifier("failureModeEvaluator")
+    private ObjectProvider<MultifactorAuthenticationFailureMode> failureModeEvaluator;
 
     @Bean
     @RefreshScope
@@ -188,6 +193,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
         val yubi = casProperties.getAuthn().getMfa().getYubikey();
         val p = new YubiKeyMultifactorAuthenticationProvider(yubicoClient(), httpClient.getIfAvailable());
         p.setBypassEvaluator(yubikeyBypassEvaluator());
+        p.setFailureModeEvaluator(failureModeEvaluator.getIfAvailable());
         p.setFailureMode(yubi.getFailureMode());
         p.setOrder(yubi.getRank());
         p.setId(yubi.getId());

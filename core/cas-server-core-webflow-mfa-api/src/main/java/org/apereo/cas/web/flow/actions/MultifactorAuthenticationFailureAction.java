@@ -28,22 +28,7 @@ public class MultifactorAuthenticationFailureAction extends AbstractMultifactorA
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val service = WebUtils.getRegisteredService(requestContext);
-
-        var failureMode = FailureModes.valueOf(casProperties.getAuthn().getMfa().getGlobalFailureMode());
-        LOGGER.debug("Setting failure mode to [{}] based on Global Policy", failureMode);
-
-        if (provider.failureMode() != FailureModes.UNDEFINED) {
-            LOGGER.debug("Provider failure mode [{}] overriding Global mode [{}]", provider.failureMode(), failureMode);
-            failureMode = provider.failureMode();
-        }
-
-        if (service != null) {
-            val policy = service.getMultifactorPolicy();
-            if (policy != null && policy.getFailureMode() != FailureModes.UNDEFINED) {
-                LOGGER.debug("Service failure mode [{}] overriding current failure mode [{}]", policy.getFailureMode(), failureMode);
-                failureMode = policy.getFailureMode();
-            }
-        }
+        val failureMode = provider.getFailureModeEvaluator().determineFailureMode(service, provider);
 
         LOGGER.debug("Final failure mode has been determined to be [{}]", failureMode);
 

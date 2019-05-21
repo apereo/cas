@@ -1,6 +1,8 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.RequestedContextValidator;
 
@@ -37,6 +39,26 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
             return Pair.of(Boolean.TRUE, Optional.empty());
         }
 
-        return authenticationContextValidator.validate(authentication, requestedContext.get(), registeredService);
+        val providerId = requestedContext.get();
+        val providerOpt = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(providerId, ApplicationContextProvider.getApplicationContext());
+
+        if (providerOpt.isPresent()) {
+            val provider = providerOpt.get();
+            if (provider.isAvailable(registeredService)) {
+                val bypassEvaluator = provider.getBypassEvaluator();
+                if (!bypassEvaluator.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, request)) {
+                    LOGGER.debug("MFA provider [{}] was determined that it should be bypassed for this service request [{}]", providerId, assertion.getService());
+                    bypassEvaluator.updateAuthenticationToRememberBypass(authentication, provider);
+                    return Pair.of(Boolean.TRUE, Optional.empty());
+                }
+            } else {
+                val failure = provider.getFailureModeEvaluator().determineFailureMode(registeredService, provider);
+                if (failure != RegisteredServiceMultifactorPolicy.FailureModes.CLOSED) {
+                    return Pair.of(Boolean.TRUE, Optional.empty());
+                }
+            }
+        }
+
+        return authenticationContextValidator.validate(authentication, providerId, registeredService);
     }
 }

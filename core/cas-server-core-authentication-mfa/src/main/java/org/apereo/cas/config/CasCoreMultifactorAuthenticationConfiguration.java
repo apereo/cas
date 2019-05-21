@@ -1,8 +1,10 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.DefaultMultifactorAuthenticationContextValidator;
+import org.apereo.cas.authentication.DefaultMultifactorAuthenticationFailureMode;
 import org.apereo.cas.authentication.DefaultRequestedAuthenticationContextValidator;
 import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
+import org.apereo.cas.authentication.MultifactorAuthenticationFailureMode;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -63,5 +65,12 @@ public class CasCoreMultifactorAuthenticationConfiguration {
         return new DefaultRequestedAuthenticationContextValidator(servicesManager.getIfAvailable(),
             multifactorTriggerSelectionStrategy.getIfAvailable(),
             authenticationContextValidator());
+    }
+
+    @RefreshScope
+    @Bean
+    @ConditionalOnMissingBean(name = "failureModeEvaluator")
+    public MultifactorAuthenticationFailureMode failureModeEvaluator() {
+        return new DefaultMultifactorAuthenticationFailureMode(casProperties);
     }
 }
