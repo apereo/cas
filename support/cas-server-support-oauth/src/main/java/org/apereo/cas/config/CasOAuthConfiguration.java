@@ -498,7 +498,8 @@ public class CasOAuthConfiguration {
     @ConditionalOnMissingBean(name = "oAuth2UserProfileDataCreator")
     @Bean
     public OAuth20UserProfileDataCreator oAuth2UserProfileDataCreator() {
-        return new DefaultOAuth20UserProfileDataCreator(servicesManager.getIfAvailable(), profileScopeToAttributesFilter());
+        return new DefaultOAuth20UserProfileDataCreator(servicesManager.getIfAvailable(),
+            profileScopeToAttributesFilter());
     }
 
     @ConditionalOnMissingBean(name = "profileController")
