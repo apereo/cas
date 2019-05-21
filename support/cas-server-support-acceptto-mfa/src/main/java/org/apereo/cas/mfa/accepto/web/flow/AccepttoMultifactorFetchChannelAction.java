@@ -106,7 +106,7 @@ public class AccepttoMultifactorFetchChannelAction extends AbstractAction {
             "timeout", acceptto.getTimeout());
 
         CookieUtils.getCookieFromRequest("jwt", request)
-            .ifPresent(cookie -> parameters.put("jwt", cookie));
+            .ifPresent(cookie -> parameters.put("jwt", cookie.getValue()));
 
         HttpResponse response = null;
         try {

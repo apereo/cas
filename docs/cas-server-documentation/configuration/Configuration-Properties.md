@@ -3613,6 +3613,20 @@ under the configuration key `cas.audit.couchbase`.
 # cas.audit.couchbase.asynchronous=true
 ```
 
+### DynamoDb Audits
+
+Store audit logs inside a DynamoDb database.
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration)
+under the configuration key `cas.audit`.
+
+AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
+under the configuration key `cas.audit.dynamoDb`.
+
+```properties
+# cas.audit.dynamoDb.asynchronous=true
+```
+
 ### Database Audits
 
 Store audit logs inside a database. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings)

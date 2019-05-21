@@ -20,7 +20,7 @@ public class AuditRestProperties extends RestEndpointProperties {
     private static final long serialVersionUID = 3893437775090452831L;
 
     /**
-     * Make storage requests asymchronously.
+     * Make storage requests asynchronously.
      */
     private boolean asynchronous = true;
 }
