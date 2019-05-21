@@ -164,6 +164,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             LOGGER.trace("Found existing single sign-on session");
             if (singleSignOnSessionAuthorizedForService(context)) {
                 prepareRequestContextForSingleSignOn(context, webContext);
+                prepareDelegatedClients(context);
                 LOGGER.trace("Skipping delegation and routing back to CAS authentication flow");
                 return resumeWebflow();
             }
@@ -201,7 +202,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             return super.doExecute(context);
         }
 
-        prepareForLoginPage(context);
+        prepareDelegatedClients(context);
 
         if (response.getStatus() == HttpStatus.UNAUTHORIZED.value()) {
             return stopWebflow();
@@ -276,7 +277,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
      *
      * @param context The current webflow context
      */
-    protected void prepareForLoginPage(final RequestContext context) {
+    protected void prepareDelegatedClients(final RequestContext context) {
         val currentService = WebUtils.getService(context);
         val service = authenticationRequestServiceSelectionStrategies.resolveService(currentService, WebApplicationService.class);
 
@@ -284,7 +285,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         val webContext = new J2EContext(request, response, this.sessionStore);
 
-        val urls = new LinkedHashSet<ProviderLoginPageConfiguration>();
+        val urls = new LinkedHashSet<DelegatedClientIdentityProviderConfiguration>();
         this.clients
             .findAllClients()
             .stream()
@@ -320,8 +321,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
      * @param service    the service
      * @return the optional
      */
-    protected Optional<ProviderLoginPageConfiguration> buildProviderConfiguration(final IndirectClient client, final WebContext webContext,
-                                                                                  final WebApplicationService service) {
+    protected Optional<DelegatedClientIdentityProviderConfiguration> buildProviderConfiguration(final IndirectClient client, final WebContext webContext,
+                                                                                                final WebApplicationService service) {
         val name = client.getName();
         val matcher = PAC4J_CLIENT_SUFFIX_PATTERN.matcher(client.getClass().getSimpleName());
         val type = matcher.replaceAll(StringUtils.EMPTY).toLowerCase();
@@ -351,7 +352,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         }
         val redirectUrl = uriBuilder.toUriString();
         val autoRedirect = (Boolean) client.getCustomProperties().getOrDefault(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT, Boolean.FALSE);
-        val p = new ProviderLoginPageConfiguration(name, redirectUrl, type, getCssClass(name), autoRedirect);
+        val p = new DelegatedClientIdentityProviderConfiguration(name, redirectUrl, type, getCssClass(name), autoRedirect);
         return Optional.of(p);
     }
 
@@ -525,8 +526,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     @RequiredArgsConstructor
     @Getter
     @ToString
-    public static class ProviderLoginPageConfiguration implements Serializable {
-
+    public static class DelegatedClientIdentityProviderConfiguration implements Serializable {
         private static final long serialVersionUID = 6216882278086699364L;
 
         private final String name;
