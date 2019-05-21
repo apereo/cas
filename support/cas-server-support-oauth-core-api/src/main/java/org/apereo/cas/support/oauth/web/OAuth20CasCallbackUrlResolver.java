@@ -49,6 +49,7 @@ public class OAuth20CasCallbackUrlResolver implements UrlResolver {
         addUrlParameter(context, builder, OAuth20Constants.GRANT_TYPE);
         addUrlParameter(context, builder, OAuth20Constants.RESPONSE_MODE);
         addUrlParameter(context, builder, OAuth20Constants.CLAIMS);
+        addUrlParameter(context, builder, OAuth20Constants.REQUEST);
 
         val callbackResolved = builder.build().toString();
 
