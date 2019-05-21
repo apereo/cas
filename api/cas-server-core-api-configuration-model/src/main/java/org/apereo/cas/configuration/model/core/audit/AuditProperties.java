@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.audit;
 
+import org.apereo.cas.configuration.model.support.dynamodb.AuditDynamoDbProperties;
 import org.apereo.cas.configuration.model.support.redis.AuditRedisProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -113,6 +114,11 @@ public class AuditProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private AuditCouchbaseProperties couchbase = new AuditCouchbaseProperties();
+    /**
+     * Family of sub-properties pertaining to dynamodb-based audit destinations.
+     */
+    @NestedConfigurationProperty
+    private AuditDynamoDbProperties dynamoDb = new AuditDynamoDbProperties();
 
     /**
      * Indicates whether catastrophic audit failures should simply be logged

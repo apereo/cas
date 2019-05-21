@@ -105,7 +105,7 @@ public class DynamoDbMultifactorTrustEngineFacilitator {
             val items = amazonDynamoDBClient.scan(scanRequest).getItems();
             items.forEach(item -> {
                 val record = new MultifactorAuthenticationTrustRecord();
-                record.setId(Long.valueOf(item.get(ColumnNames.ID.getColumnName()).getS()));
+                record.setId(Long.parseLong(item.get(ColumnNames.ID.getColumnName()).getS()));
                 record.setDeviceFingerprint(item.get(ColumnNames.DEVICE_FINGERPRINT.getColumnName()).getS());
                 record.setName(item.get(ColumnNames.NAME.getColumnName()).getS());
                 record.setPrincipal(item.get(ColumnNames.PRINCIPAL.getColumnName()).getS());
