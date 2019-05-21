@@ -72,8 +72,7 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
      * @return the response entity
      * @throws Exception the exception
      */
-    @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.PROFILE_URL,
-        produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.PROFILE_URL)
     public ResponseEntity<String> handleGetRequest(final HttpServletRequest request,
                                                    final HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
@@ -108,8 +107,7 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
         updateAccessTokenUsage(accessTokenTicket);
 
         val map = getOAuthConfigurationContext().getUserProfileDataCreator().createFrom(accessTokenTicket, context);
-        val value = getOAuthConfigurationContext().getUserProfileViewRenderer().render(map, accessTokenTicket);
-        return new ResponseEntity<>(value, HttpStatus.OK);
+        return getOAuthConfigurationContext().getUserProfileViewRenderer().render(map, accessTokenTicket, response);
     }
 
     private void updateAccessTokenUsage(final AccessToken accessTokenTicket) {

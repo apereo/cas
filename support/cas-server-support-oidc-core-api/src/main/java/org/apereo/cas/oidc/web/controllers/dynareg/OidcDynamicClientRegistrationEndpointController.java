@@ -122,7 +122,10 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
             if (StringUtils.isNotBlank(registrationRequest.getTermsOfUseUri())) {
                 registeredService.setPrivacyUrl(registrationRequest.getTermsOfUseUri());
             }
-            registeredService.setUserInfoSigningAlg(registrationRequest.getUserInfoSignedReponseAlg());
+
+            if (!StringUtils.equalsIgnoreCase("none", registrationRequest.getUserInfoSignedReponseAlg())) {
+                registeredService.setUserInfoSigningAlg(registrationRequest.getUserInfoSignedReponseAlg());
+            }
             registeredService.setUserInfoEncryptedResponseAlg(registrationRequest.getUserInfoEncryptedResponseAlg());
 
             if (StringUtils.isNotBlank(registeredService.getUserInfoEncryptedResponseAlg())) {
