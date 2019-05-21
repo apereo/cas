@@ -131,7 +131,7 @@ If you intend to use a DynamoDb database for auditing functionality, enable the 
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#dymamodb-audits).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#dynamodb-audits).
 
 ## REST Audits
 
