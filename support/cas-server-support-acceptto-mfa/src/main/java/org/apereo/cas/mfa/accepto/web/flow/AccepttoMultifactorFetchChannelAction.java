@@ -2,6 +2,7 @@ package org.apereo.cas.mfa.accepto.web.flow;
 
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.mfa.accepto.web.flow.qr.AccepttoQRCodeCredential;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.web.support.CookieUtils;
@@ -46,12 +47,12 @@ public class AccepttoMultifactorFetchChannelAction extends AbstractAction {
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         val webContext = new J2EContext(request, response, this.sessionStore);
 
-        val channel = authenticateAndFetchChannel(request);
+        val channel = authenticateAndFetchChannel(requestContext);
         LOGGER.debug("Storing channel [{}] in http session", channel);
-        webContext.getSessionStore().set(webContext, AccepttoWebflowUtils.SESSION_ATTRIBUTE_CHANNEL, channel);
+        AccepttoWebflowUtils.storeChannel(channel, webContext);
 
         val authentication = WebUtils.getInProgressAuthentication();
-        webContext.getSessionStore().set(webContext, AccepttoWebflowUtils.SESSION_ATTRIBUTE_ORIGINAL_AUTHENTICATION, authentication);
+        AccepttoWebflowUtils.storeAuthentication(authentication, webContext);
 
         val accepttoRedirectUrl = buildAccepttoAuthenticationSelectionUrl(request, channel);
         LOGGER.debug("Redirecting to [{}]", accepttoRedirectUrl);
@@ -80,10 +81,12 @@ public class AccepttoMultifactorFetchChannelAction extends AbstractAction {
     /**
      * Authenticate and fetch channel.
      *
-     * @param request the request
+     * @param requestContext the request
      * @return the channel
      */
-    protected String authenticateAndFetchChannel(final HttpServletRequest request) {
+    protected String authenticateAndFetchChannel(final RequestContext requestContext) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+
         val acceptto = casProperties.getAuthn().getMfa().getAcceptto();
         val url = StringUtils.appendIfMissing(acceptto.getApiUrl(), "/") + "authenticate_with_options";
 
@@ -108,6 +111,11 @@ public class AccepttoMultifactorFetchChannelAction extends AbstractAction {
         CookieUtils.getCookieFromRequest("jwt", request)
             .ifPresent(cookie -> parameters.put("jwt", cookie.getValue()));
 
+        val currentCredential = WebUtils.getCredential(requestContext);
+        if (currentCredential instanceof AccepttoQRCodeCredential) {
+            parameters.put("auth_type", 1);
+        }
+        
         HttpResponse response = null;
         try {
             response = HttpUtils.executePost(url, parameters, new HashMap<>(0));

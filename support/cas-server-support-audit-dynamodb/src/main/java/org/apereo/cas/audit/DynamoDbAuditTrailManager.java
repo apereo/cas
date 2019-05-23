@@ -37,4 +37,9 @@ public class DynamoDbAuditTrailManager extends AbstractAuditTrailManager {
     public Set<? extends AuditActionContext> getAuditRecordsSince(final LocalDate localDate) {
         return dynamoDbFacilitator.getAuditRecordsSince(localDate);
     }
+
+    @Override
+    public void removeAll() {
+        this.dynamoDbFacilitator.removeAll();
+    }
 }

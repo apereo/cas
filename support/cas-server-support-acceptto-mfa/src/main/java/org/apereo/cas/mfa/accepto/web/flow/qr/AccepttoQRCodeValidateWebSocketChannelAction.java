@@ -44,7 +44,7 @@ public class AccepttoQRCodeValidateWebSocketChannelAction extends AbstractAction
     private final SessionStore<J2EContext> sessionStore;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecute(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         val webContext = new J2EContext(request, response, this.sessionStore);
@@ -80,7 +80,7 @@ public class AccepttoQRCodeValidateWebSocketChannelAction extends AbstractAction
 
                     if (success) {
                         LOGGER.debug("Storing channel [{}] in http session", channel);
-                        webContext.getSessionStore().set(webContext, AccepttoWebflowUtils.SESSION_ATTRIBUTE_CHANNEL, channel);
+                        AccepttoWebflowUtils.storeChannel(channel, webContext);
                         WebUtils.putCredential(requestContext, new AccepttoQRCodeCredential(email));
                         return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_FINALIZE);
                     }

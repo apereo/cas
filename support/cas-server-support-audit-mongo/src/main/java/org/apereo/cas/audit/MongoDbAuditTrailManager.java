@@ -48,4 +48,9 @@ public class MongoDbAuditTrailManager extends AbstractAuditTrailManager {
         val query = new Query().addCriteria(Criteria.where("whenActionWasPerformed").gte(dt));
         return new LinkedHashSet<>(this.mongoTemplate.find(query, AuditActionContext.class, this.collectionName));
     }
+
+    @Override
+    public void removeAll() {
+        this.mongoTemplate.remove(AuditActionContext.class, this.collectionName);
+    }
 }
