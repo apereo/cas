@@ -119,10 +119,9 @@ public class PasswordManagementWebflowUtils {
      *
      * @param requestContext the request context
      * @param policyPattern  the policy pattern
-     * @return the string
      */
-    public static String putPasswordResetPasswordPolicyPattern(final RequestContext requestContext, final String policyPattern) {
+    public static void putPasswordResetPasswordPolicyPattern(final RequestContext requestContext, final String policyPattern) {
         val flowScope = requestContext.getFlowScope();
-        return flowScope.getString("policyPattern");
+        flowScope.put("policyPattern", policyPattern);
     }
 }
