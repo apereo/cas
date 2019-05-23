@@ -31,7 +31,7 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
         if (service instanceof OidcRegisteredService) {
             val url = context.getFullRequestURL();
             val prompts = OidcAuthorizationRequestSupport.getOidcPromptFromAuthorizationRequest(url);
-            if (prompts.contains(OidcConstants.PROMPT_CONSENT) || url.startsWith("h")) {
+            if (prompts.contains(OidcConstants.PROMPT_CONSENT)) {
                 return false;
             }
         }
