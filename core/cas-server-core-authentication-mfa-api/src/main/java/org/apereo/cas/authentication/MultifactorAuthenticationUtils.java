@@ -10,8 +10,6 @@ import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
@@ -156,10 +154,10 @@ public class MultifactorAuthenticationUtils {
         val bypass = new ChainingMultifactorAuthenticationBypassProvider();
         bypass.addBypass(new DefaultMultifactorAuthenticationProviderBypass(props));
 
-        if (props.getGroovy().getLocation() != null) {
+        if (props.getType() == MultifactorAuthenticationProviderBypassProperties.MultifactorProviderBypassTypes.GROOVY) {
             bypass.addBypass(new GroovyMultifactorAuthenticationProviderBypass(props));
         }
-        if (StringUtils.isNotBlank(props.getRest().getUrl())) {
+        if (props.getType() == MultifactorAuthenticationProviderBypassProperties.MultifactorProviderBypassTypes.REST) {
             bypass.addBypass(new RestMultifactorAuthenticationProviderBypass(props));
         }
         return bypass;

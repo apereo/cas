@@ -7,13 +7,13 @@ import org.springframework.core.Ordered;
 import java.io.Serializable;
 
 /**
- * This is {@link MultifactorAuthenticationFailureMode}.
+ * This is {@link MultifactorAuthenticationFailureModeEvaluator}.
  *
  * @author Travis Schmidt
  * @since 6.0.5
  */
 @FunctionalInterface
-public interface MultifactorAuthenticationFailureMode extends Serializable, Ordered {
+public interface MultifactorAuthenticationFailureModeEvaluator extends Serializable, Ordered {
 
 
     /**
@@ -23,8 +23,8 @@ public interface MultifactorAuthenticationFailureMode extends Serializable, Orde
      * @param provider          the provider
      * @return failure mode.
      */
-    RegisteredServiceMultifactorPolicy.FailureModes determineFailureMode(RegisteredService registeredService,
-                                                                         MultifactorAuthenticationProvider provider);
+    RegisteredServiceMultifactorPolicy.FailureModes evaluate(RegisteredService registeredService,
+                                                             MultifactorAuthenticationProvider provider);
 
     @Override
     default int getOrder() {

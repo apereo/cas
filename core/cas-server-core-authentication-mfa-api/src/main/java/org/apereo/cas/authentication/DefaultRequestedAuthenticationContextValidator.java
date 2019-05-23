@@ -53,7 +53,7 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
                     return Pair.of(Boolean.TRUE, Optional.empty());
                 }
             } else {
-                val failure = provider.getFailureModeEvaluator().determineFailureMode(registeredService, provider);
+                val failure = provider.getFailureModeEvaluator().evaluate(registeredService, provider);
                 if (failure != RegisteredServiceMultifactorPolicy.FailureModes.CLOSED) {
                     return Pair.of(Boolean.TRUE, Optional.empty());
                 }

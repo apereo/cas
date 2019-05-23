@@ -9,20 +9,20 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 /**
- * Default implementation of {@link MultifactorAuthenticationFailureMode}.
+ * Default implementation of {@link MultifactorAuthenticationFailureModeEvaluator}.
  *
  * @author Travis Schmidt
  * @since 6.0.5
  */
 @Slf4j
 @RequiredArgsConstructor
-public class DefaultMultifactorAuthenticationFailureMode implements MultifactorAuthenticationFailureMode {
+public class DefaultMultifactorAuthenticationFailureModeEvaluator implements MultifactorAuthenticationFailureModeEvaluator {
 
     private final CasConfigurationProperties casProperties;
 
     @Override
-    public RegisteredServiceMultifactorPolicy.FailureModes determineFailureMode(final RegisteredService service,
-                                                                                final MultifactorAuthenticationProvider provider) {
+    public RegisteredServiceMultifactorPolicy.FailureModes evaluate(final RegisteredService service,
+                                                                    final MultifactorAuthenticationProvider provider) {
         var failureMode = RegisteredServiceMultifactorPolicy.FailureModes.valueOf(casProperties.getAuthn().getMfa().getGlobalFailureMode());
         LOGGER.debug("Setting failure mode to [{}] based on Global Policy", failureMode);
 

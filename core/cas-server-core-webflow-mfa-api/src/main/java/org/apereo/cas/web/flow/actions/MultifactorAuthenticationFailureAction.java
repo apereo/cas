@@ -28,7 +28,7 @@ public class MultifactorAuthenticationFailureAction extends AbstractMultifactorA
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val service = WebUtils.getRegisteredService(requestContext);
-        val failureMode = provider.getFailureModeEvaluator().determineFailureMode(service, provider);
+        val failureMode = provider.getFailureModeEvaluator().evaluate(service, provider);
 
         LOGGER.debug("Final failure mode has been determined to be [{}]", failureMode);
 

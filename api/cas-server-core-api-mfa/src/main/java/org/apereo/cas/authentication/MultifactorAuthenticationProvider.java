@@ -39,7 +39,7 @@ public interface MultifactorAuthenticationProvider extends Serializable, Ordered
      *
      * @return the failuremode evaluator
      */
-    MultifactorAuthenticationFailureMode getFailureModeEvaluator();
+    MultifactorAuthenticationFailureModeEvaluator getFailureModeEvaluator();
 
     /**
      * Gets id for this provider.

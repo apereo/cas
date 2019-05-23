@@ -12,7 +12,7 @@ import org.apereo.cas.adaptors.duo.web.flow.config.DuoMultifactorWebflowConfigur
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
-import org.apereo.cas.authentication.MultifactorAuthenticationFailureMode;
+import org.apereo.cas.authentication.MultifactorAuthenticationFailureModeEvaluator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBean;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
@@ -81,7 +81,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
 
     @Autowired
     @Qualifier("failureModeEvaluator")
-    private ObjectProvider<MultifactorAuthenticationFailureMode> failureModeEvaluator;
+    private ObjectProvider<MultifactorAuthenticationFailureModeEvaluator> failureModeEvaluator;
 
     @ConditionalOnMissingBean(name = "duoPrincipalFactory")
     @Bean

@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.duo.authn;
 
-import org.apereo.cas.authentication.MultifactorAuthenticationFailureMode;
+import org.apereo.cas.authentication.MultifactorAuthenticationFailureModeEvaluator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderFactoryBean;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
@@ -23,7 +23,7 @@ public class DuoProviderFactory implements MultifactorAuthenticationProviderFact
                                                                                     DuoSecurityMultifactorProperties> {
     private final HttpClient httpClient;
 
-    private final MultifactorAuthenticationFailureMode failureModeEvaluator;
+    private final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator;
 
 
     @Override
