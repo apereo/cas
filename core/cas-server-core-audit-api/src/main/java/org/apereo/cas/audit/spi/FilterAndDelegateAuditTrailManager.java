@@ -52,4 +52,9 @@ public class FilterAndDelegateAuditTrailManager implements AuditTrailManager {
             .flatMap(Set::stream)
             .collect(Collectors.toSet());
     }
+
+    @Override
+    public void removeAll() {
+        auditTrailManagers.forEach(AuditTrailManager::removeAll);
+    }
 }
