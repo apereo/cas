@@ -9,6 +9,7 @@ import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicyTests;
 import org.apereo.cas.services.ReturnMappedAttributeReleasePolicyTests;
 import org.apereo.cas.services.ReturnRestfulAttributeReleasePolicyTests;
 import org.apereo.cas.services.ScriptedRegisteredServiceAttributeReleasePolicyTests;
+import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicyTests;
 
 import org.junit.platform.suite.api.SelectClasses;
 
@@ -27,7 +28,8 @@ import org.junit.platform.suite.api.SelectClasses;
     ReturnRestfulAttributeReleasePolicyTests.class,
     ScriptedRegisteredServiceAttributeReleasePolicyTests.class,
     ReturnAllowedAttributeReleasePolicyTests.class,
-    ChainingAttributeReleasePolicyTests.class
+    ChainingAttributeReleasePolicyTests.class,
+    DefaultRegisteredServiceConsentPolicyTests.class
 })
 public class AllAuthenticationAttributesTestsSuite {
 }

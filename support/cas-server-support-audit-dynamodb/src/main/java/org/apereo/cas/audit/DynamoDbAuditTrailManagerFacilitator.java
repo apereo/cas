@@ -87,6 +87,13 @@ public class DynamoDbAuditTrailManagerFacilitator {
     }
 
     /**
+     * Remove all.
+     */
+    public void removeAll() {
+        createTable(true);
+    }
+
+    /**
      * Build table attribute values map map.
      *
      * @param record the record

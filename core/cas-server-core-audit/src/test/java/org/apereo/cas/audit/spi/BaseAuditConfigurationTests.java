@@ -21,12 +21,15 @@ public abstract class BaseAuditConfigurationTests {
 
     @Test
     public void verifyAuditManager() {
+        val auditTrailManager = getAuditTrailManager();
+        auditTrailManager.removeAll();
+
         val time = LocalDate.now().minusDays(2);
         val ctx = new AuditActionContext("casuser", "TEST", "TEST",
             "CAS", new Date(), "1.2.3.4",
             "1.2.3.4");
-        getAuditTrailManager().record(ctx);
-        val results = getAuditTrailManager().getAuditRecordsSince(time);
+        auditTrailManager.record(ctx);
+        val results = auditTrailManager.getAuditRecordsSince(time);
         assertFalse(results.isEmpty());
     }
 }

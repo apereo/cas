@@ -66,6 +66,11 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
         return new HashSet<>(0);
     }
 
+    @Override
+    public void removeAll() {
+        getAuditRedisKeys().forEach(key -> this.redisTemplate.delete(key));
+    }
+
     private static String getAuditRedisKey(final AuditActionContext context) {
         return CAS_AUDIT_CONTEXT_PREFIX + context.getWhenActionWasPerformed().getTime();
     }
