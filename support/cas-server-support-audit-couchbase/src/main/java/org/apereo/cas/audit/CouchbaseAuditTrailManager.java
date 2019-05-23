@@ -57,10 +57,17 @@ public class CouchbaseAuditTrailManager extends AbstractAuditTrailManager {
     private final CouchbaseClientFactory couchbase;
     private final StringSerializer<AuditActionContext> serializer;
 
-    public CouchbaseAuditTrailManager(final CouchbaseClientFactory couchbase, final StringSerializer<AuditActionContext> serializer, final boolean asynchronous) {
+    public CouchbaseAuditTrailManager(final CouchbaseClientFactory couchbase, final StringSerializer<AuditActionContext> serializer,
+                                      final boolean asynchronous) {
         this(couchbase, serializer);
         this.asynchronous = asynchronous;
     }
+
+    @Override
+    public void removeAll() {
+        
+    }
+
     @SneakyThrows
     @Override
     protected void saveAuditRecord(final AuditActionContext audit) {

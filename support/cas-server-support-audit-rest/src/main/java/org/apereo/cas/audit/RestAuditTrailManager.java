@@ -53,6 +53,10 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
     }
 
     @Override
+    public void removeAll() {
+    }
+
+    @Override
     public Set<? extends AuditActionContext> getAuditRecordsSince(final LocalDate localDate) {
         HttpResponse response = null;
         try {

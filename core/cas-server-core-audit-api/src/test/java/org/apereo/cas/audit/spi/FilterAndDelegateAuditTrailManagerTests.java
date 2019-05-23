@@ -91,5 +91,10 @@ public class FilterAndDelegateAuditTrailManagerTests {
                 .filter(audit -> audit.getWhenActionWasPerformed().compareTo(dt) >= 0)
                 .collect(Collectors.toSet());
         }
+
+        @Override
+        public void removeAll() {
+            auditRecords.clear();
+        }
     }
 }

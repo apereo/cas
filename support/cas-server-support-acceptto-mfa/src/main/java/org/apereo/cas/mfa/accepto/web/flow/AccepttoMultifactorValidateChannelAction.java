@@ -1,6 +1,5 @@
 package org.apereo.cas.mfa.accepto.web.flow;
 
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.mfa.accepto.AccepttoMultifactorTokenCredential;
@@ -38,13 +37,12 @@ public class AccepttoMultifactorValidateChannelAction extends AbstractAction {
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
             val webContext = new J2EContext(request, response, this.sessionStore);
 
-            val channel = sessionStore.get(webContext, AccepttoWebflowUtils.SESSION_ATTRIBUTE_CHANNEL);
+            val channel = AccepttoWebflowUtils.getChannel(webContext);
             if (channel == null) {
                 LOGGER.debug("Unable to determine channel from session store; not a validation attempt");
                 return null;
             }
-            val authentication = (Authentication) sessionStore.get(webContext,
-                AccepttoWebflowUtils.SESSION_ATTRIBUTE_ORIGINAL_AUTHENTICATION);
+            val authentication = AccepttoWebflowUtils.getAuthentication(webContext);
             if (authentication == null) {
                 LOGGER.debug("Unable to determine the original authentication attempt the session store");
                 throw new AuthenticationException("Unable to determine authentication from session store");
@@ -55,7 +53,7 @@ public class AccepttoMultifactorValidateChannelAction extends AbstractAction {
             val service = WebUtils.getService(requestContext);
 
             LOGGER.debug("Cleaning up session store to remove [{}]", credential);
-            resetAccepttoSessionStore(webContext);
+            AccepttoWebflowUtils.resetChannelAndAuthentication(webContext);
 
             LOGGER.debug("Attempting to authenticate channel [{}] with authentication [{}] and service [{}]",
                 credential, authentication, service);
@@ -69,12 +67,5 @@ public class AccepttoMultifactorValidateChannelAction extends AbstractAction {
         }
         return new EventFactorySupport().event(this,
             CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, eventAttributes);
-    }
-
-    private void resetAccepttoSessionStore(final J2EContext webContext) {
-        sessionStore.set(webContext,
-            AccepttoWebflowUtils.SESSION_ATTRIBUTE_CHANNEL, null);
-        sessionStore.set(webContext,
-            AccepttoWebflowUtils.SESSION_ATTRIBUTE_ORIGINAL_AUTHENTICATION, null);
     }
 }
