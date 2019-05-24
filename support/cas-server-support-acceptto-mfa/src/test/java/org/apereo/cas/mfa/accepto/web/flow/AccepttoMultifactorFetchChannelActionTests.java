@@ -56,7 +56,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,
     CasCoreServicesConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class
 })
 @TestPropertySource(properties = {
     "cas.authn.mfa.acceptto.apiUrl=http://localhost:5001",
