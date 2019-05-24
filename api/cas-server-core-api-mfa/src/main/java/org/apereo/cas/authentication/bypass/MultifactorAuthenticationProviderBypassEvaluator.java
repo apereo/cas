@@ -11,12 +11,12 @@ import java.io.Serializable;
 import java.util.Optional;
 
 /**
- * This is {@link MultifactorAuthenticationProviderBypass}.
+ * This is {@link MultifactorAuthenticationProviderBypassEvaluator}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public interface MultifactorAuthenticationProviderBypass extends Serializable, Ordered {
+public interface MultifactorAuthenticationProviderBypassEvaluator extends Serializable, Ordered {
 
     /**
      * bypass mfa authn attribute.
@@ -117,5 +117,5 @@ public interface MultifactorAuthenticationProviderBypass extends Serializable, O
      * @param providerId the provider id
      * @return the provider if a match, otherwise, empty.
      */
-    Optional<MultifactorAuthenticationProviderBypass> belongsToMultifactorAuthenticationProvider(String providerId);
+    Optional<MultifactorAuthenticationProviderBypassEvaluator> belongsToMultifactorAuthenticationProvider(String providerId);
 }

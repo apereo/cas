@@ -8,7 +8,7 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
-import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypass;
+import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -49,7 +49,7 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
 
     @Autowired
     @Qualifier("u2fBypassEvaluator")
-    private ObjectProvider<MultifactorAuthenticationProviderBypass> u2fBypassEvaluator;
+    private ObjectProvider<MultifactorAuthenticationProviderBypassEvaluator> u2fBypassEvaluator;
 
     @Bean
     @RefreshScope

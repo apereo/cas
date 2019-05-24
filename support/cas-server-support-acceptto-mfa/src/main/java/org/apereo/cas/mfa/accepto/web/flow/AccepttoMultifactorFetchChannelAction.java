@@ -48,7 +48,7 @@ public class AccepttoMultifactorFetchChannelAction extends AbstractAction {
         val webContext = new J2EContext(request, response, this.sessionStore);
 
         val channel = authenticateAndFetchChannel(requestContext);
-        LOGGER.debug("Storing channel [{}] in http session", channel);
+        LOGGER.debug("Storing channel [{}] in session", channel);
         AccepttoWebflowUtils.storeChannel(channel, webContext);
 
         val authentication = WebUtils.getInProgressAuthentication();

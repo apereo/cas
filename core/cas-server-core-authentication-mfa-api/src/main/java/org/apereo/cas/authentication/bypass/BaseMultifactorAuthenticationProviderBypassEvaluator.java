@@ -20,7 +20,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link BaseMultifactorAuthenticationProviderBypass}.
+ * This is {@link BaseMultifactorAuthenticationProviderBypassEvaluator}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @Getter
 @RequiredArgsConstructor
 @ToString
-public abstract class BaseMultifactorAuthenticationProviderBypass implements MultifactorAuthenticationProviderBypass {
+public abstract class BaseMultifactorAuthenticationProviderBypassEvaluator implements MultifactorAuthenticationProviderBypassEvaluator {
     private static final long serialVersionUID = 2372899636154131393L;
     private final String providerId;
     private final String id = this.getClass().getSimpleName();
@@ -66,7 +66,7 @@ public abstract class BaseMultifactorAuthenticationProviderBypass implements Mul
     }
 
     @Override
-    public Optional<MultifactorAuthenticationProviderBypass> belongsToMultifactorAuthenticationProvider(final String providerId) {
+    public Optional<MultifactorAuthenticationProviderBypassEvaluator> belongsToMultifactorAuthenticationProvider(final String providerId) {
         if (getProviderId().equalsIgnoreCase(providerId)) {
             return Optional.of(this);
         }
