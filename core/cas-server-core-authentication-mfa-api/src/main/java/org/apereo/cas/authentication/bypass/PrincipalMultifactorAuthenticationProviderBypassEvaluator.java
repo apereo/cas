@@ -17,13 +17,13 @@ import javax.servlet.http.HttpServletRequest;
  * @since 6.0
  */
 @Slf4j
-public class PrincipalMultifactorAuthenticationProviderBypass extends BaseMultifactorAuthenticationProviderBypass {
+public class PrincipalMultifactorAuthenticationProviderBypassEvaluator extends BaseMultifactorAuthenticationProviderBypassEvaluator {
     private static final long serialVersionUID = -7553435418344342672L;
 
     private final MultifactorAuthenticationProviderBypassProperties bypassProperties;
 
-    public PrincipalMultifactorAuthenticationProviderBypass(final MultifactorAuthenticationProviderBypassProperties bypassProperties,
-                                                             final String providerId) {
+    public PrincipalMultifactorAuthenticationProviderBypassEvaluator(final MultifactorAuthenticationProviderBypassProperties bypassProperties,
+                                                                     final String providerId) {
         super(providerId);
         this.bypassProperties = bypassProperties;
     }

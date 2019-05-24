@@ -1,8 +1,8 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.authentication.bypass.ChainingMultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.bypass.NeverAllowMultifactorAuthenticationProviderBypass;
+import org.apereo.cas.authentication.bypass.ChainingMultifactorAuthenticationProviderBypassEvaluator;
+import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
+import org.apereo.cas.authentication.bypass.NeverAllowMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.services.RegisteredService;
 
 import lombok.Getter;
@@ -16,17 +16,17 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Class used to Chain multiple {@link MultifactorAuthenticationProviderBypass} implementations.
+ * Class used to Chain multiple {@link MultifactorAuthenticationProviderBypassEvaluator} implementations.
  *
  * @author Travis Schmidt
  * @since 5.3.4
  */
 @Getter
 @NoArgsConstructor
-public class DefaultChainingMultifactorAuthenticationBypassProvider implements ChainingMultifactorAuthenticationProviderBypass {
+public class DefaultChainingMultifactorAuthenticationBypassProvider implements ChainingMultifactorAuthenticationProviderBypassEvaluator {
     private static final long serialVersionUID = 2397239625822397286L;
 
-    private final List<MultifactorAuthenticationProviderBypass> multifactorAuthenticationProviderBypassEvaluators
+    private final List<MultifactorAuthenticationProviderBypassEvaluator> multifactorAuthenticationProviderBypassEvaluators
         = new ArrayList<>();
 
     @Audit(action = "MFA_BYPASS",
@@ -64,7 +64,7 @@ public class DefaultChainingMultifactorAuthenticationBypassProvider implements C
     }
 
     @Override
-    public Optional<MultifactorAuthenticationProviderBypass> belongsToMultifactorAuthenticationProvider(final String providerId) {
+    public Optional<MultifactorAuthenticationProviderBypassEvaluator> belongsToMultifactorAuthenticationProvider(final String providerId) {
         return multifactorAuthenticationProviderBypassEvaluators
             .stream()
             .filter(bypass -> bypass.belongsToMultifactorAuthenticationProvider(providerId).isPresent())
@@ -86,7 +86,7 @@ public class DefaultChainingMultifactorAuthenticationBypassProvider implements C
      *
      * @param bypass - the bypass provider
      */
-    public void addMultifactorAuthenticationProviderBypass(final MultifactorAuthenticationProviderBypass bypass) {
+    public void addMultifactorAuthenticationProviderBypassEvaluator(final MultifactorAuthenticationProviderBypassEvaluator bypass) {
         if (!bypass.isEmpty()) {
             this.multifactorAuthenticationProviderBypassEvaluators.add(bypass);
         }
@@ -103,15 +103,15 @@ public class DefaultChainingMultifactorAuthenticationBypassProvider implements C
     }
 
     @Override
-    public MultifactorAuthenticationProviderBypass filterMultifactorAuthenticationProviderBypassBy(final String providerId) {
+    public MultifactorAuthenticationProviderBypassEvaluator filterMultifactorAuthenticationProviderBypassEvaluatorsBy(final String providerId) {
         val chain = new DefaultChainingMultifactorAuthenticationBypassProvider();
         multifactorAuthenticationProviderBypassEvaluators
             .stream()
             .filter(bp -> bp.belongsToMultifactorAuthenticationProvider(providerId).isPresent())
-            .forEach(chain::addMultifactorAuthenticationProviderBypass);
+            .forEach(chain::addMultifactorAuthenticationProviderBypassEvaluator);
 
         if (chain.isEmpty()) {
-            return NeverAllowMultifactorAuthenticationProviderBypass.getInstance();
+            return NeverAllowMultifactorAuthenticationProviderBypassEvaluator.getInstance();
         }
         return chain;
     }
