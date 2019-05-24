@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.authentication.bypass.GroovyMultifactorAuthenticationProviderBypass;
+import org.apereo.cas.authentication.bypass.GroovyMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
@@ -34,7 +34,7 @@ public class GroovyMultifactorAuthenticationProviderBypassTests {
         val properties = new MultifactorAuthenticationProviderBypassProperties();
         properties.getGroovy().setLocation(new ClassPathResource("GroovyBypass.groovy"));
         val provider = new TestMultifactorAuthenticationProvider();
-        val groovy = new GroovyMultifactorAuthenticationProviderBypass(properties, provider.getId());
+        val groovy = new GroovyMultifactorAuthenticationProviderBypassEvaluator(properties, provider.getId());
 
         val authentication = mock(Authentication.class);
         val principal = mock(Principal.class);
