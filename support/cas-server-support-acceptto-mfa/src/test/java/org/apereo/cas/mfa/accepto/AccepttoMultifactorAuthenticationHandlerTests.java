@@ -55,7 +55,7 @@ import static org.mockito.Mockito.*;
     CasCoreWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,
     CasCoreServicesConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class
 })
 @TestPropertySource(properties = {
     "cas.authn.mfa.acceptto.apiUrl=http://localhost:5002",
