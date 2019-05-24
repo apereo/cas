@@ -33,6 +33,8 @@ public class DefaultRegisteredServiceConsentPolicy implements RegisteredServiceC
 
     private Set<String> includeOnlyAttributes;
 
+    private int order;
+
     public DefaultRegisteredServiceConsentPolicy(final Set<String> excludedAttributes,
                                                  final Set<String> includeOnlyAttributes) {
         this.excludedAttributes = excludedAttributes;
