@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.springframework.core.Ordered;
 
 import java.io.Serializable;
 import java.util.LinkedHashSet;
@@ -13,7 +14,7 @@ import java.util.Set;
  * @since 5.2.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public interface RegisteredServiceConsentPolicy extends Serializable {
+public interface RegisteredServiceConsentPolicy extends Serializable, Ordered {
 
     /**
      * Indicate whether consent is enabled.
@@ -44,5 +45,10 @@ public interface RegisteredServiceConsentPolicy extends Serializable {
      */
     default Set<String> getIncludeOnlyAttributes() {
         return new LinkedHashSet<>(0);
+    }
+
+    @Override
+    default int getOrder() {
+        return 0;
     }
 }

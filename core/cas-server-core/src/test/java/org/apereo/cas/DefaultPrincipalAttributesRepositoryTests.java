@@ -38,7 +38,8 @@ public class DefaultPrincipalAttributesRepositoryTests extends BaseCasCoreTests 
     public void checkDefaultAttributes() {
         val rep = new DefaultPrincipalAttributesRepository();
         val principal = CoreAuthenticationTestUtils.getPrincipal();
-        assertEquals(4, rep.getAttributes(principal, CoreAuthenticationTestUtils.getRegisteredService()).size());
+        assertEquals(CoreAuthenticationTestUtils.getAttributeRepository().getBackingMap().size(),
+            rep.getAttributes(principal, CoreAuthenticationTestUtils.getRegisteredService()).size());
     }
 
     @Test
