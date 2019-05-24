@@ -15,10 +15,10 @@ import javax.servlet.http.HttpServletRequest;
  * @since 6.0
  */
 @Slf4j
-public class RegisteredServiceMultifactorAuthenticationProviderBypass extends BaseMultifactorAuthenticationProviderBypass {
+public class RegisteredServiceMultifactorAuthenticationProviderBypassEvaluator extends BaseMultifactorAuthenticationProviderBypassEvaluator {
     private static final long serialVersionUID = -3553888418344342672L;
 
-    public RegisteredServiceMultifactorAuthenticationProviderBypass(final String providerId) {
+    public RegisteredServiceMultifactorAuthenticationProviderBypassEvaluator(final String providerId) {
         super(providerId);
     }
 
@@ -27,7 +27,6 @@ public class RegisteredServiceMultifactorAuthenticationProviderBypass extends Ba
                                                                   final RegisteredService registeredService,
                                                                   final MultifactorAuthenticationProvider provider,
                                                                   final HttpServletRequest request) {
-
         return registeredService == null
             || registeredService.getMultifactorPolicy() == null
             || !registeredService.getMultifactorPolicy().isBypassEnabled();

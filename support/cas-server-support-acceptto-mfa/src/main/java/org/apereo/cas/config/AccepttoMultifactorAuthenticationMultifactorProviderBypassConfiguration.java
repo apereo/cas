@@ -1,14 +1,14 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.DefaultChainingMultifactorAuthenticationBypassProvider;
-import org.apereo.cas.authentication.bypass.AuthenticationMultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.bypass.CredentialMultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.bypass.GroovyMultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.bypass.HttpRequestMultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.bypass.PrincipalMultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.bypass.RegisteredServiceMultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.bypass.RestMultifactorAuthenticationProviderBypass;
+import org.apereo.cas.authentication.bypass.AuthenticationMultifactorAuthenticationProviderBypassEvaluator;
+import org.apereo.cas.authentication.bypass.CredentialMultifactorAuthenticationProviderBypassEvaluator;
+import org.apereo.cas.authentication.bypass.GroovyMultifactorAuthenticationProviderBypassEvaluator;
+import org.apereo.cas.authentication.bypass.HttpRequestMultifactorAuthenticationProviderBypassEvaluator;
+import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
+import org.apereo.cas.authentication.bypass.PrincipalMultifactorAuthenticationProviderBypassEvaluator;
+import org.apereo.cas.authentication.bypass.RegisteredServiceMultifactorAuthenticationProviderBypassEvaluator;
+import org.apereo.cas.authentication.bypass.RestMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.val;
@@ -36,31 +36,31 @@ public class AccepttoMultifactorAuthenticationMultifactorProviderBypassConfigura
     @ConditionalOnMissingBean(name = "casAccepttoMultifactorBypassEvaluator")
     @Bean
     @RefreshScope
-    public MultifactorAuthenticationProviderBypass casAccepttoMultifactorBypassEvaluator() {
+    public MultifactorAuthenticationProviderBypassEvaluator casAccepttoMultifactorBypassEvaluator() {
         val bypass = new DefaultChainingMultifactorAuthenticationBypassProvider();
         val props = casProperties.getAuthn().getMfa().getAcceptto().getBypass();
 
         if (StringUtils.isNotBlank(props.getPrincipalAttributeName())) {
-            bypass.addMultifactorAuthenticationProviderBypass(casAccepttoMultifactorPrincipalMultifactorAuthenticationProviderBypass());
+            bypass.addMultifactorAuthenticationProviderBypassEvaluator(casAccepttoMultifactorPrincipalMultifactorAuthenticationProviderBypass());
         }
-        bypass.addMultifactorAuthenticationProviderBypass(casAccepttoMultifactorRegisteredServiceMultifactorAuthenticationProviderBypass());
+        bypass.addMultifactorAuthenticationProviderBypassEvaluator(casAccepttoMultifactorRegisteredServiceMultifactorAuthenticationProviderBypass());
         if (StringUtils.isNotBlank(props.getAuthenticationAttributeName())
             || StringUtils.isNotBlank(props.getAuthenticationHandlerName())
             || StringUtils.isNotBlank(props.getAuthenticationMethodName())) {
-            bypass.addMultifactorAuthenticationProviderBypass(casAccepttoMultifactorAuthenticationMultifactorAuthenticationProviderBypass());
+            bypass.addMultifactorAuthenticationProviderBypassEvaluator(casAccepttoMultifactorAuthenticationMultifactorAuthenticationProviderBypass());
         }
 
         if (StringUtils.isNotBlank(props.getCredentialClassType())) {
-            bypass.addMultifactorAuthenticationProviderBypass(casAccepttoMultifactorCredentialMultifactorAuthenticationProviderBypass());
+            bypass.addMultifactorAuthenticationProviderBypassEvaluator(casAccepttoMultifactorCredentialMultifactorAuthenticationProviderBypass());
         }
         if (StringUtils.isNotBlank(props.getHttpRequestHeaders()) || StringUtils.isNotBlank(props.getHttpRequestRemoteAddress())) {
-            bypass.addMultifactorAuthenticationProviderBypass(casAccepttoMultifactorHttpRequestMultifactorAuthenticationProviderBypass());
+            bypass.addMultifactorAuthenticationProviderBypassEvaluator(casAccepttoMultifactorHttpRequestMultifactorAuthenticationProviderBypass());
         }
         if (props.getGroovy().getLocation() != null) {
-            bypass.addMultifactorAuthenticationProviderBypass(casAccepttoMultifactorGroovyMultifactorAuthenticationProviderBypass());
+            bypass.addMultifactorAuthenticationProviderBypassEvaluator(casAccepttoMultifactorGroovyMultifactorAuthenticationProviderBypass());
         }
         if (StringUtils.isNotBlank(props.getRest().getUrl())) {
-            bypass.addMultifactorAuthenticationProviderBypass(casAccepttoMultifactorRestMultifactorAuthenticationProviderBypass());
+            bypass.addMultifactorAuthenticationProviderBypassEvaluator(casAccepttoMultifactorRestMultifactorAuthenticationProviderBypass());
         }
         return bypass;
     }
@@ -68,62 +68,62 @@ public class AccepttoMultifactorAuthenticationMultifactorProviderBypassConfigura
     @ConditionalOnMissingBean(name = "casAccepttoMultifactorRestMultifactorAuthenticationProviderBypass")
     @Bean
     @RefreshScope
-    public MultifactorAuthenticationProviderBypass casAccepttoMultifactorRestMultifactorAuthenticationProviderBypass() {
+    public MultifactorAuthenticationProviderBypassEvaluator casAccepttoMultifactorRestMultifactorAuthenticationProviderBypass() {
         val simple = casProperties.getAuthn().getMfa().getAcceptto();
         val props = simple.getBypass();
-        return new RestMultifactorAuthenticationProviderBypass(props, simple.getId());
+        return new RestMultifactorAuthenticationProviderBypassEvaluator(props, simple.getId());
     }
 
     @ConditionalOnMissingBean(name = "casAccepttoMultifactorGroovyMultifactorAuthenticationProviderBypass")
     @Bean
     @RefreshScope
-    public MultifactorAuthenticationProviderBypass casAccepttoMultifactorGroovyMultifactorAuthenticationProviderBypass() {
+    public MultifactorAuthenticationProviderBypassEvaluator casAccepttoMultifactorGroovyMultifactorAuthenticationProviderBypass() {
         val simple = casProperties.getAuthn().getMfa().getAcceptto();
         val props = simple.getBypass();
-        return new GroovyMultifactorAuthenticationProviderBypass(props, simple.getId());
+        return new GroovyMultifactorAuthenticationProviderBypassEvaluator(props, simple.getId());
     }
 
     @ConditionalOnMissingBean(name = "casAccepttoMultifactorHttpRequestMultifactorAuthenticationProviderBypass")
     @Bean
     @RefreshScope
-    public MultifactorAuthenticationProviderBypass casAccepttoMultifactorHttpRequestMultifactorAuthenticationProviderBypass() {
+    public MultifactorAuthenticationProviderBypassEvaluator casAccepttoMultifactorHttpRequestMultifactorAuthenticationProviderBypass() {
         val simple = casProperties.getAuthn().getMfa().getAcceptto();
         val props = simple.getBypass();
-        return new HttpRequestMultifactorAuthenticationProviderBypass(props, simple.getId());
+        return new HttpRequestMultifactorAuthenticationProviderBypassEvaluator(props, simple.getId());
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "casAccepttoMultifactorCredentialMultifactorAuthenticationProviderBypass")
-    public MultifactorAuthenticationProviderBypass casAccepttoMultifactorCredentialMultifactorAuthenticationProviderBypass() {
+    public MultifactorAuthenticationProviderBypassEvaluator casAccepttoMultifactorCredentialMultifactorAuthenticationProviderBypass() {
         val simple = casProperties.getAuthn().getMfa().getAcceptto();
         val props = simple.getBypass();
-        return new CredentialMultifactorAuthenticationProviderBypass(props, simple.getId());
+        return new CredentialMultifactorAuthenticationProviderBypassEvaluator(props, simple.getId());
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "casAccepttoMultifactorRegisteredServiceMultifactorAuthenticationProviderBypass")
-    public MultifactorAuthenticationProviderBypass casAccepttoMultifactorRegisteredServiceMultifactorAuthenticationProviderBypass() {
+    public MultifactorAuthenticationProviderBypassEvaluator casAccepttoMultifactorRegisteredServiceMultifactorAuthenticationProviderBypass() {
         val simple = casProperties.getAuthn().getMfa().getAcceptto();
-        return new RegisteredServiceMultifactorAuthenticationProviderBypass(simple.getId());
+        return new RegisteredServiceMultifactorAuthenticationProviderBypassEvaluator(simple.getId());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "casAccepttoMultifactorPrincipalMultifactorAuthenticationProviderBypass")
-    public MultifactorAuthenticationProviderBypass casAccepttoMultifactorPrincipalMultifactorAuthenticationProviderBypass() {
+    public MultifactorAuthenticationProviderBypassEvaluator casAccepttoMultifactorPrincipalMultifactorAuthenticationProviderBypass() {
         val simple = casProperties.getAuthn().getMfa().getAcceptto();
         val props = simple.getBypass();
-        return new PrincipalMultifactorAuthenticationProviderBypass(props, simple.getId());
+        return new PrincipalMultifactorAuthenticationProviderBypassEvaluator(props, simple.getId());
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "casAccepttoMultifactorAuthenticationMultifactorAuthenticationProviderBypass")
-    public MultifactorAuthenticationProviderBypass casAccepttoMultifactorAuthenticationMultifactorAuthenticationProviderBypass() {
+    public MultifactorAuthenticationProviderBypassEvaluator casAccepttoMultifactorAuthenticationMultifactorAuthenticationProviderBypass() {
         val simple = casProperties.getAuthn().getMfa().getAcceptto();
         val props = simple.getBypass();
-        return new AuthenticationMultifactorAuthenticationProviderBypass(props, simple.getId());
+        return new AuthenticationMultifactorAuthenticationProviderBypassEvaluator(props, simple.getId());
     }
 
 }

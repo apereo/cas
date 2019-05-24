@@ -16,7 +16,7 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBean;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderFactoryBean;
-import org.apereo.cas.authentication.bypass.ChainingMultifactorAuthenticationProviderBypass;
+import org.apereo.cas.authentication.bypass.ChainingMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -87,7 +87,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
 
     @Autowired
     @Qualifier("duoSecurityBypassEvaluator")
-    private ObjectProvider<ChainingMultifactorAuthenticationProviderBypass> duoSecurityBypassEvaluator;
+    private ObjectProvider<ChainingMultifactorAuthenticationProviderBypassEvaluator> duoSecurityBypassEvaluator;
 
     @ConditionalOnMissingBean(name = "duoPrincipalFactory")
     @Bean

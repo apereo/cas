@@ -1,14 +1,14 @@
 package org.apereo.cas.config.support.authentication;
 
 import org.apereo.cas.authentication.DefaultChainingMultifactorAuthenticationBypassProvider;
-import org.apereo.cas.authentication.bypass.AuthenticationMultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.bypass.CredentialMultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.bypass.GroovyMultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.bypass.HttpRequestMultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.bypass.PrincipalMultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.bypass.RegisteredServiceMultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.bypass.RestMultifactorAuthenticationProviderBypass;
+import org.apereo.cas.authentication.bypass.AuthenticationMultifactorAuthenticationProviderBypassEvaluator;
+import org.apereo.cas.authentication.bypass.CredentialMultifactorAuthenticationProviderBypassEvaluator;
+import org.apereo.cas.authentication.bypass.GroovyMultifactorAuthenticationProviderBypassEvaluator;
+import org.apereo.cas.authentication.bypass.HttpRequestMultifactorAuthenticationProviderBypassEvaluator;
+import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
+import org.apereo.cas.authentication.bypass.PrincipalMultifactorAuthenticationProviderBypassEvaluator;
+import org.apereo.cas.authentication.bypass.RegisteredServiceMultifactorAuthenticationProviderBypassEvaluator;
+import org.apereo.cas.authentication.bypass.RestMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.val;
@@ -36,31 +36,31 @@ public class RadiusTokenAuthenticationMultifactorProviderBypassConfiguration {
     @ConditionalOnMissingBean(name = "radiusBypassEvaluator")
     @Bean
     @RefreshScope
-    public MultifactorAuthenticationProviderBypass radiusBypassEvaluator() {
+    public MultifactorAuthenticationProviderBypassEvaluator radiusBypassEvaluator() {
         val bypass = new DefaultChainingMultifactorAuthenticationBypassProvider();
         val props = casProperties.getAuthn().getMfa().getRadius().getBypass();
 
         if (StringUtils.isNotBlank(props.getPrincipalAttributeName())) {
-            bypass.addMultifactorAuthenticationProviderBypass(radiusPrincipalMultifactorAuthenticationProviderBypass());
+            bypass.addMultifactorAuthenticationProviderBypassEvaluator(radiusPrincipalMultifactorAuthenticationProviderBypass());
         }
-        bypass.addMultifactorAuthenticationProviderBypass(radiusRegisteredServiceMultifactorAuthenticationProviderBypass());
+        bypass.addMultifactorAuthenticationProviderBypassEvaluator(radiusRegisteredServiceMultifactorAuthenticationProviderBypass());
         if (StringUtils.isNotBlank(props.getAuthenticationAttributeName())
             || StringUtils.isNotBlank(props.getAuthenticationHandlerName())
             || StringUtils.isNotBlank(props.getAuthenticationMethodName())) {
-            bypass.addMultifactorAuthenticationProviderBypass(radiusAuthenticationMultifactorAuthenticationProviderBypass());
+            bypass.addMultifactorAuthenticationProviderBypassEvaluator(radiusAuthenticationMultifactorAuthenticationProviderBypass());
         }
 
         if (StringUtils.isNotBlank(props.getCredentialClassType())) {
-            bypass.addMultifactorAuthenticationProviderBypass(radiusCredentialMultifactorAuthenticationProviderBypass());
+            bypass.addMultifactorAuthenticationProviderBypassEvaluator(radiusCredentialMultifactorAuthenticationProviderBypass());
         }
         if (StringUtils.isNotBlank(props.getHttpRequestHeaders()) || StringUtils.isNotBlank(props.getHttpRequestRemoteAddress())) {
-            bypass.addMultifactorAuthenticationProviderBypass(radiusHttpRequestMultifactorAuthenticationProviderBypass());
+            bypass.addMultifactorAuthenticationProviderBypassEvaluator(radiusHttpRequestMultifactorAuthenticationProviderBypass());
         }
         if (props.getGroovy().getLocation() != null) {
-            bypass.addMultifactorAuthenticationProviderBypass(radiusGroovyMultifactorAuthenticationProviderBypass());
+            bypass.addMultifactorAuthenticationProviderBypassEvaluator(radiusGroovyMultifactorAuthenticationProviderBypass());
         }
         if (StringUtils.isNotBlank(props.getRest().getUrl())) {
-            bypass.addMultifactorAuthenticationProviderBypass(radiusRestMultifactorAuthenticationProviderBypass());
+            bypass.addMultifactorAuthenticationProviderBypassEvaluator(radiusRestMultifactorAuthenticationProviderBypass());
         }
         return bypass;
     }
@@ -68,62 +68,62 @@ public class RadiusTokenAuthenticationMultifactorProviderBypassConfiguration {
     @ConditionalOnMissingBean(name = "radiusRestMultifactorAuthenticationProviderBypass")
     @Bean
     @RefreshScope
-    public MultifactorAuthenticationProviderBypass radiusRestMultifactorAuthenticationProviderBypass() {
+    public MultifactorAuthenticationProviderBypassEvaluator radiusRestMultifactorAuthenticationProviderBypass() {
         val radius = casProperties.getAuthn().getMfa().getRadius();
         val props = radius.getBypass();
-        return new RestMultifactorAuthenticationProviderBypass(props, radius.getId());
+        return new RestMultifactorAuthenticationProviderBypassEvaluator(props, radius.getId());
     }
 
     @ConditionalOnMissingBean(name = "radiusGroovyMultifactorAuthenticationProviderBypass")
     @Bean
     @RefreshScope
-    public MultifactorAuthenticationProviderBypass radiusGroovyMultifactorAuthenticationProviderBypass() {
+    public MultifactorAuthenticationProviderBypassEvaluator radiusGroovyMultifactorAuthenticationProviderBypass() {
         val radius = casProperties.getAuthn().getMfa().getRadius();
         val props = radius.getBypass();
-        return new GroovyMultifactorAuthenticationProviderBypass(props, radius.getId());
+        return new GroovyMultifactorAuthenticationProviderBypassEvaluator(props, radius.getId());
     }
 
     @ConditionalOnMissingBean(name = "radiusHttpRequestMultifactorAuthenticationProviderBypass")
     @Bean
     @RefreshScope
-    public MultifactorAuthenticationProviderBypass radiusHttpRequestMultifactorAuthenticationProviderBypass() {
+    public MultifactorAuthenticationProviderBypassEvaluator radiusHttpRequestMultifactorAuthenticationProviderBypass() {
         val radius = casProperties.getAuthn().getMfa().getRadius();
         val props = radius.getBypass();
-        return new HttpRequestMultifactorAuthenticationProviderBypass(props, radius.getId());
+        return new HttpRequestMultifactorAuthenticationProviderBypassEvaluator(props, radius.getId());
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "radiusCredentialMultifactorAuthenticationProviderBypass")
-    public MultifactorAuthenticationProviderBypass radiusCredentialMultifactorAuthenticationProviderBypass() {
+    public MultifactorAuthenticationProviderBypassEvaluator radiusCredentialMultifactorAuthenticationProviderBypass() {
         val radius = casProperties.getAuthn().getMfa().getRadius();
         val props = radius.getBypass();
-        return new CredentialMultifactorAuthenticationProviderBypass(props, radius.getId());
+        return new CredentialMultifactorAuthenticationProviderBypassEvaluator(props, radius.getId());
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "radiusRegisteredServiceMultifactorAuthenticationProviderBypass")
-    public MultifactorAuthenticationProviderBypass radiusRegisteredServiceMultifactorAuthenticationProviderBypass() {
+    public MultifactorAuthenticationProviderBypassEvaluator radiusRegisteredServiceMultifactorAuthenticationProviderBypass() {
         val radius = casProperties.getAuthn().getMfa().getRadius();
-        return new RegisteredServiceMultifactorAuthenticationProviderBypass(radius.getId());
+        return new RegisteredServiceMultifactorAuthenticationProviderBypassEvaluator(radius.getId());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "radiusPrincipalMultifactorAuthenticationProviderBypass")
-    public MultifactorAuthenticationProviderBypass radiusPrincipalMultifactorAuthenticationProviderBypass() {
+    public MultifactorAuthenticationProviderBypassEvaluator radiusPrincipalMultifactorAuthenticationProviderBypass() {
         val radius = casProperties.getAuthn().getMfa().getRadius();
         val props = radius.getBypass();
-        return new PrincipalMultifactorAuthenticationProviderBypass(props, radius.getId());
+        return new PrincipalMultifactorAuthenticationProviderBypassEvaluator(props, radius.getId());
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "radiusAuthenticationMultifactorAuthenticationProviderBypass")
-    public MultifactorAuthenticationProviderBypass radiusAuthenticationMultifactorAuthenticationProviderBypass() {
+    public MultifactorAuthenticationProviderBypassEvaluator radiusAuthenticationMultifactorAuthenticationProviderBypass() {
         val radius = casProperties.getAuthn().getMfa().getRadius();
         val props = radius.getBypass();
-        return new AuthenticationMultifactorAuthenticationProviderBypass(props, radius.getId());
+        return new AuthenticationMultifactorAuthenticationProviderBypassEvaluator(props, radius.getId());
     }
 
 }

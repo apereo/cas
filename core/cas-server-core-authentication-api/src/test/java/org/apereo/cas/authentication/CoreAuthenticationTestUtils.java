@@ -105,6 +105,7 @@ public class CoreAuthenticationTestUtils {
         attributes.put("uid", CollectionUtils.wrap(CONST_USERNAME));
         attributes.put("cn", CollectionUtils.wrap(CONST_USERNAME.toUpperCase()));
         attributes.put("givenName", CollectionUtils.wrap(CONST_USERNAME));
+        attributes.put("mail", CollectionUtils.wrap(CONST_USERNAME + "@example.org"));
         attributes.put("memberOf", CollectionUtils.wrapList("system", "admin", "cas", "staff"));
         return new StubPersonAttributeDao(attributes);
     }

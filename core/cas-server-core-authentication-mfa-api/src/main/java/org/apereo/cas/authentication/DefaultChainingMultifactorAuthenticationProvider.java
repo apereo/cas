@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypass;
+import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,13 +30,13 @@ public class DefaultChainingMultifactorAuthenticationProvider implements Chainin
     private final List<MultifactorAuthenticationProvider> multifactorAuthenticationProviders = new ArrayList<>();
 
     @Override
-    public MultifactorAuthenticationProviderBypass getBypassEvaluator() {
+    public MultifactorAuthenticationProviderBypassEvaluator getBypassEvaluator() {
         val bypass = new DefaultChainingMultifactorAuthenticationBypassProvider();
         getMultifactorAuthenticationProviders()
             .stream()
             .sorted()
             .map(MultifactorAuthenticationProvider::getBypassEvaluator)
-            .forEach(bypass::addMultifactorAuthenticationProviderBypass);
+            .forEach(bypass::addMultifactorAuthenticationProviderBypassEvaluator);
         return bypass;
     }
 

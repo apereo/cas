@@ -23,15 +23,15 @@ import java.util.stream.Collectors;
  * @since 6.0
  */
 @Slf4j
-public class HttpRequestMultifactorAuthenticationProviderBypass extends BaseMultifactorAuthenticationProviderBypass {
+public class HttpRequestMultifactorAuthenticationProviderBypassEvaluator extends BaseMultifactorAuthenticationProviderBypassEvaluator {
     private static final long serialVersionUID = -7553981418344342672L;
 
     private final MultifactorAuthenticationProviderBypassProperties bypassProperties;
     private final Pattern httpRequestRemoteAddressPattern;
     private final Set<Pattern> httpRequestHeaderPatterns;
 
-    public HttpRequestMultifactorAuthenticationProviderBypass(final MultifactorAuthenticationProviderBypassProperties bypassProperties,
-                                                              final String providerId) {
+    public HttpRequestMultifactorAuthenticationProviderBypassEvaluator(final MultifactorAuthenticationProviderBypassProperties bypassProperties,
+                                                                       final String providerId) {
         super(providerId);
         this.bypassProperties = bypassProperties;
         if (StringUtils.isNotBlank(bypassProperties.getHttpRequestRemoteAddress())) {

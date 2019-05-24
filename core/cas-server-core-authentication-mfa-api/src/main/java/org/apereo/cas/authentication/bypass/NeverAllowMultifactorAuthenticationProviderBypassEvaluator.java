@@ -15,12 +15,12 @@ import javax.servlet.http.HttpServletRequest;
  * @since 6.0
  */
 @Slf4j
-public class NeverAllowMultifactorAuthenticationProviderBypass extends BaseMultifactorAuthenticationProviderBypass {
+public class NeverAllowMultifactorAuthenticationProviderBypassEvaluator extends BaseMultifactorAuthenticationProviderBypassEvaluator {
     private static final long serialVersionUID = -2433888418344342672L;
-    private static volatile MultifactorAuthenticationProviderBypass INSTANCE;
+    private static volatile MultifactorAuthenticationProviderBypassEvaluator INSTANCE;
 
-    protected NeverAllowMultifactorAuthenticationProviderBypass() {
-        super(NeverAllowMultifactorAuthenticationProviderBypass.class.getSimpleName());
+    protected NeverAllowMultifactorAuthenticationProviderBypassEvaluator() {
+        super(NeverAllowMultifactorAuthenticationProviderBypassEvaluator.class.getSimpleName());
     }
 
 
@@ -29,9 +29,9 @@ public class NeverAllowMultifactorAuthenticationProviderBypass extends BaseMulti
      *
      * @return the instance
      */
-    public static MultifactorAuthenticationProviderBypass getInstance() {
+    public static MultifactorAuthenticationProviderBypassEvaluator getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new NeverAllowMultifactorAuthenticationProviderBypass();
+            INSTANCE = new NeverAllowMultifactorAuthenticationProviderBypassEvaluator();
         }
         return INSTANCE;
     }

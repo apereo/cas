@@ -15,20 +15,20 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 
 /**
- * This is {@link RestMultifactorAuthenticationProviderBypass}.
+ * This is {@link RestMultifactorAuthenticationProviderBypassEvaluator}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @Slf4j
-public class RestMultifactorAuthenticationProviderBypass extends BaseMultifactorAuthenticationProviderBypass {
+public class RestMultifactorAuthenticationProviderBypassEvaluator extends BaseMultifactorAuthenticationProviderBypassEvaluator {
 
     private static final long serialVersionUID = -7553888418344342672L;
 
     private final MultifactorAuthenticationProviderBypassProperties bypassProperties;
 
-    public RestMultifactorAuthenticationProviderBypass(final MultifactorAuthenticationProviderBypassProperties bypassProperties,
-                                                       final String providerId) {
+    public RestMultifactorAuthenticationProviderBypassEvaluator(final MultifactorAuthenticationProviderBypassProperties bypassProperties,
+                                                                final String providerId) {
         super(providerId);
         this.bypassProperties = bypassProperties;
     }

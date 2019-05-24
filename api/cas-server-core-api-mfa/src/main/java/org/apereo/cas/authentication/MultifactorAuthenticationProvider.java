@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypass;
+import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicyFailureModes;
 
@@ -34,7 +34,7 @@ public interface MultifactorAuthenticationProvider extends Serializable, Ordered
      *
      * @return - the bypass evaluator
      */
-    MultifactorAuthenticationProviderBypass getBypassEvaluator();
+    MultifactorAuthenticationProviderBypassEvaluator getBypassEvaluator();
 
     /**
      * Gets id for this provider.

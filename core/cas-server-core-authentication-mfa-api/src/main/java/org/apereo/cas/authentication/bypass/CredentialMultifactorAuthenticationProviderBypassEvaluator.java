@@ -18,13 +18,13 @@ import javax.servlet.http.HttpServletRequest;
  * @since 6.0
  */
 @Slf4j
-public class CredentialMultifactorAuthenticationProviderBypass extends BaseMultifactorAuthenticationProviderBypass {
+public class CredentialMultifactorAuthenticationProviderBypassEvaluator extends BaseMultifactorAuthenticationProviderBypassEvaluator {
     private static final long serialVersionUID = -1233888418344342672L;
 
     private final MultifactorAuthenticationProviderBypassProperties bypassProperties;
 
-    public CredentialMultifactorAuthenticationProviderBypass(final MultifactorAuthenticationProviderBypassProperties bypassProperties,
-                                                                 final String providerId) {
+    public CredentialMultifactorAuthenticationProviderBypassEvaluator(final MultifactorAuthenticationProviderBypassProperties bypassProperties,
+                                                                      final String providerId) {
         super(providerId);
         this.bypassProperties = bypassProperties;
     }

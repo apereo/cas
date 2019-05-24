@@ -12,19 +12,19 @@ import lombok.val;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * This is {@link GroovyMultifactorAuthenticationProviderBypass}.
+ * This is {@link GroovyMultifactorAuthenticationProviderBypassEvaluator}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @Slf4j
-public class GroovyMultifactorAuthenticationProviderBypass extends BaseMultifactorAuthenticationProviderBypass {
+public class GroovyMultifactorAuthenticationProviderBypassEvaluator extends BaseMultifactorAuthenticationProviderBypassEvaluator {
     private static final long serialVersionUID = -4909072898415688377L;
 
     private final transient WatchableGroovyScriptResource watchableScript;
 
-    public GroovyMultifactorAuthenticationProviderBypass(final MultifactorAuthenticationProviderBypassProperties bypassProperties,
-                                                         final String providerId) {
+    public GroovyMultifactorAuthenticationProviderBypassEvaluator(final MultifactorAuthenticationProviderBypassProperties bypassProperties,
+                                                                  final String providerId) {
         super(providerId);
         val groovyScript = bypassProperties.getGroovy().getLocation();
         this.watchableScript = new WatchableGroovyScriptResource(groovyScript);
