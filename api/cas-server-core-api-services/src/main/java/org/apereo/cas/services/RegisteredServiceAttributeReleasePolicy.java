@@ -58,6 +58,13 @@ public interface RegisteredServiceAttributeReleasePolicy extends Serializable, O
     }
 
     /**
+     * Gets consent policy.
+     *
+     * @return the consent policy
+     */
+    RegisteredServiceConsentPolicy getConsentPolicy();
+
+    /**
      * Gets principal attribute repository that may control the fetching
      * and caching of attributes at release time from attribute repository sources..
      *
