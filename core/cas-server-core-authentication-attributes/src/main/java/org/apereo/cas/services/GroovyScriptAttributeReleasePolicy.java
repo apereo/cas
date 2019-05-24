@@ -40,7 +40,7 @@ public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
 
     @Override
     public Map<String, List<Object>> getAttributesInternal(final Principal principal, final Map<String, List<Object>> attributes,
-                                                     final RegisteredService registeredService, final Service selectedService) {
+                                                           final RegisteredService registeredService, final Service selectedService) {
         try {
             val args = new Object[]{attributes, LOGGER, principal, registeredService};
             LOGGER.debug("Invoking Groovy script with attributes=[{}], principal=[{}], service=[{}] and default logger",
