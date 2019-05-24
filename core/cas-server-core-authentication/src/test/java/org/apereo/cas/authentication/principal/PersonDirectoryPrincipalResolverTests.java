@@ -116,7 +116,7 @@ public class PersonDirectoryPrincipalResolverTests {
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
         assertNotNull(p);
         assertEquals("changedPrincipal", p.getId());
-        assertEquals(6, p.getAttributes().size());
+        assertEquals(7, p.getAttributes().size());
         assertTrue(p.getAttributes().containsKey(ATTR_1));
         assertTrue(p.getAttributes().containsKey("principal"));
     }
