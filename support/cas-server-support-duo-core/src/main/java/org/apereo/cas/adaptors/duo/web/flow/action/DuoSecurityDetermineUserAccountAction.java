@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.duo.web.flow.action;
 
-import org.apereo.cas.adaptors.duo.DuoUserAccountAuthStatus;
-import org.apereo.cas.adaptors.duo.authn.DuoMultifactorAuthenticationProvider;
+import org.apereo.cas.adaptors.duo.DuoSecurityUserAccountStatus;
+import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
 import org.apereo.cas.web.support.WebUtils;
@@ -22,7 +22,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @RequiredArgsConstructor
 @Slf4j
-public class DuoSecurityDetermineUserAccountAction extends AbstractMultifactorAuthenticationAction<DuoMultifactorAuthenticationProvider> {
+public class DuoSecurityDetermineUserAccountAction extends AbstractMultifactorAuthenticationAction<DuoSecurityMultifactorAuthenticationProvider> {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
@@ -30,22 +30,22 @@ public class DuoSecurityDetermineUserAccountAction extends AbstractMultifactorAu
         val principal = authentication.getPrincipal();
 
         val duoAuthenticationService = provider.getDuoAuthenticationService();
-        val account = duoAuthenticationService.getDuoUserAccount(principal.getId());
+        val account = duoAuthenticationService.getUserAccount(principal.getId());
 
         val eventFactorySupport = new EventFactorySupport();
-        if (account.getStatus() == DuoUserAccountAuthStatus.ENROLL) {
+        if (account.getStatus() == DuoSecurityUserAccountStatus.ENROLL) {
             if (StringUtils.isNotBlank(provider.getRegistrationUrl())) {
                 requestContext.getFlowScope().put("duoRegistrationUrl", provider.getRegistrationUrl());
                 return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_ENROLL);
             }
         }
-        if (account.getStatus() == DuoUserAccountAuthStatus.ALLOW) {
+        if (account.getStatus() == DuoSecurityUserAccountStatus.ALLOW) {
             return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_BYPASS);
         }
-        if (account.getStatus() == DuoUserAccountAuthStatus.DENY) {
+        if (account.getStatus() == DuoSecurityUserAccountStatus.DENY) {
             return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_DENY);
         }
-        if (account.getStatus() == DuoUserAccountAuthStatus.UNAVAILABLE) {
+        if (account.getStatus() == DuoSecurityUserAccountStatus.UNAVAILABLE) {
             return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
         }
 

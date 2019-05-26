@@ -24,11 +24,11 @@ import java.util.ArrayList;
 @Slf4j
 public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
-    private final DuoMultifactorAuthenticationProvider provider;
+    private final DuoSecurityMultifactorAuthenticationProvider provider;
 
     public DuoSecurityAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                             final PrincipalFactory principalFactory,
-                                            final DuoMultifactorAuthenticationProvider provider,
+                                            final DuoSecurityMultifactorAuthenticationProvider provider,
                                             final Integer order) {
         super(name, servicesManager, principalFactory, order);
         this.provider = provider;
@@ -46,7 +46,7 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
      */
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
-        if (credential instanceof DuoDirectCredential) {
+        if (credential instanceof DuoSecurityDirectCredential) {
             LOGGER.debug("Attempting to directly authenticate credential against Duo");
             return authenticateDuoApiCredential(credential);
         }
@@ -56,7 +56,7 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
     private AuthenticationHandlerExecutionResult authenticateDuoApiCredential(final Credential credential) throws FailedLoginException {
         try {
             val duoAuthenticationService = provider.getDuoAuthenticationService();
-            val creds = DuoDirectCredential.class.cast(credential);
+            val creds = DuoSecurityDirectCredential.class.cast(credential);
             if (duoAuthenticationService.authenticate(creds).getKey()) {
                 val principal = creds.getAuthentication().getPrincipal();
                 LOGGER.debug("Duo has successfully authenticated [{}]", principal.getId());
@@ -70,7 +70,7 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
 
     private AuthenticationHandlerExecutionResult authenticateDuoCredential(final Credential credential) throws FailedLoginException {
         try {
-            val duoCredential = (DuoCredential) credential;
+            val duoCredential = (DuoSecurityCredential) credential;
             if (!duoCredential.isValid()) {
                 throw new GeneralSecurityException("Duo credential validation failed. Ensure a username "
                     + " and the signed Duo response is configured and passed. Credential received: " + duoCredential);

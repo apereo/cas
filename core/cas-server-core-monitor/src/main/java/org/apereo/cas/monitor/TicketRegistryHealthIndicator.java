@@ -35,6 +35,7 @@ public class TicketRegistryHealthIndicator extends AbstractHealthIndicator {
 
     @Override
     protected void doHealthCheck(final Health.Builder builder) {
+        builder.withDetail("name", getClass().getSimpleName());
 
         val sessionCount = this.registryState.sessionCount();
         val ticketCount = this.registryState.serviceTicketCount();

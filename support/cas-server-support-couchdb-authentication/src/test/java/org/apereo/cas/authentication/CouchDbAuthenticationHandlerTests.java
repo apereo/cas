@@ -50,8 +50,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Getter
-@SpringBootTest(
-    classes = {
+@SpringBootTest(classes = {
         CasCouchDbCoreConfiguration.class,
         CouchDbAuthenticationConfiguration.class,
         CasCoreAuthenticationConfiguration.class,

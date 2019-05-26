@@ -12,7 +12,7 @@ import lombok.ToString;
 
 
 /**
- * This is {@link DuoDirectCredential}.
+ * This is {@link DuoSecurityDirectCredential}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -22,7 +22,7 @@ import lombok.ToString;
 @Getter
 @RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class DuoDirectCredential extends AbstractCredential implements MultifactorAuthenticationCredential {
+public class DuoSecurityDirectCredential extends AbstractCredential implements MultifactorAuthenticationCredential {
     private static final long serialVersionUID = -7570699733132111037L;
 
     private final Authentication authentication;

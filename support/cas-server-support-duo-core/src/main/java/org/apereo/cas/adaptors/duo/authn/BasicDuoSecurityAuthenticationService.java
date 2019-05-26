@@ -46,7 +46,7 @@ public class BasicDuoSecurityAuthenticationService extends BaseDuoSecurityAuthen
 
     @Override
     public Pair<Boolean, String> authenticate(final Credential creds) throws Exception {
-        if (creds instanceof DuoDirectCredential) {
+        if (creds instanceof DuoSecurityDirectCredential) {
             return authenticateDuoCredentialDirect(creds);
         }
         return authenticateDuoCredential(creds);
@@ -54,7 +54,7 @@ public class BasicDuoSecurityAuthenticationService extends BaseDuoSecurityAuthen
 
     private Pair<Boolean, String> authenticateDuoCredentialDirect(final Credential crds) {
         try {
-            val credential = DuoDirectCredential.class.cast(crds);
+            val credential = DuoSecurityDirectCredential.class.cast(crds);
             val p = credential.getAuthentication().getPrincipal();
             val request = buildHttpPostAuthRequest();
             signHttpAuthRequest(request, p.getId());
@@ -70,7 +70,7 @@ public class BasicDuoSecurityAuthenticationService extends BaseDuoSecurityAuthen
     }
 
     private Pair<Boolean, String> authenticateDuoCredential(final Credential creds) throws Exception {
-        val signedRequestToken = DuoCredential.class.cast(creds).getSignedDuoResponse();
+        val signedRequestToken = DuoSecurityCredential.class.cast(creds).getSignedDuoResponse();
         if (StringUtils.isBlank(signedRequestToken)) {
             throw new IllegalArgumentException("No signed request token was passed to verify");
         }

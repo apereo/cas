@@ -30,7 +30,11 @@ import org.springframework.test.context.TestPropertySource;
     CasWebApplicationServiceFactoryConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreWebConfiguration.class})
-@TestPropertySource(properties = {"cas.audit.redis.host=localhost", "cas.audit.redis.port=6379"})
+@TestPropertySource(properties = {
+    "cas.audit.redis.host=localhost",
+    "cas.audit.redis.port=6379",
+    "cas.audit.redis.asynchronous=false"
+})
 @Tag("Redis")
 @Getter
 @EnabledIfContinuousIntegration

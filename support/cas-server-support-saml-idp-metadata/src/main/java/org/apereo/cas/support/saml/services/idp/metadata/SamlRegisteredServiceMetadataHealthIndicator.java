@@ -39,6 +39,7 @@ public class SamlRegisteredServiceMetadataHealthIndicator extends AbstractHealth
         LOGGER.debug("There are [{}] metadata resolver(s) available in the chain", availableResolvers.size());
 
         builder.up();
+        builder.withDetail("name", getClass().getSimpleName());
 
         samlServices
             .stream()

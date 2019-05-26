@@ -55,6 +55,7 @@ public abstract class AbstractPoolHealthIndicator extends AbstractHealthIndicato
         }
         poolBuilder
             .withDetail("message", message)
+            .withDetail("name", getClass().getSimpleName())
             .withDetail("activeCount", getActiveCount())
             .withDetail("idleCount", getIdleCount());
     }

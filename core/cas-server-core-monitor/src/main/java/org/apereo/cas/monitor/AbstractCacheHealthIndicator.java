@@ -32,6 +32,7 @@ public abstract class AbstractCacheHealthIndicator extends AbstractHealthIndicat
     protected void doHealthCheck(final Health.Builder builder) {
         try {
             val statistics = getStatistics();
+            builder.withDetail("name", getClass().getSimpleName());
             if (statistics == null || statistics.length == 0) {
                 builder.outOfService().withDetail("message", "Cache statistics are not available.");
                 return;

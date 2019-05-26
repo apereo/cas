@@ -24,7 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = {"username"}, callSuper = true)
-public class DuoCredential extends AbstractCredential implements MultifactorAuthenticationCredential {
+public class DuoSecurityCredential extends AbstractCredential implements MultifactorAuthenticationCredential {
 
     private static final long serialVersionUID = -7570600733132111037L;
 

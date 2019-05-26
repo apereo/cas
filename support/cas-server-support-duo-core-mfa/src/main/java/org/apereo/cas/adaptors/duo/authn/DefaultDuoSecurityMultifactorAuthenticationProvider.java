@@ -16,7 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 
 /**
- * This is {@link DefaultDuoMultifactorAuthenticationProvider}.
+ * This is {@link DefaultDuoSecurityMultifactorAuthenticationProvider}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -28,7 +28,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 @AllArgsConstructor
 @NoArgsConstructor
 @RefreshScope
-public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider implements DuoMultifactorAuthenticationProvider {
+public class DefaultDuoSecurityMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider implements DuoSecurityMultifactorAuthenticationProvider {
 
     private static final long serialVersionUID = 4789727148634156909L;
 
