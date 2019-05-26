@@ -1,10 +1,10 @@
 package org.apereo.cas.adaptors.duo.config;
 
-import org.apereo.cas.adaptors.duo.DuoHealthIndicator;
-import org.apereo.cas.adaptors.duo.authn.DuoCredential;
-import org.apereo.cas.adaptors.duo.authn.DuoDirectCredential;
-import org.apereo.cas.adaptors.duo.authn.DuoMultifactorAuthenticationProvider;
+import org.apereo.cas.adaptors.duo.DuoSecurityHealthIndicator;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationHandler;
+import org.apereo.cas.adaptors.duo.authn.DuoSecurityCredential;
+import org.apereo.cas.adaptors.duo.authn.DuoSecurityDirectCredential;
+import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProviderFactory;
 import org.apereo.cas.adaptors.duo.web.DuoSecurityPingEndpoint;
 import org.apereo.cas.adaptors.duo.web.DuoSecurityUserAccountStatusEndpoint;
@@ -109,14 +109,14 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
     @ConditionalOnMissingBean(name = "duoProviderFactory")
     @Bean
     @RefreshScope
-    public MultifactorAuthenticationProviderFactoryBean<DuoMultifactorAuthenticationProvider, DuoSecurityMultifactorProperties> duoProviderFactory() {
+    public MultifactorAuthenticationProviderFactoryBean<DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorProperties> duoProviderFactory() {
         return new DuoSecurityMultifactorAuthenticationProviderFactory(httpClient.getIfAvailable(), duoSecurityBypassEvaluator.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "duoProviderBean")
     @Bean
     @RefreshScope
-    public MultifactorAuthenticationProviderBean<DuoMultifactorAuthenticationProvider, DuoSecurityMultifactorProperties> duoProviderBean() {
+    public MultifactorAuthenticationProviderBean<DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorProperties> duoProviderBean() {
         return new MultifactorAuthenticationProviderBean(duoProviderFactory(),
             applicationContext.getDefaultListableBeanFactory(),
             casProperties.getAuthn().getMfa().getDuo());
@@ -173,7 +173,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
                     plan.registerAuthenticationHandler(dh);
                     plan.registerAuthenticationMetadataPopulator(duoAuthenticationMetaDataPopulator(dh));
                 });
-            plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(DuoCredential.class, DuoDirectCredential.class));
+            plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(DuoSecurityCredential.class, DuoSecurityDirectCredential.class));
         };
     }
 
@@ -185,7 +185,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
     @Bean
     @ConditionalOnEnabledHealthIndicator("duoSecurityHealthIndicator")
     public HealthIndicator duoSecurityHealthIndicator() {
-        return new DuoHealthIndicator(applicationContext);
+        return new DuoSecurityHealthIndicator(applicationContext);
     }
 
     @Bean

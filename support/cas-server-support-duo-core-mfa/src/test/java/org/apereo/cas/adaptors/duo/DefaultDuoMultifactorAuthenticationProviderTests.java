@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.duo;
 
-import org.apereo.cas.adaptors.duo.authn.DefaultDuoMultifactorAuthenticationProvider;
+import org.apereo.cas.adaptors.duo.authn.DefaultDuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.BaseAbstractMultifactorAuthenticationProviderTests;
@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
 public class DefaultDuoMultifactorAuthenticationProviderTests extends BaseAbstractMultifactorAuthenticationProviderTests {
     @Override
     public AbstractMultifactorAuthenticationProvider getMultifactorAuthenticationProvider() {
-        return new DefaultDuoMultifactorAuthenticationProvider("https://www.example.org",
+        return new DefaultDuoSecurityMultifactorAuthenticationProvider("https://www.example.org",
             mock(DuoSecurityAuthenticationService.class));
     }
 }

@@ -1,9 +1,9 @@
 package org.apereo.cas.adaptors.duo.web;
 
-import org.apereo.cas.adaptors.duo.DuoUserAccount;
-import org.apereo.cas.adaptors.duo.DuoUserAccountAuthStatus;
-import org.apereo.cas.adaptors.duo.authn.DuoMultifactorAuthenticationProvider;
+import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
+import org.apereo.cas.adaptors.duo.DuoSecurityUserAccountStatus;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
+import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
@@ -39,16 +39,16 @@ public class DuoSecurityUserAccountStatusEndpointTests {
     public void verifyOperation() {
         ApplicationContextProvider.holdApplicationContext(applicationContext);
 
-        val account = new DuoUserAccount("casuser");
+        val account = new DuoSecurityUserAccount("casuser");
         account.setMessage("User is valid");
-        account.setStatus(DuoUserAccountAuthStatus.AUTH);
+        account.setStatus(DuoSecurityUserAccountStatus.AUTH);
 
         val duoService = mock(DuoSecurityAuthenticationService.class);
         when(duoService.ping()).thenReturn(true);
         when(duoService.getApiHost()).thenReturn("https://api.duosecurity.com");
-        when(duoService.getDuoUserAccount(eq("casuser"))).thenReturn(account);
+        when(duoService.getUserAccount(eq("casuser"))).thenReturn(account);
 
-        val bean = mock(DuoMultifactorAuthenticationProvider.class);
+        val bean = mock(DuoSecurityMultifactorAuthenticationProvider.class);
         when(bean.getId()).thenReturn(DuoSecurityMultifactorProperties.DEFAULT_IDENTIFIER);
         when(bean.getDuoAuthenticationService()).thenReturn(duoService);
         when(bean.matches(eq(DuoSecurityMultifactorProperties.DEFAULT_IDENTIFIER))).thenReturn(true);

@@ -2,6 +2,7 @@ package org.apereo.cas.services.consent;
 
 import org.apereo.cas.services.RegisteredServiceConsentPolicy;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -55,10 +56,12 @@ public class ChainingRegisteredServiceConsentPolicy implements RegisteredService
     }
 
     @Override
+    @JsonIgnore
     public boolean isEnabled() {
         return this.policies.stream().anyMatch(RegisteredServiceConsentPolicy::isEnabled);
     }
 
+    @JsonIgnore
     @Override
     public Set<String> getExcludedAttributes() {
         return this.policies
@@ -70,6 +73,7 @@ public class ChainingRegisteredServiceConsentPolicy implements RegisteredService
     }
 
     @Override
+    @JsonIgnore
     public Set<String> getIncludeOnlyAttributes() {
         return this.policies
             .stream()
