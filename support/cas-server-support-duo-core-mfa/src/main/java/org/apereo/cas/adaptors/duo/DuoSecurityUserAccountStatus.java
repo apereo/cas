@@ -1,12 +1,12 @@
 package org.apereo.cas.adaptors.duo;
 
 /**
- * This is {@link DuoUserAccountAuthStatus}.
+ * This is {@link DuoSecurityUserAccountStatus}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public enum DuoUserAccountAuthStatus {
+public enum DuoSecurityUserAccountStatus {
     /**
      * The user is known and permitted to authenticate.
      */

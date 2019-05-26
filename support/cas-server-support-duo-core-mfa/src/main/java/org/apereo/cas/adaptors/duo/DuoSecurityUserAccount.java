@@ -6,7 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * This is {@link DuoUserAccount}.
+ * This is {@link DuoSecurityUserAccount}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
@@ -15,9 +15,9 @@ import lombok.ToString;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class DuoUserAccount {
+public class DuoSecurityUserAccount {
 
-    private DuoUserAccountAuthStatus status = DuoUserAccountAuthStatus.AUTH;
+    private DuoSecurityUserAccountStatus status = DuoSecurityUserAccountStatus.AUTH;
 
     private String enrollPortalUrl;
 
@@ -25,7 +25,7 @@ public class DuoUserAccount {
 
     private String message;
 
-    public DuoUserAccount(final String username) {
+    public DuoSecurityUserAccount(final String username) {
         this.username = username;
     }
 }

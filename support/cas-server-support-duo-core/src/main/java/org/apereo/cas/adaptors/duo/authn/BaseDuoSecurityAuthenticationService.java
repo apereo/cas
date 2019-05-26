@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.duo.authn;
 
-import org.apereo.cas.adaptors.duo.DuoUserAccount;
-import org.apereo.cas.adaptors.duo.DuoUserAccountAuthStatus;
+import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
+import org.apereo.cas.adaptors.duo.DuoSecurityUserAccountStatus;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
 import org.apereo.cas.util.http.HttpClient;
 
@@ -59,9 +59,9 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
 
     private final transient HttpClient httpClient;
 
-    private final transient Map<String, DuoUserAccount> userAccountCachedMap;
+    private final transient Map<String, DuoSecurityUserAccount> userAccountCachedMap;
 
-    private final transient Cache<String, DuoUserAccount> userAccountCache;
+    private final transient Cache<String, DuoSecurityUserAccount> userAccountCache;
 
     public BaseDuoSecurityAuthenticationService(final DuoSecurityMultifactorProperties duoProperties, final HttpClient httpClient) {
         this.duoProperties = duoProperties;
@@ -113,15 +113,15 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
     }
 
     @Override
-    public DuoUserAccount getDuoUserAccount(final String username) {
+    public DuoSecurityUserAccount getUserAccount(final String username) {
         if (userAccountCachedMap.containsKey(username)) {
             val account = userAccountCachedMap.get(username);
             LOGGER.debug("Found cached duo user account [{}]", account);
             return account;
         }
 
-        val account = new DuoUserAccount(username);
-        account.setStatus(DuoUserAccountAuthStatus.AUTH);
+        val account = new DuoSecurityUserAccount(username);
+        account.setStatus(DuoSecurityUserAccountStatus.AUTH);
 
         try {
             val userRequest = buildHttpPostUserPreAuthRequest(username);
@@ -142,17 +142,17 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
                 val response = result.get(RESULT_KEY_RESPONSE);
                 val authResult = response.get(RESULT_KEY_RESULT).asText().toUpperCase();
 
-                val status = DuoUserAccountAuthStatus.valueOf(authResult);
+                val status = DuoSecurityUserAccountStatus.valueOf(authResult);
                 account.setStatus(status);
                 account.setMessage(response.get(RESULT_KEY_STATUS_MESSAGE).asText());
-                if (status == DuoUserAccountAuthStatus.ENROLL) {
+                if (status == DuoSecurityUserAccountStatus.ENROLL) {
                     val enrollUrl = response.get(RESULT_KEY_ENROLL_PORTAL_URL).asText();
                     account.setEnrollPortalUrl(enrollUrl);
                 }
             } else {
                 val code = result.get(RESULT_KEY_CODE).asInt();
                 if (code > RESULT_CODE_ERROR_THRESHOLD) {
-                    LOGGER.warn("Duo returned a failure response with a code indicating a server error: [{}], Duo will be considered unavailable",
+                    LOGGER.warn("Duo returned a failure response with code: [{}]. Duo will be considered unavailable",
                         result.get(RESULT_KEY_MESSAGE));
                     throw new DuoWebException("Duo returned code 500: " + result.get(RESULT_KEY_MESSAGE));
                 }
@@ -164,7 +164,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
             }
         } catch (final Exception e) {
             LOGGER.warn("Reaching Duo has failed with error: [{}]", e.getMessage(), e);
-            account.setStatus(DuoUserAccountAuthStatus.UNAVAILABLE);
+            account.setStatus(DuoSecurityUserAccountStatus.UNAVAILABLE);
         }
 
         userAccountCachedMap.put(account.getUsername(), account);
