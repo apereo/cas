@@ -26,16 +26,15 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@SpringBootTest(
-    classes = {
-        CasCoreAuditConfiguration.class,
-        CasSupportCouchDbAuditConfiguration.class,
-        CasCouchDbCoreConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        RefreshAutoConfiguration.class,
-        CasCoreWebConfiguration.class
-    },
+@SpringBootTest(classes = {
+    CasCoreAuditConfiguration.class,
+    CasSupportCouchDbAuditConfiguration.class,
+    CasCouchDbCoreConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    RefreshAutoConfiguration.class,
+    CasCoreWebConfiguration.class
+},
     properties = {
         "cas.audit.couchDb.asynchronous=false",
         "cas.audit.couchDb.username=cas",

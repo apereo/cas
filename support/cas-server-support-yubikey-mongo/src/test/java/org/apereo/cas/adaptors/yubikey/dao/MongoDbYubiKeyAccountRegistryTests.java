@@ -47,34 +47,33 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("MongoDb")
-@SpringBootTest(
-    classes = {
-        MongoDbYubiKeyConfiguration.class,
-        MongoDbYubiKeyAccountRegistryTests.MongoDbYubiKeyAccountRegistryTestConfiguration.class,
-        YubiKeyAuthenticationEventExecutionPlanConfiguration.class,
-        YubiKeyConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasWebflowContextConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        AopAutoConfiguration.class,
-        CasThemesConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasCoreLogoutConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreWebflowConfiguration.class,
-        CasCoreConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasCookieConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        RefreshAutoConfiguration.class
-    })
+@SpringBootTest(classes = {
+    MongoDbYubiKeyConfiguration.class,
+    MongoDbYubiKeyAccountRegistryTests.MongoDbYubiKeyAccountRegistryTestConfiguration.class,
+    YubiKeyAuthenticationEventExecutionPlanConfiguration.class,
+    YubiKeyConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CasWebflowContextConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    AopAutoConfiguration.class,
+    CasThemesConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasCoreLogoutConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreWebflowConfiguration.class,
+    CasCoreConfiguration.class,
+    CasPersonDirectoryTestConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
+    CasCookieConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    RefreshAutoConfiguration.class
+})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @TestPropertySource(properties = {
     "cas.authn.mfa.yubikey.mongo.databaseName=mfa-trusted",
@@ -86,7 +85,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.mfa.yubikey.mongo.authenticationDatabaseName=admin",
     "cas.authn.mfa.yubikey.clientId=18423",
     "cas.authn.mfa.yubikey.secretKey=zAIqhjui12mK8x82oe9qzBEb0As="
-    })
+})
 public class MongoDbYubiKeyAccountRegistryTests {
     private static final String OTP = "cccccccvlidcnlednilgctgcvcjtivrjidfbdgrefcvi";
     private static final String BAD_TOKEN = "123456";

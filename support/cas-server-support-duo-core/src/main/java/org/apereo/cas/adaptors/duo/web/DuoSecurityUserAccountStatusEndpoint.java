@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.duo.web;
 
-import org.apereo.cas.adaptors.duo.authn.DuoMultifactorAuthenticationProvider;
+import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
@@ -44,15 +44,15 @@ public class DuoSecurityUserAccountStatusEndpoint extends BaseCasActuatorEndpoin
     @ReadOperation(produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<?, ?> fetchAccountStatus(@Selector final String username, @Nullable final String providerId) {
         val results = new LinkedHashMap<>();
-        val providers = applicationContext.getBeansOfType(DuoMultifactorAuthenticationProvider.class).values();
+        val providers = applicationContext.getBeansOfType(DuoSecurityMultifactorAuthenticationProvider.class).values();
         providers
             .stream()
             .filter(Objects::nonNull)
-            .map(DuoMultifactorAuthenticationProvider.class::cast)
+            .map(DuoSecurityMultifactorAuthenticationProvider.class::cast)
             .filter(provider -> StringUtils.isBlank(providerId) || provider.matches(providerId))
             .forEach(p -> {
                 val duoService = p.getDuoAuthenticationService();
-                val accountStatus = duoService.getDuoUserAccount(username);
+                val accountStatus = duoService.getUserAccount(username);
                 results.put(p.getId(),
                     CollectionUtils.wrap("duoApiHost", duoService.getApiHost(),
                         "name", p.getFriendlyName(),

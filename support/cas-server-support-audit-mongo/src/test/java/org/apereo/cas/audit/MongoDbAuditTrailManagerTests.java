@@ -24,14 +24,13 @@ import org.springframework.test.context.TestPropertySource;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@SpringBootTest(
-    classes = {
-        CasCoreAuditConfiguration.class,
-        CasSupportMongoDbAuditConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        RefreshAutoConfiguration.class,
-        CasCoreWebConfiguration.class})
+@SpringBootTest(classes = {
+    CasCoreAuditConfiguration.class,
+    CasSupportMongoDbAuditConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    RefreshAutoConfiguration.class,
+    CasCoreWebConfiguration.class})
 @TestPropertySource(properties = {
     "cas.audit.mongo.host=localhost",
     "cas.audit.mongo.port=27017",

@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.duo.web.flow.config;
 
-import org.apereo.cas.adaptors.duo.authn.DuoCredential;
+import org.apereo.cas.adaptors.duo.authn.DuoSecurityCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -317,7 +317,7 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
 
     private static void createDuoFlowVariables(final DynamicFlowModelBuilder modelBuilder) {
         val vars = new ArrayList<VarModel>();
-        vars.add(new VarModel(CasWebflowConstants.VAR_ID_CREDENTIAL, DuoCredential.class.getName()));
+        vars.add(new VarModel(CasWebflowConstants.VAR_ID_CREDENTIAL, DuoSecurityCredential.class.getName()));
         modelBuilder.setVars(vars);
     }
 }

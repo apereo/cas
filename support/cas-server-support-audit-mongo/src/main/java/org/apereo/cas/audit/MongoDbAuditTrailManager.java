@@ -51,6 +51,6 @@ public class MongoDbAuditTrailManager extends AbstractAuditTrailManager {
 
     @Override
     public void removeAll() {
-        this.mongoTemplate.remove(AuditActionContext.class, this.collectionName);
+        this.mongoTemplate.remove(new Query(), AuditActionContext.class, this.collectionName);
     }
 }
