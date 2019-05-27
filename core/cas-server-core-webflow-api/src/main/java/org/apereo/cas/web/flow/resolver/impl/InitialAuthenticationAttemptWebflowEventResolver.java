@@ -12,6 +12,7 @@ import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.RegisteredService;
@@ -122,8 +123,15 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
             registeredService = this.servicesManager.findServiceBy(service);
             LOGGER.debug("Locating authentication event in the request context...");
             final Authentication authn = WebUtils.getAuthentication(context);
-
-            LOGGER.debug("Enforcing access strategy policies for registered service [{}] and principal [{}]", registeredService, authn.getPrincipal());
+            
+            final Principal principal;
+            if (authn != null) {
+                principal = authn.getPrincipal();
+            } else {
+                principal = null;
+            }
+            
+            LOGGER.debug("Enforcing access strategy policies for registered service [{}] and principal [{}]", registeredService, principal);
             final URI unauthorizedRedirectUrl = registeredService.getAccessStrategy().getUnauthorizedRedirectUrl();
             if (unauthorizedRedirectUrl != null) {
                 WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context, unauthorizedRedirectUrl);
