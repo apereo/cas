@@ -69,7 +69,10 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
 
         if (result != null && !result.isEmpty()) {
             val id = CollectionUtils.firstElement(result);
-            return MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(id.toString(), ApplicationContextProvider.getApplicationContext());
+            if (id.isEmpty()) {
+                return Optional.empty();
+            }
+            return MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(id.get().toString(), ApplicationContextProvider.getApplicationContext());
         }
         return Optional.empty();
     }
