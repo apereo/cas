@@ -46,7 +46,13 @@ public class SurrogateAuthenticationEventListener {
         notify(event.getPrincipal(), event);
     }
 
-    private void notify(final Principal principal, final AbstractCasEvent event) {
+    /**
+     * Notify.
+     *
+     * @param principal the principal
+     * @param event     the event
+     */
+    protected void notify(final Principal principal, final AbstractCasEvent event) {
         val eventDetails = event.toString();
         if (communicationsManager.isSmsSenderDefined()) {
             val sms = casProperties.getAuthn().getSurrogate().getSms();
@@ -64,10 +70,10 @@ public class SurrogateAuthenticationEventListener {
         if (communicationsManager.isMailSenderDefined()) {
             val mail = casProperties.getAuthn().getSurrogate().getMail();
             val emailAttribute = mail.getAttributeName();
-            val to = CollectionUtils.firstElement(emailAttribute).toString();
-            if (to != null) {
+            val to = CollectionUtils.firstElement(emailAttribute);
+            if (to.isPresent()) {
                 val text = mail.getFormattedBody(eventDetails);
-                this.communicationsManager.email(mail, to, text);
+                this.communicationsManager.email(mail, to.get().toString(), text);
             } else {
                 LOGGER.trace("The principal has no [{}] attribute, cannot send email notification", emailAttribute);
             }
