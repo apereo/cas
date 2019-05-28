@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.duo.web;
 
-import org.apereo.cas.adaptors.duo.authn.DuoMultifactorAuthenticationProvider;
+import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
@@ -42,11 +42,11 @@ public class DuoSecurityPingEndpoint extends BaseCasActuatorEndpoint {
     @ReadOperation(produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<?, ?> pingDuo(@Nullable final String providerId) {
         val results = new LinkedHashMap<>();
-        val providers = applicationContext.getBeansOfType(DuoMultifactorAuthenticationProvider.class).values();
+        val providers = applicationContext.getBeansOfType(DuoSecurityMultifactorAuthenticationProvider.class).values();
         providers
             .stream()
             .filter(Objects::nonNull)
-            .map(DuoMultifactorAuthenticationProvider.class::cast)
+            .map(DuoSecurityMultifactorAuthenticationProvider.class::cast)
             .filter(provider -> StringUtils.isBlank(providerId) || provider.matches(providerId))
             .forEach(p -> {
                 val duoService = p.getDuoAuthenticationService();

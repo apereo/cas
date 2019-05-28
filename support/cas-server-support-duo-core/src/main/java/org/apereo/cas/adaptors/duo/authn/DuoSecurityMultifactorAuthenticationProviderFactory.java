@@ -12,7 +12,7 @@ import lombok.val;
 
 /**
  * Implementation of {@link MultifactorAuthenticationProviderFactoryBean} that provides instances of
- * {@link DuoMultifactorAuthenticationProvider}.
+ * {@link DuoSecurityMultifactorAuthenticationProvider}.
  *
  * @author Travis Schmidt
  * @since 6.0
@@ -20,14 +20,14 @@ import lombok.val;
 @RequiredArgsConstructor
 @Slf4j
 public class DuoSecurityMultifactorAuthenticationProviderFactory implements
-    MultifactorAuthenticationProviderFactoryBean<DuoMultifactorAuthenticationProvider, DuoSecurityMultifactorProperties> {
+    MultifactorAuthenticationProviderFactoryBean<DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorProperties> {
 
     private final HttpClient httpClient;
     private final ChainingMultifactorAuthenticationProviderBypassEvaluator bypassEvaluator;
 
     @Override
-    public DuoMultifactorAuthenticationProvider createProvider(final DuoSecurityMultifactorProperties properties) {
-        val provider = new DefaultDuoMultifactorAuthenticationProvider();
+    public DuoSecurityMultifactorAuthenticationProvider createProvider(final DuoSecurityMultifactorProperties properties) {
+        val provider = new DefaultDuoSecurityMultifactorAuthenticationProvider();
         provider.setRegistrationUrl(properties.getRegistrationUrl());
         provider.setDuoAuthenticationService(getDuoAuthenticationService(properties));
         provider.setFailureMode(properties.getFailureMode());

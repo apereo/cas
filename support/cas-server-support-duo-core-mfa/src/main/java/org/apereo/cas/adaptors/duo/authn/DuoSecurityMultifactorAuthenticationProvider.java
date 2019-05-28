@@ -3,12 +3,12 @@ package org.apereo.cas.adaptors.duo.authn;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 
 /**
- * This is {@link DuoMultifactorAuthenticationProvider}.
+ * This is {@link DuoSecurityMultifactorAuthenticationProvider}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public interface DuoMultifactorAuthenticationProvider extends MultifactorAuthenticationProvider {
+public interface DuoSecurityMultifactorAuthenticationProvider extends MultifactorAuthenticationProvider {
 
     /**
      * Gets duo authentication service.
