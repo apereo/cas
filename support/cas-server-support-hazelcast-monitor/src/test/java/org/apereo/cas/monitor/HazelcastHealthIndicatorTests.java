@@ -84,14 +84,17 @@ public class HazelcastHealthIndicatorTests {
             "Status should be UP or OUT_OF_SERVICE but was" + status);
 
         val details = health.getDetails();
-        details.values().stream()
-            .map(Map.class::cast)
-            .forEach(map -> {
+        assertTrue(details.containsKey("name"));
+
+        details.values().forEach(value -> {
+            if (value instanceof Map) {
+                val map = (Map) value;
                 assertTrue(map.containsKey("size"));
                 assertTrue(map.containsKey("capacity"));
                 assertTrue(map.containsKey("evictions"));
                 assertTrue(map.containsKey("percentFree"));
-            });
+            }
+        });
         assertNotNull(hazelcastHealthIndicator.toString());
     }
 }
