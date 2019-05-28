@@ -60,7 +60,7 @@ public enum CasLabels {
     LABEL_JWT_AUTHN_TICKETS("JWT AuthN & Tickets", "jwt"),
     LABEL_LDAP_ACTIVE_DIRECTORY("LDAP & Active Directory", "ldap|\\bad\\b"),
     LABEL_LOGOUT_SLO("Logout & SLO", "\\bslo\\b|logout|signoff|signout"),
-    LABEL_MFA("MFA", "multifactor authentication", "MFA"),
+    LABEL_MFA("MFA", "multifactor authentication|MFA|FailureMode"),
     LABEL_MFA_AUTHY("MFA Authy", "authy"),
     LABEL_MFA_BYPASS("MFA Bypass", "\\bbypass\\b"),
     LABEL_MFA_DUO_SECURITY("MFA Duo Security", "duo"),
