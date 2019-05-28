@@ -93,7 +93,6 @@ public class DelegatedClientWebflowManager {
         if (client instanceof OidcClient) {
             val oidcClient = (OidcClient) client;
             val config = oidcClient.getConfiguration();
-            config.addCustomParam(PARAMETER_CLIENT_ID, ticketId);
             config.setWithState(true);
             config.setStateGenerator(new StaticOrRandomStateGenerator(ticketId));
         }
