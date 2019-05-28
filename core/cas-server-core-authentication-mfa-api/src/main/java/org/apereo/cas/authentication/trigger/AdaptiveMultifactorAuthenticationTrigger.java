@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.core.Ordered;
 
@@ -95,17 +96,27 @@ public class AdaptiveMultifactorAuthenticationTrigger implements MultifactorAuth
         return Optional.empty();
     }
 
-    private static boolean checkUserAgentOrClientIp(final String clientIp, final String agent, final String mfaMethod, final String pattern) {
-        if (agent.matches(pattern) || clientIp.matches(pattern)) {
+    private static boolean checkUserAgentOrClientIp(final String clientIp, final String agent,
+                                                    final String mfaMethod, final String pattern) {
+        if (StringUtils.isNotBlank(agent) && agent.matches(pattern)) {
             LOGGER.debug("Current user agent [{}] at [{}] matches the provided pattern [{}] for "
                     + "adaptive authentication and is required to use [{}]",
                 agent, clientIp, pattern, mfaMethod);
             return true;
         }
+
+        if (StringUtils.isNotBlank(clientIp) && clientIp.matches(pattern)) {
+            LOGGER.debug("Current client IP [{}] matches the provided pattern [{}] for "
+                    + "adaptive authentication and is required to use [{}]",
+                clientIp, pattern, mfaMethod);
+            return true;
+        }
         return false;
     }
 
-    private boolean checkRequestGeoLocation(final HttpServletRequest httpServletRequest, final String clientIp, final String mfaMethod, final String pattern) {
+    private boolean checkRequestGeoLocation(final HttpServletRequest httpServletRequest,
+                                            final String clientIp, final String mfaMethod,
+                                            final String pattern) {
         if (this.geoLocationService != null) {
             val location = HttpRequestUtils.getHttpServletRequestGeoLocation(httpServletRequest);
             val loc = this.geoLocationService.locate(clientIp, location);
