@@ -24,7 +24,6 @@ import java.util.List;
 @Slf4j
 public class RankedMultifactorAuthenticationProviderSelector implements MultifactorAuthenticationProviderSelector {
 
-
     @Override
     public MultifactorAuthenticationProvider resolve(final Collection<MultifactorAuthenticationProvider> providers,
                                                      final RegisteredService service,
