@@ -124,14 +124,18 @@ public class AdaptiveMultifactorAuthenticationTrigger implements MultifactorAuth
 
         val location = HttpRequestUtils.getHttpServletRequestGeoLocation(httpServletRequest);
         val loc = this.geoLocationService.locate(clientIp, location);
-        if (loc != null) {
-            val address = loc.build();
-            if (address.matches(pattern)) {
-                LOGGER.debug("Current address [{}] at [{}] matches the provided pattern [{}] for "
-                        + "adaptive authentication and is required to use [{}]",
-                    address, clientIp, pattern, mfaMethod);
-                return true;
-            }
+        if (loc == null) {
+            LOGGER.trace("No geolocation respsonse is provided");
+            return false;
         }
+
+        val address = loc.build();
+        if (address.matches(pattern)) {
+            LOGGER.debug("Current address [{}] at [{}] matches the provided pattern [{}] for "
+                    + "adaptive authentication and is required to use [{}]",
+                address, clientIp, pattern, mfaMethod);
+            return true;
+        }
+        return false;
     }
 }
