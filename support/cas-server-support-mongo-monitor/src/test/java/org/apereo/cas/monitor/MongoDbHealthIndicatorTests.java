@@ -91,7 +91,7 @@ public class MongoDbHealthIndicatorTests {
     private MongoTemplate template;
 
     @BeforeEach
-    public void bootstrap(){
+    public void bootstrap() {
         template.save(new AuditActionContext("casuser", "resource",
             "action", "appcode", new Date(), "clientIp",
             "serverIp"), "monitor");
@@ -102,14 +102,17 @@ public class MongoDbHealthIndicatorTests {
         val health = mongoHealthIndicator.health();
         assertEquals(Status.UP, health.getStatus());
         val details = health.getDetails();
-        details.values().stream()
-            .map(Map.class::cast)
-            .forEach(map -> {
+        assertTrue(details.containsKey("name"));
+
+        details.values().forEach(value -> {
+            if (value instanceof Map) {
+                val map = (Map) value;
                 assertTrue(map.containsKey("size"));
                 assertTrue(map.containsKey("capacity"));
                 assertTrue(map.containsKey("evictions"));
                 assertTrue(map.containsKey("percentFree"));
-            });
+            }
+        });
         assertNotNull(mongoHealthIndicator.toString());
     }
 }
