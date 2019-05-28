@@ -2,7 +2,6 @@ package org.apereo.cas.authentication.trigger;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
-import org.apereo.cas.authentication.MultifactorAuthenticationProviderResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
@@ -33,7 +32,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RegisteredServiceMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger {
     private final CasConfigurationProperties casProperties;
-    private final MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver;
     private final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
