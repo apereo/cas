@@ -316,6 +316,83 @@ public class CollectionUtils {
     }
 
     /**
+     * Wrap map.
+     *
+     * @param <K>    the type parameter
+     * @param <V>    the type parameter
+     * @param key    the key
+     * @param value  the value
+     * @param key2   the key 2
+     * @param value2 the value 2
+     * @param key3   the key 3
+     * @param value3 the value 3
+     * @param key4   the key 4
+     * @param value4 the value 4
+     * @param key5   the key 5
+     * @param value5 the value 5
+     * @param key6   the key 6
+     * @param value6 the value 6
+     * @param key7   the key 7
+     * @param value7 the value 7
+     * @param key8   the key 8
+     * @param value8 the value 8
+     * @return the map
+     */
+    public static <K, V> Map<K, V> wrap(final String key, final Object value,
+                                        final String key2, final Object value2,
+                                        final String key3, final Object value3,
+                                        final String key4, final Object value4,
+                                        final String key5, final Object value5,
+                                        final String key6, final Object value6,
+                                        final String key7, final Object value7,
+                                        final String key8, final Object value8) {
+        val m = wrap(key, value, key2, value2, key3, value3, key4, value4,
+            key5, value5, key6, value6, key7, value7);
+        m.put(key8, value8);
+        return (Map) m;
+    }
+
+    /**
+     * Wrap map.
+     *
+     * @param <K>    the type parameter
+     * @param <V>    the type parameter
+     * @param key    the key
+     * @param value  the value
+     * @param key2   the key 2
+     * @param value2 the value 2
+     * @param key3   the key 3
+     * @param value3 the value 3
+     * @param key4   the key 4
+     * @param value4 the value 4
+     * @param key5   the key 5
+     * @param value5 the value 5
+     * @param key6   the key 6
+     * @param value6 the value 6
+     * @param key7   the key 7
+     * @param value7 the value 7
+     * @param key8   the key 8
+     * @param value8 the value 8
+     * @param key9   the key 9
+     * @param value9 the value 9
+     * @return the map
+     */
+    public static <K, V> Map<K, V> wrap(final String key, final Object value,
+                                        final String key2, final Object value2,
+                                        final String key3, final Object value3,
+                                        final String key4, final Object value4,
+                                        final String key5, final Object value5,
+                                        final String key6, final Object value6,
+                                        final String key7, final Object value7,
+                                        final String key8, final Object value8,
+                                        final String key9, final Object value9) {
+        val m = wrap(key, value, key2, value2, key3, value3, key4, value4,
+            key5, value5, key6, value6, key7, value7, key8, value8);
+        m.put(key9, value9);
+        return (Map) m;
+    }
+
+    /**
      * Wraps a possibly null list in an immutable wrapper.
      *
      * @param <T>    the type parameter
