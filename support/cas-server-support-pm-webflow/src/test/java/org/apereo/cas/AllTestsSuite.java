@@ -7,7 +7,9 @@ import org.apereo.cas.pm.web.flow.actions.SendPasswordResetInstructionsActionTes
 import org.apereo.cas.pm.web.flow.actions.VerifyPasswordResetRequestActionTests;
 import org.apereo.cas.pm.web.flow.actions.VerifySecurityQuestionsActionTests;
 
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -22,5 +24,6 @@ import org.junit.platform.suite.api.SelectClasses;
     VerifyPasswordResetRequestActionTests.class,
     HandlePasswordExpirationWarningMessagesActionTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
 }

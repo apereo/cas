@@ -5,7 +5,9 @@ import org.apereo.cas.authentication.support.GroovyPasswordPolicyHandlingStrateg
 import org.apereo.cas.authentication.support.OptionalWarningLdapAccountStateHandlerTests;
 import org.apereo.cas.authentication.support.RejectResultCodeLdapPasswordPolicyHandlingStrategyTests;
 
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -18,5 +20,6 @@ import org.junit.platform.suite.api.SelectClasses;
     OptionalWarningLdapAccountStateHandlerTests.class,
     RejectResultCodeLdapPasswordPolicyHandlingStrategyTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
 }

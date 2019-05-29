@@ -27,7 +27,9 @@ import org.apereo.cas.util.io.CommunicationsManagerTests;
 import org.apereo.cas.util.io.GroovySmsSenderTests;
 import org.apereo.cas.util.io.RestfulSmsSenderTests;
 
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * This is {@link AllUtilityTestsSuite}.
@@ -63,5 +65,6 @@ import org.junit.platform.suite.api.SelectClasses;
     RestfulSmsSenderTests.class,
     RandomUtilsTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class AllUtilityTestsSuite {
 }

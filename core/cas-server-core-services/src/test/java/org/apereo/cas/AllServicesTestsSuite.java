@@ -40,7 +40,9 @@ import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilterTest
 import org.apereo.cas.services.support.RegisteredServiceScriptedAttributeFilterTests;
 import org.apereo.cas.util.services.DefaultRegisteredServiceJsonSerializerTests;
 
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * This is {@link AllServicesTestsSuite}.
@@ -92,5 +94,6 @@ import org.junit.platform.suite.api.SelectClasses;
     GroovyRegisteredServiceAccessStrategyTests.class,
     DefaultRegisteredServiceJsonSerializerTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class AllServicesTestsSuite {
 }

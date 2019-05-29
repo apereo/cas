@@ -6,7 +6,9 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.GroovyRe
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.JsonResourceMetadataResolverTests;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.UrlResourceMetadataResolverTests;
 
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * This is {@link SamlIdPMetadataTestsSuite}.
@@ -22,5 +24,6 @@ import org.junit.platform.suite.api.SelectClasses;
     UrlResourceMetadataResolverTests.class,
     JsonResourceMetadataResolverTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class SamlIdPMetadataTestsSuite {
 }

@@ -6,7 +6,9 @@ import org.apereo.cas.authentication.principal.provision.GroovyDelegatedClientUs
 import org.apereo.cas.authentication.principal.provision.RestfulDelegatedClientUserProfileProvisionerTests;
 import org.apereo.cas.validation.DelegatedAuthenticationServiceTicketValidationAuthorizerTests;
 
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -20,5 +22,6 @@ import org.junit.platform.suite.api.SelectClasses;
     GroovyDelegatedClientUserProfileProvisionerTests.class,
     RestfulDelegatedClientUserProfileProvisionerTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
 }
