@@ -1367,6 +1367,10 @@ Handle capacity planning and system overload protection using rate-limiting and 
 
 Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.audit`. This feature uses the same data source used by the CAS MongoDb audit facility. 
 
+### Redis
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) under the configuration key `cas.audit`. This feature uses the same data source used by the CAS Redis audit facility.
+
 ### Hazelcast
 
 Use a distributed Hazelcast map to record throttled authentication attempts. Hazelcast settings for this feature are available [here](Configuration-Properties-Common.html#hazelcast-configuration) under the configuration key `cas.authn.throttle.hazelcast`.
@@ -1925,6 +1929,7 @@ To learn more about this topic, [please review this guide](../installation/Rest-
 ```properties
 # cas.authn.rest.uri=https://...
 # cas.authn.rest.name=
+# cas.authn.rest.charset=US-ASCII
 ```
 
 ## Google Apps Authentication
@@ -2527,11 +2532,23 @@ Database settings for this feature are available [here](Configuration-Properties
 
 #### CouchDb Storage
 
- Configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.authn.mfa.trusted`.
+Configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.authn.mfa.trusted`.
 
 #### MongoDb Storage
 
- Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.trusted`.
+Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.trusted`.
+ 
+#### DynamoDb Storage
+ 
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration)
+under the configuration key `cas.authn.mfa.trusted`.
+
+AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
+under the configuration key `cas.authn.mfa.trusted.dynamoDb`.
+
+```properties
+# cas.authn.mfa.trusted.dynamoDb.tableName=DynamoDbCasMfaTrustRecords
+```
 
 #### REST Storage
 
@@ -3095,7 +3112,7 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
 # Skew ID tokens in minutes
 # cas.authn.oidc.skew=5
 
-# cas.authn.oidc.jwksFile=file:/keystore.jwks
+# cas.authn.oidc.jwksFile=file:/etc/cas/config/keystore.jwks
 # cas.authn.oidc.jwksCacheInMinutes=60
 
 # cas.authn.oidc.dynamicClientRegistrationMode=OPEN|PROTECTED
@@ -3111,8 +3128,17 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
 # cas.authn.oidc.introspectionSupportedAuthenticationMethods=client_secret_basic
 # cas.authn.oidc.claimTypesSupported=normal
 # cas.authn.oidc.grantTypesSupported=authorization_code,password,client_credentials,refresh_token
-# cas.authn.oidc.idTokenSigningAlgValuesSupported=none,RS256
-# cas.authn.oidc.tokenEndpointAuthMethodsSupported=client_secret_basic,client_secret_post,private_key_jwt
+# cas.authn.oidc.tokenEndpointAuthMethodsSupported=client_secret_basic,client_secret_post,private_key_jwt,client_secret_jwt
+
+# cas.authn.oidc.idTokenSigningAlgValuesSupported=none,RS256,RS384,RS512,PS256,PS384,PS512,ES256,ES384,ES512,HS256,HS384,HS512
+# cas.authn.oidc.idTokenEncryptionAlgValuesSupported=RSA1_5,RSA-OAEP,RSA-OAEP-256,A128KW,A192KW,A256KW,\
+    A128GCMKW,A192GCMKW,A256GCMKW,ECDH-ES,ECDH-ES+A128KW,ECDH-ES+A192KW,ECDH-ES+A256KW
+# cas.authn.oidc.idTokenEncryptionEncodingValuesSupported=A128CBC-HS256,A192CBC-HS384,A256CBC-HS512,A128GCM,A192GCM,A256GCM
+
+# cas.authn.oidc.userInfoSigningAlgValuesSupported=none,RS256,RS384,RS512,PS256,PS384,PS512,ES256,ES384,ES512,HS256,HS384,HS512
+# cas.authn.oidc.userInfoEncryptionAlgValuesSupported=RSA1_5,RSA-OAEP,RSA-OAEP-256,A128KW,A192KW,A256KW,\
+    A128GCMKW,A192GCMKW,A256GCMKW,ECDH-ES,ECDH-ES+A128KW,ECDH-ES+A192KW,ECDH-ES+A256KW
+# cas.authn.oidc.userInfoEncryptionEncodingValuesSupported=A128CBC-HS256,A192CBC-HS384,A256CBC-HS512,A128GCM,A192GCM,A256GCM
 ```
 
 ### OpenID Connect Scopes & Claims
@@ -3398,7 +3424,7 @@ To learn more about this topic, [please review this guide](../installation/OAuth
 # cas.authn.uma.issuer=http://localhost:8080/cas
 
 # cas.authn.uma.requestingPartyToken.maxTimeToLiveInSeconds=PT3M
-# cas.authn.uma.requestingPartyToken.jwksFile=file:/etc/cas/uma-keystore.jwks
+# cas.authn.uma.requestingPartyToken.jwksFile=file:/etc/cas/config/uma-keystore.jwks
 
 # cas.authn.uma.permissionTicket.maxTimeToLiveInSeconds=PT3M
 ```
@@ -3585,6 +3611,20 @@ under the configuration key `cas.audit.couchbase`.
 
 ```properties
 # cas.audit.couchbase.asynchronous=true
+```
+
+### DynamoDb Audits
+
+Store audit logs inside a DynamoDb database.
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration)
+under the configuration key `cas.audit`.
+
+AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
+under the configuration key `cas.audit.dynamoDb`.
+
+```properties
+# cas.audit.dynamoDb.asynchronous=true
 ```
 
 ### Database Audits

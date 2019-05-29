@@ -9,6 +9,7 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.ticket.OAuthToken;
 import org.apereo.cas.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -73,7 +75,11 @@ public class OAuth20Utils {
      * @param clientId        the client id by which the {@link OAuthRegisteredService} is to be located.
      * @return null, or the located {@link OAuthRegisteredService} instance in the service registry.
      */
-    public static OAuthRegisteredService getRegisteredOAuthServiceByClientId(final ServicesManager servicesManager, final String clientId) {
+    public static OAuthRegisteredService getRegisteredOAuthServiceByClientId(final ServicesManager servicesManager,
+                                                                             final String clientId) {
+        if (StringUtils.isBlank(clientId)) {
+            return null;
+        }
         return getRegisteredOAuthServiceByPredicate(servicesManager, s -> s.getClientId().equals(clientId));
     }
 
@@ -84,7 +90,11 @@ public class OAuth20Utils {
      * @param redirectUri     the redirect uri
      * @return the registered OAuth service by redirect uri
      */
-    public static OAuthRegisteredService getRegisteredOAuthServiceByRedirectUri(final ServicesManager servicesManager, final String redirectUri) {
+    public static OAuthRegisteredService getRegisteredOAuthServiceByRedirectUri(final ServicesManager servicesManager,
+                                                                                final String redirectUri) {
+        if (StringUtils.isBlank(redirectUri)) {
+            return null;
+        }
         return getRegisteredOAuthServiceByPredicate(servicesManager, s -> s.matches(redirectUri));
     }
 
@@ -424,5 +434,42 @@ public class OAuth20Utils {
             return CollectionUtils.toCollection(attribute, ArrayList.class).get(0).toString();
         }
         return null;
+    }
+
+    /**
+     * Parse request claims map.
+     *
+     * @param context the context
+     * @return the map
+     * @throws Exception the exception
+     */
+    public static Map<String, Map<String, Object>> parseRequestClaims(final J2EContext context) throws Exception {
+        val claims = context.getRequestParameter(OAuth20Constants.CLAIMS);
+        if (StringUtils.isBlank(claims)) {
+            return new HashMap<>();
+        }
+        return MAPPER.readValue(claims, Map.class);
+    }
+
+    /**
+     * Parse user info request claims set.
+     *
+     * @param token the token
+     * @return the set
+     */
+    public static Set<String> parseUserInfoRequestClaims(final OAuthToken token) {
+        return token.getClaims().getOrDefault("userinfo", new HashMap<>()).keySet();
+    }
+
+    /**
+     * Parse user info request claims set.
+     *
+     * @param context the context
+     * @return the set
+     * @throws Exception the exception
+     */
+    public static Set<String> parseUserInfoRequestClaims(final J2EContext context) throws Exception {
+        val requestedClaims = parseRequestClaims(context);
+        return requestedClaims.getOrDefault("userinfo", new HashMap<>()).keySet();
     }
 }

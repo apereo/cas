@@ -38,12 +38,13 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAu
     private final ServicesManager servicesManager;
 
     @Override
-    public ModelAndView build(final J2EContext context, final String clientId, final AccessTokenRequestDataHolder holder) {
+    public ModelAndView build(final J2EContext context, final String clientId,
+                              final AccessTokenRequestDataHolder holder) {
         val authentication = holder.getAuthentication();
         val code = oAuthCodeFactory.create(holder.getService(), authentication,
             holder.getTicketGrantingTicket(), holder.getScopes(),
             holder.getCodeChallenge(), holder.getCodeChallengeMethod(),
-            holder.getClientId());
+            holder.getClientId(), holder.getClaims());
         LOGGER.debug("Generated OAuth code: [{}]", code);
         this.ticketRegistry.addTicket(code);
 
@@ -66,13 +67,14 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAu
      * @return the model and view
      */
     protected ModelAndView buildCallbackViewViaRedirectUri(final J2EContext context, final String clientId,
-                                                           final Authentication authentication, final OAuthCode code) {
+                                                           final Authentication authentication,
+                                                           final OAuthCode code) {
         val attributes = authentication.getAttributes();
         val state = attributes.get(OAuth20Constants.STATE).get(0).toString();
         val nonce = attributes.get(OAuth20Constants.NONCE).get(0).toString();
 
         val redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI);
-        LOGGER.debug("Authorize request verification successful for client [{}] with redirect uri [{}]", clientId, redirectUri);
+        LOGGER.debug("Authorize request successful for client [{}] with redirect uri [{}]", clientId, redirectUri);
 
         var callbackUrl = redirectUri;
         callbackUrl = CommonHelper.addParameter(callbackUrl, OAuth20Constants.CODE, code.getId());

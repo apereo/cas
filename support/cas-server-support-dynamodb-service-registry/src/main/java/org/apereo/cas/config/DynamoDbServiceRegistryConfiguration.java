@@ -38,7 +38,7 @@ public class DynamoDbServiceRegistryConfiguration {
     @Bean
     public DynamoDbServiceRegistryFacilitator dynamoDbServiceRegistryFacilitator() {
         val db = casProperties.getServiceRegistry().getDynamoDb();
-        return new DynamoDbServiceRegistryFacilitator(db, amazonDynamoDbClient());
+        return new DynamoDbServiceRegistryFacilitator(db, amazonDynamoDbServiceRegistryClient());
     }
 
     @Bean
@@ -61,7 +61,8 @@ public class DynamoDbServiceRegistryConfiguration {
     @RefreshScope
     @Bean
     @SneakyThrows
-    public AmazonDynamoDB amazonDynamoDbClient() {
+    @ConditionalOnMissingBean(name = "amazonDynamoDbServiceRegistryClient")
+    public AmazonDynamoDB amazonDynamoDbServiceRegistryClient() {
         val dynamoDbProperties = casProperties.getServiceRegistry().getDynamoDb();
         val factory = new AmazonDynamoDbClientFactory();
         return factory.createAmazonDynamoDb(dynamoDbProperties);

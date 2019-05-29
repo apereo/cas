@@ -2,7 +2,10 @@ package org.apereo.cas.ticket.accesstoken;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
@@ -15,10 +18,12 @@ import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * Default OAuth access token factory.
@@ -45,20 +50,29 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
      */
     protected final JwtBuilder jwtBuilder;
 
-    public DefaultAccessTokenFactory(final ExpirationPolicy expirationPolicy, final JwtBuilder jwtBuilder) {
-        this(new DefaultUniqueTicketIdGenerator(), expirationPolicy, jwtBuilder);
+    /**
+     * Services manager.
+     */
+    protected final ServicesManager servicesManager;
+
+    public DefaultAccessTokenFactory(final ExpirationPolicy expirationPolicy,
+                                     final JwtBuilder jwtBuilder,
+                                     final ServicesManager servicesManager) {
+        this(new DefaultUniqueTicketIdGenerator(), expirationPolicy, jwtBuilder, servicesManager);
     }
 
     @Override
     public AccessToken create(final Service service, final Authentication authentication,
                               final TicketGrantingTicket ticketGrantingTicket,
-                              final Collection<String> scopes, final String clientId) {
+                              final Collection<String> scopes, final String clientId,
+                              final Map<String, Map<String, Object>> requestClaims) {
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(jwtBuilder.getServicesManager(), clientId);
+        val expirationPolicyToUse = determineExpirationPolicyForService(registeredService);
         var accessTokenId = this.accessTokenIdGenerator.getNewTicketId(AccessToken.PREFIX);
-
-        val registeredService = (OAuthRegisteredService) this.jwtBuilder.getServicesManager().findServiceBy(service);
         if (registeredService != null && registeredService.isJwtAccessToken()) {
-            val dt = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(this.expirationPolicy.getTimeToLive());
+            val dt = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(expirationPolicyToUse.getTimeToLive());
             val builder = JwtBuilder.JwtRequest.builder();
+
             val request = builder
                 .serviceAudience(service.getId())
                 .issueDate(DateTimeUtils.dateOf(authentication.getAuthenticationDate()))
@@ -70,7 +84,8 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
             accessTokenId = jwtBuilder.build(request);
         }
         val at = new AccessTokenImpl(accessTokenId, service, authentication,
-            this.expirationPolicy, ticketGrantingTicket, scopes, clientId);
+            expirationPolicyToUse, ticketGrantingTicket, scopes,
+            clientId, requestClaims);
         if (ticketGrantingTicket != null) {
             ticketGrantingTicket.getDescendantTickets().add(at.getId());
         }
@@ -78,14 +93,33 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
     }
 
     @Override
-    public AccessToken create(final Service service, final Authentication authentication, final Collection<String> scopes, final String clientId) {
+    public AccessToken create(final Service service, final Authentication authentication,
+                              final Collection<String> scopes, final String clientId,
+                              final Map<String, Map<String, Object>> requestClaims) {
         val accessTokenId = this.accessTokenIdGenerator.getNewTicketId(AccessToken.PREFIX);
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(jwtBuilder.getServicesManager(), clientId);
+        val expirationPolicyToUse = determineExpirationPolicyForService(registeredService);
         return new AccessTokenImpl(accessTokenId, service, authentication,
-            this.expirationPolicy, null, scopes, clientId);
+            expirationPolicyToUse, null,
+            scopes, clientId, requestClaims);
     }
 
     @Override
     public TicketFactory get(final Class<? extends Ticket> clazz) {
         return this;
+    }
+
+    private ExpirationPolicy determineExpirationPolicyForService(final OAuthRegisteredService registeredService) {
+        if (registeredService != null && registeredService.getAccessTokenExpirationPolicy() != null) {
+            val policy = registeredService.getAccessTokenExpirationPolicy();
+            val maxTime = policy.getMaxTimeToLive();
+            val ttl = policy.getTimeToKill();
+            if (StringUtils.isNotBlank(maxTime) && StringUtils.isNotBlank(ttl)) {
+                return new OAuthAccessTokenExpirationPolicy(
+                    Beans.newDuration(maxTime).getSeconds(),
+                    Beans.newDuration(ttl).getSeconds());
+            }
+        }
+        return this.expirationPolicy;
     }
 }

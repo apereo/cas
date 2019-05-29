@@ -41,7 +41,6 @@ ext.libraries = [
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                     exclude(group: "org.slf4j", module: "slf4j-api")
-
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-aop")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
@@ -2367,11 +2366,11 @@ ext.libraries = [
                     exclude(group: "commons-lang", module: "commons-lang")
                     force = true
                 },
-                dependencies.create("org.codehaus.jackson:jackson-mapper-asl:1.9.13") {
+                dependencies.create("org.codehaus.jackson:jackson-mapper-asl:${jacksonAslVersion}") {
                     transitive = false
                     force = true
                 },
-                dependencies.create("org.codehaus.jackson:jackson-core-asl:1.9.13") {
+                dependencies.create("org.codehaus.jackson:jackson-core-asl:${jacksonAslVersion}") {
                     transitive = false
                     force = true
                 }
@@ -3559,6 +3558,7 @@ ext.libraries = [
                     force = true
                 },
                 dependencies.create("org.webjars:jquery-ui:$jqueryUiVersion") {
+                    exclude(group: "org.webjars", module: "jquery")
                     force = true
                 },
                 dependencies.create("org.webjars:jquery:$jqueryVersion") {
@@ -3569,12 +3569,16 @@ ext.libraries = [
                 },
                 dependencies.create("org.webjars:bootstrap:$bootstrapVersion") {
                     exclude(group: "org.webjars", module: "popper.js")
+                    exclude(group: "org.webjars", module: "jquery")
                     force = true
                 },
                 dependencies.create("org.webjars:datatables:$datatablesVersion") {
+                    exclude(group: "org.webjars", module: "jquery")
                     force = true
                 },
-                dependencies.create("org.webjars.bower:bootstrap-select:$bootstrapSelectVersion") {
+                dependencies.create("org.webjars:bootstrap-select:$bootstrapSelectVersion") {
+                    exclude(group: "org.webjars", module: "jquery")
+                    exclude(group: "org.webjars", module: "bootstrap")
                     force = true
                 }
         ]

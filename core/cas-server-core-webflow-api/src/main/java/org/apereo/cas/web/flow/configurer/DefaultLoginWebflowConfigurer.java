@@ -68,6 +68,7 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
             createDefaultActionStates(flow);
             createDefaultViewStates(flow);
             createRememberMeAuthnWebflowConfig(flow);
+
             setStartState(flow, CasWebflowConstants.STATE_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK);
         }
     }
@@ -78,7 +79,9 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
      * @param flow the flow
      */
     protected void createInitialFlowActions(final Flow flow) {
-        flow.getStartActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_INIT_FLOW_SETUP));
+        val startActionList = flow.getStartActionList();
+        startActionList.add(createEvaluateAction(CasWebflowConstants.ACTION_ID_INIT_FLOW_SETUP));
+        startActionList.add(createEvaluateAction(CasWebflowConstants.ACTION_ID_VERIFY_REQUIRED_SERVICE));
     }
 
     /**
@@ -127,7 +130,8 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
 
         val setAction = createSetAction("requestScope.messages", "messageContext.allMessages");
         state.getEntryActionList().add(setAction);
-        createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_PROCEED, CasWebflowConstants.STATE_ID_PROCEED_FROM_AUTHENTICATION_WARNINGS_VIEW);
+        createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_PROCEED,
+            CasWebflowConstants.STATE_ID_PROCEED_FROM_AUTHENTICATION_WARNINGS_VIEW);
 
         val proceedAction = createActionState(flow, CasWebflowConstants.STATE_ID_PROCEED_FROM_AUTHENTICATION_WARNINGS_VIEW);
         proceedAction.getActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_SEND_TICKET_GRANTING_TICKET));
@@ -175,7 +179,7 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
      * @param flow the flow
      */
     protected void createRealSubmitAction(final Flow flow) {
-        val state = createActionState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, "authenticationViaFormAction");
+        val state = createActionState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, CasWebflowConstants.ACTION_ID_AUTHENTICATION_VIA_FORM_ACTION);
         createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_WARN, CasWebflowConstants.STATE_ID_WARN);
         createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET);
         createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS, CasWebflowConstants.STATE_ID_SHOW_AUTHN_WARNING_MSGS);
@@ -191,9 +195,12 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
     protected void createTicketGrantingTicketCheckAction(final Flow flow) {
         val action = createActionState(flow, CasWebflowConstants.STATE_ID_TICKET_GRANTING_TICKET_CHECK,
             CasWebflowConstants.ACTION_ID_TICKET_GRANTING_TICKET_CHECK);
-        createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_TGT_NOT_EXISTS, CasWebflowConstants.STATE_ID_GATEWAY_REQUEST_CHECK);
-        createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_TGT_INVALID, CasWebflowConstants.STATE_ID_TERMINATE_SESSION);
-        createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_TGT_VALID, CasWebflowConstants.STATE_ID_HAS_SERVICE_CHECK);
+        createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_TGT_NOT_EXISTS,
+            CasWebflowConstants.STATE_ID_GATEWAY_REQUEST_CHECK);
+        createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_TGT_INVALID,
+            CasWebflowConstants.STATE_ID_TERMINATE_SESSION);
+        createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_TGT_VALID,
+            CasWebflowConstants.STATE_ID_HAS_SERVICE_CHECK);
     }
 
     /**
@@ -204,10 +211,15 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
     protected void createInitialAuthenticationRequestValidationCheckAction(final Flow flow) {
         val action = createActionState(flow, CasWebflowConstants.STATE_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK,
             CasWebflowConstants.ACTION_ID_INITIAL_AUTHN_REQUEST_VALIDATION);
-        createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, CasWebflowConstants.STATE_ID_HANDLE_AUTHN_FAILURE);
-        createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
-        createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_TICKET_GRANTING_TICKET_CHECK);
-        createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS, CasWebflowConstants.STATE_ID_SHOW_AUTHN_WARNING_MSGS);
+        action.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_VERIFY_REQUIRED_SERVICE));
+        createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE,
+            CasWebflowConstants.STATE_ID_HANDLE_AUTHN_FAILURE);
+        createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_ERROR,
+            CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
+        createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_SUCCESS,
+            CasWebflowConstants.STATE_ID_TICKET_GRANTING_TICKET_CHECK);
+        createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS,
+            CasWebflowConstants.STATE_ID_SHOW_AUTHN_WARNING_MSGS);
     }
 
     /**
@@ -217,7 +229,8 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
      */
     protected void createTerminateSessionAction(final Flow flow) {
         val terminateSession = createActionState(flow,
-            CasWebflowConstants.STATE_ID_TERMINATE_SESSION, createEvaluateAction(CasWebflowConstants.ACTION_ID_TERMINATE_SESSION));
+            CasWebflowConstants.STATE_ID_TERMINATE_SESSION,
+            createEvaluateAction(CasWebflowConstants.ACTION_ID_TERMINATE_SESSION));
         createStateDefaultTransition(terminateSession, CasWebflowConstants.STATE_ID_GATEWAY_REQUEST_CHECK);
     }
 
@@ -229,8 +242,10 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
     protected void createSendTicketGrantingTicketAction(final Flow flow) {
         val action = createActionState(flow, CasWebflowConstants.STATE_ID_SEND_TICKET_GRANTING_TICKET,
             CasWebflowConstants.ACTION_ID_SEND_TICKET_GRANTING_TICKET);
-        createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_SERVICE_CHECK);
-        createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS, CasWebflowConstants.STATE_ID_SHOW_AUTHN_WARNING_MSGS);
+        createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_SUCCESS,
+            CasWebflowConstants.STATE_ID_SERVICE_CHECK);
+        createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS,
+            CasWebflowConstants.STATE_ID_SHOW_AUTHN_WARNING_MSGS);
     }
 
     /**

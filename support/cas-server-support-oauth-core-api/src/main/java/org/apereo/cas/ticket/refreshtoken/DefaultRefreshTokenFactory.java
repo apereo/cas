@@ -2,6 +2,9 @@ package org.apereo.cas.ticket.refreshtoken;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
@@ -11,8 +14,10 @@ import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * Default OAuth refresh token factory.
@@ -33,19 +38,26 @@ public class DefaultRefreshTokenFactory implements RefreshTokenFactory {
      */
     protected final ExpirationPolicy expirationPolicy;
 
-    public DefaultRefreshTokenFactory(final ExpirationPolicy expirationPolicy) {
-        this(new DefaultUniqueTicketIdGenerator(), expirationPolicy);
-    }
+    /**
+     * Services manager.
+     */
+    protected final ServicesManager servicesManager;
 
+    public DefaultRefreshTokenFactory(final ExpirationPolicy expirationPolicy, final ServicesManager servicesManager) {
+        this(new DefaultUniqueTicketIdGenerator(), expirationPolicy, servicesManager);
+    }
 
     @Override
     public RefreshToken create(final Service service, final Authentication authentication,
                                final TicketGrantingTicket ticketGrantingTicket,
                                final Collection<String> scopes,
-                               final String clientId) {
+                               final String clientId,
+                               final Map<String, Map<String, Object>> requestClaims) {
         val codeId = this.refreshTokenIdGenerator.getNewTicketId(RefreshToken.PREFIX);
+        val expirationPolicyToUse = determineExpirationPolicyForService(clientId);
         val rt = new RefreshTokenImpl(codeId, service, authentication,
-            this.expirationPolicy, ticketGrantingTicket, scopes, clientId);
+            expirationPolicyToUse, ticketGrantingTicket,
+            scopes, clientId, requestClaims);
 
         if (ticketGrantingTicket != null) {
             ticketGrantingTicket.getDescendantTickets().add(rt.getId());
@@ -56,5 +68,17 @@ public class DefaultRefreshTokenFactory implements RefreshTokenFactory {
     @Override
     public TicketFactory get(final Class<? extends Ticket> clazz) {
         return this;
+    }
+
+    private ExpirationPolicy determineExpirationPolicyForService(final String clientId) {
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
+        if (registeredService != null && registeredService.getRefreshTokenExpirationPolicy() != null) {
+            val policy = registeredService.getRefreshTokenExpirationPolicy();
+            val timeToKill = policy.getTimeToKill();
+            if (StringUtils.isNotBlank(timeToKill)) {
+                return new OAuthRefreshTokenExpirationPolicy(Beans.newDuration(timeToKill).getSeconds());
+            }
+        }
+        return this.expirationPolicy;
     }
 }

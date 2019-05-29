@@ -9,13 +9,13 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.ScriptingUtils;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,6 +37,7 @@ public class PredicatedPrincipalAttributeMultifactorAuthenticationTrigger implem
     private static final Class[] PREDICATE_CTOR_PARAMETERS = {Object.class, Object.class, Object.class, Object.class};
 
     private final CasConfigurationProperties casProperties;
+    private final ApplicationContext applicationContext;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
 
@@ -47,12 +48,12 @@ public class PredicatedPrincipalAttributeMultifactorAuthenticationTrigger implem
                                                                    final Service service) {
         val predicateResource = casProperties.getAuthn().getMfa().getGlobalPrincipalAttributePredicate();
 
-        if (predicateResource == null || !ResourceUtils.doesResourceExist(predicateResource)) {
-            LOGGER.trace("No groovy script predicate is defined to decide which multifactor authentication provider should be chosen");
+        if (!ResourceUtils.doesResourceExist(predicateResource)) {
+            LOGGER.trace("No predicate is defined to decide which multifactor authentication provider should be chosen");
             return Optional.empty();
         }
 
-        val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(ApplicationContextProvider.getApplicationContext());
+        val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         val providers = providerMap.values();
 
         if (providers.isEmpty()) {
@@ -61,8 +62,14 @@ public class PredicatedPrincipalAttributeMultifactorAuthenticationTrigger implem
         }
 
         val principal = authentication.getPrincipal();
-        val args = new Object[] {service, principal, providers, LOGGER};
-        val predicate = ScriptingUtils.getObjectInstanceFromGroovyResource(predicateResource, PREDICATE_CTOR_PARAMETERS, args, Predicate.class);
+        val args = new Object[]{service, principal, providers, LOGGER};
+        val predicate = ScriptingUtils.getObjectInstanceFromGroovyResource(predicateResource,
+            PREDICATE_CTOR_PARAMETERS, args, Predicate.class);
+
+        if (predicate == null) {
+            LOGGER.debug("No multifactor authentication provider is determined along by the predicate");
+            return Optional.empty();
+        }
 
         LOGGER.debug("Created predicate instance [{}] from [{}] to filter multifactor authentication providers [{}]",
             predicate.getClass().getSimpleName(), predicateResource, providers);

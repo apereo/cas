@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypass;
+import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicyFailureModes;
 
@@ -29,7 +29,7 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
 
     private static final long serialVersionUID = 4789727148134156909L;
 
-    private MultifactorAuthenticationProviderBypass bypassEvaluator;
+    private MultifactorAuthenticationProviderBypassEvaluator bypassEvaluator;
 
     private String failureMode = "UNDEFINED";
 

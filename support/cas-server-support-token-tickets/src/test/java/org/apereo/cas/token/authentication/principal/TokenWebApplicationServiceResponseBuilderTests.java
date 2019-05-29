@@ -84,7 +84,11 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableScheduling
-@TestPropertySource(locations = "classpath:tokentests.properties")
+@TestPropertySource(properties = {
+    "cas.server.name=http://localhost:8281",
+    "cas.server.prefix=${cas.server.name}/cas",
+    "cas.client.validatorType=CAS10"
+})
 public class TokenWebApplicationServiceResponseBuilderTests {
     @Autowired
     @Qualifier("webApplicationServiceResponseBuilder")

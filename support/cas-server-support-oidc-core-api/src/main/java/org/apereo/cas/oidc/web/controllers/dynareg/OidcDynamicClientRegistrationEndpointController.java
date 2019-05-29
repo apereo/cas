@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequest;
+import org.apereo.cas.oidc.profile.OidcUserProfileSigningAndEncryptionService;
 import org.apereo.cas.services.DefaultRegisteredServiceContact;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.OidcRegisteredService;
@@ -72,10 +73,18 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
                 .getClientRegistrationRequestSerializer().from(jsonInput);
             LOGGER.debug("Received client registration request [{}]", registrationRequest);
 
+            val containsFragment = registrationRequest.getRedirectUris()
+                .stream()
+                .anyMatch(uri -> uri.contains("#"));
+            if (containsFragment) {
+                throw new IllegalArgumentException("Redirect URI cannot contain a fragment");
+            }
+
             val servicesManager = getOAuthConfigurationContext().getServicesManager();
             val registeredService = registrationRequest.getRedirectUris()
                 .stream()
-                .map(uri -> (OidcRegisteredService) OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(servicesManager, uri))
+                .map(uri -> (OidcRegisteredService)
+                    OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(servicesManager, uri))
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElseGet(OidcRegisteredService::new);
@@ -121,6 +130,19 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
                 registeredService.setPrivacyUrl(registrationRequest.getTermsOfUseUri());
             }
 
+            if (!StringUtils.equalsIgnoreCase("none", registrationRequest.getUserInfoSignedReponseAlg())) {
+                registeredService.setUserInfoSigningAlg(registrationRequest.getUserInfoSignedReponseAlg());
+            }
+            registeredService.setUserInfoEncryptedResponseAlg(registrationRequest.getUserInfoEncryptedResponseAlg());
+
+            if (StringUtils.isNotBlank(registeredService.getUserInfoEncryptedResponseAlg())) {
+                if (StringUtils.isBlank(registrationRequest.getUserInfoEncryptedResponseEncoding())) {
+                    registeredService.setUserInfoEncryptedResponseEncoding(OidcUserProfileSigningAndEncryptionService.USER_INFO_RESPONSE_ENCRYPTION_ENCODING_DEFAULT);
+                } else {
+                    registeredService.setUserInfoEncryptedResponseEncoding(registrationRequest.getUserInfoEncryptedResponseEncoding());
+                }
+            }
+
             val properties = getOAuthConfigurationContext().getCasProperties();
             val supportedScopes = new HashSet<String>(properties.getAuthn().getOidc().getScopes());
             val prefix = properties.getServer().getPrefix();
@@ -156,7 +178,12 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
 
             registrationRequest.getContacts().forEach(c -> {
                 val contact = new DefaultRegisteredServiceContact();
-                contact.setName(c);
+                if (c.contains("@")) {
+                    contact.setEmail(c);
+                    contact.setName(c.substring(0, c.indexOf('@')));
+                } else {
+                    contact.setName(c);
+                }
                 registeredService.getContacts().add(contact);
             });
 
@@ -218,7 +245,11 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
             getOAuthConfigurationContext().getCasProperties().getServer().getPrefix());
         val service = getOAuthConfigurationContext().getWebApplicationServiceServiceFactory().createService(clientConfigUri);
         val accessToken = getOAuthConfigurationContext().getAccessTokenFactory()
-            .create(service, authn, List.of(OidcConstants.CLIENT_REGISTRATION_SCOPE), registeredService.getClientId());
+            .create(service,
+                authn,
+                List.of(OidcConstants.CLIENT_REGISTRATION_SCOPE),
+                registeredService.getClientId(),
+                new HashMap<>());
         getOAuthConfigurationContext().getTicketRegistry().addTicket(accessToken);
         return accessToken;
     }

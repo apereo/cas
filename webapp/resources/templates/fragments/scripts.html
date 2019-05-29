@@ -2,9 +2,9 @@
 <script type="text/javascript" th:src="@{#{webjars.jqueryui.js}}"></script>
 <script src="//www.google.com/recaptcha/api.js" async defer th:if="${recaptchaSiteKey != null and recaptchaVersion=='v2'}"></script>
 <script th:src="${'//www.google.com/recaptcha/api.js?render=' + recaptchaSiteKey}" th:if="${recaptchaSiteKey != null and recaptchaVersion == 'v3'}"></script>
-<script th:src="@{#{webjars.bootstrapmin.js}}"></script>
+<script type="text/javascript" th:src="@{#{webjars.bootstrapmin.js}}"></script>
 
-<script th:src="@{#{webjars.headmin.js}}"></script>
+<script type="text/javascript" th:src="@{#{webjars.headmin.js}}"></script>
 <script type="text/javascript" th:src="@{${#themes.code('cas.javascript.file')}}"></script>
 
 <script th:inline="javascript">
@@ -32,8 +32,7 @@
 <script th:inline="javascript">
     /*<![CDATA[*/
 
-    var trackGeoLocation = /*[[${trackGeoLocation}]]*/ ===
-    "true";
+    var trackGeoLocation = /*[[${trackGeoLocation}]]*/ === "true";
 
     var googleAnalyticsTrackingId = /*[[${googleAnalyticsTrackingId}]]*/;
 

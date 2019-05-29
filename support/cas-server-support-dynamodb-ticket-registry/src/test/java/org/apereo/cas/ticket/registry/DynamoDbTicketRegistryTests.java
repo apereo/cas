@@ -32,6 +32,8 @@ import org.apereo.cas.ticket.refreshtoken.DefaultRefreshTokenFactory;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
 import org.junit.jupiter.api.RepeatedTest;
@@ -41,6 +43,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
+
+import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -75,9 +79,14 @@ import static org.junit.jupiter.api.Assertions.*;
     CasPersonDirectoryConfiguration.class,
     RefreshAutoConfiguration.class
 })
-@TestPropertySource(locations = "classpath:/dynamodb-ticketregistry.properties")
-//@EnabledIfContinuousIntegration
-//@EnabledIfPortOpen(port = 8000)
+@TestPropertySource(properties = {
+    "cas.ticket.registry.dynamoDb.endpoint=http://localhost:8000",
+    "cas.ticket.registry.dynamoDb.dropTablesOnStartup=true",
+    "cas.ticket.registry.dynamoDb.localInstance=true",
+    "cas.ticket.registry.dynamoDb.region=us-east-1"
+})
+@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 8000)
 public class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     static {
         System.setProperty("aws.accessKeyId", "AKIAIPPIGGUNIO74C63Z");
@@ -99,9 +108,10 @@ public class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
 
     @RepeatedTest(2)
     public void verifyOAuthCodeCanBeAdded() {
-        val code = new DefaultOAuthCodeFactory(new NeverExpiresExpirationPolicy()).create(RegisteredServiceTestUtils.getService(),
+        val code = new DefaultOAuthCodeFactory(new NeverExpiresExpirationPolicy(), servicesManager)
+            .create(RegisteredServiceTestUtils.getService(),
             RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),
-            CollectionUtils.wrapSet("1", "2"), "code-challenge", "code-challenge-method", "clientId1234567");
+            CollectionUtils.wrapSet("1", "2"), "code-challenge", "code-challenge-method", "clientId1234567", new HashMap<>());
         ticketRegistry.addTicket(code);
         assertSame(1, ticketRegistry.deleteTicket(code.getId()), "Wrong ticket count");
         assertNull(ticketRegistry.getTicket(code.getId()));
@@ -111,10 +121,10 @@ public class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     public void verifyAccessTokenCanBeAdded() {
         val jwtBuilder = new JwtBuilder("cas-prefix", CipherExecutor.noOpOfSerializableToString(),
             servicesManager, RegisteredServiceCipherExecutor.noOp());
-        val token = new DefaultAccessTokenFactory(new NeverExpiresExpirationPolicy(), jwtBuilder)
+        val token = new DefaultAccessTokenFactory(new NeverExpiresExpirationPolicy(), jwtBuilder, servicesManager)
             .create(RegisteredServiceTestUtils.getService(),
                 RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),
-                CollectionUtils.wrapSet("1", "2"), "clientId1234567");
+                CollectionUtils.wrapSet("1", "2"), "clientId1234567", new HashMap<>());
         ticketRegistry.addTicket(token);
         assertSame(1, ticketRegistry.deleteTicket(token.getId()), "Wrong ticket count");
         assertNull(ticketRegistry.getTicket(token.getId()));
@@ -122,10 +132,10 @@ public class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
 
     @RepeatedTest(2)
     public void verifyRefreshTokenCanBeAdded() {
-        val token = new DefaultRefreshTokenFactory(new NeverExpiresExpirationPolicy())
+        val token = new DefaultRefreshTokenFactory(new NeverExpiresExpirationPolicy(), servicesManager)
             .create(RegisteredServiceTestUtils.getService(),
                 RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),
-                CollectionUtils.wrapSet("1", "2"), "clientId1234567");
+                CollectionUtils.wrapSet("1", "2"), "clientId1234567", new HashMap<>());
         ticketRegistry.addTicket(token);
         assertSame(1, ticketRegistry.deleteTicket(token.getId()), "Wrong ticket count");
         assertNull(ticketRegistry.getTicket(token.getId()));

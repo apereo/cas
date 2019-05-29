@@ -93,7 +93,6 @@ public class DelegatedClientWebflowManager {
         if (client instanceof OidcClient) {
             val oidcClient = (OidcClient) client;
             val config = oidcClient.getConfiguration();
-            config.addCustomParam(PARAMETER_CLIENT_ID, ticketId);
             config.setWithState(true);
             config.setStateGenerator(new StaticOrRandomStateGenerator(ticketId));
         }
@@ -214,7 +213,7 @@ public class DelegatedClientWebflowManager {
                 clientId = webContext.getRequestParameter(OAuth20Configuration.STATE_REQUEST_PARAMETER);
             }
             if (client instanceof OAuth10Client) {
-                LOGGER.debug("Client identifier could not be found as part of request parameters.  Looking at state for the OAuth1 client");
+                LOGGER.debug("Client identifier could not be found as part of request parameters. Looking at state for the OAuth1 client");
                 val sessionStore = webContext.getSessionStore();
                 clientId = (String) sessionStore.get(webContext, OAUTH10_CLIENT_ID_SESSION_KEY);
                 sessionStore.set(webContext, OAUTH10_CLIENT_ID_SESSION_KEY, null);

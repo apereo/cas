@@ -30,5 +30,5 @@ public class DefaultRegisteredServiceProxyTicketExpirationPolicy implements Regi
 
     private long numberOfUses;
 
-    private long timeToLive;
+    private String timeToLive;
 }

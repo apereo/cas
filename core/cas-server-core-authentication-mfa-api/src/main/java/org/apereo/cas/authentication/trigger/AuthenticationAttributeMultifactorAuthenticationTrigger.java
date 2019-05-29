@@ -9,7 +9,6 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +16,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,6 +37,7 @@ import static org.springframework.util.StringUtils.commaDelimitedListToSet;
 public class AuthenticationAttributeMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger {
     private final CasConfigurationProperties casProperties;
     private final MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver;
+    private final ApplicationContext applicationContext;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
 
@@ -44,8 +45,9 @@ public class AuthenticationAttributeMultifactorAuthenticationTrigger implements 
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication, final RegisteredService registeredService,
                                                                    final HttpServletRequest httpServletRequest, final Service service) {
 
-        val globalAuthenticationAttributeValueRegex = casProperties.getAuthn().getMfa().getGlobalAuthenticationAttributeValueRegex();
-        val attributeNames = commaDelimitedListToSet(casProperties.getAuthn().getMfa().getGlobalAuthenticationAttributeNameTriggers());
+        val mfa = casProperties.getAuthn().getMfa();
+        val globalAuthenticationAttributeValueRegex = mfa.getGlobalAuthenticationAttributeValueRegex();
+        val attributeNames = commaDelimitedListToSet(mfa.getGlobalAuthenticationAttributeNameTriggers());
 
         if (authentication == null) {
             LOGGER.debug("No authentication is available to determine event for principal");
@@ -57,7 +59,6 @@ public class AuthenticationAttributeMultifactorAuthenticationTrigger implements 
             return Optional.empty();
         }
 
-        val applicationContext = ApplicationContextProvider.getApplicationContext();
         val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
         if (providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context");
@@ -75,11 +76,15 @@ public class AuthenticationAttributeMultifactorAuthenticationTrigger implements 
             }
         }
 
-        val result = multifactorAuthenticationProviderResolver.resolveEventViaAuthenticationAttribute(authentication, attributeNames, registeredService, Optional.empty(), providers,
+        val result = multifactorAuthenticationProviderResolver.resolveEventViaAuthenticationAttribute(authentication, attributeNames,
+            registeredService, Optional.empty(), providers,
             input -> providers.stream().anyMatch(provider -> input != null && provider.matches(input)));
         if (result != null && !result.isEmpty()) {
             val id = CollectionUtils.firstElement(result);
-            return MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(id.toString(), applicationContext);
+            if (id.isEmpty()) {
+                return Optional.empty();
+            }
+            return MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(id.get().toString(), applicationContext);
         }
         return Optional.empty();
     }

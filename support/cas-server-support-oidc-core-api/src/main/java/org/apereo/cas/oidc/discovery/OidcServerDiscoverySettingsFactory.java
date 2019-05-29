@@ -27,8 +27,17 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
         discoveryProperties.setClaimTypesSupported(oidc.getClaimTypesSupported());
         discoveryProperties.setIntrospectionSupportedAuthenticationMethods(oidc.getIntrospectionSupportedAuthenticationMethods());
         discoveryProperties.setGrantTypesSupported(oidc.getGrantTypesSupported());
-        discoveryProperties.setIdTokenSigningAlgValuesSupported(oidc.getIdTokenSigningAlgValuesSupported());
         discoveryProperties.setTokenEndpointAuthMethodsSupported(oidc.getTokenEndpointAuthMethodsSupported());
+        discoveryProperties.setClaimsParameterSupported(true);
+
+        discoveryProperties.setIdTokenSigningAlgValuesSupported(oidc.getIdTokenSigningAlgValuesSupported());
+        discoveryProperties.setIdTokenEncryptionAlgValuesSupported(oidc.getIdTokenEncryptionAlgValuesSupported());
+        discoveryProperties.setIdTokenEncryptionEncodingValuesSupported(oidc.getIdTokenEncryptionEncodingValuesSupported());
+
+        discoveryProperties.setUserInfoSigningAlgValuesSupported(oidc.getUserInfoSigningAlgValuesSupported());
+        discoveryProperties.setUserInfoEncryptionAlgValuesSupported(oidc.getUserInfoEncryptionAlgValuesSupported());
+        discoveryProperties.setUserInfoEncryptionEncodingValuesSupported(oidc.getUserInfoEncryptionEncodingValuesSupported());
+        
         return discoveryProperties;
     }
 

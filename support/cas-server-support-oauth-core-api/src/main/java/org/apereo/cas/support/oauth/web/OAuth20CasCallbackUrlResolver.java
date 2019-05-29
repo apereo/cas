@@ -36,26 +36,30 @@ public class OAuth20CasCallbackUrlResolver implements UrlResolver {
     @Override
     @SneakyThrows
     public String compute(final String url, final WebContext context) {
-        if (url.startsWith(callbackUrl)) {
-            val builder = new URIBuilder(url);
-
-            addUrlParameter(context, builder, OAuth20Constants.CLIENT_ID);
-            addUrlParameter(context, builder, OAuth20Constants.REDIRECT_URI);
-            addUrlParameter(context, builder, OAuth20Constants.ACR_VALUES);
-            addUrlParameter(context, builder, OAuth20Constants.RESPONSE_TYPE);
-            addUrlParameter(context, builder, OAuth20Constants.GRANT_TYPE);
-            addUrlParameter(context, builder, OAuth20Constants.RESPONSE_MODE);
-
-            val callbackResolved = builder.build().toString();
-
-            LOGGER.debug("Final resolved callback URL is [{}]", callbackResolved);
-            return callbackResolved;
+        if (!url.startsWith(callbackUrl)) {
+            return url;
         }
-        return url;
+        
+        val builder = new URIBuilder(url);
+
+        addUrlParameter(context, builder, OAuth20Constants.CLIENT_ID);
+        addUrlParameter(context, builder, OAuth20Constants.REDIRECT_URI);
+        addUrlParameter(context, builder, OAuth20Constants.ACR_VALUES);
+        addUrlParameter(context, builder, OAuth20Constants.RESPONSE_TYPE);
+        addUrlParameter(context, builder, OAuth20Constants.GRANT_TYPE);
+        addUrlParameter(context, builder, OAuth20Constants.RESPONSE_MODE);
+        addUrlParameter(context, builder, OAuth20Constants.CLAIMS);
+        addUrlParameter(context, builder, OAuth20Constants.REQUEST);
+
+        val callbackResolved = builder.build().toString();
+
+        LOGGER.debug("Final resolved callback URL is [{}]", callbackResolved);
+        return callbackResolved;
     }
 
     private static void addUrlParameter(final WebContext context, final URIBuilder builder, final String parameterName) {
         var parameter = getQueryParameter(context, parameterName);
-        parameter.ifPresent(basicNameValuePair -> builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));
+        parameter.ifPresent(basicNameValuePair ->
+            builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));
     }
 }

@@ -1,6 +1,9 @@
 package org.apereo.cas.ticket.device;
 
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
@@ -10,6 +13,7 @@ import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Default OAuth device token factory.
@@ -36,20 +40,30 @@ public class DefaultDeviceTokenFactory implements DeviceTokenFactory {
      */
     protected final int userCodeLength;
 
-    public DefaultDeviceTokenFactory(final ExpirationPolicy expirationPolicy) {
-        this(new DefaultUniqueTicketIdGenerator(), expirationPolicy, USER_CODE_LENGTH);
+
+    /**
+     * Services manager.
+     */
+    protected final ServicesManager servicesManager;
+
+
+    public DefaultDeviceTokenFactory(final ExpirationPolicy expirationPolicy,
+                                     final ServicesManager servicesManager) {
+        this(new DefaultUniqueTicketIdGenerator(), expirationPolicy, USER_CODE_LENGTH, servicesManager);
     }
 
     @Override
     public DeviceToken createDeviceCode(final Service service) {
         val codeId = deviceTokenIdGenerator.getNewTicketId(DeviceToken.PREFIX);
-        return new DeviceTokenImpl(codeId, service, expirationPolicy);
+        val expirationPolicyToUse = determineExpirationPolicyForService(service);
+        return new DeviceTokenImpl(codeId, service, expirationPolicyToUse);
     }
 
     @Override
     public DeviceUserCode createDeviceUserCode(final DeviceToken deviceToken) {
         val userCode = generateDeviceUserCode(RandomStringUtils.randomAlphanumeric(userCodeLength));
-        val deviceUserCode = new DeviceUserCodeImpl(userCode, deviceToken.getId(), this.expirationPolicy);
+        val expirationPolicyToUse = determineExpirationPolicyForService(deviceToken.getService());
+        val deviceUserCode = new DeviceUserCodeImpl(userCode, deviceToken.getId(), expirationPolicyToUse);
         deviceToken.assignUserCode(deviceUserCode);
         return deviceUserCode;
     }
@@ -66,5 +80,21 @@ public class DefaultDeviceTokenFactory implements DeviceTokenFactory {
             return providedCode;
         }
         return prefix + providedCode.toUpperCase();
+    }
+
+    private ExpirationPolicy determineExpirationPolicyForService(final Service service) {
+        val registeredService = this.servicesManager.findServiceBy(service);
+        if (!(registeredService instanceof OAuthRegisteredService)) {
+            return this.expirationPolicy;
+        }
+        val oauthService = OAuthRegisteredService.class.cast(registeredService);
+        if (oauthService.getDeviceTokenExpirationPolicy() != null) {
+            val policy = oauthService.getDeviceTokenExpirationPolicy();
+            val ttl = policy.getTimeToKill();
+            if (StringUtils.isNotBlank(ttl)) {
+                return new DeviceTokenExpirationPolicy(Beans.newDuration(ttl).getSeconds());
+            }
+        }
+        return this.expirationPolicy;
     }
 }

@@ -26,7 +26,10 @@ import java.util.stream.Collectors;
 @Setter
 @RequiredArgsConstructor
 public class RedisAuditTrailManager extends AbstractAuditTrailManager {
-    private static final String CAS_AUDIT_CONTEXT_PREFIX = AuditActionContext.class.getSimpleName() + ':';
+    /**
+     * Redis key prefix.
+     */
+    public static final String CAS_AUDIT_CONTEXT_PREFIX = AuditActionContext.class.getSimpleName() + ':';
 
     private final RedisTemplate redisTemplate;
 
@@ -54,13 +57,18 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
                 .stream()
                 .map(redisKey -> this.redisTemplate.boundValueOps(redisKey).get())
                 .filter(Objects::nonNull)
-                .map(obj -> AuditActionContext.class.cast(obj))
+                .map(AuditActionContext.class::cast)
                 .filter(audit -> audit.getWhenActionWasPerformed().compareTo(dt) >= 0)
                 .collect(Collectors.toSet());
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
         return new HashSet<>(0);
+    }
+
+    @Override
+    public void removeAll() {
+        getAuditRedisKeys().forEach(key -> this.redisTemplate.delete(key));
     }
 
     private static String getAuditRedisKey(final AuditActionContext context) {

@@ -12,7 +12,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileEndpointController;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenCipherExecutor;
-import org.apereo.cas.support.oauth.web.response.accesstoken.response.RegisteredServiceJwtAccessTokenCipherExecutor;
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20RegisteredServiceJwtAccessTokenCipherExecutor;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.accesstoken.DefaultAccessTokenFactory;
 import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
@@ -68,7 +68,8 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyNoGivenAccessToken() throws Exception {
-        val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.PROFILE_URL);
+        val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(),
+            CONTEXT + OAuth20Constants.PROFILE_URL);
         val mockResponse = new MockHttpServletResponse();
 
         val entity = oAuth20ProfileController.handleGetRequest(mockRequest, mockResponse);
@@ -97,10 +98,13 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
     public void verifyExpiredAccessToken() throws Exception {
         val principal = CoreAuthenticationTestUtils.getPrincipal(ID, new HashMap<>());
         val authentication = getAuthentication(principal);
-        val jwtBuilder = new JwtBuilder("cas.example.org", new OAuth20JwtAccessTokenCipherExecutor(), servicesManager, new RegisteredServiceJwtAccessTokenCipherExecutor());
-        val expiringAccessTokenFactory = new DefaultAccessTokenFactory(new AlwaysExpiresExpirationPolicy(), jwtBuilder);
+        val jwtBuilder = new JwtBuilder("cas.example.org",
+            new OAuth20JwtAccessTokenCipherExecutor(), servicesManager,
+            new OAuth20RegisteredServiceJwtAccessTokenCipherExecutor());
+        val expiringAccessTokenFactory = new DefaultAccessTokenFactory(
+            new AlwaysExpiresExpirationPolicy(), jwtBuilder, servicesManager);
         val accessToken = expiringAccessTokenFactory.create(RegisteredServiceTestUtils.getService(), authentication,
-            new MockTicketGrantingTicket("casuser"), new ArrayList<>(), null);
+            new MockTicketGrantingTicket("casuser"), new ArrayList<>(), null, new HashMap<>());
         this.ticketRegistry.addTicket(accessToken);
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.PROFILE_URL);
@@ -124,7 +128,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         val principal = CoreAuthenticationTestUtils.getPrincipal(ID, map);
         val authentication = getAuthentication(principal);
         val accessToken = accessTokenFactory.create(RegisteredServiceTestUtils.getService(), authentication,
-            new MockTicketGrantingTicket("casuser"), new ArrayList<>(), null);
+            new MockTicketGrantingTicket("casuser"), new ArrayList<>(), null, new HashMap<>());
         this.ticketRegistry.addTicket(accessToken);
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.PROFILE_URL);
@@ -158,7 +162,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         val principal = CoreAuthenticationTestUtils.getPrincipal(ID, map);
         val authentication = getAuthentication(principal);
         val accessToken = accessTokenFactory.create(RegisteredServiceTestUtils.getService(), authentication,
-            new MockTicketGrantingTicket("casuser"), new ArrayList<>(), null);
+            new MockTicketGrantingTicket("casuser"), new ArrayList<>(), null, new HashMap<>());
         accessToken.getTicketGrantingTicket().markTicketExpired();
         this.ticketRegistry.addTicket(accessToken);
 
@@ -200,7 +204,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         val principal = CoreAuthenticationTestUtils.getPrincipal(ID, map);
         val authentication = getAuthentication(principal);
         val accessToken = accessTokenFactory.create(RegisteredServiceTestUtils.getService(), authentication,
-            new MockTicketGrantingTicket("casuser"), new ArrayList<>(), null);
+            new MockTicketGrantingTicket("casuser"), new ArrayList<>(), null, new HashMap<>());
         this.ticketRegistry.addTicket(accessToken);
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.PROFILE_URL);

@@ -19,8 +19,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 
 /**
@@ -82,10 +82,11 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
      */
     public static MultifactorAuthenticationTrustRecord newInstance(final String principal, final String geography, final String fingerprint) {
         val r = new MultifactorAuthenticationTrustRecord();
-        r.setRecordDate(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
+        val now = LocalDateTime.now(ZoneOffset.UTC);
+        r.setRecordDate(now.truncatedTo(ChronoUnit.SECONDS));
         r.setPrincipal(principal);
         r.setDeviceFingerprint(fingerprint);
-        r.setName(principal.concat("-").concat(LocalDate.now().toString()).concat("-").concat(geography));
+        r.setName(principal.concat("-").concat(now.toString()).concat("-").concat(geography));
         return r;
     }
 

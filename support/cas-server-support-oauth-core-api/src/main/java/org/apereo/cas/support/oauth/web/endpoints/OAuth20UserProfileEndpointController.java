@@ -57,8 +57,10 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
      * @return the response entity
      * @throws Exception the exception
      */
-    @PostMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.PROFILE_URL, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> handlePostRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    @PostMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.PROFILE_URL,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> handlePostRequest(final HttpServletRequest request,
+                                                    final HttpServletResponse response) throws Exception {
         return handleGetRequest(request, response);
     }
 
@@ -70,8 +72,9 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
      * @return the response entity
      * @throws Exception the exception
      */
-    @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.PROFILE_URL, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> handleGetRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.PROFILE_URL)
+    public ResponseEntity<String> handleGetRequest(final HttpServletRequest request,
+                                                   final HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
         val context = new J2EContext(request, response, getOAuthConfigurationContext().getSessionStore());
@@ -80,7 +83,6 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
             LOGGER.error("Missing [{}] from the request", OAuth20Constants.ACCESS_TOKEN);
             return buildUnauthorizedResponseEntity(OAuth20Constants.MISSING_ACCESS_TOKEN);
         }
-
         val accessTokenTicket = getOAuthConfigurationContext().getTicketRegistry().getTicket(accessToken, AccessToken.class);
 
         if (accessTokenTicket == null) {
@@ -105,8 +107,7 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
         updateAccessTokenUsage(accessTokenTicket);
 
         val map = getOAuthConfigurationContext().getUserProfileDataCreator().createFrom(accessTokenTicket, context);
-        val value = getOAuthConfigurationContext().getUserProfileViewRenderer().render(map, accessTokenTicket);
-        return new ResponseEntity<>(value, HttpStatus.OK);
+        return getOAuthConfigurationContext().getUserProfileViewRenderer().render(map, accessTokenTicket, response);
     }
 
     private void updateAccessTokenUsage(final AccessToken accessTokenTicket) {
@@ -129,12 +130,12 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
         var accessToken = request.getParameter(OAuth20Constants.ACCESS_TOKEN);
         if (StringUtils.isBlank(accessToken)) {
             val authHeader = request.getHeader(HttpConstants.AUTHORIZATION_HEADER);
-            if (StringUtils.isNotBlank(authHeader) && authHeader.toLowerCase().startsWith(OAuth20Constants.TOKEN_TYPE_BEARER.toLowerCase() + ' ')) {
+            if (StringUtils.isNotBlank(authHeader) && authHeader.toLowerCase()
+                .startsWith(OAuth20Constants.TOKEN_TYPE_BEARER.toLowerCase() + ' ')) {
                 accessToken = authHeader.substring(OAuth20Constants.TOKEN_TYPE_BEARER.length() + 1);
             }
         }
         LOGGER.debug("[{}]: [{}]", OAuth20Constants.ACCESS_TOKEN, accessToken);
-
         return accessToken;
     }
 }

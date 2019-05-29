@@ -635,6 +635,11 @@ public interface CasWebflowConstants {
     String ACTION_ID_RENDER_LOGIN_FORM = "renderLoginFormAction";
 
     /**
+     * Action id 'authenticationViaFormAction'.
+     */
+    String ACTION_ID_AUTHENTICATION_VIA_FORM_ACTION = "authenticationViaFormAction";
+
+    /**
      * Action id 'compositeMfaProviderSelectedAction'.
      */
     String ACTION_ID_MFA_PROVIDER_SELECTED = "compositeMfaProviderSelectedAction";
@@ -643,6 +648,10 @@ public interface CasWebflowConstants {
      * Action id 'initialFlowSetupAction'.
      */
     String ACTION_ID_INIT_FLOW_SETUP = "initialFlowSetupAction";
+    /**
+     * Action id 'verifyRequiredServiceAction'.
+     */
+    String ACTION_ID_VERIFY_REQUIRED_SERVICE = "verifyRequiredServiceAction";
 
     /**
      * Action id 'ticketGrantingTicketCheckAction'.

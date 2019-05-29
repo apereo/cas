@@ -30,5 +30,5 @@ public class DefaultRegisteredServiceServiceTicketExpirationPolicy implements Re
 
     private long numberOfUses;
 
-    private long timeToLive;
+    private String timeToLive;
 }

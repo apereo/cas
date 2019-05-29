@@ -36,6 +36,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * This is {@link BaseOAuthExpirationPolicyTests}.
@@ -89,13 +90,14 @@ public abstract class BaseOAuthExpirationPolicyTests {
 
     protected AccessToken newAccessToken(final TicketGrantingTicket tgt) {
         val testService = CoreAuthenticationTestUtils.getService("https://service.example.com");
-        return defaultAccessTokenFactory.create(testService, tgt.getAuthentication(), tgt, new ArrayList<>(), null);
+        return defaultAccessTokenFactory.create(testService, tgt.getAuthentication(), tgt, new ArrayList<>(), null, new HashMap<>());
     }
 
     protected RefreshToken newRefreshToken(final AccessToken at) {
         val testService = CoreAuthenticationTestUtils.getService("https://service.example.com");
         val rt = defaultRefreshTokenFactory.create(testService, at.getAuthentication(),
-            at.getTicketGrantingTicket(), new ArrayList<>(), "clientid12345");
+            at.getTicketGrantingTicket(), new ArrayList<>(), "clientid12345",
+            new HashMap<>());
         at.getTicketGrantingTicket().getDescendantTickets().add(rt.getId());
         return rt;
     }

@@ -58,6 +58,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
             .grantType(getGrantType())
             .generateRefreshToken(generateRefreshToken)
             .token(token)
+            .claims(token.getClaims())
             .ticketGrantingTicket(token.getTicketGrantingTicket());
 
         return extractInternal(request, response, builder);
@@ -118,7 +119,8 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
     protected OAuthToken getOAuthTokenFromRequest(final HttpServletRequest request) {
         val token = getOAuthConfigurationContext().getTicketRegistry().getTicket(getOAuthParameter(request), OAuthToken.class);
         if (token == null || token.isExpired()) {
-            LOGGER.error("OAuth token indicated by parameter [{}] has expired or not found: [{}]", getOAuthParameter(request), token);
+            LOGGER.error("OAuth token indicated by parameter [{}] has expired or not found: [{}]",
+                getOAuthParameter(request), token);
             if (token != null) {
                 getOAuthConfigurationContext().getTicketRegistry().deleteTicket(token.getId());
             }
@@ -159,7 +161,13 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
      */
     protected OAuthRegisteredService getOAuthRegisteredServiceBy(final HttpServletRequest request) {
         val redirectUri = getRegisteredServiceIdentifierFromRequest(request);
-        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(getOAuthConfigurationContext().getServicesManager(), redirectUri);
+        var registeredService = OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(
+            getOAuthConfigurationContext().getServicesManager(), redirectUri);
+        if (registeredService == null) {
+            val clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
+            registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
+                getOAuthConfigurationContext().getServicesManager(), clientId);
+        }
         LOGGER.debug("Located registered service [{}]", registeredService);
         return registeredService;
     }

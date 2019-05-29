@@ -49,7 +49,7 @@ public class OidcProperties implements Serializable {
      * Path to the JWKS file resource used to handle signing/encryption of authentication tokens.
      */
     @RequiredProperty
-    private transient Resource jwksFile = new FileSystemResource("/etc/cas/keystore.jwks");
+    private transient Resource jwksFile = new FileSystemResource("/etc/cas/config/keystore.jwks");
 
     /**
      * Whether dynamic registration operates in {@code OPEN} or {@code PROTECTED} mode.
@@ -108,14 +108,58 @@ public class OidcProperties implements Serializable {
     private List<String> grantTypesSupported = Stream.of("authorization_code", "password", "client_credentials", "refresh_token").collect(Collectors.toList());
 
     /**
-     * Supported grant types.
+     * Supported algorithms for id token signing.
      */
-    private List<String> idTokenSigningAlgValuesSupported = Stream.of("none", "RS256").collect(Collectors.toList());
+    private List<String> idTokenSigningAlgValuesSupported = Stream.of("none", "RS256", "RS384",
+        "RS512", "PS256", "PS384",
+        "PS512", "ES256", "ES384",
+        "ES512", "HS256", "HS384", "HS512")
+        .collect(Collectors.toList());
+
+    /**
+     * Supported algorithms for id token encryption.
+     */
+    private List<String> idTokenEncryptionAlgValuesSupported = Stream.of("RSA1_5", "RSA-OAEP", "RSA-OAEP-256",
+        "A128KW", "A192KW", "A256KW", "A128GCMKW", "A192GCMKW", "A256GCMKW",
+        "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW")
+        .collect(Collectors.toList());
+
+    /**
+     * Supported encoding strategies for id token encryption.
+     */
+    private List<String> idTokenEncryptionEncodingValuesSupported = Stream.of("A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512",
+        "A128GCM", "A192GCM", "A256GCM")
+        .collect(Collectors.toList());
+
+    /**
+     * Supported algorithms for user-info signing.
+     */
+    private List<String> userInfoSigningAlgValuesSupported = Stream.of("none", "RS256", "RS384",
+        "RS512", "PS256", "PS384",
+        "PS512", "ES256", "ES384",
+        "ES512", "HS256", "HS384", "HS512")
+        .collect(Collectors.toList());
+
+    /**
+     * Supported algorithms for user-info encryption.
+     */
+    private List<String> userInfoEncryptionAlgValuesSupported = Stream.of("RSA1_5", "RSA-OAEP", "RSA-OAEP-256",
+        "A128KW", "A192KW", "A256KW", "A128GCMKW", "A192GCMKW", "A256GCMKW",
+        "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW")
+        .collect(Collectors.toList());
+
+    /**
+     * Supported encoding strategies for user-info encryption.
+     */
+    private List<String> userInfoEncryptionEncodingValuesSupported = Stream.of("A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512",
+        "A128GCM", "A192GCM", "A256GCM")
+        .collect(Collectors.toList());
 
     /**
      * List of client authentication methods supported by token endpoint.
      */
-    private List<String> tokenEndpointAuthMethodsSupported = Stream.of("client_secret_basic", "client_secret_post", "private_key_jwt").collect(Collectors.toList());
+    private List<String> tokenEndpointAuthMethodsSupported =
+        Stream.of("client_secret_basic", "client_secret_post", "client_secret_jwt", "private_key_jwt").collect(Collectors.toList());
 
     /**
      * OIDC webfinger protocol settings.

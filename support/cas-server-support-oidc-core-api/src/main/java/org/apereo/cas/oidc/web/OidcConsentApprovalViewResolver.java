@@ -31,7 +31,7 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
         if (service instanceof OidcRegisteredService) {
             val url = context.getFullRequestURL();
             val prompts = OidcAuthorizationRequestSupport.getOidcPromptFromAuthorizationRequest(url);
-            if (prompts.contains(OidcConstants.PROMPT_CONSENT) || url.startsWith("h")) {
+            if (prompts.contains(OidcConstants.PROMPT_CONSENT)) {
                 return false;
             }
         }
@@ -44,7 +44,9 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
     }
 
     @Override
-    protected void prepareApprovalViewModel(final Map<String, Object> model, final J2EContext ctx, final OAuthRegisteredService svc) {
+    protected void prepareApprovalViewModel(final Map<String, Object> model,
+                                            final J2EContext ctx,
+                                            final OAuthRegisteredService svc) throws Exception {
         super.prepareApprovalViewModel(model, ctx, svc);
         if (svc instanceof OidcRegisteredService) {
             val oidcRegisteredService = (OidcRegisteredService) svc;
@@ -53,7 +55,10 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
             val supportedScopes = new HashSet<String>(casProperties.getAuthn().getOidc().getScopes());
             supportedScopes.retainAll(oidcRegisteredService.getScopes());
             supportedScopes.retainAll(OAuth20Utils.getRequestedScopes(ctx));
+            supportedScopes.add(OidcConstants.StandardScopes.OPENID.getScope());
             model.put("scopes", supportedScopes);
+            val userInfoClaims = OAuth20Utils.parseUserInfoRequestClaims(ctx);
+            model.put("userInfoClaims", userInfoClaims);
         }
     }
 }

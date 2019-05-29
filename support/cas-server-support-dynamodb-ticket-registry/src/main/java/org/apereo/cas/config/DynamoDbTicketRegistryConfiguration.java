@@ -13,6 +13,7 @@ import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -45,7 +46,7 @@ public class DynamoDbTicketRegistryConfiguration {
     @Bean
     public DynamoDbTicketRegistryFacilitator dynamoDbTicketRegistryFacilitator(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
         val db = casProperties.getTicket().getRegistry().getDynamoDb();
-        val f = new DynamoDbTicketRegistryFacilitator(ticketCatalog, db, amazonDynamoDbClient());
+        val f = new DynamoDbTicketRegistryFacilitator(ticketCatalog, db, amazonDynamoDbTicketRegistryClient());
         if (!db.isPreventTableCreationOnStartup()) {
             f.createTicketTables(db.isDropTablesOnStartup());
         }
@@ -55,7 +56,8 @@ public class DynamoDbTicketRegistryConfiguration {
     @RefreshScope
     @Bean
     @SneakyThrows
-    public AmazonDynamoDB amazonDynamoDbClient() {
+    @ConditionalOnMissingBean(name = "amazonDynamoDbTicketRegistryClient")
+    public AmazonDynamoDB amazonDynamoDbTicketRegistryClient() {
         val dynamoDbProperties = casProperties.getTicket().getRegistry().getDynamoDb();
         val factory = new AmazonDynamoDbClientFactory();
         return factory.createAmazonDynamoDb(dynamoDbProperties);

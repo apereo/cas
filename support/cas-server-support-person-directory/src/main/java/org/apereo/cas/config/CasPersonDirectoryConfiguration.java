@@ -10,6 +10,7 @@ import org.apereo.cas.persondir.DefaultPersonDirectoryAttributeRepositoryPlan;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
+import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 
@@ -51,6 +52,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -113,20 +115,26 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
         val list = new ArrayList<IPersonAttributeDao>();
         casProperties.getAuthn().getAttributeRepository().getJson()
             .stream()
-            .filter(json -> json.getLocation() != null)
+            .filter(json -> ResourceUtils.doesResourceExist(json.getLocation()))
             .forEach(Unchecked.consumer(json -> {
                 val r = json.getLocation();
                 val dao = new JsonBackedComplexStubPersonAttributeDao(r);
-                val watcherService = new FileWatcherService(r.getFile(), file -> {
-                    try {
-                        dao.init();
-                    } catch (final Exception e) {
-                        LOGGER.error(e.getMessage(), e);
+                try {
+                    if (r.isFile()) {
+                        val watcherService = new FileWatcherService(r.getFile(), file -> {
+                            try {
+                                dao.init();
+                            } catch (final Exception e) {
+                                LOGGER.error(e.getMessage(), e);
+                            }
+                        });
+                        watcherService.start(getClass().getSimpleName());
+                        dao.setResourceWatcherService(watcherService);
                     }
-                });
-                watcherService.start(getClass().getSimpleName());
+                } catch (final Exception e) {
+                    LOGGER.debug(e.getMessage(), e);
+                }
                 dao.setOrder(json.getOrder());
-                dao.setResourceWatcherService(watcherService);
                 FunctionUtils.doIfNotNull(json.getId(), dao::setId);
                 dao.init();
                 LOGGER.debug("Configured JSON attribute sources from [{}]", r);
@@ -316,7 +324,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
                 dao.setOrder(rest.getOrder());
                 FunctionUtils.doIfNotNull(rest.getId(), dao::setId);
                 dao.setUrl(rest.getUrl());
-                dao.setMethod(HttpMethod.resolve(rest.getMethod()).name());
+                dao.setMethod(Objects.requireNonNull(HttpMethod.resolve(rest.getMethod())).name());
 
                 if (StringUtils.isNotBlank(rest.getBasicAuthPassword()) && StringUtils.isNotBlank(rest.getBasicAuthUsername())) {
                     dao.setBasicAuthPassword(rest.getBasicAuthPassword());

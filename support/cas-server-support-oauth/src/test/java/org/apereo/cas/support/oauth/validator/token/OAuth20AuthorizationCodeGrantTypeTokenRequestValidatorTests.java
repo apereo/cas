@@ -30,6 +30,7 @@ import org.pac4j.core.profile.CommonProfile;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.util.HashMap;
 import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -59,10 +60,11 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
             new CasConfigurationProperties());
         val oauthCasAuthenticationBuilderService = builder.buildService(service, null, false);
         val expirationPolicy = new OAuthCodeExpirationPolicy(1, 60);
-        val oauthCode = new DefaultOAuthCodeFactory(expirationPolicy)
+        val oauthCode = new DefaultOAuthCodeFactory(expirationPolicy, mock(ServicesManager.class))
             .create(oauthCasAuthenticationBuilderService, RegisteredServiceTestUtils.getAuthentication(),
                 new MockTicketGrantingTicket("casuser"), new HashSet<>(),
-                null, null, "clientid12345");
+                null, null, "clientid12345",
+                new HashMap<>());
         when(ticketRegistry.getTicket(eq(name), (Class<Ticket>) any())).thenReturn(oauthCode);
     }
 

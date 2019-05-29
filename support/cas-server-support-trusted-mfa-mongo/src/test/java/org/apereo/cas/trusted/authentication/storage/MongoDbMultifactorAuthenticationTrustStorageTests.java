@@ -34,7 +34,8 @@ import static org.junit.jupiter.api.Assertions.*;
     MultifactorAuthnTrustedDeviceFingerprintConfiguration.class,
     MultifactorAuthnTrustConfiguration.class,
     CasCoreAuditConfiguration.class,
-    RefreshAutoConfiguration.class})
+    RefreshAutoConfiguration.class
+})
 @TestPropertySource(properties = {
     "cas.authn.mfa.trusted.mongo.databaseName=mfa-trusted",
     "cas.authn.mfa.trusted.mongo.host=localhost",

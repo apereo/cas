@@ -27,5 +27,5 @@ public interface RegisteredServiceProxyTicketExpirationPolicy extends Serializab
      *
      * @return the time to live
      */
-    long getTimeToLive();
+    String getTimeToLive();
 }

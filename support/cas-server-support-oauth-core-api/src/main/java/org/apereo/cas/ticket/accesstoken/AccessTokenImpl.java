@@ -14,6 +14,7 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * An OAuth access token implementation.
@@ -40,11 +41,12 @@ public class AccessTokenImpl extends OAuthCodeImpl implements AccessToken {
                            final Collection<String> scopes,
                            final String codeChallenge,
                            final String codeChallengeMethod,
-                           final String clientId) {
+                           final String clientId,
+                           final Map<String, Map<String, Object>> requestClaims) {
         super(id, service, authentication, expirationPolicy,
             ticketGrantingTicket, scopes,
             codeChallenge, codeChallengeMethod,
-            clientId);
+            clientId, requestClaims);
     }
 
     public AccessTokenImpl(final String id, final Service service,
@@ -52,10 +54,11 @@ public class AccessTokenImpl extends OAuthCodeImpl implements AccessToken {
                            final ExpirationPolicy expirationPolicy,
                            final TicketGrantingTicket ticketGrantingTicket,
                            final Collection<String> scopes,
-                           final String clientId) {
+                           final String clientId,
+                           final Map<String, Map<String, Object>> requestClaims) {
         this(id, service, authentication, expirationPolicy,
             ticketGrantingTicket, scopes, null,
-            null, clientId);
+            null, clientId, requestClaims);
     }
 
     @Override

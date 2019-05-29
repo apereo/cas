@@ -1,27 +1,22 @@
 package org.apereo.cas.oidc.authn;
 
-import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeySetUtils;
-import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
-import lombok.RequiredArgsConstructor;
+import com.nimbusds.jose.Algorithm;
+import com.nimbusds.jose.JWSAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
-import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.profile.CommonProfile;
 
 /**
@@ -31,37 +26,33 @@ import org.pac4j.core.profile.CommonProfile;
  * @since 6.1.0
  */
 @Slf4j
-@RequiredArgsConstructor
-public class OidcPrivateKeyJwtAuthenticator implements Authenticator<UsernamePasswordCredentials> {
-    private final ServicesManager servicesManager;
-    private final AuditableExecution registeredServiceAccessStrategyEnforcer;
-    private final TicketRegistry ticketRegistry;
-    private final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
-    private final CasConfigurationProperties casProperties;
+public class OidcPrivateKeyJwtAuthenticator extends BaseOidcJwtAuthenticator {
+
+    public OidcPrivateKeyJwtAuthenticator(final ServicesManager servicesManager,
+                                          final AuditableExecution registeredServiceAccessStrategyEnforcer,
+                                          final TicketRegistry ticketRegistry,
+                                          final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
+                                          final CasConfigurationProperties casProperties) {
+        super(servicesManager, registeredServiceAccessStrategyEnforcer,
+            ticketRegistry, webApplicationServiceServiceFactory, casProperties);
+    }
+
+    @Override
+    protected boolean validateJwtAlgorithm(final Algorithm alg) {
+        return JWSAlgorithm.Family.RSA.contains(alg) || JWSAlgorithm.Family.EC.contains(alg);
+    }
 
     @Override
     public void validate(final UsernamePasswordCredentials credentials,
                          final WebContext webContext) {
-        if (!StringUtils.equalsIgnoreCase(OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
-            credentials.getUsername())) {
-            LOGGER.debug("client assertion type is not set to [{}]", OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER);
-            return;
-        }
-        val code = webContext.getRequestParameter(OAuth20Constants.CODE);
-        val oauthCode = this.ticketRegistry.getTicket(code, OAuthCode.class);
-        if (oauthCode == null || oauthCode.isExpired()) {
-            LOGGER.error("Provided code [{}] is either not found in the ticket registry or has expired", code);
-            return;
-        }
-        val clientId = oauthCode.getClientId();
-        val registeredService = (OidcRegisteredService)
-            OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
-        val audit = AuditableContext.builder()
-            .registeredService(registeredService)
-            .build();
-        val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
-        accessResult.throwExceptionIfNeeded();
 
+        val registeredService = verifyCredentials(credentials, webContext);
+        if (registeredService == null) {
+            LOGGER.warn("Unable to verify credentials");
+            return;
+        }
+
+        val clientId = registeredService.getClientId();
         val audience = casProperties.getServer().getPrefix().concat('/'
             + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL);
         val keys = OidcJsonWebKeySetUtils.getJsonWebKeySet(registeredService);

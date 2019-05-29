@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.mfa;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.couchdb.BaseCouchDbProperties;
+import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbMultifactorTrustProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mfa.trusteddevice.DeviceFingerprintProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
@@ -89,9 +90,14 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
     private MongoDb mongo = new MongoDb();
 
     /**
-     * Store devices records inside MongoDb.
+     * Store devices records inside CouchDb.
      */
     private CouchDb couchDb = new CouchDb();
+
+    /**
+     * Store devices records inside DynamoDb.
+     */
+    private DynamoDbMultifactorTrustProperties dynamoDb = new DynamoDbMultifactorTrustProperties();
 
     /**
      * Crypto settings that sign/encrypt the device records.
@@ -106,12 +112,14 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
 
     @Getter
     @Setter
+    @RequiresModule(name = "cas-server-support-trusted-rest")
     public static class Rest extends RestEndpointProperties {
         private static final long serialVersionUID = 3659099897056632608L;
     }
 
     @Getter
     @Setter
+    @RequiresModule(name = "cas-server-support-trusted-jdbc")
     public static class Jpa extends AbstractJpaProperties {
         private static final long serialVersionUID = -8329950619696176349L;
     }
@@ -130,6 +138,7 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
 
     @Getter
     @Setter
+    @RequiresModule(name = "cas-server-support-trusted-mongo")
     public static class MongoDb extends SingleCollectionMongoDbProperties {
 
         private static final long serialVersionUID = 4940497540189318943L;
@@ -141,8 +150,9 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
 
     @Getter
     @Setter
+    @RequiresModule(name = "cas-server-support-trusted-mfa")
     public static class Json extends SpringResourceProperties {
-
         private static final long serialVersionUID = 3599367681439517829L;
     }
+
 }

@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.J2EContext;
 import org.springframework.core.Ordered;
 
@@ -55,6 +56,12 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator i
 
         if (!checkParameterExist) {
             LOGGER.warn("Missing required parameters (client id, redirect uri, etc) for response type [{}].", getResponseType());
+            return false;
+        }
+
+        val authnRequest = request.getParameter(OAuth20Constants.REQUEST);
+        if (StringUtils.isNotBlank(authnRequest)) {
+            LOGGER.warn("Self-contained authentication requests as JWTs are not accepted");
             return false;
         }
 

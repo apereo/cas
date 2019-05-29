@@ -21,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
@@ -108,7 +109,7 @@ public class CollectionUtils {
             c.add(obj);
             LOGGER.trace("Converting element [{}]", obj);
         }
-        return c;
+        return c.stream().filter(Objects::nonNull).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     /**

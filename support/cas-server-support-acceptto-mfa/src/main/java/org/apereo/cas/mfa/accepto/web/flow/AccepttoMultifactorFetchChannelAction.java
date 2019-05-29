@@ -2,8 +2,10 @@ package org.apereo.cas.mfa.accepto.web.flow;
 
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.mfa.accepto.web.flow.qr.AccepttoQRCodeCredential;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,6 +23,7 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,16 +36,6 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 public class AccepttoMultifactorFetchChannelAction extends AbstractAction {
-    /**
-     * Session attribute to hold the authentication channel.
-     */
-    public static final String SESSION_ATTRIBUTE_CHANNEL = "acceptoMfaChannel";
-
-    /**
-     * Session attribute to hold original authn.
-     */
-    public static final String SESSION_ATTRIBUTE_ORIGINAL_AUTHENTICATION = "acceptoMfaOriginalAuthN";
-
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     private final CasConfigurationProperties casProperties;
@@ -50,39 +43,52 @@ public class AccepttoMultifactorFetchChannelAction extends AbstractAction {
 
     @Override
     public Event doExecute(final RequestContext requestContext) throws Exception {
-        val acceptto = casProperties.getAuthn().getMfa().getAcceptto();
-
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         val webContext = new J2EContext(request, response, this.sessionStore);
 
-        val channel = authenticateAndFetchChannel();
-        LOGGER.debug("Storing channel [{}] in http session", channel);
-        webContext.getSessionStore().set(webContext, SESSION_ATTRIBUTE_CHANNEL, channel);
+        val channel = authenticateAndFetchChannel(requestContext);
+        LOGGER.debug("Storing channel [{}] in session", channel);
+        AccepttoWebflowUtils.storeChannel(channel, webContext);
 
         val authentication = WebUtils.getInProgressAuthentication();
-        webContext.getSessionStore().set(webContext, SESSION_ATTRIBUTE_ORIGINAL_AUTHENTICATION, authentication);
+        AccepttoWebflowUtils.storeAuthentication(authentication, webContext);
 
-        val callbackUrl = WebUtils.getHttpRequestFullUrl(request);
-        val accepttoRedirectUrl = new URIBuilder(acceptto.getAuthnSelectionUrl() + "/mfa/index")
-            .addParameter("channel", channel)
-            .addParameter("callback_url", callbackUrl)
-            .build()
-            .toString();
-
+        val accepttoRedirectUrl = buildAccepttoAuthenticationSelectionUrl(request, channel);
         LOGGER.debug("Redirecting to [{}]", accepttoRedirectUrl);
         requestContext.getRequestScope().put("accepttoRedirectUrl", accepttoRedirectUrl);
         return new EventFactorySupport().success(this);
     }
 
     /**
+     * Build acceptto authentication selection url string.
+     *
+     * @param request the request
+     * @param channel the channel
+     * @return the string
+     * @throws Exception the exception
+     */
+    protected String buildAccepttoAuthenticationSelectionUrl(final HttpServletRequest request, final String channel) throws Exception {
+        val acceptto = casProperties.getAuthn().getMfa().getAcceptto();
+        val callbackUrl = WebUtils.getHttpRequestFullUrl(request);
+        return new URIBuilder(acceptto.getAuthnSelectionUrl() + "/mfa/index")
+            .addParameter("channel", channel)
+            .addParameter("callback_url", callbackUrl)
+            .build()
+            .toString();
+    }
+
+    /**
      * Authenticate and fetch channel.
      *
+     * @param requestContext the request
      * @return the channel
      */
-    protected String authenticateAndFetchChannel() {
+    protected String authenticateAndFetchChannel(final RequestContext requestContext) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+
         val acceptto = casProperties.getAuthn().getMfa().getAcceptto();
-        val url = StringUtils.appendIfMissing(acceptto.getApiUrl(), "/") + "authenticate";
+        val url = StringUtils.appendIfMissing(acceptto.getApiUrl(), "/") + "authenticate_with_options";
 
         LOGGER.trace("Contacting API [{}] to fetch channel", url);
 
@@ -102,6 +108,14 @@ public class AccepttoMultifactorFetchChannelAction extends AbstractAction {
             "message", acceptto.getMessage(),
             "timeout", acceptto.getTimeout());
 
+        CookieUtils.getCookieFromRequest("jwt", request)
+            .ifPresent(cookie -> parameters.put("jwt", cookie.getValue()));
+
+        val currentCredential = WebUtils.getCredential(requestContext);
+        if (currentCredential instanceof AccepttoQRCodeCredential) {
+            parameters.put("auth_type", 1);
+        }
+        
         HttpResponse response = null;
         try {
             response = HttpUtils.executePost(url, parameters, new HashMap<>(0));

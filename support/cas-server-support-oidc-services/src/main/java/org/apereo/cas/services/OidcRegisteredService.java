@@ -40,6 +40,12 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     private String jwks;
 
     @Column
+    private long jwksCacheDuration;
+
+    @Column
+    private String jwksCacheTimeUnit;
+
+    @Column(name = "token_auth_method")
     private String tokenEndpointAuthenticationMethod = "client_secret_basic";
 
     @Column
@@ -53,6 +59,15 @@ public class OidcRegisteredService extends OAuthRegisteredService {
 
     @Column
     private String idTokenSigningAlg;
+
+    @Column
+    private String userInfoSigningAlg;
+
+    @Column(name = "userinfo_enc_alg")
+    private String userInfoEncryptedResponseAlg;
+
+    @Column(name = "userinfo_enc_enc")
+    private String userInfoEncryptedResponseEncoding;
 
     @Column
     private String idTokenEncryptionEncoding;

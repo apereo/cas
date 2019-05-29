@@ -51,12 +51,16 @@ public class OidcIdTokenSigningAndEncryptionService extends BaseOidcJsonWebKeyTo
      * @return the boolean
      */
     @Override
-    protected boolean shouldSignTokenFor(final OidcRegisteredService svc) {
-        if (AlgorithmIdentifiers.NONE.equalsIgnoreCase(svc.getIdTokenSigningAlg())) {
-            LOGGER.warn("ID token signing algorithm is set to none for [{}] and ID token will not be signed", svc.getServiceId());
-            return false;
+    public boolean shouldSignToken(final OAuthRegisteredService svc) {
+        if (svc instanceof OidcRegisteredService) {
+            val service = (OidcRegisteredService) svc;
+            if (AlgorithmIdentifiers.NONE.equalsIgnoreCase(service.getIdTokenSigningAlg())) {
+                LOGGER.warn("ID token signing algorithm is set to none for [{}] and ID token will not be signed", svc.getServiceId());
+                return false;
+            }
+            return service.isSignIdToken();
         }
-        return svc.isSignIdToken();
+        return false;
     }
 
     /**
@@ -66,11 +70,17 @@ public class OidcIdTokenSigningAndEncryptionService extends BaseOidcJsonWebKeyTo
      * @return the boolean
      */
     @Override
-    protected boolean shouldEncryptTokenFor(final OidcRegisteredService svc) {
-        if (AlgorithmIdentifiers.NONE.equalsIgnoreCase(svc.getIdTokenEncryptionAlg())) {
-            LOGGER.warn("ID token encryption algorithm is set to none for [{}] and ID token will not be encrypted", svc.getServiceId());
-            return false;
+    public boolean shouldEncryptToken(final OAuthRegisteredService svc) {
+        if (svc instanceof OidcRegisteredService) {
+            val service = (OidcRegisteredService) svc;
+            if (AlgorithmIdentifiers.NONE.equalsIgnoreCase(service.getIdTokenEncryptionAlg())) {
+                LOGGER.warn("ID token encryption algorithm is set to none for [{}] and ID token will not be encrypted", service.getServiceId());
+                return false;
+            }
+            return service.isEncryptIdToken()
+                && StringUtils.isNotBlank(service.getIdTokenEncryptionAlg())
+                && StringUtils.isNotBlank(service.getIdTokenEncryptionEncoding());
         }
-        return svc.isEncryptIdToken() && StringUtils.isNotBlank(svc.getIdTokenEncryptionAlg()) && StringUtils.isNotBlank(svc.getIdTokenEncryptionEncoding());
+        return false;
     }
 }

@@ -26,6 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -109,12 +110,12 @@ public class OAuth20DefaultAccessTokenResponseGeneratorTests extends AbstractOAu
 
         val factory = new DefaultAccessTokenFactory(new HardTimeoutExpirationPolicy(30),
             new JwtBuilder("cas.example.org", new OAuth20JwtAccessTokenCipherExecutor(), servicesManager,
-                new RegisteredServiceJwtAccessTokenCipherExecutor()));
+                new OAuth20RegisteredServiceJwtAccessTokenCipherExecutor()), servicesManager);
 
         val accessToken = factory.create(service,
             RegisteredServiceTestUtils.getAuthentication("casuser"),
             new MockTicketGrantingTicket("casuser"),
-            new ArrayList<>(), null);
+            new ArrayList<>(), registeredService.getClientId(), new HashMap<>());
 
         val genBuilder = OAuth20TokenGeneratedResult.builder();
         val generatedToken = genBuilder.registeredService(registeredService)

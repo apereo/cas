@@ -42,8 +42,7 @@ public class MongoDbThrottledSubmissionHandlerInterceptorAdapter extends Abstrac
                 .and("actionPerformed").is(getConfigurationContext().getAuthenticationFailureCode())
                 .and("applicationCode").is(getConfigurationContext().getApplicationCode())
                 .and("whenActionWasPerformed").gte(getFailureInRangeCutOffDate()));
-
-        query.with(new Sort(Sort.Direction.DESC, "whenActionWasPerformed"));
+        query.with(Sort.by(Sort.Direction.DESC, "whenActionWasPerformed"));
         query.limit(2);
         query.fields().include("whenActionWasPerformed");
 

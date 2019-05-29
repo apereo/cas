@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.consent.ChainingRegisteredServiceConsentPolicy;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -39,6 +40,19 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
     private String mergingPolicy = "replace";
 
     private int order;
+
+    @Override
+    public RegisteredServiceConsentPolicy getConsentPolicy() {
+        AnnotationAwareOrderComparator.sortIfNecessary(policies);
+        val policy = new ChainingRegisteredServiceConsentPolicy();
+        val consentPolicies = this.policies
+            .stream()
+            .map(RegisteredServiceAttributeReleasePolicy::getConsentPolicy)
+            .distinct()
+            .collect(Collectors.toList());
+        policy.addPolicies(consentPolicies);
+        return policy;
+    }
 
     @Override
     public Map<String, List<Object>> getAttributes(final Principal p, final Service selectedService, final RegisteredService service) {

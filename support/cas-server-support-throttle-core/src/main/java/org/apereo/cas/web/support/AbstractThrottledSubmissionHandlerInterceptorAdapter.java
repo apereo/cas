@@ -89,7 +89,8 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
     }
 
     @Override
-    public final void postHandle(final HttpServletRequest request, final HttpServletResponse response, final Object o, final ModelAndView modelAndView) {
+    public final void postHandle(final HttpServletRequest request, final HttpServletResponse response,
+                                 final Object o, final ModelAndView modelAndView) {
         if (!HttpMethod.POST.name().equals(request.getMethod())) {
             LOGGER.trace("Skipping authentication throttling for requests other than POST");
             return;
