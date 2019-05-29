@@ -3287,8 +3287,6 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 # cas.authn.pac4j.saml[0].serviceProviderEntityId=
 # cas.authn.pac4j.saml[0].serviceProviderMetadataPath=
 
-# Identify the client and the generated certificate associated when having several client
-# cas.authn.pac4j.saml[0].clientName=
 # cas.authn.pac4j.saml[0].certificateNameToAppend=
 
 # cas.authn.pac4j.saml[0].maximumAuthenticationLifetime=3600
