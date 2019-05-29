@@ -1,6 +1,8 @@
 package org.apereo.cas.ticket.registry;
 
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * This is {@link AllRedisTicketRegistryTestsSuite}.
@@ -14,5 +16,6 @@ import org.junit.platform.suite.api.SelectClasses;
     RedisServerTicketRegistryTests.class,
     SentinelServerTicketRegistryTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class AllRedisTicketRegistryTestsSuite {
 }

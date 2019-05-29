@@ -5,7 +5,9 @@ import org.apereo.cas.services.util.CasAddonsRegisteredServicesJsonSerializerTes
 import org.apereo.cas.services.util.RegisteredServiceAccessStrategyAuditableEnforcerTests;
 import org.apereo.cas.services.util.RegisteredServicePublicKeyCipherExecutorTests;
 
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -18,5 +20,6 @@ import org.junit.platform.suite.api.SelectClasses;
     CasAddonsRegisteredServicesJsonSerializerTests.class,
     RegisteredServiceAccessStrategyAuditableEnforcerTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
 }

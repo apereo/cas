@@ -13,7 +13,9 @@ import org.apereo.cas.authentication.mfa.trigger.RegisteredServiceMultifactorAut
 import org.apereo.cas.authentication.mfa.trigger.RegisteredServicePrincipalAttributeMultifactorAuthenticationTriggerTests;
 import org.apereo.cas.authentication.mfa.trigger.RestEndpointMultifactorAuthenticationTriggerTests;
 
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * This is {@link MultifactorAuthenticationTestsSuite}.
@@ -38,5 +40,6 @@ import org.junit.platform.suite.api.SelectClasses;
     GroovyScriptMultifactorAuthenticationTriggerTests.class,
     PrincipalAttributeMultifactorAuthenticationTriggerTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class MultifactorAuthenticationTestsSuite {
 }

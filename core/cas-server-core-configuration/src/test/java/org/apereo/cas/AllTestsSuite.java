@@ -4,7 +4,9 @@ package org.apereo.cas;
 import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutorTests;
 import org.apereo.cas.configuration.support.DefaultCasConfigurationPropertiesSourceLocatorTests;
 
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -16,5 +18,6 @@ import org.junit.platform.suite.api.SelectClasses;
     CasConfigurationJasyptCipherExecutorTests.class,
     DefaultCasConfigurationPropertiesSourceLocatorTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
 }

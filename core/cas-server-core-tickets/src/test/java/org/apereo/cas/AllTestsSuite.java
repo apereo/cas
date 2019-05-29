@@ -25,7 +25,9 @@ import org.apereo.cas.ticket.support.TimeoutExpirationPolicyTests;
 import org.apereo.cas.util.DefaultUniqueTicketIdGeneratorTests;
 import org.apereo.cas.util.TicketEncryptionDecryptionTests;
 
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -57,6 +59,8 @@ import org.junit.platform.suite.api.SelectClasses;
     NeverExpiresExpirationPolicyTests.class,
     DefaultTicketRegistryCleanerTests.class,
     TicketSerializersTests.class,
-    Cas20ProxyHandlerTests.class})
+    Cas20ProxyHandlerTests.class
+})
+@RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
 }
