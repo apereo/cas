@@ -26,6 +26,7 @@ import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.LogoutRequest;
+import org.opensaml.saml.saml2.core.LogoutResponse;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.SessionIndex;
@@ -224,6 +225,29 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
             request.setNameID(nameId);
         }
         return request;
+    }
+
+    /**
+     * New saml2 logout response.
+     *
+     * @param id            the id
+     * @param issueInstant  the issue instant
+     * @param destination   the destination
+     * @param inResponseTo  the id in response to
+     * @param status        the response status
+     * @return the logout response
+     */
+    public LogoutResponse newLogoutResponse(final String id, final DateTime issueInstant,
+                                            final String destination, final String inResponseTo,
+                                            final Status status) {
+        val response = newSamlObject(LogoutResponse.class);
+        response.setID(id);
+        response.setVersion(SAMLVersion.VERSION_20);
+        response.setIssueInstant(issueInstant);
+        response.setDestination(destination);
+        response.setInResponseTo(inResponseTo);
+        response.setStatus(status);
+        return response;
     }
 
     /**

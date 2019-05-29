@@ -29,4 +29,9 @@ public class SamlIdPLogoutProperties implements Serializable {
      * Whether SAML SLO is enabled and processed.
      */
     private boolean singleLogoutCallbacksDisabled;
+
+    /**
+     * Whether the response to the SLO request will be SAML LogoutResponse.
+     */
+    private boolean returnLogoutResponse;
 }

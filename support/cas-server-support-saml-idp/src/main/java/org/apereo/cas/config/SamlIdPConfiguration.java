@@ -21,6 +21,7 @@ import org.apereo.cas.support.saml.web.idp.audit.SamlRequestAuditResourceResolve
 import org.apereo.cas.support.saml.web.idp.audit.SamlResponseAuditPrincipalIdProvider;
 import org.apereo.cas.support.saml.web.idp.audit.SamlResponseAuditResourceResolver;
 import org.apereo.cas.support.saml.web.idp.profile.artifact.CasSamlArtifactMap;
+import org.apereo.cas.support.saml.web.idp.profile.builders.SamlLogoutResponseObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.assertion.SamlProfileSamlAssertionBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.attr.SamlProfileSamlAttributeStatementBuilder;
@@ -32,6 +33,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEnc
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.attribute.SamlAttributeEncoder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.nameid.SamlProfileSamlNameIdBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlLogoutResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSaml2ResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSamlResponseBuilderConfigurationContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.artifact.SamlProfileArtifactFaultResponseBuilder;
@@ -40,6 +42,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.response.query.SamlP
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.query.SamlProfileAttributeQueryResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.soap.SamlProfileSamlSoap11FaultResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.soap.SamlProfileSamlSoap11ResponseBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.slo.SamlLogoutResponseBuilderConfigurationContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.subject.SamlProfileSamlSubjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPSingleLogoutServiceMessageHandler;
@@ -65,6 +68,7 @@ import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.Conditions;
+import org.opensaml.saml.saml2.core.LogoutResponse;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.ecp.Response;
@@ -181,6 +185,13 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @RefreshScope
     public SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlResponseBuilder() {
         return new SamlProfileSaml2ResponseBuilder(getSamlResponseBuilderConfigurationContextBuilder().build());
+    }
+
+    @ConditionalOnMissingBean(name = "samlLogoutResponseBuilder")
+    @Bean
+    @RefreshScope
+    public SamlLogoutResponseObjectBuilder<LogoutResponse> samlLogoutResponseBuilder() {
+        return new SamlLogoutResponseBuilder(getSamlLogoutResponseBuilderConfigurationContextBuilder().build());
     }
 
     @ConditionalOnMissingBean(name = "samlArtifactTicketFactory")
@@ -407,5 +418,13 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
             .samlArtifactMap(samlArtifactMap())
             .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory())
             .casProperties(casProperties);
+    }
+
+    private SamlLogoutResponseBuilderConfigurationContext.SamlLogoutResponseBuilderConfigurationContextBuilder getSamlLogoutResponseBuilderConfigurationContextBuilder() {
+        return SamlLogoutResponseBuilderConfigurationContext.builder()
+                .openSamlConfigBean(openSamlConfigBean.getIfAvailable())
+                .samlObjectSigner(samlObjectSigner())
+                .velocityEngineFactory(velocityEngineFactory.getIfAvailable())
+                .casProperties(casProperties);
     }
 }

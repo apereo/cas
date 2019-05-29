@@ -17,6 +17,7 @@ import org.apereo.cas.support.saml.web.idp.profile.HttpServletRequestXMLMessageD
 import org.apereo.cas.support.saml.web.idp.profile.IdentityProviderInitiatedProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
 import org.apereo.cas.support.saml.web.idp.profile.artifact.Saml1ArtifactResolutionProfileHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.builders.SamlLogoutResponseObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlIdPObjectSignatureValidator;
@@ -43,6 +44,7 @@ import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostSimpleSignDecoder;
+import org.opensaml.saml.saml2.core.LogoutResponse;
 import org.opensaml.saml.saml2.core.Response;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,6 +90,10 @@ public class SamlIdPEndpointsConfiguration {
     @Autowired
     @Qualifier("samlProfileSamlResponseBuilder")
     private ObjectProvider<SamlProfileObjectBuilder<Response>> samlProfileSamlResponseBuilder;
+
+    @Autowired
+    @Qualifier("samlLogoutResponseBuilder")
+    private ObjectProvider<SamlLogoutResponseObjectBuilder<LogoutResponse>> samlLogoutResponseBuilder;
 
     @Autowired
     @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
@@ -236,6 +242,7 @@ public class SamlIdPEndpointsConfiguration {
     @RefreshScope
     public SLOSamlRedirectProfileHandlerController sloRedirectProfileHandlerController() {
         val context = getSamlProfileHandlerConfigurationContextBuilder()
+            .logoutResponseBuilder(samlLogoutResponseBuilder.getIfAvailable())
             .samlMessageDecoders(sloRedirectProfileHandlerDecoders())
             .build();
         return new SLOSamlRedirectProfileHandlerController(context);
@@ -253,6 +260,7 @@ public class SamlIdPEndpointsConfiguration {
     @RefreshScope
     public SLOSamlPostProfileHandlerController sloPostProfileHandlerController() {
         val context = getSamlProfileHandlerConfigurationContextBuilder()
+            .logoutResponseBuilder(samlLogoutResponseBuilder.getIfAvailable())
             .samlMessageDecoders(sloPostProfileHandlerDecoders())
             .build();
         return new SLOSamlPostProfileHandlerController(context);

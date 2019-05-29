@@ -8,6 +8,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.apereo.cas.support.saml.web.idp.profile.builders.SamlLogoutResponseObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
@@ -23,6 +24,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.opensaml.saml.common.SAMLObject;
+import org.opensaml.saml.saml2.core.LogoutResponse;
 
 /**
  * This is {@link SamlProfileHandlerConfigurationContext}.
@@ -71,4 +73,6 @@ public class SamlProfileHandlerConfigurationContext {
     private final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory;
 
     private final SamlArtifactTicketFactory artifactTicketFactory;
+
+    private final SamlLogoutResponseObjectBuilder<? extends LogoutResponse> logoutResponseBuilder;
 }

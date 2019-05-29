@@ -126,7 +126,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
             return encoder.encode(authnRequest, samlResponse, relayState);
         }
 
-        val encoder = new SamlResponsePostEncoder(getSamlResponseBuilderConfigurationContext().getVelocityEngineFactory(), adaptor, httpResponse, httpRequest);
+        val encoder = new SamlResponsePostEncoder<Response>(getSamlResponseBuilderConfigurationContext().getVelocityEngineFactory(), adaptor, httpResponse, httpRequest);
         return encoder.encode(authnRequest, samlResponse, relayState);
     }
 

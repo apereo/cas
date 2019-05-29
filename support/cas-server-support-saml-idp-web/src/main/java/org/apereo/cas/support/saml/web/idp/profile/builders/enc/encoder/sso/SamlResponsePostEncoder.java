@@ -8,7 +8,7 @@ import org.apache.velocity.app.VelocityEngine;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.binding.encoding.impl.BaseSAML2MessageEncoder;
 import org.opensaml.saml.saml2.binding.encoding.impl.HTTPPostEncoder;
-import org.opensaml.saml.saml2.core.Response;
+import org.opensaml.saml.saml2.core.StatusResponseType;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class SamlResponsePostEncoder extends BaseHttpServletAwareSamlObjectEncoder<Response> {
+public class SamlResponsePostEncoder<T extends StatusResponseType> extends BaseHttpServletAwareSamlObjectEncoder<T> {
 
     public SamlResponsePostEncoder(final VelocityEngine velocityEngineFactory,
                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,

@@ -9,6 +9,7 @@ import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurati
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
 import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
@@ -16,6 +17,7 @@ import org.opensaml.saml.saml2.core.LogoutRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * This is {@link AbstractSamlSLOProfileHandlerController}.
@@ -67,6 +69,27 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
                 .verifySamlProfileRequestIfNeeded(logoutRequest, facade, request, ctx);
         }
         SamlUtils.logSamlObject(getSamlProfileHandlerConfigurationContext().getOpenSamlConfigBean(), logoutRequest);
+        val service = getSamlProfileHandlerConfigurationContext().getServicesManager().findServiceBy(SamlIdPUtils.getIssuerFromSamlObject(logoutRequest), SamlRegisteredService.class);
+        val entityId = SamlIdPUtils.getIssuerFromSamlObject(logoutRequest);
+        val facade = SamlRegisteredServiceServiceProviderMetadataFacade.get(
+                getSamlProfileHandlerConfigurationContext().getSamlRegisteredServiceCachingMetadataResolver(), service, entityId).get();
+        sendResponse(response, request, logoutRequest, ctx);
+    }
+
+    /**
+     * Send SLO response.
+     *
+     * @param response          the response
+     * @param request           the request
+     * @param logoutRequest     the logout request
+     * @param ctx               the message context
+     * @throws IOException      the exception
+     */
+
+    protected void sendResponse(final HttpServletResponse response,
+                                final HttpServletRequest request,
+                                final LogoutRequest logoutRequest,
+                                final MessageContext ctx) throws IOException {
         response.sendRedirect(getSamlProfileHandlerConfigurationContext().getCasProperties().getServer().getLogoutUrl());
     }
 }
