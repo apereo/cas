@@ -109,6 +109,11 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_DENY = "deny";
 
     /**
+     * Transition id 'register'.
+     */
+    String TRANSITION_ID_REGISTER = "register";
+
+    /**
      * The transition state 'success'.
      */
     String TRANSITION_ID_SUCCESS = "success";
