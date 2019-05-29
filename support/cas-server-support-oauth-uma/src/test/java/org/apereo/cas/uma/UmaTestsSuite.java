@@ -12,7 +12,9 @@ import org.apereo.cas.uma.web.controllers.resource.UmaDeleteResourceSetRegistrat
 import org.apereo.cas.uma.web.controllers.resource.UmaFindResourceSetRegistrationEndpointControllerTests;
 import org.apereo.cas.uma.web.controllers.resource.UmaUpdateResourceSetRegistrationEndpointControllerTests;
 
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * This is {@link UmaTestsSuite}.
@@ -33,5 +35,6 @@ import org.junit.platform.suite.api.SelectClasses;
     UmaAuthorizationRequestEndpointControllerTests.class,
     JpaResourceSetRepositoryTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class UmaTestsSuite {
 }

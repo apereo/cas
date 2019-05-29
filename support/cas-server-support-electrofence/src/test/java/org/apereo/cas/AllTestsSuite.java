@@ -7,7 +7,9 @@ import org.apereo.cas.impl.calcs.UserAgentAuthenticationRequestRiskCalculatorTes
 import org.apereo.cas.impl.notify.AuthenticationRiskEmailNotifierTests;
 import org.apereo.cas.impl.notify.AuthenticationRiskSmsNotifierTests;
 
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * Test suite that runs all test in a batch.
@@ -23,5 +25,6 @@ import org.junit.platform.suite.api.SelectClasses;
     AuthenticationRiskEmailNotifierTests.class,
     AuthenticationRiskSmsNotifierTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
 }
