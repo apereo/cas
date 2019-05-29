@@ -120,6 +120,13 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
     private String keystoreAlias;
 
     /**
+     * A name to append to signing certificates generated.
+     * The named part appended can be usefull to identify for which clientName it was generated
+     * If no name is provided the default certificate name will be used.
+     */
+    private String certificateNameToAppend;
+
+    /**
      * NameID policy to request in the authentication requests.
      */
     private String nameIdPolicyFormat;
