@@ -10,7 +10,6 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +17,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -42,6 +42,7 @@ import static org.springframework.util.StringUtils.commaDelimitedListToSet;
 public class PrincipalAttributeMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger {
     private final CasConfigurationProperties casProperties;
     private final MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver;
+    private final ApplicationContext applicationContext;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
 
@@ -61,7 +62,7 @@ public class PrincipalAttributeMultifactorAuthenticationTrigger implements Multi
             if (id.isEmpty()) {
                 return Optional.empty();
             }
-            return MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(id.get().toString(), ApplicationContextProvider.getApplicationContext());
+            return MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(id.get().toString(), applicationContext);
         }
 
         return Optional.empty();
@@ -89,7 +90,7 @@ public class PrincipalAttributeMultifactorAuthenticationTrigger implements Multi
                                                                   final RegisteredService service,
                                                                   final Principal principal) {
         val globalPrincipalAttributeValueRegex = casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeValueRegex();
-        val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(ApplicationContextProvider.getApplicationContext());
+        val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
         val providers = providerMap.values();
         if (providers.size() == 1 && StringUtils.isNotBlank(globalPrincipalAttributeValueRegex)) {
             return resolveSingleMultifactorProvider(context, service, principal, providers);
