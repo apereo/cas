@@ -79,7 +79,7 @@ public class AuthenticationAttributeMultifactorAuthenticationTrigger implements 
             input -> providers.stream().anyMatch(provider -> input != null && provider.matches(input)));
         if (result != null && !result.isEmpty()) {
             val id = CollectionUtils.firstElement(result);
-            return MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(id.toString(), applicationContext);
+            return MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(id.get().toString(), applicationContext);
         }
         return Optional.empty();
     }
