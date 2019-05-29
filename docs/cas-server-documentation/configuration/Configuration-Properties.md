@@ -3287,6 +3287,8 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 # cas.authn.pac4j.saml[0].serviceProviderEntityId=
 # cas.authn.pac4j.saml[0].serviceProviderMetadataPath=
 
+# cas.authn.pac4j.saml[0].certificateNameToAppend=
+
 # cas.authn.pac4j.saml[0].maximumAuthenticationLifetime=3600
 # cas.authn.pac4j.saml[0].maximumAuthenticationLifetime=300
 # cas.authn.pac4j.saml[0].destinationBinding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect
