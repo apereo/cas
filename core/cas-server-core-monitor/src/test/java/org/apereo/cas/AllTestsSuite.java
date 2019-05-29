@@ -6,7 +6,9 @@ import org.apereo.cas.monitor.MemoryHealthIndicatorTests;
 import org.apereo.cas.monitor.PoolHealthIndicatorTests;
 import org.apereo.cas.monitor.SessionHealthIndicatorTests;
 
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -20,5 +22,6 @@ import org.junit.platform.suite.api.SelectClasses;
     SessionHealthIndicatorTests.class,
     CacheHealthIndicatorTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
 }

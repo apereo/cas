@@ -17,7 +17,9 @@ import org.apereo.cas.oidc.web.controllers.OidcWellKnownEndpointControllerTests;
 import org.apereo.cas.oidc.web.flow.OidcAuthenticationContextWebflowEventResolverTests;
 import org.apereo.cas.oidc.web.flow.OidcRegisteredServiceUIActionTests;
 
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * This is {@link OidcTestsSuite}.
@@ -43,5 +45,6 @@ import org.junit.platform.suite.api.SelectClasses;
     OidcGroovyWebFingerUserInfoRepositoryTests.class,
     OidcRestfulWebFingerUserInfoRepositoryTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class OidcTestsSuite {
 }

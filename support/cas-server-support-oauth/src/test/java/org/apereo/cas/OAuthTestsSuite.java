@@ -24,7 +24,9 @@ import org.apereo.cas.ticket.accesstoken.OAuthAccessTokenSovereignExpirationPoli
 import org.apereo.cas.ticket.refreshtoken.OAuthRefreshTokenExpirationPolicyTests;
 import org.apereo.cas.ticket.refreshtoken.OAuthRefreshTokenSovereignExpirationPolicyTests;
 
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * OAuth test suite that runs all test in a batch.
@@ -57,5 +59,6 @@ import org.junit.platform.suite.api.SelectClasses;
     OAuth20DefaultAccessTokenResponseGeneratorTests.class,
     OAuth20RefreshTokenTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class OAuthTestsSuite {
 }

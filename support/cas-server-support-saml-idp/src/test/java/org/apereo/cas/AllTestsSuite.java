@@ -22,7 +22,9 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfile
 import org.apereo.cas.support.saml.web.idp.profile.sso.request.DefaultSSOSamlHttpRequestExtractorTests;
 import org.apereo.cas.ticket.query.DefaultSamlAttributeQueryTicketFactoryTests;
 
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * Test suite to run all SAML tests.
@@ -53,6 +55,7 @@ import org.junit.platform.suite.api.SelectClasses;
     EduPersonTargetedIdAttributeReleasePolicyTests.class,
     SamlProfileSaml2ResponseBuilderTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
 }
 

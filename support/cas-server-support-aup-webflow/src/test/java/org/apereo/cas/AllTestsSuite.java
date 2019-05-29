@@ -6,7 +6,9 @@ import org.apereo.cas.aup.GroovyAcceptableUsagePolicyRepositoryTests;
 import org.apereo.cas.web.flow.AcceptableUsagePolicySubmitActionTests;
 import org.apereo.cas.web.flow.AcceptableUsagePolicyVerifyActionTests;
 
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -20,5 +22,6 @@ import org.junit.platform.suite.api.SelectClasses;
     DefaultAcceptableUsagePolicyRepositoryTests.class,
     GroovyAcceptableUsagePolicyRepositoryTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
 }

@@ -6,7 +6,9 @@ import org.apereo.cas.interrupt.JsonResourceInterruptInquirerTests;
 import org.apereo.cas.interrupt.RegexAttributeInterruptInquirerTests;
 import org.apereo.cas.interrupt.RestEndpointInterruptInquirerTests;
 
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -20,5 +22,6 @@ import org.junit.platform.suite.api.SelectClasses;
     JsonResourceInterruptInquirerTests.class,
     RestEndpointInterruptInquirerTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
 }

@@ -7,7 +7,9 @@ import org.apereo.cas.consent.GroovyConsentRepositoryTests;
 import org.apereo.cas.consent.InMemoryConsentRepositoryTests;
 import org.apereo.cas.consent.JsonConsentRepositoryTests;
 
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -22,5 +24,6 @@ import org.junit.platform.suite.api.SelectClasses;
     InMemoryConsentRepositoryTests.class,
     JsonConsentRepositoryTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
 }

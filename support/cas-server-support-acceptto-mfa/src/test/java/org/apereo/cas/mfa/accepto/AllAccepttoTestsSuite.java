@@ -4,7 +4,9 @@ import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorFetchChannelAction
 import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorValidateChannelActionTests;
 import org.apereo.cas.mfa.accepto.web.flow.qr.AccepttoQRCodeAuthenticationHandlerTests;
 
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * This is {@link AllAccepttoTestsSuite}.
@@ -18,5 +20,6 @@ import org.junit.platform.suite.api.SelectClasses;
     AccepttoMultifactorFetchChannelActionTests.class,
     AccepttoMultifactorValidateChannelActionTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class AllAccepttoTestsSuite {
 }

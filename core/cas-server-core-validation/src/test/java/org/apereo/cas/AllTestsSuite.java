@@ -6,7 +6,9 @@ import org.apereo.cas.validation.Cas20ProtocolValidationSpecificationTests;
 import org.apereo.cas.validation.Cas20WithoutProxyingValidationSpecificationTests;
 import org.apereo.cas.validation.ImmutableAssertionTests;
 
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -20,5 +22,6 @@ import org.junit.platform.suite.api.SelectClasses;
     Cas10ProtocolValidationSpecificationTests.class,
     Cas20WithoutProxyingValidationSpecificationTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
 }

@@ -1,6 +1,8 @@
 package org.apereo.cas.services;
 
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * This is {@link AllJpaServiceRegistryTestsSuite}.
@@ -15,5 +17,6 @@ import org.junit.platform.suite.api.SelectClasses;
     JpaServiceRegistryPostgresTests.class,
     JpaServiceRegistryMariaDbTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class AllJpaServiceRegistryTestsSuite {
 }

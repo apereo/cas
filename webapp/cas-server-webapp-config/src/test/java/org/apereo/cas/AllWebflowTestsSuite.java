@@ -6,7 +6,9 @@ import org.apereo.cas.web.security.CasWebSecurityExpressionRootTests;
 import org.apereo.cas.web.security.authentication.MonitorEndpointLdapAuthenticationProviderGroupsBasedTests;
 import org.apereo.cas.web.security.authentication.MonitorEndpointLdapAuthenticationProviderRolesBasedTests;
 
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * This is {@link AllWebflowTestsSuite}.
@@ -24,5 +26,6 @@ import org.junit.platform.suite.api.SelectClasses;
     MonitorEndpointLdapAuthenticationProviderRolesBasedTests.class,
     MonitorEndpointLdapAuthenticationProviderGroupsBasedTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class AllWebflowTestsSuite {
 }

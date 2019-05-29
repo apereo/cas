@@ -4,7 +4,9 @@ import org.apereo.cas.support.spnego.authentication.handler.support.JcifsSpnegoA
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredentialsTests;
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredentialsToPrincipalResolverTests;
 
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * Test suite to run all LDAP tests.
@@ -17,5 +19,6 @@ import org.junit.platform.suite.api.SelectClasses;
     SpnegoCredentialsTests.class,
     SpnegoCredentialsToPrincipalResolverTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
 }

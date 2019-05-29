@@ -5,7 +5,9 @@ import org.apereo.cas.audit.spi.resource.MessageBundleAwareResourceResolverTests
 import org.apereo.cas.audit.spi.resource.ServiceResourceResolverTests;
 import org.apereo.cas.audit.spi.resource.TicketAsFirstParameterResourceResolverTests;
 
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * This is {@link CoreAuditTestsSuite}.
@@ -21,5 +23,6 @@ import org.junit.platform.suite.api.SelectClasses;
     FilterAndDelegateAuditTrailManagerTests.class,
     MessageBundleAwareResourceResolverTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class CoreAuditTestsSuite {
 }

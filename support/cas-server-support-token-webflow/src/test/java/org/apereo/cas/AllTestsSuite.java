@@ -5,7 +5,9 @@ import org.apereo.cas.web.DefaultTokenRequestExtractorTests;
 import org.apereo.cas.web.TokenCredentialTests;
 import org.apereo.cas.web.flow.TokenAuthenticationActionTests;
 
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -18,5 +20,6 @@ import org.junit.platform.suite.api.SelectClasses;
     TokenAuthenticationActionTests.class,
     TokenCredentialTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
 }

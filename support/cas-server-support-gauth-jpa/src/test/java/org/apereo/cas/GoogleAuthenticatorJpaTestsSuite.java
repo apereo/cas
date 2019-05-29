@@ -5,7 +5,9 @@ import org.apereo.cas.gauth.credential.MariaDbJpaGoogleAuthenticatorTokenCredent
 import org.apereo.cas.gauth.token.GoogleAuthenticatorJpaTokenRepositoryTests;
 import org.apereo.cas.gauth.token.MariaDbGoogleAuthenticatorJpaTokenRepositoryTests;
 
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * This is {@link GoogleAuthenticatorJpaTestsSuite}.
@@ -19,5 +21,6 @@ import org.junit.platform.suite.api.SelectClasses;
     MariaDbJpaGoogleAuthenticatorTokenCredentialRepositoryTests.class,
     GoogleAuthenticatorJpaTokenRepositoryTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class GoogleAuthenticatorJpaTestsSuite {
 }

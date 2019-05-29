@@ -8,7 +8,9 @@ import org.apereo.cas.adaptors.trusted.web.flow.PrincipalFromRequestHeaderNonInt
 import org.apereo.cas.adaptors.trusted.web.flow.PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests;
 import org.apereo.cas.adaptors.trusted.web.flow.PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTests;
 
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * This is {@link AllTrustedTestsSuite}.
@@ -25,5 +27,6 @@ import org.junit.platform.suite.api.SelectClasses;
     PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests.class,
     PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class AllTrustedTestsSuite {
 }

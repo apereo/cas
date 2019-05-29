@@ -7,7 +7,9 @@ import org.apereo.cas.adaptors.u2f.storage.U2FInMemoryDeviceRepositoryTests;
 import org.apereo.cas.adaptors.u2f.storage.U2FJsonResourceDeviceRepositoryTests;
 import org.apereo.cas.adaptors.u2f.storage.U2FRestResourceDeviceRepositoryTests;
 
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -22,5 +24,6 @@ import org.junit.platform.suite.api.SelectClasses;
     U2FInMemoryDeviceRepositoryTests.class,
     U2FAuthenticationHandlerTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
 }
