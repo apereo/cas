@@ -2858,13 +2858,20 @@ Multifactor authentication bypass settings for this provider are available [here
 To learn more about this topic, [please review this guide](../mfa/Acceptto-Authentication.html).
 
 ```properties
-# cas.authn.mfa.acceptto.authnSelectionUrl=https://mfa.acceptto.com/mfa/index
-# cas.authn.mfa.acceptto.api-url=https://mfa.acceptto.com/api/v9/
 # cas.authn.mfa.acceptto.applicationId=
 # cas.authn.mfa.acceptto.secret=
-# cas.authn.mfa.acceptto.message=Do you want to login to CAS?
+# cas.authn.mfa.acceptto.organizationId=
+# cas.authn.mfa.acceptto.organizationSecret=
+
+# cas.authn.mfa.acceptto.authnSelectionUrl=https://mfa.acceptto.com/mfa/index
+# cas.authn.mfa.acceptto.api-url=https://mfa.acceptto.com/api/v9/
+# cas.authn.mfa.acceptto.message=Do you want to login via CAS?
 # cas.authn.mfa.acceptto.timeout=120
-# cas.authn.mfa.acceptto.emailAttribute=mail
+# cas.authn.mfa.acceptto.emailAttribute=mail    
+
+# cas.authn.mfa.acceptto.registrationApiUrl=https://mfa.acceptto.com/api/integration/v1/mfa/authenticate
+# cas.authn.mfa.acceptto.registrationApiPublicKey=file:/path/to/publickey.pem
+
 # cas.authn.mfa.acceptto.name=
 # cas.authn.mfa.acceptto.order=
 # cas.authn.mfa.acceptto.rank=0

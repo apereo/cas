@@ -36,7 +36,7 @@ public class MultifactorAuthenticationContingencyPlan extends BaseAuthentication
                                                                     final AuthenticationRiskScore score,
                                                                     final HttpServletRequest request) {
         val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
-        if (providerMap == null || providerMap.isEmpty()) {
+        if (providerMap.isEmpty()) {
             LOGGER.warn("No multifactor authentication providers are available in the application context");
             throw new AuthenticationException();
         }
