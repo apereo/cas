@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.mfa;
 
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
+import org.apereo.cas.configuration.support.SpringResourceProperties;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -44,6 +45,12 @@ public class AccepttoMultifactorProperties extends BaseMultifactorProviderProper
     private String apiUrl = "https://mfa.acceptto.com/api/v9/";
 
     /**
+     * URL to the enrollment/registration API.
+     */
+    @RequiredProperty
+    private String registrationApiUrl = "https://mfa.acceptto.com/api/integration/v1/mfa/authenticate";
+
+    /**
      * Identifier of the application. When an organization creates
      * an application in eGuardian dashboard this id gets generated.
      */
@@ -82,6 +89,24 @@ public class AccepttoMultifactorProperties extends BaseMultifactorProviderProper
      * Whether QR Code login should be enabled.
      */
     private boolean qrLoginEnabled = true;
+
+    /**
+     * Organization identifier.
+     */
+    @RequiredProperty
+    private String organizationId;
+
+    /**
+     * Organization secret.
+     */
+    @RequiredProperty
+    private String organizationSecret;
+
+    /**
+     * Location of public key used to verify API responses
+     * that are produced as part of device pairing and registration.
+     */
+    private SpringResourceProperties registrationApiPublicKey;
 
     public AccepttoMultifactorProperties() {
         setId(DEFAULT_IDENTIFIER);
