@@ -3,7 +3,6 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -23,11 +22,16 @@ import java.util.List;
 @ToString
 @Getter
 @Setter
-@NoArgsConstructor
 public class DefaultChainingMultifactorAuthenticationProvider implements ChainingMultifactorAuthenticationProvider {
     private static final long serialVersionUID = -3199297701531604341L;
 
     private final List<MultifactorAuthenticationProvider> multifactorAuthenticationProviders = new ArrayList<>();
+
+    private final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator;
+
+    public DefaultChainingMultifactorAuthenticationProvider(final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator) {
+        this.failureModeEvaluator = failureModeEvaluator;
+    }
 
     @Override
     public MultifactorAuthenticationProviderBypassEvaluator getBypassEvaluator() {
@@ -51,5 +55,10 @@ public class DefaultChainingMultifactorAuthenticationProvider implements Chainin
     @Override
     public void addMultifactorAuthenticationProviders(final Collection<MultifactorAuthenticationProvider> providers) {
         multifactorAuthenticationProviders.addAll(providers);
+    }
+
+    @Override
+    public MultifactorAuthenticationFailureModeEvaluator getFailureModeEvaluator() {
+        return failureModeEvaluator;
     }
 }
