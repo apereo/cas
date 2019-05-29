@@ -339,6 +339,17 @@ public class EncodingUtils {
     }
 
     /**
+     * Sign jws hmac sha 256.
+     *
+     * @param key   the key
+     * @param value the value
+     * @return the byte [ ]
+     */
+    public static byte[] signJwsHMACSha256(final Key key, final byte[] value) {
+        return signJws(key, value, AlgorithmIdentifiers.HMAC_SHA256);
+    }
+
+    /**
      * Sign jws.
      *
      * @param key   the key
