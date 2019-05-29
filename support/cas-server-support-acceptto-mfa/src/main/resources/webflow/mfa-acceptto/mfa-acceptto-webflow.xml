@@ -17,6 +17,7 @@
         <evaluate expression="mfaAccepttoMultifactorDetermineUserAccountStatusAction" />
         <transition on="unavailable" to="mfaFailure" />
         <transition on="deny" to="deny" />
+        <transition on="register" to="registerDevice" />
         <transition on="success" to="authenticateAndFetchChannel" />
     </action-state>
 
@@ -29,6 +30,16 @@
                view="externalRedirect:#{requestScope.accepttoRedirectUrl}">
         <transition to="success" />
     </view-state>
+
+    <view-state id="registerDevice" view="casAccepttoRegistrationView">
+        <transition on="success" to="validateUser" />
+    </view-state>
+
+<!--    <action-state id="validateUser">-->
+<!--        <evaluate expression="mfaAccepttoMultifactorFetchChannelAction" />-->
+<!--        <transition on="success" to="redirectToAcceptto" />-->
+<!--    </action-state>-->
+
     <end-state id="success"  />
     <end-state id="unavailable"  />
     <end-state id="deny"  />

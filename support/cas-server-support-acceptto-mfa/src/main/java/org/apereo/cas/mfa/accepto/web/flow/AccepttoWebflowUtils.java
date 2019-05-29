@@ -2,9 +2,12 @@ package org.apereo.cas.mfa.accepto.web.flow;
 
 import org.apereo.cas.authentication.Authentication;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.context.J2EContext;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * This is {@link AccepttoWebflowUtils}.
@@ -13,7 +16,10 @@ import org.pac4j.core.context.J2EContext;
  * @since 6.1.0
  */
 @UtilityClass
+@Slf4j
 public class AccepttoWebflowUtils {
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+
     /**
      * Session attribute to hold the authentication channel.
      */
@@ -73,5 +79,35 @@ public class AccepttoWebflowUtils {
      */
     public static void storeAuthentication(final Authentication authentication, final J2EContext webContext) {
         webContext.getSessionStore().set(webContext, SESSION_ATTRIBUTE_ORIGINAL_AUTHENTICATION, authentication);
+    }
+
+    /**
+     * Sets invitation token.
+     *
+     * @param requestContext  the request context
+     * @param invitationToken the invitation token
+     */
+    public static void setInvitationToken(final RequestContext requestContext, final String invitationToken) {
+        requestContext.getFlowScope().put("accepttoInvitationToken", invitationToken);
+    }
+
+    /**
+     * Sets e guardian user id.
+     *
+     * @param authentication  the authentication
+     * @param eguardianUserId the eguardian user id
+     */
+    public static void setEGuardianUserId(final Authentication authentication, final String eguardianUserId) {
+        authentication.addAttribute("eguardianUserId", eguardianUserId);
+    }
+
+    /**
+     * Sets application id.
+     *
+     * @param requestContext the request context
+     * @param applicationId  the application id
+     */
+    public static void setApplicationId(final RequestContext requestContext, final String applicationId) {
+        requestContext.getFlowScope().put("accepttoApplicationId", applicationId);
     }
 }
