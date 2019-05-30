@@ -2,7 +2,6 @@ package org.apereo.cas.mfa.accepto.web.flow;
 
 import org.apereo.cas.authentication.Authentication;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -18,8 +17,6 @@ import org.springframework.webflow.execution.RequestContext;
 @UtilityClass
 @Slf4j
 public class AccepttoWebflowUtils {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
-
     /**
      * Session attribute to hold the authentication channel.
      */
@@ -109,5 +106,15 @@ public class AccepttoWebflowUtils {
      */
     public static void setApplicationId(final RequestContext requestContext, final String applicationId) {
         requestContext.getFlowScope().put("accepttoApplicationId", applicationId);
+    }
+
+    /**
+     * Sets invitation token qr code.
+     *
+     * @param requestContext the request context
+     * @param qrHash         the qr hash
+     */
+    public static void setInvitationTokenQRCode(final RequestContext requestContext, final String qrHash) {
+        requestContext.getFlowScope().put("accepttoInvitationTokenQRCodeHash", qrHash);
     }
 }

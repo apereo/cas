@@ -35,10 +35,18 @@
         <transition on="success" to="validateUser" />
     </view-state>
 
-<!--    <action-state id="validateUser">-->
-<!--        <evaluate expression="mfaAccepttoMultifactorFetchChannelAction" />-->
-<!--        <transition on="success" to="redirectToAcceptto" />-->
-<!--    </action-state>-->
+    <action-state id="validateUser">
+        <evaluate expression="mfaAccepttoMultifactorValidateUserDeviceRegistrationAction" />
+        <transition on="finalize" to="realSubmit" />
+        <transition on="error" to="deny" />
+        <transition on="deny" to="deny" />
+    </action-state>
+
+    <action-state id="realSubmit">
+        <evaluate expression="mfaAccepttoMultifactorFinalizeAuthenticationWebflowAction" />
+        <transition on="success" to="success" />
+        <transition on="error" to="initializeLoginForm" />
+    </action-state>
 
     <end-state id="success"  />
     <end-state id="unavailable"  />

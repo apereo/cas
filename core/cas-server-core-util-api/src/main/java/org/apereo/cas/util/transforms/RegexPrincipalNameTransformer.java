@@ -17,8 +17,6 @@ import java.util.regex.Pattern;
 @Setter
 public class RegexPrincipalNameTransformer implements PrincipalNameTransformer {
 
-    private static final long serialVersionUID = 1067914936775326709L;
-
     private Pattern pattern;
 
     public RegexPrincipalNameTransformer(final String pattern) {

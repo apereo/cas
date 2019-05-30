@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -148,10 +149,8 @@ public class AccepttoApiUtils {
                 val decoded = EncodingUtils.verifyJwsSignature(publicKey, content);
                 if (decoded != null) {
                     val decodedResult = new String(decoded, StandardCharsets.UTF_8);
-                    if (status == HttpStatus.SC_OK) {
-                        LOGGER.debug("Received API response as [{}]", decodedResult);
-                        return MAPPER.readValue(decodedResult, Map.class);
-                    }
+                    LOGGER.debug("Received API response as [{}]", decodedResult);
+                    return MAPPER.readValue(decodedResult, Map.class);
                 }
             }
         } catch (final Exception e) {
@@ -160,5 +159,50 @@ public class AccepttoApiUtils {
             HttpUtils.close(response);
         }
         return new HashMap<>();
+    }
+
+    /**
+     * Is user device paired?.
+     *
+     * @param authentication the authentication
+     * @param acceptto       the acceptto
+     * @return the boolean
+     */
+    public static boolean isUserDevicePaired(final Authentication authentication, final AccepttoMultifactorProperties acceptto) {
+        val results = isUserValid(authentication, acceptto);
+        if (results != null && results.containsKey("device_paired")) {
+            return BooleanUtils.toBoolean(results.get("device_paired").toString());
+        }
+        return false;
+    }
+
+    /**
+     * Generate qr code hash.
+     *
+     * @param authentication  the authentication
+     * @param acceptto        the acceptto
+     * @param invitationToken the invitation token
+     * @return the string
+     * @throws Exception the exception
+     */
+    public static String generateQRCodeHash(final Authentication authentication, final AccepttoMultifactorProperties acceptto,
+                                            final String invitationToken) throws Exception {
+        val email = getUserEmailAttribute(authentication, acceptto);
+        val hash = CollectionUtils.wrap("invitation_token", invitationToken, "email_address", email);
+        val result = MAPPER.writeValueAsString(hash);
+        return EncodingUtils.encodeBase64(result);
+    }
+
+    /**
+     * Decode invitation token to string.
+     *
+     * @param token the token
+     * @return the string
+     * @throws Exception the exception
+     */
+    public static String decodeInvitationToken(final String token) throws Exception {
+        val decoded = EncodingUtils.decodeBase64(token);
+        val results = MAPPER.readValue(decoded, Map.class);
+        return results.get("invitation_token").toString();
     }
 }
