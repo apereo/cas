@@ -1,4 +1,4 @@
-package org.apereo.cas.mfa.accepto.web.flow.qr;
+package org.apereo.cas.mfa.accepto;
 
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 
@@ -9,7 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * This is {@link AccepttoQRCodeCredential}.
+ * This is {@link AccepttoEmailCredential}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
@@ -19,10 +19,10 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class AccepttoQRCodeCredential extends BasicIdentifiableCredential {
+public class AccepttoEmailCredential extends BasicIdentifiableCredential {
     private static final long serialVersionUID = -4245622701132144037L;
 
-    public AccepttoQRCodeCredential(final String email) {
+    public AccepttoEmailCredential(final String email) {
         super(email);
     }
 }
