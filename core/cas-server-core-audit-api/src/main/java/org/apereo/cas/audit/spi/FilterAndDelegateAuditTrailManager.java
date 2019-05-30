@@ -39,7 +39,7 @@ public class FilterAndDelegateAuditTrailManager implements AuditTrailManager {
             LOGGER.trace("Recording audit action context [{}]", auditActionContext);
             auditTrailManagers.forEach(mgr -> mgr.record(auditActionContext));
         } else {
-            LOGGER.trace("Skipping to record audit action context [{}] as it's not authorizing as an audit action among [{}}",
+            LOGGER.trace("Skipping to record audit action context [{}] as it's not authorizing as an audit action among [{}]",
                 auditActionContext, supportedActionsPerformed);
         }
     }

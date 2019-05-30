@@ -29,7 +29,7 @@ public class DefaultPasswordValidationService implements PasswordValidationServi
             return false;
         }
         if (!RegexUtils.find(policyPattern, bean.getPassword())) {
-            LOGGER.error("Provided password does not match the pattern required for password policy [{}}", policyPattern);
+            LOGGER.error("Provided password does not match the pattern required for password policy [{}]", policyPattern);
             return false;
         }
         return true;

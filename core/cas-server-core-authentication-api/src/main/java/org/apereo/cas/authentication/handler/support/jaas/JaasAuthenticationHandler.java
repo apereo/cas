@@ -142,10 +142,10 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         try {
             lc.login();
             val principals = lc.getSubject().getPrincipals();
-            LOGGER.debug("JAAS principals extracted from subject are [{}}", principals);
+            LOGGER.debug("JAAS principals extracted from subject are [{}]", principals);
             if (principals != null && !principals.isEmpty()) {
                 val secPrincipal = principals.iterator().next();
-                LOGGER.debug("JAAS principal detected from subject login context is [{}}", secPrincipal.getName());
+                LOGGER.debug("JAAS principal detected from subject login context is [{}]", secPrincipal.getName());
                 return this.principalFactory.createPrincipal(secPrincipal.getName());
             }
         } finally {
