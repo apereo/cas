@@ -69,10 +69,6 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
                 .verifySamlProfileRequestIfNeeded(logoutRequest, facade, request, ctx);
         }
         SamlUtils.logSamlObject(getSamlProfileHandlerConfigurationContext().getOpenSamlConfigBean(), logoutRequest);
-        val service = getSamlProfileHandlerConfigurationContext().getServicesManager().findServiceBy(SamlIdPUtils.getIssuerFromSamlObject(logoutRequest), SamlRegisteredService.class);
-        val entityId = SamlIdPUtils.getIssuerFromSamlObject(logoutRequest);
-        val facade = SamlRegisteredServiceServiceProviderMetadataFacade.get(
-                getSamlProfileHandlerConfigurationContext().getSamlRegisteredServiceCachingMetadataResolver(), service, entityId).get();
         sendResponse(response, request, logoutRequest, ctx);
     }
 
