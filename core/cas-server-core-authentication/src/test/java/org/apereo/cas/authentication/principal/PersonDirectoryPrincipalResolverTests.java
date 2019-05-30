@@ -13,13 +13,16 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Test cases for {@link PersonDirectoryPrincipalResolver}.
@@ -47,6 +50,20 @@ public class PersonDirectoryPrincipalResolverTests {
         final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         final Principal p = resolver.resolve(c, null);
         assertNull(p);
+    }
+
+    @Test
+    public void verifyNullAttributeValues() {
+        final ArrayList<Object> attributes = new ArrayList<>();
+        attributes.add(null);
+        final HashMap<String, List<Object>> attributesMap = new HashMap<>();
+        attributesMap.put("a", attributes);
+        final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver(
+                new StubPersonAttributeDao(attributesMap)
+        );
+        final Principal principal = resolver.resolve((Credential) () -> "a");
+
+        assertThat(principal).isNotNull();
     }
 
     @Test
