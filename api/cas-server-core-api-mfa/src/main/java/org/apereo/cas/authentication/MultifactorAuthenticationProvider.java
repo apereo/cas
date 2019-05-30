@@ -35,6 +35,13 @@ public interface MultifactorAuthenticationProvider extends Serializable, Ordered
     MultifactorAuthenticationProviderBypass getBypassEvaluator();
 
     /**
+     * Returns the configured failure mode evaluator for this MFA provider.
+     *
+     * @return the failuremode evaluator
+     */
+    MultifactorAuthenticationFailureModeEvaluator getFailureModeEvaluator();
+
+    /**
      * Gets id for this provider.
      *
      * @return the id

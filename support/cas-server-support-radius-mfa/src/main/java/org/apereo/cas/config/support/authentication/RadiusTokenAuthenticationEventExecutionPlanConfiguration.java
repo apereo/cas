@@ -9,6 +9,7 @@ import org.apereo.cas.adaptors.radius.authentication.RadiusTokenCredential;
 import org.apereo.cas.adaptors.radius.server.NonBlockingRadiusServer;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.MultifactorAuthenticationFailureModeEvaluator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
@@ -50,12 +51,17 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
 
+    @Autowired
+    @Qualifier("failureModeEvaluator")
+    private ObjectProvider<MultifactorAuthenticationFailureModeEvaluator> failureModeEvaluator;
+
     @RefreshScope
     @Bean
     public MultifactorAuthenticationProvider radiusMultifactorAuthenticationProvider() {
         val radius = casProperties.getAuthn().getMfa().getRadius();
         val p = new RadiusMultifactorAuthenticationProvider(radiusTokenServers());
         p.setBypassEvaluator(radiusBypassEvaluator());
+        p.setFailureModeEvaluator(failureModeEvaluator.getIfAvailable());
         p.setFailureMode(radius.getFailureMode());
         p.setOrder(radius.getRank());
         p.setId(radius.getId());
