@@ -1,23 +1,25 @@
-package org.apereo.cas.authentication.principal;
+package org.apereo.cas.authentication.principal.resolvers;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
-import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolver;
-import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
-import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.util.CollectionUtils;
 
+import com.google.common.collect.Maps;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -45,6 +47,18 @@ public class PersonDirectoryPrincipalResolverTests {
         val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         val p = resolver.resolve(c, null);
         assertNull(p);
+    }
+
+    @Test
+    public void verifyNullAttributeValues() {
+        val attributes = new ArrayList<Object>();
+        attributes.add(null);
+        val resolver = new PersonDirectoryPrincipalResolver(
+                new StubPersonAttributeDao(Map.of("a", attributes))
+        );
+        val principal = resolver.resolve((Credential) () -> "a");
+
+        assertThat(principal.getAttributes()).containsExactly(Maps.immutableEntry("a", new ArrayList<>()));
     }
 
     @Test

@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandl
 import org.apereo.cas.authentication.policy.GroovyScriptAuthenticationPolicyTests;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtilsTests;
 import org.apereo.cas.authentication.principal.resolvers.InternalGroovyScriptDaoTests;
+import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolverTests;
 import org.apereo.cas.authentication.support.password.DefaultPasswordPolicyHandlingStrategyTests;
 import org.apereo.cas.authentication.support.password.GroovyPasswordEncoderTests;
 import org.apereo.cas.authentication.support.password.PasswordExpiringWarningMessageDescriptorTests;
@@ -31,6 +32,7 @@ import org.junit.runner.RunWith;
     BlackDotIPAddressIntelligenceServiceTests.class,
     GroovyScriptAuthenticationPolicyTests.class,
     InternalGroovyScriptDaoTests.class,
+    PersonDirectoryPrincipalResolverTests.class,
     PrincipalNameTransformerUtilsTests.class,
     AuthenticationCredentialTypeMetaDataPopulatorTests.class,
     DefaultPrincipalFactoryTests.class,
