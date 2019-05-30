@@ -31,7 +31,7 @@ public class AccepttoMultifactorValidateChannelAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        val eventAttributes = new LocalAttributeMap();
+        val eventAttributes = new LocalAttributeMap<>();
         try {
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);

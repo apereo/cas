@@ -2,7 +2,7 @@ package org.apereo.cas.mfa.accepto.web.flow;
 
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.mfa.accepto.web.flow.qr.AccepttoQRCodeCredential;
+import org.apereo.cas.mfa.accepto.AccepttoEmailCredential;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.web.support.CookieUtils;
@@ -112,7 +112,7 @@ public class AccepttoMultifactorFetchChannelAction extends AbstractAction {
             .ifPresent(cookie -> parameters.put("jwt", cookie.getValue()));
 
         val currentCredential = WebUtils.getCredential(requestContext);
-        if (currentCredential instanceof AccepttoQRCodeCredential) {
+        if (currentCredential instanceof AccepttoEmailCredential) {
             parameters.put("auth_type", 1);
         }
         

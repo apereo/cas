@@ -124,6 +124,16 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_REDIRECT = "redirect";
 
     /**
+     * Transition id 'skip' .
+     */
+    String TRANSITION_ID_SKIP = "skip";
+
+    /**
+     * Transition id 'approve' .
+     */
+    String TRANSITION_ID_APPROVE = "approve";
+
+    /**
      * Propagate transition id.
      */
     String TRANSITION_ID_PROPAGATE = "propagate";

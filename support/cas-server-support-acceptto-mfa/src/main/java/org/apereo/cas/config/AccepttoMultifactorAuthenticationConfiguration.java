@@ -15,6 +15,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.integration.pac4j.DistributedJ2ESessionStore;
+import org.apereo.cas.mfa.accepto.AccepttoEmailCredential;
 import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorAuthenticationWebflowEventResolver;
 import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorDetermineUserAccountStatusAction;
 import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorFetchChannelAction;
@@ -23,7 +24,6 @@ import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorValidateChannelAct
 import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorValidateUserDeviceRegistrationAction;
 import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorWebflowConfigurer;
 import org.apereo.cas.mfa.accepto.web.flow.qr.AccepttoQRCodeAuthenticationHandler;
-import org.apereo.cas.mfa.accepto.web.flow.qr.AccepttoQRCodeCredential;
 import org.apereo.cas.mfa.accepto.web.flow.qr.AccepttoQRCodeValidateWebSocketChannelAction;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
@@ -53,6 +53,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -68,6 +69,7 @@ import org.springframework.webflow.execution.Action;
 @Configuration("accepttoMultifactorAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
+@EnableRetry
 public class AccepttoMultifactorAuthenticationConfiguration {
     @Autowired
     @Qualifier("servicesManager")
@@ -255,7 +257,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
         return plan -> {
             plan.registerAuthenticationHandlerWithPrincipalResolver(casAccepttoQRCodeAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
             plan.registerAuthenticationMetadataPopulator(casAccepttoQRCodeAuthenticationMetaDataPopulator());
-            plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(AccepttoQRCodeCredential.class));
+            plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(AccepttoEmailCredential.class));
         };
     }
 
