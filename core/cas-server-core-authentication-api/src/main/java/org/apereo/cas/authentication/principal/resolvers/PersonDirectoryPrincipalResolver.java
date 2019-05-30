@@ -27,8 +27,11 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Resolves principals by querying a data source using the Person Directory API.
@@ -198,18 +201,17 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      * @param attributes           the attributes
      * @return the pair
      */
+    @SuppressWarnings("unchecked")
     protected Pair<String, Map<String, List<Object>>> convertPersonAttributesToPrincipal(final String extractedPrincipalId,
                                                                                          final Map<String, List<Object>> attributes) {
         val convertedAttributes = new LinkedHashMap<String, List<Object>>();
         attributes.forEach((key, attrValue) -> {
-            val values = CollectionUtils.toCollection(attrValue, ArrayList.class);
+            val values = ((List<Object>) CollectionUtils.toCollection(attrValue, ArrayList.class))
+                    .stream()
+                    .filter(Objects::nonNull)
+                    .collect(toList());
             LOGGER.debug("Found attribute [{}] with value(s) [{}]", key, values);
-            if (values.size() == 1) {
-                val value = CollectionUtils.firstElement(values).get();
-                convertedAttributes.put(key, CollectionUtils.wrapList(value));
-            } else {
-                convertedAttributes.put(key, values);
-            }
+            convertedAttributes.put(key, values);
         });
 
         var principalId = extractedPrincipalId;

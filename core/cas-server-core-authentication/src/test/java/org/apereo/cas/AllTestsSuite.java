@@ -20,7 +20,6 @@ import org.apereo.cas.authentication.policy.UniquePrincipalAuthenticationPolicyT
 import org.apereo.cas.authentication.principal.ChainingPrincipalResolverTests;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactoryTests;
 import org.apereo.cas.authentication.principal.NullPrincipalTests;
-import org.apereo.cas.authentication.principal.PersonDirectoryPrincipalResolverTests;
 import org.apereo.cas.authentication.principal.RememberMeAuthenticationMetaDataPopulatorTests;
 import org.apereo.cas.authentication.principal.SimplePrincipalFactoryTests;
 import org.apereo.cas.authentication.principal.SimplePrincipalTests;
@@ -37,7 +36,6 @@ import org.junit.platform.suite.api.SelectClasses;
  */
 @SelectClasses({
     TrustedProxyAuthenticationTrustStoreSslSocketFactoryTests.class,
-    PersonDirectoryPrincipalResolverTests.class,
     SimplePrincipalTests.class,
     CachingPrincipalAttributesRepositoryTests.class,
     ChainingPrincipalResolverTests.class,
