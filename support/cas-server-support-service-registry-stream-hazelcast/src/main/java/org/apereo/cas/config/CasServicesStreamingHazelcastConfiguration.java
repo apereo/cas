@@ -11,6 +11,7 @@ import org.apereo.cas.services.publisher.CasRegisteredServiceStreamPublisher;
 import org.apereo.cas.services.replication.DefaultRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 
+import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -35,18 +36,12 @@ import java.util.concurrent.TimeUnit;
 @ConditionalOnProperty(prefix = "cas.serviceRegistry.stream", name = "enabled", havingValue = "true", matchIfMissing = true)
 @Slf4j
 public class CasServicesStreamingHazelcastConfiguration {
-
-
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("casRegisteredServiceStreamPublisherIdentifier")
     private ObjectProvider<StringBean> casRegisteredServiceStreamPublisherIdentifier;
-
-    @Autowired
-    @Qualifier("casHazelcastInstance")
-    private ObjectProvider<HazelcastInstance> hazelcastInstance;
 
     @Bean
     public DistributedCacheManager registeredServiceDistributedCacheManager() {
@@ -65,6 +60,7 @@ public class CasServicesStreamingHazelcastConfiguration {
             casRegisteredServiceStreamPublisherIdentifier.getIfAvailable());
     }
 
+
     @Bean
     public HazelcastInstance casRegisteredServiceHazelcastInstance() {
         val name = CasRegisteredServiceHazelcastStreamPublisher.class.getSimpleName();
@@ -74,8 +70,9 @@ public class CasServicesStreamingHazelcastConfiguration {
         val hzConfig = stream.getConfig();
         val duration = Beans.newDuration(stream.getDuration()).toMillis();
         val mapConfig = factory.buildMapConfig(hzConfig, name, TimeUnit.MILLISECONDS.toSeconds(duration));
-        val hz = hazelcastInstance.getIfAvailable();
-        hz.getConfig().addMapConfig(mapConfig);
-        return hz;
+
+        val hazelcastInstance = Hazelcast.newHazelcastInstance(HazelcastConfigurationFactory.build(hzConfig));
+        hazelcastInstance.getConfig().addMapConfig(mapConfig);
+        return hazelcastInstance;
     }
 }

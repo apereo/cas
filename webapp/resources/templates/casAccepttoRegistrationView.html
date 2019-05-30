@@ -34,24 +34,20 @@
                 </a>
             </div>
 
-
             <form method="POST" id="fmAccepttoQRCode">
-
                 <script type="text/javascript" th:inline="javascript">
                     /*<![CDATA[*/
                     $(function () {
-                        var uid = /*[[${accepttoApplicationId}]]*/;
                         var invitationToken = /*[[${accepttoInvitationToken}]]*/;
-
-                        var qrcodeJSON = '{ "app_uid":"' + uid + '", "channel":"' + invitationToken + '" }';
-                        var qrcode = window.btoa(qrcodeJSON);
-                        var src = "https://chart.apis.google.com/chart?cht=qr&chs=220x220&chl=" + qrcode + "#&chld=H|0";
-                        $('#login_qrcode').attr("src", src);
-
+                        var hashCode = /*[[${accepttoInvitationTokenQRCodeHash}]]*/;
+                        var src = "https://chart.apis.google.com/chart?cht=qr&chs=250x250&chl=" + hashCode + "&chld=H|0";
+                        $('#qrLoginCode').attr("src", src);
                         var faye = new Faye.Client("https://faye.acceptto.com/faye");
                         faye.subscribe("/messages/" + invitationToken,
                             function (data) {
-                                $('#fmAccepttoQRCode').submit();
+                                setTimeout(function() {
+                                    $('#fmAccepttoQRCode').submit();
+                                }, 2500);
                             }
                         );
                     });
@@ -62,7 +58,9 @@
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
             </form>
             <center>
-                <img id="login_qrcode" alt="QR Code">
+                <img class="autowidth"
+                     id="qrLoginCode"
+                     width="250"/>
             </center>
         </div>
     </div>

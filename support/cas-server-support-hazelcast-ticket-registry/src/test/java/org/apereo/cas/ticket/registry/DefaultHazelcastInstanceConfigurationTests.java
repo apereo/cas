@@ -15,7 +15,6 @@ import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.CasHazelcastConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.HazelcastTicketRegistryConfiguration;
 import org.apereo.cas.config.HazelcastTicketRegistryTicketCatalogConfiguration;
@@ -49,7 +48,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     DefaultHazelcastInstanceConfigurationTests.HazelcastTestConfiguration.class,
-    CasHazelcastConfiguration.class,
     HazelcastTicketRegistryConfiguration.class,
     CasCoreTicketsConfiguration.class,
     RefreshAutoConfiguration.class,
@@ -78,12 +76,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
 public class DefaultHazelcastInstanceConfigurationTests {
     @Autowired
-    @Qualifier("casHazelcastInstance")
+    @Qualifier("casTicketRegistryHazelcastInstance")
     private HazelcastInstance hzInstance;
-
-    public HazelcastInstance getHzInstance() {
-        return hzInstance;
-    }
 
     @Test
     public void correctHazelcastInstanceIsCreated() {
