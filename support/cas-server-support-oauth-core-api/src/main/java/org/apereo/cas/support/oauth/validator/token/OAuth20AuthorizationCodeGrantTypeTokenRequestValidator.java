@@ -79,7 +79,7 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
 
             return true;
         }
-        LOGGER.warn("Access token request cannot be validated for grant type [{}} and client id [{}] given the redirect URI [{}]", grantType, clientId, redirectUri);
+        LOGGER.warn("Access token request cannot be validated for grant type [{}] and client id [{}] given the redirect URI [{}]", grantType, clientId, redirectUri);
         return false;
     }
 }

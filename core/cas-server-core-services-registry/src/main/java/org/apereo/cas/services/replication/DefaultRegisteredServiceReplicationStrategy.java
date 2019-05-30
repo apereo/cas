@@ -93,7 +93,7 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
         }
         LOGGER.debug("Requested service definition is not found in the replication cache");
         if (service != null) {
-            LOGGER.debug("Attempting to update replication cache with service [{}}", service);
+            LOGGER.debug("Attempting to update replication cache with service [{}]", service);
             val item = new DistributedCacheObject<RegisteredService>(service);
             this.distributedCacheManager.set(service, item);
         }

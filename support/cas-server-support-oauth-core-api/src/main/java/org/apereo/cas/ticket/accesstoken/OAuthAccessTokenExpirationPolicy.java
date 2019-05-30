@@ -81,7 +81,7 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
 
         var expirationTime = creationTime.plus(this.maxTimeToLiveInSeconds, ChronoUnit.SECONDS);
         if (currentSystemTime.isAfter(expirationTime)) {
-            LOGGER.debug("Access token is expired because the current time [{}} is after [{}]", currentSystemTime, expirationTime);
+            LOGGER.debug("Access token is expired because the current time [{}] is after [{}]", currentSystemTime, expirationTime);
             return true;
         }
 

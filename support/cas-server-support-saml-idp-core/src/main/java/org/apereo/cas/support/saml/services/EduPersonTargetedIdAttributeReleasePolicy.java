@@ -67,7 +67,7 @@ public class EduPersonTargetedIdAttributeReleasePolicy extends BaseSamlRegistere
             principalId, ATTRIBUTE_NAME_EDU_PERSON_TARGETED_ID, selectedService);
         val result = persistentIdGenerator.generate(principalId, selectedService);
         releaseAttributes.put(ATTRIBUTE_NAME_EDU_PERSON_TARGETED_ID, CollectionUtils.wrapList(result));
-        LOGGER.debug("Calculated [{}] attribute as [{}}", ATTRIBUTE_NAME_EDU_PERSON_TARGETED_ID, result);
+        LOGGER.debug("Calculated [{}] attribute as [{}]", ATTRIBUTE_NAME_EDU_PERSON_TARGETED_ID, result);
         return releaseAttributes;
     }
 }

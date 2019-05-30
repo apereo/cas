@@ -261,7 +261,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     protected BaseClient<Credentials, CommonProfile> findDelegatedClientByName(final HttpServletRequest request,
                                                                                final String clientName, final Service service) {
         val client = (BaseClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
-        LOGGER.debug("Delegated authentication client is [{}] with service [{}}", client, service);
+        LOGGER.debug("Delegated authentication client is [{}] with service [{}]", client, service);
         if (service != null) {
             request.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
             if (!isDelegatedClientAuthorizedForService(client, service)) {
