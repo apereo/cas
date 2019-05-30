@@ -45,7 +45,7 @@ public class ChainingThemeResolver extends AbstractThemeResolver {
                 return resolverTheme;
             }
         }
-        LOGGER.trace("No specific theme could be found. Using default theme [{}}", getDefaultThemeName());
+        LOGGER.trace("No specific theme could be found. Using default theme [{}]", getDefaultThemeName());
         return getDefaultThemeName();
     }
 

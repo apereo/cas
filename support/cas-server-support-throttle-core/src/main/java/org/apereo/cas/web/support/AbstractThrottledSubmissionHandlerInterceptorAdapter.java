@@ -191,7 +191,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
             DateTimeUtils.dateOf(ZonedDateTime.now(ZoneOffset.UTC)),
             clientInfo.getClientIpAddress(),
             clientInfo.getServerIpAddress());
-        LOGGER.debug("Recording throttled audit action [{}}", context);
+        LOGGER.debug("Recording throttled audit action [{}]", context);
         configurationContext.getAuditTrailExecutionPlan().record(context);
     }
 }
