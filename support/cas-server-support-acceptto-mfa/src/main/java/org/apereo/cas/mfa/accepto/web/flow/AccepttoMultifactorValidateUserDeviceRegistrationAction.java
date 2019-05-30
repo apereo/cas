@@ -3,13 +3,15 @@ package org.apereo.cas.mfa.accepto.web.flow;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.accepto.AccepttoApiUtils;
-import org.apereo.cas.mfa.accepto.web.flow.qr.AccepttoQRCodeCredential;
+import org.apereo.cas.mfa.accepto.AccepttoEmailCredential;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -31,13 +33,13 @@ public class AccepttoMultifactorValidateUserDeviceRegistrationAction extends Abs
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        val eventAttributes = new LocalAttributeMap();
+        val eventAttributes = new LocalAttributeMap<>();
         val acceptto = casProperties.getAuthn().getMfa().getAcceptto();
         val authentication = WebUtils.getInProgressAuthentication();
         val email = AccepttoApiUtils.getUserEmailAttribute(authentication, acceptto);
         try {
-            if (AccepttoApiUtils.isUserDevicePaired(authentication, acceptto)) {
-                val credential = new AccepttoQRCodeCredential(email);
+            if (verifyUserDeviceIsPaired()) {
+                val credential = new AccepttoEmailCredential(email);
                 WebUtils.putCredential(requestContext, credential);
                 return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_FINALIZE);
             }
@@ -47,5 +49,30 @@ public class AccepttoMultifactorValidateUserDeviceRegistrationAction extends Abs
         }
         LOGGER.warn("Device linked to [{}} is not paired; authentication cannot proceed", email);
         return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_DENY, eventAttributes);
+    }
+
+    private static class AccepttoUserDeviceRegistrationException extends RuntimeException {
+        private static final long serialVersionUID = -8225610355713310470L;
+
+        AccepttoUserDeviceRegistrationException(final String message) {
+            super(message);
+        }
+    }
+
+    /**
+     * Verify user device is paired.
+     *
+     * @return the boolean
+     */
+    @Retryable(value = AccepttoUserDeviceRegistrationException.class,
+        maxAttempts = 2, backoff = @Backoff(delay = 1000, maxDelay = 3000))
+    public boolean verifyUserDeviceIsPaired() {
+        val acceptto = casProperties.getAuthn().getMfa().getAcceptto();
+        val authentication = WebUtils.getInProgressAuthentication();
+        val email = AccepttoApiUtils.getUserEmailAttribute(authentication, acceptto);
+        if (!AccepttoApiUtils.isUserDevicePaired(authentication, acceptto)) {
+            throw new AccepttoUserDeviceRegistrationException("Could not locate registered device for " + email);
+        }
+        return true;
     }
 }
