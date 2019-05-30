@@ -390,7 +390,7 @@ public class DelegatedClientFactory {
                 val cfg = new SAML2Configuration(saml.getKeystorePath(),
                     saml.getKeystorePassword(),
                     saml.getPrivateKeyPassword(), saml.getIdentityProviderMetadataPath());
-                cfg.setCertificateNameToAppend(saml.getCertificateNameToAppend());
+                cfg.setCertificateNameToAppend(StringUtils.defaultIfBlank(saml.getCertificateNameToAppend(), saml.getClientName()));
                 cfg.setMaximumAuthenticationLifetime(saml.getMaximumAuthenticationLifetime());
                 cfg.setServiceProviderEntityId(saml.getServiceProviderEntityId());
                 cfg.setServiceProviderMetadataPath(saml.getServiceProviderMetadataPath());
