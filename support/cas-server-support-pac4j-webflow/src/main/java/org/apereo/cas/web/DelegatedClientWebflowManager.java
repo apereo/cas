@@ -139,7 +139,7 @@ public class DelegatedClientWebflowManager {
         val clientId = getDelegatedClientId(webContext, client);
         val ticket = retrieveSessionTicketViaClientId(webContext, clientId);
         restoreDelegatedAuthenticationRequest(requestContext, webContext, ticket);
-        LOGGER.debug("Removing delegated client identifier [{}} from registry", ticket.getId());
+        LOGGER.debug("Removing delegated client identifier [{}] from registry", ticket.getId());
         this.ticketRegistry.deleteTicket(ticket.getId());
         return ticket.getService();
 

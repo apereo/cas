@@ -51,7 +51,7 @@ public abstract class BaseCasRegisteredServiceStreamPublisher implements CasRegi
             handleCasRegisteredServiceUpdateEvents(service, event);
             return;
         }
-        LOGGER.warn("Unsupported event [{}} for service replication", event);
+        LOGGER.warn("Unsupported event [{}] for service replication", event);
     }
 
     /**

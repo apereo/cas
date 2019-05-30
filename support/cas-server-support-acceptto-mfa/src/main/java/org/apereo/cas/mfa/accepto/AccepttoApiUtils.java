@@ -172,7 +172,7 @@ public class AccepttoApiUtils {
         claims.setClaim("uid", acceptto.getOrganizationId());
         claims.setExpirationTimeMinutesInTheFuture(1);
         val payload = claims.toJson();
-        LOGGER.trace("Authorization payload is [{}}", payload);
+        LOGGER.trace("Authorization payload is [{}]", payload);
         val signingKey = new AesKey(acceptto.getOrganizationSecret().getBytes(StandardCharsets.UTF_8));
         LOGGER.trace("Signing authorization payload...");
         val signedBytes = EncodingUtils.signJwsHMACSha256(signingKey, payload.getBytes(StandardCharsets.UTF_8));

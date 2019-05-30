@@ -139,7 +139,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                                                                 final Map<String, List<Object>> attributes) {
         val userinfo = OAuth20Utils.parseUserInfoRequestClaims(accessToken);
         val principalAttributes = accessToken.getTicketGrantingTicket().getAuthentication().getPrincipal().getAttributes();
-        LOGGER.debug("Requested user-info claims [{}] are compared against principal attributes [{}}", userinfo, principalAttributes);
+        LOGGER.debug("Requested user-info claims [{}] are compared against principal attributes [{}]", userinfo, principalAttributes);
         userinfo
             .stream()
             .filter(principalAttributes::containsKey)
@@ -164,7 +164,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
         if (scopes.isEmpty()) {
             val attributes = principal.getAttributes();
             LOGGER.trace("No defined scopes are available to instruct attribute release policies for [{}]. "
-                    + "CAS will authorize the collection of resolved attributes [{}] for release to [{}}",
+                    + "CAS will authorize the collection of resolved attributes [{}] for release to [{}]",
                 registeredService.getServiceId(), attributes, service.getId());
             return attributes;
         }

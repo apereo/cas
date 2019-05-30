@@ -45,6 +45,6 @@ public class OidcUserProfileDataCreator extends DefaultOAuth20UserProfileDataCre
                 map.keySet().retainAll(CollectionUtils.wrapList(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES));
             }
         }
-        LOGGER.trace("Finalized user profile data as [{}] for access token [{}}", map, accessToken.getId());
+        LOGGER.trace("Finalized user profile data as [{}] for access token [{}]", map, accessToken.getId());
     }
 }

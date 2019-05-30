@@ -30,7 +30,7 @@ public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleA
         val samlRequest = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST);
         var xmlRequest = StringUtils.EMPTY;
         try {
-            LOGGER.trace("Decoding saml authentication request [{}}", samlRequest);
+            LOGGER.trace("Decoding saml authentication request [{}]", samlRequest);
             xmlRequest = this.googleSaml20ObjectBuilder.decodeSamlAuthnRequest(samlRequest);
         } catch (final Exception e) {
             LOGGER.debug("Unable to decode SAML authentication request", e);
