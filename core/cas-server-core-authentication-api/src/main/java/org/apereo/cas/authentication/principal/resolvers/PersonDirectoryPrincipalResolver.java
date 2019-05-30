@@ -148,7 +148,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
             final List values = CollectionUtils.toCollection(attrValue, ArrayList.class);
             LOGGER.debug("Found attribute [{}] with value(s) [{}]", key, values);
             if (values.size() == 1) {
-                final Object value = CollectionUtils.firstElement(values).get();
+                final Object value = values.get(0);
                 convertedAttributes.put(key, value);
             } else {
                 convertedAttributes.put(key, values);
