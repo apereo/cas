@@ -29,12 +29,13 @@ public class AccepttoMultifactorDetermineUserAccountStatusAction extends Abstrac
     public Event doExecute(final RequestContext requestContext) {
         val eventFactorySupport = new EventFactorySupport();
         try {
-            if (isUserDevicePaired(requestContext)) {
+            val acceptto = casProperties.getAuthn().getMfa().getAcceptto();
+            val authentication = WebUtils.getInProgressAuthentication();
+
+            if (AccepttoApiUtils.isUserDevicePaired(authentication, acceptto)) {
                 return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_SUCCESS);
             }
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-            val acceptto = casProperties.getAuthn().getMfa().getAcceptto();
-            val authentication = WebUtils.getInProgressAuthentication();
             val results = AccepttoApiUtils.authenticate(authentication, acceptto, request);
 
             if (results.isEmpty()) {
@@ -46,33 +47,20 @@ public class AccepttoMultifactorDetermineUserAccountStatusAction extends Abstrac
             }
 
             if (results.containsKey("invite_token")) {
-                val invitationToken = results.get("invite_token").toString();
+                val invitationToken = AccepttoApiUtils.decodeInvitationToken(results.get("invite_token").toString());
                 val eguardianUserId = results.get("eguardian_user_id").toString();
 
                 AccepttoWebflowUtils.setApplicationId(requestContext, acceptto.getApplicationId());
                 AccepttoWebflowUtils.setInvitationToken(requestContext, invitationToken);
                 AccepttoWebflowUtils.setEGuardianUserId(authentication, eguardianUserId);
+
+                val qrHash = AccepttoApiUtils.generateQRCodeHash(authentication, acceptto, invitationToken);
+                AccepttoWebflowUtils.setInvitationTokenQRCode(requestContext, qrHash);
                 return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_REGISTER);
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
         return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_SUCCESS);
-    }
-
-    /**
-     * Is user device paired?.
-     *
-     * @param requestContext the request context
-     * @return the boolean
-     */
-    protected boolean isUserDevicePaired(final RequestContext requestContext) {
-        val acceptto = casProperties.getAuthn().getMfa().getAcceptto();
-        val authentication = WebUtils.getInProgressAuthentication();
-        val results = AccepttoApiUtils.isUserValid(authentication, acceptto);
-        if (results != null && results.containsKey("device_paired")) {
-            return BooleanUtils.toBoolean(results.get("device_paired").toString());
-        }
-        return false;
     }
 }

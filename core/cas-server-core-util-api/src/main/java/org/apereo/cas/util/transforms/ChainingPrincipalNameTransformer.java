@@ -19,8 +19,6 @@ import java.util.List;
 @Getter
 public class ChainingPrincipalNameTransformer implements PrincipalNameTransformer {
 
-    private static final long serialVersionUID = 7586914936775326709L;
-
     private final List<PrincipalNameTransformer> transformers = new ArrayList<>();
 
     @Override
