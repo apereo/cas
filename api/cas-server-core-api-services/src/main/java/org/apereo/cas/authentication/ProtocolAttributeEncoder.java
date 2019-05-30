@@ -48,7 +48,7 @@ public interface ProtocolAttributeEncoder {
     default Map<String, Object> encodeAttributes(final Map<String, Object> attributes, final RegisteredService service) {
         val finalAttributes = Maps.<String, Object>newHashMapWithExpectedSize(attributes.size());
         attributes.forEach((k, v) -> {
-            val attributeName = ProtocolAttributeEncoder.decodeAttribute(k);
+            val attributeName = decodeAttribute(k);
             LOGGER.debug("Decoded attribute [{}] to [{}] with value(s) [{}]", k, attributeName, v);
             finalAttributes.put(attributeName, v);
         });
