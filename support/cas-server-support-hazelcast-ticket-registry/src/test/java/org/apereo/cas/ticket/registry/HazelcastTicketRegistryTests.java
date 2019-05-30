@@ -15,7 +15,6 @@ import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.CasHazelcastConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.HazelcastTicketRegistryConfiguration;
 import org.apereo.cas.config.HazelcastTicketRegistryTicketCatalogConfiguration;
@@ -35,7 +34,6 @@ import org.springframework.test.context.TestPropertySource;
  * @since 4.1.0
  */
 @SpringBootTest(classes = {
-    CasHazelcastConfiguration.class,
     HazelcastTicketRegistryConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,

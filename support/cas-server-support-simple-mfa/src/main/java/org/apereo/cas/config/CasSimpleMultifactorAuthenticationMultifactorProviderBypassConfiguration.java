@@ -1,8 +1,8 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.authentication.DefaultChainingMultifactorAuthenticationBypassProvider;
 import org.apereo.cas.authentication.bypass.AuthenticationMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.CredentialMultifactorAuthenticationProviderBypassEvaluator;
+import org.apereo.cas.authentication.bypass.DefaultChainingMultifactorAuthenticationBypassProvider;
 import org.apereo.cas.authentication.bypass.GroovyMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.HttpRequestMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;

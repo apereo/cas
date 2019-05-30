@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.bypass.DefaultChainingMultifactorAuthenticationBypassProvider;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 
 import lombok.Getter;
