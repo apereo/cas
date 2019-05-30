@@ -29,4 +29,11 @@ public class DefaultRegisteredServiceServiceTicketExpirationPolicyTests {
         val repositoryRead = MAPPER.readValue(JSON_FILE, DefaultRegisteredServiceServiceTicketExpirationPolicy.class);
         assertEquals(p, repositoryRead);
     }
+
+    @Test
+    public void verifyUndefined() {
+        val p = RegisteredServiceServiceTicketExpirationPolicy.undefined();
+        assertNull(p.getTimeToLive());
+        assertEquals(Long.MIN_VALUE, p.getNumberOfUses());
+    }
 }
