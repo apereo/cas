@@ -17,7 +17,9 @@
         <evaluate expression="mfaAccepttoMultifactorDetermineUserAccountStatusAction" />
         <transition on="unavailable" to="mfaFailure" />
         <transition on="deny" to="deny" />
+        <transition on="register" to="registerDevice" />
         <transition on="success" to="authenticateAndFetchChannel" />
+        <transition on="approve" to="realSubmit" />
     </action-state>
 
     <action-state id="authenticateAndFetchChannel">
@@ -29,6 +31,24 @@
                view="externalRedirect:#{requestScope.accepttoRedirectUrl}">
         <transition to="success" />
     </view-state>
+
+    <view-state id="registerDevice" view="casAccepttoRegistrationView">
+        <transition on="success" to="validateUser" />
+    </view-state>
+
+    <action-state id="validateUser">
+        <evaluate expression="mfaAccepttoMultifactorValidateUserDeviceRegistrationAction" />
+        <transition on="finalize" to="realSubmit" />
+        <transition on="error" to="deny" />
+        <transition on="deny" to="deny" />
+    </action-state>
+
+    <action-state id="realSubmit">
+        <evaluate expression="mfaAccepttoMultifactorFinalizeAuthenticationWebflowAction" />
+        <transition on="success" to="success" />
+        <transition on="error" to="initializeLoginForm" />
+    </action-state>
+
     <end-state id="success"  />
     <end-state id="unavailable"  />
     <end-state id="deny"  />

@@ -26,7 +26,9 @@ import org.apereo.cas.authentication.principal.SimplePrincipalTests;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepositoryTests;
 import org.apereo.cas.util.TrustedProxyAuthenticationTrustStoreSslSocketFactoryTests;
 
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -60,5 +62,6 @@ import org.junit.platform.suite.api.SelectClasses;
     RestfulAuthenticationPolicyTests.class,
     FileTrustStoreSslSocketFactoryTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
 }

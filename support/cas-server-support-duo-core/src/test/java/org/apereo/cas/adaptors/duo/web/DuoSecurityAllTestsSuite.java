@@ -1,6 +1,8 @@
 package org.apereo.cas.adaptors.duo.web;
 
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * This is {@link DuoSecurityAllTestsSuite}.
@@ -12,5 +14,6 @@ import org.junit.platform.suite.api.SelectClasses;
     DuoSecurityPingEndpointTests.class,
     DuoSecurityUserAccountStatusEndpointTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class DuoSecurityAllTestsSuite {
 }

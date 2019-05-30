@@ -4,7 +4,9 @@ package org.apereo.cas;
 import org.apereo.cas.web.view.ChainingTemplateViewResolverTests;
 import org.apereo.cas.web.view.RestfulUrlTemplateResolverTests;
 
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -16,5 +18,6 @@ import org.junit.platform.suite.api.SelectClasses;
     ChainingTemplateViewResolverTests.class,
     RestfulUrlTemplateResolverTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
 }

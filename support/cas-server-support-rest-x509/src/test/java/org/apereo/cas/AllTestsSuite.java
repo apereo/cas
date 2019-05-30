@@ -5,7 +5,9 @@ import org.apereo.cas.support.x509.rest.X509RestHttpRequestHeaderCredentialFacto
 import org.apereo.cas.support.x509.rest.X509RestMultipartBodyCredentialFactoryTests;
 import org.apereo.cas.support.x509.rest.X509RestTlsClientCertCredentialFactoryTests;
 
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -17,7 +19,7 @@ import org.junit.platform.suite.api.SelectClasses;
     X509RestHttpRequestHeaderCredentialFactoryTests.class,
     X509RestMultipartBodyCredentialFactoryTests.class,
     X509RestTlsClientCertCredentialFactoryTests.class
-
 })
+@RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
 }

@@ -9,7 +9,9 @@ import org.apereo.cas.authentication.DirectLdapAuthenticationHandlerTests;
 import org.apereo.cas.authentication.LdapPasswordSynchronizationAuthenticationPostProcessorTests;
 import org.apereo.cas.authentication.principal.PersonDirectoryPrincipalResolverLdaptiveTests;
 
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * Test suite to run all LDAP tests.
@@ -27,5 +29,6 @@ import org.junit.platform.suite.api.SelectClasses;
     DirectLdapAuthenticationHandlerTests.class,
     LdapPasswordSynchronizationAuthenticationPostProcessorTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class AllLdapTestsSuite {
 }

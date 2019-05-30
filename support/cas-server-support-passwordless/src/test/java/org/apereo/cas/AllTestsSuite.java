@@ -8,7 +8,9 @@ import org.apereo.cas.impl.token.RestfulPasswordlessTokenRepositoryTests;
 import org.apereo.cas.web.flow.DisplayBeforePasswordlessAuthenticationActionTests;
 import org.apereo.cas.web.flow.PrepareForPasswordlessAuthenticationActionTests;
 
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -24,5 +26,6 @@ import org.junit.platform.suite.api.SelectClasses;
     PrepareForPasswordlessAuthenticationActionTests.class,
     PasswordlessTokenAuthenticationHandlerTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
 }

@@ -15,7 +15,9 @@ import org.apereo.cas.authentication.support.password.GroovyPasswordEncoderTests
 import org.apereo.cas.authentication.support.password.PasswordExpiringWarningMessageDescriptorTests;
 import org.apereo.cas.authentication.support.password.RejectResultCodePasswordPolicyHandlingStrategyTests;
 
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * This is {@link AllAuthenticationTestsSuite}.
@@ -46,5 +48,6 @@ import org.junit.platform.suite.api.SelectClasses;
     DefaultAuthenticationResultBuilderTests.class,
     GroovyAuthenticationPostProcessorTests.class
 })
+@RunWith(JUnitPlatform.class)
 public class AllAuthenticationTestsSuite {
 }

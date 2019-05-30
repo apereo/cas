@@ -1,26 +1,22 @@
 package org.apereo.cas.mfa.accepto.web.flow;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.mfa.accepto.AccepttoApiUtils;
+import org.apereo.cas.mfa.accepto.AccepttoEmailCredential;
+import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.security.PublicKey;
 
 /**
  * This is {@link AccepttoMultifactorDetermineUserAccountStatusAction}.
@@ -29,76 +25,78 @@ import java.util.Map;
  * @since 6.1.0
  */
 @Slf4j
-@RequiredArgsConstructor
 public class AccepttoMultifactorDetermineUserAccountStatusAction extends AbstractAction {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
-
     private final CasConfigurationProperties casProperties;
+
+    private final PublicKey registrationApiPublicKey;
+
+    @SneakyThrows
+    public AccepttoMultifactorDetermineUserAccountStatusAction(final CasConfigurationProperties casProperties) {
+        this.casProperties = casProperties;
+        val acceptto = casProperties.getAuthn().getMfa().getAcceptto();
+        val factory = new PublicKeyFactoryBean();
+        val location = acceptto.getRegistrationApiPublicKey().getLocation();
+
+        LOGGER.debug("Locating registration API public key from [{}]", location);
+        factory.setResource(location);
+        factory.setSingleton(false);
+        factory.setAlgorithm("RSA");
+        this.registrationApiPublicKey = factory.getObject();
+    }
 
     @Override
     public Event doExecute(final RequestContext requestContext) {
-        val acceptto = casProperties.getAuthn().getMfa().getAcceptto();
-        val url = StringUtils.appendIfMissing(acceptto.getApiUrl(), "/") + "is_user_valid";
-
-        LOGGER.trace("Contacting [{}] to fetch user account status", url);
-
-        val authentication = WebUtils.getInProgressAuthentication();
-        val attributes = authentication.getPrincipal().getAttributes();
-        LOGGER.debug("Current principal attributes are [{}]", attributes);
-
-        val email = CollectionUtils.firstElement(attributes.get(acceptto.getEmailAttribute()))
-            .map(Object::toString)
-            .orElseThrow(null);
-
         val eventFactorySupport = new EventFactorySupport();
-        if (StringUtils.isBlank(email)) {
-            LOGGER.error("Unable to determine email address under attribute [{}]", acceptto.getEmailAttribute());
-            return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_DENY);
-        }
+        val acceptto = casProperties.getAuthn().getMfa().getAcceptto();
+        val authentication = WebUtils.getInProgressAuthentication();
+        val email = AccepttoApiUtils.getUserEmailAttribute(authentication, acceptto);
 
-        LOGGER.debug("Principal email address determined from attribute [{}] is [{}]", acceptto.getEmailAttribute(), email);
-        val parameters = CollectionUtils.<String, Object>wrap(
-            "uid", acceptto.getApplicationId(),
-            "secret", acceptto.getSecret(),
-            "email", email);
-
-        HttpResponse response = null;
         try {
-            response = HttpUtils.executePost(url, parameters, new HashMap<>(0));
-            if (response != null) {
-                val status = response.getStatusLine().getStatusCode();
-                LOGGER.debug("Response status code is [{}]", status);
+            LOGGER.trace("Contacting authentication API to inquire for account status of [{}]", email);
+            val results = AccepttoApiUtils.authenticate(authentication, acceptto, requestContext, this.registrationApiPublicKey);
 
-                if (status == HttpStatus.SC_OK) {
-                    val results = MAPPER.readValue(response.getEntity().getContent(), Map.class);
-                    LOGGER.debug("Received user-account API results as [{}]", results);
-                    val valid = results.get("valid").toString();
-                    val registrationState = results.get("registration_state").toString();
+            if (results.containsKey("status") && results.get("status").toString().equalsIgnoreCase("approved")) {
+                LOGGER.trace("Account status is approved for [{}]. Moving on...", email);
+                val credential = new AccepttoEmailCredential(email);
+                WebUtils.putCredential(requestContext, credential);
+                return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_APPROVE);
+            }
 
-                    if (!BooleanUtils.toBoolean(valid)) {
-                        LOGGER.error("User account [{}] does not have a valid status", email);
-                        return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_DENY);
-                    }
+            if (results.isEmpty()) {
+                LOGGER.warn("No API response could be found for [{}]. Denying access...", email);
+                return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_DENY);
+            }
+            val success = BooleanUtils.toBoolean(results.get("success").toString());
+            if (!success) {
+                LOGGER.warn("API response did not return successfully for [{}]. Denying access...", email);
+                return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_DENY);
+            }
 
-                    if (!StringUtils.equalsIgnoreCase("finished", registrationState)) {
-                        LOGGER.warn("User account [{}] has not finished the registration process yet", email);
-                    }
-                } else {
-                    if (status == HttpStatus.SC_FORBIDDEN) {
-                        LOGGER.error("Invalid application id and secret combination");
-                    }
-                    if (status == HttpStatus.SC_UNAUTHORIZED) {
-                        LOGGER.error("Email address provided is not a valid registered account");
-                    }
-                    return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_DENY);
+            if (results.containsKey("invite_token")) {
+                val originalToken = results.get("invite_token").toString();
+                LOGGER.trace("Located invitation token as [{}] for [{}].", originalToken, email);
+
+                val invitationToken = AccepttoApiUtils.decodeInvitationToken(originalToken);
+                LOGGER.trace("Decoded invitation token as [{}] for [{}].", invitationToken, email);
+
+                AccepttoWebflowUtils.setApplicationId(requestContext, acceptto.getApplicationId());
+                AccepttoWebflowUtils.setInvitationToken(requestContext, invitationToken);
+
+                if (results.containsKey("eguardian_user_id")) {
+                    val eguardianUserId = (String) results.get("eguardian_user_id");
+                    AccepttoWebflowUtils.setEGuardianUserId(requestContext, eguardianUserId);
                 }
+
+                val qrHash = AccepttoApiUtils.generateQRCodeHash(authentication, acceptto, invitationToken);
+                LOGGER.trace("Generated QR hash [{}] for [{}] to register/pair device.", qrHash, email);
+                AccepttoWebflowUtils.setInvitationTokenQRCode(requestContext, qrHash);
+
+                return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_REGISTER);
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
-        } finally {
-            HttpUtils.close(response);
         }
-
+        LOGGER.trace("Account status is verified for [{}]. Proceeding to MFA flow...", email);
         return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_SUCCESS);
     }
 }

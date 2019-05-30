@@ -4,6 +4,7 @@ dependencies {
     api project(":api:cas-server-core-api-util")
 
     implementation libraries.pac4jcore
+    implementation libraries.jose4j
     
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-authentication-mfa-api")

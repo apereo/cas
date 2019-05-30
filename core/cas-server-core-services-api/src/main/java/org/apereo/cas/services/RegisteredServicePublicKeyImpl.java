@@ -41,7 +41,7 @@ public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKe
     @JsonIgnore
     @Transient
     @javax.persistence.Transient
-    private Class<PublicKeyFactoryBean> publicKeyFactoryBeanClass = PublicKeyFactoryBean.class;
+    private transient Class<PublicKeyFactoryBean> publicKeyFactoryBeanClass = PublicKeyFactoryBean.class;
 
     public RegisteredServicePublicKeyImpl(final String location, final String algorithm) {
         this.location = location;

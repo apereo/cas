@@ -188,7 +188,7 @@ Authentication handlers as part of principal transformation may also be provided
 def String run(final Object... args) {
     def providedUsername = args[0]
     def logger = args[1]
-    return providedUsername.concat("SomethingElse)
+    return providedUsername.concat("SomethingElse")
 }
 ```
 
