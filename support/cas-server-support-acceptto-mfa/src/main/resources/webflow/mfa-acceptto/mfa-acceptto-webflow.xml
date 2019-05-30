@@ -19,6 +19,7 @@
         <transition on="deny" to="deny" />
         <transition on="register" to="registerDevice" />
         <transition on="success" to="authenticateAndFetchChannel" />
+        <transition on="approve" to="realSubmit" />
     </action-state>
 
     <action-state id="authenticateAndFetchChannel">

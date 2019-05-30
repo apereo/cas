@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.mfa.accepto.AccepttoEmailCredential;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +27,7 @@ public class AccepttoQRCodeAuthenticationHandler extends AbstractPreAndPostProce
 
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) {
-        val tokenCredential = (AccepttoQRCodeCredential) credential;
+        val tokenCredential = (AccepttoEmailCredential) credential;
         LOGGER.debug("Received token [{}]", tokenCredential.getId());
         val principal = this.principalFactory.createPrincipal(tokenCredential.getId());
         return createHandlerResult(tokenCredential, principal);
@@ -34,11 +35,11 @@ public class AccepttoQRCodeAuthenticationHandler extends AbstractPreAndPostProce
 
     @Override
     public boolean supports(final Class<? extends Credential> clazz) {
-        return AccepttoQRCodeCredential.class.isAssignableFrom(clazz);
+        return AccepttoEmailCredential.class.isAssignableFrom(clazz);
     }
 
     @Override
     public boolean supports(final Credential credential) {
-        return AccepttoQRCodeCredential.class.isAssignableFrom(credential.getClass());
+        return AccepttoEmailCredential.class.isAssignableFrom(credential.getClass());
     }
 }

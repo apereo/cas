@@ -3,6 +3,7 @@ package org.apereo.cas.mfa.accepto.web.flow.qr;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.mfa.accepto.AccepttoEmailCredential;
 import org.apereo.cas.mfa.accepto.web.flow.AccepttoWebflowUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
@@ -81,7 +82,7 @@ public class AccepttoQRCodeValidateWebSocketChannelAction extends AbstractAction
                     if (success) {
                         LOGGER.debug("Storing channel [{}] in http session", channel);
                         AccepttoWebflowUtils.storeChannel(channel, webContext);
-                        WebUtils.putCredential(requestContext, new AccepttoQRCodeCredential(email));
+                        WebUtils.putCredential(requestContext, new AccepttoEmailCredential(email));
                         return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_FINALIZE);
                     }
                     LOGGER.error(message);
@@ -104,7 +105,7 @@ public class AccepttoQRCodeValidateWebSocketChannelAction extends AbstractAction
     }
 
     private Event returnError(final String message) {
-        val eventAttributes = new LocalAttributeMap();
+        val eventAttributes = new LocalAttributeMap<>();
         LOGGER.error(message);
         eventAttributes.put("error",
             new AuthenticationException(new UnauthorizedAuthenticationException(message)));

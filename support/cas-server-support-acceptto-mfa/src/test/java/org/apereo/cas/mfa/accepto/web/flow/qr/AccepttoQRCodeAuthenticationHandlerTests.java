@@ -3,6 +3,7 @@ package org.apereo.cas.mfa.accepto.web.flow.qr;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.mfa.accepto.AccepttoEmailCredential;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
@@ -33,8 +34,8 @@ public class AccepttoQRCodeAuthenticationHandlerTests {
     @Test
     public void verifyOperation() throws Exception {
         val handler = new AccepttoQRCodeAuthenticationHandler(mock(ServicesManager.class), PrincipalFactoryUtils.newPrincipalFactory());
-        assertTrue(handler.supports(AccepttoQRCodeCredential.class));
-        val credential = new AccepttoQRCodeCredential("cas@example.org");
+        assertTrue(handler.supports(AccepttoEmailCredential.class));
+        val credential = new AccepttoEmailCredential("cas@example.org");
         assertTrue(handler.supports(credential));
         assertNotNull(handler.authenticate(credential));
     }

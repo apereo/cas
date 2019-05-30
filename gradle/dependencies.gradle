@@ -3288,9 +3288,20 @@ ext.libraries = [
 
         spring                  : [
                 dependencies.create("org.springframework:spring-aop:$springVersion") {
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-expression")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
                     force = true
                 },
                 dependencies.create("org.springframework:spring-beans:$springVersion") {
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-expression")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
                     force = true
                 },
                 dependencies.create("org.springframework.webflow:spring-binding:$springWebflowVersion") {
@@ -3308,6 +3319,19 @@ ext.libraries = [
                     force = true
                 },
                 dependencies.create("org.springframework:spring-context-support:$springVersion") {
+                    force = true
+                },
+                dependencies.create("org.springframework.retry:spring-retry:$springRetryVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-expression")
+                    exclude(group: "org.springframework", module: "spring-tx")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "junit", module: "junit")
+                    exclude(group: "org.mockito", module: "mockito-core")
                     force = true
                 },
                 dependencies.create("org.springframework:spring-core:$springVersion") {

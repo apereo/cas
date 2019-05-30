@@ -8,6 +8,8 @@ import lombok.val;
 import org.pac4j.core.context.J2EContext;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Optional;
+
 /**
  * This is {@link AccepttoWebflowUtils}.
  *
@@ -89,13 +91,23 @@ public class AccepttoWebflowUtils {
     }
 
     /**
-     * Sets e guardian user id.
+     * Sets eguardian user id.
      *
-     * @param authentication  the authentication
+     * @param requestContext  the context
      * @param eguardianUserId the eguardian user id
      */
-    public static void setEGuardianUserId(final Authentication authentication, final String eguardianUserId) {
-        authentication.addAttribute("eguardianUserId", eguardianUserId);
+    public static void setEGuardianUserId(final RequestContext requestContext, final String eguardianUserId) {
+        requestContext.getFlowScope().put("eguardianUserId", eguardianUserId);
+    }
+
+    /**
+     * Gets eguardian user id.
+     *
+     * @param requestContext the request context
+     * @return the e guardian user id
+     */
+    public static Optional<String> getEGuardianUserId(final RequestContext requestContext) {
+        return Optional.ofNullable((String) requestContext.getFlowScope().get("eguardianUserId"));
     }
 
     /**

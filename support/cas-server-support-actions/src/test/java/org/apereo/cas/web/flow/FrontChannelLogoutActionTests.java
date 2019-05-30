@@ -68,7 +68,7 @@ public class FrontChannelLogoutActionTests {
         when(this.requestContext.getExternalContext()).thenReturn(servletExternalContext);
         when(servletExternalContext.getNativeRequest()).thenReturn(request);
         when(servletExternalContext.getNativeResponse()).thenReturn(response);
-        val flowScope = new LocalAttributeMap();
+        val flowScope = new LocalAttributeMap<>();
         when(this.requestContext.getFlowScope()).thenReturn(flowScope);
         val mockFlowExecutionKey = new MockFlowExecutionKey(FLOW_EXECUTION_KEY);
         val mockFlowExecutionContext = new MockFlowExecutionContext();
