@@ -74,7 +74,7 @@ public class HazelcastClusterProperties implements Serializable {
      * The instance name.
      */
     @RequiredProperty
-    private String instanceName = "localhost";
+    private String instanceName;
 
     /**
      * You may also want to choose to use only one port. In that case, you can disable the auto-increment feature of port.
