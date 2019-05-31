@@ -70,7 +70,7 @@ public class HazelcastTicketRegistryConfiguration {
     @Bean
     public HazelcastInstance casTicketRegistryHazelcastInstance() {
         val hz = casProperties.getTicket().getRegistry().getHazelcast();
-        LOGGER.debug("Creating Hazelcast instance using properties [{}]", hz);
+        LOGGER.debug("Creating Hazelcast instance for members [{}]", hz.getCluster().getMembers());
         return Hazelcast.newHazelcastInstance(HazelcastConfigurationFactory.build(hz));
     }
 

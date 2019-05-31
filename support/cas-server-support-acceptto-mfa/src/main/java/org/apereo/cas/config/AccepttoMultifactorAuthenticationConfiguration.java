@@ -29,6 +29,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -37,6 +38,7 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.J2EContext;
@@ -70,6 +72,7 @@ import org.springframework.webflow.execution.Action;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @EnableRetry
+@Slf4j
 public class AccepttoMultifactorAuthenticationConfiguration {
     @Autowired
     @Qualifier("servicesManager")
@@ -186,8 +189,18 @@ public class AccepttoMultifactorAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "mfaAccepttoMultifactorDetermineUserAccountStatusAction")
     @Bean
-    public Action mfaAccepttoMultifactorDetermineUserAccountStatusAction() {
-        return new AccepttoMultifactorDetermineUserAccountStatusAction(casProperties);
+    public Action mfaAccepttoMultifactorDetermineUserAccountStatusAction() throws Exception {
+        val props = casProperties.getAuthn().getMfa().getAcceptto();
+        val location = props.getRegistrationApiPublicKey().getLocation();
+        if (location == null) {
+            throw new BeanCreationException("No registration API public key is defined for the Acceptto integration.");
+        }
+        val factory = new PublicKeyFactoryBean();
+        LOGGER.debug("Locating Acceptto registration API public key from [{}]", location);
+        factory.setResource(location);
+        factory.setSingleton(false);
+        factory.setAlgorithm("RSA");
+        return new AccepttoMultifactorDetermineUserAccountStatusAction(casProperties, factory.getObject());
     }
 
     @ConditionalOnMissingBean(name = "mfaAccepttoMultifactorValidateUserDeviceRegistrationAction")
