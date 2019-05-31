@@ -203,7 +203,7 @@ again to fetch attributes and cache them for `30` minutes.
 
 Here is a similar example with caching turned off for the service where CAS attempts to combine previously-resolved attributes with the results from the attribute
 repository identified as `MyJsonRepository`. The expectation is that the attribute source `MyJsonRepository` is excluded from principal resolution during the authentication phase
-and should only be contacted at release time for this service 
+and should only be contacted at release time for this service:
 
 ```json
 {
@@ -221,4 +221,4 @@ and should only be contacted at release time for this service
     }
   }
 }
-
+```

@@ -60,7 +60,10 @@ import static org.mockito.Mockito.*;
 @TestPropertySource(properties = {
     "cas.authn.mfa.acceptto.apiUrl=http://localhost:5002",
     "cas.authn.mfa.acceptto.application-id=thisisatestid",
-    "cas.authn.mfa.acceptto.secret=thisisasecret"
+    "cas.authn.mfa.acceptto.secret=thisisasecret",
+    "cas.authn.mfa.acceptto.organization-id=thisisatestid",
+    "cas.authn.mfa.acceptto.organization-secret=thisisasecret",
+    "cas.authn.mfa.acceptto.registration-api-public-key.location=classpath:publickey.pem"
 })
 public class AccepttoMultifactorAuthenticationHandlerTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
