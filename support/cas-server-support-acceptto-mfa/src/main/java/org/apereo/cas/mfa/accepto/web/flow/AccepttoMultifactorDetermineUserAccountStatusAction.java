@@ -3,11 +3,10 @@ package org.apereo.cas.mfa.accepto.web.flow;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.accepto.AccepttoApiUtils;
 import org.apereo.cas.mfa.accepto.AccepttoEmailCredential;
-import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.SneakyThrows;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
@@ -25,24 +24,11 @@ import java.security.PublicKey;
  * @since 6.1.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class AccepttoMultifactorDetermineUserAccountStatusAction extends AbstractAction {
     private final CasConfigurationProperties casProperties;
 
     private final PublicKey registrationApiPublicKey;
-
-    @SneakyThrows
-    public AccepttoMultifactorDetermineUserAccountStatusAction(final CasConfigurationProperties casProperties) {
-        this.casProperties = casProperties;
-        val acceptto = casProperties.getAuthn().getMfa().getAcceptto();
-        val factory = new PublicKeyFactoryBean();
-        val location = acceptto.getRegistrationApiPublicKey().getLocation();
-
-        LOGGER.debug("Locating registration API public key from [{}]", location);
-        factory.setResource(location);
-        factory.setSingleton(false);
-        factory.setAlgorithm("RSA");
-        this.registrationApiPublicKey = factory.getObject();
-    }
 
     @Override
     public Event doExecute(final RequestContext requestContext) {
