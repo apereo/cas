@@ -29,6 +29,7 @@ import org.springframework.util.StringUtils;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.UUID;
 
 /**
  * This is {@link HazelcastConfigurationFactory}.
@@ -143,9 +144,12 @@ public class HazelcastConfigurationFactory {
         LOGGER.trace("Created Hazelcast network configuration [{}]", networkConfig);
         config.setNetworkConfig(networkConfig);
 
-        return config.setInstanceName(cluster.getInstanceName())
-            .setProperty(BaseHazelcastProperties.HAZELCAST_DISCOVERY_ENABLED_PROP,
-                BooleanUtils.toStringTrueFalse(cluster.getDiscovery().isEnabled()))
+        val instanceName = StringUtils.hasText(cluster.getInstanceName())
+            ? cluster.getInstanceName()
+            : UUID.randomUUID().toString();
+        LOGGER.trace("Configuring Hazelcast instance name [{}]", instanceName);
+        return config.setInstanceName(instanceName)
+            .setProperty(BaseHazelcastProperties.HAZELCAST_DISCOVERY_ENABLED_PROP, BooleanUtils.toStringTrueFalse(cluster.getDiscovery().isEnabled()))
             .setProperty(BaseHazelcastProperties.IPV4_STACK_PROP, String.valueOf(cluster.isIpv4Enabled()))
             .setProperty(BaseHazelcastProperties.LOGGING_TYPE_PROP, cluster.getLoggingType())
             .setProperty(BaseHazelcastProperties.MAX_HEARTBEAT_SECONDS_PROP, String.valueOf(cluster.getMaxNoHeartbeatSeconds()));
