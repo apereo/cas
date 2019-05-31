@@ -27,9 +27,7 @@ import java.security.spec.X509EncodedKeySpec;
 @Getter
 @Setter
 public class PublicKeyFactoryBean extends AbstractFactoryBean<PublicKey> {
-
     private Resource resource;
-
     private String algorithm;
 
     @Override
@@ -42,17 +40,32 @@ public class PublicKeyFactoryBean extends AbstractFactoryBean<PublicKey> {
         return key;
     }
 
-    private PublicKey readPemPublicKey() throws Exception {
+    /**
+     * Read pem public key.
+     *
+     * @return the public key
+     * @throws Exception the exception
+     */
+    protected PublicKey readPemPublicKey() throws Exception {
         try (val reader = new PemReader(new InputStreamReader(this.resource.getInputStream(), StandardCharsets.UTF_8))) {
             val pemObject = reader.readPemObject();
-            val content = pemObject.getContent();
-            val pubSpec = new X509EncodedKeySpec(content);
-            val factory = KeyFactory.getInstance(this.algorithm);
-            return factory.generatePublic(pubSpec);
+            if (pemObject != null) {
+                val content = pemObject.getContent();
+                val pubSpec = new X509EncodedKeySpec(content);
+                val factory = KeyFactory.getInstance(this.algorithm);
+                return factory.generatePublic(pubSpec);
+            }
         }
+        return null;
     }
 
-    private PublicKey readDERPublicKey() throws Exception {
+    /**
+     * Read der public key.
+     *
+     * @return the public key
+     * @throws Exception the exception
+     */
+    protected PublicKey readDERPublicKey() throws Exception {
         LOGGER.debug("Creating public key instance from [{}] using [{}]", this.resource.getFilename(), this.algorithm);
         try (val pubKey = this.resource.getInputStream()) {
             val bytes = new byte[(int) this.resource.contentLength()];
