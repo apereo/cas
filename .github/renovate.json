@@ -99,6 +99,12 @@
       ]
     },
     {
+      "groupName": "Mockito",
+      "packagePatterns": [
+        "^org.mockito:"
+      ]
+    },
+    {
       "groupName": "ApacheJClouds",
       "packagePatterns": [
         "^org.apache.jclouds"
