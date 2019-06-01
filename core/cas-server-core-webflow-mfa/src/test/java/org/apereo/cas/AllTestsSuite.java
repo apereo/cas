@@ -24,8 +24,7 @@ import org.junit.runner.RunWith;
     GroovyScriptMultifactorAuthenticationProviderSelectorTests.class,
     RankedMultifactorAuthenticationProviderSelectorTests.class,
     RequestSessionAttributeMultifactorAuthenticationPolicyEventResolverTests.class,
-    TimedMultifactorAuthenticationPolicyEventResolverTests.class,
-    AllMultifactorAuthenticationWebflowTests.class
+    TimedMultifactorAuthenticationPolicyEventResolverTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
