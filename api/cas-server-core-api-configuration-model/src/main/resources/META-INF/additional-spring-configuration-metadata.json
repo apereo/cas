@@ -12,6 +12,17 @@
       }
     },
     {
+      "name": "cas.service-registry.config.location",
+      "type": "java.lang.String",
+      "description": "Location of the JSON/YAML service registry files",
+      "defaultValue": true,
+      "deprecation": {
+        "replacement": "cas.service-registry.json.location",
+        "reason": "Property renamed due to cas.service-registry.json.location instead.",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.authn.throttle.appcode",
       "type": "java.lang.String",
       "description": "Throttling application code to record.",
