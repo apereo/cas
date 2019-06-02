@@ -83,7 +83,7 @@ public class OAuth20TokenManagementEndpoint extends BaseCasActuatorEndpoint {
     public void deleteToken(@Selector final String ticketId) {
         val ticket = getToken(ticketId);
         if (ticket != null) {
-            ticketRegistry.deleteTicket(ticketId);
+            ticketRegistry.deleteTicket(ticket.getId());
         }
     }
 }

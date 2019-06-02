@@ -36,7 +36,6 @@ import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.OidcServiceJsonWebKeystoreCacheExpirationPolicy;
 import org.apereo.cas.oidc.jwks.OidcServiceJsonWebKeystoreCacheLoader;
 import org.apereo.cas.oidc.profile.OidcProfileScopeToAttributesFilter;
-import org.apereo.cas.oidc.profile.OidcRegisteredServicePreProcessorEventListener;
 import org.apereo.cas.oidc.profile.OidcUserProfileDataCreator;
 import org.apereo.cas.oidc.profile.OidcUserProfileSigningAndEncryptionService;
 import org.apereo.cas.oidc.profile.OidcUserProfileViewRenderer;
@@ -618,11 +617,6 @@ public class OidcConfiguration implements WebMvcConfigurer {
             .stream()
             .map(k -> new OidcCustomScopeAttributeReleasePolicy(k.getKey(), CollectionUtils.wrapList(k.getValue().split(","))))
             .collect(Collectors.toSet());
-    }
-
-    @Bean
-    public OidcRegisteredServicePreProcessorEventListener oidcRegisteredServicePreProcessorEventListener() {
-        return new OidcRegisteredServicePreProcessorEventListener(profileScopeToAttributesFilter());
     }
 
     @Bean
