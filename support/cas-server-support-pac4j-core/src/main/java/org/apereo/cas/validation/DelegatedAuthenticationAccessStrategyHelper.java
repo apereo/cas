@@ -58,7 +58,7 @@ public class DelegatedAuthenticationAccessStrategyHelper {
      * @param authentication the authentication
      * @return the client name from authentication
      */
-    public String getClientNameFromAuthentication(final Authentication authentication) {
+    public static String getClientNameFromAuthentication(final Authentication authentication) {
         val clientNames = authentication.getAttributes()
             .getOrDefault(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME, new ArrayList<>());
         return CollectionUtils.firstElement(clientNames).map(Object::toString).orElse(StringUtils.EMPTY);

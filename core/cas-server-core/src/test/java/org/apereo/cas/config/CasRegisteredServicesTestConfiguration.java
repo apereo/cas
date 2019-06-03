@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
+import org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider;
@@ -195,6 +196,22 @@ public class CasRegisteredServicesTestConfiguration {
         svc21.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.getPropertyName(), prop);
         svc21.setEvaluationOrder(2000);
         l.add(svc21);
+
+        val svc22 = RegisteredServiceTestUtils.getRegisteredService("cas-access-disabled");
+        val strategy = new DefaultRegisteredServiceAccessStrategy();
+        strategy.setEnabled(false);
+        strategy.setUnauthorizedRedirectUrl(new URI("https://www.github.com"));
+        svc22.setAccessStrategy(strategy);
+        l.add(svc22);
+
+        val svc23 = RegisteredServiceTestUtils.getRegisteredService("cas-access-delegation");
+        val strategy23 = new DefaultRegisteredServiceAccessStrategy();
+        strategy23.setEnabled(true);
+        val delegate = new DefaultRegisteredServiceDelegatedAuthenticationPolicy();
+        delegate.setExclusive(true);
+        strategy23.setDelegatedAuthenticationPolicy(delegate);
+        svc23.setAccessStrategy(strategy23);
+        l.add(svc23);
 
         return l;
     }
