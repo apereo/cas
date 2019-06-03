@@ -44,9 +44,14 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
     private RegisteredService reconcile(final OidcRegisteredService oidcService) {
         LOGGER.trace("Reconciling OpenId Connect scopes and claims for [{}]", oidcService.getServiceId());
 
-        val policyChain = new ChainingAttributeReleasePolicy();
-
         val definedServiceScopes = oidcService.getScopes();
+        if (definedServiceScopes.isEmpty()) {
+            LOGGER.trace("Registered service [{}] does not define any scopes to control attribute release policies. "
+                + "CAS will allow the existing attribute release policies assigned to the service to operate without a scope.", oidcService.getServiceId());
+            return oidcService;
+        }
+
+        val policyChain = new ChainingAttributeReleasePolicy();
         definedServiceScopes.forEach(givenScope -> {
             LOGGER.trace("Reviewing scope [{}] for [{}]", givenScope, oidcService.getServiceId());
 
@@ -88,10 +93,7 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
             }
         });
 
-        if (definedServiceScopes.isEmpty()) {
-            LOGGER.trace("Registered service [{}] does not define any scopes to control attribute release policies. "
-                + "CAS will allow the existing attribute release policies assigned to the service to operate without a scope.", oidcService.getServiceId());
-        } else if (policyChain.getPolicies().isEmpty()) {
+        if (policyChain.getPolicies().isEmpty()) {
             LOGGER.debug("No attribute release policy could be determined based on given scopes. "
                 + "No claims/attributes will be released to [{}]", oidcService.getServiceId());
             oidcService.setAttributeReleasePolicy(new DenyAllAttributeReleasePolicy());
