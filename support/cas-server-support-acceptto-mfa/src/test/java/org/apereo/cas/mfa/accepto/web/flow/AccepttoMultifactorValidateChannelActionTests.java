@@ -16,6 +16,7 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
@@ -24,6 +25,8 @@ import org.apereo.cas.web.support.WebUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.J2EContext;
@@ -93,6 +96,11 @@ public class AccepttoMultifactorValidateChannelActionTests {
 
     @Test
     public void verifyOperation() throws Exception {
+        val httpRequest = new MockHttpServletRequest();
+        httpRequest.setRemoteAddr("185.86.151.11");
+        httpRequest.setLocalAddr("185.88.151.11");
+        ClientInfoHolder.setClientInfo(new ClientInfo(httpRequest));
+
         val data = MAPPER.writeValueAsString(CollectionUtils.wrap("channel", "test-channel",
             "status", "approved", "device_id", "deviceid-123456"));
         try (val webServer = new MockWebServer(5001,
@@ -107,7 +115,7 @@ public class AccepttoMultifactorValidateChannelActionTests {
             val authn = CoreAuthenticationTestUtils.getAuthentication("casuser");
             WebUtils.putAuthentication(authn, context);
             AccepttoWebflowUtils.storeChannelInSessionStore("test-channel", webContext);
-            AccepttoWebflowUtils.storeAuthentication(authn, webContext);
+            AccepttoWebflowUtils.storeAuthenticationInSessionStore(authn, webContext);
             RequestContextHolder.setRequestContext(context);
             val result = action.doExecute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_FINALIZE, result.getId());
