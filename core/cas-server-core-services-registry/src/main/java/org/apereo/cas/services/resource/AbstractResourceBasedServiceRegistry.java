@@ -3,6 +3,7 @@ package org.apereo.cas.services.resource;
 import org.apereo.cas.services.AbstractServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ResourceBasedServiceRegistry;
+import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
@@ -85,18 +86,22 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
 
     public AbstractResourceBasedServiceRegistry(final Resource configDirectory,
                                                 final Collection<StringSerializer<RegisteredService>> serializers,
-                                                final ApplicationEventPublisher eventPublisher) throws Exception {
+                                                final ApplicationEventPublisher eventPublisher,
+                                                final Collection<ServiceRegistryListener> serviceRegistryListeners) throws Exception {
         this(configDirectory, serializers, false, eventPublisher,
             new NoOpRegisteredServiceReplicationStrategy(),
-            new DefaultRegisteredServiceResourceNamingStrategy());
+            new DefaultRegisteredServiceResourceNamingStrategy(),
+            serviceRegistryListeners);
     }
 
     public AbstractResourceBasedServiceRegistry(final Path configDirectory, final StringSerializer<RegisteredService> serializer,
                                                 final boolean enableWatcher, final ApplicationEventPublisher eventPublisher,
                                                 final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
-                                                final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) {
+                                                final RegisteredServiceResourceNamingStrategy resourceNamingStrategy,
+                                                final Collection<ServiceRegistryListener> serviceRegistryListeners) {
         this(configDirectory, CollectionUtils.wrap(serializer), enableWatcher, eventPublisher,
-            registeredServiceReplicationStrategy, resourceNamingStrategy);
+            registeredServiceReplicationStrategy, resourceNamingStrategy,
+            serviceRegistryListeners);
     }
 
     public AbstractResourceBasedServiceRegistry(final Path configDirectory,
@@ -104,8 +109,9 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                                                 final boolean enableWatcher,
                                                 final ApplicationEventPublisher eventPublisher,
                                                 final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
-                                                final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) {
-        super(eventPublisher);
+                                                final RegisteredServiceResourceNamingStrategy resourceNamingStrategy,
+                                                final Collection<ServiceRegistryListener> serviceRegistryListeners) {
+        super(eventPublisher, serviceRegistryListeners);
         initializeRegistry(configDirectory, serializers, enableWatcher, registeredServiceReplicationStrategy, resourceNamingStrategy);
     }
 
@@ -114,8 +120,9 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                                                 final boolean enableWatcher,
                                                 final ApplicationEventPublisher eventPublisher,
                                                 final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
-                                                final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) throws Exception {
-        super(eventPublisher);
+                                                final RegisteredServiceResourceNamingStrategy resourceNamingStrategy,
+                                                final Collection<ServiceRegistryListener> serviceRegistryListeners) throws Exception {
+        super(eventPublisher, serviceRegistryListeners);
         LOGGER.trace("Provided service registry directory is specified at [{}]", configDirectory);
         val pattern = String.join("|", getExtensions());
         val servicesDirectory = ResourceUtils.prepareClasspathResourceIfNeeded(configDirectory, true, pattern);
@@ -230,8 +237,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             .collect(Collectors.toMap(RegisteredService::getId, Function.identity(),
                 LOG_DUPLICATE_AND_RETURN_FIRST_ONE, LinkedHashMap::new));
         val services = new ArrayList<RegisteredService>(this.serviceMap.values());
-        val results =
-            this.registeredServiceReplicationStrategy.updateLoadedRegisteredServicesFromCache(services, this);
+        val results = this.registeredServiceReplicationStrategy.updateLoadedRegisteredServicesFromCache(services, this);
         results.forEach(service -> publishEvent(new CasRegisteredServiceLoadedEvent(this, service)));
         return results;
     }
@@ -277,6 +283,8 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                 .map(s -> s.load(in))
                 .filter(Objects::nonNull)
                 .flatMap(Collection::stream)
+                .map(this::invokeServiceRegistryListenerPostLoad)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         } catch (final Exception e) {
             LOGGER.error("Error reading configuration file [{}]", fileName, e);
@@ -292,6 +300,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         }
         val f = getRegisteredServiceFileName(service);
         try (val out = Files.newOutputStream(f.toPath())) {
+            invokeServiceRegistryListenerPreSave(service);
             val result = this.registeredServiceSerializers.stream().anyMatch(s -> {
                 try {
                     s.to(out, service);

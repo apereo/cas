@@ -45,7 +45,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
         svc.setRequiredHandlers(new HashSet<>(0));
         list.add(svc);
 
-        val dao = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class), list);
+        val dao = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class), list, new ArrayList<>());
 
         this.defaultServicesManager = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class), new HashSet<>());
         this.defaultServicesManager.load();

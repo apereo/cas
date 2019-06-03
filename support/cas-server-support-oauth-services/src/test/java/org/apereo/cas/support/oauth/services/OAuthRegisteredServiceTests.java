@@ -16,6 +16,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -35,7 +36,8 @@ public class OAuthRegisteredServiceTests {
     public OAuthRegisteredServiceTests() throws Exception {
         this.dao = new JsonServiceRegistry(RESOURCE, false,
             mock(ApplicationEventPublisher.class), new NoOpRegisteredServiceReplicationStrategy(),
-            new DefaultRegisteredServiceResourceNamingStrategy());
+            new DefaultRegisteredServiceResourceNamingStrategy(),
+            new ArrayList<>());
     }
 
     @BeforeAll

@@ -7,16 +7,21 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
+import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.util.LdapUtils;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.Collection;
 
 /**
  * This is {@link LdapServiceRegistryConfiguration}.
@@ -34,6 +39,10 @@ public class LdapServiceRegistryConfiguration {
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
+    @Autowired
+    @Qualifier("serviceRegistryListeners")
+    private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
+
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "ldapServiceRegistryMapper")
@@ -46,7 +55,8 @@ public class LdapServiceRegistryConfiguration {
     public ServiceRegistry ldapServiceRegistry() {
         val ldap = casProperties.getServiceRegistry().getLdap();
         val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
-        return new LdapServiceRegistry(connectionFactory, ldap.getBaseDn(), ldapServiceRegistryMapper(), ldap, eventPublisher);
+        return new LdapServiceRegistry(connectionFactory, ldap.getBaseDn(), ldapServiceRegistryMapper(),
+            ldap, eventPublisher, serviceRegistryListeners.getIfAvailable());
     }
 
     @Bean
