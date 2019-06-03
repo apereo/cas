@@ -17,6 +17,8 @@ import org.apereo.cas.web.support.WebUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.J2EContext;
@@ -36,8 +38,10 @@ import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.nio.charset.StandardCharsets;
+import java.security.PublicKey;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link AccepttoMultifactorFetchChannelActionTests}.
@@ -76,19 +80,29 @@ public class AccepttoMultifactorFetchChannelActionTests {
     @Qualifier("mfaAccepttoDistributedSessionStore")
     private SessionStore<J2EContext> mfaAccepttoDistributedSessionStore;
 
+    @Autowired
+    @Qualifier("mfaAccepttoApiPublicKey")
+    private PublicKey mfaAccepttoApiPublicKey;
+
     @Test
     public void verifyOperation() throws Exception {
+        val httpRequest = new MockHttpServletRequest();
+        httpRequest.setRemoteAddr("185.86.151.11");
+        httpRequest.setLocalAddr("185.88.151.11");
+        ClientInfoHolder.setClientInfo(new ClientInfo(httpRequest));
+
         val data = MAPPER.writeValueAsString(CollectionUtils.wrap("channel", "test-channel", "status", "success"));
         try (val webServer = new MockWebServer(5001,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
             webServer.start();
-            val action = new AccepttoMultifactorFetchChannelAction(casProperties, mfaAccepttoDistributedSessionStore);
+            val action = new AccepttoMultifactorFetchChannelAction(casProperties, mfaAccepttoDistributedSessionStore, mfaAccepttoApiPublicKey);
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
             WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication("casuser"), context);
             RequestContextHolder.setRequestContext(context);
+            AccepttoWebflowUtils.setChannel(context, "test-channel");
             val result = action.doExecute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
             assertTrue(context.getRequestScope().contains("accepttoRedirectUrl"));
