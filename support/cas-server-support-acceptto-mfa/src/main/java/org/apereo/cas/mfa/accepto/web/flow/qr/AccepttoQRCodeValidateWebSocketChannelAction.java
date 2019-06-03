@@ -81,7 +81,7 @@ public class AccepttoQRCodeValidateWebSocketChannelAction extends AbstractAction
 
                     if (success) {
                         LOGGER.debug("Storing channel [{}] in http session", channel);
-                        AccepttoWebflowUtils.storeChannel(channel, webContext);
+                        AccepttoWebflowUtils.storeChannelInSessionStore(channel, webContext);
                         WebUtils.putCredential(requestContext, new AccepttoEmailCredential(email));
                         return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_FINALIZE);
                     }

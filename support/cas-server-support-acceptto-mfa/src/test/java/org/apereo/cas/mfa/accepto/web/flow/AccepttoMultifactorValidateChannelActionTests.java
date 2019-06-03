@@ -106,7 +106,7 @@ public class AccepttoMultifactorValidateChannelActionTests {
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
             val authn = CoreAuthenticationTestUtils.getAuthentication("casuser");
             WebUtils.putAuthentication(authn, context);
-            AccepttoWebflowUtils.storeChannel("test-channel", webContext);
+            AccepttoWebflowUtils.storeChannelInSessionStore("test-channel", webContext);
             AccepttoWebflowUtils.storeAuthentication(authn, webContext);
             RequestContextHolder.setRequestContext(context);
             val result = action.doExecute(context);
