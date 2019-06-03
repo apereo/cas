@@ -62,6 +62,8 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
+import java.security.PublicKey;
+
 /**
  * This is {@link AccepttoMultifactorAuthenticationConfiguration}.
  *
@@ -170,8 +172,8 @@ public class AccepttoMultifactorAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "mfaAccepttoMultifactorFetchChannelAction")
     @Bean
-    public Action mfaAccepttoMultifactorFetchChannelAction() {
-        return new AccepttoMultifactorFetchChannelAction(casProperties, mfaAccepttoDistributedSessionStore());
+    public Action mfaAccepttoMultifactorFetchChannelAction() throws Exception {
+        return new AccepttoMultifactorFetchChannelAction(casProperties, mfaAccepttoDistributedSessionStore(), mfaAccepttoApiPublicKey());
     }
 
     @ConditionalOnMissingBean(name = "mfaAccepttoMultifactorValidateChannelAction")
@@ -190,6 +192,11 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "mfaAccepttoMultifactorDetermineUserAccountStatusAction")
     @Bean
     public Action mfaAccepttoMultifactorDetermineUserAccountStatusAction() throws Exception {
+        return new AccepttoMultifactorDetermineUserAccountStatusAction(casProperties, mfaAccepttoApiPublicKey());
+    }
+
+    @Bean
+    public PublicKey mfaAccepttoApiPublicKey() throws Exception {
         val props = casProperties.getAuthn().getMfa().getAcceptto();
         val location = props.getRegistrationApiPublicKey().getLocation();
         if (location == null) {
@@ -200,7 +207,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
         factory.setResource(location);
         factory.setSingleton(false);
         factory.setAlgorithm("RSA");
-        return new AccepttoMultifactorDetermineUserAccountStatusAction(casProperties, factory.getObject());
+        return factory.getObject();
     }
 
     @ConditionalOnMissingBean(name = "mfaAccepttoMultifactorValidateUserDeviceRegistrationAction")

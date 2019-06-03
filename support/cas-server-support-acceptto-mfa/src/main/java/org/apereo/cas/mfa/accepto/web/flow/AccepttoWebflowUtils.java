@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.Authentication;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.J2EContext;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -51,6 +52,16 @@ public class AccepttoWebflowUtils {
     }
 
     /**
+     * Gets channel.
+     *
+     * @param requestContext the request context
+     * @return the channel
+     */
+    public static Optional<String> getChannel(final RequestContext requestContext) {
+        return Optional.ofNullable((String) requestContext.getFlowScope().get("accepttoChannel"));
+    }
+
+    /**
      * Gets authentication from session store.
      *
      * @param webContext the web context
@@ -66,7 +77,7 @@ public class AccepttoWebflowUtils {
      * @param channel    the channel
      * @param webContext the web context
      */
-    public static void storeChannel(final String channel, final J2EContext webContext) {
+    public static void storeChannelInSessionStore(final String channel, final J2EContext webContext) {
         webContext.getSessionStore().set(webContext, SESSION_ATTRIBUTE_CHANNEL, channel);
     }
 
@@ -76,7 +87,7 @@ public class AccepttoWebflowUtils {
      * @param authentication the authentication
      * @param webContext     the web context
      */
-    public static void storeAuthentication(final Authentication authentication, final J2EContext webContext) {
+    public static void storeAuthenticationInSessionStore(final Authentication authentication, final J2EContext webContext) {
         webContext.getSessionStore().set(webContext, SESSION_ATTRIBUTE_ORIGINAL_AUTHENTICATION, authentication);
     }
 
@@ -88,6 +99,20 @@ public class AccepttoWebflowUtils {
      */
     public static void setInvitationToken(final RequestContext requestContext, final String invitationToken) {
         requestContext.getFlowScope().put("accepttoInvitationToken", invitationToken);
+    }
+
+    /**
+     * Sets channel in webflow.
+     *
+     * @param requestContext the request context
+     * @param channel        the channel
+     */
+    public void setChannel(final RequestContext requestContext, final String channel) {
+        if (StringUtils.isBlank(channel)) {
+            requestContext.getFlowScope().remove("accepttoChannel");
+        } else {
+            requestContext.getFlowScope().put("accepttoChannel", channel);
+        }
     }
 
     /**

@@ -54,6 +54,7 @@ public class AccepttoMultifactorValidateChannelAction extends AbstractAction {
 
             LOGGER.debug("Cleaning up session store to remove [{}]", credential);
             AccepttoWebflowUtils.resetChannelAndAuthentication(webContext);
+            AccepttoWebflowUtils.setChannel(requestContext, null);
 
             LOGGER.debug("Attempting to authenticate channel [{}] with authentication [{}] and service [{}]",
                 credential, authentication, service);
