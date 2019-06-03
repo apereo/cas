@@ -31,7 +31,7 @@ import java.security.PublicKey;
 public class AccepttoMultifactorDetermineUserAccountStatusAction extends AbstractAction {
     private final CasConfigurationProperties casProperties;
 
-    private final PublicKey registrationApiPublicKey;
+    private final PublicKey apiPublicKey;
 
     @Override
     public Event doExecute(final RequestContext requestContext) {
@@ -42,10 +42,10 @@ public class AccepttoMultifactorDetermineUserAccountStatusAction extends Abstrac
 
         try {
             LOGGER.trace("Contacting authentication API to inquire for account status of [{}]", email);
-            val results = AccepttoApiUtils.authenticate(authentication, acceptto, requestContext, this.registrationApiPublicKey);
+            val results = AccepttoApiUtils.authenticate(authentication, acceptto, requestContext, this.apiPublicKey);
 
-            val isApproved = results.containsKey("status")
-                && ObjectUtils.defaultIfNull(results.get("status"), StringUtils.EMPTY).toString().equalsIgnoreCase("approved");
+            val responseCode = ObjectUtils.defaultIfNull(results.get("response_code"), StringUtils.EMPTY).toString();
+            val isApproved = results.containsKey("status") && responseCode.equalsIgnoreCase("approved");
 
             if (isApproved) {
                 LOGGER.trace("Account status is approved for [{}]. Moving on...", email);
@@ -64,7 +64,8 @@ public class AccepttoMultifactorDetermineUserAccountStatusAction extends Abstrac
                 return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_DENY);
             }
 
-            if (results.containsKey("invite_token")) {
+            val shouldPairDevice = responseCode.equalsIgnoreCase("pair_device");
+            if (shouldPairDevice && results.containsKey("invite_token")) {
                 val originalToken = results.get("invite_token").toString();
                 LOGGER.trace("Located invitation token as [{}] for [{}].", originalToken, email);
 
@@ -84,6 +85,17 @@ public class AccepttoMultifactorDetermineUserAccountStatusAction extends Abstrac
                 AccepttoWebflowUtils.setInvitationTokenQRCode(requestContext, qrHash);
 
                 return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_REGISTER);
+            }
+
+            val isSuccessResponseCode = responseCode.equalsIgnoreCase("success");
+            if (isSuccessResponseCode && results.containsKey("channel")) {
+                val channel = results.get("channel").toString();
+                AccepttoWebflowUtils.setChannel(requestContext, channel);
+
+                if (results.containsKey("eguardian_user_id")) {
+                    val eguardianUserId = CollectionUtils.firstElement(results.get("eguardian_user_id")).get();
+                    AccepttoWebflowUtils.setEGuardianUserId(requestContext, eguardianUserId.toString());
+                }
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
