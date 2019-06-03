@@ -6,6 +6,7 @@ import org.apereo.cas.services.CosmosDbServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
+import org.apereo.cas.services.ServiceRegistryListener;
 
 import com.microsoft.azure.documentdb.ConsistencyLevel;
 import com.microsoft.azure.documentdb.IndexingMode;
@@ -13,7 +14,9 @@ import com.microsoft.azure.documentdb.IndexingPolicy;
 import com.microsoft.azure.documentdb.RequestOptions;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -21,6 +24,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.Collection;
 
 /**
  * This is {@link CosmosDbServiceRegistryConfiguration}.
@@ -45,6 +50,10 @@ public class CosmosDbServiceRegistryConfiguration {
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
+
+    @Autowired
+    @Qualifier("serviceRegistryListeners")
+    private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
 
     @Bean
     @RefreshScope
@@ -71,7 +80,7 @@ public class CosmosDbServiceRegistryConfiguration {
         db.createCollectionIfNotExists(cosmosDb.getCollection(), PARTITION_KEY_FIELD_NAME,
             cosmosDb.getThroughput(), indexingPolicy);
         return new CosmosDbServiceRegistry(db, dbFactory, cosmosDb.getCollection(),
-            cosmosDb.getDatabase(), eventPublisher);
+            cosmosDb.getDatabase(), eventPublisher, serviceRegistryListeners.getIfAvailable());
     }
 
     @Bean

@@ -40,8 +40,9 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
 
     public CosmosDbServiceRegistry(final DocumentDbTemplate db, final DocumentDbFactory dbFactory,
                                    final String collectionName, final String databaseName,
-                                   final ApplicationEventPublisher eventPublisher) {
-        super(eventPublisher);
+                                   final ApplicationEventPublisher eventPublisher,
+                                   final Collection<ServiceRegistryListener> serviceRegistryListeners) {
+        super(eventPublisher, serviceRegistryListeners);
 
         this.documentDbTemplate = db;
         this.collectionName = collectionName;
@@ -52,6 +53,7 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
+        invokeServiceRegistryListenerPreSave(registeredService);
         if (registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
             registeredService.setId(System.currentTimeMillis());
             insert(registeredService);
@@ -98,7 +100,10 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
         val services = new ArrayList<RegisteredService>();
         while (it.hasNext()) {
             val doc = it.next();
-            val svc = getRegisteredServiceFromDocumentBody(doc);
+            var svc = getRegisteredServiceFromDocumentBody(doc);
+            if (svc != null) {
+                svc = invokeServiceRegistryListenerPostLoad(svc);
+            }
             if (svc != null) {
                 services.add(svc);
             }

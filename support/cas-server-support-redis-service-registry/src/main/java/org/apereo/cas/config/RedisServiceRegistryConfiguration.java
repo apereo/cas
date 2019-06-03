@@ -6,9 +6,12 @@ import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
+import org.apereo.cas.services.ServiceRegistryListener;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -17,6 +20,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+
+import java.util.Collection;
 
 /**
  * This is {@link RedisServiceRegistryConfiguration}.
@@ -34,6 +39,10 @@ public class RedisServiceRegistryConfiguration {
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
+    @Autowired
+    @Qualifier("serviceRegistryListeners")
+    private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
+    
     @Bean
     @ConditionalOnMissingBean(name = "redisServiceConnectionFactory")
     public RedisConnectionFactory redisServiceConnectionFactory() {
@@ -50,7 +59,7 @@ public class RedisServiceRegistryConfiguration {
     @Bean
     @RefreshScope
     public ServiceRegistry redisServiceRegistry() {
-        return new RedisServiceRegistry(eventPublisher, registeredServiceRedisTemplate());
+        return new RedisServiceRegistry(eventPublisher, registeredServiceRedisTemplate(), serviceRegistryListeners.getIfAvailable());
     }
 
     @Bean

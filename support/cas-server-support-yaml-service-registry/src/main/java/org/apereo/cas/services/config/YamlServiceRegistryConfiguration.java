@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
+import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.YamlServiceRegistry;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
@@ -20,6 +21,8 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.Collection;
 
 /**
  * This is {@link YamlServiceRegistryConfiguration}.
@@ -45,6 +48,10 @@ public class YamlServiceRegistryConfiguration {
     @Qualifier("registeredServiceResourceNamingStrategy")
     private ObjectProvider<RegisteredServiceResourceNamingStrategy> resourceNamingStrategy;
 
+    @Autowired
+    @Qualifier("serviceRegistryListeners")
+    private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
+
     @Bean
     @RefreshScope
     @SneakyThrows
@@ -52,7 +59,9 @@ public class YamlServiceRegistryConfiguration {
         val registry = casProperties.getServiceRegistry();
         return new YamlServiceRegistry(registry.getYaml().getLocation(),
             registry.isWatcherEnabled(), eventPublisher,
-            registeredServiceReplicationStrategy.getIfAvailable(), resourceNamingStrategy.getIfAvailable());
+            registeredServiceReplicationStrategy.getIfAvailable(),
+            resourceNamingStrategy.getIfAvailable(),
+            serviceRegistryListeners.getIfAvailable());
     }
 
     @Bean

@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -28,7 +29,8 @@ public class DeleteResourceBasedRegisteredServiceWatcherTests {
     public void verifyOperationNotFound() {
         val result = new AtomicBoolean(false);
         val watcher = new DeleteResourceBasedRegisteredServiceWatcher(new AbstractResourceBasedServiceRegistry(new ClassPathResource("services"),
-            Collections.singletonList(new RegisteredServiceJsonSerializer()), o -> result.set(o.getClass().equals(CasRegisteredServicesLoadedEvent.class))) {
+            Collections.singletonList(new RegisteredServiceJsonSerializer()), o -> result.set(o.getClass().equals(CasRegisteredServicesLoadedEvent.class)),
+            new ArrayList<>()) {
             @Override
             protected String[] getExtensions() {
                 return new String[]{"json"};
@@ -43,7 +45,8 @@ public class DeleteResourceBasedRegisteredServiceWatcherTests {
     public void verifyOperationFoundDeleted() {
         val result = new AtomicBoolean(false);
         val registry = new AbstractResourceBasedServiceRegistry(new ClassPathResource("services"),
-            Collections.singletonList(new RegisteredServiceJsonSerializer()), o -> result.set(o.getClass().equals(CasRegisteredServiceDeletedEvent.class))) {
+            Collections.singletonList(new RegisteredServiceJsonSerializer()), o -> result.set(o.getClass().equals(CasRegisteredServiceDeletedEvent.class)),
+            new ArrayList<>()) {
             @Override
             protected String[] getExtensions() {
                 return new String[]{"json"};
@@ -61,7 +64,8 @@ public class DeleteResourceBasedRegisteredServiceWatcherTests {
     public void verifyTempFilesIgnored() throws Exception {
         val result = new AtomicBoolean(false);
         val registry = new AbstractResourceBasedServiceRegistry(new ClassPathResource("services"),
-                Collections.singletonList(new RegisteredServiceJsonSerializer()), o -> result.set(o.getClass().equals(CasRegisteredServiceDeletedEvent.class))) {
+                Collections.singletonList(new RegisteredServiceJsonSerializer()), o -> result.set(o.getClass().equals(CasRegisteredServiceDeletedEvent.class)),
+            new ArrayList<>()) {
             @Override
             protected String[] getExtensions() {
                 return new String[]{"json"};
