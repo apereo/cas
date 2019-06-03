@@ -272,7 +272,8 @@ public class CasSupportActionsConfiguration {
     @ConditionalOnMissingBean(name = "gatewayServicesManagementCheck")
     @RefreshScope
     public Action gatewayServicesManagementCheck() {
-        return new GatewayServicesManagementCheckAction(this.servicesManager.getIfAvailable());
+        return new GatewayServicesManagementCheckAction(this.servicesManager.getIfAvailable(),
+            authenticationRequestServiceSelectionStrategies.getIfAvailable());
     }
 
     @Autowired

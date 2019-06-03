@@ -3,6 +3,7 @@ package org.apereo.cas.mfa.accepto.web.flow;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.accepto.AccepttoApiUtils;
 import org.apereo.cas.mfa.accepto.AccepttoEmailCredential;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -10,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -41,7 +44,10 @@ public class AccepttoMultifactorDetermineUserAccountStatusAction extends Abstrac
             LOGGER.trace("Contacting authentication API to inquire for account status of [{}]", email);
             val results = AccepttoApiUtils.authenticate(authentication, acceptto, requestContext, this.registrationApiPublicKey);
 
-            if (results.containsKey("status") && results.get("status").toString().equalsIgnoreCase("approved")) {
+            val isApproved = results.containsKey("status")
+                && ObjectUtils.defaultIfNull(results.get("status"), StringUtils.EMPTY).toString().equalsIgnoreCase("approved");
+
+            if (isApproved) {
                 LOGGER.trace("Account status is approved for [{}]. Moving on...", email);
                 val credential = new AccepttoEmailCredential(email);
                 WebUtils.putCredential(requestContext, credential);
@@ -69,8 +75,8 @@ public class AccepttoMultifactorDetermineUserAccountStatusAction extends Abstrac
                 AccepttoWebflowUtils.setInvitationToken(requestContext, invitationToken);
 
                 if (results.containsKey("eguardian_user_id")) {
-                    val eguardianUserId = (String) results.get("eguardian_user_id");
-                    AccepttoWebflowUtils.setEGuardianUserId(requestContext, eguardianUserId);
+                    val eguardianUserId = CollectionUtils.firstElement(results.get("eguardian_user_id")).get();
+                    AccepttoWebflowUtils.setEGuardianUserId(requestContext, eguardianUserId.toString());
                 }
 
                 val qrHash = AccepttoApiUtils.generateQRCodeHash(authentication, acceptto, invitationToken);
@@ -81,6 +87,7 @@ public class AccepttoMultifactorDetermineUserAccountStatusAction extends Abstrac
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+            return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_DENY);
         }
         LOGGER.trace("Account status is verified for [{}]. Proceeding to MFA flow...", email);
         return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_SUCCESS);

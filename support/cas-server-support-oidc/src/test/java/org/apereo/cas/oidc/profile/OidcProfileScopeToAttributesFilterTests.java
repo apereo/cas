@@ -4,8 +4,6 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.services.ChainingAttributeReleasePolicy;
-import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -66,21 +64,5 @@ public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
         assertTrue(principal.getAttributes().containsKey("gender"));
         assertTrue(principal.getAttributes().containsKey("email"));
         assertEquals(4, principal.getAttributes().size());
-    }
-
-    @Test
-    public void verifyOperationRecon() {
-        var service = getOidcRegisteredService();
-        service.getScopes().add(OidcConstants.StandardScopes.ADDRESS.getScope());
-        service.getScopes().add(OidcConstants.StandardScopes.EMAIL.getScope());
-        service.getScopes().add(OidcConstants.StandardScopes.OFFLINE_ACCESS.getScope());
-        service.getScopes().add(OidcConstants.StandardScopes.OPENID.getScope());
-        service.getScopes().add(OidcConstants.StandardScopes.PHONE.getScope());
-        service.getScopes().add(OidcConstants.StandardScopes.PROFILE.getScope());
-        service = (OidcRegisteredService) profileScopeToAttributesFilter.reconcile(service);
-        val policy = service.getAttributeReleasePolicy();
-        assertTrue(policy instanceof ChainingAttributeReleasePolicy);
-        val chain = (ChainingAttributeReleasePolicy) policy;
-        assertEquals(4, chain.size());
     }
 }
