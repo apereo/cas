@@ -133,6 +133,10 @@ public class AccepttoApiUtils {
         AccepttoWebflowUtils.getEGuardianUserId(requestContext).ifPresent(value -> {
             parameters.put("eguardian_user_id", value);
         });
+        val currentCredential = WebUtils.getCredential(requestContext);
+        if (currentCredential instanceof AccepttoEmailCredential) {
+            parameters.put("auth_type", 1);
+        }
 
         LOGGER.debug("Authentication API parameters are assembled as [{}]", parameters);
         HttpResponse response = null;
