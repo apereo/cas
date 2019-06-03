@@ -5,6 +5,7 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.audit.AuditableExecutionResult;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
@@ -18,6 +19,7 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.pac4j.logout.RequestSloException;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.DelegatedClientNavigationController;
@@ -54,6 +56,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -153,9 +156,24 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
 
         if (singleSignOnSessionExists(context)) {
-            LOGGER.debug("An existing single sign-on session already exists. Skipping delegation and routing back to CAS authentication flow");
-            prepareForLoginPage(context);
-            return resumeWebflow();
+            final String tgt = WebUtils.getTicketGrantingTicketId(context);
+            final Optional<Authentication> authnResult = getSingleSignOnAuthenticationFrom(context);
+
+            if (authnResult.isPresent()) {
+                final Authentication authentication = authnResult.get();
+                final Object clientNames = authentication.getAttributes()
+                    .getOrDefault(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME, new ArrayList<>());
+                final String clientName = CollectionUtils.firstElement(clientNames).map(Object::toString).orElse(StringUtils.EMPTY);
+                final Service service = resolveServiceFromRequestContext(context);
+                if (isDelegatedClientAuthorizedFor(clientName, service)) {
+                    LOGGER.debug("An existing single sign-on session already exists. Skipping delegation and routing back to CAS authentication flow");
+                    prepareForLoginPage(context);
+                    return resumeWebflow();
+                }
+            }
+            final Service resolvedService = resolveServiceFromRequestContext(context);
+            LOGGER.debug("Single sign-on session in unauthorized for service [{}]", resolvedService);
+            centralAuthenticationService.deleteTicket(tgt);
         }
 
         final String clientName = request.getParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER);
@@ -203,6 +221,20 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         return error();
     }
 
+    private Optional<Authentication> getSingleSignOnAuthenticationFrom(final RequestContext requestContext) {
+        final String tgtId = WebUtils.getTicketGrantingTicketId(requestContext);
+        if (StringUtils.isBlank(tgtId)) {
+            LOGGER.trace("No ticket-granting ticket could be located in the webflow context");
+            return Optional.empty();
+        }
+        final TicketGrantingTicket ticket = this.centralAuthenticationService.getTicket(tgtId, TicketGrantingTicket.class);
+        if (ticket != null && !ticket.isExpired()) {
+            LOGGER.trace("Located a valid ticket-granting ticket. Examining existing single sign-on session strategies...");
+            return Optional.of(ticket.getAuthentication());
+        }
+        return Optional.empty();
+    }
+
     /**
      * Handle the thrown exception.
      *
@@ -223,6 +255,38 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             LOGGER.info(e.getMessage(), e);
             throw new IllegalArgumentException("Delegated authentication has failed with client " + client.getName());
         }
+    }
+
+    /**
+     * Is delegated client authorized for boolean.
+     *
+     * @param clientName the client name
+     * @param service    the service
+     * @return the boolean
+     */
+    public boolean isDelegatedClientAuthorizedFor(final String clientName, final Service service) {
+        if (service == null || StringUtils.isBlank(service.getId())) {
+            LOGGER.debug("Can not evaluate delegated authentication policy without a service");
+            return true;
+        }
+
+        final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+        if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
+            LOGGER.warn("Service access for [{}] is denied", registeredService);
+            return false;
+        }
+        LOGGER.trace("Located registered service definition [{}] matching [{}]", registeredService, service);
+        final AuditableContext context = AuditableContext.builder()
+            .registeredService(registeredService)
+            .properties(CollectionUtils.wrap(Client.class.getSimpleName(), clientName))
+            .build();
+        final AuditableExecutionResult result = delegatedAuthenticationPolicyEnforcer.execute(context);
+        if (!result.isExecutionFailure()) {
+            LOGGER.debug("Delegated authentication policy for [{}] allows for using client [{}]", registeredService, clientName);
+            return true;
+        }
+        LOGGER.warn("Delegated authentication policy for [{}] refuses access to client [{}]", registeredService.getServiceId(), clientName);
+        return false;
     }
 
     /**
@@ -347,7 +411,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     protected Event stopWebflow() {
         return new Event(this, CasWebflowConstants.TRANSITION_ID_STOP);
     }
-    
+
     /**
      * Resume webflow event.
      *
@@ -355,6 +419,11 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
      */
     protected Event resumeWebflow() {
         return new Event(this, CasWebflowConstants.TRANSITION_ID_RESUME);
+    }
+
+    private Service resolveServiceFromRequestContext(final RequestContext context) {
+        final Service service = WebUtils.getService(context);
+        return authenticationRequestServiceSelectionStrategies.resolveService(service);
     }
 
     /**
