@@ -33,6 +33,7 @@ import org.apereo.cas.oidc.config.OidcConfiguration;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -116,6 +117,10 @@ public abstract class AbstractOidcTests {
     @Autowired
     @Qualifier("profileScopeToAttributesFilter")
     protected OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter;
+
+    @Autowired
+    @Qualifier("oidcServiceRegistryListener")
+    protected ServiceRegistryListener oidcServiceRegistryListener;
 
     @Autowired
     @Qualifier("defaultOAuthCodeFactory")

@@ -29,7 +29,9 @@ import org.junit.runner.RunWith;
     TerminateSessionActionTests.class,
     VerifyRequiredServiceActionTests.class,
     SetServiceUnauthorizedRedirectUrlActionTests.class,
-    TerminateSessionConfirmingActionTests.class
+    TerminateSessionConfirmingActionTests.class,
+    GatewayServicesManagementCheckActionTests.class,
+    ServiceAuthorizationCheckActionTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
