@@ -10,6 +10,7 @@ import org.apache.http.client.AuthenticationStrategy;
 import org.apache.http.client.ConnectionBackoffStrategy;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.RedirectStrategy;
 import org.apache.http.client.ServiceUnavailableRetryStrategy;
 import org.apache.http.client.config.RequestConfig;
@@ -22,6 +23,7 @@ import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultBackoffStrategy;
+import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.DefaultRedirectStrategy;
 import org.apache.http.impl.client.DefaultServiceUnavailableRetryStrategy;
 import org.apache.http.impl.client.FutureRequestExecutionService;
@@ -151,6 +153,11 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
     private ServiceUnavailableRetryStrategy serviceUnavailableRetryStrategy = new DefaultServiceUnavailableRetryStrategy();
 
     /**
+     * Design a retry strategy for http requests. Default appears to be 3 retries.
+     */
+    private HttpRequestRetryHandler httpRequestRetryHandler = new DefaultHttpRequestRetryHandler();
+
+    /**
      * Default headers to be sent.
      **/
     private Collection<? extends Header> defaultHeaders = new ArrayList<>(0);
@@ -242,6 +249,7 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
             .setServiceUnavailableRetryStrategy(this.serviceUnavailableRetryStrategy)
             .setProxyAuthenticationStrategy(this.proxyAuthenticationStrategy)
             .setDefaultHeaders(this.defaultHeaders)
+            .setRetryHandler(this.httpRequestRetryHandler)
             .useSystemProperties();
         return builder.build();
     }
