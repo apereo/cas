@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.ldap.services;
 import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServiceRegistryProperties;
 import org.apereo.cas.services.AbstractServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
@@ -46,8 +47,9 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
                                final String baseDn,
                                final LdapRegisteredServiceMapper ldapServiceMapper,
                                final LdapServiceRegistryProperties ldapProperties,
-                               final ApplicationEventPublisher eventPublisher) {
-        super(eventPublisher);
+                               final ApplicationEventPublisher eventPublisher,
+                               final Collection<ServiceRegistryListener> serviceRegistryListeners) {
+        super(eventPublisher, serviceRegistryListeners);
         this.connectionFactory = connectionFactory;
         this.baseDn = baseDn;
         if (ldapServiceMapper == null) {
@@ -63,6 +65,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
     @Override
     public RegisteredService save(final RegisteredService rs) {
         try {
+            invokeServiceRegistryListenerPreSave(rs);
             if (rs.getId() != RegisteredService.INITIAL_IDENTIFIER_VALUE) {
                 return update(rs);
             }
@@ -165,6 +168,8 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
                 response.getResult().getEntries()
                     .stream()
                     .map(this.ldapServiceMapper::mapToRegisteredService)
+                    .filter(Objects::nonNull)
+                    .map(this::invokeServiceRegistryListenerPostLoad)
                     .filter(Objects::nonNull)
                     .forEach(s -> {
                         publishEvent(new CasRegisteredServiceLoadedEvent(this, s));

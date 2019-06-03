@@ -5,6 +5,7 @@ import org.apereo.cas.services.JsonServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
+import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
 
@@ -21,6 +22,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
+
+import java.util.Collection;
 
 /**
  * This is {@link JsonServiceRegistryConfiguration}.
@@ -48,13 +51,19 @@ public class JsonServiceRegistryConfiguration {
     @Qualifier("registeredServiceResourceNamingStrategy")
     private ObjectProvider<RegisteredServiceResourceNamingStrategy> resourceNamingStrategy;
 
+    @Autowired
+    @Qualifier("serviceRegistryListeners")
+    private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
+
     @Bean
     @SneakyThrows
     public ServiceRegistry jsonServiceRegistry() {
         val registry = casProperties.getServiceRegistry();
         return new JsonServiceRegistry(registry.getJson().getLocation(),
             registry.isWatcherEnabled(), eventPublisher,
-            registeredServiceReplicationStrategy.getIfAvailable(), resourceNamingStrategy.getIfAvailable());
+            registeredServiceReplicationStrategy.getIfAvailable(),
+            resourceNamingStrategy.getIfAvailable(),
+            serviceRegistryListeners.getIfAvailable());
     }
 
     @Bean

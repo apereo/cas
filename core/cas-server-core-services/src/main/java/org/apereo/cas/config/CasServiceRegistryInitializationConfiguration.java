@@ -5,6 +5,7 @@ import org.apereo.cas.services.CasServiceRegistryInitializerConfigurationEventLi
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryInitializer;
+import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistry;
 import org.apereo.cas.services.util.CasAddonsRegisteredServicesJsonSerializer;
@@ -51,6 +52,10 @@ import java.util.Collection;
 public class CasServiceRegistryInitializationConfiguration {
 
     @Autowired
+    @Qualifier("serviceRegistryListeners")
+    private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
+
+    @Autowired
     private ApplicationEventPublisher eventPublisher;
 
     @Autowired
@@ -89,7 +94,7 @@ public class CasServiceRegistryInitializationConfiguration {
     @Lazy(false)
     public ServiceRegistry embeddedJsonServiceRegistry() {
         val location = getServiceRegistryInitializerServicesDirectoryResource();
-        return new EmbeddedResourceBasedServiceRegistry(eventPublisher, location);
+        return new EmbeddedResourceBasedServiceRegistry(eventPublisher, location, serviceRegistryListeners.getIfAvailable());
     }
 
     private Resource getServiceRegistryInitializerServicesDirectoryResource() {
@@ -102,8 +107,10 @@ public class CasServiceRegistryInitializationConfiguration {
      * on the classpath.
      */
     public static class EmbeddedResourceBasedServiceRegistry extends AbstractResourceBasedServiceRegistry {
-        EmbeddedResourceBasedServiceRegistry(final ApplicationEventPublisher publisher, final Resource location) throws Exception {
-            super(location, getRegisteredServiceSerializers(), publisher);
+        EmbeddedResourceBasedServiceRegistry(final ApplicationEventPublisher publisher,
+                                             final Resource location,
+                                             final Collection<ServiceRegistryListener> serviceRegistryListeners) throws Exception {
+            super(location, getRegisteredServiceSerializers(), publisher, serviceRegistryListeners);
         }
 
         static Collection<StringSerializer<RegisteredService>> getRegisteredServiceSerializers() {

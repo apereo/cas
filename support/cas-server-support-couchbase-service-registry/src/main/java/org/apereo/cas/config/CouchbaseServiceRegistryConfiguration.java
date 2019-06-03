@@ -7,10 +7,13 @@ import org.apereo.cas.services.CouchbaseServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
+import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -18,6 +21,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
+
+import java.util.Collection;
 
 /**
  * This is {@link CouchbaseServiceRegistryConfiguration}.
@@ -35,6 +40,10 @@ public class CouchbaseServiceRegistryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier("serviceRegistryListeners")
+    private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
+
     @RefreshScope
     @Bean
     public CouchbaseClientFactory serviceRegistryCouchbaseClientFactory() {
@@ -48,7 +57,8 @@ public class CouchbaseServiceRegistryConfiguration {
     @Bean
     @RefreshScope
     public ServiceRegistry couchbaseServiceRegistry() {
-        return new CouchbaseServiceRegistry(eventPublisher, serviceRegistryCouchbaseClientFactory(), new RegisteredServiceJsonSerializer());
+        return new CouchbaseServiceRegistry(eventPublisher, serviceRegistryCouchbaseClientFactory(),
+            new RegisteredServiceJsonSerializer(), serviceRegistryListeners.getIfAvailable());
     }
 
     @Bean

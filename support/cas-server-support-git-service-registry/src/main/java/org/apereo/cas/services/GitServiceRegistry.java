@@ -49,8 +49,9 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
                               final GitRepository gitRepository,
                               final Collection<StringSerializer<RegisteredService>> registeredServiceSerializers,
                               final RegisteredServiceResourceNamingStrategy resourceNamingStrategy,
-                              final boolean pushChanges) {
-        super(eventPublisher);
+                              final boolean pushChanges,
+                              final Collection<ServiceRegistryListener> serviceRegistryListeners) {
+        super(eventPublisher, serviceRegistryListeners);
         this.gitRepository = gitRepository;
         this.registeredServiceSerializers = registeredServiceSerializers;
         this.resourceNamingStrategy = resourceNamingStrategy;
@@ -73,6 +74,7 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
                 writeRegisteredServiceToFile(registeredService, file);
             });
 
+        invokeServiceRegistryListenerPreSave(registeredService);
         this.gitRepository.commitAll(message);
         if (this.pushChanges) {
             this.gitRepository.push();
@@ -114,6 +116,8 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
             .filter(Objects::nonNull)
             .map(this::parseGitObjectContentIntoRegisteredService)
             .flatMap(Collection::stream)
+            .map(this::invokeServiceRegistryListenerPostLoad)
+            .filter(Objects::nonNull)
             .collect(Collectors.toList()));
         return registeredServices;
     }

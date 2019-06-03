@@ -5,6 +5,7 @@ import org.apereo.cas.services.RegisteredService;
 
 import org.springframework.context.ApplicationEventPublisher;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 public class WSFederationServiceRegistry extends ImmutableInMemoryServiceRegistry {
     public WSFederationServiceRegistry(final List<RegisteredService> services,
                                        final ApplicationEventPublisher eventPublisher) {
-        super(services, eventPublisher);
+        super(services, eventPublisher, new ArrayList<>());
     }
 
     public WSFederationServiceRegistry(final ApplicationEventPublisher eventPublisher,

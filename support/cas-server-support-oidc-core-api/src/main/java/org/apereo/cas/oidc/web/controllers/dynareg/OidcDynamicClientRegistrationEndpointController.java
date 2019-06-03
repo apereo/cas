@@ -190,10 +190,8 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
             registeredService.setDescription("Registered service ".concat(registeredService.getName()));
             registeredService.setDynamicallyRegistered(true);
 
-
             validate(registrationRequest, registeredService);
-
-            getOAuthConfigurationContext().getProfileScopeToAttributesFilter().reconcile(registeredService);
+            getOAuthConfigurationContext().getServicesManager().save(registeredService);
             return new ResponseEntity<>(clientResponse, HttpStatus.CREATED);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

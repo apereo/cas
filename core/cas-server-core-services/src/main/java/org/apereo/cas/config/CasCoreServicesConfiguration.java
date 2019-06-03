@@ -22,6 +22,7 @@ import org.apereo.cas.services.RegisteredServicesEventListener;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
+import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerScheduledLoader;
 import org.apereo.cas.services.domain.DefaultRegisteredServiceDomainExtractor;
@@ -60,6 +61,7 @@ import org.springframework.http.converter.AbstractHttpMessageConverter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -196,6 +198,12 @@ public class CasCoreServicesConfiguration {
         return ServicesManagerScheduledLoader.noOp();
     }
 
+    @Bean
+    @ConditionalOnMissingBean(name = "serviceRegistryListeners")
+    public Collection<ServiceRegistryListener> serviceRegistryListeners() {
+        return applicationContext.getBeansOfType(ServiceRegistryListener.class, false, true).values();
+    }
+
     @ConditionalOnMissingBean(name = "serviceRegistry")
     @Bean
     @RefreshScope
@@ -210,7 +218,7 @@ public class CasCoreServicesConfiguration {
                 + "Changes that are made to service definitions during runtime WILL be LOST when the CAS server is restarted. "
                 + "Ideally for production, you should choose a storage option (JSON, JDBC, MongoDb, etc) to track service definitions.");
             val services = getInMemoryRegisteredServices().orElseGet(ArrayList::new);
-            chainingRegistry.addServiceRegistry(new InMemoryServiceRegistry(eventPublisher, services));
+            chainingRegistry.addServiceRegistry(new InMemoryServiceRegistry(eventPublisher, services, serviceRegistryListeners()));
         }
 
         chainingRegistry.addServiceRegistries(plan.getServiceRegistries());

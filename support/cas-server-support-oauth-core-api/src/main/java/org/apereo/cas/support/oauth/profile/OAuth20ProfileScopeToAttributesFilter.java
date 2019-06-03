@@ -3,9 +3,13 @@ package org.apereo.cas.support.oauth.profile;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 
 import org.pac4j.core.context.J2EContext;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * This is {@link OAuth20ProfileScopeToAttributesFilter}.
@@ -14,6 +18,10 @@ import org.pac4j.core.context.J2EContext;
  * @since 5.1.0
  */
 public interface OAuth20ProfileScopeToAttributesFilter {
+
+    default Map<String, ? extends RegisteredServiceAttributeReleasePolicy> getAttributeReleasePolicies() {
+        return new LinkedHashMap<>();
+    }
 
     /**
      * Filter attributes.
@@ -29,18 +37,5 @@ public interface OAuth20ProfileScopeToAttributesFilter {
                              final RegisteredService registeredService, final J2EContext context,
                              final AccessToken accessToken) {
         return profile;
-    }
-
-    /**
-     * Reconcile the service definition.
-     * Usual operations involve translating scopes
-     * to attribute release policies if needed.
-     * The operation is expected to persist service changes.
-     *
-     * @param service the service
-     * @return the registered service
-     */
-    default RegisteredService reconcile(final RegisteredService service) {
-        return service;
     }
 }

@@ -28,7 +28,7 @@ public class ChainingServiceRegistry extends AbstractServiceRegistry {
 
     public ChainingServiceRegistry(final ApplicationEventPublisher eventPublisher,
                                    final List<ServiceRegistry> serviceRegistries) {
-        super(eventPublisher);
+        super(eventPublisher, new ArrayList<>());
         this.serviceRegistries = serviceRegistries;
     }
 

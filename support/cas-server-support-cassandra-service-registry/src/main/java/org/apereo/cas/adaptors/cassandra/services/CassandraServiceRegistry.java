@@ -4,6 +4,7 @@ import org.apereo.cas.cassandra.CassandraSessionFactory;
 import org.apereo.cas.configuration.model.support.cassandra.serviceregistry.CassandraServiceRegistryProperties;
 import org.apereo.cas.services.AbstractServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.serialization.StringSerializer;
 
@@ -19,6 +20,7 @@ import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -38,8 +40,9 @@ public class CassandraServiceRegistry extends AbstractServiceRegistry implements
 
     public CassandraServiceRegistry(final CassandraSessionFactory cassandraSessionFactory,
                                     final CassandraServiceRegistryProperties properties,
-                                    final ApplicationEventPublisher eventPublisher) {
-        super(eventPublisher);
+                                    final ApplicationEventPublisher eventPublisher,
+                                    final Collection<ServiceRegistryListener> serviceRegistryListeners) {
+        super(eventPublisher, serviceRegistryListeners);
         this.properties = properties;
         this.cassandraSession = cassandraSessionFactory.getSession();
         val mappingManager = new MappingManager(this.cassandraSession);
@@ -50,6 +53,7 @@ public class CassandraServiceRegistry extends AbstractServiceRegistry implements
     public RegisteredService save(final RegisteredService rs) {
         try {
             val data = SERIALIZER.toString(rs);
+            invokeServiceRegistryListenerPreSave(rs);
             entityManager.save(new CassandraRegisteredServiceHolder(rs.getId(), data), getConsistencyLevel());
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -89,6 +93,9 @@ public class CassandraServiceRegistry extends AbstractServiceRegistry implements
                 .all()
                 .stream()
                 .map(holder -> SERIALIZER.from(holder.getData()))
+                .filter(Objects::nonNull)
+                .map(this::invokeServiceRegistryListenerPostLoad)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

@@ -11,6 +11,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.Resource;
 
 import java.nio.file.Path;
+import java.util.Collection;
 
 /**
  * Implementation of {@code ServiceRegistry} that reads services definition from YAML
@@ -55,9 +56,10 @@ public class YamlServiceRegistry extends AbstractResourceBasedServiceRegistry {
      */
     public YamlServiceRegistry(final Path configDirectory, final boolean enableWatcher, final ApplicationEventPublisher eventPublisher,
                                final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
-                               final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) {
+                               final RegisteredServiceResourceNamingStrategy resourceNamingStrategy,
+                               final Collection<ServiceRegistryListener> serviceRegistryListeners) {
         super(configDirectory, new RegisteredServiceYamlSerializer(), enableWatcher, eventPublisher,
-            registeredServiceReplicationStrategy, resourceNamingStrategy);
+            registeredServiceReplicationStrategy, resourceNamingStrategy, serviceRegistryListeners);
     }
 
     /**
@@ -74,9 +76,10 @@ public class YamlServiceRegistry extends AbstractResourceBasedServiceRegistry {
      */
     public YamlServiceRegistry(final Resource configDirectory, final boolean enableWatcher, final ApplicationEventPublisher eventPublisher,
                                final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
-                               final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) throws Exception {
+                               final RegisteredServiceResourceNamingStrategy resourceNamingStrategy,
+                               final Collection<ServiceRegistryListener> serviceRegistryListeners) throws Exception {
         super(configDirectory, CollectionUtils.wrapList(new RegisteredServiceYamlSerializer()), enableWatcher,
-            eventPublisher, registeredServiceReplicationStrategy, resourceNamingStrategy);
+            eventPublisher, registeredServiceReplicationStrategy, resourceNamingStrategy, serviceRegistryListeners);
     }
 
     @Override

@@ -5,6 +5,7 @@ import org.apereo.cas.services.RegisteredService;
 
 import org.springframework.context.ApplicationEventPublisher;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 public class OAuth20ServiceRegistry extends ImmutableInMemoryServiceRegistry {
     public OAuth20ServiceRegistry(final List<RegisteredService> services,
                                   final ApplicationEventPublisher eventPublisher) {
-        super(services, eventPublisher);
+        super(services, eventPublisher, new ArrayList<>());
     }
 
     public OAuth20ServiceRegistry(final ApplicationEventPublisher eventPublisher, final RegisteredService... services) {

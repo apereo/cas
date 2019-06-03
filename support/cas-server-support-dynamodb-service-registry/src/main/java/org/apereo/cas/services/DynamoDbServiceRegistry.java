@@ -6,6 +6,8 @@ import lombok.val;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.Collection;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link DynamoDbServiceRegistry}.
@@ -16,13 +18,16 @@ import java.util.Collection;
 public class DynamoDbServiceRegistry extends AbstractServiceRegistry {
     private final DynamoDbServiceRegistryFacilitator dbTableService;
 
-    public DynamoDbServiceRegistry(final ApplicationEventPublisher eventPublisher, final DynamoDbServiceRegistryFacilitator dbTableService) {
-        super(eventPublisher);
+    public DynamoDbServiceRegistry(final ApplicationEventPublisher eventPublisher,
+                                   final DynamoDbServiceRegistryFacilitator dbTableService,
+                                   final Collection<ServiceRegistryListener> serviceRegistryListeners) {
+        super(eventPublisher, serviceRegistryListeners);
         this.dbTableService = dbTableService;
     }
 
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
+        invokeServiceRegistryListenerPreSave(registeredService);
         dbTableService.put(registeredService);
         return registeredService;
     }
@@ -35,8 +40,12 @@ public class DynamoDbServiceRegistry extends AbstractServiceRegistry {
     @Override
     public Collection<RegisteredService> load() {
         val svc = dbTableService.getAll();
-        svc.forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));
-        return svc;
+        return svc
+            .stream()
+            .map(this::invokeServiceRegistryListenerPostLoad)
+            .filter(Objects::nonNull)
+            .peek(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)))
+            .collect(Collectors.toList());
     }
 
     @Override
