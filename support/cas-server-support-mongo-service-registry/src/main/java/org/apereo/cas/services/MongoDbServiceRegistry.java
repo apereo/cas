@@ -11,7 +11,9 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * <p>Implementation of {@code ServiceRegistry} that uses a MongoDb repository as the backend
@@ -30,9 +32,11 @@ public class MongoDbServiceRegistry extends AbstractServiceRegistry {
     private final MongoOperations mongoTemplate;
     private final String collectionName;
 
-    public MongoDbServiceRegistry(final ApplicationEventPublisher eventPublisher, final MongoOperations mongoTemplate,
-                                  final String collectionName) {
-        super(eventPublisher);
+    public MongoDbServiceRegistry(final ApplicationEventPublisher eventPublisher,
+                                  final MongoOperations mongoTemplate,
+                                  final String collectionName,
+                                  final Collection<ServiceRegistryListener> serviceRegistryListeners) {
+        super(eventPublisher, serviceRegistryListeners);
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;
     }
@@ -61,8 +65,12 @@ public class MongoDbServiceRegistry extends AbstractServiceRegistry {
     @Override
     public Collection<RegisteredService> load() {
         val list = this.mongoTemplate.findAll(RegisteredService.class, this.collectionName);
-        list.forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));
-        return list;
+        return list
+            .stream()
+            .map(this::invokeServiceRegistryListenerPostLoad)
+            .filter(Objects::nonNull)
+            .peek(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)))
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -70,6 +78,7 @@ public class MongoDbServiceRegistry extends AbstractServiceRegistry {
         if (svc.getId() == AbstractRegisteredService.INITIAL_IDENTIFIER_VALUE) {
             svc.setId(svc.hashCode());
         }
+        invokeServiceRegistryListenerPreSave(svc);
         this.mongoTemplate.save(svc, this.collectionName);
         LOGGER.debug("Saved registered service: [{}]", svc);
         return this.findServiceById(svc.getId());

@@ -8,6 +8,7 @@ import org.apereo.cas.services.CouchDbServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
+import org.apereo.cas.services.ServiceRegistryListener;
 
 import lombok.val;
 import org.ektorp.impl.ObjectMapperFactory;
@@ -20,6 +21,8 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.Collection;
 
 /**
  * This is {@link CouchDbServiceRegistryConfiguration}.
@@ -46,6 +49,10 @@ public class CouchDbServiceRegistryConfiguration {
     @Qualifier("defaultObjectMapperFactory")
     private ObjectProvider<ObjectMapperFactory> objectMapperFactory;
 
+    @Autowired
+    @Qualifier("serviceRegistryListeners")
+    private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
+
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "serviceRegistryCouchDbFactory")
@@ -68,7 +75,7 @@ public class CouchDbServiceRegistryConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "couchDbServiceRegistry")
     public ServiceRegistry couchDbServiceRegistry() {
-        return new CouchDbServiceRegistry(eventPublisher, serviceRegistryCouchDbRepository());
+        return new CouchDbServiceRegistry(eventPublisher, serviceRegistryCouchDbRepository(), serviceRegistryListeners.getIfAvailable());
     }
 
     @Bean

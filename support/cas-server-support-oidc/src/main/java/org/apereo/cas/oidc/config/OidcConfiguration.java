@@ -36,10 +36,10 @@ import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.OidcServiceJsonWebKeystoreCacheExpirationPolicy;
 import org.apereo.cas.oidc.jwks.OidcServiceJsonWebKeystoreCacheLoader;
 import org.apereo.cas.oidc.profile.OidcProfileScopeToAttributesFilter;
-import org.apereo.cas.oidc.profile.OidcRegisteredServicePreProcessorEventListener;
 import org.apereo.cas.oidc.profile.OidcUserProfileDataCreator;
 import org.apereo.cas.oidc.profile.OidcUserProfileSigningAndEncryptionService;
 import org.apereo.cas.oidc.profile.OidcUserProfileViewRenderer;
+import org.apereo.cas.oidc.services.OidcServiceRegistryListener;
 import org.apereo.cas.oidc.token.OidcIdTokenGeneratorService;
 import org.apereo.cas.oidc.token.OidcIdTokenSigningAndEncryptionService;
 import org.apereo.cas.oidc.token.OidcRegisteredServiceJwtAccessTokenCipherExecutor;
@@ -67,6 +67,7 @@ import org.apereo.cas.oidc.web.flow.OidcRegisteredServiceUIAction;
 import org.apereo.cas.oidc.web.flow.OidcWebflowConfigurer;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
+import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
@@ -387,8 +388,14 @@ public class OidcConfiguration implements WebMvcConfigurer {
 
     @Bean
     public OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter() {
-        return new OidcProfileScopeToAttributesFilter(oidcPrincipalFactory(), servicesManager.getIfAvailable(),
-            userDefinedScopeBasedAttributeReleasePolicies(), casProperties);
+        return new OidcProfileScopeToAttributesFilter(oidcPrincipalFactory(),
+            casProperties, userDefinedScopeBasedAttributeReleasePolicies());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "oidcServiceRegistryListener")
+    public ServiceRegistryListener oidcServiceRegistryListener() {
+        return new OidcServiceRegistryListener(userDefinedScopeBasedAttributeReleasePolicies());
     }
 
     @RefreshScope
@@ -618,11 +625,6 @@ public class OidcConfiguration implements WebMvcConfigurer {
             .stream()
             .map(k -> new OidcCustomScopeAttributeReleasePolicy(k.getKey(), CollectionUtils.wrapList(k.getValue().split(","))))
             .collect(Collectors.toSet());
-    }
-
-    @Bean
-    public OidcRegisteredServicePreProcessorEventListener oidcRegisteredServicePreProcessorEventListener() {
-        return new OidcRegisteredServicePreProcessorEventListener(profileScopeToAttributesFilter());
     }
 
     @Bean

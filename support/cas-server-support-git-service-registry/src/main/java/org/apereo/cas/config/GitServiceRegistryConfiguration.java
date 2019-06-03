@@ -7,6 +7,7 @@ import org.apereo.cas.services.GitServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
+import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
@@ -21,6 +22,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.Collection;
 
 /**
  * This is {@link GitServiceRegistryConfiguration}.
@@ -40,6 +43,10 @@ public class GitServiceRegistryConfiguration {
     @Autowired
     @Qualifier("registeredServiceResourceNamingStrategy")
     private ObjectProvider<RegisteredServiceResourceNamingStrategy> resourceNamingStrategy;
+
+    @Autowired
+    @Qualifier("serviceRegistryListeners")
+    private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
 
     @Bean
     @ConditionalOnMissingBean(name = "gitRepositoryInstance")
@@ -63,7 +70,8 @@ public class GitServiceRegistryConfiguration {
                 new RegisteredServiceYamlSerializer()
             ),
             resourceNamingStrategy.getIfAvailable(),
-            registry.isPushChanges()
+            registry.isPushChanges(),
+            serviceRegistryListeners.getIfAvailable()
         );
     }
 

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Default In Memory Service Registry Dao for test/demonstration purposes.
@@ -23,12 +24,13 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistry {
     private final List<RegisteredService> registeredServices;
 
     public InMemoryServiceRegistry(final ApplicationEventPublisher eventPublisher) {
-        this(eventPublisher, new ArrayList<>());
+        this(eventPublisher, new ArrayList<>(), new ArrayList<>());
     }
 
     public InMemoryServiceRegistry(final ApplicationEventPublisher eventPublisher,
-                                   final List<RegisteredService> registeredServices) {
-        super(eventPublisher);
+                                   final List<RegisteredService> registeredServices,
+                                   final Collection<ServiceRegistryListener> serviceRegistryListeners) {
+        super(eventPublisher, serviceRegistryListeners);
         this.registeredServices = registeredServices;
     }
 
@@ -50,10 +52,14 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistry {
     @Override
     public Collection<RegisteredService> load() {
         val services = new ArrayList<RegisteredService>();
-        this.registeredServices.forEach(s -> {
-            publishEvent(new CasRegisteredServiceLoadedEvent(this, s));
-            services.add(s);
-        });
+        registeredServices
+            .stream()
+            .map(this::invokeServiceRegistryListenerPostLoad)
+            .filter(Objects::nonNull)
+            .forEach(s -> {
+                publishEvent(new CasRegisteredServiceLoadedEvent(this, s));
+                services.add(s);
+            });
         return services;
     }
 
@@ -62,6 +68,7 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistry {
         if (registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
             registeredService.setId(findHighestId() + 1);
         }
+        invokeServiceRegistryListenerPreSave(registeredService);
         val svc = findServiceById(registeredService.getId());
         if (svc != null) {
             this.registeredServices.remove(svc);
