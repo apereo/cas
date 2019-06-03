@@ -11,6 +11,7 @@ import org.ektorp.DocumentNotFoundException;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -24,8 +25,10 @@ public class CouchDbServiceRegistry extends AbstractServiceRegistry {
 
     private final RegisteredServiceCouchDbRepository dbClient;
 
-    public CouchDbServiceRegistry(final ApplicationEventPublisher eventPublisher, final RegisteredServiceCouchDbRepository dbClient) {
-        super(eventPublisher);
+    public CouchDbServiceRegistry(final ApplicationEventPublisher eventPublisher,
+                                  final RegisteredServiceCouchDbRepository dbClient,
+                                  final Collection<ServiceRegistryListener> serviceRegistryListeners) {
+        super(eventPublisher, serviceRegistryListeners);
         this.dbClient = dbClient;
     }
 
@@ -37,6 +40,7 @@ public class CouchDbServiceRegistry extends AbstractServiceRegistry {
         }
         try {
             val svc = dbClient.get(registeredService.getId());
+            invokeServiceRegistryListenerPreSave(registeredService);
             if (svc != null) {
                 val doc = new RegisteredServiceDocument(registeredService);
                 doc.setRevision(svc.getRevision());
@@ -69,7 +73,12 @@ public class CouchDbServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public Collection<RegisteredService> load() {
-        return dbClient.getAll().stream().map(RegisteredServiceDocument::getService).collect(Collectors.toList());
+        return dbClient.getAll()
+            .stream()
+            .map(RegisteredServiceDocument::getService)
+            .map(this::invokeServiceRegistryListenerPostLoad)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
     }
 
     @Override

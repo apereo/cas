@@ -6,15 +6,20 @@ import org.apereo.cas.services.MongoDbServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
+import org.apereo.cas.services.ServiceRegistryListener;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
+
+import java.util.Collection;
 
 /**
  * This is {@link MongoDbServiceRegistryConfiguration}.
@@ -30,6 +35,10 @@ public class MongoDbServiceRegistryConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    @Qualifier("serviceRegistryListeners")
+    private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
 
     @ConditionalOnMissingBean(name = "mongoDbServiceRegistryTemplate")
     @Bean
@@ -48,7 +57,8 @@ public class MongoDbServiceRegistryConfiguration {
         return new MongoDbServiceRegistry(
             eventPublisher,
             mongoDbServiceRegistryTemplate(),
-            mongo.getCollection());
+            mongo.getCollection(),
+            serviceRegistryListeners.getIfAvailable());
     }
 
     @Bean

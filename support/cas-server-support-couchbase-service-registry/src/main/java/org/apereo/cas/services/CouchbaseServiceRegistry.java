@@ -19,7 +19,6 @@ import org.springframework.context.ApplicationEventPublisher;
 
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Spliterator;
@@ -47,8 +46,9 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements
     private final StringSerializer<RegisteredService> registeredServiceJsonSerializer;
 
     public CouchbaseServiceRegistry(final ApplicationEventPublisher eventPublisher, final CouchbaseClientFactory couchbase,
-                                    final StringSerializer<RegisteredService> registeredServiceJsonSerializer) {
-        super(eventPublisher);
+                                    final StringSerializer<RegisteredService> registeredServiceJsonSerializer,
+                                    final Collection<ServiceRegistryListener> serviceRegistryListeners) {
+        super(eventPublisher, serviceRegistryListeners);
         this.couchbase = couchbase;
         this.registeredServiceJsonSerializer = registeredServiceJsonSerializer;
     }
@@ -62,6 +62,7 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements
         val stringWriter = new StringWriter();
         this.registeredServiceJsonSerializer.to(stringWriter, service);
         val document = RawJsonDocument.create(String.valueOf(service.getId()), 0, stringWriter.toString());
+        invokeServiceRegistryListenerPreSave(service);
         val savedDocument= couchbase.getBucket().upsert(document, couchbase.getTimeout(), TimeUnit.MILLISECONDS);
         val savedService = registeredServiceJsonSerializer.from(savedDocument.content());
         LOGGER.debug("Saved service [{}] as [{}]", service.getName(), savedService.getName());
@@ -82,10 +83,6 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements
         try {
             val allKeys = executeViewQueryForAllServices();
             val bucketName = couchbase.getBucket().name();
-            if (allKeys == null) {
-                LOGGER.info("No registered services could be found in bucket [{}]", bucketName);
-                return new ArrayList<>(0);
-            }
             val spliterator = Spliterators.spliteratorUnknownSize(allKeys.iterator(), Spliterator.ORDERED);
             return StreamSupport.stream(spliterator, false)
                 .map(N1qlQueryRow::value)
@@ -96,6 +93,8 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements
                     LOGGER.trace("Found service: [{}]", json);
                     return this.registeredServiceJsonSerializer.from(json);
                 })
+                .filter(Objects::nonNull)
+                .map(this::invokeServiceRegistryListenerPostLoad)
                 .filter(Objects::nonNull)
                 .peek(service -> publishEvent(new CasRegisteredServiceLoadedEvent(this, service)))
                 .collect(Collectors.toList());

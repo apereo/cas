@@ -5,12 +5,15 @@ import org.apereo.cas.services.RestfulServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
+import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.util.HttpUtils;
 
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -21,6 +24,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Collection;
 
 /**
  * This is {@link RestServiceRegistryConfiguration}.
@@ -36,6 +41,10 @@ public class RestServiceRegistryConfiguration {
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
+
+    @Autowired
+    @Qualifier("serviceRegistryListeners")
+    private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
 
     @Bean
     @RefreshScope
@@ -54,7 +63,7 @@ public class RestServiceRegistryConfiguration {
         headers.add("Content-Type", MediaType.APPLICATION_JSON_VALUE);
         headers.add("Accept", MediaType.APPLICATION_JSON_VALUE);
 
-        return new RestfulServiceRegistry(eventPublisher, restTemplate, registry.getUrl(), headers);
+        return new RestfulServiceRegistry(eventPublisher, restTemplate, registry.getUrl(), headers, serviceRegistryListeners.getIfAvailable());
     }
 
     @Bean

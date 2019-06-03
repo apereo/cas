@@ -6,6 +6,8 @@ import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingSt
 import lombok.SneakyThrows;
 import org.springframework.context.ApplicationEventPublisher;
 
+import java.util.ArrayList;
+
 import static org.mockito.Mockito.*;
 
 /**
@@ -22,7 +24,8 @@ public class YamlServiceRegistryTests extends AbstractResourceBasedServiceRegist
         dao = new YamlServiceRegistry(RESOURCE, false,
             mock(ApplicationEventPublisher.class),
             new NoOpRegisteredServiceReplicationStrategy(),
-            new DefaultRegisteredServiceResourceNamingStrategy());
+            new DefaultRegisteredServiceResourceNamingStrategy(),
+            new ArrayList<>());
         return dao;
     }
 }

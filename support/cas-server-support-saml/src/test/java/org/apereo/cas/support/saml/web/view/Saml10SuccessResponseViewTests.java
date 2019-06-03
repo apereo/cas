@@ -61,7 +61,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
     public void initialize() {
         val list = new ArrayList<RegisteredService>();
         list.add(RegisteredServiceTestUtils.getRegisteredService("https://.+"));
-        val dao = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class), list);
+        val dao = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class), list, new ArrayList<>());
 
         val mgmr = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class), new HashSet<>());
         mgmr.load();

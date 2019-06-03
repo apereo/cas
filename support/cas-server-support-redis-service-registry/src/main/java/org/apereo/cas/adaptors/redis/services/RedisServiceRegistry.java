@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.redis.services;
 
 import org.apereo.cas.services.AbstractServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
@@ -32,8 +33,10 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
 
     private final RedisTemplate<String, RegisteredService> template;
 
-    public RedisServiceRegistry(final ApplicationEventPublisher eventPublisher, final RedisTemplate<String, RegisteredService> template) {
-        super(eventPublisher);
+    public RedisServiceRegistry(final ApplicationEventPublisher eventPublisher,
+                                final RedisTemplate<String, RegisteredService> template,
+                                final Collection<ServiceRegistryListener> serviceRegistryListeners) {
+        super(eventPublisher, serviceRegistryListeners);
         this.template = template;
     }
 
@@ -42,6 +45,7 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
         try {
             LOGGER.trace("Saving registered service [{}]", rs);
             val redisKey = getRegisteredServiceRedisKey(rs);
+            invokeServiceRegistryListenerPreSave(rs);
             this.template.boundValueOps(redisKey).set(rs);
             LOGGER.trace("Saved registered service [{}]", rs);
             publishEvent(new CasRegisteredServiceSavedEvent(this, rs));
@@ -82,6 +86,8 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
             val list = getRegisteredServiceKeys()
                 .stream()
                 .map(redisKey -> this.template.boundValueOps(redisKey).get())
+                .filter(Objects::nonNull)
+                .map(this::invokeServiceRegistryListenerPostLoad)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
             LOGGER.trace("Loaded registered services [{}]", list);
