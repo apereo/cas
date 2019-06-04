@@ -103,7 +103,6 @@ public class CasThrottlingConfiguration {
         return plan;
     }
 
-    @Lazy
     @Bean
     @Autowired
     public Runnable throttleSubmissionCleaner(@Qualifier("authenticationThrottlingExecutionPlan") final AuthenticationThrottlingExecutionPlan plan) {

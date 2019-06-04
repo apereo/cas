@@ -25,6 +25,7 @@ public class InMemoryThrottledSubmissionCleaner implements Runnable {
     @Scheduled(initialDelayString = "${cas.authn.throttle.schedule.startDelay:PT10S}",
         fixedDelayString = "${cas.authn.throttle.schedule.repeatInterval:PT15S}")
     public void run() {
+        LOGGER.trace("Running in-memory authentication throttle cleaner process");
         final List<HandlerInterceptor> handlers = authenticationThrottlingExecutionPlan.getAuthenticationThrottleInterceptors();
         handlers
             .stream()
