@@ -239,14 +239,14 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
         return action.toString();
     }
 
-    private String convertEvaluateActionToString(final Action action) {
+    private static String convertEvaluateActionToString(final Action action) {
         val eval = EvaluateAction.class.cast(action);
         val expF = ReflectionUtils.findField(eval.getClass(), "expression");
         val resultExpF = ReflectionUtils.findField(eval.getClass(), "resultExpression");
         return stringifyActionField(action, expF, resultExpF);
     }
 
-    private String stringifyActionField(final Action eval, final Field... fields) {
+    private static String stringifyActionField(final Action eval, final Field... fields) {
         return Arrays.stream(fields)
             .map(f -> {
                 ReflectionUtils.makeAccessible(f);

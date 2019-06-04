@@ -369,7 +369,7 @@ public class CloseableKryoFactory implements KryoFactory {
         kryo.register(BaseDelegatingExpirationPolicy.class);
     }
 
-    private void registerMessageDescriptorsWithKryo(final CloseableKryo kryo) {
+    private static void registerMessageDescriptorsWithKryo(final CloseableKryo kryo) {
         kryo.register(DefaultMessageDescriptor.class);
         kryo.register(PasswordExpiringWarningMessageDescriptor.class);
     }
