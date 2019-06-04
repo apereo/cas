@@ -107,10 +107,18 @@ public class MultifactorAuthenticationTestUtils {
                 multifactorContextValidator, applicationContext);
     }
 
-    public static MultifactorAuthenticationProviderBypassProperties getBypassProperties() {
+    public static MultifactorAuthenticationProviderBypassProperties getPrinciaplBypassProperties() {
         val props = new MultifactorAuthenticationProviderBypassProperties();
         props.setPrincipalAttributeName("givenName");
         props.setPrincipalAttributeValue("CAS");
         return props;
     }
+
+    public static MultifactorAuthenticationProviderBypassProperties getAuthenticationBypassProperties() {
+        val props = new MultifactorAuthenticationProviderBypassProperties();
+        props.setAuthenticationAttributeName("givenName");
+        props.setAuthenticationAttributeValue("CAS");
+        return props;
+    }
+
 }
