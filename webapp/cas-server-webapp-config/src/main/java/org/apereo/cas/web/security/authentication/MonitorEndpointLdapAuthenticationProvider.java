@@ -109,7 +109,7 @@ public class MonitorEndpointLdapAuthenticationProvider implements Authentication
         throw new BadCredentialsException("Could not authenticate provided credentials");
     }
 
-    private Authentication generateAuthenticationToken(final Authentication authentication, final List<SimpleGrantedAuthority> authorities) {
+    private static Authentication generateAuthenticationToken(final Authentication authentication, final List<SimpleGrantedAuthority> authorities) {
         val username = authentication.getPrincipal().toString();
         val credentials = authentication.getCredentials();
         return new UsernamePasswordAuthenticationToken(username, credentials, authorities);

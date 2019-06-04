@@ -203,7 +203,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
     }
 
     @SneakyThrows
-    private void validate(final OidcClientRegistrationRequest registrationRequest, final OidcRegisteredService registeredService) {
+    private static void validate(final OidcClientRegistrationRequest registrationRequest, final OidcRegisteredService registeredService) {
         if (StringUtils.isNotBlank(registeredService.getSectorIdentifierUri())) {
             HttpResponse sectorResponse = null;
             try {
