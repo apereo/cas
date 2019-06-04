@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.ldap.services;
 
 import org.apereo.cas.adaptors.ldap.services.config.LdapServiceRegistryConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
@@ -35,7 +36,11 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.serviceRegistry.ldap.useSsl=false",
     "cas.serviceRegistry.ldap.baseDn=dc=example,dc=org"
 })
-@SpringBootTest(classes = {LdapServiceRegistryConfiguration.class, RefreshAutoConfiguration.class})
+@SpringBootTest(classes = {
+    LdapServiceRegistryConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    RefreshAutoConfiguration.class
+})
 public abstract class BaseLdapServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired

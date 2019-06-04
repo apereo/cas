@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.MongoDbServiceRegistryConfiguration;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
@@ -25,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     MongoDbServiceRegistryConfiguration.class,
+    CasCoreServicesConfiguration.class,
     RefreshAutoConfiguration.class
 })
 @Tag("MongoDb")
