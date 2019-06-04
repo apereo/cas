@@ -35,6 +35,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     RestfulServiceRegistryTests.RestServicesTestConfiguration.class,
+    CasCoreServicesConfiguration.class,
     RestServiceRegistryConfiguration.class,
     RefreshAutoConfiguration.class
 },

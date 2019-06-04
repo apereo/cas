@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.cassandra.services;
 
+import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CassandraServiceRegistryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
@@ -21,7 +22,11 @@ import org.springframework.test.context.TestPropertySource;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@SpringBootTest(classes = {CassandraServiceRegistryConfiguration.class, RefreshAutoConfiguration.class})
+@SpringBootTest(classes = {
+    CassandraServiceRegistryConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    RefreshAutoConfiguration.class
+})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @TestPropertySource(properties = {"cas.serviceRegistry.cassandra.keyspace=cas"})
