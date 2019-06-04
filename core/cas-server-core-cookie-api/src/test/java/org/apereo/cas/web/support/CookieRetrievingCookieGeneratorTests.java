@@ -68,7 +68,7 @@ public class CookieRetrievingCookieGeneratorTests {
         assertTrue(response.getCookies().length > 0);
     }
 
-    private CookieGenerationContext getCookieGenerationContext() {
+    private static CookieGenerationContext getCookieGenerationContext() {
         return CookieGenerationContext.builder()
             .name("cas")
             .path("/")
