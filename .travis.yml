@@ -118,10 +118,10 @@ jobs:
   - stage: dependencies
     script: ./ci/analyze-dependencies.sh
     name: "Dependency Security Analysis"
-  - stage: dependencies
-    if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
-    script: ./ci/report-dependency-updates.sh
-    name: "Dependency Update Report"
+#   - stage: dependencies
+#     if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
+#     script: ./ci/report-dependency-updates.sh
+#     name: "Dependency Update Report"
     ############################################
   - stage: test
     script: ./ci/tests/validate-tests.sh
