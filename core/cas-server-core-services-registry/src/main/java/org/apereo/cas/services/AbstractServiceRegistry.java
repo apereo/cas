@@ -48,7 +48,9 @@ public abstract class AbstractServiceRegistry implements ServiceRegistry {
      * @return the registered service
      */
     protected RegisteredService invokeServiceRegistryListenerPreSave(final RegisteredService registeredService) {
-        serviceRegistryListeners.forEach(listener -> listener.preSave(registeredService));
+        if (serviceRegistryListeners != null) {
+            serviceRegistryListeners.forEach(listener -> listener.preSave(registeredService));
+        }
         return registeredService;
     }
 
@@ -59,7 +61,9 @@ public abstract class AbstractServiceRegistry implements ServiceRegistry {
      * @return the registered service
      */
     protected RegisteredService invokeServiceRegistryListenerPostLoad(final RegisteredService registeredService) {
-        serviceRegistryListeners.forEach(listener -> listener.postLoad(registeredService));
+        if (serviceRegistryListeners != null) {
+            serviceRegistryListeners.forEach(listener -> listener.postLoad(registeredService));
+        }
         return registeredService;
     }
 

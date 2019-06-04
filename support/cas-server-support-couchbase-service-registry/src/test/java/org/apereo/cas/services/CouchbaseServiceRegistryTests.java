@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CouchbaseServiceRegistryConfiguration;
 import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
@@ -25,6 +26,7 @@ import org.springframework.context.event.EventListener;
 @SpringBootTest(classes = {
     CouchbaseServiceRegistryTests.CouchbaseServiceRegistryTestConfiguration.class,
     RefreshAutoConfiguration.class,
+    CasCoreServicesConfiguration.class,
     CouchbaseServiceRegistryConfiguration.class
 },
     properties = {
