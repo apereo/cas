@@ -80,9 +80,9 @@ public class CouchbaseAuthenticationHandlerTests {
         internalAutenticate(new BCryptPasswordEncoder(), new SimplePrincipal(), BAD_PASSWORD));
     }
 
-    private AuthenticationHandlerExecutionResult internalAutenticate(final PasswordEncoder encoder,
-                                                                     final Principal principal,
-                                                                     final String userPassword) throws Exception {
+    private static AuthenticationHandlerExecutionResult internalAutenticate(final PasswordEncoder encoder,
+                                                                            final Principal principal,
+                                                                            final String userPassword) throws Exception {
         val factory = mock(CouchbaseClientFactory.class);
         val defBucket = mock(Bucket.class);
         when(defBucket.name()).thenReturn(BUCKET_NAME);

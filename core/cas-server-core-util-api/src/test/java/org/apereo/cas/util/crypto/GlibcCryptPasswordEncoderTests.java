@@ -45,7 +45,7 @@ public class GlibcCryptPasswordEncoderTests {
         assertTrue(testMatchWithDifferentSalt("aB", "aB4fMcNOggJoQ"));
     }
 
-    private boolean testEncodingRoundtrip(final String algorithm) {
+    private static boolean testEncodingRoundtrip(final String algorithm) {
         val encoder = new GlibcCryptPasswordEncoder(algorithm, 0, null);
 
         val passwordHash = encoder.encode(PASSWORD_CLEAR);
@@ -57,7 +57,7 @@ public class GlibcCryptPasswordEncoderTests {
         return match;
     }
 
-    private boolean testMatchWithDifferentSalt(final String algorithm, final String encodedPassword) {
+    private static boolean testMatchWithDifferentSalt(final String algorithm, final String encodedPassword) {
         val encoder = new GlibcCryptPasswordEncoder(algorithm, 0, null);
         val match = encoder.matches(PASSWORD_CLEAR, encodedPassword);
         LOGGER.debug("Does password [{}] match original password [{}]: [{}]", encodedPassword, PASSWORD_CLEAR, match);
