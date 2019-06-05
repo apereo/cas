@@ -2,10 +2,8 @@ package org.apereo.cas.audit.spi;
 
 import org.apereo.cas.util.DateTimeUtils;
 
-import lombok.Getter;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
-import org.apereo.inspektr.audit.AuditTrailManager;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -13,9 +11,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -72,29 +67,5 @@ public class FilterAndDelegateAuditTrailManagerTests {
         mgr.record(ctx);
         assertFalse(mock.getAuditRecords().isEmpty());
         assertEquals(1, mock.getAuditRecordsSince(LocalDate.now(ZoneOffset.UTC)).size());
-    }
-
-    @Getter
-    private static class MockAuditTrailManager implements AuditTrailManager {
-        private final Set<AuditActionContext> auditRecords = new LinkedHashSet<>();
-
-        @Override
-        public void record(final AuditActionContext auditActionContext) {
-            auditRecords.add(auditActionContext);
-        }
-
-        @Override
-        public Set<? extends AuditActionContext> getAuditRecordsSince(final LocalDate localDate) {
-            val dt = DateTimeUtils.dateOf(localDate);
-            return auditRecords
-                .stream()
-                .filter(audit -> audit.getWhenActionWasPerformed().compareTo(dt) >= 0)
-                .collect(Collectors.toSet());
-        }
-
-        @Override
-        public void removeAll() {
-            auditRecords.clear();
-        }
     }
 }
