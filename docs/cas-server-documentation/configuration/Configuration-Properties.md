@@ -3397,7 +3397,7 @@ Allows CAS to act as an OAuth2 provider. Here you can control how long various t
 To learn more about this topic, [please review this guide](../installation/OAuth-OpenId-Authentication.html).
 
 ```properties
-# cas.authn.oidc.replicateSessions=false
+# cas.authn.oauth.replicateSessions=false
 
 # cas.authn.oauth.refreshToken.timeToKillInSeconds=2592000
 
