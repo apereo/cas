@@ -50,20 +50,20 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
 
     @Override
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
-        LOGGER.trace("Locating ticket ticketId [{}]", ticketId);
-        val encodedTicketId = encodeTicketId(ticketId);
-        if (encodedTicketId == null) {
-            LOGGER.debug("Ticket id [{}] could not be found", ticketId);
-            return null;
-        }
-
-        val definition = ticketCatalog.find(encodedTicketId);
+        val definition = ticketCatalog.find(ticketId);
         if (definition == null) {
             LOGGER.debug("Ticket definition [{}] could not be found in the ticket catalog", ticketId);
             return null;
         }
 
+        LOGGER.trace("Locating ticket ticketId [{}]", ticketId);
+        val encodedTicketId = encodeTicketId(ticketId);
         val holder = entityManager.get(encodedTicketId);
+        if (holder == null) {
+            LOGGER.debug("Ticket id [{}] could not be found", ticketId);
+            return null;
+        }
+
         val result = decodeTicket(deserialize(holder));
         if (result != null && predicate.test(result)) {
             return result;
@@ -123,11 +123,7 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
     }
 
     private Ticket deserialize(final CassandraTicketHolder holder) {
-        var definition = ticketCatalog.find(holder.getId());
-        if (definition == null) {
-            throw new IllegalArgumentException("Ticket catalog has not registered a ticket definition for " + holder.getId());
-        }
-        return ticketSerializationManager.deserializeTicket(holder.getData(), definition.getImplementationClass());
+        return ticketSerializationManager.deserializeTicket(holder.getData(), EncodedTicket.class);
     }
 
     private static Mapper.Option getTimeToLive(final Ticket ticket) {
