@@ -34,7 +34,7 @@ public class CassandraTicketRegistryConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("ticketSerializationManager;")
+    @Qualifier("ticketSerializationManager")
     private ObjectProvider<TicketSerializationManager> ticketSerializationManager;
 
     @Autowired
