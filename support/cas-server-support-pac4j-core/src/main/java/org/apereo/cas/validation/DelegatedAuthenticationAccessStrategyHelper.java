@@ -77,6 +77,12 @@ public class DelegatedAuthenticationAccessStrategyHelper {
             return true;
         }
 
+        if (StringUtils.isBlank(clientName)) {
+            LOGGER.debug("No client is provided to enforce authorization for delegated authentication. SSO session "
+                + "may have been established without delegated authentication");
+            return true;
+        }
+
         val registeredService = this.servicesManager.findServiceBy(service);
         if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             LOGGER.warn("Service access for [{}] is denied", registeredService);
