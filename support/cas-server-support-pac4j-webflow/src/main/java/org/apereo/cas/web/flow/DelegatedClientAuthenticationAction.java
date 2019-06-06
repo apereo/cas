@@ -269,7 +269,10 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             LOGGER.debug("Can not evaluate delegated authentication policy without a service");
             return true;
         }
-
+        if (StringUtils.isBlank(clientName)) {
+            LOGGER.debug("No client is provided to execute authorization for [{}]. SSO session may have been established w/o delegation", service);
+            return true;
+        }
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
         if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             LOGGER.warn("Service access for [{}] is denied", registeredService);
