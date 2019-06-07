@@ -41,7 +41,8 @@ public class CassandraTicketRegistryConfiguration {
     @Bean
     public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
         val cassandra = casProperties.getTicket().getRegistry().getCassandra();
-        val registry = new CassandraTicketRegistry(ticketCatalog, cassandraTicketRegistrySessionFactory(),
+        val sessionFactory = cassandraTicketRegistrySessionFactory();
+        val registry = new CassandraTicketRegistry(ticketCatalog, sessionFactory,
             cassandra, ticketSerializationManager.getIfAvailable());
         registry.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(cassandra.getCrypto(), "cassandra"));
         return registry;
@@ -54,5 +55,4 @@ public class CassandraTicketRegistryConfiguration {
         val cassandra = casProperties.getTicket().getRegistry().getCassandra();
         return new DefaultCassandraSessionFactory(cassandra);
     }
-
 }
