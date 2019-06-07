@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.duo.authn;
 
+import org.apereo.cas.authentication.MultifactorAuthenticationFailureModeEvaluator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderFactoryBean;
 import org.apereo.cas.authentication.bypass.ChainingMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
@@ -24,6 +25,7 @@ public class DuoSecurityMultifactorAuthenticationProviderFactory implements
 
     private final HttpClient httpClient;
     private final ChainingMultifactorAuthenticationProviderBypassEvaluator bypassEvaluator;
+    private final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator;
 
     @Override
     public DuoSecurityMultifactorAuthenticationProvider createProvider(final DuoSecurityMultifactorProperties properties) {
@@ -31,6 +33,7 @@ public class DuoSecurityMultifactorAuthenticationProviderFactory implements
         provider.setRegistrationUrl(properties.getRegistrationUrl());
         provider.setDuoAuthenticationService(getDuoAuthenticationService(properties));
         provider.setFailureMode(properties.getFailureMode());
+        provider.setFailureModeEvaluator(failureModeEvaluator);
         provider.setBypassEvaluator(getMultifactorAuthenticationProviderBypass(properties));
         provider.setOrder(properties.getRank());
         provider.setId(properties.getId());

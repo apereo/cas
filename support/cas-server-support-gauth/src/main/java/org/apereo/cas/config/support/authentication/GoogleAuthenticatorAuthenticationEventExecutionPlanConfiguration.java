@@ -4,6 +4,7 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.MultifactorAuthenticationFailureModeEvaluator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
@@ -83,6 +84,10 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
 
+    @Autowired
+    @Qualifier("failureModeEvaluator")
+    private ObjectProvider<MultifactorAuthenticationFailureModeEvaluator> failureModeEvaluator;
+
     @Bean
     public IGoogleAuthenticator googleAuthenticatorInstance() {
         val gauth = casProperties.getAuthn().getMfa().getGauth();
@@ -116,6 +121,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         val p = new GoogleAuthenticatorMultifactorAuthenticationProvider();
         p.setBypassEvaluator(googleAuthenticatorBypassEvaluator.getIfAvailable());
         p.setFailureMode(gauth.getFailureMode());
+        p.setFailureModeEvaluator(failureModeEvaluator.getIfAvailable());
         p.setOrder(gauth.getRank());
         p.setId(gauth.getId());
         return p;

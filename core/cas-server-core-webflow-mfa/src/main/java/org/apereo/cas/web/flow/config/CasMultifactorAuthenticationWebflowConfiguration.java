@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultMultifactorAuthenticationProviderResolver;
 import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
+import org.apereo.cas.authentication.MultifactorAuthenticationFailureModeEvaluator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
@@ -129,6 +130,10 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
     @Qualifier("registeredServiceAccessStrategyEnforcer")
     private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
 
+    @Autowired
+    @Qualifier("failureModeEvaluator")
+    private ObjectProvider<MultifactorAuthenticationFailureModeEvaluator> failureModeEvaluator;
+
     @Bean
     @ConditionalOnMissingBean(name = "multifactorAuthenticationProviderResolver")
     public MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver() {
@@ -233,7 +238,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
             return new GroovyScriptMultifactorAuthenticationProviderSelector(script);
         }
         if (mfa.isProviderSelectionEnabled()) {
-            return new ChainingMultifactorAuthenticationProviderSelector();
+            return new ChainingMultifactorAuthenticationProviderSelector(failureModeEvaluator.getIfAvailable());
         }
         return new RankedMultifactorAuthenticationProviderSelector();
     }

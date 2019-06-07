@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.services.RegisteredServiceMultifactorPolicyFailureModes;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
@@ -46,18 +47,27 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
 
         if (providerResult.isPresent()) {
             val provider = providerResult.get();
-            val bypassEvaluator = provider.getBypassEvaluator();
-            if (!bypassEvaluator.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, request)) {
-                LOGGER.debug("MFA provider [{}] has determined that it should be bypassed for this service request [{}]",
-                    providerId, assertion.getService());
-                bypassEvaluator.rememberBypass(authentication, provider);
-                return Pair.of(Boolean.TRUE, Optional.empty());
-            }
-
-            if (bypassEvaluator.isMultifactorAuthenticationBypassed(authentication, providerId)) {
-                LOGGER.debug("Authentication attempt indicates that MFA is bypassed for this request for [{}]", requestedContext);
-                bypassEvaluator.rememberBypass(authentication, provider);
-                return Pair.of(Boolean.TRUE, Optional.empty());
+            if (provider.isAvailable(registeredService)) {
+                val bypassEvaluator = provider.getBypassEvaluator();
+                if (!bypassEvaluator.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, request)) {
+                    LOGGER.debug("MFA provider [{}] has determined that it should be bypassed for this service request [{}]",
+                            providerId, assertion.getService());
+                    bypassEvaluator.rememberBypass(authentication, provider);
+                    return Pair.of(Boolean.TRUE, Optional.empty());
+                }
+                /**
+                 * Not Sure this should be here.  Could result in MFA bypass in one service bypasses all other sso services.
+                 */
+                if (bypassEvaluator.isMultifactorAuthenticationBypassed(authentication, providerId)) {
+                    LOGGER.debug("Authentication attempt indicates that MFA is bypassed for this request for [{}]", requestedContext);
+                    bypassEvaluator.rememberBypass(authentication, provider);
+                    return Pair.of(Boolean.TRUE, Optional.empty());
+                }
+            } else {
+                val failure = provider.getFailureModeEvaluator().evaluate(registeredService, provider);
+                if (failure != RegisteredServiceMultifactorPolicyFailureModes.CLOSED) {
+                    return Pair.of(Boolean.TRUE, Optional.empty());
+                }
             }
         }
 
