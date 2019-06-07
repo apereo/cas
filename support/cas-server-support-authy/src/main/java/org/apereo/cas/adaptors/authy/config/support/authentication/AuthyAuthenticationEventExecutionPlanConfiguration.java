@@ -8,6 +8,7 @@ import org.apereo.cas.adaptors.authy.web.flow.AuthyAuthenticationRegistrationWeb
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.MultifactorAuthenticationFailureModeEvaluator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
@@ -52,6 +53,10 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
     @Qualifier("authyBypassEvaluator")
     private ObjectProvider<MultifactorAuthenticationProviderBypassEvaluator> authyBypassEvaluator;
 
+    @Autowired
+    @Qualifier("failureModeEvaluator")
+    private ObjectProvider<MultifactorAuthenticationFailureModeEvaluator> failureModeEvaluator;
+
     @RefreshScope
     @Bean
     public AuthyClientInstance authyClientInstance() {
@@ -88,6 +93,7 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
         p.setBypassEvaluator(authyBypassEvaluator.getIfAvailable());
         val authy = casProperties.getAuthn().getMfa().getAuthy();
         p.setFailureMode(authy.getFailureMode());
+        p.setFailureModeEvaluator(failureModeEvaluator.getIfAvailable());
         p.setOrder(authy.getRank());
         p.setId(authy.getId());
         return p;

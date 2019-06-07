@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication.mfa;
 
 import org.apereo.cas.authentication.DefaultMultifactorAuthenticationContextValidator;
-import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -75,35 +74,4 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
             "mfa-dummy", MultifactorAuthenticationTestUtils.getRegisteredService());
         assertTrue(result.getKey());
     }
-
-    @Test
-    public void verifyBypassAuthnFoundInContext() {
-        TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
-        val v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
-            "OPEN", "trusted_authn", applicationContext);
-        val authentication = MultifactorAuthenticationTestUtils.getAuthentication(
-            MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
-            CollectionUtils.wrap("authn_method", List.of("mfa-other"),
-                MultifactorAuthenticationProviderBypassEvaluator.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, List.of(true),
-                MultifactorAuthenticationProviderBypassEvaluator.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER, List.of("mfa-dummy")));
-        val result = v.validate(authentication,
-            "mfa-dummy", MultifactorAuthenticationTestUtils.getRegisteredService());
-        assertFalse(result.getKey());
-    }
-
-    @Test
-    public void verifyBypassAuthnNotFoundInContext() {
-        TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
-        val v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
-            "OPEN", "trusted_authn", applicationContext);
-        val authentication = MultifactorAuthenticationTestUtils.getAuthentication(
-            MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
-            CollectionUtils.wrap("authn_method", List.of("mfa-other"),
-                MultifactorAuthenticationProviderBypassEvaluator.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, List.of(true),
-                MultifactorAuthenticationProviderBypassEvaluator.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER, List.of("mfa-other")));
-        val result = v.validate(authentication,
-            "mfa-dummy", MultifactorAuthenticationTestUtils.getRegisteredService());
-        assertFalse(result.getKey());
-    }
-
 }

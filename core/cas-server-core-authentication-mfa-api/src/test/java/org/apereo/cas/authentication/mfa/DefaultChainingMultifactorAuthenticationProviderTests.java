@@ -1,7 +1,9 @@
 package org.apereo.cas.authentication.mfa;
 
 import org.apereo.cas.authentication.DefaultChainingMultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.DefaultMultifactorAuthenticationFailureModeEvaluator;
 import org.apereo.cas.authentication.bypass.HttpRequestMultifactorAuthenticationProviderBypassEvaluator;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicyFailureModes;
 
@@ -32,8 +34,10 @@ public class DefaultChainingMultifactorAuthenticationProviderTests {
         props.setHttpRequestHeaders("headerbypass");
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         provider.setBypassEvaluator(new HttpRequestMultifactorAuthenticationProviderBypassEvaluator(props, provider.getId()));
-
-        val p = new DefaultChainingMultifactorAuthenticationProvider();
+        val casProperties = new CasConfigurationProperties();
+        casProperties.getAuthn().getMfa().setGlobalFailureMode(RegisteredServiceMultifactorPolicyFailureModes.OPEN.toString());
+        val failureEvaluator = new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties);
+        val p = new DefaultChainingMultifactorAuthenticationProvider(failureEvaluator);
         p.addMultifactorAuthenticationProviders(provider);
         assertNotNull(p.getBypassEvaluator());
         assertNotNull(p.getId());

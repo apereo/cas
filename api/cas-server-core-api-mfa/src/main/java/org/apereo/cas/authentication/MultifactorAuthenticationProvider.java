@@ -3,7 +3,6 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicyFailureModes;
-
 import org.springframework.core.Ordered;
 
 import java.io.Serializable;
@@ -35,6 +34,13 @@ public interface MultifactorAuthenticationProvider extends Serializable, Ordered
      * @return - the bypass evaluator
      */
     MultifactorAuthenticationProviderBypassEvaluator getBypassEvaluator();
+
+    /**
+     * Returns the configured failure mode evaluator for this MFA provider.
+     *
+     * @return the failuremode evaluator
+     */
+    MultifactorAuthenticationFailureModeEvaluator getFailureModeEvaluator();
 
     /**
      * Gets id for this provider.
