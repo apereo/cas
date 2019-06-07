@@ -18,6 +18,7 @@ import org.springframework.beans.factory.DisposableBean;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -100,24 +101,18 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
         return this.ticketCatalog.findAll()
             .stream()
             .map(definition -> {
-                val select = QueryBuilder.select()
-                    .all()
-                    .from(this.properties.getKeyspace(), definition.getProperties().getStorageName())
-                    .setConsistencyLevel(getConsistencyLevel());
-                LOGGER.trace("Attempting to locate tickets via query [{}]", select);
-                val results = cassandraSession.execute(select);
-                if (results.getAvailableWithoutFetching() > 0) {
-                    val row = results.one();
-                    val id = row.get("id", String.class);
-                    val data = row.get("data", String.class);
-                    val holder = new CassandraTicketHolder(id, data, definition.getImplementationClass().getName());
-                    val deserialized = deserialize(holder);
-                    return decodeTicket(deserialized);
-                }
-                return null;
+                val results = findCassandraTicketBy(definition);
+                return results
+                    .stream()
+                    .map(holder -> {
+                        val deserialized = deserialize(holder);
+                        return decodeTicket(deserialized);
+                    })
+                    .collect(Collectors.toSet());
             })
+            .flatMap(Set::stream)
             .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+            .collect(Collectors.toSet());
     }
 
     @Override
@@ -175,7 +170,10 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
         }
         return ttl;
     }
-
+    private Collection<CassandraTicketHolder> findCassandraTicketBy(final TicketDefinition definition) {
+        return findCassandraTicketBy(definition, null);
+    }
+    
     private Collection<CassandraTicketHolder> findCassandraTicketBy(final TicketDefinition definition, final String ticketId) {
         val select = QueryBuilder.select().all()
             .from(this.properties.getKeyspace(), definition.getProperties().getStorageName());
