@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
  * @author Dmitriy Kopylenko
  */
 @RequiredArgsConstructor
-public class TicketDefinitionBuilderSupport extends CasCoreTicketCatalogConfiguration {
+public abstract class BaseTicketDefinitionBuilderSupportConfiguration extends CasCoreTicketCatalogConfiguration {
 
     private final CasConfigurationProperties casProperties;
 

@@ -1,7 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
@@ -9,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import static org.apereo.cas.ticket.registry.CassandraTicketHolder.TABLE_NAME;
+import java.io.Serializable;
 
 /**
  * This is {@link CassandraTicketHolder}.
@@ -22,18 +20,12 @@ import static org.apereo.cas.ticket.registry.CassandraTicketHolder.TABLE_NAME;
 @ToString
 @EqualsAndHashCode
 @NoArgsConstructor
-@Table(name = TABLE_NAME, writeConsistency = "LOCAL_QUORUM", readConsistency = "ONE")
-public class CassandraTicketHolder {
-
-    /**
-     * Ticket table name.
-     */
-    public static final String TABLE_NAME = "castickets";
+public class CassandraTicketHolder implements Serializable {
+    private static final long serialVersionUID = -4308217682209741077L;
 
     /**
      * The Id.
      */
-    @PartitionKey
     private String id;
 
     /**
@@ -41,9 +33,16 @@ public class CassandraTicketHolder {
      */
     private String data;
 
+    /**
+     * Ticket type.
+     */
+    private String type;
+
     @JsonCreator
-    public CassandraTicketHolder(@JsonProperty("id") final String id, @JsonProperty("data") final String data) {
+    public CassandraTicketHolder(@JsonProperty("id") final String id, @JsonProperty("data") final String data,
+                                 @JsonProperty("type") final String type) {
         this.id = id;
         this.data = data;
+        this.type = type;
     }
 }

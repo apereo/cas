@@ -58,81 +58,6 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         LOGGER.info("Configured MongoDb Ticket Registry instance with available collections: [{}]", mongoTemplate.getCollectionNames());
     }
 
-    /**
-     * Calculate the time at which the ticket is eligible for automated deletion by MongoDb.
-     * Makes the assumption that the CAS server date and the Mongo server date are in sync.
-     */
-    private static Date getExpireAt(final Ticket ticket) {
-        val expirationPolicy = ticket.getExpirationPolicy();
-        val ttl = ticket instanceof TicketState
-            ? expirationPolicy.getTimeToLive((TicketState) ticket)
-            : expirationPolicy.getTimeToLive();
-
-        if (ttl < 1) {
-            return null;
-        }
-
-        return new Date(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(ttl));
-    }
-
-    private String serializeTicketForMongoDocument(final Ticket ticket) {
-        try {
-            return ticketSerializationManager.serializeTicket(ticket);
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return null;
-    }
-
-    private Ticket deserializeTicketFromMongoDocument(final TicketHolder holder) {
-        return ticketSerializationManager.deserializeTicket(holder.getJson(), holder.getType());
-    }
-
-    private MongoCollection createTicketCollection(final TicketDefinition ticket, final MongoDbConnectionFactory factory) {
-        val collectionName = ticket.getProperties().getStorageName();
-        LOGGER.trace("Setting up MongoDb Ticket Registry instance [{}]", collectionName);
-        factory.createCollection(mongoTemplate, collectionName, this.dropCollection);
-
-        LOGGER.trace("Creating indices on collection [{}] to auto-expire documents...", collectionName);
-        val collection = mongoTemplate.getCollection(collectionName);
-        val index = new Index().on(TicketHolder.FIELD_NAME_EXPIRE_AT, Sort.Direction.ASC).expire(ticket.getProperties().getStorageTimeout());
-        removeDifferingIndexIfAny(collection, index);
-        mongoTemplate.indexOps(collectionName).ensureIndex(index);
-        return collection;
-    }
-
-    /**
-     * Remove any index with the same indexKey but differing indexOptions in anticipation of recreating it.
-     *
-     * @param collection The collection to check the indexes of
-     * @param index      The index to find
-     */
-    private static void removeDifferingIndexIfAny(final MongoCollection collection, final Index index) {
-        val indexes = (ListIndexesIterable<Document>) collection.listIndexes();
-        var indexExistsWithDifferentOptions = false;
-
-        for (val existingIndex : indexes) {
-            val keyMatches = existingIndex.get("key").equals(index.getIndexKeys());
-            val optionsMatch = index.getIndexOptions().entrySet().stream().allMatch(entry -> entry.getValue().equals(existingIndex.get(entry.getKey())));
-            val noExtraOptions = existingIndex.keySet().stream().allMatch(key -> MONGO_INDEX_KEYS.contains(key) || index.getIndexOptions().keySet().contains(key));
-            indexExistsWithDifferentOptions |= keyMatches && !(optionsMatch && noExtraOptions);
-        }
-
-        if (indexExistsWithDifferentOptions) {
-            LOGGER.debug("Removing MongoDb index [{}] from [{}] because it appears to already exist in a different form", index.getIndexKeys(), collection.getNamespace());
-            collection.dropIndex(index.getIndexKeys());
-        }
-    }
-
-    private void createTicketCollections() {
-        val definitions = ticketCatalog.findAll();
-        val factory = new MongoDbConnectionFactory();
-        definitions.forEach(t -> {
-            val c = createTicketCollection(t, factory);
-            LOGGER.debug("Created MongoDb collection configuration for [{}]", c.getNamespace().getFullName());
-        });
-    }
-
     @Override
     public Ticket updateTicket(final Ticket ticket) {
         LOGGER.debug("Updating ticket [{}]", ticket);
@@ -286,6 +211,81 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             LOGGER.error(e.getMessage(), e);
         }
         return null;
+    }
+
+    /**
+     * Calculate the time at which the ticket is eligible for automated deletion by MongoDb.
+     * Makes the assumption that the CAS server date and the Mongo server date are in sync.
+     */
+    private static Date getExpireAt(final Ticket ticket) {
+        val expirationPolicy = ticket.getExpirationPolicy();
+        val ttl = ticket instanceof TicketState
+            ? expirationPolicy.getTimeToLive((TicketState) ticket)
+            : expirationPolicy.getTimeToLive();
+
+        if (ttl < 1) {
+            return null;
+        }
+
+        return new Date(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(ttl));
+    }
+
+    private String serializeTicketForMongoDocument(final Ticket ticket) {
+        try {
+            return ticketSerializationManager.serializeTicket(ticket);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    private Ticket deserializeTicketFromMongoDocument(final TicketHolder holder) {
+        return ticketSerializationManager.deserializeTicket(holder.getJson(), holder.getType());
+    }
+
+    private MongoCollection createTicketCollection(final TicketDefinition ticket, final MongoDbConnectionFactory factory) {
+        val collectionName = ticket.getProperties().getStorageName();
+        LOGGER.trace("Setting up MongoDb Ticket Registry instance [{}]", collectionName);
+        factory.createCollection(mongoTemplate, collectionName, this.dropCollection);
+
+        LOGGER.trace("Creating indices on collection [{}] to auto-expire documents...", collectionName);
+        val collection = mongoTemplate.getCollection(collectionName);
+        val index = new Index().on(TicketHolder.FIELD_NAME_EXPIRE_AT, Sort.Direction.ASC).expire(ticket.getProperties().getStorageTimeout());
+        removeDifferingIndexIfAny(collection, index);
+        mongoTemplate.indexOps(collectionName).ensureIndex(index);
+        return collection;
+    }
+
+    /**
+     * Remove any index with the same indexKey but differing indexOptions in anticipation of recreating it.
+     *
+     * @param collection The collection to check the indexes of
+     * @param index      The index to find
+     */
+    private static void removeDifferingIndexIfAny(final MongoCollection collection, final Index index) {
+        val indexes = (ListIndexesIterable<Document>) collection.listIndexes();
+        var indexExistsWithDifferentOptions = false;
+
+        for (val existingIndex : indexes) {
+            val keyMatches = existingIndex.get("key").equals(index.getIndexKeys());
+            val optionsMatch = index.getIndexOptions().entrySet().stream().allMatch(entry -> entry.getValue().equals(existingIndex.get(entry.getKey())));
+            val noExtraOptions = existingIndex.keySet().stream().allMatch(key -> MONGO_INDEX_KEYS.contains(key) || index.getIndexOptions().keySet().contains(key));
+            indexExistsWithDifferentOptions |= keyMatches && !(optionsMatch && noExtraOptions);
+        }
+
+        if (indexExistsWithDifferentOptions) {
+            LOGGER.debug("Removing MongoDb index [{}] from [{}] because it appears to already exist in a different form", index.getIndexKeys(), collection.getNamespace());
+            collection.dropIndex(index.getIndexKeys());
+        }
+    }
+
+    private void createTicketCollections() {
+        val definitions = ticketCatalog.findAll();
+        val factory = new MongoDbConnectionFactory();
+        definitions.forEach(t -> {
+            val c = createTicketCollection(t, factory);
+            LOGGER.debug("Created MongoDb collection configuration for [{}]", c.getNamespace().getFullName());
+        });
     }
 }
 

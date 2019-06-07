@@ -15,6 +15,11 @@ import com.datastax.driver.core.policies.RetryPolicy;
 @FunctionalInterface
 public interface CassandraSessionFactory {
     /**
+     * Max time-to-live value in seconds (10 years).
+     */
+    int MAX_TTL = 10 * 365 * 24 * 60 * 60;
+
+    /**
      * Gets session.
      *
      * @return the session
