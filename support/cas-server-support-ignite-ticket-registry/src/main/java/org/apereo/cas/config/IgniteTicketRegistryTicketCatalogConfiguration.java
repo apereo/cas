@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("igniteTicketRegistryTicketCatalogConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class IgniteTicketRegistryTicketCatalogConfiguration extends TicketDefinitionBuilderSupport {
+public class IgniteTicketRegistryTicketCatalogConfiguration extends BaseTicketDefinitionBuilderSupportConfiguration {
 
     public IgniteTicketRegistryTicketCatalogConfiguration(final CasConfigurationProperties casProperties) {
         super(casProperties, new CasTicketCatalogConfigurationValuesProvider() {});

@@ -8,6 +8,7 @@ dependencies {
     implementation project(":core:cas-server-core-logging")
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-tickets")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":support:cas-server-support-cassandra-core")
 
@@ -17,10 +18,14 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
 
+    testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-authentication-api")
     testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-authentication-attributes")
 }

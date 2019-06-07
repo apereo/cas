@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("ehcacheTicketRegistryTicketCatalogConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class EhcacheTicketRegistryTicketCatalogConfiguration extends TicketDefinitionBuilderSupport {
+public class EhcacheTicketRegistryTicketCatalogConfiguration extends BaseTicketDefinitionBuilderSupportConfiguration {
 
     public EhcacheTicketRegistryTicketCatalogConfiguration(final CasConfigurationProperties casProperties) {
         super(casProperties, new CasTicketCatalogConfigurationValuesProvider() {});

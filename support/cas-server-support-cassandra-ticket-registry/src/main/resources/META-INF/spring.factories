@@ -1,1 +1,2 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.CassandraTicketRegistryConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.CassandraTicketRegistryConfiguration,\
+  org.apereo.cas.config.CassandraTicketRegistryTicketCatalogConfiguration

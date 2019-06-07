@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("hazelcastTicketRegistryTicketMetadataCatalogConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class HazelcastTicketRegistryTicketCatalogConfiguration extends TicketDefinitionBuilderSupport {
+public class HazelcastTicketRegistryTicketCatalogConfiguration extends BaseTicketDefinitionBuilderSupportConfiguration {
 
     public HazelcastTicketRegistryTicketCatalogConfiguration(final CasConfigurationProperties casProperties) {
         super(casProperties, new CasTicketCatalogConfigurationValuesProvider() {});

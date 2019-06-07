@@ -3,7 +3,7 @@
 # while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
 
 echo "Running Cassandra docker image..."
-docker run --name cassandra -d -p 9042:9042 cassandra:3.11.3
+docker run --name cassandra -d -p 9042:9042 cassandra:3.11.4
 
 docker ps | grep "cassandra"
 retVal=$?
@@ -15,16 +15,13 @@ else
 fi
 
 echo "Waiting for Cassandra server to come online..."
-sleep 30
+sleep 15
 
 echo "Creating Cassandra keyspace: cas"
 docker exec -it cassandra cqlsh -e "CREATE KEYSPACE cas WITH REPLICATION = {'class' : 'SimpleStrategy', 'replication_factor' : 1}"
 
 echo "Creating Cassandra users table"
 docker exec -it cassandra cqlsh -e "CREATE TABLE cas.users_table ( id UUID PRIMARY KEY, user_attr text, pwd_attr text )"
-
-echo "Creating Cassandra tickets table"
-docker exec -it cassandra cqlsh -e "CREATE TABLE cas.castickets ( id UUID PRIMARY KEY, data text )"
 
 echo "Creating Cassandra services table"
 docker exec -it cassandra cqlsh -e "CREATE TABLE cas.casservices ( id bigint PRIMARY KEY, data text )"

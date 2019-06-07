@@ -61,8 +61,7 @@ public class DefaultCassandraSessionFactory implements CassandraSessionFactory, 
             .setSerialConsistencyLevel(ConsistencyLevel.valueOf(cassandra.getSerialConsistencyLevel()));
 
         val retryPolicy = RetryPolicyType.valueOf(cassandra.getRetryPolicy()).getRetryPolicy();
-        val builder =
-            Cluster.builder()
+        val builder = Cluster.builder()
                 .withCredentials(cassandra.getUsername(), cassandra.getPassword())
                 .withPoolingOptions(poolingOptions)
                 .withProtocolVersion(ProtocolVersion.valueOf(cassandra.getProtocolVersion()))

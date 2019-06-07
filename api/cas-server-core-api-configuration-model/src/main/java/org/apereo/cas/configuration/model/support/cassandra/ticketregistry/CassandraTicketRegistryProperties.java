@@ -18,6 +18,12 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Setter
 public class CassandraTicketRegistryProperties extends BaseCassandraProperties {
     private static final long serialVersionUID = -2468250557119133004L;
+
+    /**
+     * Flag that indicates whether to drop tables on start up.
+     */
+    private boolean dropTablesOnStartup;
+
     /**
      * Crypto settings for the registry.
      */
