@@ -7,6 +7,7 @@ import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.MultifactorAuthenticationFailureModeEvaluator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
@@ -51,6 +52,10 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
     @Qualifier("u2fBypassEvaluator")
     private ObjectProvider<MultifactorAuthenticationProviderBypassEvaluator> u2fBypassEvaluator;
 
+    @Autowired
+    @Qualifier("failureModeEvaluator")
+    private ObjectProvider<MultifactorAuthenticationFailureModeEvaluator> failureModeEvaluator;
+
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "u2fAuthenticationMetaDataPopulator")
@@ -86,6 +91,7 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
         val p = new U2FMultifactorAuthenticationProvider();
         p.setBypassEvaluator(u2fBypassEvaluator.getIfAvailable());
         p.setFailureMode(u2f.getFailureMode());
+        p.setFailureModeEvaluator(failureModeEvaluator.getIfAvailable());
         p.setOrder(u2f.getRank());
         p.setId(u2f.getId());
         return p;

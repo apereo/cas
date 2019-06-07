@@ -14,6 +14,7 @@ import org.apereo.cas.adaptors.duo.web.flow.config.DuoSecurityMultifactorWebflow
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.MultifactorAuthenticationFailureModeEvaluator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBean;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderFactoryBean;
 import org.apereo.cas.authentication.bypass.ChainingMultifactorAuthenticationProviderBypassEvaluator;
@@ -89,6 +90,10 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
     @Qualifier("duoSecurityBypassEvaluator")
     private ObjectProvider<ChainingMultifactorAuthenticationProviderBypassEvaluator> duoSecurityBypassEvaluator;
 
+    @Autowired
+    @Qualifier("failureModeEvaluator")
+    private ObjectProvider<MultifactorAuthenticationFailureModeEvaluator> failureModeEvaluator;
+
     @ConditionalOnMissingBean(name = "duoPrincipalFactory")
     @Bean
     public PrincipalFactory duoPrincipalFactory() {
@@ -110,7 +115,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProviderFactoryBean<DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorProperties> duoProviderFactory() {
-        return new DuoSecurityMultifactorAuthenticationProviderFactory(httpClient.getIfAvailable(), duoSecurityBypassEvaluator.getIfAvailable());
+        return new DuoSecurityMultifactorAuthenticationProviderFactory(httpClient.getIfAvailable(), duoSecurityBypassEvaluator.getIfAvailable(), failureModeEvaluator.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "duoProviderBean")
