@@ -49,7 +49,7 @@ public class JasyptEncryptPropertyCommand {
             help = "Password (encryption key) to encrypt") final String password,
         @ShellOption(value = {"iterations"},
             defaultValue = ShellOption.NULL,
-            help = "Key obtention iterations to encrypt") final String iterations) {
+            help = "Key obtention iterations to encrypt, default 1000") final String iterations) {
 
         val cipher = new CasConfigurationJasyptCipherExecutor(this.environment);
         cipher.setAlgorithm(alg);
