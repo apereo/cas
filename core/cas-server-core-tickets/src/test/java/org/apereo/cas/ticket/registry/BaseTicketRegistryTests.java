@@ -201,7 +201,11 @@ public abstract class BaseTicketRegistryTests {
                 new NeverExpiresExpirationPolicy()));
         }
         val actual = ticketRegistry.deleteAll();
-        assertEquals(TICKETS_IN_REGISTRY, actual, "Wrong ticket count. useEncryption[" + useEncryption + ']');
+        if (actual <= 0) {
+            LOGGER.warn("Ticket registry does not support reporting count of deleted rows");
+        } else {
+            assertEquals(TICKETS_IN_REGISTRY, actual, "Wrong ticket count. useEncryption[" + useEncryption + ']');
+        }
     }
 
     @RepeatedTest(2)
