@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.jasypt.encryption.pbe.StandardPBEByteEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.shell.standard.ShellCommandGroup;
@@ -34,7 +35,7 @@ public class JasyptEncryptPropertyCommand {
      * @param alg        the alg
      * @param provider   the provider
      * @param password   the password
-     * @param iterations the iterations
+     * @param iterations the iterations - defaults to {@value StandardPBEByteEncryptor#DEFAULT_KEY_OBTENTION_ITERATIONS}
      */
     @ShellMethod(key = "encrypt-value", value = "Encrypt a CAS property value/setting via Jasypt")
     public void encryptValue(
@@ -47,7 +48,8 @@ public class JasyptEncryptPropertyCommand {
         @ShellOption(value = {"password"},
             help = "Password (encryption key) to encrypt") final String password,
         @ShellOption(value = {"iterations"},
-            help = "Key obtention iterations to encrypt") final String iterations) {
+            defaultValue = ShellOption.NULL,
+            help = "Key obtention iterations to encrypt, default 1000") final String iterations) {
 
         val cipher = new CasConfigurationJasyptCipherExecutor(this.environment);
         cipher.setAlgorithm(alg);
