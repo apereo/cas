@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.MultifactorAuthenticationFailureModeEvaluator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
@@ -53,6 +54,10 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
     @Qualifier("casSimpleMultifactorBypassEvaluator")
     private ObjectProvider<MultifactorAuthenticationProviderBypassEvaluator> casSimpleMultifactorBypassEvaluator;
 
+    @Autowired
+    @Qualifier("failureModeEvaluator")
+    private ObjectProvider<MultifactorAuthenticationFailureModeEvaluator> failureModeEvaluator;
+
     @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationHandler")
     @Bean
     @RefreshScope
@@ -70,6 +75,7 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
         val p = new CasSimpleMultifactorAuthenticationProvider();
         p.setBypassEvaluator(casSimpleMultifactorBypassEvaluator.getIfAvailable());
         p.setFailureMode(simple.getFailureMode());
+        p.setFailureModeEvaluator(failureModeEvaluator.getIfAvailable());
         p.setOrder(simple.getRank());
         p.setId(simple.getId());
         return p;
