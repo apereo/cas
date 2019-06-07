@@ -123,6 +123,13 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
     }
 
     private Ticket deserialize(final CassandraTicketHolder holder) {
+        if (!isCipherExecutorEnabled()) {
+            var definition = ticketCatalog.find(holder.getId());
+            if (definition == null) {
+                throw new IllegalArgumentException("Ticket catalog has not registered a ticket definition for " + holder.getId());
+            }
+            return ticketSerializationManager.deserializeTicket(holder.getData(), definition.getImplementationClass());
+        }
         return ticketSerializationManager.deserializeTicket(holder.getData(), EncodedTicket.class);
     }
 
