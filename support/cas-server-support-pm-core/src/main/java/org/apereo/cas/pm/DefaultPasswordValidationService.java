@@ -32,6 +32,17 @@ public class DefaultPasswordValidationService implements PasswordValidationServi
             LOGGER.error("Provided password does not match the pattern required for password policy [{}]", policyPattern);
             return false;
         }
+        return validatePassword(c, bean);
+    }
+
+    /**
+     * Validate password.
+     *
+     * @param credential the credential
+     * @param bean       the bean
+     * @return the boolean
+     */
+    protected boolean validatePassword(final UsernamePasswordCredential credential, final PasswordChangeBean bean) {
         return true;
     }
 }

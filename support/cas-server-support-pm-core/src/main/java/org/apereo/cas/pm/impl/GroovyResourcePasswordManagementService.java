@@ -5,7 +5,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.BasePasswordManagementService;
 import org.apereo.cas.pm.PasswordChangeBean;
-import org.apereo.cas.util.scripting.ScriptingUtils;
+import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 
 import lombok.Getter;
 import lombok.NonNull;
@@ -25,33 +25,33 @@ import java.util.Map;
 @Getter
 public class GroovyResourcePasswordManagementService extends BasePasswordManagementService {
 
-    private final Resource groovyResource;
+    private final transient WatchableGroovyScriptResource watchableScript;
 
     public GroovyResourcePasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
                                                    final String issuer,
                                                    final PasswordManagementProperties passwordManagementProperties,
-                                                   final Resource jsonResource) {
+                                                   final Resource groovyResource) {
         super(passwordManagementProperties, cipherExecutor, issuer);
-        this.groovyResource = jsonResource;
+        this.watchableScript = new WatchableGroovyScriptResource(groovyResource);
     }
 
     @Override
     public boolean changeInternal(final @NonNull Credential credential, final @NonNull PasswordChangeBean bean) {
-        return ScriptingUtils.executeGroovyScript(this.groovyResource, "change", new Object[]{credential, bean, LOGGER}, Boolean.class, true);
+        return watchableScript.execute("change", Boolean.class, new Object[]{credential, bean, LOGGER});
     }
 
     @Override
     public String findEmail(final String username) {
-        return ScriptingUtils.executeGroovyScript(this.groovyResource, "findEmail", new Object[]{username, LOGGER}, String.class, true);
+        return watchableScript.execute("findEmail", String.class, new Object[]{username, LOGGER});
     }
 
     @Override
     public String findUsername(final String email) {
-        return ScriptingUtils.executeGroovyScript(this.groovyResource, "findUsername", new Object[]{email, LOGGER}, String.class, true);
+        return watchableScript.execute("findUsername", String.class, new Object[]{email, LOGGER});
     }
 
     @Override
     public Map<String, String> getSecurityQuestions(final String username) {
-        return ScriptingUtils.executeGroovyScript(this.groovyResource, "getSecurityQuestions", new Object[]{username, LOGGER}, Map.class, true);
+        return watchableScript.execute("getSecurityQuestions", Map.class, new Object[]{username, LOGGER});
     }
 }
