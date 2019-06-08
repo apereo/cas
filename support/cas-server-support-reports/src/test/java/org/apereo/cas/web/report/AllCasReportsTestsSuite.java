@@ -14,6 +14,8 @@ import org.junit.runner.RunWith;
     AuditLogEndpointTests.class,
     RegisteredServicesEndpointTests.class,
     CasInfoEndpointContributorTests.class,
+    CasResolveAttributesReportEndpointTests.class,
+    CasReleaseAttributesReportEndpointTests.class,
     ExportRegisteredServicesEndpointTests.class
 })
 @RunWith(JUnitPlatform.class)
