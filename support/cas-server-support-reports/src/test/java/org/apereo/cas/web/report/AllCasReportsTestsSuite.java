@@ -12,7 +12,9 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     AuditLogEndpointTests.class,
-    CasInfoEndpointContributorTests.class
+    RegisteredServicesEndpointTests.class,
+    CasInfoEndpointContributorTests.class,
+    ExportRegisteredServicesEndpointTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class AllCasReportsTestsSuite {

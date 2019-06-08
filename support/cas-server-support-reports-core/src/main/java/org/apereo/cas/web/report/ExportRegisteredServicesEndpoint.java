@@ -74,6 +74,6 @@ public class ExportRegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
             }));
         }
         val resource = new TemporaryFileSystemResource(file);
-        return new WebEndpointResponse(resource);
+        return new WebEndpointResponse<>(resource);
     }
 }

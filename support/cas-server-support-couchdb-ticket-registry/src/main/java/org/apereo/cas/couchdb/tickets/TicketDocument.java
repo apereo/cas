@@ -2,6 +2,8 @@ package org.apereo.cas.couchdb.tickets;
 
 import org.apereo.cas.ticket.Ticket;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,7 +29,8 @@ public class TicketDocument extends CouchDbDocument {
         this.ticket = ticket;
     }
 
-    public TicketDocument(final String id, final String rev) {
+    @JsonCreator
+    public TicketDocument(@JsonProperty("id") final String id, @JsonProperty("rev") final String rev) {
         this.setId(id);
         this.setRevision(rev);
     }

@@ -31,8 +31,10 @@ public class TicketRepository extends CouchDbRepositorySupport<TicketDocument> {
      * @return number of tickets deleted
      */
     public long delete(final List<TicketDocument> ticketDocuments) {
-        return (long) db.executeBulk(ticketDocuments.stream().map(BulkDeleteDocument::of)
-            .collect(Collectors.toList())).size();
+        return db.executeBulk(ticketDocuments.stream()
+            .map(BulkDeleteDocument::of)
+            .collect(Collectors.toList()))
+            .size();
     }
 
     /**

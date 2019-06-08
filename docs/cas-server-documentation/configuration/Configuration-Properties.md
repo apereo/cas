@@ -4091,6 +4091,10 @@ Common Cassandra settings for this feature are available [here](Configuration-Pr
 
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.cassandra`.
 
+```properties
+# cas.ticket.registry.cassandra.dropTablesOnStartup=false
+```
+
 ### Infinispan Ticket Registry
 
 To learn more about this topic, [please review this guide](../ticketing/Infinispan-Ticket-Registry.html).
