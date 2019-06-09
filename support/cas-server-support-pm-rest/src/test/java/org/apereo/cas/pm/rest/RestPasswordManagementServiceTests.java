@@ -5,7 +5,8 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.pm.RestPasswordManagementConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.pm.PasswordChangeBean;
+import org.apereo.cas.pm.PasswordChangeRequest;
+import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.config.PasswordManagementConfiguration;
 import org.apereo.cas.util.MockWebServer;
@@ -55,6 +56,10 @@ public class RestPasswordManagementServiceTests {
     @Qualifier("passwordManagementCipherExecutor")
     private CipherExecutor passwordManagementCipherExecutor;
 
+    @Autowired
+    @Qualifier("passwordHistoryService")
+    private PasswordHistoryService passwordHistoryService;
+
     @Test
     public void verifyEmailFound() {
         val data = "casuser@example.org";
@@ -85,7 +90,8 @@ public class RestPasswordManagementServiceTests {
             val passwordService = new RestPasswordManagementService(passwordManagementCipherExecutor,
                 props.getServer().getPrefix(),
                 new RestTemplate(),
-                props.getAuthn().getPm());
+                props.getAuthn().getPm(),
+                passwordHistoryService);
 
             val questions = passwordService.getSecurityQuestions("casuser");
             assertFalse(questions.isEmpty());
@@ -110,10 +116,11 @@ public class RestPasswordManagementServiceTests {
             val passwordService = new RestPasswordManagementService(passwordManagementCipherExecutor,
                 props.getServer().getPrefix(),
                 new RestTemplate(),
-                props.getAuthn().getPm());
+                props.getAuthn().getPm(),
+                passwordHistoryService);
 
             val result = passwordService.change(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
-                new PasswordChangeBean("123456", "123456"));
+                new PasswordChangeRequest("casuser", "123456", "123456"));
             assertTrue(result);
             webServer.stop();
         }

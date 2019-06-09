@@ -9,17 +9,18 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":support:cas-server-support-pm")
-    
+    implementation project(":support:cas-server-support-pm-core")
+
     implementation libraries.pac4jcore
     implementation libraries.nimbus
     
     
+    testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core")
-    testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-webflow")
