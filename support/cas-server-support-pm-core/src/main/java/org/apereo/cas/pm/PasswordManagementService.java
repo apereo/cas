@@ -23,7 +23,7 @@ public interface PasswordManagementService {
      * @return true /false
      * @throws InvalidPasswordException if new password fails downstream validation
      */
-    default boolean change(final Credential c, final PasswordChangeBean bean) throws InvalidPasswordException {
+    default boolean change(final Credential c, final PasswordChangeRequest bean) throws InvalidPasswordException {
         return false;
     }
 

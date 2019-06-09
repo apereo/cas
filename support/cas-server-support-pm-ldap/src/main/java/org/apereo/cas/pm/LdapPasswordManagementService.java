@@ -26,8 +26,9 @@ import java.util.Map;
 public class LdapPasswordManagementService extends BasePasswordManagementService {
     public LdapPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
                                          final String issuer,
-                                         final PasswordManagementProperties passwordManagementProperties) {
-        super(passwordManagementProperties, cipherExecutor, issuer);
+                                         final PasswordManagementProperties passwordManagementProperties,
+                                         final PasswordHistoryService passwordHistoryService) {
+        super(passwordManagementProperties, cipherExecutor, issuer, passwordHistoryService);
     }
 
     @Override
@@ -107,7 +108,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
     }
 
     @Override
-    public boolean changeInternal(final Credential credential, final PasswordChangeBean bean) {
+    public boolean changeInternal(final Credential credential, final PasswordChangeRequest bean) {
         try {
             val ldap = properties.getLdap();
             val c = (UsernamePasswordCredential) credential;

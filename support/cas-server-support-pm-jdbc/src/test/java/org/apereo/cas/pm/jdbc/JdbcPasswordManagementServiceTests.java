@@ -18,7 +18,7 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.pm.JdbcPasswordManagementConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.pm.PasswordChangeBean;
+import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.config.PasswordManagementConfiguration;
 
@@ -112,7 +112,7 @@ public class JdbcPasswordManagementServiceTests {
     @Test
     public void verifyUserPasswordChange() {
         val c = new UsernamePasswordCredential("casuser", "password");
-        val bean = new PasswordChangeBean();
+        val bean = new PasswordChangeRequest();
         bean.setConfirmedPassword("newPassword1");
         bean.setPassword("newPassword1");
         val res = passwordChangeService.change(c, bean);

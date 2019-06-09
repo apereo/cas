@@ -80,6 +80,11 @@ public class PasswordManagementProperties implements Serializable {
     private ForgotUsername forgotUsername = new ForgotUsername();
 
     /**
+     * Settings related to password history management.
+     */
+    private PasswordHistory history = new PasswordHistory();
+    
+    /**
      * Handle password policy via Groovy script.
      */
     private Groovy groovy = new Groovy();
@@ -206,7 +211,24 @@ public class PasswordManagementProperties implements Serializable {
         }
     }
 
+    @RequiresModule(name = "cas-server-support-pm-webflow")
+    @Getter
+    @Setter
+    public static class PasswordHistory implements Serializable {
+        private static final long serialVersionUID = 2211199066765183587L;
 
+        /**
+         * Flag to indicate if password history tracking is enabled.
+         */
+        private boolean enabled;
+
+        /**
+         * Handle password history with Groovy.
+         */
+        @NestedConfigurationProperty
+        private SpringResourceProperties groovy = new SpringResourceProperties();
+    }
+    
     @RequiresModule(name = "cas-server-support-pm-webflow")
     @Getter
     @Setter

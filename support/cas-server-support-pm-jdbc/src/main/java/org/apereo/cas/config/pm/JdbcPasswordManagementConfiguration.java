@@ -3,6 +3,7 @@ package org.apereo.cas.config.pm;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
+import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.jdbc.JdbcPasswordManagementService;
 
@@ -32,6 +33,10 @@ public class JdbcPasswordManagementConfiguration {
     @Qualifier("passwordManagementCipherExecutor")
     private ObjectProvider<CipherExecutor> passwordManagementCipherExecutor;
 
+    @Autowired
+    @Qualifier("passwordHistoryService")
+    private ObjectProvider<PasswordHistoryService> passwordHistoryService;
+
     @Bean
     public DataSource jdbcPasswordManagementDataSource() {
         return JpaBeans.newDataSource(casProperties.getAuthn().getPm().getJdbc());
@@ -43,6 +48,7 @@ public class JdbcPasswordManagementConfiguration {
         return new JdbcPasswordManagementService(passwordManagementCipherExecutor.getIfAvailable(),
             casProperties.getServer().getPrefix(),
             casProperties.getAuthn().getPm(),
-            jdbcPasswordManagementDataSource());
+            jdbcPasswordManagementDataSource(),
+            passwordHistoryService.getIfAvailable());
     }
 }

@@ -3,6 +3,7 @@ package org.apereo.cas.config.pm;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
+import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.rest.RestPasswordManagementService;
 
@@ -16,7 +17,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
-
 
 /**
  * This is {@link RestPasswordManagementConfiguration}.
@@ -34,6 +34,10 @@ public class RestPasswordManagementConfiguration {
     @Qualifier("passwordManagementCipherExecutor")
     private ObjectProvider<CipherExecutor> passwordManagementCipherExecutor;
 
+    @Autowired
+    @Qualifier("passwordHistoryService")
+    private ObjectProvider<PasswordHistoryService> passwordHistoryService;
+
     @RefreshScope
     @Bean
     @Autowired
@@ -42,7 +46,7 @@ public class RestPasswordManagementConfiguration {
         return new RestPasswordManagementService(passwordManagementCipherExecutor.getIfAvailable(),
             casProperties.getServer().getPrefix(),
             buildRestTemplateBuilder(restTemplateBuilder),
-            pm);
+            pm, passwordHistoryService.getIfAvailable());
     }
 
     private RestTemplate buildRestTemplateBuilder(final RestTemplateBuilder restTemplateBuilder) {

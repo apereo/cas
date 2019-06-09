@@ -4,6 +4,7 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -27,6 +28,7 @@ import java.util.UUID;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Getter
 public class BasePasswordManagementService implements PasswordManagementService {
 
     /**
@@ -37,6 +39,8 @@ public class BasePasswordManagementService implements PasswordManagementService 
     private final CipherExecutor<Serializable, String> cipherExecutor;
 
     private final String issuer;
+
+    private final PasswordHistoryService passwordHistoryService;
 
     /**
      * Orders security questions consistently.
@@ -125,8 +129,19 @@ public class BasePasswordManagementService implements PasswordManagementService 
         actionResolverName = "CHANGE_PASSWORD_ACTION_RESOLVER",
         resourceResolverName = "CHANGE_PASSWORD_RESOURCE_RESOLVER")
     @Override
-    public boolean change(final Credential c, final PasswordChangeBean bean) throws InvalidPasswordException {
-        return changeInternal(c, bean);
+    public boolean change(final Credential c, final PasswordChangeRequest bean) throws InvalidPasswordException {
+        if (passwordHistoryService != null && passwordHistoryService.exists(bean)) {
+            LOGGER.debug("Password history policy disallows reusing the password for [{}]", c.getId());
+            return false;
+        }
+        if (changeInternal(c, bean)) {
+            if (passwordHistoryService != null) {
+                LOGGER.debug("Password successfully changed; storing used password in history for [{}]...", c.getId());
+                return passwordHistoryService.store(bean);
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -137,7 +152,7 @@ public class BasePasswordManagementService implements PasswordManagementService 
      * @return the boolean
      * @throws InvalidPasswordException if new password fails downstream validation
      */
-    public boolean changeInternal(final Credential c, final PasswordChangeBean bean) throws InvalidPasswordException {
+    public boolean changeInternal(final Credential c, final PasswordChangeRequest bean) throws InvalidPasswordException {
         return false;
     }
 }

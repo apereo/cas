@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.LdapPasswordManagementService;
+import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.PasswordManagementService;
 
 import org.springframework.beans.factory.ObjectProvider;
@@ -29,11 +30,16 @@ public class LdapPasswordManagementConfiguration {
     @Qualifier("passwordManagementCipherExecutor")
     private ObjectProvider<CipherExecutor> passwordManagementCipherExecutor;
 
+    @Autowired
+    @Qualifier("passwordHistoryService")
+    private ObjectProvider<PasswordHistoryService> passwordHistoryService;
+
     @RefreshScope
     @Bean
     public PasswordManagementService passwordChangeService() {
         return new LdapPasswordManagementService(passwordManagementCipherExecutor.getIfAvailable(),
             casProperties.getServer().getPrefix(),
-            casProperties.getAuthn().getPm());
+            casProperties.getAuthn().getPm(),
+            passwordHistoryService.getIfAvailable());
     }
 }

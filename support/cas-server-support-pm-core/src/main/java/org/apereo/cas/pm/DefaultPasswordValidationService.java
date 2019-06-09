@@ -17,9 +17,10 @@ import org.springframework.util.StringUtils;
 @RequiredArgsConstructor
 public class DefaultPasswordValidationService implements PasswordValidationService {
     private final String policyPattern;
-
+    private final PasswordHistoryService passwordHistoryService;
+    
     @Override
-    public boolean isValid(final UsernamePasswordCredential c, final PasswordChangeBean bean) {
+    public boolean isValid(final UsernamePasswordCredential c, final PasswordChangeRequest bean) {
         if (StringUtils.isEmpty(bean.getPassword())) {
             LOGGER.error("Provided password is blank");
             return false;
@@ -32,6 +33,10 @@ public class DefaultPasswordValidationService implements PasswordValidationServi
             LOGGER.error("Provided password does not match the pattern required for password policy [{}]", policyPattern);
             return false;
         }
+        if (passwordHistoryService.exists(bean)) {
+            LOGGER.error("Recycled password from password history is not allowed for [{}]", bean.getUsername());
+            return false;
+        }
         return validatePassword(c, bean);
     }
 
@@ -42,7 +47,7 @@ public class DefaultPasswordValidationService implements PasswordValidationServi
      * @param bean       the bean
      * @return the boolean
      */
-    protected boolean validatePassword(final UsernamePasswordCredential credential, final PasswordChangeBean bean) {
+    protected boolean validatePassword(final UsernamePasswordCredential credential, final PasswordChangeRequest bean) {
         return true;
     }
 }

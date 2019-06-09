@@ -1,12 +1,11 @@
-package org.apereo.cas.pm.impl;
+package org.apereo.cas.pm.history;
 
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordHistoryService;
-import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.config.PasswordManagementConfiguration;
 
+import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,7 @@ import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link GroovyResourcePasswordManagementServiceTests}.
+ * This is {@link GroovyPasswordHistoryServiceTests}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
@@ -28,34 +27,23 @@ import static org.junit.jupiter.api.Assertions.*;
     PasswordManagementConfiguration.class,
     CasCoreUtilConfiguration.class
 })
-@Tag("Groovy")
 @TestPropertySource(properties = {
     "cas.authn.pm.enabled=true",
-    "cas.authn.pm.groovy.location=classpath:/GroovyPasswordMgmt.groovy"
+    "cas.authn.pm.history.enabled=true",
+    "cas.authn.pm.history.groovy.location=classpath:PasswordHistoryService.groovy"
 })
-public class GroovyResourcePasswordManagementServiceTests {
-
-    @Autowired
-    @Qualifier("passwordChangeService")
-    private PasswordManagementService passwordChangeService;
-
+@Tag("Groovy")
+public class GroovyPasswordHistoryServiceTests {
     @Autowired
     @Qualifier("passwordHistoryService")
     private PasswordHistoryService passwordHistoryService;
-    
-    @Test
-    public void verifyFindEmail() {
-        assertNotNull(passwordChangeService.findEmail("casuser"));
-    }
-    @Test
-    public void verifyFindUser() {
-        assertNotNull(passwordChangeService.findUsername("casuser@example.org"));
-    }
 
     @Test
-    public void verifyChangePassword() {
-        assertTrue(passwordChangeService.change(
-            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "password"),
-            new PasswordChangeRequest("casuser", "password", "password")));
+    public void verifyValidity() {
+        val request = new PasswordChangeRequest("casuser", "password", "password");
+        assertFalse(passwordHistoryService.exists(request));
+        assertTrue(passwordHistoryService.store(request));
+        assertTrue(passwordHistoryService.fetchAll().isEmpty());
+        assertTrue(passwordHistoryService.fetch("casuser").isEmpty());
     }
 }
