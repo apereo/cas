@@ -6,12 +6,16 @@ import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.DefaultPasswordValidationService;
+import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordResetTokenCipherExecutor;
 import org.apereo.cas.pm.PasswordValidationService;
 import org.apereo.cas.pm.impl.GroovyResourcePasswordManagementService;
 import org.apereo.cas.pm.impl.JsonResourcePasswordManagementService;
 import org.apereo.cas.pm.impl.NoOpPasswordManagementService;
+import org.apereo.cas.pm.impl.history.AmnesiacPasswordHistoryService;
+import org.apereo.cas.pm.impl.history.GroovyPasswordHistoryService;
+import org.apereo.cas.pm.impl.history.InMemoryPasswordHistoryService;
 import org.apereo.cas.util.io.CommunicationsManager;
 
 import lombok.extern.slf4j.Slf4j;
@@ -67,7 +71,22 @@ public class PasswordManagementConfiguration implements AuditTrailRecordResoluti
     @Bean
     public PasswordValidationService passwordValidationService() {
         val policyPattern = casProperties.getAuthn().getPm().getPolicyPattern();
-        return new DefaultPasswordValidationService(policyPattern);
+        return new DefaultPasswordValidationService(policyPattern, passwordHistoryService());
+    }
+
+    @ConditionalOnMissingBean(name = "passwordHistoryService")
+    @RefreshScope
+    @Bean
+    public PasswordHistoryService passwordHistoryService() {
+        val pm = casProperties.getAuthn().getPm();
+        val history = pm.getHistory();
+        if (pm.isEnabled() && history.isEnabled()) {
+            if (history.getGroovy().getLocation() != null) {
+                return new GroovyPasswordHistoryService(history.getGroovy().getLocation());
+            }
+            return new InMemoryPasswordHistoryService();
+        }
+        return new AmnesiacPasswordHistoryService();
     }
 
     @ConditionalOnMissingBean(name = "passwordChangeService")
@@ -81,7 +100,9 @@ public class PasswordManagementConfiguration implements AuditTrailRecordResoluti
                 LOGGER.debug("Configuring password management based on JSON resource [{}]", location);
                 return new JsonResourcePasswordManagementService(passwordManagementCipherExecutor(),
                     casProperties.getServer().getPrefix(),
-                    casProperties.getAuthn().getPm(), location);
+                    casProperties.getAuthn().getPm(),
+                    location,
+                    passwordHistoryService());
             }
 
             val groovyScript = pm.getGroovy().getLocation();
@@ -89,7 +110,9 @@ public class PasswordManagementConfiguration implements AuditTrailRecordResoluti
                 LOGGER.debug("Configuring password management based on Groovy resource [{}]", groovyScript);
                 return new GroovyResourcePasswordManagementService(passwordManagementCipherExecutor(),
                     casProperties.getServer().getPrefix(),
-                    casProperties.getAuthn().getPm(), groovyScript);
+                    casProperties.getAuthn().getPm(),
+                    groovyScript,
+                    passwordHistoryService());
             }
 
             LOGGER.warn("No storage service (LDAP, Database, etc) is configured to handle the account update and password service operations. "
@@ -108,7 +131,7 @@ public class PasswordManagementConfiguration implements AuditTrailRecordResoluti
     public void afterPropertiesSet() {
         val pm = casProperties.getAuthn().getPm();
         if (pm.isEnabled()) {
-            communicationsManager.getIfAvailable().validate();
+            communicationsManager.getObject().validate();
         }
     }
 

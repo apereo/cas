@@ -17,7 +17,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.pm.PasswordChangeBean;
+import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordValidationService;
 import org.apereo.cas.pm.config.PasswordManagementConfiguration;
@@ -89,7 +89,7 @@ public class JsonResourcePasswordManagementServiceTests {
     @Test
     public void verifyUserPasswordChange() {
         val c = new UsernamePasswordCredential("casuser", "password");
-        val bean = new PasswordChangeBean();
+        val bean = new PasswordChangeRequest();
         bean.setConfirmedPassword("newPassword");
         bean.setPassword("newPassword");
         val res = passwordChangeService.change(c, bean);
@@ -99,7 +99,7 @@ public class JsonResourcePasswordManagementServiceTests {
     @Test
     public void verifyPasswordValidationService() {
         val c = new UsernamePasswordCredential("casuser", "password");
-        val bean = new PasswordChangeBean();
+        val bean = new PasswordChangeRequest();
         bean.setConfirmedPassword("Test@1234");
         bean.setPassword("Test@1234");
         val isValid = passwordValidationService.isValid(c, bean);

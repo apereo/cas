@@ -5,7 +5,8 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.BasePasswordManagementService;
-import org.apereo.cas.pm.PasswordChangeBean;
+import org.apereo.cas.pm.PasswordChangeRequest;
+import org.apereo.cas.pm.PasswordHistoryService;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,9 +41,11 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
     private Map<String, JsonBackedAccount> jsonBackedAccounts;
 
     public JsonResourcePasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
-                                                 final String issuer, final PasswordManagementProperties passwordManagementProperties,
-                                                 final Resource jsonResource) {
-        super(passwordManagementProperties, cipherExecutor, issuer);
+                                                 final String issuer,
+                                                 final PasswordManagementProperties passwordManagementProperties,
+                                                 final Resource jsonResource,
+                                                 final PasswordHistoryService passwordHistoryService) {
+        super(passwordManagementProperties, cipherExecutor, issuer, passwordHistoryService);
         this.jsonResource = jsonResource;
         readAccountsFromJsonResource();
     }
@@ -58,7 +61,7 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
     }
 
     @Override
-    public boolean changeInternal(final @NonNull Credential credential, final @NonNull PasswordChangeBean bean) {
+    public boolean changeInternal(final @NonNull Credential credential, final @NonNull PasswordChangeRequest bean) {
         val c = (UsernamePasswordCredential) credential;
         if (StringUtils.isBlank(bean.getPassword())) {
             LOGGER.error("Password cannot be blank");

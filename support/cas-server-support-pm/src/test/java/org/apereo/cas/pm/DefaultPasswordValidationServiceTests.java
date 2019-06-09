@@ -28,30 +28,35 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @TestPropertySource(properties = {
     "cas.authn.pm.enabled=true",
-    "cas.authn.pm.policyPattern=^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&]{8,10}",
+    "cas.authn.pm.policyPattern=^Th!.+{8,10}"
 })
 public class DefaultPasswordValidationServiceTests {
     @Autowired
     @Qualifier("passwordValidationService")
     private PasswordValidationService passwordValidationService;
 
+    @Autowired
+    @Qualifier("passwordHistoryService")
+    private PasswordHistoryService passwordHistoryService;
+
     @Test
     public void verifyValidity() {
         val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "password");
         assertFalse(passwordValidationService.isValid(
             creds,
-            new PasswordChangeBean(StringUtils.EMPTY, null)));
+            new PasswordChangeRequest("user", StringUtils.EMPTY, null)));
 
         assertFalse(passwordValidationService.isValid(
             creds,
-            new PasswordChangeBean("password", "password")));
+            new PasswordChangeRequest("user", "password", "password")));
 
         assertFalse(passwordValidationService.isValid(
             creds,
-            new PasswordChangeBean("Th!sIsT3st", "password")));
+            new PasswordChangeRequest("user", "Th!sIsT3st", "password")));
 
-        assertFalse(passwordValidationService.isValid(
-            creds,
-            new PasswordChangeBean("Th!sIsT3st", "Th!sIsT3st")));
+        val request = new PasswordChangeRequest("user", "Th!sIsT3st", "Th!sIsT3st");
+        assertTrue(passwordValidationService.isValid(creds, request));
+        passwordHistoryService.store(request);
+        assertFalse(passwordValidationService.isValid(creds, request));
     }
 }

@@ -17,5 +17,5 @@ public interface PasswordValidationService {
      * @param bean the bean
      * @return the boolean
      */
-    boolean isValid(UsernamePasswordCredential c, PasswordChangeBean bean);
+    boolean isValid(UsernamePasswordCredential c, PasswordChangeRequest bean);
 }

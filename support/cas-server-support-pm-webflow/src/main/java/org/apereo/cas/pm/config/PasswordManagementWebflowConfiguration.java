@@ -125,7 +125,9 @@ public class PasswordManagementWebflowConfiguration implements CasWebflowExecuti
     @RefreshScope
     @Bean
     public Action passwordChangeAction() {
-        return new PasswordChangeAction(passwordManagementService.getIfAvailable(), passwordValidationService.getIfAvailable(), communicationsManager.getIfAvailable());
+        return new PasswordChangeAction(passwordManagementService.getIfAvailable(),
+            passwordValidationService.getIfAvailable(),
+            communicationsManager.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "sendPasswordResetInstructionsAction")

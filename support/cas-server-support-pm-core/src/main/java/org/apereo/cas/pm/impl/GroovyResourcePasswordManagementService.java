@@ -4,7 +4,8 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.BasePasswordManagementService;
-import org.apereo.cas.pm.PasswordChangeBean;
+import org.apereo.cas.pm.PasswordChangeRequest;
+import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 
 import lombok.Getter;
@@ -30,13 +31,14 @@ public class GroovyResourcePasswordManagementService extends BasePasswordManagem
     public GroovyResourcePasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
                                                    final String issuer,
                                                    final PasswordManagementProperties passwordManagementProperties,
-                                                   final Resource groovyResource) {
-        super(passwordManagementProperties, cipherExecutor, issuer);
+                                                   final Resource groovyResource,
+                                                   final PasswordHistoryService passwordHistoryService) {
+        super(passwordManagementProperties, cipherExecutor, issuer, passwordHistoryService);
         this.watchableScript = new WatchableGroovyScriptResource(groovyResource);
     }
 
     @Override
-    public boolean changeInternal(final @NonNull Credential credential, final @NonNull PasswordChangeBean bean) {
+    public boolean changeInternal(final @NonNull Credential credential, final @NonNull PasswordChangeRequest bean) {
         return watchableScript.execute("change", Boolean.class, new Object[]{credential, bean, LOGGER});
     }
 

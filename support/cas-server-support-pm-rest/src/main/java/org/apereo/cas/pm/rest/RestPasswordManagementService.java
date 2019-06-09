@@ -5,7 +5,8 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.BasePasswordManagementService;
-import org.apereo.cas.pm.PasswordChangeBean;
+import org.apereo.cas.pm.PasswordChangeRequest;
+import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -33,14 +34,16 @@ public class RestPasswordManagementService extends BasePasswordManagementService
     public RestPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
                                          final String issuer,
                                          final RestTemplate restTemplate,
-                                         final PasswordManagementProperties passwordManagementProperties) {
-        super(passwordManagementProperties, cipherExecutor, issuer);
+                                         final PasswordManagementProperties passwordManagementProperties,
+                                         final PasswordHistoryService passwordHistoryService) {
+        super(passwordManagementProperties, cipherExecutor, issuer, passwordHistoryService);
         this.restTemplate = restTemplate;
     }
 
     @Override
-    public boolean changeInternal(final Credential c, final PasswordChangeBean bean) {
+    public boolean changeInternal(final Credential c, final PasswordChangeRequest bean) {
         val rest = properties.getRest();
+        
         if (StringUtils.isBlank(rest.getEndpointUrlChange())) {
             return false;
         }
