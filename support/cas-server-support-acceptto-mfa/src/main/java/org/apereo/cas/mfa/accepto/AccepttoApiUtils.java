@@ -169,25 +169,27 @@ public class AccepttoApiUtils {
             val authzPayload = buildAuthorizationHeaderPayloadForAuthentication(acceptto);
             val headers = CollectionUtils.<String, Object>wrap("Authorization", "Bearer " + authzPayload);
             response = HttpUtils.executePost(url, parameters, headers);
-            if (response != null) {
-                val status = response.getStatusLine().getStatusCode();
-                LOGGER.debug("Authentication response status code is [{}]", status);
-                val results = MAPPER.readValue(response.getEntity().getContent(), Map.class);
-                LOGGER.trace("Received API response as [{}]", results);
-                if (!results.containsKey("content")) {
-                    throw new IllegalArgumentException("Unable to locate content in API response");
-                }
-                val content = results.get("content").toString();
-                LOGGER.trace("Loading public key from [{}] to validate response", acceptto.getRegistrationApiPublicKey().getLocation());
-
-                LOGGER.trace("Validating response signature for [{}]", content);
-                val decoded = EncodingUtils.verifyJwsSignature(apiResponsePublicKey, content);
-                if (decoded != null) {
-                    val decodedResult = new String(decoded, StandardCharsets.UTF_8);
-                    LOGGER.debug("Received final API response as [{}]", decodedResult);
-                    return MAPPER.readValue(decodedResult, Map.class);
-                }
+            if (response == null) {
+                LOGGER.error("Unable to extract response from API at [{}]", url);
+                return new HashMap<>();
             }
+            val status = response.getStatusLine().getStatusCode();
+            LOGGER.debug("Authentication response status code is [{}]", status);
+            val results = MAPPER.readValue(response.getEntity().getContent(), Map.class);
+            LOGGER.trace("Received API response as [{}]", results);
+            if (!results.containsKey("content")) {
+                throw new IllegalArgumentException("Unable to locate content in API response");
+            }
+            val content = results.get("content").toString();
+            LOGGER.trace("Validating response signature for [{}] using [{}]", content, apiResponsePublicKey);
+            val decoded = EncodingUtils.verifyJwsSignature(apiResponsePublicKey, content);
+            if (decoded == null) {
+                LOGGER.error("Unable to verify API content using public key [{}]", apiResponsePublicKey);
+                return new HashMap<>();
+            }
+            val decodedResult = new String(decoded, StandardCharsets.UTF_8);
+            LOGGER.debug("Received final API response as [{}]", decodedResult);
+            return MAPPER.readValue(decodedResult, Map.class);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         } finally {
