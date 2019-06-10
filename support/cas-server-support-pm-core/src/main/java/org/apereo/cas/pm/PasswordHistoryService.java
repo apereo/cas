@@ -2,6 +2,8 @@ package org.apereo.cas.pm;
 
 import org.apereo.cas.pm.impl.history.PasswordHistoryEntity;
 
+import org.springframework.core.Ordered;
+
 import java.util.Collection;
 
 /**
@@ -10,7 +12,12 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-public interface PasswordHistoryService {
+public interface PasswordHistoryService extends Ordered {
+
+    @Override
+    default int getOrder() {
+        return 0;
+    }
 
     /**
      * Determine whether password request
@@ -43,4 +50,16 @@ public interface PasswordHistoryService {
      * @return the collection
      */
     Collection<PasswordHistoryEntity> fetch(String username);
+
+    /**
+     * Remove.
+     *
+     * @param username the username
+     */
+    void remove(String username);
+
+    /**
+     * Remove all.
+     */
+    void removeAll();
 }

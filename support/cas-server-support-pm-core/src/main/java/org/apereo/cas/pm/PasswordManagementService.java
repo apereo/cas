@@ -89,7 +89,8 @@ public interface PasswordManagementService {
      * @param input    user response to question
      * @return whether the answer is correct
      */
-    default boolean isValidSecurityQuestionAnswer(final String username, final String question, final String answer, final String input) {
+    default boolean isValidSecurityQuestionAnswer(final String username, final String question,
+                                                  final String answer, final String input) {
         if (StringUtils.isNotBlank(answer)) {
             return answer.equals(input);
         }

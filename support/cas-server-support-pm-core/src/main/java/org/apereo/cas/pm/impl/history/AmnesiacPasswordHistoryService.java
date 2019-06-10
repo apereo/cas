@@ -34,4 +34,12 @@ public class AmnesiacPasswordHistoryService extends BasePasswordHistoryService {
     public boolean store(final PasswordChangeRequest changeRequest) {
         return true;
     }
+
+    @Override
+    public void remove(final String username) {
+    }
+
+    @Override
+    public void removeAll() {
+    }
 }

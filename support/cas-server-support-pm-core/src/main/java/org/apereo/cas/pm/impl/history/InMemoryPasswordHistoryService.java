@@ -54,4 +54,14 @@ public class InMemoryPasswordHistoryService extends BasePasswordHistoryService {
         history.add(entity);
         return true;
     }
+
+    @Override
+    public void remove(final String username) {
+        this.history.removeIf(p -> p.getUsername().equalsIgnoreCase(username));
+    }
+
+    @Override
+    public void removeAll() {
+        this.history.clear();
+    }
 }

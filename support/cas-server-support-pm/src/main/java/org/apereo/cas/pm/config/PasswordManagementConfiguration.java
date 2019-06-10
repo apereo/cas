@@ -29,8 +29,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+
+import java.util.ArrayList;
 
 /**
  * This is {@link PasswordManagementConfiguration}.
@@ -44,6 +48,9 @@ import org.springframework.context.annotation.Configuration;
 public class PasswordManagementConfiguration implements AuditTrailRecordResolutionPlanConfigurer, InitializingBean {
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("communicationsManager")
@@ -81,10 +88,17 @@ public class PasswordManagementConfiguration implements AuditTrailRecordResoluti
         val pm = casProperties.getAuthn().getPm();
         val history = pm.getHistory();
         if (pm.isEnabled() && history.isEnabled()) {
-            if (history.getGroovy().getLocation() != null) {
-                return new GroovyPasswordHistoryService(history.getGroovy().getLocation());
+            val beans = applicationContext.getBeansOfType(PasswordHistoryService.class, false, true);
+            val services = new ArrayList<PasswordHistoryService>(beans.values());
+            AnnotationAwareOrderComparator.sort(services);
+
+            if (services.isEmpty()) {
+                if (history.getGroovy().getLocation() != null) {
+                    return new GroovyPasswordHistoryService(history.getGroovy().getLocation());
+                }
+                return new InMemoryPasswordHistoryService();
             }
-            return new InMemoryPasswordHistoryService();
+            return services.get(0);
         }
         return new AmnesiacPasswordHistoryService();
     }

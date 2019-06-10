@@ -31,7 +31,6 @@ public class JpaConsentRepository implements ConsentRepository {
     private static final long serialVersionUID = 6599902742493270206L;
 
     private static final String SELECT_QUERY = "SELECT r from ConsentDecision r ";
-    private static final String DELETE_QUERY = "DELETE r from ConsentDecision r ";
 
     @PersistenceContext(unitName = "consentEntityManagerFactory")
     private transient EntityManager entityManager;

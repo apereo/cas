@@ -20,3 +20,9 @@ def fetch(Object[] args) {
     def logger = args[1]
     return []
 }
+
+def remove(Object[] args) {
+}
+
+def removeAll(Object[] args) {
+}

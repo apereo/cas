@@ -41,4 +41,14 @@ public class GroovyPasswordHistoryService extends BasePasswordHistoryService {
     public Collection<PasswordHistoryEntity> fetch(final String username) {
         return this.watchableScript.execute("fetch", Collection.class, new Object[]{username, LOGGER});
     }
+
+    @Override
+    public void remove(final String username) {
+        this.watchableScript.execute("remove", Void.class, new Object[]{username, LOGGER});
+    }
+
+    @Override
+    public void removeAll() {
+        this.watchableScript.execute("removeAll", Void.class, new Object[]{LOGGER});
+    }
 }

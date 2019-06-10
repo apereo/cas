@@ -24,7 +24,9 @@ import org.springframework.webflow.execution.RequestContext;
 
 import java.nio.charset.StandardCharsets;
 import java.security.PublicKey;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -46,13 +48,30 @@ public class AccepttoApiUtils {
      * @param acceptto       the acceptto
      * @return the user email attribute
      */
-    public String getUserEmailAttribute(final Authentication authentication, final AccepttoMultifactorProperties acceptto) {
+    public String getUserEmail(final Authentication authentication, final AccepttoMultifactorProperties acceptto) {
         val attributes = authentication.getPrincipal().getAttributes();
         LOGGER.debug("Current principal attributes are [{}]", attributes);
 
         return CollectionUtils.firstElement(attributes.get(acceptto.getEmailAttribute()))
             .map(Object::toString)
-            .orElseThrow(null);
+            .orElse(null);
+    }
+
+    /**
+     * Gets user group.
+     *
+     * @param authentication the authentication
+     * @param acceptto       the acceptto
+     * @return the user group
+     */
+    public List<String> getUserGroup(final Authentication authentication, final AccepttoMultifactorProperties acceptto) {
+        val attributes = authentication.getPrincipal().getAttributes();
+        LOGGER.debug("Current principal attributes are [{}]", attributes);
+
+        if (StringUtils.isBlank(acceptto.getGroupAttribute()) || !attributes.containsKey(acceptto.getGroupAttribute())) {
+            return new ArrayList<>();
+        }
+        return CollectionUtils.toCollection(attributes.get(acceptto.getGroupAttribute()), ArrayList.class);
     }
 
     /**
@@ -64,7 +83,7 @@ public class AccepttoApiUtils {
      */
     public static Map isUserValid(final Authentication authentication, final AccepttoMultifactorProperties acceptto) {
         val url = StringUtils.appendIfMissing(acceptto.getApiUrl(), "/") + "is_user_valid";
-        val email = getUserEmailAttribute(authentication, acceptto);
+        val email = getUserEmail(authentication, acceptto);
 
         if (StringUtils.isBlank(email)) {
             LOGGER.error("Unable to determine email address under attribute [{}]", acceptto.getEmailAttribute());
@@ -112,7 +131,7 @@ public class AccepttoApiUtils {
                                    final RequestContext requestContext,
                                    final PublicKey apiResponsePublicKey) {
         val url = acceptto.getRegistrationApiUrl();
-        val email = getUserEmailAttribute(authentication, acceptto);
+        val email = getUserEmail(authentication, acceptto);
         val sessionId = UUID.randomUUID().toString();
 
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
@@ -130,9 +149,15 @@ public class AccepttoApiUtils {
         CookieUtils.getCookieFromRequest("jwt", request)
             .ifPresent(cookie -> parameters.put("jwt", cookie.getValue()));
 
+        val group = getUserGroup(authentication, acceptto);
+        if (!group.isEmpty()) {
+            parameters.put("groups", group);
+        }
+
         AccepttoWebflowUtils.getEGuardianUserId(requestContext).ifPresent(value -> {
             parameters.put("eguardian_user_id", value);
         });
+
         val currentCredential = WebUtils.getCredential(requestContext);
         if (currentCredential instanceof AccepttoEmailCredential) {
             parameters.put("auth_type", 1);
@@ -211,7 +236,7 @@ public class AccepttoApiUtils {
      */
     public static String generateQRCodeHash(final Authentication authentication, final AccepttoMultifactorProperties acceptto,
                                             final String invitationToken) throws Exception {
-        val email = getUserEmailAttribute(authentication, acceptto);
+        val email = getUserEmail(authentication, acceptto);
         val hash = CollectionUtils.wrap("invitation_token", invitationToken, "email_address", email);
         val result = MAPPER.writeValueAsString(hash);
         return EncodingUtils.encodeBase64(result);

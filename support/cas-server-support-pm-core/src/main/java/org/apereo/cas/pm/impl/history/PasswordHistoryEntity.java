@@ -15,7 +15,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
@@ -45,7 +44,7 @@ public class PasswordHistoryEntity implements Serializable {
     @Column(nullable = false)
     private String username;
 
-    @Column(name = "password", length = Integer.MAX_VALUE)
+    @Column(name = "password", length = Integer.MAX_VALUE, nullable = false)
     private String password;
 
     @Column(nullable = false)

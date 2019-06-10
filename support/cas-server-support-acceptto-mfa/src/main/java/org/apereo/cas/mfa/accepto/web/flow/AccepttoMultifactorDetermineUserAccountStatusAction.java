@@ -38,7 +38,7 @@ public class AccepttoMultifactorDetermineUserAccountStatusAction extends Abstrac
         val eventFactorySupport = new EventFactorySupport();
         val acceptto = casProperties.getAuthn().getMfa().getAcceptto();
         val authentication = WebUtils.getInProgressAuthentication();
-        val email = AccepttoApiUtils.getUserEmailAttribute(authentication, acceptto);
+        val email = AccepttoApiUtils.getUserEmail(authentication, acceptto);
 
         try {
             LOGGER.trace("Contacting authentication API to inquire for account status of [{}]", email);
