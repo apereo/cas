@@ -33,7 +33,6 @@ import java.util.Map;
  */
 @Slf4j
 public class JsonResourcePasswordManagementService extends BasePasswordManagementService {
-
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     private final Resource jsonResource;
@@ -48,16 +47,6 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
         super(passwordManagementProperties, cipherExecutor, issuer, passwordHistoryService);
         this.jsonResource = jsonResource;
         readAccountsFromJsonResource();
-    }
-
-    private void readAccountsFromJsonResource() {
-        try (val reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
-            final TypeReference<Map<String, JsonBackedAccount>> personList = new TypeReference<>() {
-            };
-            this.jsonBackedAccounts = MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
-        } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
-        }
     }
 
     @Override
@@ -112,11 +101,24 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
         return new HashMap<>(0);
     }
 
+    private void readAccountsFromJsonResource() {
+        try (val reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
+            final TypeReference<Map<String, JsonBackedAccount>> personList = new TypeReference<>() {
+            };
+            this.jsonBackedAccounts = MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
+        } catch (final Exception e) {
+            LOGGER.warn(e.getMessage(), e);
+        }
+    }
+
+
     /**
      * The type Json backed account.
      */
     @Data
-    private static class JsonBackedAccount {
+    private static class JsonBackedAccount implements Serializable {
+        private static final long serialVersionUID = -8522936598053838986L;
+
         private String email;
 
         private String password;

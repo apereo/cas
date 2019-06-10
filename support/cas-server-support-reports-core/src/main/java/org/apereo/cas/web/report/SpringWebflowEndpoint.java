@@ -96,7 +96,7 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
                     }
 
                     var acts = StreamSupport.stream(state.getEntryActionList().spliterator(), false)
-                        .map(this::convertActionToString)
+                        .map(SpringWebflowEndpoint::convertActionToString)
                         .collect(Collectors.toList());
 
                     if (!acts.isEmpty()) {
@@ -105,7 +105,7 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
 
                     if (state instanceof ActionState) {
                         acts = StreamSupport.stream(ActionState.class.cast(state).getActionList().spliterator(), false)
-                            .map(this::convertActionToString)
+                            .map(SpringWebflowEndpoint::convertActionToString)
                             .collect(Collectors.toList());
                         if (!acts.isEmpty()) {
                             stateMap.put("actionList", acts);
@@ -186,7 +186,7 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
                 flowDetails.put("stateCount", def.getStateCount());
 
                 var acts = StreamSupport.stream(def.getEndActionList().spliterator(), false)
-                    .map(this::convertActionToString)
+                    .map(SpringWebflowEndpoint::convertActionToString)
                     .collect(Collectors.toList());
                 if (!acts.isEmpty()) {
                     flowDetails.put("endActions", acts);
@@ -220,7 +220,7 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
         return jsonMap;
     }
 
-    private String convertActionToString(final Action action) {
+    private static String convertActionToString(final Action action) {
         if (action instanceof EvaluateAction) {
             return convertEvaluateActionToString(action);
         }
