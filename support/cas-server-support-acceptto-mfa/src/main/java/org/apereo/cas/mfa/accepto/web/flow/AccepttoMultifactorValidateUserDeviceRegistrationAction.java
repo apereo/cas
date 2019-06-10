@@ -36,7 +36,7 @@ public class AccepttoMultifactorValidateUserDeviceRegistrationAction extends Abs
         val eventAttributes = new LocalAttributeMap<>();
         val acceptto = casProperties.getAuthn().getMfa().getAcceptto();
         val authentication = WebUtils.getInProgressAuthentication();
-        val email = AccepttoApiUtils.getUserEmailAttribute(authentication, acceptto);
+        val email = AccepttoApiUtils.getUserEmail(authentication, acceptto);
         try {
             if (verifyUserDeviceIsPaired()) {
                 val credential = new AccepttoEmailCredential(email);
@@ -69,7 +69,7 @@ public class AccepttoMultifactorValidateUserDeviceRegistrationAction extends Abs
     public boolean verifyUserDeviceIsPaired() {
         val acceptto = casProperties.getAuthn().getMfa().getAcceptto();
         val authentication = WebUtils.getInProgressAuthentication();
-        val email = AccepttoApiUtils.getUserEmailAttribute(authentication, acceptto);
+        val email = AccepttoApiUtils.getUserEmail(authentication, acceptto);
         if (!AccepttoApiUtils.isUserDevicePaired(authentication, acceptto)) {
             throw new AccepttoUserDeviceRegistrationException("Could not locate registered device for " + email);
         }

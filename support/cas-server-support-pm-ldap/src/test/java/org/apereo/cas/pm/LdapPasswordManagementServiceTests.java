@@ -43,7 +43,17 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @DirtiesContext
 @EnabledIfContinuousIntegration
-@TestPropertySource(locations = {"classpath:/ldap-pm.properties"})
+@TestPropertySource(properties = {
+    "cas.authn.pm.ldap.ldapUrl=ldap://localhost:10389",
+    "cas.authn.pm.ldap.bindDn=cn=Directory Manager",
+    "cas.authn.pm.ldap.bindCredential=password",
+    "cas.authn.pm.ldap.baseDn=ou=people,dc=example,dc=org",
+    "cas.authn.pm.ldap.searchFilter=cn={user}",
+    "cas.authn.pm.ldap.useSsl=false",
+    "cas.authn.pm.ldap.type=GENERIC",
+    "cas.authn.pm.ldap.securityQuestionsAttributes.registeredAddress=roomNumber",
+    "cas.authn.pm.ldap.securityQuestionsAttributes.postalCode=teletexTerminalIdentifier"
+})
 public class LdapPasswordManagementServiceTests {
     private static final int LDAP_PORT = 10389;
 

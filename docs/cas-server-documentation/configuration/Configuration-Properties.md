@@ -4919,6 +4919,16 @@ under the configuration key `cas.authn.pm.reset`.
 The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.pm.reset`.
 
+### Password History
+
+To learn more about this topic, [please review this guide](../installation/Password-Policy-Enforcement.html).
+
+```properties
+# cas.authn.pm.history.enabled=false
+
+# cas.authn.pm.history.groovy.location=classpath:PasswordHistory.groovy
+```
+
 ### JSON Password Management
 
 ```properties
