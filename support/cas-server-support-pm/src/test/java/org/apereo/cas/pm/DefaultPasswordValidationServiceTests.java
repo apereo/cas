@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @TestPropertySource(properties = {
     "cas.authn.pm.enabled=true",
+    "cas.authn.pm.history.enabled=true",
     "cas.authn.pm.policyPattern=^Th!.+{8,10}"
 })
 public class DefaultPasswordValidationServiceTests {
