@@ -86,6 +86,7 @@ public class LdapPasswordManagementServiceTests {
         val bean = new PasswordChangeRequest();
         bean.setConfirmedPassword("Mellon");
         bean.setPassword("Mellon");
+        bean.setUsername(credential.getUsername());
         assertFalse(passwordChangeService.change(credential, bean));
     }
 

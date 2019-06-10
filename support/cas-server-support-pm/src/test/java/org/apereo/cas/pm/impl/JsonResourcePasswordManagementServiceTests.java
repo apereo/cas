@@ -38,7 +38,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@SpringBootTest(classes = {RefreshAutoConfiguration.class,
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationPolicyConfiguration.class,
     CasCoreAuthenticationMetadataConfiguration.class,
@@ -56,11 +57,12 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreUtilConfiguration.class,
-    PasswordManagementConfiguration.class})
+    PasswordManagementConfiguration.class
+})
 @TestPropertySource(properties = {
     "cas.authn.pm.json.location=classpath:jsonResourcePassword.json",
     "cas.authn.pm.enabled=true",
-    "cas.authn.pm.policyPattern=^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%#?&])[A-Za-z\\d@$!%#?&]{8,}$"
+    "cas.authn.pm.policyPattern=^Test1.+"
 })
 public class JsonResourcePasswordManagementServiceTests {
     @Autowired
@@ -104,8 +106,9 @@ public class JsonResourcePasswordManagementServiceTests {
     public void verifyPasswordValidationService() {
         val c = new UsernamePasswordCredential("casuser", "password");
         val bean = new PasswordChangeRequest();
-        bean.setConfirmedPassword("Test@1234");
-        bean.setPassword("Test@1234");
+        bean.setUsername(c.getUsername());
+        bean.setConfirmedPassword("Test1@1234");
+        bean.setPassword("Test1@1234");
         val isValid = passwordValidationService.isValid(c, bean);
         assertTrue(isValid);
     }
