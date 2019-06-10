@@ -22,16 +22,12 @@ import org.ektorp.support.CouchDbDocument;
 @NoArgsConstructor
 public class TicketDocument extends CouchDbDocument {
     private static final long serialVersionUID = -5460618381339711000L;
+
     private Ticket ticket;
 
-    public TicketDocument(final Ticket ticket) {
+    @JsonCreator
+    public TicketDocument(@JsonProperty("ticket") final Ticket ticket) {
         this.setId(ticket.getId());
         this.ticket = ticket;
-    }
-
-    @JsonCreator
-    public TicketDocument(@JsonProperty("id") final String id, @JsonProperty("rev") final String rev) {
-        this.setId(id);
-        this.setRevision(rev);
     }
 }

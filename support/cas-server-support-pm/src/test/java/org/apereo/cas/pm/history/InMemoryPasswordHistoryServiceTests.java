@@ -27,7 +27,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class
 })
 @TestPropertySource(properties = {
-    "cas.authn.pm.enabled=true"
+    "cas.authn.pm.enabled=true",
+    "cas.authn.pm.history.enabled=true"
 })
 public class InMemoryPasswordHistoryServiceTests {
     @Autowired
