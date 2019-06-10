@@ -31,3 +31,7 @@ The expected database schema for account security questions is:
 ```sql
 create table pm_table_questions (id int, userid varchar(255), question varchar(255), answer varchar(255));
 ```
+
+## Password History
+
+This feature is does also enable password history tracking and storage. Managing passwords via JDBC will switch CAS to use the same JDBC configuration for password history.

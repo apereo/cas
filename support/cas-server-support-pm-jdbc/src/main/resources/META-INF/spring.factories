@@ -1,1 +1,2 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.pm.JdbcPasswordManagementConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.pm.JdbcPasswordManagementConfiguration,\
+  org.apereo.cas.config.pm.JdbcPasswordHistoryManagementConfiguration
