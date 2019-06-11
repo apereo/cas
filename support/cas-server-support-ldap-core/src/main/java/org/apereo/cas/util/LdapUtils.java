@@ -58,6 +58,7 @@ import org.ldaptive.auth.PooledBindAuthenticationHandler;
 import org.ldaptive.auth.PooledCompareAuthenticationHandler;
 import org.ldaptive.auth.PooledSearchDnResolver;
 import org.ldaptive.control.PasswordPolicyControl;
+import org.ldaptive.control.util.PagedResultsClient;
 import org.ldaptive.extended.PasswordModifyOperation;
 import org.ldaptive.extended.PasswordModifyRequest;
 import org.ldaptive.handler.CaseChangeEntryHandler;
@@ -221,6 +222,7 @@ public class LdapUtils {
      * @param connectionFactory the connection factory
      * @param baseDn            the base dn
      * @param filter            the filter
+     * @param pageSize          the page size
      * @param returnAttributes  the return attributes
      * @return the response
      * @throws LdapException the ldap exception
@@ -228,8 +230,10 @@ public class LdapUtils {
     public static Response<SearchResult> executeSearchOperation(final ConnectionFactory connectionFactory,
                                                                 final String baseDn,
                                                                 final SearchFilter filter,
+                                                                final int pageSize,
                                                                 final String... returnAttributes) throws LdapException {
-        return executeSearchOperation(connectionFactory, baseDn, filter, null, returnAttributes);
+        return executeSearchOperation(connectionFactory, baseDn,
+            filter, pageSize, null, returnAttributes);
     }
 
     /**
@@ -238,6 +242,7 @@ public class LdapUtils {
      * @param connectionFactory the connection factory
      * @param baseDn            the base dn
      * @param filter            the filter
+     * @param pageSize          the page size
      * @param binaryAttributes  the binary attributes
      * @param returnAttributes  the return attributes
      * @return the response
@@ -246,13 +251,18 @@ public class LdapUtils {
     public static Response<SearchResult> executeSearchOperation(final ConnectionFactory connectionFactory,
                                                                 final String baseDn,
                                                                 final SearchFilter filter,
+                                                                final int pageSize,
                                                                 final String[] binaryAttributes,
                                                                 final String[] returnAttributes) throws LdapException {
         try (val connection = createConnection(connectionFactory)) {
-            val searchOperation = new SearchOperation(connection);
             val request = LdapUtils.newLdaptiveSearchRequest(baseDn, filter, binaryAttributes, returnAttributes);
             request.setReferralHandler(new SearchReferralHandler());
-            return searchOperation.execute(request);
+            if (pageSize <=0) {
+                val searchOperation = new SearchOperation(connection);
+                return searchOperation.execute(request);
+            }
+            val client = new PagedResultsClient(connection, pageSize);
+            return client.executeToCompletion(request);
         }
     }
 
@@ -262,13 +272,16 @@ public class LdapUtils {
      * @param connectionFactory the connection factory
      * @param baseDn            the base dn
      * @param filter            the filter
+     * @param pageSize          the page size
      * @return the response
      * @throws LdapException the ldap exception
      */
     public static Response<SearchResult> executeSearchOperation(final ConnectionFactory connectionFactory,
                                                                 final String baseDn,
-                                                                final SearchFilter filter) throws LdapException {
-        return executeSearchOperation(connectionFactory, baseDn, filter, ReturnAttributes.ALL_USER.value(), ReturnAttributes.ALL_USER.value());
+                                                                final SearchFilter filter,
+                                                                final int pageSize) throws LdapException {
+        return executeSearchOperation(connectionFactory, baseDn, filter, pageSize,
+            ReturnAttributes.ALL_USER.value(), ReturnAttributes.ALL_USER.value());
     }
 
     /**

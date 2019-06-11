@@ -31,6 +31,14 @@ public abstract class AbstractLdapSearchProperties extends AbstractLdapPropertie
     private boolean subtreeSearch = true;
 
     /**
+     * Request that the server return results in batches of a
+     * specific size. See <a href="http://www.ietf.org/rfc/rfc2696.txt">RFC 2696</a>. This control is often
+     * used to work around server result size limits.
+     * A negative/zero value disables paged requests.
+     */
+    private int pageSize;
+
+    /**
      * Base DN to use.
      */
     @RequiredProperty

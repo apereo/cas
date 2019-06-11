@@ -49,7 +49,7 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
                 CollectionUtils.wrapList(id, surrogate));
             LOGGER.debug("Using search filter to locate surrogate accounts for [{}]: [{}]", id, filter);
 
-            val response = LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(), filter);
+            val response = LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(), filter, ldapProperties.getPageSize());
             LOGGER.debug("LDAP response: [{}]", response);
             return LdapUtils.containsResultEntry(response);
         } catch (final Exception e) {
@@ -65,7 +65,7 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
             val filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSearchFilter(), CollectionUtils.wrap(username));
             LOGGER.debug("Using search filter to find eligible accounts: [{}]", filter);
 
-            val response = LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(), filter);
+            val response = LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(), filter, ldapProperties.getPageSize());
             LOGGER.debug("LDAP response: [{}]", response);
 
             if (!LdapUtils.containsResultEntry(response)) {
@@ -78,7 +78,7 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
             LOGGER.debug("Locating LDAP entry [{}] with attribute [{}]", ldapEntry, attribute);
 
             if (attribute == null || attribute.getStringValues().isEmpty()) {
-                LOGGER.warn("Attribute not found or has no values");
+                LOGGER.warn("Attribute [{}] not found or has no values", ldapProperties.getMemberAttributeName());
                 return eligible;
             }
 

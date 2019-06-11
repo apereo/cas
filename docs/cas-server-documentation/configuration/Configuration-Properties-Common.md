@@ -1242,6 +1242,7 @@ The following  options apply  given the provider's *configuration key*:
 # ${configurationKey}.baseDn=dc=example,dc=org
 # ${configurationKey}.subtreeSearch=true
 # ${configurationKey}.searchFilter=cn={user}
+# ${configurationKey}.pageSize=0
 
 # ${configurationKey}.enhanceWithEntryResolver=true
 # ${configurationKey}.derefAliases=NEVER|SEARCHING|FINDING|ALWAYS
