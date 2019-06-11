@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.support.couchdb.BaseAsynchronousCouchD
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
+import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RestEndpointProperties;
@@ -48,14 +49,19 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     private CouchDb couchDb = new CouchDb();
 
     /**
-     * Keep consent decisions stored via a MongoDb database resource.
+     * Control AUP via a MongoDb database resource.
      */
     private MongoDb mongo = new MongoDb();
 
     /**
-     * Keep consent decisions stored via a Groovy script.
+     * Control AUP a Groovy script.
      */
     private Groovy groovy = new Groovy();
+
+    /**
+     * Control AUP via Redis.
+     */
+    private Redis redis = new Redis();
 
     /**
      * AUP enabled allows AUP to be turned off on startup.
@@ -172,5 +178,12 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     @Setter
     public static class Groovy extends SpringResourceProperties {
         private static final long serialVersionUID = 9164227843747126083L;
+    }
+
+    @RequiresModule(name = "cas-server-support-aup-redis")
+    @Getter
+    @Setter
+    public static class Redis extends BaseRedisProperties {
+        private static final long serialVersionUID = -2147683393318585262L;
     }
 }
