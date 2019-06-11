@@ -2868,6 +2868,7 @@ To learn more about this topic, [please review this guide](../mfa/Acceptto-Authe
 # cas.authn.mfa.acceptto.message=Do you want to login via CAS?
 # cas.authn.mfa.acceptto.timeout=120
 # cas.authn.mfa.acceptto.emailAttribute=mail    
+# cas.authn.mfa.acceptto.groupAttribute=    
 
 # cas.authn.mfa.acceptto.registrationApiUrl=https://mfa.acceptto.com/api/integration/v1/mfa/authenticate
 # cas.authn.mfa.acceptto.registrationApiPublicKey=file:/path/to/publickey.pem
