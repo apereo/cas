@@ -17,7 +17,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AccepttoMultifactorProperties extends BaseMultifactorProviderProperties {
-
     /**
      * Provider id by default.
      */
@@ -113,6 +112,7 @@ public class AccepttoMultifactorProperties extends BaseMultifactorProviderProper
      * Location of public key used to verify API responses
      * that are produced as part of device pairing and registration.
      */
+    @RequiredProperty
     private SpringResourceProperties registrationApiPublicKey;
 
     public AccepttoMultifactorProperties() {
