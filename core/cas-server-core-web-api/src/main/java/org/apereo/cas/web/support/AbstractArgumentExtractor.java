@@ -35,9 +35,10 @@ public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
     public WebApplicationService extractService(final HttpServletRequest request) {
         val service = extractServiceInternal(request);
         if (service == null) {
-            LOGGER.trace("Extractor did not generate service.");
+            LOGGER.trace("Extractor did not generate service via [{}].", getClass().getName());
         } else {
-            LOGGER.trace("Extractor generated service type [{}] for: [{}]",
+            LOGGER.trace("Extractor [{}] generated service type [{}] for: [{}]",
+                getClass().getName(),
                 service.getClass().getName(), DigestUtils.abbreviate(service.getId()));
         }
         return service;
