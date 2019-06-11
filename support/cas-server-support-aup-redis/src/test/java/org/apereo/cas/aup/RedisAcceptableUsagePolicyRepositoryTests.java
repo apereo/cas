@@ -18,7 +18,7 @@ import org.springframework.test.context.TestPropertySource;
  */
 @Tag("Redis")
 @Import(CasAcceptableUsagePolicyRedisConfiguration.class)
-//@EnabledIfContinuousIntegration
+@EnabledIfContinuousIntegration
 @TestPropertySource(properties = {
     "cas.acceptableUsagePolicy.redis.host=localhost",
     "cas.acceptableUsagePolicy.redis.port=6379",
