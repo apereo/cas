@@ -1,5 +1,7 @@
 description = "Apereo CAS Redis Ticket Registry"
-
+ext {
+    maxParallelForksForTests = 1
+}
 dependencies {
     implementation libraries.springbootredis
 

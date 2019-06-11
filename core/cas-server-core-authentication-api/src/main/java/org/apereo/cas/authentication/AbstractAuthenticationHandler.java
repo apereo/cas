@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Objects;
 import java.util.function.Predicate;
 
 /**
@@ -65,10 +66,6 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
         this.name = StringUtils.isNotBlank(name) ? name : getClass().getSimpleName();
         this.servicesManager = servicesManager;
         this.principalFactory = principalFactory == null ? new DefaultPrincipalFactory() : principalFactory;
-        if (order == null) {
-            this.order = RandomUtils.nextInt(1, Integer.MAX_VALUE);
-        } else {
-            this.order = order;
-        }
+        this.order = Objects.requireNonNullElseGet(order, () -> RandomUtils.nextInt(1, Integer.MAX_VALUE));
     }
 }

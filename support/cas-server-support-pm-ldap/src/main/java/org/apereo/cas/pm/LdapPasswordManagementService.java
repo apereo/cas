@@ -41,7 +41,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
             LOGGER.debug("Constructed LDAP filter [{}] to locate user account", filter);
 
             val factory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
-            val response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(), filter);
+            val response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(), filter, 0);
             LOGGER.debug("LDAP response to locate user account is [{}]", response);
 
             if (LdapUtils.containsResultEntry(response)) {
@@ -77,7 +77,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
             LOGGER.debug("Constructed LDAP filter [{}] to locate account email", filter);
 
             val factory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
-            val response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(), filter);
+            val response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(), filter, 0);
             LOGGER.debug("LDAP response to locate account email is [{}]", response);
 
             if (LdapUtils.containsResultEntry(response)) {
@@ -119,7 +119,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
             LOGGER.debug("Constructed LDAP filter [{}] to update account password", filter);
 
             val factory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
-            val response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(), filter);
+            val response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(), filter, 0);
             LOGGER.debug("LDAP response to update password is [{}]", response);
 
             if (LdapUtils.containsResultEntry(response)) {
@@ -151,7 +151,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
             LOGGER.debug("Constructed LDAP filter [{}] to locate security questions", filter);
 
             val factory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
-            val response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(), filter);
+            val response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(), filter, 0);
             LOGGER.debug("LDAP response for security questions [{}]", response);
 
             if (LdapUtils.containsResultEntry(response)) {
