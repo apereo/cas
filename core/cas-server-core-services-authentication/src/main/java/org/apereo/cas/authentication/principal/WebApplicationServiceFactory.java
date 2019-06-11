@@ -101,6 +101,4 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
     public WebApplicationService createService(final String id) {
         return newWebApplicationService(HttpRequestUtils.getHttpServletRequestFromRequestAttributes(), id);
     }
-
-
 }
