@@ -12,6 +12,7 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class
 })
 @Getter
+@DirtiesContext
 public abstract class BaseConsentRepositoryTests {
     protected static final DefaultConsentDecisionBuilder BUILDER = new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());
     protected static final Service SVC = RegisteredServiceTestUtils.getService();
@@ -48,7 +50,7 @@ public abstract class BaseConsentRepositoryTests {
         val decision = BUILDER.build(SVC, REG_SVC, "casuser", ATTR);
         decision.setId(1);
         repo.storeConsentDecision(decision);
-
+        assertFalse(repo.findConsentDecisions().isEmpty());
         assertNull(repo.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication()));
     }
 

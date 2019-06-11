@@ -91,9 +91,6 @@ public interface PasswordManagementService {
      */
     default boolean isValidSecurityQuestionAnswer(final String username, final String question,
                                                   final String answer, final String input) {
-        if (StringUtils.isNotBlank(answer)) {
-            return answer.equals(input);
-        }
-        return false;
+        return StringUtils.isNotBlank(answer) && answer.equals(input);
     }
 }

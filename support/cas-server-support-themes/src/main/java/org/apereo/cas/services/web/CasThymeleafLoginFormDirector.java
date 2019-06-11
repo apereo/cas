@@ -22,10 +22,7 @@ public class CasThymeleafLoginFormDirector {
      */
     public boolean isLoginFormViewable(final WebEngineContext vars) {
         val context = RequestContextHolder.getRequestContext();
-        if (context != null) {
-            return WebUtils.getDelegatedAuthenticationProviderPrimary(context) == null
-                && WebUtils.isCasLoginFormViewable(context);
-        }
-        return false;
+        return context != null && WebUtils.getDelegatedAuthenticationProviderPrimary(context) == null
+            && WebUtils.isCasLoginFormViewable(context);
     }
 }

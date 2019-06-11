@@ -101,9 +101,6 @@ public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegis
 
     @Override
     public boolean isAvailable(final SamlRegisteredService service) {
-        if (supports(service)) {
-            return !s3Client.listBuckets().isEmpty();
-        }
-        return false;
+        return supports(service) && !s3Client.listBuckets().isEmpty();
     }
 }

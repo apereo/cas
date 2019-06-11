@@ -103,10 +103,7 @@ public class VerifyRequiredServiceAction extends AbstractAction {
         }
 
         val registeredService = this.servicesManager.findServiceBy(service);
-        if (registeredService == null) {
-            return false;
-        }
-        return RegisteredServiceProperties.SKIP_REQUIRED_SERVICE_CHECK.isAssignedTo(registeredService);
+        return registeredService != null && RegisteredServiceProperties.SKIP_REQUIRED_SERVICE_CHECK.isAssignedTo(registeredService);
     }
 
     /**

@@ -69,9 +69,6 @@ public class MongoDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
 
     @Override
     public boolean isAvailable(final SamlRegisteredService service) {
-        if (supports(service)) {
-            return mongoTemplate.collectionExists(this.collectionName);
-        }
-        return false;
+        return supports(service) && mongoTemplate.collectionExists(this.collectionName);
     }
 }
