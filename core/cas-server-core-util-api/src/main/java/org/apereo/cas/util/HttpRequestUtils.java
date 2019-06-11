@@ -50,7 +50,8 @@ public class HttpRequestUtils {
      */
     public static HttpServletRequest getHttpServletRequestFromRequestAttributes() {
         try {
-            return ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+            val requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+            return requestAttributes != null ? requestAttributes.getRequest() : null;
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);
         }
@@ -63,7 +64,8 @@ public class HttpRequestUtils {
      * @return the http servlet response from request attributes
      */
     public static HttpServletResponse getHttpServletResponseFromRequestAttributes() {
-        return ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getResponse();
+        val requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        return requestAttributes != null ? requestAttributes.getResponse() : null;
     }
 
     /**
