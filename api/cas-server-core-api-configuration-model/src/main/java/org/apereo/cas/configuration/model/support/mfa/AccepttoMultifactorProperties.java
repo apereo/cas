@@ -76,6 +76,7 @@ public class AccepttoMultifactorProperties extends BaseMultifactorProviderProper
      */
     @RequiredProperty
     private String emailAttribute = "mail";
+    
     /**
      * List of active directory group GUIDs that user is a member of.
      * This is used for Group based policies. If undefined,
