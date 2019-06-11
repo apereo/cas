@@ -2868,6 +2868,7 @@ To learn more about this topic, [please review this guide](../mfa/Acceptto-Authe
 # cas.authn.mfa.acceptto.message=Do you want to login via CAS?
 # cas.authn.mfa.acceptto.timeout=120
 # cas.authn.mfa.acceptto.emailAttribute=mail    
+# cas.authn.mfa.acceptto.groupAttribute=    
 
 # cas.authn.mfa.acceptto.registrationApiUrl=https://mfa.acceptto.com/api/integration/v1/mfa/authenticate
 # cas.authn.mfa.acceptto.registrationApiPublicKey=file:/path/to/publickey.pem
@@ -4575,11 +4576,15 @@ If AUP is controlled via JDBC, decide how choices should be remembered back insi
 
 #### CouchDb
 
- Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.acceptableUsagePolicy`. This feature uses the `asynchronous` setting.
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.acceptableUsagePolicy`. This feature uses the `asynchronous` setting.
 
 #### MongoDb
 
- Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.acceptableUsagePolicy`.
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.acceptableUsagePolicy`.
+
+#### Redis
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) under the configuration key `cas.acceptableUsagePolicy`.
 
 #### LDAP
 
@@ -4852,11 +4857,15 @@ LDAP settings for this feature are available [here](Configuration-Properties-Com
 
 ### MongoDb Attribute Consent
 
- Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.consent`.
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.consent`.
+ 
+### Redis Attribute Consent
+ 
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) under the configuration key `cas.consent`.
 
 ### CouchDb Attribute Consent
 
- Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.consent`.
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.consent`.
 
 ### REST Attribute Consent
 
