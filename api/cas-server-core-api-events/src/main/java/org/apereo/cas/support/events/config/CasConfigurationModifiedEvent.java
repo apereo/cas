@@ -68,9 +68,6 @@ public class CasConfigurationModifiedEvent extends AbstractCasEvent {
         if (this.override) {
             return true;
         }
-        if (getFile() != null) {
-            return CONFIG_FILE_PATTERN.matcher(getFile().toFile().getName()).find();
-        }
-        return false;
+        return getFile() != null && CONFIG_FILE_PATTERN.matcher(getFile().toFile().getName()).find();
     }
 }

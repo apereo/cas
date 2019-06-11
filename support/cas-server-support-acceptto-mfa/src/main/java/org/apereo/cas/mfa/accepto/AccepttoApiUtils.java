@@ -221,10 +221,7 @@ public class AccepttoApiUtils {
      */
     public static boolean isUserDevicePaired(final Authentication authentication, final AccepttoMultifactorProperties acceptto) {
         val results = isUserValid(authentication, acceptto);
-        if (results != null && results.containsKey("device_paired")) {
-            return BooleanUtils.toBoolean(results.get("device_paired").toString());
-        }
-        return false;
+        return results != null && results.containsKey("device_paired") && BooleanUtils.toBoolean(results.get("device_paired").toString());
     }
 
     /**

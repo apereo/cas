@@ -72,10 +72,7 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
             val handler = (ResponseHandler<Boolean>) response -> response.getStatusLine().getStatusCode() == HttpStatus.SC_OK;
             LOGGER.trace("Created HTTP post message payload [{}]", request);
             val task = this.requestExecutorService.execute(request, HttpClientContext.create(), handler);
-            if (message.isAsynchronous()) {
-                return true;
-            }
-            return task.get();
+            return message.isAsynchronous() || task.get();
         } catch (final RejectedExecutionException e) {
             LOGGER.warn("Execution rejected", e);
             return false;

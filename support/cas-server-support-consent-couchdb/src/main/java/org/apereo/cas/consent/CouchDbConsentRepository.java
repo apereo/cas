@@ -36,7 +36,8 @@ public class CouchDbConsentRepository implements ConsentRepository {
     private final transient ConsentDecisionCouchDbRepository couchDb;
 
     @Override
-    public ConsentDecision findConsentDecision(final Service service, final RegisteredService registeredService, final Authentication authentication) {
+    public ConsentDecision findConsentDecision(final Service service, final RegisteredService registeredService,
+                                               final Authentication authentication) {
         return couchDb.findFirstConsentDecision(authentication.getPrincipal().getId(), service.getId());
     }
 

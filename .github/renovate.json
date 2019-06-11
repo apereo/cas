@@ -172,6 +172,12 @@
       ]
     },
     {
+      "groupName": "ApacheIgnite",
+      "packagePatterns": [
+        "^org.apache.ignite:"
+      ]
+    },
+    {
       "groupName": "AmazonSDK",
       "packagePatterns": [
         "^com.amazonaws:"

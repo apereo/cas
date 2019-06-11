@@ -45,10 +45,7 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
             return requiresAuthenticationAuthorizeInterceptor.preHandle(request, response, handler);
         }
 
-        if (isAuthorizationRequest(request, response)) {
-            return requiresAuthenticationAuthorizeInterceptor.preHandle(request, response, handler);
-        }
-        return true;
+        return !isAuthorizationRequest(request, response) || requiresAuthenticationAuthorizeInterceptor.preHandle(request, response, handler);
     }
 
 

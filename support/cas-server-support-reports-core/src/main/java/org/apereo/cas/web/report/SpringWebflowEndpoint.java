@@ -71,12 +71,7 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
         val map = this.applicationContext.getBeansOfType(FlowDefinitionRegistry.class, false, true);
 
         map.forEach((k, v) -> Arrays.stream(v.getFlowDefinitionIds())
-            .filter(currentId -> {
-                if (StringUtils.isNotBlank(flowId)) {
-                    return flowId.equalsIgnoreCase(currentId);
-                }
-                return true;
-            })
+            .filter(currentId -> StringUtils.isBlank(flowId) || flowId.equalsIgnoreCase(currentId))
             .forEach(id -> {
                 val flowDetails = new LinkedHashMap<String, Object>();
                 val def = Flow.class.cast(v.getFlowDefinition(id));

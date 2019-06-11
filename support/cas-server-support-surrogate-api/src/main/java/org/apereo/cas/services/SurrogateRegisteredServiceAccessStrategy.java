@@ -30,10 +30,7 @@ public class SurrogateRegisteredServiceAccessStrategy extends BaseSurrogateRegis
     @Override
     public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> attributes) {
         if (isSurrogateAuthenticationSession(attributes)) {
-            if (!isSurrogateEnabled()) {
-                return false;
-            }
-            return doPrincipalAttributesAllowSurrogateServiceAccess(attributes);
+            return isSurrogateEnabled() && doPrincipalAttributesAllowSurrogateServiceAccess(attributes);
         }
         return super.doPrincipalAttributesAllowServiceAccess(principal, attributes);
     }
