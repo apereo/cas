@@ -52,10 +52,7 @@ public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredS
         if (!doesStartingTimeAllowServiceAccess()) {
             return false;
         }
-        if (!doesEndingTimeAllowServiceAccess()) {
-            return false;
-        }
-        return super.isServiceAccessAllowed();
+        return doesEndingTimeAllowServiceAccess() && super.isServiceAccessAllowed();
     }
 
     /**

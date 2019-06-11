@@ -147,10 +147,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
      */
     private static boolean isCritical(final X509Certificate certificate, final String extensionOid) {
         val criticalOids = certificate.getCriticalExtensionOIDs();
-        if (criticalOids == null || criticalOids.isEmpty()) {
-            return false;
-        }
-        return criticalOids.contains(extensionOid);
+        return criticalOids != null && !criticalOids.isEmpty() && criticalOids.contains(extensionOid);
     }
 
     /**

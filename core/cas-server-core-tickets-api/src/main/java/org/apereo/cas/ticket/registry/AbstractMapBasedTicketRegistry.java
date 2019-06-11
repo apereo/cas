@@ -63,10 +63,7 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
         val encTicketId = encodeTicketId(ticketId);
-        if (StringUtils.isBlank(encTicketId)) {
-            return false;
-        }
-        return getMapInstance().remove(encTicketId) != null;
+        return !StringUtils.isBlank(encTicketId) && getMapInstance().remove(encTicketId) != null;
     }
 
     @Override

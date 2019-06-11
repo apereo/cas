@@ -55,10 +55,8 @@ public abstract class BaseConsentRepository implements ConsentRepository {
     public boolean storeConsentDecision(final ConsentDecision decision) {
         val consent = getConsentDecisions()
             .stream()
-            .filter(d -> d.getId() == decision.getId())
-            .findFirst()
-            .orElse(null);
-        if (consent != null) {
+            .anyMatch(d -> d.getId() == decision.getId());
+        if (consent) {
             getConsentDecisions().remove(decision);
         } else {
             decision.setId(RandomUtils.getNativeInstance().nextInt());

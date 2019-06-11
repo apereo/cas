@@ -52,10 +52,7 @@ public abstract class BaseMultifactorAuthenticationTrustStorage implements Multi
             }
             val decodedKey = this.cipherExecutor.decode(entry.getRecordKey());
             val currentKey = MultifactorAuthenticationTrustUtils.generateKey(entry);
-            if (StringUtils.isBlank(decodedKey)) {
-                return true;
-            }
-            return !decodedKey.equals(currentKey);
+            return StringUtils.isBlank(decodedKey) || !decodedKey.equals(currentKey);
         });
         return res;
     }
