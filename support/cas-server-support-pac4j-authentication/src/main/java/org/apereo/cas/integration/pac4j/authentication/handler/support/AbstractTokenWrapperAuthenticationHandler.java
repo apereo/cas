@@ -12,6 +12,7 @@ import org.pac4j.core.credentials.TokenCredentials;
 
 import javax.security.auth.login.AccountNotFoundException;
 import java.security.GeneralSecurityException;
+import java.util.Objects;
 
 /**
  * Pac4j authentication handler which works on a CAS identifiable credential
@@ -33,11 +34,7 @@ public abstract class AbstractTokenWrapperAuthenticationHandler extends
                                                      final PrincipalFactory principalFactory,
                                                      final Integer order, final PrincipalNameTransformer principalNameTransformer) {
         super(name, servicesManager, principalFactory, order);
-        if (principalNameTransformer == null) {
-            this.principalNameTransformer = formUserId -> formUserId;
-        } else {
-            this.principalNameTransformer = principalNameTransformer;
-        }
+        this.principalNameTransformer = Objects.requireNonNullElseGet(principalNameTransformer, () -> formUserId -> formUserId);
     }
 
     @Override

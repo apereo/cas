@@ -16,6 +16,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 
 /**
@@ -61,11 +62,7 @@ public class SimplePrincipal implements Principal {
     protected SimplePrincipal(@JsonProperty("id") final @NonNull String id,
                               @JsonProperty("attributes") final Map<String, List<Object>> attributes) {
         this.id = id;
-        if (attributes == null) {
-            this.attributes = new HashMap<>();
-        } else {
-            this.attributes = attributes;
-        }
+        this.attributes = Objects.requireNonNullElseGet(attributes, HashMap::new);
     }
 
     /**
