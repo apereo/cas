@@ -315,6 +315,7 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
     }
 
     @RefreshScope
+    @ConditionalOnMissingBean(name = "oidcIdTokenGenerator")
     @Bean
     public IdTokenGeneratorService oidcIdTokenGenerator() {
         return new OidcIdTokenGeneratorService(
@@ -324,6 +325,7 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
             ticketRegistry.getIfAvailable());
     }
 
+    @ConditionalOnMissingBean(name = "oidcAccessTokenResponseGenerator")
     @Bean
     @RefreshScope
     public OAuth20AccessTokenResponseGenerator oidcAccessTokenResponseGenerator() {
