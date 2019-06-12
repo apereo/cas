@@ -66,9 +66,17 @@ public class CasVersion {
             val file = new File(path.substring(JAR_PROTOCOL_STARTING_INDEX, path.indexOf('!')));
             return DateTimeUtils.zonedDateTimeOf(file.lastModified());
         }
-        if ("vfs".equals(resource.getProtocol())) {
-            val file = new VfsResource(resource.openConnection().getContent()).getFile();
-            return DateTimeUtils.zonedDateTimeOf(file.lastModified());
+        if ( "vfs".equals( resource.getProtocol() ) ) {
+            Object content = resource.openConnection().getContent();
+            Class<?> virtualFile = Thread.currentThread().getContextClassLoader()
+                    .loadClass( "org.jboss.vfs.VirtualFile" );
+            if ( virtualFile.isAssignableFrom( content.getClass() ) ) {
+                final File file = new VfsResource(
+                        resource.openConnection().getContent( new Class[] { virtualFile } ) ).getFile();
+                return DateTimeUtils.zonedDateTimeOf( file.lastModified() );
+            } else {
+                return ZonedDateTime.now();
+            }
         }
         LOGGER.warn("Unhandled url protocol: [{}] resource: [{}]", resource.getProtocol(), resource);
         return ZonedDateTime.now(ZoneOffset.UTC);
